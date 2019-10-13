@@ -1,5 +1,17 @@
 2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [iOS] Crash in WebCore::DOMWindow::incrementScrollEventListenersCount
+        https://bugs.webkit.org/show_bug.cgi?id=202878
+
+        Reviewed by Alex Christensen.
+
+        Added a regression test for the crash.
+
+        * fast/events/scroll-event-on-document-without-window-expected.txt: Added.
+        * fast/events/scroll-event-on-document-without-window.html: Added.
+
+2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Invoke callback registered by requestIdleCallback
         https://bugs.webkit.org/show_bug.cgi?id=202824
 
