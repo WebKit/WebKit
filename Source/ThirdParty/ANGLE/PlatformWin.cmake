@@ -23,7 +23,7 @@ if (USE_ANGLE_EGL)
         ANGLE_ENABLE_D3D11
     )
 
-    list(APPEND ANGLEGLESv2_LIBRARIES dxguid)
+    list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi)
 
     # DirectX 9 support should be optional but ANGLE will not compile without it
     list(APPEND ANGLE_SOURCES ${libangle_d3d9_sources})

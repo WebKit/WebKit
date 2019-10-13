@@ -1,3 +1,12 @@
+2019-10-12  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Regression (251018): Wincairo build broken: unresolved external symbol
+        https://bugs.webkit.org/show_bug.cgi?id=202879
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake: Add dxgi library for CreateDXGIFactory1
+
 2019-10-11  Kenneth Russell  <kbr@chromium.org>
 
         USE_ANGLE=1 build broken with last ANGLE roll
