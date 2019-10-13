@@ -29,7 +29,6 @@
 #include "SynchronousLoaderClient.h"
 
 #include "AuthenticationChallenge.h"
-#include "EventLoop.h"
 #include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
 

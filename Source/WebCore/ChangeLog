@@ -1,3 +1,14 @@
+2019-10-13  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Wincairo build broken: EventLoop.h: No such file or directory
+        https://bugs.webkit.org/show_bug.cgi?id=202893
+
+        Reviewed by Fujii Hironori.
+
+        Remove include of EventLoop.h.
+
+        * platform/network/curl/SynchronousLoaderClientCurl.cpp:
+
 2019-10-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fix compilation of Crypto.cpp on macOS with !WEB_CRYPTO
