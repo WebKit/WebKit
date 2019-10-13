@@ -37,7 +37,8 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 
 #if OS(DARWIN)
-#include "CommonCryptoUtilities.h"
+#include <CommonCrypto/CommonCryptor.h>
+#include <CommonCrypto/CommonRandom.h>
 #endif
 
 namespace WebCore {
