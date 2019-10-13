@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "CSSReflectionDirection.h"
 #include "Length.h"
 #include "NinePieceImage.h"
+#include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -44,23 +44,22 @@ public:
     }
     bool operator!=(const StyleReflection& o) const { return !(*this == o); }
 
-    CSSReflectionDirection direction() const { return m_direction; }
+    ReflectionDirection direction() const { return m_direction; }
     const Length& offset() const { return m_offset; }
     const NinePieceImage& mask() const { return m_mask; }
 
-    void setDirection(CSSReflectionDirection dir) { m_direction = dir; }
+    void setDirection(ReflectionDirection dir) { m_direction = dir; }
     void setOffset(Length offset) { m_offset = WTFMove(offset); }
     void setMask(const NinePieceImage& image) { m_mask = image; }
 
 private:
     StyleReflection()
-        : m_direction(ReflectionBelow)
-        , m_offset(0, Fixed)
+        : m_offset(0, Fixed)
     {
          m_mask.setMaskDefaults();
     }
     
-    CSSReflectionDirection m_direction;
+    ReflectionDirection m_direction { ReflectionDirection::Below };
     Length m_offset;
     NinePieceImage m_mask;
 };

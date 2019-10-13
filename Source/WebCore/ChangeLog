@@ -1,5 +1,36 @@
 2019-10-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Move CSSReflectionDirection into RenderStyleConstants as ReflectionDirection
+        https://bugs.webkit.org/show_bug.cgi?id=202886
+
+        Reviewed by Sam Weinig.
+
+        Make CSSReflectionDirection an enum class ReflectionDirection, and fix the usage sites.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForReflection):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ReflectionDirection const):
+        (WebCore::CSSPrimitiveValue::operator CSSReflectionDirection const): Deleted.
+        * css/CSSReflectionDirection.h: Removed.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::reflectionOffset const):
+        (WebCore::RenderBox::reflectedRect const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::direction const):
+        (WebCore::StyleReflection::setDirection):
+        (WebCore::StyleReflection::StyleReflection):
+
+2019-10-12  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the spelling of ThreeDDarkDhasowColor and unwrap the ThemeType enums
         https://bugs.webkit.org/show_bug.cgi?id=202887
 

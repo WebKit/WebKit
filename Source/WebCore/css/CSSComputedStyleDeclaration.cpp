@@ -659,16 +659,16 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
 
     RefPtr<CSSPrimitiveValue> direction;
     switch (reflection->direction()) {
-    case ReflectionBelow:
+    case ReflectionDirection::Below:
         direction = CSSValuePool::singleton().createIdentifierValue(CSSValueBelow);
         break;
-    case ReflectionAbove:
+    case ReflectionDirection::Above:
         direction = CSSValuePool::singleton().createIdentifierValue(CSSValueAbove);
         break;
-    case ReflectionLeft:
+    case ReflectionDirection::Left:
         direction = CSSValuePool::singleton().createIdentifierValue(CSSValueLeft);
         break;
-    case ReflectionRight:
+    case ReflectionDirection::Right:
         direction = CSSValuePool::singleton().createIdentifierValue(CSSValueRight);
         break;
     }

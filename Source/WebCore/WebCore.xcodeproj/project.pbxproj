@@ -2613,7 +2613,6 @@
 		935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */; };
 		935FBC4509BA00B900E230B1 /* EventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBC4409BA00B900E230B1 /* EventListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */; };
 		9377ABA015DEFEEF0031FD04 /* Pagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 9377AB9F15DEFEEF0031FD04 /* Pagination.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10584,7 +10583,6 @@
 		935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLazyEventListener.h; sourceTree = "<group>"; };
 		935FBC4409BA00B900E230B1 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
-		9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectionDirection.h; sourceTree = "<group>"; };
 		936B21F41DBBF8300052E117 /* CanvasPath.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasPath.idl; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textAreaResizeCorner@2x.png"; sourceTree = "<group>"; };
@@ -26989,7 +26987,6 @@
 				A80E6CD50A1989CA007FB8C5 /* CSSProperty.h */,
 				82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */,
 				82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */,
-				9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */,
 				BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */,
 				BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */,
 				4B1706642162B42F00E578BB /* CSSRegisteredCustomProperty.cpp */,
@@ -29069,7 +29066,6 @@
 				949C77051D6E39EA00C0DE4F /* CSSPropertyParserHelpers.h in Headers */,
 				82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */,
 				FE271F672082DBE500A952D4 /* CSSPtrTag.h in Headers */,
-				9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */,
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
 				4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */,
 				BC7D8FF41BD1A47900FFE540 /* CSSRevertValue.h in Headers */,

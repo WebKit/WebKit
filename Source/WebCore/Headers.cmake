@@ -306,7 +306,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSPrimitiveValue.h
     css/CSSPrimitiveValueMappings.h
     css/CSSProperty.h
-    css/CSSReflectionDirection.h
     css/CSSRegisteredCustomProperty.h
     css/CSSRule.h
     css/CSSRuleList.h

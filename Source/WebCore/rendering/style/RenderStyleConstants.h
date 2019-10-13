@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CSSReflectionDirection.h" // FIXME: CSSReflectionDirection should just move here.
 #include <initializer_list>
 
 namespace WTF {
@@ -664,6 +663,13 @@ enum class WhiteSpace : uint8_t {
     BreakSpaces
 };
 
+enum class ReflectionDirection : uint8_t {
+    Below,
+    Above,
+    Left,
+    Right
+};
+
 // The order of this enum must match the order of the text align values in CSSValueKeywords.in.
 enum class TextAlignMode : uint8_t {
     Left,
@@ -1184,7 +1190,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, BoxSizing);
 WTF::TextStream& operator<<(WTF::TextStream&, BreakBetween);
 WTF::TextStream& operator<<(WTF::TextStream&, BreakInside);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSBoxType);
-WTF::TextStream& operator<<(WTF::TextStream&, CSSReflectionDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, CaptionSide);
 WTF::TextStream& operator<<(WTF::TextStream&, Clear);
 #if ENABLE(DARK_MODE_CSS)
@@ -1239,6 +1244,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, PositionType);
 WTF::TextStream& operator<<(WTF::TextStream&, PrintColorAdjust);
 WTF::TextStream& operator<<(WTF::TextStream&, PseudoId);
 WTF::TextStream& operator<<(WTF::TextStream&, QuoteType);
+WTF::TextStream& operator<<(WTF::TextStream&, ReflectionDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, Resize);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 #if ENABLE(CSS_SCROLL_SNAP)

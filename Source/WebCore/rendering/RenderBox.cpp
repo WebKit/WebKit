@@ -726,7 +726,7 @@ int RenderBox::reflectionOffset() const
 {
     if (!style().boxReflect())
         return 0;
-    if (style().boxReflect()->direction() == ReflectionLeft || style().boxReflect()->direction() == ReflectionRight)
+    if (style().boxReflect()->direction() == ReflectionDirection::Left || style().boxReflect()->direction() == ReflectionDirection::Right)
         return valueForLength(style().boxReflect()->offset(), borderBoxRect().width());
     return valueForLength(style().boxReflect()->offset(), borderBoxRect().height());
 }
@@ -739,18 +739,18 @@ LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
     LayoutRect box = borderBoxRect();
     LayoutRect result = r;
     switch (style().boxReflect()->direction()) {
-        case ReflectionBelow:
-            result.setY(box.maxY() + reflectionOffset() + (box.maxY() - r.maxY()));
-            break;
-        case ReflectionAbove:
-            result.setY(box.y() - reflectionOffset() - box.height() + (box.maxY() - r.maxY()));
-            break;
-        case ReflectionLeft:
-            result.setX(box.x() - reflectionOffset() - box.width() + (box.maxX() - r.maxX()));
-            break;
-        case ReflectionRight:
-            result.setX(box.maxX() + reflectionOffset() + (box.maxX() - r.maxX()));
-            break;
+    case ReflectionDirection::Below:
+        result.setY(box.maxY() + reflectionOffset() + (box.maxY() - r.maxY()));
+        break;
+    case ReflectionDirection::Above:
+        result.setY(box.y() - reflectionOffset() - box.height() + (box.maxY() - r.maxY()));
+        break;
+    case ReflectionDirection::Left:
+        result.setX(box.x() - reflectionOffset() - box.width() + (box.maxX() - r.maxX()));
+        break;
+    case ReflectionDirection::Right:
+        result.setX(box.maxX() + reflectionOffset() + (box.maxX() - r.maxX()));
+        break;
     }
     return result;
 }

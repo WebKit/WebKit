@@ -256,17 +256,6 @@ TextStream& operator<<(TextStream& ts, CSSBoxType boxType)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, CSSReflectionDirection direction)
-{
-    switch (direction) {
-    case ReflectionBelow: ts << "below"; break;
-    case ReflectionAbove: ts << "above"; break;
-    case ReflectionLeft: ts << "left"; break;
-    case ReflectionRight: ts << "right"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, CaptionSide side)
 {
     switch (side) {
@@ -963,6 +952,17 @@ TextStream& operator<<(TextStream& ts, QuoteType quoteType)
     case QuoteType::CloseQuote: ts << "close"; break;
     case QuoteType::NoOpenQuote: ts << "no-open"; break;
     case QuoteType::NoCloseQuote: ts << "no-close"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ReflectionDirection direction)
+{
+    switch (direction) {
+    case ReflectionDirection::Below: ts << "below"; break;
+    case ReflectionDirection::Above: ts << "above"; break;
+    case ReflectionDirection::Left: ts << "left"; break;
+    case ReflectionDirection::Right: ts << "right"; break;
     }
     return ts;
 }
