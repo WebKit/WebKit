@@ -1,5 +1,45 @@
 2019-10-13  Simon Fraser  <simon.fraser@apple.com>
 
+        Clarify the naming of the radius-related functions on BorderData
+        https://bugs.webkit.org/show_bug.cgi?id=202888
+
+        Reviewed by Alex Christensen.
+
+        BorderData had some confusingly named data members and functions ("topLeft"'"). Renamed
+        to include the term "radius".
+
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::PathUtilities::pathWithShrinkWrappedRectsForOutline):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::BorderData):
+        (WebCore::BorderData::hasBorderRadius const):
+        (WebCore::BorderData::operator== const):
+        (WebCore::BorderData::topLeftRadius const):
+        (WebCore::BorderData::topRightRadius const):
+        (WebCore::BorderData::bottomLeftRadius const):
+        (WebCore::BorderData::bottomRightRadius const):
+        (WebCore::BorderData::topLeft const): Deleted.
+        (WebCore::BorderData::topRight const): Deleted.
+        (WebCore::BorderData::bottomLeft const): Deleted.
+        (WebCore::BorderData::bottomRight const): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::borderTopLeftRadius const):
+        (WebCore::RenderStyle::borderTopRightRadius const):
+        (WebCore::RenderStyle::borderBottomLeftRadius const):
+        (WebCore::RenderStyle::borderBottomRightRadius const):
+        (WebCore::RenderStyle::resetBorderTopLeftRadius):
+        (WebCore::RenderStyle::resetBorderTopRightRadius):
+        (WebCore::RenderStyle::resetBorderBottomLeftRadius):
+        (WebCore::RenderStyle::resetBorderBottomRightRadius):
+        (WebCore::RenderStyle::setBorderTopLeftRadius):
+        (WebCore::RenderStyle::setBorderTopRightRadius):
+        (WebCore::RenderStyle::setBorderBottomLeftRadius):
+        (WebCore::RenderStyle::setBorderBottomRightRadius):
+
+2019-10-13  Simon Fraser  <simon.fraser@apple.com>
+
         Convert LineBoxContain to use an OptionSet<>
         https://bugs.webkit.org/show_bug.cgi?id=202890
 

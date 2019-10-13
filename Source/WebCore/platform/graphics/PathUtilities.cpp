@@ -493,10 +493,10 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
 {
     ASSERT(borderData.hasBorderRadius());
 
-    FloatSize topLeftRadius { borderData.topLeft().width.value(), borderData.topLeft().height.value() };
-    FloatSize topRightRadius { borderData.topRight().width.value(), borderData.topRight().height.value() };
-    FloatSize bottomRightRadius { borderData.bottomRight().width.value(), borderData.bottomRight().height.value() };
-    FloatSize bottomLeftRadius { borderData.bottomLeft().width.value(), borderData.bottomLeft().height.value() };
+    FloatSize topLeftRadius { borderData.topLeftRadius().width.value(), borderData.topLeftRadius().height.value() };
+    FloatSize topRightRadius { borderData.topRightRadius().width.value(), borderData.topRightRadius().height.value() };
+    FloatSize bottomRightRadius { borderData.bottomRightRadius().width.value(), borderData.bottomRightRadius().height.value() };
+    FloatSize bottomLeftRadius { borderData.bottomLeftRadius().width.value(), borderData.bottomLeftRadius().height.value() };
 
     auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset, deviceScaleFactor] (const FloatRect& rect)
     {

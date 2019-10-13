@@ -34,12 +34,13 @@ class BorderData {
 friend class RenderStyle;
 public:
     BorderData()
-        : m_topLeft { { 0, Fixed }, { 0, Fixed } }
-        , m_topRight { { 0, Fixed }, { 0, Fixed } }
-        , m_bottomLeft { { 0, Fixed }, { 0, Fixed } }
-        , m_bottomRight { { 0, Fixed }, { 0, Fixed } }
+        : m_topLeftRadius { { 0, Fixed }, { 0, Fixed } }
+        , m_topRightRadius { { 0, Fixed }, { 0, Fixed } }
+        , m_bottomLeftRadius { { 0, Fixed }, { 0, Fixed } }
+        , m_bottomRightRadius { { 0, Fixed }, { 0, Fixed } }
     {
     }
+
     bool hasBorder() const
     {
         bool haveImage = m_image.hasImage();
@@ -59,10 +60,10 @@ public:
     
     bool hasBorderRadius() const
     {
-        return !m_topLeft.width.isZero()
-            || !m_topRight.width.isZero()
-            || !m_bottomLeft.width.isZero()
-            || !m_bottomRight.width.isZero();
+        return !m_topLeftRadius.width.isZero()
+            || !m_topRightRadius.width.isZero()
+            || !m_bottomLeftRadius.width.isZero()
+            || !m_bottomRightRadius.width.isZero();
     }
     
     float borderLeftWidth() const
@@ -101,7 +102,7 @@ public:
     bool operator==(const BorderData& o) const
     {
         return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom && m_image == o.m_image
-               && m_topLeft == o.m_topLeft && m_topRight == o.m_topRight && m_bottomLeft == o.m_bottomLeft && m_bottomRight == o.m_bottomRight;
+            && m_topLeftRadius == o.m_topLeftRadius && m_topRightRadius == o.m_topRightRadius && m_bottomLeftRadius == o.m_bottomLeftRadius && m_bottomRightRadius == o.m_bottomRightRadius;
     }
     
     bool operator!=(const BorderData& o) const
@@ -116,10 +117,10 @@ public:
     
     const NinePieceImage& image() const { return m_image; }
     
-    const LengthSize& topLeft() const { return m_topLeft; }
-    const LengthSize& topRight() const { return m_topRight; }
-    const LengthSize& bottomLeft() const { return m_bottomLeft; }
-    const LengthSize& bottomRight() const { return m_bottomRight; }
+    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
+    const LengthSize& topRightRadius() const { return m_topRightRadius; }
+    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
+    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
 
 private:
     BorderValue m_left;
@@ -129,10 +130,10 @@ private:
 
     NinePieceImage m_image;
 
-    LengthSize m_topLeft;
-    LengthSize m_topRight;
-    LengthSize m_bottomLeft;
-    LengthSize m_bottomRight;
+    LengthSize m_topLeftRadius;
+    LengthSize m_topRightRadius;
+    LengthSize m_bottomLeftRadius;
+    LengthSize m_bottomRightRadius;
 };
 
 } // namespace WebCore
