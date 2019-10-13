@@ -645,36 +645,36 @@ void CSSToStyleMap::mapNinePieceImageRepeat(CSSValue& value, NinePieceImage& ima
     CSSValueID firstIdentifier = pair->first()->valueID();
     CSSValueID secondIdentifier = pair->second()->valueID();
 
-    ENinePieceImageRule horizontalRule;
+    NinePieceImageRule horizontalRule;
     switch (firstIdentifier) {
     case CSSValueStretch:
-        horizontalRule = StretchImageRule;
+        horizontalRule = NinePieceImageRule::Stretch;
         break;
     case CSSValueRound:
-        horizontalRule = RoundImageRule;
+        horizontalRule = NinePieceImageRule::Round;
         break;
     case CSSValueSpace:
-        horizontalRule = SpaceImageRule;
+        horizontalRule = NinePieceImageRule::Space;
         break;
     default: // CSSValueRepeat
-        horizontalRule = RepeatImageRule;
+        horizontalRule = NinePieceImageRule::Repeat;
         break;
     }
     image.setHorizontalRule(horizontalRule);
 
-    ENinePieceImageRule verticalRule;
+    NinePieceImageRule verticalRule;
     switch (secondIdentifier) {
     case CSSValueStretch:
-        verticalRule = StretchImageRule;
+        verticalRule = NinePieceImageRule::Stretch;
         break;
     case CSSValueRound:
-        verticalRule = RoundImageRule;
+        verticalRule = NinePieceImageRule::Round;
         break;
     case CSSValueSpace:
-        verticalRule = SpaceImageRule;
+        verticalRule = NinePieceImageRule::Space;
         break;
     default: // CSSValueRepeat
-        verticalRule = RepeatImageRule;
+        verticalRule = NinePieceImageRule::Repeat;
         break;
     }
     image.setVerticalRule(verticalRule);

@@ -521,8 +521,8 @@ public:
             image.setOutset(LengthBox(0));
             break;
         case Repeat:
-            image.setHorizontalRule(StretchImageRule);
-            image.setVerticalRule(StretchImageRule);
+            image.setHorizontalRule(NinePieceImageRule::Stretch);
+            image.setVerticalRule(NinePieceImageRule::Stretch);
             break;
         case Slice:
             // Masks have a different initial value for slices. Preserve the value of 0 for backwards compatibility.

@@ -470,17 +470,17 @@ static const CSSPropertyID computedProperties[] = {
 
 const unsigned numComputedProperties = WTF_ARRAY_LENGTH(computedProperties);
 
-static CSSValueID valueForRepeatRule(int rule)
+static CSSValueID valueForRepeatRule(NinePieceImageRule rule)
 {
     switch (rule) {
-        case RepeatImageRule:
-            return CSSValueRepeat;
-        case RoundImageRule:
-            return CSSValueRound;
-        case SpaceImageRule:
-            return CSSValueSpace;
-        default:
-            return CSSValueStretch;
+    case NinePieceImageRule::Repeat:
+        return CSSValueRepeat;
+    case NinePieceImageRule::Round:
+        return CSSValueRound;
+    case NinePieceImageRule::Space:
+        return CSSValueSpace;
+    default:
+        return CSSValueStretch;
     }
 }
 

@@ -34,8 +34,14 @@ class LayoutSize;
 class LayoutRect;
 class RenderStyle;
 
-enum ENinePieceImageRule { StretchImageRule, RoundImageRule, SpaceImageRule, RepeatImageRule };
+enum class NinePieceImageRule : uint8_t {
+    Stretch,
+    Round,
+    Space,
+    Repeat,
+};
 
+// Used for array indexing, so not an enum class.
 enum ImagePiece {
     MinPiece = 0,
     TopLeftPiece = MinPiece,
@@ -101,7 +107,7 @@ inline Optional<PhysicalBoxSide> imagePieceVerticalSide(ImagePiece piece)
 class NinePieceImage {
 public:
     NinePieceImage();
-    NinePieceImage(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule);
+    NinePieceImage(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
 
     bool operator==(const NinePieceImage& other) const { return m_data == other.m_data; }
     bool operator!=(const NinePieceImage& other) const { return m_data != other.m_data; }
@@ -122,11 +128,11 @@ public:
     const LengthBox& outset() const { return m_data->outset; }
     void setOutset(LengthBox outset) { m_data.access().outset = WTFMove(outset); }
 
-    ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_data->horizontalRule); }
-    void setHorizontalRule(ENinePieceImageRule rule) { m_data.access().horizontalRule = rule; }
+    NinePieceImageRule horizontalRule() const { return m_data->horizontalRule; }
+    void setHorizontalRule(NinePieceImageRule rule) { m_data.access().horizontalRule = rule; }
     
-    ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_data->verticalRule); }
-    void setVerticalRule(ENinePieceImageRule rule) { m_data.access().verticalRule = rule; }
+    NinePieceImageRule verticalRule() const { return m_data->verticalRule; }
+    void setVerticalRule(NinePieceImageRule rule) { m_data.access().verticalRule = rule; }
 
     void copyImageSlicesFrom(const NinePieceImage& other)
     {
@@ -176,23 +182,23 @@ public:
     static void scaleSlicesIfNeeded(const LayoutSize&, LayoutBoxExtent& slices, float deviceScaleFactor);
 
     static FloatSize computeSideTileScale(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
-    static FloatSize computeMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
-    static Vector<FloatSize> computeTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
+    static FloatSize computeMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule);
+    static Vector<FloatSize> computeTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule);
 
     void paint(GraphicsContext&, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator) const;
 
 private:
     struct Data : RefCounted<Data> {
         static Ref<Data> create();
-        static Ref<Data> create(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule);
+        static Ref<Data> create(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
         Ref<Data> copy() const;
 
         bool operator==(const Data&) const;
         bool operator!=(const Data& other) const { return !(*this == other); }
 
-        bool fill : 1;
-        unsigned horizontalRule : 2; // ENinePieceImageRule
-        unsigned verticalRule : 2; // ENinePieceImageRule
+        bool fill { false };
+        NinePieceImageRule horizontalRule { NinePieceImageRule::Stretch };
+        NinePieceImageRule verticalRule { NinePieceImageRule::Stretch };
         RefPtr<StyleImage> image;
         LengthBox imageSlices { { 100, Percent }, { 100, Percent }, { 100, Percent }, { 100, Percent } };
         LengthBox borderSlices { { 1, Relative }, { 1, Relative }, { 1, Relative }, { 1, Relative } };
@@ -200,7 +206,7 @@ private:
 
     private:
         Data();
-        Data(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule);
+        Data(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
         Data(const Data&);
     };
 
