@@ -693,8 +693,8 @@ public:
     const Length& perspectiveOriginY() const { return m_rareNonInheritedData->perspectiveOriginY; }
     const LengthSize& pageSize() const { return m_rareNonInheritedData->pageSize; }
     PageSizeType pageSizeType() const { return static_cast<PageSizeType>(m_rareNonInheritedData->pageSizeType); }
-    
-    LineBoxContain lineBoxContain() const { return m_rareInheritedData->lineBoxContain; }
+
+    OptionSet<LineBoxContain> lineBoxContain() const { return OptionSet<LineBoxContain>::fromRaw(m_rareInheritedData->lineBoxContain); }
     const LineClampValue& lineClamp() const { return m_rareNonInheritedData->lineClamp; }
     const IntSize& initialLetter() const { return m_rareNonInheritedData->initialLetter; }
     int initialLetterDrop() const { return initialLetter().width(); }
@@ -1212,7 +1212,7 @@ public:
     void setPageSizeType(PageSizeType t) { SET_VAR(m_rareNonInheritedData, pageSizeType, t); }
     void resetPageSizeType() { SET_VAR(m_rareNonInheritedData, pageSizeType, PAGE_SIZE_AUTO); }
 
-    void setLineBoxContain(LineBoxContain c) { SET_VAR(m_rareInheritedData, lineBoxContain, c); }
+    void setLineBoxContain(OptionSet<LineBoxContain> c) { SET_VAR(m_rareInheritedData, lineBoxContain, c.toRaw()); }
     void setLineClamp(LineClampValue c) { SET_VAR(m_rareNonInheritedData, lineClamp, c); }
     
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
@@ -1582,7 +1582,7 @@ public:
     static const AtomString& initialTextEmphasisCustomMark() { return nullAtom(); }
     static OptionSet<TextEmphasisPosition> initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
     static RubyPosition initialRubyPosition() { return RubyPosition::Before; }
-    static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
+    static OptionSet<LineBoxContain> initialLineBoxContain() { return { LineBoxContain::Block, LineBoxContain::Inline, LineBoxContain::Replaced }; }
     static ImageOrientation initialImageOrientation() { return ImageOrientation::None; }
     static ImageRendering initialImageRendering() { return ImageRendering::Auto; }
     static ImageResolutionSource initialImageResolutionSource() { return ImageResolutionSource::Specified; }

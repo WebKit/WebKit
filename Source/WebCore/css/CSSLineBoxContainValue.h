@@ -26,40 +26,39 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
 
-enum LineBoxContainFlags {
-    LineBoxContainNone = 0x0,
-    LineBoxContainBlock = 0x1,
-    LineBoxContainInline = 0x2,
-    LineBoxContainFont = 0x4,
-    LineBoxContainGlyphs = 0x8,
-    LineBoxContainReplaced = 0x10,
-    LineBoxContainInlineBox = 0x20,
-    LineBoxContainInitialLetter = 0x40
+enum class LineBoxContain {
+    Block           = 1 << 0,
+    Inline          = 1 << 1,
+    Font            = 1 << 2,
+    Glyphs          = 1 << 3,
+    Replaced        = 1 << 4,
+    InlineBox       = 1 << 5,
+    InitialLetter   = 1 << 6,
 };
-typedef unsigned LineBoxContain;
 
 // Used for text-CSSLineBoxContain and box-CSSLineBoxContain
 class CSSLineBoxContainValue final : public CSSValue {
 public:
-    static Ref<CSSLineBoxContainValue> create(LineBoxContain value)
+    static Ref<CSSLineBoxContainValue> create(OptionSet<LineBoxContain> value)
     {
         return adoptRef(*new CSSLineBoxContainValue(value));
     }
 
     String customCSSText() const;
     bool equals(const CSSLineBoxContainValue& other) const { return m_value == other.m_value; }
-    LineBoxContain value() const { return m_value; }
+    OptionSet<LineBoxContain> value() const { return m_value; }
 
 private:
-    explicit CSSLineBoxContainValue(LineBoxContain);
+    explicit CSSLineBoxContainValue(OptionSet<LineBoxContain>);
 
-    LineBoxContain m_value;
+    OptionSet<LineBoxContain> m_value;
 };
 
 } // namespace WebCore

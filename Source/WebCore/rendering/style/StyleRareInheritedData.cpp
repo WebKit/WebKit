@@ -102,7 +102,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textIndentLine(RenderStyle::initialTextIndentLine())
     , textIndentType(RenderStyle::initialTextIndentType())
 #endif
-    , lineBoxContain(RenderStyle::initialLineBoxContain())
+    , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     , imageOrientation(RenderStyle::initialImageOrientation())
 #endif

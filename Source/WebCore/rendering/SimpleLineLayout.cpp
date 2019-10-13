@@ -162,7 +162,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     if (fontCascade.primaryFont().isInterstitial())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
     Optional<float> lineHeightConstraint;
-    if (style.lineBoxContain() & LineBoxContainGlyphs)
+    if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
         lineHeightConstraint = lineHeightFromFlow(flow).toFloat();
     bool flowIsJustified = style.textAlign() == TextAlignMode::Justify;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
@@ -208,7 +208,7 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
-    if (!(style.lineBoxContain() & LineBoxContainBlock))
+    if (!(style.lineBoxContain().contains(LineBoxContain::Block)))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.writingMode() != TopToBottomWritingMode)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);

@@ -118,7 +118,7 @@ public:
     unsigned textIndentLine : 1; // TextIndentLine
     unsigned textIndentType : 1; // TextIndentType
 #endif
-    unsigned lineBoxContain: 7; // LineBoxContain
+    unsigned lineBoxContain: 7; // OptionSet<LineBoxContain>
     // CSS Image Values Level 3
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     unsigned imageOrientation : 4; // ImageOrientation

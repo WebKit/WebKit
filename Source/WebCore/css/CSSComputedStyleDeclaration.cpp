@@ -1693,7 +1693,7 @@ static Ref<CSSValueList> timingFunctionValue(const AnimationList* animationList)
     return list;
 }
 
-static Ref<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
+static Ref<CSSValue> createLineBoxContainValue(OptionSet<LineBoxContain> lineBoxContain)
 {
     if (!lineBoxContain)
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);

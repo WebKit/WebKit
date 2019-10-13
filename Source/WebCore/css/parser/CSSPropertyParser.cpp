@@ -3491,38 +3491,38 @@ static RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
-    LineBoxContain lineBoxContain = LineBoxContainNone;
+    OptionSet<LineBoxContain> lineBoxContain;
     
     while (range.peek().type() == IdentToken) {
         auto id = range.peek().id();
         if (id == CSSValueBlock) {
-            if (lineBoxContain & LineBoxContainBlock)
+            if (lineBoxContain.contains(LineBoxContain::Block))
                 return nullptr;
-            lineBoxContain |= LineBoxContainBlock;
+            lineBoxContain.add(LineBoxContain::Block);
         } else if (id == CSSValueInline) {
-            if (lineBoxContain & LineBoxContainInline)
+            if (lineBoxContain.contains(LineBoxContain::Inline))
                 return nullptr;
-            lineBoxContain |= LineBoxContainInline;
+            lineBoxContain.add(LineBoxContain::Inline);
         } else if (id == CSSValueFont) {
-            if (lineBoxContain & LineBoxContainFont)
+            if (lineBoxContain.contains(LineBoxContain::Font))
                 return nullptr;
-            lineBoxContain |= LineBoxContainFont;
+            lineBoxContain.add(LineBoxContain::Font);
         } else if (id == CSSValueGlyphs) {
-            if (lineBoxContain & LineBoxContainGlyphs)
+            if (lineBoxContain.contains(LineBoxContain::Glyphs))
                 return nullptr;
-            lineBoxContain |= LineBoxContainGlyphs;
+            lineBoxContain.add(LineBoxContain::Glyphs);
         } else if (id == CSSValueReplaced) {
-            if (lineBoxContain & LineBoxContainReplaced)
+            if (lineBoxContain.contains(LineBoxContain::Replaced))
                 return nullptr;
-            lineBoxContain |= LineBoxContainReplaced;
+            lineBoxContain.add(LineBoxContain::Replaced);
         } else if (id == CSSValueInlineBox) {
-            if (lineBoxContain & LineBoxContainInlineBox)
+            if (lineBoxContain.contains(LineBoxContain::InlineBox))
                 return nullptr;
-            lineBoxContain |= LineBoxContainInlineBox;
+            lineBoxContain.add(LineBoxContain::InlineBox);
         } else if (id == CSSValueInitialLetter) {
-            if (lineBoxContain & LineBoxContainInitialLetter)
+            if (lineBoxContain.contains(LineBoxContain::InitialLetter))
                 return nullptr;
-            lineBoxContain |= LineBoxContainInitialLetter;
+            lineBoxContain.add(LineBoxContain::InitialLetter);
         } else
             return nullptr;
         range.consumeIncludingWhitespace();

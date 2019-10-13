@@ -1,3 +1,46 @@
+2019-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert LineBoxContain to use an OptionSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=202890
+
+        Reviewed by Alex Christensen.
+
+        Use OptionSet<LineBoxContain>.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createLineBoxContainValue):
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::CSSLineBoxContainValue):
+        (WebCore::CSSLineBoxContainValue::customCSSText const):
+        * css/CSSLineBoxContainValue.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertLineBoxContain):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeLineBoxContain):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::minLineHeightForReplacedRenderer const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox const):
+        (WebCore::RootInlineBox::includeLeadingForBox const):
+        (WebCore::RootInlineBox::includeFontForBox const):
+        (WebCore::RootInlineBox::includeGlyphsForBox const):
+        (WebCore::RootInlineBox::includeInitialLetterForBox const):
+        (WebCore::RootInlineBox::includeMarginForBox const):
+        (WebCore::RootInlineBox::fitsToGlyphs const):
+        (WebCore::RootInlineBox::includesRootLineBoxFontOrLeading const):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::lineBoxContain const):
+        (WebCore::RenderStyle::setLineBoxContain):
+        (WebCore::RenderStyle::initialLineBoxContain):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::styleForFirstLetter):
+
 2019-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Crash in WebCore::DOMWindow::incrementScrollEventListenersCount
