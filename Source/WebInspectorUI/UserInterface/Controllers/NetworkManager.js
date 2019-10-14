@@ -50,7 +50,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._saveLocalResourceOverridesDebouncer = null;
 
         // FIXME: Provide dedicated UI to toggle Network Interception globally?
-        this._interceptionEnabled = !!window.InspectorTest;
+        this._interceptionEnabled = true;
 
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
