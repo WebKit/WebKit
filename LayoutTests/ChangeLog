@@ -1,3 +1,14 @@
+2019-10-14  Rob Buis  <rbuis@igalia.com>
+
+        Replace reftest scripts-height.html with script tests
+        https://bugs.webkit.org/show_bug.cgi?id=159423
+
+        Reviewed by Frédéric Wang.
+
+        Remove the expected result as well.
+
+        * mathml/presentation/scripts-height-expected.html: Removed.
+
 2019-10-14  youenn fablet  <youenn@apple.com>
 
         Reuse existing web processes for running service workers
