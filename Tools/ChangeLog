@@ -1,3 +1,9 @@
+2019-10-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed, set Adrian Perez de Castro as WebKit Reviewer
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-10-14  youenn fablet  <youenn@apple.com>
 
         Reuse existing web processes for running service workers
