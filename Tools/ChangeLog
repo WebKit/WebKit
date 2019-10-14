@@ -1,3 +1,13 @@
+2019-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: [iOS 13?] TestWebKitAPI.SharedBufferTest.tryCreateArrayBufferLargeSegments is failing
+        https://bugs.webkit.org/show_bug.cgi?id=201902
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2019-10-14  Saam Barati  <sbarati@apple.com>
 
         Canonicalize how we prepare the prototype chain for inline caching

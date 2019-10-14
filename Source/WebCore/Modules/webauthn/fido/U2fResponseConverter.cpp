@@ -98,9 +98,7 @@ static Vector<uint8_t> createAttestedCredentialDataFromU2fRegisterResponse(const
     if (credentialId.isEmpty())
         return { };
 
-    Vector<uint8_t> aaguid(aaguidLength);
-    memset(aaguid.data(), 0, aaguidLength);
-    return buildAttestedCredentialData(aaguid, credentialId, publicKey);
+    return buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, publicKey);
 }
 
 static size_t parseX509Length(const Vector<uint8_t>& u2fData, size_t offset)

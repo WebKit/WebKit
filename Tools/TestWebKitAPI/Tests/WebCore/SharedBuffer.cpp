@@ -101,7 +101,6 @@ TEST_F(SharedBufferTest, tryCreateArrayBuffer)
     EXPECT_EQ(0, memcmp(expectedConcatenation, arrayBuffer->data(), strlen(expectedConcatenation)));
 }
 
-#if !PLATFORM(IOS) // FIXME: webkit.org/b/201902 REGRESSION: [iOS 13?] TestWebKitAPI.SharedBufferTest.tryCreateArrayBufferLargeSegments is failing
 TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
 {
     Vector<char> vector0(0x4000, 'a');
@@ -127,7 +126,6 @@ TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
         ++position;
     }
 }
-#endif // !PLATFORM(IOS)
 
 TEST_F(SharedBufferTest, copy)
 {

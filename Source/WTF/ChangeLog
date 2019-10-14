@@ -1,3 +1,15 @@
+2019-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: [iOS 13?] TestWebKitAPI.SharedBufferTest.tryCreateArrayBufferLargeSegments is failing
+        https://bugs.webkit.org/show_bug.cgi?id=201902
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Vector.h:
+        The code introduced in r108153 to workaround a warning when building Chrome was causing us to use uninitialized memory
+        when we create a Vector with the size_t/{signed,unsigned}char constructor with a constexpr size_t.
+        This was the cause of bug 201902 and bug 201620 which only manifested themselves in release builds with some compilers.
+
 2019-10-14  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Sandbox extensions should be created with audit tokens, not PIDs
