@@ -915,6 +915,8 @@ enum class BackfaceVisibility : uint8_t {
 };
 
 enum class TransformBox : uint8_t {
+    StrokeBox,
+    ContentBox,
     BorderBox,
     FillBox,
     ViewBox

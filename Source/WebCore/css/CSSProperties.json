@@ -6378,7 +6378,9 @@
             "values" : [
                 "border-box",
                 "fill-box",
-                "view-box"
+                "view-box",
+                "stroke-box",
+                "content-box"
             ],
             "codegen-properties": {
             },

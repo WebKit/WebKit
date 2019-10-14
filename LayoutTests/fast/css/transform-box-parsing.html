@@ -62,16 +62,22 @@
         shouldBeEqualToString('testPropertyValue("transform-box: border-box", "transform-box")', 'border-box');
         shouldBeEqualToString('testPropertyValue("transform-box: fill-box", "transform-box")', 'fill-box');
         shouldBeEqualToString('testPropertyValue("transform-box: view-box", "transform-box")', 'view-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: stroke-box", "transform-box")', 'stroke-box');
 
         debug('');
         shouldBeEqualToString('testComputedStyle("", "transform-box")', 'border-box');
         shouldBeEqualToString('testComputedStyle("transform-box: fill-box", "transform-box")', 'fill-box');
         shouldBeEqualToString('testComputedStyle("transform-box: view-box", "transform-box")', 'view-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: stroke-box", "transform-box")', 'stroke-box');
 
         debug('');
         shouldBeEqualToString('testSVGComputedStyle("", "transform-box")', 'view-box');
         shouldBeEqualToString('testSVGComputedStyle("transform-box: fill-box", "transform-box")', 'fill-box');
         shouldBeEqualToString('testSVGComputedStyle("transform-box: border-box", "transform-box")', 'border-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: stroke-box", "transform-box")', 'stroke-box');
 
         debug('');
         shouldBeEqualToString('testComputedStyleOnElementWithId("foreignObject")', 'view-box');
