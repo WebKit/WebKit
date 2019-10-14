@@ -33,7 +33,9 @@
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
 #import "WebPopupItem.h"
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/system/mac/PopupMenu.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
@@ -100,11 +102,26 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSFont *font;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     if (data.fontInfo.fontAttributeDictionary) {
-        NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(__bridge NSDictionary *)data.fontInfo.fontAttributeDictionary.get()];
+        RetainPtr<NSMutableDictionary> mutableDictionary = adoptNS([(__bridge NSDictionary *)data.fontInfo.fontAttributeDictionary.get() mutableCopy]);
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+        if (id opticalSizeAttribute = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute]) {
+            if ([opticalSizeAttribute isKindOfClass:[NSString class]]) {
+                [mutableDictionary removeObjectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
+                if (NSNumber *size = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontSizeAttribute])
+                    [mutableDictionary setObject:size forKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
+            }
+        }
+#endif
+        NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:mutableDictionary.get()];
         font = [NSFont fontWithDescriptor:fontDescriptor size:((pageScaleFactor != 1) ? [fontDescriptor pointSize] * pageScaleFactor : 0)];
     } else
         font = [NSFont menuFontOfSize:0];
+    
+    END_BLOCK_OBJC_EXCEPTIONS
 
     populate(items, font, textDirection);
 
