@@ -66,9 +66,102 @@ private:
     uint8_t m_bits { 0 };
 };
 
-template <typename BitfieldType>
-class ArithProfile {
+struct ArithProfile {
+private:
+    static constexpr uint32_t numberOfFlagBits = 6;
+    static constexpr uint32_t rhsResultTypeShift = numberOfFlagBits;
+    static constexpr uint32_t lhsResultTypeShift = rhsResultTypeShift + ResultType::numBitsNeeded;
+    static constexpr uint32_t rhsObservedTypeShift = lhsResultTypeShift + ResultType::numBitsNeeded;
+    static constexpr uint32_t lhsObservedTypeShift = rhsObservedTypeShift + ObservedType::numBitsNeeded;
+
+    static_assert(ObservedType::numBitsNeeded == 3, "We make a hard assumption about that here.");
+    static constexpr uint32_t clearRhsObservedTypeBitMask = static_cast<uint32_t>(~((1 << rhsObservedTypeShift) | (1 << (rhsObservedTypeShift + 1)) | (1 << (rhsObservedTypeShift + 2))));
+    static constexpr uint32_t clearLhsObservedTypeBitMask = static_cast<uint32_t>(~((1 << lhsObservedTypeShift) | (1 << (lhsObservedTypeShift + 1)) | (1 << (lhsObservedTypeShift + 2))));
+
+    static constexpr uint32_t resultTypeMask = (1 << ResultType::numBitsNeeded) - 1;
+    static constexpr uint32_t observedTypeMask = (1 << ObservedType::numBitsNeeded) - 1;
+
+    enum class ConstantTag { Constant };
+
 public:
+    static constexpr uint32_t specialFastPathBit = 1 << (lhsObservedTypeShift + ObservedType::numBitsNeeded);
+    static_assert((lhsObservedTypeShift + ObservedType::numBitsNeeded) <= (sizeof(uint32_t) * 8) - 1, "Should fit in a uint32_t.");
+    static_assert(!(specialFastPathBit & ~clearLhsObservedTypeBitMask), "These bits should not intersect.");
+    static_assert(specialFastPathBit & clearLhsObservedTypeBitMask, "These bits should intersect.");
+    static_assert(specialFastPathBit > ~clearLhsObservedTypeBitMask, "These bits should not intersect and specialFastPathBit should be a higher bit.");
+
+    ArithProfile(ResultType arg)
+        : ArithProfile(ConstantTag::Constant, arg)
+    {
+        ASSERT(lhsResultType().bits() == arg.bits());
+        ASSERT(lhsObservedType().isEmpty());
+        ASSERT(rhsObservedType().isEmpty());
+    }
+
+    ArithProfile(ResultType lhs, ResultType rhs)
+        : ArithProfile(ConstantTag::Constant, lhs, rhs)
+    {
+        ASSERT(lhsResultType().bits() == lhs.bits() && rhsResultType().bits() == rhs.bits());
+        ASSERT(lhsObservedType().isEmpty());
+        ASSERT(rhsObservedType().isEmpty());
+    }
+
+    ArithProfile(OperandTypes types)
+        : ArithProfile(types.first(), types.second())
+    { }
+
+    ArithProfile() = default;
+
+    static constexpr ArithProfile fromInt(uint32_t bits)
+    {
+        return ArithProfile { ConstantTag::Constant, bits };
+    }
+
+    static constexpr ArithProfile observedUnaryInt()
+    {
+        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
+        constexpr uint32_t bits = observedInt32.bits() << lhsObservedTypeShift;
+        static_assert(bits == 0x800000, "");
+        return fromInt(bits);
+    }
+    static constexpr ArithProfile observedUnaryNumber()
+    {
+        constexpr ObservedType observedNumber { ObservedType().withNumber() };
+        constexpr uint32_t bits = observedNumber.bits() << lhsObservedTypeShift;
+        static_assert(bits == 0x1000000, "");
+        return fromInt(bits);
+    }
+    static constexpr ArithProfile observedBinaryIntInt()
+    {
+        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
+        constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
+        static_assert(bits == 0x900000, "");
+        return fromInt(bits);
+    }
+    static constexpr ArithProfile observedBinaryNumberInt()
+    {
+        constexpr ObservedType observedNumber { ObservedType().withNumber() };
+        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
+        constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
+        static_assert(bits == 0x1100000, "");
+        return fromInt(bits);
+    }
+    static constexpr ArithProfile observedBinaryIntNumber()
+    {
+        constexpr ObservedType observedNumber { ObservedType().withNumber() };
+        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
+        constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
+        static_assert(bits == 0xa00000, "");
+        return fromInt(bits);
+    }
+    static constexpr ArithProfile observedBinaryNumberNumber()
+    {
+        constexpr ObservedType observedNumber { ObservedType().withNumber() };
+        constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
+        static_assert(bits == 0x1200000, "");
+        return fromInt(bits);
+    }
+
     enum ObservedResults {
         NonNegZeroDouble = 1 << 0,
         NegZeroDouble    = 1 << 1,
@@ -77,231 +170,6 @@ public:
         Int52Overflow    = 1 << 4,
         BigInt           = 1 << 5,
     };
-    static constexpr uint32_t observedResultsNumBitsNeeded = 6;
-
-    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumeric | BigInt); }
-    bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
-    bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
-    bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
-    bool didObserveNonNumeric() const { return hasBits(NonNumeric); }
-    bool didObserveBigInt() const { return hasBits(BigInt); }
-    bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
-    bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
-
-    void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
-    void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
-    void setObservedNonNumeric() { setBit(NonNumeric); }
-    void setObservedBigInt() { setBit(BigInt); }
-    void setObservedInt32Overflow() { setBit(Int32Overflow); }
-    void setObservedInt52Overflow() { setBit(Int52Overflow); }
-
-    void observeResult(JSValue value)
-    {
-        if (value.isInt32())
-            return;
-        if (value.isNumber()) {
-            m_bits |= Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble;
-            return;
-        }
-        if (value && value.isBigInt()) {
-            m_bits |= BigInt;
-            return;
-        }
-        m_bits |= NonNumeric;
-    }
-
-    const void* addressOfBits() const { return &m_bits; }
-
-#if ENABLE(JIT)
-    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
-    // double. Sets NonNumeric if it sees a non-numeric.
-    void emitObserveResult(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
-
-    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
-    bool shouldEmitSetDouble() const;
-    void emitSetDouble(CCallHelpers&) const;
-
-    // Sets NonNumber.
-    void emitSetNonNumeric(CCallHelpers&) const;
-    bool shouldEmitSetNonNumeric() const;
-
-    // Sets BigInt
-    void emitSetBigInt(CCallHelpers&) const;
-    bool shouldEmitSetBigInt() const;
-#endif // ENABLE(JIT)
-
-    constexpr uint32_t bits() const { return m_bits; }
-
-protected:
-    ArithProfile(BitfieldType bits)
-        : m_bits(bits)
-    {
-    }
-
-    bool hasBits(int mask) const { return m_bits & mask; }
-    void setBit(int mask) { m_bits |= mask; }
-
-    BitfieldType m_bits { 0 }; // We take care to update m_bits only in a single operation. We don't ever store an inconsistent bit representation to it.
-};
-
-/* This class stores the following components in 16 bits:
- * - ObservedResults
- * - ResultType for the argument
- * - ObservedType for the argument
- */
-class UnaryArithProfile : public ArithProfile<uint16_t> {
-    static constexpr unsigned argResultTypeShift = observedResultsNumBitsNeeded;
-    static constexpr unsigned argObservedTypeShift = argResultTypeShift + ResultType::numBitsNeeded;
-
-    static_assert(argObservedTypeShift + ObservedType::numBitsNeeded <= sizeof(uint16_t) * 8, "Should fit in a uint16_t");
-
-    static constexpr uint16_t clearArgObservedTypeBitMask = static_cast<uint16_t>(~(0b111 << argObservedTypeShift));
-
-    static constexpr uint16_t resultTypeMask = (1 << ResultType::numBitsNeeded) - 1;
-    static constexpr uint16_t observedTypeMask = (1 << ObservedType::numBitsNeeded) - 1;
-
-public:
-    UnaryArithProfile(ResultType arg)
-        : ArithProfile<uint16_t>(arg.bits() << argResultTypeShift)
-    {
-        ASSERT(argResultType().bits() == arg.bits());
-        ASSERT(argObservedType().isEmpty());
-        ASSERT(argObservedType().isEmpty());
-    }
-
-    UnaryArithProfile()
-        : UnaryArithProfile(ResultType::unknownType())
-    {
-    }
-
-    static constexpr uint16_t observedIntBits()
-    {
-        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
-        constexpr uint16_t bits = observedInt32.bits() << argObservedTypeShift;
-        static_assert(bits == 0x2000, "");
-        return bits;
-    }
-    static constexpr uint16_t observedNumberBits()
-    {
-        constexpr ObservedType observedNumber { ObservedType().withNumber() };
-        constexpr uint16_t bits = observedNumber.bits() << argObservedTypeShift;
-        static_assert(bits == 0x4000, "");
-        return bits;
-    }
-
-    ResultType argResultType() const { return ResultType((m_bits >> argResultTypeShift) & resultTypeMask); }
-
-    constexpr ObservedType argObservedType() const { return ObservedType((m_bits >> argObservedTypeShift) & observedTypeMask); }
-    void setArgObservedType(ObservedType type)
-    {
-        uint16_t bits = m_bits;
-        bits &= clearArgObservedTypeBitMask;
-        bits |= type.bits() << argObservedTypeShift;
-        m_bits = bits;
-        ASSERT(argObservedType() == type);
-    }
-
-    void argSawInt32() { setArgObservedType(argObservedType().withInt32()); }
-    void argSawNumber() { setArgObservedType(argObservedType().withNumber()); }
-    void argSawNonNumber() { setArgObservedType(argObservedType().withNonNumber()); }
-
-    void observeArg(JSValue arg)
-    {
-        UnaryArithProfile newProfile = *this;
-        if (arg.isNumber()) {
-            if (arg.isInt32())
-                newProfile.argSawInt32();
-            else
-                newProfile.argSawNumber();
-        } else
-            newProfile.argSawNonNumber();
-
-        m_bits = newProfile.bits();
-    }
-
-    bool isObservedTypeEmpty()
-    {
-        return argObservedType().isEmpty();
-    }
-
-    friend class JSC::LLIntOffsetsExtractor;
-};
-
-/* This class stores the following components in 32 bits:
- * - ObservedResults
- * - ResultType for right-hand-side
- * - ResultType for left-hand-side
- * - ObservedType for right-hand-side
- * - ObservedType for left-hand-side
- * - a bit used by division to indicate whether a special fast path was taken
- */
-class BinaryArithProfile : public ArithProfile<uint32_t> {
-    static constexpr uint32_t rhsResultTypeShift = observedResultsNumBitsNeeded;
-    static constexpr uint32_t lhsResultTypeShift = rhsResultTypeShift + ResultType::numBitsNeeded;
-    static constexpr uint32_t rhsObservedTypeShift = lhsResultTypeShift + ResultType::numBitsNeeded;
-    static constexpr uint32_t lhsObservedTypeShift = rhsObservedTypeShift + ObservedType::numBitsNeeded;
-
-    static_assert(ObservedType::numBitsNeeded == 3, "We make a hard assumption about that here.");
-    static constexpr uint32_t clearRhsObservedTypeBitMask = static_cast<uint32_t>(~(0b111 << rhsObservedTypeShift));
-    static constexpr uint32_t clearLhsObservedTypeBitMask = static_cast<uint32_t>(~(0b111 << lhsObservedTypeShift));
-
-    static constexpr uint32_t resultTypeMask = (1 << ResultType::numBitsNeeded) - 1;
-    static constexpr uint32_t observedTypeMask = (1 << ObservedType::numBitsNeeded) - 1;
-
-public:
-    static constexpr uint32_t specialFastPathBit = 1 << (lhsObservedTypeShift + ObservedType::numBitsNeeded);
-    static_assert((lhsObservedTypeShift + ObservedType::numBitsNeeded + 1) <= sizeof(uint32_t) * 8, "Should fit in a uint32_t.");
-    static_assert(!(specialFastPathBit & ~clearLhsObservedTypeBitMask), "These bits should not intersect.");
-    static_assert(specialFastPathBit & clearLhsObservedTypeBitMask, "These bits should intersect.");
-    static_assert(specialFastPathBit > ~clearLhsObservedTypeBitMask, "These bits should not intersect and specialFastPathBit should be a higher bit.");
-
-    BinaryArithProfile(ResultType lhs, ResultType rhs)
-        : ArithProfile<uint32_t>((lhs.bits() << lhsResultTypeShift) | (rhs.bits() << rhsResultTypeShift))
-    {
-        ASSERT(lhsResultType().bits() == lhs.bits() && rhsResultType().bits() == rhs.bits());
-        ASSERT(lhsObservedType().isEmpty());
-        ASSERT(rhsObservedType().isEmpty());
-    }
-
-    BinaryArithProfile(OperandTypes types)
-        : BinaryArithProfile(types.first(), types.second())
-    { }
-
-    BinaryArithProfile()
-        : BinaryArithProfile(ResultType::unknownType(), ResultType::unknownType())
-    {
-    }
-
-    static constexpr uint32_t observedIntIntBits()
-    {
-        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
-        constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x900000, "");
-        return bits;
-    }
-    static constexpr uint32_t observedNumberIntBits()
-    {
-        constexpr ObservedType observedNumber { ObservedType().withNumber() };
-        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
-        constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedInt32.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x1100000, "");
-        return bits;
-    }
-    static constexpr uint32_t observedIntNumberBits()
-    {
-        constexpr ObservedType observedNumber { ObservedType().withNumber() };
-        constexpr ObservedType observedInt32 { ObservedType().withInt32() };
-        constexpr uint32_t bits = (observedInt32.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0xa00000, "");
-        return bits;
-    }
-    static constexpr uint32_t observedNumberNumberBits()
-    {
-        constexpr ObservedType observedNumber { ObservedType().withNumber() };
-        constexpr uint32_t bits = (observedNumber.bits() << lhsObservedTypeShift) | (observedNumber.bits() << rhsObservedTypeShift);
-        static_assert(bits == 0x1200000, "");
-        return bits;
-    }
 
     ResultType lhsResultType() const { return ResultType((m_bits >> lhsResultTypeShift) & resultTypeMask); }
     ResultType rhsResultType() const { return ResultType((m_bits >> rhsResultTypeShift) & resultTypeMask); }
@@ -328,6 +196,39 @@ public:
 
     bool tookSpecialFastPath() const { return m_bits & specialFastPathBit; }
 
+    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumeric | BigInt); }
+    bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
+    bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
+    bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
+    bool didObserveNonNumeric() const { return hasBits(NonNumeric); }
+    bool didObserveBigInt() const { return hasBits(BigInt); }
+    bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
+    bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
+
+    void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
+    void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
+    void setObservedNonNumeric() { setBit(NonNumeric); }
+    void setObservedBigInt() { setBit(BigInt); }
+    void setObservedInt32Overflow() { setBit(Int32Overflow); }
+    void setObservedInt52Overflow() { setBit(Int52Overflow); }
+
+    const void* addressOfBits() const { return &m_bits; }
+
+    void observeResult(JSValue value)
+    {
+        if (value.isInt32())
+            return;
+        if (value.isNumber()) {
+            m_bits |= Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble;
+            return;
+        }
+        if (value && value.isBigInt()) {
+            m_bits |= BigInt;
+            return;
+        }
+        m_bits |= NonNumeric;
+    }
+
     void lhsSawInt32() { setLhsObservedType(lhsObservedType().withInt32()); }
     void lhsSawNumber() { setLhsObservedType(lhsObservedType().withNumber()); }
     void lhsSawNonNumber() { setLhsObservedType(lhsObservedType().withNonNumber()); }
@@ -337,7 +238,7 @@ public:
 
     void observeLHS(JSValue lhs)
     {
-        BinaryArithProfile newProfile = *this;
+        ArithProfile newProfile = *this;
         if (lhs.isNumber()) {
             if (lhs.isInt32())
                 newProfile.lhsSawInt32();
@@ -353,7 +254,7 @@ public:
     {
         observeLHS(lhs);
 
-        BinaryArithProfile newProfile = *this;
+        ArithProfile newProfile = *this;
         if (rhs.isNumber()) {
             if (rhs.isInt32())
                 newProfile.rhsSawInt32();
@@ -365,10 +266,46 @@ public:
         m_bits = newProfile.bits();
     }
 
-    bool isObservedTypeEmpty()
+#if ENABLE(JIT)    
+    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
+    // double. Sets NonNumeric if it sees a non-numeric.
+    void emitObserveResult(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
+    
+    // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
+    bool shouldEmitSetDouble() const;
+    void emitSetDouble(CCallHelpers&) const;
+    
+    // Sets NonNumber.
+    void emitSetNonNumeric(CCallHelpers&) const;
+    bool shouldEmitSetNonNumeric() const;
+
+    // Sets BigInt
+    void emitSetBigInt(CCallHelpers&) const;
+    bool shouldEmitSetBigInt() const;
+#endif // ENABLE(JIT)
+
+    constexpr uint32_t bits() const { return m_bits; }
+
+private:
+    constexpr explicit ArithProfile(ConstantTag, uint32_t bits)
+        : m_bits(bits)
     {
-        return lhsObservedType().isEmpty() && rhsObservedType().isEmpty();
     }
+
+    constexpr ArithProfile(ConstantTag, ResultType arg)
+        : m_bits(arg.bits() << lhsResultTypeShift)
+    {
+    }
+
+    constexpr ArithProfile(ConstantTag, ResultType lhs, ResultType rhs)
+        : m_bits((lhs.bits() << lhsResultTypeShift) | (rhs.bits() << rhsResultTypeShift))
+    {
+    }
+
+    bool hasBits(int mask) const { return m_bits & mask; }
+    void setBit(int mask) { m_bits |= mask; }
+
+    uint32_t m_bits { 0 }; // We take care to update m_bits only in a single operation. We don't ever store an inconsistent bit representation to it.
 
     friend class JSC::LLIntOffsetsExtractor;
 };
@@ -377,8 +314,7 @@ public:
 
 namespace WTF {
 
-void printInternal(PrintStream&, const JSC::UnaryArithProfile&);
-void printInternal(PrintStream&, const JSC::BinaryArithProfile&);
+void printInternal(PrintStream&, const JSC::ArithProfile&);
 void printInternal(PrintStream&, const JSC::ObservedType&);
 
 } // namespace WTF

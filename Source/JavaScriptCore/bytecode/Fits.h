@@ -237,27 +237,6 @@ struct Fits<E, size, std::enable_if_t<sizeof(E) != size && std::is_enum<E>::valu
 };
 
 template<OpcodeSize size>
-struct Fits<ResultType, size, std::enable_if_t<sizeof(ResultType) != size, std::true_type>> {
-    static_assert(sizeof(ResultType) == sizeof(uint8_t));
-    using TargetType = typename TypeBySize<size>::unsignedType;
-
-    static bool check(ResultType)
-    {
-        return true;
-    }
-
-    static TargetType convert(ResultType type)
-    {
-        return static_cast<TargetType>(type.bits());
-    }
-
-    static ResultType convert(TargetType type)
-    {
-        return ResultType(static_cast<uint8_t>(type));
-    }
-};
-
-template<OpcodeSize size>
 struct Fits<OperandTypes, size, std::enable_if_t<sizeof(OperandTypes) != size, std::true_type>> {
     static_assert(sizeof(OperandTypes) == sizeof(uint16_t));
     using TargetType = typename TypeBySize<size>::unsignedType;

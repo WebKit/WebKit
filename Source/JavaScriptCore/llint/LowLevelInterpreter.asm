@@ -240,15 +240,13 @@ const IsInvalidated = constexpr IsInvalidated
 # ShadowChicken data
 const ShadowChickenTailMarker = constexpr ShadowChicken::Packet::tailMarkerValue
 
-# UnaryArithProfile data
-const ArithProfileInt = constexpr (UnaryArithProfile::observedIntBits())
-const ArithProfileNumber = constexpr (UnaryArithProfile::observedNumberBits())
-
-# BinaryArithProfile data
-const ArithProfileIntInt = constexpr (BinaryArithProfile::observedIntIntBits())
-const ArithProfileNumberInt = constexpr (BinaryArithProfile::observedNumberIntBits())
-const ArithProfileIntNumber = constexpr (BinaryArithProfile::observedIntNumberBits())
-const ArithProfileNumberNumber = constexpr (BinaryArithProfile::observedNumberNumberBits())
+# ArithProfile data
+const ArithProfileInt = constexpr (ArithProfile::observedUnaryInt().bits())
+const ArithProfileNumber = constexpr (ArithProfile::observedUnaryNumber().bits())
+const ArithProfileIntInt = constexpr (ArithProfile::observedBinaryIntInt().bits())
+const ArithProfileNumberInt = constexpr (ArithProfile::observedBinaryNumberInt().bits())
+const ArithProfileIntNumber = constexpr (ArithProfile::observedBinaryIntNumber().bits())
+const ArithProfileNumberNumber = constexpr (ArithProfile::observedBinaryNumberNumber().bits())
 
 # Pointer Tags
 const BytecodePtrTag = constexpr BytecodePtrTag
