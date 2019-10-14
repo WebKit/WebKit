@@ -1,3 +1,17 @@
+2019-10-14  David Quesada  <david_quesada@apple.com>
+
+        Remove WebCore::IOSApplication::isWebApp()
+        https://bugs.webkit.org/show_bug.cgi?id=181259
+
+        Reviewed by Alex Christensen.
+
+        As of iOS 11, the Web.app process no longer uses WebKit directly, so IOSApplication::isWebApp()
+        is never true. Since it's no longer needed, remove it.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isWebApp): Deleted.
+
 2019-10-14  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r243682): Quick Look previews loaded from the memory cache render with the wrong content type

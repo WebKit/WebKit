@@ -1,3 +1,16 @@
+2019-10-14  David Quesada  <david_quesada@apple.com>
+
+        Remove WebCore::IOSApplication::isWebApp()
+        https://bugs.webkit.org/show_bug.cgi?id=181259
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultApplicationCacheDirectory):
+            Remove the wording "this is not supported as of right now", as it seems to be supported
+            since r247686, which added SPI on _WKWebsiteDataStoreConfiguration to set the application
+            cache directory.
+
 2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support writing multiple PasteboardCustomData with SharedBuffers to the pasteboard

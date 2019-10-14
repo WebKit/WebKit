@@ -249,8 +249,8 @@ WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
     // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
     // Preserving it avoids the need to migrate data when upgrading.
     // FIXME: Ideally we should just have Safari, WebApp, and webbookmarksd create a data store with
-    // this application cache path, but that's not supported as of right now.
-    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp() || WebCore::IOSApplication::isWebBookmarksD()) {
+    // this application cache path.
+    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebBookmarksD()) {
         NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
 
         return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);

@@ -86,7 +86,6 @@ WEBCORE_EXPORT bool isWebBookmarksD();
 WEBCORE_EXPORT bool isDumpRenderTree();
 bool isMobileStore();
 bool isSpringBoard();
-WEBCORE_EXPORT bool isWebApp();
 WEBCORE_EXPORT bool isWebProcess();
 WEBCORE_EXPORT bool isIBooks();
 bool isIBooksStorytime();

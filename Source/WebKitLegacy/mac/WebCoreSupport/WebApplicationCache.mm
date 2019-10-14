@@ -66,7 +66,7 @@ static NSString *applicationCacheBundleIdentifier()
 #if PLATFORM(IOS_FAMILY)
     if (overrideBundleIdentifier)
         return overrideBundleIdentifier;
-    if (WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isWebApp())
+    if (WebCore::IOSApplication::isMobileSafari())
         return @"com.apple.WebAppCache";
 #endif
 

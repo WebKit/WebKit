@@ -1,3 +1,13 @@
+2019-10-14  David Quesada  <david_quesada@apple.com>
+
+        Remove WebCore::IOSApplication::isWebApp()
+        https://bugs.webkit.org/show_bug.cgi?id=181259
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebApplicationCache.mm:
+        (applicationCacheBundleIdentifier):
+
 2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support writing multiple PasteboardCustomData with SharedBuffers to the pasteboard
