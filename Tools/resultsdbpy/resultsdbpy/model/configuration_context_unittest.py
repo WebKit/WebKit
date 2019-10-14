@@ -160,6 +160,14 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.assertEqual(12, len(recent_configurations))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_expired_configurations(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        recent_configurations = self.database.search_for_configuration()
+        self.assertEqual(24, len(recent_configurations))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_recent_configurations_constrained(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()

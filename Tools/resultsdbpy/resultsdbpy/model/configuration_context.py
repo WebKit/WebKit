@@ -189,7 +189,7 @@ class ConfigurationContext(object):
 
         self._register_in_redis(configuration, branch, timestamp)
 
-    def search_for_configuration(self, configuration, branch=None):
+    def search_for_configuration(self, configuration=Configuration(), branch=None):
         if not isinstance(configuration, Configuration):
             raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
 
@@ -207,7 +207,16 @@ class ConfigurationContext(object):
         elif 'model' in kwargs:
             table = self.ByModel
         else:
-            raise TypeError(f'{configuration} is not specific enough to be searched by')
+            # Platforms rarely expire, so we can do a decent job of wildcard matching expired configurations
+            # if we try all platforms in the cache.
+            platforms = set([config.platform for config in self.search_for_recent_configuration(branch=branch)])
+            with self:
+                result = []
+                for platform in platforms:
+                    configuration.platform = platform
+                    result.extend(self.search_for_configuration(configuration, branch))
+                configuration.platform = None
+                return result
 
         with self:
             return [model.to_configuration() for model in self.cassandra.select_from_table(table.__table_name__, **kwargs)]

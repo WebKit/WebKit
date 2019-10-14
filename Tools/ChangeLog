@@ -1,3 +1,16 @@
+2019-10-14  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Make recent=False more usable
+        https://bugs.webkit.org/show_bug.cgi?id=202873
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/configuration_context.py:
+        (ConfigurationContext.search_for_configuration): If no configuration is specified,
+        use a set of configurations defined by recent platform.
+        * resultsdbpy/resultsdbpy/model/configuration_context_unittest.py:
+        (ConfigurationContextTest.test_expired_configurations): Test that recent=False works.
+
 2019-10-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed, set Adrian Perez de Castro as WebKit Reviewer
