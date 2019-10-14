@@ -143,7 +143,7 @@ static PreviewLoaderClient& emptyClient()
 
     if (_shouldDecidePolicyBeforeLoading) {
         _hasProcessedResponse = YES;
-        _resourceLoader->documentLoader()->setResponse(response);
+        _resourceLoader->didReceivePreviewResponse(response);
         return;
     }
 

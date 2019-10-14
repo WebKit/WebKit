@@ -49,6 +49,10 @@ public:
     virtual void dataReceived(CachedResource&, const char* /* data */, int /* length */) { }
     virtual void redirectReceived(CachedResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
     virtual void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) { }
+
+#if USE(QUICK_LOOK)
+    virtual void previewResponseReceived(CachedResource&, const ResourceResponse&) { };
+#endif
 };
 
 }

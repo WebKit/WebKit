@@ -2135,6 +2135,12 @@ bool DocumentLoader::isAlwaysOnLoggingAllowed() const
 
 #if USE(QUICK_LOOK)
 
+void DocumentLoader::previewResponseReceived(CachedResource& resource, const ResourceResponse& response)
+{
+    ASSERT_UNUSED(resource, m_mainResource == &resource);
+    m_response = response;
+}
+
 void DocumentLoader::setPreviewConverter(std::unique_ptr<PreviewConverter>&& previewConverter)
 {
     m_previewConverter = WTFMove(previewConverter);

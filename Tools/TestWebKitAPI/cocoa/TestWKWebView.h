@@ -50,6 +50,8 @@
 @interface WKWebView (TestWebKitAPI)
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
 - (void)loadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyGoBack;
+- (void)synchronouslyGoForward;
 - (void)synchronouslyLoadHTMLString:(NSString *)html;
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request;

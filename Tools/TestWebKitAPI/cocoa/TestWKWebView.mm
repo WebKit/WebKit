@@ -70,6 +70,18 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
     [self loadRequest:request];
 }
 
+- (void)synchronouslyGoBack
+{
+    [self goBack];
+    [self _test_waitForDidFinishNavigation];
+}
+
+- (void)synchronouslyGoForward
+{
+    [self goForward];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request
 {
     [self loadRequest:request];

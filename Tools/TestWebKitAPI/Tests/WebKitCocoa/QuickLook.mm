@@ -29,6 +29,8 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestProtocol.h"
+#import "TestWKWebView.h"
 #import <CoreServices/CoreServices.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -476,6 +478,32 @@ TEST(QuickLook, LegacyQuickLookContent)
     WebThreadLock();
 
     EXPECT_NULL(mainFrame.dataSource._quickLookContent);
+}
+
+TEST(QuickLook, LoadFromMemoryCache)
+{
+    [TestProtocol registerWithScheme:@"http"];
+    TestProtocol.additionalResponseHeaders = @{ @"Cache-Control" : @"max-age=3600" };
+
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://bundle-file/simple.html"]]];
+
+    NSString * const contentTypeJavaScript = @"document.contentType";
+    NSString * const simpleMIMEType = @"text/html";
+    EXPECT_WK_STREQ(simpleMIMEType, [webView stringByEvaluatingJavaScript:contentTypeJavaScript]);
+
+    NSURL * const pagesDocumentHTTPURL = [NSURL URLWithString:@"http://bundle-file/pages.pages"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:pagesDocumentHTTPURL]];
+    EXPECT_WK_STREQ(pagesDocumentPreviewMIMEType, [webView stringByEvaluatingJavaScript:contentTypeJavaScript]);
+
+    [webView synchronouslyGoBack];
+    EXPECT_WK_STREQ(simpleMIMEType, [webView stringByEvaluatingJavaScript:contentTypeJavaScript]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:pagesDocumentHTTPURL]];
+    EXPECT_WK_STREQ(pagesDocumentPreviewMIMEType, [webView stringByEvaluatingJavaScript:contentTypeJavaScript]);
+
+    TestProtocol.additionalResponseHeaders = nil;
+    [TestProtocol unregister];
 }
 
 #endif // PLATFORM(IOS_FAMILY)

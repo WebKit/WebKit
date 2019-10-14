@@ -919,4 +919,14 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 
 #endif
 
+#if USE(QUICK_LOOK)
+
+void CachedResource::previewResponseReceived(const ResourceResponse& response)
+{
+    ASSERT(response.url().protocolIs(QLPreviewProtocol));
+    CachedResource::responseReceived(response);
+}
+
+#endif
+
 }

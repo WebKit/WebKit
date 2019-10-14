@@ -100,6 +100,7 @@ private:
 
 #if USE(QUICK_LOOK)
     bool shouldCreatePreviewLoaderForResponse(const ResourceResponse&) const;
+    void didReceivePreviewResponse(const ResourceResponse&) override;
 #endif
 
     enum SubresourceLoaderState {

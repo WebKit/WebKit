@@ -341,4 +341,16 @@ void CachedRawResource::clear()
         m_loader->clearResourceData();
 }
 
+#if USE(QUICK_LOOK)
+void CachedRawResource::previewResponseReceived(const ResourceResponse& response)
+{
+    CachedResourceHandle<CachedRawResource> protectedThis(this);
+    CachedResource::previewResponseReceived(response);
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next())
+        c->previewResponseReceived(*this, m_response);
+}
+
+#endif
+
 } // namespace WebCore

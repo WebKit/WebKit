@@ -314,6 +314,15 @@ bool SubresourceLoader::shouldCreatePreviewLoaderForResponse(const ResourceRespo
     return PreviewConverter::supportsMIMEType(response.mimeType());
 }
 
+void SubresourceLoader::didReceivePreviewResponse(const ResourceResponse& response)
+{
+    ASSERT(m_state == Initialized);
+    ASSERT(!response.isNull());
+    ASSERT(m_resource);
+    m_resource->previewResponseReceived(response);
+    ResourceLoader::didReceivePreviewResponse(response);
+}
+
 #endif
 
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, CompletionHandler<void()>&& policyCompletionHandler)
