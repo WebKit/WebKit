@@ -309,7 +309,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
 bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
 {
-#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_PID)
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
     if (message.encoder->messageName() == "LoadRequestWaitingForPID") {
         auto buffer = message.encoder->buffer();
         auto bufferSize = message.encoder->bufferSize();

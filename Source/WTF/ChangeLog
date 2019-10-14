@@ -1,3 +1,18 @@
+2019-10-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Sandbox extensions should be created with audit tokens, not PIDs
+        https://bugs.webkit.org/show_bug.cgi?id=201828
+
+        Reviewed by Brent Fulgham.
+
+        Remove HAVE macro for issuing sandbox extension by PID, and fix version checks for the HAVE
+        macros related to issuing sandbox extensions by audit token. Remove SPI for creating
+        extensions by PID, and add SPI for creating mach extension by audit token. Also remove an
+        unneeded flag.
+        
+        * wtf/Platform.h:
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2019-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make WebInspector's remote debug EventLoop code into RunLoop

@@ -58,14 +58,13 @@ extern const char *const APP_SANDBOX_READ;
 extern const char *const APP_SANDBOX_READ_WRITE;
 extern const enum sandbox_filter_type SANDBOX_CHECK_NO_REPORT;
 
-extern const uint32_t SANDBOX_EXTENSION_USER_INTENT;
-
 char *sandbox_extension_issue_file(const char *extension_class, const char *path, uint32_t flags);
 char *sandbox_extension_issue_generic(const char *extension_class, uint32_t flags);
-char *sandbox_extension_issue_mach_to_process_by_pid(const char *extension_class, const char *name, uint32_t flags, pid_t);
-char *sandbox_extension_issue_file_to_process_by_pid(const char *extension_class, const char *path, uint32_t flags, pid_t);
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if HAVE(SANDBOX_ISSUE_READ_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
 char *sandbox_extension_issue_file_to_process(const char *extension_class, const char *path, uint32_t flags, audit_token_t);
+#endif
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
+char *sandbox_extension_issue_mach_to_process(const char *extension_class, const char *name, uint32_t flags, audit_token_t);
 #endif
 int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
 int sandbox_check_by_audit_token(audit_token_t, const char *operation, enum sandbox_filter_type, ...);

@@ -54,8 +54,14 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     if (!canSendMessage())
         return;
 
+    ASSERT(connection() && connection()->getAuditToken());
+    if (!connection() || !connection()->getAuditToken()) {
+        WTFLogAlways("Unable to get audit token.");
+        return;
+    }
+    
     SandboxExtension::Handle handle;
-    if (!SandboxExtension::createHandleForMachLookupByPid("com.apple.iphone.axserver-systemwide", processIdentifier(), handle))
+    if (!SandboxExtension::createHandleForMachLookupByAuditToken("com.apple.iphone.axserver-systemwide", *(connection()->getAuditToken()), handle))
         return;
 
     send(Messages::WebProcess::UnblockAccessibilityServer(handle), 0);

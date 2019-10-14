@@ -104,9 +104,8 @@ public:
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
-    static bool createHandleForMachLookupByPid(const String& service, ProcessID, Handle&);
-    static bool createHandleForReadByPid(const String& path, ProcessID, Handle&);
 #if HAVE(AUDIT_TOKEN)
+    static bool createHandleForMachLookupByAuditToken(const String& service, audit_token_t, Handle&);
     static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
 #endif
     ~SandboxExtension();
