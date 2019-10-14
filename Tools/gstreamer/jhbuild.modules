@@ -85,7 +85,7 @@
     </branch>
   </meson>
 
-  <meson id="gst-plugins-bad" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled">
+  <meson id="gst-plugins-bad" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dopenexr=disabled">
     <dependencies>
       <dep package="graphene"/>
       <dep package="gst-plugins-base"/>
