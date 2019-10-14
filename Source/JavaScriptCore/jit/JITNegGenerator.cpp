@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const ArithProfile* arithProfile)
+JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICGenerationState& state, const UnaryArithProfile* arithProfile)
 {
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_src.payloadGPR());
@@ -45,7 +45,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     // We default to speculating int32.
     ObservedType observedTypes = ObservedType().withInt32();
     if (arithProfile)
-        observedTypes = arithProfile->lhsObservedType();
+        observedTypes = arithProfile->argObservedType();
     ASSERT_WITH_MESSAGE(!observedTypes.isEmpty(), "We should not attempt to generate anything if we do not have a profile.");
 
     if (observedTypes.isOnlyNonNumber())
@@ -82,7 +82,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     return JITMathICInlineResult::GenerateFullSnippet;
 }
 
-bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile* arithProfile, bool shouldEmitProfiling)
+bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const UnaryArithProfile* arithProfile, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != m_src.payloadGPR());
     ASSERT(m_scratchGPR != m_result.payloadGPR());
@@ -117,7 +117,7 @@ bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 #endif
     // The flags of ArithNegate are basic in DFG.
     // We only need to know if we ever produced a number.
-    if (shouldEmitProfiling && arithProfile && !arithProfile->lhsObservedType().sawNumber() && !arithProfile->didObserveDouble())
+    if (shouldEmitProfiling && arithProfile && !arithProfile->argObservedType().sawNumber() && !arithProfile->didObserveDouble())
         arithProfile->emitSetDouble(jit);
     return true;
 }

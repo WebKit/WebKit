@@ -2107,7 +2107,7 @@ private:
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
         unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeOffset(bytecodeIndex);
         auto repatchingFunction = operationValueAddOptimize;
         auto nonRepatchingFunction = operationValueAdd;
         compileBinaryMathIC<JITAddGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2126,7 +2126,7 @@ private:
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
         unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeOffset(bytecodeIndex);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
         compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2145,7 +2145,7 @@ private:
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
         unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeOffset(bytecodeIndex);
         auto repatchingFunction = operationValueMulOptimize;
         auto nonRepatchingFunction = operationValueMul;
         compileBinaryMathIC<JITMulGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2153,7 +2153,7 @@ private:
 
     template <typename Generator, typename Func1, typename Func2,
         typename = std::enable_if_t<std::is_function<typename std::remove_pointer<Func1>::type>::value && std::is_function<typename std::remove_pointer<Func2>::type>::value>>
-    void compileUnaryMathIC(ArithProfile* arithProfile, Func1 repatchingFunction, Func2 nonRepatchingFunction)
+    void compileUnaryMathIC(UnaryArithProfile* arithProfile, Func1 repatchingFunction, Func2 nonRepatchingFunction)
     {
         Node* node = m_node;
 
@@ -2239,7 +2239,7 @@ private:
 
     template <typename Generator, typename Func1, typename Func2,
         typename = std::enable_if_t<std::is_function<typename std::remove_pointer<Func1>::type>::value && std::is_function<typename std::remove_pointer<Func2>::type>::value>>
-    void compileBinaryMathIC(ArithProfile* arithProfile, Func1 repatchingFunction, Func2 nonRepatchingFunction)
+    void compileBinaryMathIC(BinaryArithProfile* arithProfile, Func1 repatchingFunction, Func2 nonRepatchingFunction)
     {
         Node* node = m_node;
         
@@ -2406,7 +2406,7 @@ private:
 
             CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
             unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+            BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeOffset(bytecodeIndex);
             auto repatchingFunction = operationValueSubOptimize;
             auto nonRepatchingFunction = operationValueSub;
             compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -3072,7 +3072,7 @@ private:
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
         unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        UnaryArithProfile* arithProfile = baselineCodeBlock->unaryArithProfileForBytecodeOffset(bytecodeIndex);
         auto repatchingFunction = operationArithNegateOptimize;
         auto nonRepatchingFunction = operationArithNegate;
         compileUnaryMathIC<JITNegGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);

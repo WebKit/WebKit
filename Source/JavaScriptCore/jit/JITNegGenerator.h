@@ -43,8 +43,8 @@ public:
         , m_scratchGPR(scratchGPR)
     { }
 
-    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const ArithProfile*);
-    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile*, bool shouldEmitProfiling);
+    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const UnaryArithProfile*);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const UnaryArithProfile*, bool shouldEmitProfiling);
 
 private:
     JSValueRegs m_result;

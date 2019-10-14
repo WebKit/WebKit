@@ -717,13 +717,13 @@ ALWAYS_INLINE GetPutInfo JIT::copiedGetPutInfo(OpPutToScope bytecode)
 }
 
 template<typename BinaryOp>
-ALWAYS_INLINE ArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
+ALWAYS_INLINE BinaryArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
 {
     uint64_t key = (static_cast<uint64_t>(BinaryOp::opcodeID) + 1) << 32 | static_cast<uint64_t>(bytecode.m_metadataID);
     auto iterator = m_copiedArithProfiles.find(key);
     if (iterator != m_copiedArithProfiles.end())
         return iterator->value;
-    ArithProfile arithProfile = bytecode.metadata(m_codeBlock).m_arithProfile;
+    BinaryArithProfile arithProfile = bytecode.metadata(m_codeBlock).m_arithProfile;
     m_copiedArithProfiles.add(key, arithProfile);
     return arithProfile;
 }

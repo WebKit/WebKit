@@ -1652,7 +1652,9 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 return &profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex());
 
             if (profiledBlock->hasBaselineJITProfiling()) {
-                if (ArithProfile* result = profiledBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex()))
+                if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex()))
+                    return result;
+                if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex()))
                     return result;
             }
         }
