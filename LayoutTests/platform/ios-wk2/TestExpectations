@@ -1365,6 +1365,3 @@ fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
-# rdar://56267775 ([ iOS13 ] Layout test imported/w3c/web-platform-tests/html/dom/idlharness.https.html is consistently Failing (202960))
-webkit.org/b/202960 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Failure ]
-
