@@ -1,3 +1,12 @@
+2019-10-14  Truitt Savell  <tsavell@apple.com>
+
+        Remove expectations for fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html
+        <rdar://problem/52699318>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-14  Dirk Schulze  <krit@webkit.org>
 
         transform-box: content-box, stroke-box missing
