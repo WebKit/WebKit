@@ -76,7 +76,7 @@
 #endif
 
 #if defined(XP_MACOSX)
-#include <ApplicationServices/ApplicationServices.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <OpenGL/OpenGL.h>
 #ifndef NP_NO_CARBON
 #include <Carbon/Carbon.h>

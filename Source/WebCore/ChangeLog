@@ -1,3 +1,15 @@
+2019-10-13  Tim Horton  <timothy_horton@apple.com>
+
+        Don't include ApplicationServices in npapi.h
+        https://bugs.webkit.org/show_bug.cgi?id=202911
+
+        Reviewed by Sam Weinig.
+
+        * plugins/npapi.h:
+        Just include CoreGraphics.h, not ApplicationServices.h.
+        ApplicationServices.h pulls in all sorts of crazy things like
+        QuickDraw headers that have symbol conflicts with JSC (like Handle).
+
 2019-10-13  Stephan Szabo  <stephan.szabo@sony.com>
 
         Wincairo build broken: EventLoop.h: No such file or directory
