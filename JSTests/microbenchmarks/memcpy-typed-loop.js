@@ -1,3 +1,6 @@
+// Skipped under https://bugs.webkit.org/show_bug.cgi?id=202923
+// due to timeout in ARMv7 that started between Oct 8 - Oct 10
+//@ skip if $architecture == "arm"
 //@ skip if $buildType == "debug"
 function doTest(arr1, arr2) {
     if (arr1.length != arr2.length)
