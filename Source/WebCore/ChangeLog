@@ -1,3 +1,46 @@
+2019-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy smart pointers in RadioButtonGroups and RadioButtonGroup
+        https://bugs.webkit.org/show_bug.cgi?id=202942
+
+        Reviewed by Zalan Bujtas.
+
+        Use Ref & WeakPtr instead of raw pointers in RadioButtonGroups and RadioButtonGroup.
+
+        Also made RadioButtonGroups::m_nameToGroupMap a HashMap instead of a unique_ptr of HashMap
+        since RadioButtonGroups is lazily created in TreeScope as of r250708.
+
+        No new tests since there should be no observable behavioral change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers const):
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup): Use WeakHashSet and WeakPtr instead of raw pointers.
+        (WebCore::RadioButtonGroup::isEmpty const):
+        (WebCore::RadioButtonGroup::checkedButton const):
+        (WebCore::RadioButtonGroup::members const):
+        (WebCore::RadioButtonGroup::setCheckedButton):
+        (WebCore::RadioButtonGroup::updateCheckedState):
+        (WebCore::RadioButtonGroup::requiredStateChanged):
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::RadioButtonGroup::setNeedsStyleRecalcForAllButtons):
+        (WebCore::RadioButtonGroup::updateValidityForAllButtons):
+        (WebCore::RadioButtonGroup::contains const):
+        (WebCore::RadioButtonGroups::addButton):
+        (WebCore::RadioButtonGroups::groupMembers const):
+        (WebCore::RadioButtonGroups::updateCheckedState):
+        (WebCore::RadioButtonGroups::requiredStateChanged):
+        (WebCore::RadioButtonGroups::checkedButtonForGroup const):
+        (WebCore::RadioButtonGroups::hasCheckedButton const):
+        (WebCore::RadioButtonGroups::isInRequiredGroup const):
+        (WebCore::RadioButtonGroups::removeButton):
+        * dom/RadioButtonGroups.h:
+        (WebCore::RadioButtonGroups):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::radioButtonGroup const):
+        (WebCore::HTMLInputElement::checkedRadioButtonForGroup const):
+        * html/HTMLInputElement.h:
+
 2019-10-14  David Quesada  <david_quesada@apple.com>
 
         Remove WebCore::IOSApplication::isWebApp()

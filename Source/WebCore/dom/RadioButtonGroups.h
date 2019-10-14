@@ -39,14 +39,14 @@ public:
     void updateCheckedState(HTMLInputElement&);
     void requiredStateChanged(HTMLInputElement&);
     void removeButton(HTMLInputElement&);
-    HTMLInputElement* checkedButtonForGroup(const AtomString& groupName) const;
+    RefPtr<HTMLInputElement> checkedButtonForGroup(const AtomString& groupName) const;
     bool hasCheckedButton(const HTMLInputElement&) const;
     bool isInRequiredGroup(HTMLInputElement&) const;
-    Vector<HTMLInputElement*> groupMembers(const HTMLInputElement&) const;
+    Vector<Ref<HTMLInputElement>> groupMembers(const HTMLInputElement&) const;
 
 private:
-    typedef HashMap<AtomStringImpl*, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
-    std::unique_ptr<NameToGroupMap> m_nameToGroupMap;
+    typedef HashMap<AtomString, std::unique_ptr<RadioButtonGroup>> NameToGroupMap;
+    NameToGroupMap m_nameToGroupMap;
 };
 
 } // namespace WebCore

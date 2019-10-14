@@ -279,8 +279,8 @@ public:
     void listAttributeTargetChanged();
 #endif
 
-    Vector<HTMLInputElement*> radioButtonGroup() const;
-    HTMLInputElement* checkedRadioButtonForGroup() const;
+    Vector<Ref<HTMLInputElement>> radioButtonGroup() const;
+    RefPtr<HTMLInputElement> checkedRadioButtonForGroup() const;
     bool isInRequiredRadioButtonGroup();
     // Returns null if this isn't associated with any radio button group.
     RadioButtonGroups* radioButtonGroups() const;

@@ -995,7 +995,7 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
     if (is<HTMLInputElement>(node)) {
         HTMLInputElement& input = downcast<HTMLInputElement>(*node);
         for (auto& radioSibling : input.radioButtonGroup()) {
-            if (AccessibilityObject* object = axObjectCache()->getOrCreate(radioSibling))
+            if (AccessibilityObject* object = axObjectCache()->getOrCreate(radioSibling.ptr()))
                 linkedUIElements.append(object);
         }
     } else {
