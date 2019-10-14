@@ -49,6 +49,10 @@ SystemFontDatabaseCoreText::SystemFontDatabaseCoreText()
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createSystemUIFont(const CascadeListParameters& parameters, CFStringRef locale)
 {
+    // Work around a quirk of the platform API.
+    // If the passed string is empty instead of null,
+    // CoreText doesn't use the system's locale instead.
+    // We need to use the system locale in this case.
     if (locale && !CFStringGetLength(locale))
         locale = nullptr;
     auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, parameters.size, locale));

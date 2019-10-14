@@ -1,3 +1,15 @@
+2019-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] font-family:system-ui on Chinese systems don't get Chinese quote marks
+        https://bugs.webkit.org/show_bug.cgi?id=202778
+
+        Unreviewed.
+
+        Addressing post-review comment.
+
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::createSystemUIFont):
+
 2019-10-14  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: [iOS 13?] TestWebKitAPI.SharedBufferTest.tryCreateArrayBufferLargeSegments is failing
