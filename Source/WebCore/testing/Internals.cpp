@@ -535,6 +535,8 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(MEDIA_STREAM)
     RuntimeEnabledFeatures::sharedFeatures().setInterruptAudioOnPageVisibilityChangeEnabled(false);
 #endif
+
+    HTMLCanvasElement::setMaxPixelMemoryForTesting(0); // This means use the default value.
 }
 
 Internals::Internals(Document& document)

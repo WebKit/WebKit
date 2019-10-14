@@ -38,11 +38,11 @@
             ctx.fillRect(0, 0, width, height);
         }
     
-        // This uses up all the available memory.
-        fillCanvas("canvas1", MAX_WIDTH, MAX_HEIGHT);
-
-        // Any new canvas from now on should exceed the memory limit.
+        // This one should always work.
         fillCanvas("canvas2", 10, 10);
+
+        // And this one should exceed the memory limit.
+        fillCanvas("canvas1", MAX_WIDTH + 1, MAX_HEIGHT + 1);
     }
     run();
 </script>

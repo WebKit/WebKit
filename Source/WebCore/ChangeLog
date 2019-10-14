@@ -1,3 +1,16 @@
+2019-10-14  Dean Jackson  <dino@apple.com>
+
+        Reset maxCanvasPixelMemory between tests
+        https://bugs.webkit.org/show_bug.cgi?id=202941
+        <rdar://problem/56260865>
+
+        Reviewed by Wenson Hsieh.
+
+        Reset the maximum canvas memory between tests.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2019-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] font-family:system-ui on Chinese systems don't get Chinese quote marks
