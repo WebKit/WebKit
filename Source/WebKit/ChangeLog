@@ -1,3 +1,19 @@
+2019-10-14  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WebInspector] Support for saving data
+        https://bugs.webkit.org/show_bug.cgi?id=202894
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implement the WebInspectorProxy::platformSave() method. This
+        allows users to save the inspector performance measurements, for
+        instance.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSave):
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp:
+        (WebKit::WebInspectorUI::canSave):
+
 2019-10-14  youenn fablet  <youenn@apple.com>
 
         Reuse existing web processes for running service workers

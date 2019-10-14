@@ -36,7 +36,7 @@ namespace WebKit {
 
 bool WebInspectorUI::canSave()
 {
-    return false;
+    return true;
 }
 
 String WebInspectorUI::localizedStringsURL()

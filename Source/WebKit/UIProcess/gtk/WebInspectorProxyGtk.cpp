@@ -36,6 +36,7 @@
 #include "WKMutableArray.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebInspectorProxyClient.h"
+#include "WebInspectorUIMessages.h"
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
@@ -45,6 +46,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/FileSystem.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -458,9 +460,44 @@ void WebInspectorProxy::platformStartWindowDrag()
     notImplemented();
 }
 
-void WebInspectorProxy::platformSave(const String&, const String&, bool, bool)
+void WebInspectorProxy::platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
-    notImplemented();
+    UNUSED_PARAM(forceSaveDialog);
+
+    GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
+    if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
+        return;
+
+    GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Save File",
+        GTK_WINDOW(parent), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
+
+    GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+    gtk_file_chooser_set_current_name(chooser, filename.utf8().data());
+
+    if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
+        return;
+
+    gssize dataLength = 0;
+    const char* data;
+
+    if (base64Encoded) {
+        Vector<char> out;
+        if (!base64Decode(content, out, Base64ValidatePadding))
+            return;
+
+        out.shrinkToFit();
+        data = out.data();
+        dataLength = out.size();
+    } else {
+        data = content.utf8().data();
+        dataLength = content.utf8().length();
+    }
+
+    GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
+    GUniquePtr<char> path(g_file_get_path(file.get()));
+    if (g_file_set_contents(path.get(), data, dataLength, nullptr))
+        m_inspectorPage->process().send(Messages::WebInspectorUI::DidSave(path.get()), m_inspectorPage->webPageID());
 }
 
 void WebInspectorProxy::platformAppend(const String&, const String&)
