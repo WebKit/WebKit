@@ -504,9 +504,9 @@ sub printFunctionTable
         }
 
         if ($enabledTags{$tagName}{mapToTagName}) {
-            print F "        { ${tagName}Tag, $enabledTags{$tagName}{mapToTagName}To${tagName}Constructor },\n";
+            print F "        { $parameters{namespace}Names::${tagName}Tag, $enabledTags{$tagName}{mapToTagName}To${tagName}Constructor },\n";
         } else {
-            print F "        { ${tagName}Tag, $tagConstructorMap{$tagName}Constructor },\n";
+            print F "        { $parameters{namespace}Names::${tagName}Tag, $tagConstructorMap{$tagName}Constructor },\n";
         }
 
         if ($conditional) {
@@ -967,8 +967,6 @@ END
 
 namespace WebCore {
 
-using namespace $parameters{namespace}Names;
-
 typedef Ref<$parameters{namespace}Element> (*$parameters{namespace}ConstructorFunction)(const QualifiedName&, Document&$formElementArgumentForDeclaration, bool createdByParser);
 
 END
@@ -1059,7 +1057,7 @@ Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createE
         const auto& name = *entry.qualifiedName;
         return entry.function($argumentList);
     }
-    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom(), localName, ${lowercaseNamespacePrefix}NamespaceURI), document);
+    return $parameters{fallbackInterfaceName}::create(QualifiedName(nullAtom(), localName, $parameters{namespace}Names::${lowercaseNamespacePrefix}NamespaceURI), document);
 }
 
 Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
@@ -1249,8 +1247,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-using namespace $parameters{namespace}Names;
-
 typedef JSDOMObject* (*Create$parameters{namespace}ElementWrapperFunction)(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 END
@@ -1288,7 +1284,7 @@ END
             $ucTag = $enabledTags{$tag}{JSInterfaceName};
         }
 
-        print F "        { ${tag}Tag, create${ucTag}Wrapper },\n";
+        print F "        { $parameters{namespace}Names::${tag}Tag, create${ucTag}Wrapper },\n";
 
         if ($conditional) {
             print F "#endif\n";
