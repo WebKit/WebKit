@@ -24,40 +24,34 @@
  */
 
 #import "config.h"
-#import "WebAutocorrectionData.h"
+#import "CoreTextHelpers.h"
 
-#if PLATFORM(IOS_FAMILY)
-
-#import "ArgumentCodersCocoa.h"
-#import "Decoder.h"
-#import "Encoder.h"
-#import "WebCoreArgumentCoders.h"
-#import <UIKit/UIKit.h>
-#import <WebCore/FloatRect.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
+PlatformFontDescriptor *fontDescriptorWithFontAttributes(NSDictionary *attributes)
 {
-    encoder << textRects;
-    IPC::encode(encoder, font.get());
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+#if HAVE(NSFONT_WITH_OPTICAL_SIZING_BUG)
+    auto mutableDictionary = adoptNS([attributes mutableCopy]);
+    if (id opticalSizeAttribute = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute]) {
+        if ([opticalSizeAttribute isKindOfClass:[NSString class]]) {
+            [mutableDictionary removeObjectForKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
+            if (NSNumber *size = [mutableDictionary objectForKey:(__bridge NSString *)kCTFontSizeAttribute])
+                [mutableDictionary setObject:size forKey:(__bridge NSString *)kCTFontOpticalSizeAttribute];
+        }
+    }
+    return [PlatformFontDescriptor fontDescriptorWithFontAttributes:mutableDictionary.get()];
+#else
+    return [PlatformFontDescriptor fontDescriptorWithFontAttributes:attributes];
+#endif
+
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    return nil;
 }
 
-Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
-{
-    Optional<Vector<FloatRect>> textRects;
-    decoder >> textRects;
-    if (!textRects)
-        return WTF::nullopt;
-
-    RetainPtr<UIFont> font;
-    if (!IPC::decode(decoder, font, @[ UIFont.class ]))
-        return WTF::nullopt;
-
-    return {{ *textRects, font }};
 }
-
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY)

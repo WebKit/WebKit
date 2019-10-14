@@ -34,6 +34,7 @@
 #import "AppKitSPI.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
+#import "CoreTextHelpers.h"
 #import "FontInfo.h"
 #import "FullscreenClient.h"
 #import "GenericCallback.h"
@@ -117,6 +118,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sys/stat.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/FileSystem.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
@@ -1119,7 +1121,7 @@ static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignm
     default:
         ASSERT_NOT_REACHED();
     }
-    
+
     return nsTextAlignment;
 }
 
@@ -1599,9 +1601,9 @@ bool WebViewImpl::resignFirstResponder()
         m_page->clearSelection();
 
     m_page->activityStateDidChange(WebCore::ActivityState::IsFocused);
-    
+
     m_inResignFirstResponder = false;
-    
+
     return true;
 }
 
@@ -1748,7 +1750,7 @@ void WebViewImpl::updateWindowAndViewFrames()
         if (WebCore::AXObjectCache::accessibilityEnabled())
             accessibilityPosition = [[weakThis->m_view accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
             ALLOW_DEPRECATED_DECLARATIONS_END
-        
+
         weakThis->m_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     });
 }
@@ -2321,7 +2323,7 @@ ColorSpaceData WebViewImpl::colorSpace()
 
     ColorSpaceData colorSpaceData;
     colorSpaceData.cgColorSpace = [m_colorSpace CGColorSpace];
-    
+
     return colorSpaceData;
 }
 
@@ -2568,7 +2570,7 @@ void WebViewImpl::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHa
         // The input source changed; discard any entered text.
         [[WKTextInputWindowController sharedTextInputWindowController] unmarkText];
     }
-    
+
     // This will force the current input context to be updated to its correct value.
     [NSApp updateWindows];
 }
@@ -2818,18 +2820,18 @@ void WebViewImpl::showShareSheet(const WebCore::ShareDataWithParsedURL& data, WT
 {
     if (_shareSheet)
         [_shareSheet dismiss];
-    
+
     ASSERT([view respondsToSelector:@selector(shareSheetDidDismiss:)]);
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:view]);
     [_shareSheet setDelegate:view];
-    
+
     [_shareSheet presentWithParameters:data inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
 }
-    
+
 void WebViewImpl::shareSheetDidDismiss(WKShareSheet *shareSheet)
 {
     ASSERT(_shareSheet == shareSheet);
-    
+
     [_shareSheet setDelegate:nil];
     _shareSheet = nil;
 }
@@ -2853,11 +2855,13 @@ void WebViewImpl::updateFontManagerIfNeeded()
         if (error != CallbackBase::Error::None)
             return;
 
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
         NSDictionary *attributeDictionary = (__bridge NSDictionary *)fontInfo.fontAttributeDictionary.get();
         if (!attributeDictionary)
             return;
 
-        NSFontDescriptor *descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:attributeDictionary];
+        PlatformFontDescriptor *descriptor = fontDescriptorWithFontAttributes(attributeDictionary);
         if (!descriptor)
             return;
 
@@ -2866,6 +2870,8 @@ void WebViewImpl::updateFontManagerIfNeeded()
             return;
 
         [NSFontManager.sharedFontManager setSelectedFont:font isMultiple:selectionHasMultipleFonts];
+
+        END_BLOCK_OBJC_EXCEPTIONS
     });
 }
 
@@ -3238,7 +3244,7 @@ void WebViewImpl::setAutomaticTextReplacementEnabled(bool flag)
 {
     if (static_cast<bool>(flag) == TextChecker::state().isAutomaticTextReplacementEnabled)
         return;
-    
+
     TextChecker::setAutomaticTextReplacementEnabled(flag);
     m_page->process().updateTextCheckerState();
 }
@@ -3661,14 +3667,14 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
             return NSAccessibilityUnignoredAncestor([m_view superview]);
             if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
                 return @YES;
-    
+
     if ([attribute isEqualToString:@"AXConvertRelativeFrame"]) {
         if ([parameter isKindOfClass:[NSValue class]]) {
             NSRect rect = [(NSValue *)parameter rectValue];
             return [NSValue valueWithRect:m_pageClient->rootViewToScreen(WebCore::IntRect(rect))];
         }
     }
-    
+
     return [m_view _web_superAccessibilityAttributeValue:attribute];
 }
 
@@ -3780,7 +3786,7 @@ void WebViewImpl::toolTipChanged(const String& oldToolTip, const String& newTool
 {
     if (!oldToolTip.isNull())
         sendToolTipMouseExited();
-    
+
     if (!newToolTip.isEmpty()) {
         // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
         [m_view removeAllToolTips];
@@ -3971,7 +3977,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
     SandboxExtension::HandleArray sandboxExtensionForUpload;
 
     if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
-        
+
         // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
         // guaranteed that the count of UTIs equals the count of files, since some clients only write
         // unique UTIs.
@@ -4025,9 +4031,9 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
             delete dragData;
             return false;
         }
-        
+
         Vector<String> fileNames;
-        
+
         for (NSString *file in files)
             fileNames.append(file);
         m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
@@ -4248,14 +4254,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // "Fix" the filename of the path.
     NSString *filename = filenameByFixingIllegalCharacters([path lastPathComponent]);
     path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
-    
+
     if (fileExists(path)) {
         // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
         NSString *extensions = nil;
         NSString *pathWithoutExtensions;
         NSString *lastPathComponent = [path lastPathComponent];
         NSRange periodRange = [lastPathComponent rangeOfString:@"."];
-        
+
         if (periodRange.location == NSNotFound) {
             pathWithoutExtensions = path;
         } else {
@@ -4263,7 +4269,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
             lastPathComponent = [lastPathComponent substringToIndex:periodRange.location];
             pathWithoutExtensions = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:lastPathComponent];
         }
-        
+
         for (unsigned i = 1; ; i++) {
             NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
             path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
@@ -4271,7 +4277,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
                 break;
         }
     }
-    
+
     return path;
 }
 
@@ -4279,20 +4285,20 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
 {
     RetainPtr<NSFileWrapper> wrapper;
     RetainPtr<NSData> data;
-    
+
     if (m_promisedImage) {
         data = m_promisedImage->data()->createNSData();
         wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
     } else
         wrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL URLWithString:m_promisedURL] options:NSFileWrapperReadingImmediate error:nil]);
-    
+
     if (wrapper)
         [wrapper setPreferredFilename:m_promisedFilename];
     else {
         LOG_ERROR("Failed to create image file.");
         return nil;
     }
-    
+
     // FIXME: Report an error if we fail to create a file.
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
     path = pathWithUniqueFilenameForPath(path);
@@ -4301,7 +4307,7 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
 
     if (!m_promisedURL.isEmpty())
         FileSystem::setMetadataURL(String(path), m_promisedURL);
-    
+
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
@@ -4498,7 +4504,7 @@ bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
     bool handledEvent = gestureController.handleScrollWheelEvent(event);
 
     gestureController.setShouldIgnorePinnedState(wasIgnoringPinnedState);
-    
+
     return handledEvent;
 }
 
@@ -4641,7 +4647,7 @@ void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
     m_keyDownEventBeingResent = event;
     [NSApp _setCurrentEvent:event];
     [NSApp sendEvent:event];
-    
+
     m_keyDownEventBeingResent = nullptr;
 }
 
@@ -4686,7 +4692,7 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
             }
             result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), compositionUnderlineColor, color, style.intValue > 1));
         }
-        
+
         i = range.location + range.length;
     }
 
@@ -5106,7 +5112,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
         });
         return YES;
     }
-    
+
     return [m_view _web_superPerformKeyEquivalent:event];
 }
 
@@ -5316,7 +5322,7 @@ bool WebViewImpl::windowIsFrontWindowUnderMouse(NSEvent *event)
 {
     NSRect eventScreenPosition = [[m_view window] convertRectToScreen:NSMakeRect(event.locationInWindow.x, event.locationInWindow.y, 0, 0)];
     NSInteger eventWindowNumber = [NSWindow windowNumberAtPoint:eventScreenPosition.origin belowWindowWithWindowNumber:0];
-        
+
     return [m_view window].windowNumber != eventWindowNumber;
 }
 
@@ -5356,7 +5362,7 @@ bool WebViewImpl::completeBackSwipeForTesting()
         return false;
     return m_gestureController->completeSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
 }
-    
+
 void WebViewImpl::setUseSystemAppearance(bool useSystemAppearance)
 {
     m_page->setUseSystemAppearance(useSystemAppearance);

@@ -1,3 +1,24 @@
+2019-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION (r245672): Contenteditable with optical sizing freezes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=202262
+
+        Reviewed by Tim Horton.
+
+        r250640 didn't go far enough. We need to apply the same fix everywhere [NSFontDescriptor fontDescriptorWithFontAttributes:] is called.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeFontInternal):
+        * Shared/Cocoa/CoreTextHelpers.h: Added.
+        * Shared/Cocoa/CoreTextHelpers.mm: Added.
+        (fontDescriptorWithFontAttributes):
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateFontManagerIfNeeded):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-14  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251045.
