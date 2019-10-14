@@ -1568,6 +1568,7 @@ void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesSt
     ASSERT(m_serviceWorkerInformation);
     send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
+#endif
 
 void WebProcessProxy::disableServiceWorkers()
 {
@@ -1575,9 +1576,11 @@ void WebProcessProxy::disableServiceWorkers()
         return;
 
     m_serviceWorkerInformation = { };
-    processPool().removeFromServiceWorkerProcesses(*this);
 
+#if ENABLE(SERVICE_WORKER)
+    processPool().removeFromServiceWorkerProcesses(*this);
     send(Messages::WebSWContextManagerConnection::Close { }, 0);
+#endif
 
     maybeShutDown();
 }
@@ -1588,7 +1591,6 @@ void WebProcessProxy::enableServiceWorkers()
     ASSERT(!m_serviceWorkerInformation);
     m_serviceWorkerInformation = ServiceWorkerInformation { WebPageProxyIdentifier::generate(), PageIdentifier::generate() };
 }
-#endif
 
 } // namespace WebKit
 
