@@ -30,6 +30,7 @@
 
 #include "FormDataReference.h"
 #include "Logging.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
@@ -42,10 +43,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, RegistrableDomain&& registrableDomain, SWServer& server, Ref<IPC::Connection>&& connection)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, RegistrableDomain&& registrableDomain, SWServer& server)
     : SWServerToContextConnection(WTFMove(registrableDomain))
-    , m_ipcConnection(WTFMove(connection))
-    , m_networkProcess(networkProcess)
+    , m_connection(connection)
     , m_server(makeWeakPtr(server))
 {
     server.addContextConnection(*this);
@@ -53,26 +53,22 @@ WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& n
 
 WebSWServerToContextConnection::~WebSWServerToContextConnection()
 {
-    connectionClosed();
+    auto fetches = WTFMove(m_ongoingFetches);
+    for (auto& fetch : fetches.values())
+        fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+
     if (m_server && m_server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
         m_server->removeContextConnection(*this);
 }
 
 IPC::Connection* WebSWServerToContextConnection::messageSenderConnection() const
 {
-    return m_ipcConnection.ptr();
+    return &m_connection.connection();
 }
 
 uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 {
     return 0;
-}
-
-void WebSWServerToContextConnection::connectionClosed()
-{
-    auto fetches = WTFMove(m_ongoingFetches);
-    for (auto& fetch : fetches.values())
-        fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
 }
 
 void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
@@ -136,9 +132,7 @@ void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
 
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 {
-    RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
-    terminate();
-    connectionClosed();
+    m_connection.serverToContextConnectionNoLongerNeeded();
 }
 
 void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)
@@ -147,17 +141,12 @@ void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)
     send(Messages::WebSWContextManagerConnection::SetThrottleState { isThrottleable });
 }
 
-void WebSWServerToContextConnection::terminate()
-{
-    send(Messages::WebSWContextManagerConnection::TerminateProcess());
-}
-
 void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, WebSWServerConnection& contentConnection, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& data, const String& referrer)
 {
     auto serverConnectionIdentifier = contentConnection.identifier();
     auto fetchIdentifier = FetchIdentifier::generate();
 
-    auto result = m_ongoingFetches.add(fetchIdentifier, makeUnique<ServiceWorkerFetchTask>(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_networkProcess->serviceWorkerFetchTimeout()));
+    auto result = m_ongoingFetches.add(fetchIdentifier, makeUnique<ServiceWorkerFetchTask>(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_connection.networkProcess().serviceWorkerFetchTimeout()));
 
     ASSERT(!m_ongoingFetchIdentifiers.contains({ serverConnectionIdentifier, contentFetchIdentifier }));
     m_ongoingFetchIdentifiers.add({ serverConnectionIdentifier, contentFetchIdentifier }, fetchIdentifier);

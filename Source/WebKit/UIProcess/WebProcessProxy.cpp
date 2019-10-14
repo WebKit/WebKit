@@ -141,7 +141,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& pr
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
-    proxy->m_serviceWorkerInformation = ServiceWorkerInformation { WebPageProxyIdentifier::generate(), PageIdentifier::generate() };
+    proxy->enableServiceWorkers();
     proxy->connect();
     return proxy;
 }
@@ -962,6 +962,9 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
     if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache || m_shutdownPreventingScopeCount)
         return false;
 
+    if (isRunningServiceWorkers())
+        return false;
+
     if (!m_processPool->shouldTerminate(this))
         return false;
 
@@ -1466,6 +1469,9 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 
     auto registrableDomain = WebCore::RegistrableDomain { url };
     if (m_registrableDomain && *m_registrableDomain != registrableDomain) {
+#if ENABLE(SERVICE_WORKER)
+        disableServiceWorkers();
+#endif
         // Null out registrable domain since this process has now been used for several domains.
         m_registrableDomain = WebCore::RegistrableDomain { };
         return;
@@ -1561,6 +1567,26 @@ void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesSt
 {
     ASSERT(m_serviceWorkerInformation);
     send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+}
+
+void WebProcessProxy::disableServiceWorkers()
+{
+    if (!m_serviceWorkerInformation)
+        return;
+
+    m_serviceWorkerInformation = { };
+    processPool().removeFromServiceWorkerProcesses(*this);
+
+    send(Messages::WebSWContextManagerConnection::Close { }, 0);
+
+    maybeShutDown();
+}
+
+void WebProcessProxy::enableServiceWorkers()
+{
+    ASSERT(m_registrableDomain && !m_registrableDomain->isEmpty());
+    ASSERT(!m_serviceWorkerInformation);
+    m_serviceWorkerInformation = ServiceWorkerInformation { WebPageProxyIdentifier::generate(), PageIdentifier::generate() };
 }
 #endif
 

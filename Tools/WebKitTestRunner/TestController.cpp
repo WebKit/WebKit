@@ -978,6 +978,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
 
+    WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.

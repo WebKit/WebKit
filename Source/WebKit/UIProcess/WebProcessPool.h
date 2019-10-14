@@ -387,6 +387,7 @@ public:
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, PAL::SessionID);
+    void removeFromServiceWorkerProcesses(WebProcessProxy&);
     size_t serviceWorkerProxiesCount() const { return m_serviceWorkerProcesses.size(); }
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
@@ -518,6 +519,9 @@ public:
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
     
     PlugInAutoStartProvider& plugInAutoStartProvider() { return m_plugInAutoStartProvider; }
+
+    void setUseSeparateServiceWorkerProcess(bool);
+    bool useSeparateServiceWorkerProcess() const { return m_useSeparateServiceWorkerProcess; }
 
 private:
     void platformInitialize();
@@ -793,6 +797,7 @@ private:
 #else
     bool m_isDelayedWebProcessLaunchDisabled { false };
 #endif
+    bool m_useSeparateServiceWorkerProcess { false };
 };
 
 template<typename T>

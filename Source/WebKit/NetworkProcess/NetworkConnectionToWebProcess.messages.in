@@ -81,6 +81,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection()
     EstablishSWContextConnection(WebCore::RegistrableDomain domain)
+    CloseSWContextConnection()
 #endif
 
     CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)

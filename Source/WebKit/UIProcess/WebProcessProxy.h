@@ -123,9 +123,13 @@ public:
     WebProcessPool* processPoolIfExists() const;
     WebProcessPool& processPool() const;
 
+    bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.valueOr(WebCore::RegistrableDomain { }); }
     void setIsInProcessCache(bool);
     bool isInProcessCache() const { return m_isInProcessCache; }
+
+    void enableServiceWorkers();
+    void disableServiceWorkers();
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
     void setWebsiteDataStore(WebsiteDataStore&);

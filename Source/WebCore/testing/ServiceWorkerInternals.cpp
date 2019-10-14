@@ -31,6 +31,7 @@
 #include "FetchEvent.h"
 #include "JSFetchResponse.h"
 #include "SWContextManager.h"
+#include <wtf/ProcessID.h>
 
 namespace WebCore {
 
@@ -100,6 +101,11 @@ bool ServiceWorkerInternals::isThrottleable() const
 {
     auto* connection = SWContextManager::singleton().connection();
     return connection ? connection->isThrottleable() : true;
+}
+
+int ServiceWorkerInternals::processIdentifier() const
+{
+    return getCurrentProcessID();
 }
 
 } // namespace WebCore

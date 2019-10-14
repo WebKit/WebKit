@@ -155,6 +155,10 @@ public:
 
     void checkProcessLocalPortForActivity(const WebCore::MessagePortIdentifier&, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>&&);
 
+#if ENABLE(SERVICE_WORKER)
+    void serverToContextConnectionNoLongerNeeded();
+#endif
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
 
@@ -214,6 +218,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
     void establishSWContextConnection(WebCore::RegistrableDomain&&);
+    void closeSWContextConnection();
     void unregisterSWConnection();
 #endif
 

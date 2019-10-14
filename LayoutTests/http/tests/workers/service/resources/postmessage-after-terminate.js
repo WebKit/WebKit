@@ -10,6 +10,15 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         finishSWTest();
 });
 
-navigator.serviceWorker.register("resources/postmessage-echo-worker.js", { }).then(function(registration) {
+async function doTest()
+{
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+ 
+    const registration = await navigator.serviceWorker.register("resources/postmessage-echo-worker.js", { });
     registration.installing.postMessage("Message 1");
-});
+}
+
+doTest();

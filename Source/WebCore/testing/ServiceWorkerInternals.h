@@ -55,6 +55,8 @@ public:
 
     bool isThrottleable() const;
 
+    int processIdentifier() const;
+
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 

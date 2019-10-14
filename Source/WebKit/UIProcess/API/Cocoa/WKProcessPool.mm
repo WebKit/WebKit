@@ -448,6 +448,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateServiceWorkerProcesses();
 }
 
+- (void)_setUseSeparateServiceWorkerProcess:(BOOL)useSeparateServiceWorkerProcess
+{
+    _processPool->setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
+}
+
 - (pid_t)_networkProcessIdentifier
 {
     return _processPool->networkProcessIdentifier();
@@ -504,12 +509,12 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (size_t)_webPageContentProcessCount
 {
-    auto allWebProcesses = _processPool->processes();
+    auto result = _processPool->processes().size();
 #if ENABLE(SERVICE_WORKER)
-    return allWebProcesses.size() - _processPool->serviceWorkerProxiesCount();
-#else
-    return allWebProcesses.size();
+    if (_processPool->useSeparateServiceWorkerProcess())
+        result -= _processPool->serviceWorkerProxiesCount();
 #endif
+    return result;
 }
 
 - (void)_preconnectToServer:(NSURL *)serverURL

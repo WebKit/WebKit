@@ -1,3 +1,25 @@
+2019-10-14  youenn fablet  <youenn@apple.com>
+
+        Reuse existing web processes for running service workers
+        https://bugs.webkit.org/show_bug.cgi?id=202195
+
+        Reviewed by Chris Dumez.
+
+        Add support for enforcing a separate process for service workers.
+        This is useful for tests trying to crash the service worker process.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        Update test to use serviceWorkerProcessCount.
+        Add test to check for in process and out of process service workers.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUseSeparateServiceWorkerProcess):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-10-12  Chris Dumez  <cdumez@apple.com>
 
         Back/Forward cache does not work after doing a favorite navigation

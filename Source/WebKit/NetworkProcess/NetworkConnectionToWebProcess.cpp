@@ -74,6 +74,9 @@
 #include "WebPaymentCoordinatorProxyMessages.h"
 #endif
 
+#undef RELEASE_LOG_IF_ALLOWED
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), channel, "%p - NetworkConnectionToWebProcess::" fmt, this, ##__VA_ARGS__)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -219,19 +222,15 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
-        ASSERT(m_swContextConnection);
-        if (m_swContextConnection) {
+        if (m_swContextConnection)
             m_swContextConnection->didReceiveMessage(connection, decoder);
-            return;
-        }
+        return;
     }
 
     if (decoder.messageReceiverName() == Messages::ServiceWorkerFetchTask::messageReceiverName()) {
-        ASSERT(m_swContextConnection);
-        if (m_swContextConnection) {
+        if (m_swContextConnection)
             m_swContextConnection->didReceiveFetchTaskMessage(connection, decoder);
-            return;
-        }
+        return;
     }
 #endif
 
@@ -887,7 +886,20 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
 void NetworkConnectionToWebProcess::establishSWContextConnection(RegistrableDomain&& registrableDomain)
 {
     if (auto* server = m_networkProcess->swServerForSessionIfExists(m_sessionID))
-        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(m_networkProcess, WTFMove(registrableDomain), *server, m_connection.get());
+        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, WTFMove(registrableDomain), *server);
+}
+
+void NetworkConnectionToWebProcess::closeSWContextConnection()
+{
+    m_swContextConnection = nullptr;
+}
+
+void NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded()
+{
+    RELEASE_LOG_IF_ALLOWED(ServiceWorker, "serverToContextConnectionNoLongerNeeded - WebProcess %llu no longer useful for running service workers", webProcessIdentifier().toUInt64());
+    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::WorkerContextConnectionNoLongerNeeded { webProcessIdentifier() }, 0);
+
+    m_swContextConnection = nullptr;
 }
 #endif
 

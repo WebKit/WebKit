@@ -671,6 +671,11 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
     auto& newNetworkProcess = ensureNetworkProcess();
     for (auto& reply : pendingReplies)
         newNetworkProcess.getNetworkProcessConnection(*reply.first, WTFMove(reply.second));
+
+#if ENABLE(SERVICE_WORKER)
+    while (!m_serviceWorkerProcesses.isEmpty())
+        m_serviceWorkerProcesses.begin()->value->disableServiceWorkers();
+#endif
 }
 
 void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
@@ -697,24 +702,57 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     }
 
     RegistrableDomainWithSessionID registrableDomainWithSessionID { RegistrableDomain { registrableDomain }, sessionID };
-    if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID))
+    if (m_serviceWorkerProcesses.contains(registrableDomainWithSessionID)) {
+        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess process already created");
         return;
+    }
 
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
 
-    auto serviceWorkerProcessProxy = WebProcessProxy::createForServiceWorkers(*this, WTFMove(registrableDomain), *websiteDataStore);
-    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), serviceWorkerProcessProxy.ptr());
+    WebProcessProxy* serviceWorkerProcessProxy { nullptr };
+    if (!m_useSeparateServiceWorkerProcess) {
+        for (auto& process : m_processes) {
+            if (process == m_prewarmedProcess || process == m_dummyProcessProxy)
+                continue;
+            if (&process->websiteDataStore() != websiteDataStore)
+                continue;
+            if (!process->isMatchingRegistrableDomain(registrableDomain))
+                continue;
 
-    updateProcessAssertions();
-    initializeNewWebProcess(serviceWorkerProcessProxy, websiteDataStore);
+            serviceWorkerProcessProxy = process.get();
+            serviceWorkerProcessProxy->enableServiceWorkers();
 
-    auto* serviceWorkerProcessProxyPtr = serviceWorkerProcessProxy.ptr();
-    m_processes.append(WTFMove(serviceWorkerProcessProxy));
+            RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess reusing an existing web process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+            break;
+        }
+    }
 
-    serviceWorkerProcessProxyPtr->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store());
+    if (!serviceWorkerProcessProxy) {
+        auto newProcessProxy = WebProcessProxy::createForServiceWorkers(*this, WTFMove(registrableDomain), *websiteDataStore);
+        serviceWorkerProcessProxy = newProcessProxy.ptr();
+
+        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess creating a new service worker process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
+
+        updateProcessAssertions();
+        initializeNewWebProcess(newProcessProxy, websiteDataStore);
+        m_processes.append(WTFMove(newProcessProxy));
+    }
+
+    ASSERT(!m_serviceWorkerProcesses.contains(registrableDomainWithSessionID));
+    m_serviceWorkerProcesses.add(WTFMove(registrableDomainWithSessionID), serviceWorkerProcessProxy);
+
+    serviceWorkerProcessProxy->establishServiceWorkerContext(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store());
     if (!m_serviceWorkerUserAgent.isNull())
-        serviceWorkerProcessProxyPtr->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
+        serviceWorkerProcessProxy->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
+}
+
+void WebProcessPool::removeFromServiceWorkerProcesses(WebProcessProxy& process)
+{
+    RegistrableDomainWithSessionID key { process.registrableDomain(), process.websiteDataStore().sessionID() };
+    ASSERT(m_serviceWorkerProcesses.contains(key));
+    ASSERT(m_serviceWorkerProcesses.get(key) == &process);
+    m_serviceWorkerProcesses.remove(key);
 }
 #endif
 
@@ -1096,8 +1134,9 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 #if ENABLE(SERVICE_WORKER)
     if (process->isRunningServiceWorkers()) {
-        auto* removedProcess = m_serviceWorkerProcesses.take(RegistrableDomainWithSessionID { process->registrableDomain(), process->websiteDataStore().sessionID() });
-        ASSERT_UNUSED(removedProcess, removedProcess == process);
+        auto iterator = m_serviceWorkerProcesses.find(RegistrableDomainWithSessionID { process->registrableDomain(), process->websiteDataStore().sessionID() });
+        if (iterator != m_serviceWorkerProcesses.end() && iterator->value == process)
+            m_serviceWorkerProcesses.remove(iterator);
         updateProcessAssertions();
     }
 #endif
@@ -1112,15 +1151,6 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 #endif
 
     removeProcessFromOriginCacheSet(*process);
-
-#if ENABLE(SERVICE_WORKER)
-    // FIXME: We should do better than this. For now, we just destroy the ServiceWorker process
-    // whenever there is no regular WebContent process remaining.
-    if (m_processes.size() == m_serviceWorkerProcesses.size()) {
-        if (!m_serviceWorkerProcessesTerminationTimer.isActive())
-            m_serviceWorkerProcessesTerminationTimer.startOneShot(serviceWorkerTerminationDelay);
-    }
-#endif
 }
 
 WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
@@ -1210,8 +1240,6 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(!process->isRunningServiceWorkers());
-
     if (!m_serviceWorkerPreferences) {
         m_serviceWorkerPreferences = page->preferencesStore();
         for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
@@ -1691,6 +1719,11 @@ void WebProcessPool::clearCachedCredentials()
 
 void WebProcessPool::terminateNetworkProcess()
 {
+#if ENABLE(SERVICE_WORKER)
+    while (!m_serviceWorkerProcesses.isEmpty())
+        m_serviceWorkerProcesses.begin()->value->disableServiceWorkers();
+#endif
+
     if (!m_networkProcess)
         return;
     
@@ -2419,6 +2452,21 @@ void WebProcessPool::clearWebProcessIsPlayingAudibleMedia(WebCore::ProcessIdenti
         ASSERT(m_uiProcessMediaPlaybackAssertion);
         m_uiProcessMediaPlaybackAssertion = nullptr;
     }
+}
+
+void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceWorkerProcess)
+{
+    if (m_useSeparateServiceWorkerProcess == useSeparateServiceWorkerProcess)
+        return;
+
+    RELEASE_LOG(ServiceWorker, "WebProcessPool::setUseSeparateServiceWorkerProcess %d", useSeparateServiceWorkerProcess);
+
+    m_useSeparateServiceWorkerProcess = useSeparateServiceWorkerProcess;
+#if ENABLE(SERVICE_WORKER)
+    while (!m_serviceWorkerProcesses.isEmpty())
+        m_serviceWorkerProcesses.begin()->value->disableServiceWorkers();
+#endif
+    terminateNetworkProcess();
 }
 
 } // namespace WebKit

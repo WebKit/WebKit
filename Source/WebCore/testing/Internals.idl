@@ -723,6 +723,7 @@ enum CompositingPolicy {
 
     boolean isAnyWorkletGlobalScopeAlive();
 
+    readonly attribute long processIdentifier;
     DOMString serviceWorkerClientIdentifier(Document document);
     Promise<void> storeRegistrationsOnDisk();
 

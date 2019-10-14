@@ -1225,10 +1225,8 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (SWContextManager::singleton().connection()) {
-        RELEASE_LOG(ServiceWorker, "Service worker process is exiting because network process is gone");
-        _exit(EXIT_SUCCESS);
-    }
+    if (SWContextManager::singleton().connection())
+        SWContextManager::singleton().stopAllServiceWorkers();
 #endif
 
     m_networkProcessConnection = nullptr;
@@ -1798,8 +1796,6 @@ void WebProcess::establishWorkerContextConnectionToNetworkProcess(uint64_t pageG
 
 void WebProcess::registerServiceWorkerClients()
 {
-    // We do not want to register service worker dummy documents.
-    ASSERT(!SWContextManager::singleton().connection());
     ServiceWorkerProvider::singleton().registerServiceWorkerClients();
 }
 

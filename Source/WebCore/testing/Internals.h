@@ -892,6 +892,8 @@ public:
     void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
 #endif
 
+    int processIdentifier() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

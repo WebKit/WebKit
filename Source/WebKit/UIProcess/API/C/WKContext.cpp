@@ -667,3 +667,8 @@ void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef contextRef, vo
             callback(context);
     });
 }
+
+void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef contextRef, bool useSeparateServiceWorkerProcess)
+{
+    WebKit::toImpl(contextRef)->setUseSeparateServiceWorkerProcess(useSeparateServiceWorkerProcess);
+}

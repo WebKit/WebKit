@@ -68,9 +68,6 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-static const Seconds asyncWorkerTerminationTimeout { 10_s };
-static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
-
 ServiceWorkerFrameLoaderClient::ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, FrameIdentifier frameID, const String& userAgent)
     : m_connection(connection)
     , m_webPageProxyID(webPageProxyID)
@@ -99,6 +96,7 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
 {
     updatePreferencesStore(store);
     m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_registrableDomain }, 0);
+    WebProcess::singleton().disableTermination();
 }
 
 WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;
@@ -253,12 +251,12 @@ void WebSWContextManagerConnection::softUpdate(WebCore::ServiceWorkerIdentifier 
 
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
-    SWContextManager::singleton().terminateWorker(identifier, asyncWorkerTerminationTimeout, nullptr);
+    SWContextManager::singleton().terminateWorker(identifier, SWContextManager::workerTerminationTimeout, nullptr);
 }
 
 void WebSWContextManagerConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier, Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply&& reply)
 {
-    SWContextManager::singleton().terminateWorker(identifier, syncWorkerTerminationTimeout, WTFMove(reply));
+    SWContextManager::singleton().terminateWorker(identifier, SWContextManager::syncWorkerTerminationTimeout, WTFMove(reply));
 }
 
 void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
@@ -348,10 +346,14 @@ void WebSWContextManagerConnection::didFinishSkipWaiting(uint64_t callbackID)
         callback();
 }
 
-void WebSWContextManagerConnection::terminateProcess()
+void WebSWContextManagerConnection::close()
 {
-    RELEASE_LOG(ServiceWorker, "Service worker process is exiting because it is no longer needed");
-    _exit(EXIT_SUCCESS);
+    RELEASE_LOG(ServiceWorker, "Service worker process is requested to stop all service workers");
+    setAsClosed();
+
+    m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::CloseSWContextConnection { }, 0);
+    SWContextManager::singleton().stopAllServiceWorkers();
+    WebProcess::singleton().enableTermination();
 }
 
 void WebSWContextManagerConnection::setThrottleState(bool isThrottleable)

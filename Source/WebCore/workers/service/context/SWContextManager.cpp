@@ -42,7 +42,7 @@ SWContextManager& SWContextManager::singleton()
 
 void SWContextManager::setConnection(std::unique_ptr<Connection>&& connection)
 {
-    ASSERT(!m_connection);
+    ASSERT(!m_connection || m_connection->isClosed());
     m_connection = WTFMove(connection);
 }
 
@@ -175,6 +175,16 @@ SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationReque
     : m_timeoutTimer([&manager, serviceWorkerIdentifier] { manager.serviceWorkerFailedToTerminate(serviceWorkerIdentifier); })
 {
     m_timeoutTimer.startOneShot(timeout);
+}
+
+void SWContextManager::stopAllServiceWorkers()
+{
+    auto serviceWorkers = WTFMove(m_workerMap);
+    for (auto& serviceWorker : serviceWorkers.values()) {
+        serviceWorker->setAsTerminatingOrTerminated();
+        m_pendingServiceWorkerTerminationRequests.add(serviceWorker->identifier(), makeUnique<ServiceWorkerTerminationRequest>(*this, serviceWorker->identifier(), workerTerminationTimeout));
+        serviceWorker->thread().stop([] { });
+    }
 }
 
 } // namespace WebCore

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <script src="/resources/testharness.js"></script>
@@ -5,7 +6,6 @@
 </head>
 <body>
 <script>
-var scope = "";
 var activeWorker;
 
 promise_test(async (test) => {
@@ -14,7 +14,7 @@ promise_test(async (test) => {
         await fetch("").then(() => { }, () => { });
     }
 
-    var registration = await navigator.serviceWorker.register("online-worker.js", { scope : scope });
+    var registration = await navigator.serviceWorker.register("service-worker-process-worker.js", { scope : "" });
     activeWorker = registration.active;
     if (activeWorker)
         return;
@@ -28,17 +28,13 @@ promise_test(async (test) => {
 }, "Setup worker");
 
 promise_test(async (test) => {
-    var promise = new Promise((resolve, reject) => {
-        navigator.serviceWorker.addEventListener("message", (event) => {
-            resolve(event.data);
-        });
-    });
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    navigator.serviceWorker.addEventListener("message", (e) => resolve(e.data), {once: true}); 
+    activeWorker.postMessage("PID");
+    assert_not_equals(await promise, window.internals.processIdentifier);
+}, "Test that service worker is in a different process");
 
-    activeWorker.postMessage("ONLINE");
-    var result = await promise;
-
-    assert_equals(result, "PASS");
-}, "Test service worker online/offline");
 </script>
 </body>
 </html>

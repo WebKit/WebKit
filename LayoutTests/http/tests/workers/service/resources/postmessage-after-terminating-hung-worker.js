@@ -23,7 +23,17 @@ navigator.serviceWorker.addEventListener("message", function(event) {
     }
 });
 
-navigator.serviceWorker.register("resources/postmessage-echo-worker-mayhang.js", { }).then(function(registration) {
+async function doTest()
+{
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+ 
+    const registration = await navigator.serviceWorker.register("resources/postmessage-echo-worker-mayhang.js", { });
     worker = registration.installing;
     worker.postMessage("HANG");
-});
+}
+
+doTest();
+

@@ -38,4 +38,6 @@
 
     readonly attribute DOMString processName;
     readonly attribute boolean isThrottleable;
+
+    readonly attribute long processIdentifier;
 };

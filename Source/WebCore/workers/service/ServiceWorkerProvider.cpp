@@ -29,6 +29,9 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Document.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "LegacySchemeRegistry.h"
 #include "SWClientConnection.h"
 
@@ -64,6 +67,8 @@ void ServiceWorkerProvider::registerServiceWorkerClients()
 {
     setMayHaveRegisteredServiceWorkers();
     for (auto* document : Document::allDocuments()) {
+        if (!document->page() || document->page()->mainFrame().loader().client().isServiceWorkerFrameLoaderClient())
+            continue;
         if (LegacySchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
             document->setServiceWorkerConnection(&serviceWorkerConnection());
     }

@@ -193,6 +193,7 @@
 #include <wtf/Language.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/ProcessID.h>
 #include <wtf/URLHelpers.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -5249,6 +5250,11 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
 void Internals::setMaxCanvasPixelMemory(unsigned size)
 {
     HTMLCanvasElement::setMaxPixelMemoryForTesting(size);
+}
+
+int Internals::processIdentifier() const
+{
+    return getCurrentProcessID();
 }
 
 } // namespace WebCore

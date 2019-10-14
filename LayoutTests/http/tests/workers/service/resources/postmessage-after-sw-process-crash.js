@@ -37,10 +37,20 @@ navigator.serviceWorker.addEventListener("message", function(event) {
     finishSWTest();
 });
 
-navigator.serviceWorker.register("resources/postmessage-after-sw-process-crash-worker.js", { }).then(function(registration) {
-    worker = registration.installing;
-    log("* Sending State to Service Worker");
-    worker.postMessage("SetState");
-    log("* Asking Service Worker if it received the state");
-    worker.postMessage("HasState");
-});
+async function doTest()
+{
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    navigator.serviceWorker.register("resources/postmessage-after-sw-process-crash-worker.js", { }).then(function(registration) {
+        worker = registration.installing;
+        log("* Sending State to Service Worker");
+        worker.postMessage("SetState");
+        log("* Asking Service Worker if it received the state");
+        worker.postMessage("HasState");
+    });
+}
+
+doTest();

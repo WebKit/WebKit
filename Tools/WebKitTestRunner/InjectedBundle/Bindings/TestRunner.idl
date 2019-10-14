@@ -366,6 +366,7 @@ interface TestRunner {
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
+    void setUseSeparateServiceWorkerProcess(boolean value);
 
     readonly attribute unsigned long serverTrustEvaluationCallbackCallsCount;
 

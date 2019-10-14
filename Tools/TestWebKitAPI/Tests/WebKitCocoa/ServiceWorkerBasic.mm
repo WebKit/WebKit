@@ -1243,7 +1243,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     done = false;
 
     // Make sure that loading the simple page did not start the service worker process.
-    EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
+    EXPECT_EQ(0u, webView.get().configuration.processPool._serviceWorkerProcessCount);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
@@ -1253,7 +1253,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     done = false;
 
     // Make sure that loading this page did start the service worker process.
-    EXPECT_EQ(3u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
+    EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1908,6 +1908,53 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     [webView2 loadRequest:request2];
 
     waitUntilServiceWorkerProcessCount(processPool, 2);
+}
+
+static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto* dataStore = dataStoreWithRegisteredServiceWorkerScheme(@"sw");
+
+    // Start with a clean slate data store
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto handler1 = adoptNS([[SWSchemes alloc] init]);
+    handler1->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    handler1->resources.set("sw://host2/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw://host2/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler1.get() forURLScheme:@"sw"];
+
+    auto *processPool = configuration.get().processPool;
+    [processPool _setUseSeparateServiceWorkerProcess: useSeparateServiceWorkerProcess];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+
+    [webView loadRequest:request];
+
+    waitUntilServiceWorkerProcessCount(processPool, 1);
+    return webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed;
+}
+
+TEST(ServiceWorkers, OutOfAndInProcessServiceWorker)
+{
+    bool useSeparateServiceWorkerProcess = false;
+    EXPECT_EQ(1u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
+
+    useSeparateServiceWorkerProcess = true;
+    EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess));
 }
 
 TEST(ServiceWorkers, ThrottleCrash)

@@ -124,6 +124,8 @@ WK_EXPORT void WKContextSyncLocalStorage(WKContextRef contextRef, void* context,
 typedef void (*WKContextClearLegacyPrivateBrowsingLocalStorageCallback)(void* functionContext);
 WK_EXPORT void WKContextClearLegacyPrivateBrowsingLocalStorage(WKContextRef contextRef, void* context, WKContextClearLegacyPrivateBrowsingLocalStorageCallback callback);
 
+WK_EXPORT void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef context, bool forceServiceWorkerProcess);
+
 #ifdef __cplusplus
 }
 #endif

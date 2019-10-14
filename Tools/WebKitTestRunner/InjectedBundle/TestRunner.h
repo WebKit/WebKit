@@ -465,6 +465,7 @@ public:
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
+    void setUseSeparateServiceWorkerProcess(bool);
 
     void removeAllSessionCredentials(JSValueRef);
     void callDidRemoveAllSessionCredentialsCallback();

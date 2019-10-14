@@ -95,7 +95,7 @@ private:
     void claimCompleted(uint64_t claimRequestIdentifier);
     void didFinishSkipWaiting(uint64_t callbackID);
     void setUserAgent(String&& userAgent);
-    NO_RETURN void terminateProcess();
+    void close();
     void setThrottleState(bool isThrottleable);
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;

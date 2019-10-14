@@ -1,3 +1,92 @@
+2019-10-14  youenn fablet  <youenn@apple.com>
+
+        Reuse existing web processes for running service workers
+        https://bugs.webkit.org/show_bug.cgi?id=202195
+
+        Reviewed by Chris Dumez.
+
+        When network process asks for a service worker context connection,
+        we now iterate through existing web processes and reuse one if both session
+        and registrable domain match.
+        We then ask the web process to create a context connection to the network process.
+
+        When network process no longer needs the connection, it instructs the UIProcess
+        that will update its state so that the web process is no longer considered as running
+        service workers.
+        UIProcess then instructs the web process to stop its service workers and its connection.
+
+        Later on, the same web process may be reused for running service workers in which case
+        a new connection will replace the stopped connection.
+
+        Similarly, on network process crash, all web process running service workers are updated
+        so that they are no longer considered as running service workers.
+
+        Add a boolean state to WebProcessPool to control whether creating a separate service worker process.
+
+        We no longer terminate the web process when stopping service workers or when network process crash.
+        We use the enableTermination/disableTermination at context connection start/stop time.
+        We consider that the context connection is similar to running a page in the process and creating/removing a page
+        calls disableTermination/enableTermination.
+
+        NetworkProcess is handling the management of service worker processes by checking for clients.
+        In case there is no client, the process is terminated.
+        This removes the need for the WebProcessPool service worker process timer.
+        This patch removes this timer.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::establishSWContextConnection):
+        (WebKit::NetworkConnectionToWebProcess::closeSWContextConnection):
+        (WebKit::NetworkConnectionToWebProcess::serverToContextConnectionNoLongerNeeded):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::~WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::messageSenderConnection const):
+        (WebKit::WebSWServerToContextConnection::connectionIsNoLongerNeeded):
+        (WebKit::WebSWServerToContextConnection::startFetch):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetUseSeparateServiceWorkerProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setUseSeparateServiceWorkerProcess:]):
+        (-[WKProcessPool _webPageContentProcessCount]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::workerContextConnectionNoLongerNeeded):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::removeFromServiceWorkerProcesses):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::terminateNetworkProcess):
+        (WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createForServiceWorkers):
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+        (WebKit::WebProcessProxy::disableServiceWorkers):
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isMatchingRegistrableDomain const):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::m_userAgent):
+        (WebKit::WebSWContextManagerConnection::terminateWorker):
+        (WebKit::WebSWContextManagerConnection::syncTerminateWorker):
+        (WebKit::WebSWContextManagerConnection::close):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::registerServiceWorkerClients):
+
 2019-10-12  Chris Dumez  <cdumez@apple.com>
 
         Back/Forward cache does not work after doing a favorite navigation
