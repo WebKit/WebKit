@@ -1,3 +1,15 @@
+2019-10-14  Russell Epstein  <russell_e@apple.com>
+
+        Unreviewed, rolling out r251081.
+
+        Broke macOS and iOS builds.
+
+        Reverted changeset:
+
+        "transform-box: content-box, stroke-box missing"
+        https://bugs.webkit.org/show_bug.cgi?id=201892
+        https://trac.webkit.org/changeset/251081
+
 2019-10-14  Eric Carlson  <eric.carlson@apple.com>
 
         [ Mac ] REGRESSION (r243033) Assertion failed: m_logger Layout Test imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html is a flaky crash
