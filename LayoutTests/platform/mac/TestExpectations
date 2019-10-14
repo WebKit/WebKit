@@ -1810,8 +1810,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.h
 
 webkit.org/b/19650 [ HighSierra+ ] accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
 
-webkit.org/b/196517 imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html [ Skip ]
-
 # Skip iOS-specific Pointer Events WPT tests.
 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]

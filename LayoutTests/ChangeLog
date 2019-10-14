@@ -1,3 +1,13 @@
+2019-10-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Mac ] REGRESSION (r243033) Assertion failed: m_logger Layout Test imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=196517
+        <rdar://problem/49540704>
+
+        Unreviewed, unskipping a passing test.
+
+        * platform/mac/TestExpectations: Unskip MediaStreamTrack-contentHint.html.
+
 2019-10-14  Truitt Savell  <tsavell@apple.com>
 
         Remove expectations for fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html
