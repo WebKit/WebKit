@@ -32,22 +32,26 @@
 
 namespace WebCore {
 
+class SharedBuffer;
+
 class StaticPasteboard final : public Pasteboard {
 public:
     StaticPasteboard();
+    ~StaticPasteboard();
 
     PasteboardCustomData takeCustomData();
 
     bool isStatic() const final { return true; }
 
     bool hasData() final;
-    Vector<String> typesSafeForBindings(const String&) final { return m_types; }
-    Vector<String> typesForLegacyUnsafeBindings() final { return m_types; }
+    Vector<String> typesSafeForBindings(const String&) final;
+    Vector<String> typesForLegacyUnsafeBindings() final;
     String readOrigin() final { return { }; }
     String readString(const String& type) final;
     String readStringInCustomData(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
+    void writeData(const String& type, Ref<SharedBuffer>&& data);
     void writeStringInCustomData(const String& type, const String& data);
     void clear() final;
     void clear(const String& type) final;
@@ -72,9 +76,7 @@ public:
 #endif
 
 private:
-    Vector<String> m_types;
-    HashMap<String, String> m_platformData;
-    HashMap<String, String> m_customData;
+    PasteboardCustomData m_customData;
 };
 
 }

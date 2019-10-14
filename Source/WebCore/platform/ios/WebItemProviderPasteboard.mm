@@ -462,7 +462,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     // FIXME: These ivars should be refactored to be Vector<RetainPtr<Type>> instead of generic NSArrays.
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _supportedTypeIdentifiers;
-    RetainPtr<WebItemProviderRegistrationInfoList> _stagedRegistrationInfoList;
+    RetainPtr<NSArray<WebItemProviderRegistrationInfoList *>> _stagedRegistrationInfoLists;
 
     Vector<RetainPtr<WebItemProviderLoadResult>> _loadResults;
 }
@@ -484,7 +484,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
         _changeCount = 0;
         _pendingOperationCount = 0;
         _supportedTypeIdentifiers = nil;
-        _stagedRegistrationInfoList = nil;
+        _stagedRegistrationInfoLists = nil;
         _loadResults = { };
     }
     return self;
@@ -853,16 +853,20 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     [_itemProviders enumerateObjectsUsingBlock:block];
 }
 
-- (void)stageRegistrationList:(nullable WebItemProviderRegistrationInfoList *)info
+- (void)stageRegistrationLists:(NSArray<WebItemProviderRegistrationInfoList *> *)lists
 {
-    _stagedRegistrationInfoList = info.numberOfItems ? info : nil;
+    ASSERT(lists.count);
+    _stagedRegistrationInfoLists = lists;
 }
 
-- (WebItemProviderRegistrationInfoList *)takeRegistrationList
+- (void)clearRegistrationLists
 {
-    auto stagedRegistrationInfoList = _stagedRegistrationInfoList;
-    _stagedRegistrationInfoList = nil;
-    return stagedRegistrationInfoList.autorelease();
+    _stagedRegistrationInfoLists = nil;
+}
+
+- (NSArray<WebItemProviderRegistrationInfoList *> *)takeRegistrationLists
+{
+    return _stagedRegistrationInfoLists.autorelease();
 }
 
 @end

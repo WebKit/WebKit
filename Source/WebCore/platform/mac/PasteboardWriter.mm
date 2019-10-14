@@ -118,7 +118,7 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
             [pasteboardItem setData:webContent->clientData[i]->createNSData().get() forType:toUTIUnlessAlreadyUTI(webContent->clientTypes[i]).get()];
 
         PasteboardCustomData customData;
-        customData.origin = webContent->contentOrigin;
+        customData.setOrigin(webContent->contentOrigin);
         [pasteboardItem setData:customData.createSharedBuffer()->createNSData().get() forType:toUTIUnlessAlreadyUTI(String(PasteboardCustomData::cocoaType())).get()];
     }
 

@@ -26,65 +26,66 @@
 #include "config.h"
 #include "StaticPasteboard.h"
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 
-StaticPasteboard::StaticPasteboard()
-{
-}
+StaticPasteboard::StaticPasteboard() = default;
+StaticPasteboard::~StaticPasteboard() = default;
 
 bool StaticPasteboard::hasData()
 {
-    return !m_platformData.isEmpty() || !m_customData.isEmpty();
+    return m_customData.hasData();
+}
+
+Vector<String> StaticPasteboard::typesSafeForBindings(const String&)
+{
+    return m_customData.orderedTypes();
+}
+
+Vector<String> StaticPasteboard::typesForLegacyUnsafeBindings()
+{
+    return m_customData.orderedTypes();
 }
 
 String StaticPasteboard::readString(const String& type)
 {
-    return m_platformData.get(type);
+    return m_customData.readString(type);
 }
 
 String StaticPasteboard::readStringInCustomData(const String& type)
 {
-    return m_customData.get(type);
-}
-
-static void updateTypes(Vector<String>& types, String type, bool moveToEnd)
-{
-    if (moveToEnd)
-        types.removeFirst(type);
-    ASSERT(!types.contains(type));
-    types.append(type);
+    return m_customData.readStringInCustomData(type);
 }
 
 void StaticPasteboard::writeString(const String& type, const String& value)
 {
-    bool typeWasAlreadyPresent = !m_platformData.set(type, value).isNewEntry || m_customData.contains(type);
-    updateTypes(m_types, type, typeWasAlreadyPresent);
+    m_customData.writeString(type, value);
+}
+
+void StaticPasteboard::writeData(const String& type, Ref<SharedBuffer>&& data)
+{
+    m_customData.writeData(type, WTFMove(data));
 }
 
 void StaticPasteboard::writeStringInCustomData(const String& type, const String& value)
 {
-    bool typeWasAlreadyPresent = !m_customData.set(type, value).isNewEntry || m_platformData.contains(type);
-    updateTypes(m_types, type, typeWasAlreadyPresent);
+    m_customData.writeStringInCustomData(type, value);
 }
 
 void StaticPasteboard::clear()
 {
     m_customData.clear();
-    m_platformData.clear();
-    m_types.clear();
 }
 
 void StaticPasteboard::clear(const String& type)
 {
-    if (!m_platformData.remove(type) && !m_customData.remove(type))
-        return;
-    m_types.removeFirst(type);
-    ASSERT(!m_types.contains(type));
+    m_customData.clear(type);
 }
 
 PasteboardCustomData StaticPasteboard::takeCustomData()
 {
-    return { { }, WTFMove(m_types), WTFMove(m_platformData), WTFMove(m_customData) };
+    return std::exchange(m_customData, { });
 }
 
 }

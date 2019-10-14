@@ -4318,7 +4318,7 @@ void WebViewImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String& o
 
     NSData *data = [NSPasteboard.generalPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType())];
     auto buffer = WebCore::SharedBuffer::create(data);
-    if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin == originIdentifier) {
+    if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
         completion(WebCore::DOMPasteAccessResponse::GrantedForGesture);
         return;
     }

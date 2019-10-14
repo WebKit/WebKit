@@ -94,7 +94,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
     client()->getClientPasteboardDataForRange(elementRange.ptr(), outTypes, outData);
 
     outTypes.append(PasteboardCustomData::cocoaType());
-    outData.append(PasteboardCustomData { document.originIdentifierForPasteboard(), { }, { }, { } }.createSharedBuffer());
+    outData.append(PasteboardCustomData { document.originIdentifierForPasteboard(), { } }.createSharedBuffer());
 
     if (auto archive = LegacyWebArchive::create(elementRange.ptr())) {
         if (auto webArchiveData = archive->rawDataRepresentation()) {

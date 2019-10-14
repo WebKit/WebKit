@@ -1636,28 +1636,80 @@ bool ArgumentCoder<DataListSuggestionInformation>::decode(Decoder& decoder, WebC
 }
 #endif
 
+template<> struct ArgumentCoder<PasteboardCustomData::Entry> {
+    static void encode(Encoder&, const PasteboardCustomData::Entry&);
+    static bool decode(Decoder&, PasteboardCustomData::Entry&);
+};
+
+void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const PasteboardCustomData::Entry& data)
+{
+    encoder << data.type << data.customData;
+
+    auto& platformData = data.platformData;
+    bool hasString = WTF::holds_alternative<String>(platformData);
+    encoder << hasString;
+    if (hasString)
+        encoder << WTF::get<String>(platformData);
+
+    bool hasBuffer = WTF::holds_alternative<Ref<SharedBuffer>>(platformData);
+    encoder << hasBuffer;
+    if (hasBuffer)
+        encodeSharedBuffer(encoder, WTF::get<Ref<SharedBuffer>>(platformData).ptr());
+}
+
+bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
+{
+    if (!decoder.decode(data.type))
+        return false;
+
+    if (!decoder.decode(data.customData))
+        return false;
+
+    bool hasString;
+    if (!decoder.decode(hasString))
+        return false;
+
+    if (hasString) {
+        String value;
+        if (!decoder.decode(value))
+            return false;
+        data.platformData = { WTFMove(value) };
+    }
+
+    bool hasBuffer;
+    if (!decoder.decode(hasBuffer))
+        return false;
+
+    if (hasString && hasBuffer)
+        return false;
+
+    if (hasBuffer) {
+        RefPtr<SharedBuffer> value;
+        if (!decodeSharedBuffer(decoder, value))
+            return false;
+        data.platformData = { value.releaseNonNull() };
+    }
+
+    return true;
+}
+
 void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
 {
-    encoder << data.origin;
-    encoder << data.orderedTypes;
-    encoder << data.platformData;
-    encoder << data.sameOriginCustomData;
+    encoder << data.origin();
+    encoder << data.data();
 }
 
 bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCustomData& data)
 {
-    if (!decoder.decode(data.origin))
+    String origin;
+    if (!decoder.decode(origin))
         return false;
 
-    if (!decoder.decode(data.orderedTypes))
+    Vector<PasteboardCustomData::Entry> items;
+    if (!decoder.decode(items))
         return false;
 
-    if (!decoder.decode(data.platformData))
-        return false;
-
-    if (!decoder.decode(data.sameOriginCustomData))
-        return false;
-
+    data = PasteboardCustomData(WTFMove(origin), WTFMove(items));
     return true;
 }
 

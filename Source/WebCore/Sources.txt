@@ -1725,6 +1725,7 @@ platform/MIMETypeRegistry.cpp
 platform/MainThreadSharedTimer.cpp
 platform/NotImplemented.cpp
 platform/Pasteboard.cpp
+platform/PasteboardCustomData.cpp
 platform/PasteboardWriterData.cpp
 platform/PlatformKeyboardEvent.cpp
 platform/PlatformSpeechSynthesisUtterance.cpp

@@ -426,15 +426,18 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
     ASSERT(is<StaticPasteboard>(*m_pasteboard) && !is<StaticPasteboard>(nativePasteboard));
     PasteboardCustomData customData = downcast<StaticPasteboard>(*m_pasteboard).takeCustomData();
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
-        customData.origin = m_originIdentifier;
+        customData.setOrigin(m_originIdentifier);
         nativePasteboard.writeCustomData(customData);
         return;
     }
 
-    for (auto& entry : customData.platformData)
-        nativePasteboard.writeString(entry.key, entry.value);
-    for (auto& entry : customData.sameOriginCustomData)
-        nativePasteboard.writeString(entry.key, entry.value);
+    customData.forEachPlatformString([&] (auto& type, auto& string) {
+        nativePasteboard.writeString(type, string);
+    });
+
+    customData.forEachCustomString([&] (auto& type, auto& string) {
+        nativePasteboard.writeString(type, string);
+    });
 }
 
 #if !ENABLE(DRAG_SUPPORT)

@@ -30,8 +30,6 @@
 #include "PlatformStrategies.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include <wtf/URLParser.h>
-#include <wtf/persistence/PersistentCoders.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -49,40 +47,6 @@ bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlS
 {
     URL url({ }, urlString);
     return url.protocolIsInHTTPFamily() || url.protocolIsBlob() || url.protocolIsData();
-}
-
-Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const
-{
-    const static unsigned currentCustomDataSerializationVersion = 1;
-
-    WTF::Persistence::Encoder encoder;
-    encoder << currentCustomDataSerializationVersion;
-    encoder << origin;
-    encoder << sameOriginCustomData;
-    encoder << orderedTypes;
-    return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
-}
-
-PasteboardCustomData PasteboardCustomData::fromSharedBuffer(const SharedBuffer& buffer)
-{
-    const static unsigned maxSupportedDataSerializationVersionNumber = 1;
-
-    PasteboardCustomData result;
-    WTF::Persistence::Decoder decoder { reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size() };
-    unsigned version;
-    if (!decoder.decode(version) || version > maxSupportedDataSerializationVersionNumber)
-        return { };
-
-    if (!decoder.decode(result.origin))
-        return { };
-
-    if (!decoder.decode(result.sameOriginCustomData))
-        return { };
-
-    if (!decoder.decode(result.orderedTypes))
-        return { };
-
-    return result;
 }
 
 #if !PLATFORM(COCOA)

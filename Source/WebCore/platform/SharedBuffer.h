@@ -57,6 +57,12 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
 #endif
 
+namespace WTF {
+namespace Persistence {
+class Decoder;
+}
+}
+
 namespace WebCore {
 
 class SharedBufferDataView;
@@ -189,6 +195,8 @@ public:
     SharedBufferDataView getSomeData(size_t position) const;
 
     void hintMemoryNotNeededSoon() const;
+
+    WTF::Persistence::Decoder decoder() const;
 
     bool operator==(const SharedBuffer&) const;
     bool operator!=(const SharedBuffer& other) const { return !operator==(other); }

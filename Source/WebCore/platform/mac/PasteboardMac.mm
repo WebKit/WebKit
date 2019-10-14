@@ -161,7 +161,7 @@ void Pasteboard::write(const PasteboardWebContent& content)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, legacyStringPasteboardType(), m_pasteboardName);
 
     PasteboardCustomData data;
-    data.origin = content.contentOrigin;
+    data.setOrigin(content.contentOrigin);
     m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(data.createSharedBuffer().ptr(), PasteboardCustomData::cocoaType(), m_pasteboardName);
 
 }

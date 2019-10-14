@@ -1,3 +1,158 @@
+2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support writing multiple PasteboardCustomData with SharedBuffers to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=202851
+
+        Reviewed by Darin Adler.
+
+        This patch refactors some logic around WebCore::PasteboardCustomData, in preparation for implementing the async
+        clipboard API. There are two main goals of this refactoring:
+
+        1. Enable writing multiple items (each backed by PasteboardCustomData) to the platform pasteboard.
+        2. Enable writing platform data in the form of SharedBuffers to the platform pasteboard.
+
+        See below for more details; no tests, as there is no change in behavior yet.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Move PasteboardCustomData out of Pasteboard.h and into its own file.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::commitToPasteboard):
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment):
+        * platform/Pasteboard.cpp:
+        (WebCore::PasteboardCustomData::createSharedBuffer const): Deleted.
+        (WebCore::PasteboardCustomData::fromSharedBuffer): Deleted.
+
+        Moved these method implementations to PasteboardCustomData.cpp.
+
+        * platform/Pasteboard.h:
+
+        Refactor PasteboardCustomData so that its member variables are now private, and encapsulated behind methods
+        Additionally, make it so that the only way to set data on PasteboardCustomData is to use the writeString,
+        writeData, and writeStringInCustomData methods, which ensure that the PasteboardCustomData is always in a
+        consistent state.
+
+        * platform/PasteboardCustomData.cpp: Added.
+        (WebCore::copyPlatformData):
+        (WebCore::PasteboardCustomData::Entry::Entry):
+        (WebCore::PasteboardCustomData::Entry::operator=):
+
+        Refactor the implementation of PasteboardCustomData, so that it contains a list of PasteboardCustomData entries
+        instead of individual Vectors and HashMaps.
+
+        (WebCore::PasteboardCustomData::PasteboardCustomData):
+        (WebCore::PasteboardCustomData::createSharedBuffer const):
+        (WebCore::PasteboardCustomData::fromSharedBuffer):
+        (WebCore::PasteboardCustomData::writeString):
+        (WebCore::PasteboardCustomData::writeData):
+        (WebCore::PasteboardCustomData::writeStringInCustomData):
+        (WebCore::PasteboardCustomData::addOrMoveEntryToEnd):
+
+        Move logic from StaticPasteboard into PasteboardCustomData, and refactor these methods to handle
+        Vector<PasteboardCustomData::Entry>.
+
+        (WebCore::PasteboardCustomData::clear):
+        (WebCore::PasteboardCustomData::operator=):
+        (WebCore::PasteboardCustomData::orderedTypes const):
+        (WebCore::PasteboardCustomData::hasData const):
+        (WebCore::PasteboardCustomData::hasSameOriginCustomData const):
+        (WebCore::PasteboardCustomData::sameOriginCustomStringData const):
+        (WebCore::PasteboardCustomData::readBuffer const):
+        (WebCore::PasteboardCustomData::readString const):
+        (WebCore::PasteboardCustomData::readStringInCustomData const):
+        (WebCore::PasteboardCustomData::forEachType const):
+        (WebCore::PasteboardCustomData::forEachPlatformString const):
+        (WebCore::PasteboardCustomData::forEachCustomString const):
+        (WebCore::PasteboardCustomData::forEachPlatformStringOrBuffer const):
+
+        Moved these method implementations from StaticPasteboard to PasteboardCustomData, and also introduced some new
+        methods to help iterate through types and data.
+
+        * platform/PasteboardCustomData.h: Added.
+        (WebCore::PasteboardCustomData::origin const):
+        (WebCore::PasteboardCustomData::setOrigin):
+        (WebCore::PasteboardCustomData::data const):
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::decoder const):
+        * platform/SharedBuffer.h:
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::hasData):
+        (WebCore::StaticPasteboard::typesSafeForBindings):
+        (WebCore::StaticPasteboard::typesForLegacyUnsafeBindings):
+        (WebCore::StaticPasteboard::readString):
+        (WebCore::StaticPasteboard::readStringInCustomData):
+        (WebCore::StaticPasteboard::writeString):
+        (WebCore::StaticPasteboard::writeData):
+        (WebCore::StaticPasteboard::writeStringInCustomData):
+        (WebCore::StaticPasteboard::clear):
+        (WebCore::StaticPasteboard::takeCustomData):
+        (WebCore::StaticPasteboard::StaticPasteboard): Deleted.
+
+        Refactor StaticPasteboard to now contain a PasteboardCustomData; additionally, adjust several methods in
+        StaticPasteboard to simply call into PasteboardCustomData to write, read, or clear data.
+
+        (WebCore::updateTypes): Deleted.
+        * platform/StaticPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::readStringInCustomData):
+        (WebCore::Pasteboard::readOrigin):
+        (WebCore::PasteboardCustomData::cocoaType): Deleted.
+
+        Moved the implementation of PasteboardCustomData::cocoaType from PasteboardCocoa.mm to
+        PasteboardCustomDataCocoa.mm.
+
+        * platform/cocoa/PasteboardCustomDataCocoa.mm: Added.
+        (WebCore::PasteboardCustomData::cocoaType):
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::changeCount const):
+        (WebCore::registerItemsToPasteboard):
+        (WebCore::registerItemToPasteboard):
+        (WebCore::PlatformPasteboard::write):
+
+        Support writing multiple PasteboardCustomData objects to the platform pasteboard on iOS, by generating
+        NSItemProviders for each one. This refactors the existing `registerItemToPasteboard` helper to handle multiple
+        registration lists, renames it to `registerItemsToPasteboard` (plural), and then reimplements
+        `registerItemToPasteboard` in terms of `registerItemsToPasteboard`.
+
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::createItemProviderRegistrationList):
+
+        Adjust these to use getters on PasteboardCustomData instead of accessing the member variables directly.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard stageRegistrationLists:]):
+        (-[WebItemProviderPasteboard clearRegistrationLists]):
+        (-[WebItemProviderPasteboard takeRegistrationLists]):
+
+        Refactor registration list staging on WebItemProviderPasteboard to support multiple registration lists, each
+        representing a single item provider.
+
+        (-[WebItemProviderPasteboard stageRegistrationList:]): Deleted.
+        (-[WebItemProviderPasteboard takeRegistrationList]): Deleted.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+        * platform/mac/PasteboardWriter.mm:
+        (WebCore::createPasteboardWriter):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+
+        Support writing multiple PasteboardCustomData objects to the platform pasteboard on macOS, by creating and
+        setting NSPasteboardItems for each custom data. This means that instead of using legacy macOS pasteboard types,
+        we need to use the "modern" NSPasteboardTypes when writing each item. This is because NSPasteboardItem quietly
+        fails when attempting to set data for a legacy pasteboard type.
+
+        (WebCore::createPasteboardItem):
+
 2019-10-14  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251081.

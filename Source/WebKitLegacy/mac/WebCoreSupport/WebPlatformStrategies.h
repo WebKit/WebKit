@@ -29,9 +29,9 @@
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 
+class PasteboardCustomData;
 struct PasteboardImage;
 struct PasteboardWebContent;
-struct PasteboardCustomData;
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::PasteboardStrategy {
 public:

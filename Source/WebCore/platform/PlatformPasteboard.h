@@ -47,9 +47,9 @@ struct wpe_pasteboard;
 namespace WebCore {
 
 class Color;
+class PasteboardCustomData;
 class SelectionData;
 class SharedBuffer;
-struct PasteboardCustomData;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
@@ -96,7 +96,7 @@ public:
     WEBCORE_EXPORT URL readURL(size_t index, String& title) const;
     WEBCORE_EXPORT int count() const;
     WEBCORE_EXPORT int numberOfFiles() const;
-
+    WEBCORE_EXPORT void write(const Vector<PasteboardCustomData>&);
     WEBCORE_EXPORT long write(const PasteboardCustomData&);
     WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
 

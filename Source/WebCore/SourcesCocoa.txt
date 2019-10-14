@@ -198,6 +198,7 @@ platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/cocoa/ParentalControlsContentFilter.mm
 platform/cocoa/PasteboardCocoa.mm
+platform/cocoa/PasteboardCustomDataCocoa.mm
 platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm

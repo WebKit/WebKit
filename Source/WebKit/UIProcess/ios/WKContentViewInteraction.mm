@@ -3233,7 +3233,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         NSArray *allCustomPasteboardData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType()) inItemSet:indices];
         for (NSData *data in allCustomPasteboardData) {
             auto buffer = WebCore::SharedBuffer::create(data);
-            if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin == focusedDocumentOrigin)
+            if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == focusedDocumentOrigin)
                 return YES;
         }
         return NO;
@@ -5731,7 +5731,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
             continue;
 
         auto buffer = WebCore::SharedBuffer::create(data);
-        if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin != originIdentifier)
+        if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() != originIdentifier)
             return NO;
 
         foundAtLeastOneMatchingIdentifier = YES;
@@ -6706,15 +6706,15 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     if (!completion)
         return;
 
-    WebItemProviderRegistrationInfoList *registrationList = [[WebItemProviderPasteboard sharedInstance] takeRegistrationList];
-    if (!added || !registrationList || !_dragDropInteractionState.hasStagedDragSource()) {
+    auto *registrationLists = [[WebItemProviderPasteboard sharedInstance] takeRegistrationLists];
+    if (!added || ![registrationLists count] || !_dragDropInteractionState.hasStagedDragSource()) {
         _dragDropInteractionState.clearStagedDragSource();
         completion(@[ ]);
         return;
     }
 
     auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
-    NSArray *dragItemsToAdd = [self _itemsForBeginningOrAddingToSessionWithRegistrationList:registrationList stagedDragSource:stagedDragSource];
+    NSArray *dragItemsToAdd = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
 
     RELEASE_LOG(DragAndDrop, "Drag session: %p adding %tu items", _dragDropInteractionState.dragSession(), dragItemsToAdd.count);
     _dragDropInteractionState.clearStagedDragSource(dragItemsToAdd.count ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);
@@ -6793,7 +6793,7 @@ static UIDropOperation dropOperationForWebCoreDragOperation(WebCore::DragOperati
         [[WebItemProviderPasteboard sharedInstance] setItemProviders:nil];
     }
 
-    [[WebItemProviderPasteboard sharedInstance] stageRegistrationList:nil];
+    [[WebItemProviderPasteboard sharedInstance] clearRegistrationLists];
     [self _restoreCalloutBarIfNeeded];
 
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
@@ -6960,7 +6960,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     WebItemProviderPasteboard *pasteboard = [WebItemProviderPasteboard sharedInstance];
     pasteboard.itemProviders = @[ [registrationList itemProvider] ];
-    [pasteboard stageRegistrationList:registrationList.get()];
+    [pasteboard stageRegistrationLists:@[ registrationList.get() ]];
 }
 
 - (WKDragDestinationAction)_dragDestinationActionForDropSession:(id <UIDropSession>)session
@@ -6999,26 +6999,38 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _shouldRestoreCalloutBarAfterDrop = NO;
 }
 
-- (NSArray<UIDragItem *> *)_itemsForBeginningOrAddingToSessionWithRegistrationList:(WebItemProviderRegistrationInfoList *)registrationList stagedDragSource:(const WebKit::DragSourceState&)stagedDragSource
+- (NSArray<UIDragItem *> *)_itemsForBeginningOrAddingToSessionWithRegistrationLists:(NSArray<WebItemProviderRegistrationInfoList *> *)registrationLists stagedDragSource:(const WebKit::DragSourceState&)stagedDragSource
 {
-    NSItemProvider *defaultItemProvider = registrationList.itemProvider;
-    if (!defaultItemProvider)
+    if (!registrationLists.count)
         return @[ ];
 
-    NSArray *adjustedItemProviders;
+    NSMutableArray *adjustedItemProviders = [NSMutableArray array];
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:)]) {
-        auto representingObjects = adoptNS([[NSMutableArray alloc] init]);
-        auto additionalData = adoptNS([[NSMutableDictionary alloc] init]);
-        [registrationList enumerateItems:[representingObjects, additionalData] (id <WebItemProviderRegistrar> item, NSUInteger) {
-            if ([item respondsToSelector:@selector(representingObjectForClient)])
-                [representingObjects addObject:item.representingObjectForClient];
-            if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
-                [additionalData setObject:item.dataForClient forKey:item.typeIdentifierForClient];
-        }];
-        adjustedItemProviders = [uiDelegate _webView:_webView adjustedDataInteractionItemProvidersForItemProvider:defaultItemProvider representingObjects:representingObjects.get() additionalData:additionalData.get()];
-    } else
-        adjustedItemProviders = @[ defaultItemProvider ];
+        // FIXME: We should consider a new UI delegate hook that accepts a list of item providers, so we don't need to invoke this delegate method repeatedly for multiple items.
+        for (WebItemProviderRegistrationInfoList *list in registrationLists) {
+            NSItemProvider *defaultItemProvider = list.itemProvider;
+            if (!defaultItemProvider)
+                continue;
+
+            auto representingObjects = adoptNS([[NSMutableArray alloc] init]);
+            auto additionalData = adoptNS([[NSMutableDictionary alloc] init]);
+            [list enumerateItems:[representingObjects, additionalData] (id <WebItemProviderRegistrar> item, NSUInteger) {
+                if ([item respondsToSelector:@selector(representingObjectForClient)])
+                    [representingObjects addObject:item.representingObjectForClient];
+                if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
+                    [additionalData setObject:item.dataForClient forKey:item.typeIdentifierForClient];
+            }];
+            NSArray *adjustedItems = [uiDelegate _webView:_webView adjustedDataInteractionItemProvidersForItemProvider:defaultItemProvider representingObjects:representingObjects.get() additionalData:additionalData.get()];
+            if (adjustedItems.count)
+                [adjustedItemProviders addObjectsFromArray:adjustedItems];
+        }
+    } else {
+        for (WebItemProviderRegistrationInfoList *list in registrationLists) {
+            if (auto *defaultItemProvider = list.itemProvider)
+                [adjustedItemProviders addObject:defaultItemProvider];
+        }
+    }
 
     NSMutableArray *dragItems = [NSMutableArray arrayWithCapacity:adjustedItemProviders.count];
     for (NSItemProvider *itemProvider in adjustedItemProviders) {
@@ -7261,8 +7273,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     }
 
     auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
-    WebItemProviderRegistrationInfoList *registrationList = [[WebItemProviderPasteboard sharedInstance] takeRegistrationList];
-    NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationList:registrationList stagedDragSource:stagedDragSource];
+    auto *registrationLists = [[WebItemProviderPasteboard sharedInstance] takeRegistrationLists];
+    NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
     if (![dragItems count])
         _page->dragCancelled();
 

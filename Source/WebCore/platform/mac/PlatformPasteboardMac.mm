@@ -198,8 +198,8 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     ListHashSet<String> domPasteboardTypes;
     if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
-        if (data.origin == origin) {
-            for (auto& type : data.orderedTypes)
+        if (data.origin() == origin) {
+            for (auto& type : data.orderedTypes())
                 domPasteboardTypes.add(type);
         }
     }
@@ -225,21 +225,24 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 long PlatformPasteboard::write(const PasteboardCustomData& data)
 {
     NSMutableArray *types = [NSMutableArray array];
-    for (auto& entry : data.platformData)
-        [types addObject:platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(entry.key)];
-    if (data.sameOriginCustomData.size())
+    data.forEachType([&] (auto& type) {
+        [types addObject:platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type)];
+    });
+
+    bool hasSameOriginCustomData = data.hasSameOriginCustomData();
+    if (hasSameOriginCustomData)
         [types addObject:@(PasteboardCustomData::cocoaType())];
 
     [m_pasteboard declareTypes:types owner:nil];
 
-    for (auto& entry : data.platformData) {
-        auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(entry.key);
+    data.forEachPlatformString([&] (auto& type, auto& data) {
+        auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type);
         ASSERT(!platformType.isEmpty());
         if (!platformType.isEmpty())
-            [m_pasteboard setString:entry.value forType:platformType];
-    }
+            [m_pasteboard setString:data forType:platformType];
+    });
 
-    if (data.sameOriginCustomData.size()) {
+    if (hasSameOriginCustomData) {
         if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
             [m_pasteboard setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
     }
@@ -461,6 +464,43 @@ URL PlatformPasteboard::readURL(size_t index, String& title) const
 int PlatformPasteboard::count() const
 {
     return [m_pasteboard pasteboardItems].count;
+}
+
+static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomData& data)
+{
+    auto item = adoptNS([[NSPasteboardItem alloc] init]);
+
+    if (data.hasSameOriginCustomData() || !data.origin().isEmpty()) {
+        if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
+            [item setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
+    }
+
+    data.forEachPlatformStringOrBuffer([&] (auto& type, auto& stringOrBuffer) {
+        auto platformType = modernPasteboardTypeForWebSafeMIMEType(type);
+        if (!platformType)
+            return;
+
+        if (WTF::holds_alternative<String>(stringOrBuffer)) {
+            [item setString:WTF::get<String>(stringOrBuffer) forType:platformType];
+            return;
+        }
+
+        if (WTF::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
+            if (auto platformData = WTF::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
+                [item setData:platformData.get() forType:platformType];
+        }
+    });
+
+    return item;
+}
+
+void PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+{
+    auto platformItems = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
+    for (auto& data : itemData)
+        [platformItems addObject:createPasteboardItem(data).get()];
+    [m_pasteboard clearContents];
+    [m_pasteboard writeObjects:platformItems.get()];
 }
 
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)

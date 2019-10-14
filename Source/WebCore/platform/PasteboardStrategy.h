@@ -31,13 +31,13 @@
 namespace WebCore {
 
 class Color;
+class PasteboardCustomData;
 class SelectionData;
 class SharedBuffer;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
 struct PasteboardWebContent;
-struct PasteboardCustomData;
 
 class PasteboardStrategy {
 public:

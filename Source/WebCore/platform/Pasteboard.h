@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DragImage.h"
+#include "PasteboardCustomData.h"
 #include "PasteboardItemInfo.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -159,21 +160,6 @@ struct PasteboardFileReader {
     virtual ~PasteboardFileReader() = default;
     virtual void readFilename(const String&) = 0;
     virtual void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) = 0;
-};
-
-// FIXME: We need to ensure that the contents of sameOriginCustomData are not accessible across different origins.
-struct PasteboardCustomData {
-    String origin;
-    Vector<String> orderedTypes;
-    HashMap<String, String> platformData;
-    HashMap<String, String> sameOriginCustomData;
-
-    WEBCORE_EXPORT Ref<SharedBuffer> createSharedBuffer() const;
-    WEBCORE_EXPORT static PasteboardCustomData fromSharedBuffer(const SharedBuffer&);
-
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT static const char* cocoaType();
-#endif
 };
 
 class Pasteboard {

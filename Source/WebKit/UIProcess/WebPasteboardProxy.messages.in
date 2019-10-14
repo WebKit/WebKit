@@ -29,7 +29,7 @@ messages -> WebPasteboardProxy {
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
 #endif
 
-    WriteCustomData(struct WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount) Synchronous
+    WriteCustomData(WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount) Synchronous
     TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous
     AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo) Synchronous
     InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info) Synchronous

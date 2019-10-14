@@ -266,7 +266,7 @@ long PlatformPasteboard::setStringForType(const String&, const String&)
 
 long PlatformPasteboard::changeCount() const
 {
-    return [(id<AbstractPasteboard>)m_pasteboard.get() changeCount];
+    return [m_pasteboard changeCount];
 }
 
 String PlatformPasteboard::uniqueName()
@@ -292,29 +292,41 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
 static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard type";
 
-static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
+static void registerItemsToPasteboard(NSArray<WebItemProviderRegistrationInfoList *> *itemLists, id <AbstractPasteboard> pasteboard)
 {
 #if PLATFORM(MACCATALYST)
     // In macCatalyst, -[UIPasteboard setItemProviders:] is not yet supported, so we fall back to setting an item dictionary when
     // populating the pasteboard upon copy.
     if ([pasteboard isKindOfClass:PAL::getUIPasteboardClass()]) {
-        auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-        [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
-            if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
-                [itemDictionary setObject:item.dataForClient forKey:item.typeIdentifierForClient];
-        }];
-        [pasteboard setItems:@[ itemDictionary.get() ]];
+        auto itemDictionaries = adoptNS([[NSMutableArray alloc] initWithCapacity:itemLists.count]);
+        for (WebItemProviderRegistrationInfoList *representationsToRegister in itemLists) {
+            auto itemDictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:representationsToRegister.numberOfItems]);
+            [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
+                if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
+                    [itemDictionary setObject:item.dataForClient forKey:item.typeIdentifierForClient];
+            }];
+            [itemDictionaries addObject:itemDictionary.get()];
+        }
+        [pasteboard setItems:itemDictionaries.get()];
         return;
     }
 #endif // PLATFORM(MACCATALYST)
 
-    if (NSItemProvider *itemProvider = representationsToRegister.itemProvider)
-        [pasteboard setItemProviders:@[ itemProvider ]];
-    else
-        [pasteboard setItemProviders:@[ ]];
+    auto itemProviders = adoptNS([[NSMutableArray alloc] initWithCapacity:itemLists.count]);
+    for (WebItemProviderRegistrationInfoList *representationsToRegister in itemLists) {
+        if (auto *itemProvider = representationsToRegister.itemProvider)
+            [itemProviders addObject:itemProvider];
+    }
 
-    if ([pasteboard respondsToSelector:@selector(stageRegistrationList:)])
-        [pasteboard stageRegistrationList:representationsToRegister];
+    [pasteboard setItemProviders:itemProviders.get()];
+
+    if ([pasteboard respondsToSelector:@selector(stageRegistrationLists:)])
+        [pasteboard stageRegistrationLists:itemLists];
+}
+
+static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
+{
+    registerItemsToPasteboard(@[ representationsToRegister ], pasteboard);
 }
 
 long PlatformPasteboard::setColor(const Color& color)
@@ -393,7 +405,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         addRepresentationsForPlainText(representationsToRegister.get(), content.dataInStringFormat);
 
     PasteboardCustomData customData;
-    customData.origin = content.contentOrigin;
+    customData.setOrigin(content.contentOrigin);
     [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType())];
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
@@ -516,8 +528,8 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 
     if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
-        if (data.origin == origin) {
-            for (auto& type : data.orderedTypes)
+        if (data.origin() == origin) {
+            for (auto& type : data.orderedTypes())
                 domPasteboardTypes.add(type);
         }
     }
@@ -548,12 +560,12 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     return copyToVector(domPasteboardTypes);
 }
 
-long PlatformPasteboard::write(const PasteboardCustomData& data)
+static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistrationList(const PasteboardCustomData& data)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
     [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
-    if (data.sameOriginCustomData.size()) {
+    if (data.hasSameOriginCustomData() || !data.origin().isEmpty()) {
         if (auto serializedSharedBuffer = data.createSharedBuffer()->createNSData()) {
             // We stash the list of supplied pasteboard types in teamData here for compatibility with drag and drop.
             // Since the contents of item providers cannot be loaded prior to drop, but the pasteboard types are
@@ -562,29 +574,38 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
             // all of the custom types. We use the teamData property, available on NSItemProvider on iOS, to store
             // this information, since the contents of teamData are immediately available prior to the drop.
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
-            for (auto& type : data.orderedTypes)
+            for (auto& type : data.orderedTypes())
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:securelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray })];
+            [representationsToRegister setTeamData:securelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : typesAsNSArray })];
             [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
         }
     }
 
-    for (auto& type : data.orderedTypes) {
-        NSString *stringValue = data.platformData.get(type);
+    data.forEachPlatformString([&] (auto& type, auto& value) {
+        NSString *stringValue = value;
         if (!stringValue.length)
-            continue;
+            return;
 
-        auto cocoaType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type).createCFString();
+        auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type).createCFString();
         if (UTTypeConformsTo(cocoaType.get(), kUTTypeURL))
             [representationsToRegister addRepresentingObject:[NSURL URLWithString:stringValue]];
         else if (UTTypeConformsTo(cocoaType.get(), kUTTypePlainText))
             [representationsToRegister addRepresentingObject:stringValue];
         else
             [representationsToRegister addData:[stringValue dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)cocoaType.get()];
-    }
+    });
 
-    registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
-    return [(id<AbstractPasteboard>)m_pasteboard.get() changeCount];
+    return representationsToRegister;
+}
+
+void PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+{
+    auto registrationLists = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
+    for (auto& data : itemData) {
+        if (auto itemList = createItemProviderRegistrationList(data))
+            [registrationLists addObject:itemList.get()];
+    }
+    registerItemsToPasteboard(registrationLists.get(), m_pasteboard.get());
 }
 
 #else
@@ -620,9 +641,8 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-long PlatformPasteboard::write(const PasteboardCustomData&)
+void PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
 {
-    return 0;
 }
 
 #endif
@@ -719,6 +739,12 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
         [typesArray addObject:(NSString *)type];
 
     [m_pasteboard updateSupportedTypeIdentifiers:typesArray];
+}
+
+long PlatformPasteboard::write(const PasteboardCustomData& data)
+{
+    write(Vector<PasteboardCustomData> { data });
+    return [m_pasteboard changeCount];
 }
 
 }
