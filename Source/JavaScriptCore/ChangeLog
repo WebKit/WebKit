@@ -1,3 +1,45 @@
+2019-10-14  Saam Barati  <sbarati@apple.com>
+
+        Canonicalize how we prepare the prototype chain for inline caching
+        https://bugs.webkit.org/show_bug.cgi?id=202827
+        <rdar://problem/56193919>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch canonicalizes how we prepare the prototype chain for caching. Both
+        in the poly proto chain, and the generateConditions*, we were flattening
+        dictionaries as we walk the prototype chain. We now unify that into one
+        function called `preparePrototypeChainForCaching`. In that, we flatten
+        dictionaries as we traverse the prototype chain, and note if any objects
+        are poly proto.
+        
+        My patch in r250540 made it so we now flatten uncacheable dictionaries (this
+        was the intention all along, but it was a perf bug that we didn't do this). That
+        revealed that the inline caching code could use a stale PropertyOffset when
+        flattening an uncacheable dictionary. This patch makes it so we universally
+        try just defer caching to later if we encounter a situation where we flatten
+        a dictionary that could be a property holder.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPrototypeEquivalenceConcurrently):
+        (JSC::generateConditionsForPropertyMissConcurrently):
+        (JSC::generateConditionsForPropertySetterMissConcurrently):
+        (JSC::preparePrototypeChainForCaching):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * bytecode/PolyProtoAccessChain.cpp:
+        (JSC::PolyProtoAccessChain::create):
+        * bytecode/PolyProtoAccessChain.h:
+        (JSC::PolyProtoAccessChain::slotBaseStructure const):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+        (JSC::tryCacheInstanceOf):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::setObjectToStringValue):
+
 2019-10-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: support pattern blackboxing

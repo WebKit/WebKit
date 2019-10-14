@@ -1,3 +1,13 @@
+2019-10-14  Saam Barati  <sbarati@apple.com>
+
+        Canonicalize how we prepare the prototype chain for inline caching
+        https://bugs.webkit.org/show_bug.cgi?id=202827
+        <rdar://problem/56193919>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2019-10-14  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Update my nickname.

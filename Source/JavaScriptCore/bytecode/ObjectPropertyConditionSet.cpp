@@ -267,14 +267,9 @@ ObjectPropertyCondition generateCondition(
     return result;
 }
 
-enum Concurrency {
-    MainThread,
-    Concurrent
-};
 template<typename Functor>
 ObjectPropertyConditionSet generateConditions(
-    VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, const Functor& functor,
-    Concurrency concurrency = MainThread)
+    VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, const Functor& functor)
 {
     Vector<ObjectPropertyCondition> conditions;
     
@@ -314,21 +309,9 @@ ObjectPropertyConditionSet generateConditions(
         structure = object->structure(vm);
         
         if (structure->isDictionary()) {
-            if (concurrency == MainThread) {
-                if (structure->hasBeenFlattenedBefore()) {
-                    if (ObjectPropertyConditionSetInternal::verbose)
-                        dataLog("Dictionary has been flattened before, so invalid.\n");
-                    return ObjectPropertyConditionSet::invalid();
-                }
-
-                if (ObjectPropertyConditionSetInternal::verbose)
-                    dataLog("Flattening ", pointerDump(structure));
-                structure->flattenDictionaryStructure(vm, object);
-            } else {
-                if (ObjectPropertyConditionSetInternal::verbose)
-                    dataLog("Cannot flatten dictionary when not on main thread, so invalid.\n");
-                return ObjectPropertyConditionSet::invalid();
-            }
+            if (ObjectPropertyConditionSetInternal::verbose)
+                dataLog("Cannot cache dictionary.\n");
+            return ObjectPropertyConditionSet::invalid();
         }
 
         if (!functor(conditions, object)) {
@@ -487,7 +470,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrent);
+        });
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
@@ -501,7 +484,7 @@ ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrent);
+        });
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
@@ -516,13 +499,92 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrent);
+        });
 }
 
 ObjectPropertyCondition generateConditionForSelfEquivalence(
     VM& vm, JSCell* owner, JSObject* object, UniquedStringImpl* uid)
 {
     return generateCondition(vm, owner, object, uid, PropertyCondition::Equivalence);
+}
+
+// Current might be null. Structure can't be null.
+static Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* current, Structure* structure, JSObject* target)
+{
+    ASSERT(structure);
+    VM& vm = globalObject->vm();
+
+    bool found = false;
+    bool usesPolyProto = false;
+    bool flattenedDictionary = false;
+
+    while (true) {
+        if (structure->isDictionary()) {
+            if (!current)
+                return WTF::nullopt;
+
+            ASSERT(structure->isObject());
+            if (structure->hasBeenFlattenedBefore())
+                return WTF::nullopt;
+
+            structure->flattenDictionaryStructure(vm, asObject(current));
+            flattenedDictionary = true;
+        }
+
+        if (!structure->propertyAccessesAreCacheable())
+            return WTF::nullopt;
+
+        if (structure->isProxy())
+            return WTF::nullopt;
+
+        if (current && current == target) {
+            found = true;
+            break;
+        }
+
+        // We only have poly proto if we need to access our prototype via
+        // the poly proto protocol. If the slot base is the only poly proto
+        // thing in the chain, and we have a cache hit on it, then we're not
+        // poly proto.
+        JSValue prototype;
+        if (structure->hasPolyProto()) {
+            if (!current)
+                return WTF::nullopt;
+            usesPolyProto = true;
+            prototype = structure->prototypeForLookup(globalObject, current);
+        } else
+            prototype = structure->prototypeForLookup(globalObject);
+
+        if (prototype.isNull())
+            break;
+        current = asObject(prototype);
+        structure = current->structure(vm);
+    }
+
+    if (!found && !!target)
+        return WTF::nullopt;
+
+    PrototypeChainCachingStatus result;
+    result.usesPolyProto = usesPolyProto;
+    result.flattenedDictionary = flattenedDictionary;
+
+    return result;
+}
+
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
+{
+    return preparePrototypeChainForCaching(globalObject, base, base->structure(globalObject->vm()), target);
+}
+
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
+{
+    JSObject* target = slot.isUnset() ? nullptr : slot.slotBase();
+    return preparePrototypeChainForCaching(globalObject, base, target);
+}
+
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject* globalObject, Structure* baseStructure, JSObject* target)
+{
+    return preparePrototypeChainForCaching(globalObject, nullptr, baseStructure, target);
 }
 
 } // namespace JSC

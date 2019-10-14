@@ -290,6 +290,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                     if (structure->hasBeenFlattenedBefore())
                         return GiveUpOnCache;
                     structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseCell));
+                    return RetryCacheLater; // We may have changed property offsets.
                 }
 
                 if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
@@ -298,14 +299,21 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 // If a kind is GetByIDKind::Direct, we do not need to investigate prototype chains further.
                 // Cacheability just depends on the head structure.
                 if (kind != GetByIDKind::Direct) {
-                    bool usesPolyProto;
-                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot, usesPolyProto);
-                    if (!prototypeAccessChain) {
-                        // It's invalid to access this prototype property.
+                    auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), baseCell, slot);
+                    if (!cacheStatus)
                         return GiveUpOnCache;
+
+                    if (cacheStatus->flattenedDictionary) {
+                        // Property offsets may have changed due to flattening. We'll cache later.
+                        return RetryCacheLater;
                     }
 
-                    if (!usesPolyProto) {
+                    if (cacheStatus->usesPolyProto) {
+                        prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot);
+                        if (!prototypeAccessChain)
+                            return GiveUpOnCache;
+                        RELEASE_ASSERT(slot.isCacheableCustom() || prototypeAccessChain->slotBaseStructure(structure)->get(vm, propertyName) == offset);
+                    } else {
                         // We use ObjectPropertyConditionSet instead for faster accesses.
                         prototypeAccessChain = nullptr;
 
@@ -318,6 +326,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                             conditionSet = generateConditionsForPrototypePropertyHit(
                                 vm, codeBlock, exec, structure, slot.slotBase(),
                                 propertyName.impl());
+                            RELEASE_ASSERT(!conditionSet.isValid() || conditionSet.slotBaseCondition().offset() == offset);
                         } else {
                             conditionSet = generateConditionsForPrototypePropertyHitCustom(
                                 vm, codeBlock, exec, structure, slot.slotBase(),
@@ -328,8 +337,6 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                             return GiveUpOnCache;
                     }
                 }
-
-                offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
             }
 
             JSFunction* getter = nullptr;
@@ -496,12 +503,11 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     if (structure->hasBeenFlattenedBefore())
                         return GiveUpOnCache;
                     structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseValue));
+                    return RetryCacheLater;
                 }
 
                 PropertyOffset offset;
-                Structure* newStructure =
-                    Structure::addPropertyTransitionToExistingStructureConcurrently(
-                        structure, ident.impl(), 0, offset);
+                Structure* newStructure = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, ident.impl(), static_cast<unsigned>(PropertyAttribute::None), offset);
                 if (!newStructure || !newStructure->propertyAccessesAreCacheable())
                     return GiveUpOnCache;
 
@@ -512,22 +518,21 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
                 if (putKind == NotDirect) {
-                    bool usesPolyProto;
-                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, nullptr, usesPolyProto);
-                    if (!prototypeAccessChain) {
-                        // It's invalid to access this prototype property.
+                    auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), baseCell, nullptr);
+                    if (!cacheStatus)
                         return GiveUpOnCache;
-                    }
 
-                    if (!usesPolyProto) {
+                    if (cacheStatus->usesPolyProto) {
+                        prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, nullptr);
+                        if (!prototypeAccessChain)
+                            return GiveUpOnCache;
+                    } else {
                         prototypeAccessChain = nullptr;
-                        conditionSet =
-                            generateConditionsForPropertySetterMiss(
-                                vm, codeBlock, exec, newStructure, ident.impl());
+                        conditionSet = generateConditionsForPropertySetterMiss(
+                            vm, codeBlock, exec, newStructure, ident.impl());
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }
-
                 }
 
                 newCase = AccessCase::create(vm, codeBlock, offset, structure, newStructure, conditionSet, WTFMove(prototypeAccessChain));
@@ -538,18 +543,18 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
 
                 if (slot.base() != baseValue) {
-                    bool usesPolyProto;
-                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base(), usesPolyProto);
-                    if (!prototypeAccessChain) {
-                        // It's invalid to access this prototype property.
+                    auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), baseCell, slot.base());
+                    if (!cacheStatus)
                         return GiveUpOnCache;
-                    }
 
-                    if (!usesPolyProto) {
+                    if (cacheStatus->usesPolyProto) {
+                        prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base());
+                        if (!prototypeAccessChain)
+                            return GiveUpOnCache;
+                    } else {
                         prototypeAccessChain = nullptr;
-                        conditionSet =
-                            generateConditionsForPrototypePropertyHitCustom(
-                                vm, codeBlock, exec, structure, slot.base(), ident.impl(), static_cast<unsigned>(PropertyAttribute::None));
+                        conditionSet = generateConditionsForPrototypePropertyHitCustom(
+                            vm, codeBlock, exec, structure, slot.base(), ident.impl(), static_cast<unsigned>(PropertyAttribute::None));
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }
@@ -564,18 +569,21 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 PropertyOffset offset = slot.cachedOffset();
 
                 if (slot.base() != baseValue) {
-                    bool usesPolyProto;
-                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base(), usesPolyProto);
-                    if (!prototypeAccessChain) {
-                        // It's invalid to access this prototype property.
+                    auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), baseCell, slot.base());
+                    if (!cacheStatus)
                         return GiveUpOnCache;
-                    }
+                    if (cacheStatus->flattenedDictionary)
+                        return RetryCacheLater;
 
-                    if (!usesPolyProto) {
+                    if (cacheStatus->usesPolyProto) {
+                        prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), baseCell, slot.base());
+                        if (!prototypeAccessChain)
+                            return GiveUpOnCache;
+                        offset = prototypeAccessChain->slotBaseStructure(baseCell->structure(vm))->get(vm, ident.impl());
+                    } else {
                         prototypeAccessChain = nullptr;
-                        conditionSet =
-                            generateConditionsForPrototypePropertyHit(
-                                vm, codeBlock, exec, structure, slot.base(), ident.impl());
+                        conditionSet = generateConditionsForPrototypePropertyHit(
+                            vm, codeBlock, exec, structure, slot.base(), ident.impl());
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
 
@@ -584,7 +592,6 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
 
                         offset = conditionSet.slotBaseCondition().offset();
                     }
-
                 }
 
                 newCase = GetterSetterAccessCase::create(
@@ -667,34 +674,43 @@ static InlineCacheAction tryCacheInByID(
             }
 
             if (slot.slotBase() != base) {
-                bool usesPolyProto;
-                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot, usesPolyProto);
-                if (!prototypeAccessChain) {
-                    // It's invalid to access this prototype property.
+                auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), base, slot);
+                if (!cacheStatus)
                     return GiveUpOnCache;
-                }
-                if (!usesPolyProto) {
+                if (cacheStatus->flattenedDictionary)
+                    return RetryCacheLater;
+
+                if (cacheStatus->usesPolyProto) {
+                    prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot);
+                    if (!prototypeAccessChain)
+                        return GiveUpOnCache;
+                    RELEASE_ASSERT(slot.isCacheableCustom() || prototypeAccessChain->slotBaseStructure(structure)->get(vm, ident.impl()) == slot.cachedOffset());
+                } else {
                     prototypeAccessChain = nullptr;
                     conditionSet = generateConditionsForPrototypePropertyHit(
                         vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
+                    if (!conditionSet.isValid())
+                        return GiveUpOnCache;
+                    RELEASE_ASSERT(slot.isCacheableCustom() || conditionSet.slotBaseCondition().offset() == slot.cachedOffset());
                 }
             }
         } else {
-            bool usesPolyProto;
-            prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot, usesPolyProto);
-            if (!prototypeAccessChain) {
-                // It's invalid to access this prototype property.
+            auto cacheStatus = preparePrototypeChainForCaching(exec->lexicalGlobalObject(), base, nullptr);
+            if (!cacheStatus)
                 return GiveUpOnCache;
-            }
 
-            if (!usesPolyProto) {
+            if (cacheStatus->usesPolyProto) {
+                prototypeAccessChain = PolyProtoAccessChain::create(exec->lexicalGlobalObject(), base, slot);
+                if (!prototypeAccessChain)
+                    return GiveUpOnCache;
+            } else {
                 prototypeAccessChain = nullptr;
                 conditionSet = generateConditionsForPropertyMiss(
                     vm, codeBlock, exec, structure, ident.impl());
+                if (!conditionSet.isValid())
+                    return GiveUpOnCache;
             }
         }
-        if (!conditionSet.isValid())
-            return GiveUpOnCache;
 
         LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident, slot.slotBase() == base));
 
@@ -754,7 +770,7 @@ static InlineCacheAction tryCacheInstanceOf(
             } else if (structure->prototypeQueriesAreCacheable()) {
                 // FIXME: Teach this to do poly proto.
                 // https://bugs.webkit.org/show_bug.cgi?id=185663
-
+                preparePrototypeChainForCaching(exec->lexicalGlobalObject(), value, wasFound ? prototype : nullptr);
                 ObjectPropertyConditionSet conditionSet = generateConditionsForInstanceOf(
                     vm, codeBlock, exec, structure, prototype, wasFound);
 

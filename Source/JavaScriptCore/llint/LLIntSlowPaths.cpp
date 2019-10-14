@@ -709,6 +709,8 @@ static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, const Instructio
         structure->flattenDictionaryStructure(vm, jsCast<JSObject*>(baseCell));
     }
 
+    preparePrototypeChainForCaching(exec->lexicalGlobalObject(), baseCell, slot);
+
     ObjectPropertyConditionSet conditions;
     if (slot.isUnset())
         conditions = generateConditionsForPropertyMiss(vm, codeBlock, exec, structure, ident.impl());

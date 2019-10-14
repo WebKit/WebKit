@@ -42,8 +42,8 @@ public:
     PolyProtoAccessChain(PolyProtoAccessChain&) = default;
 
     // Returns nullptr when invalid.
-    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, const PropertySlot&, bool& usesPolyProto);
-    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, JSObject* target, bool& usesPolyProto);
+    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, const PropertySlot&);
+    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, JSObject* target);
 
     std::unique_ptr<PolyProtoAccessChain> clone()
     {
@@ -71,6 +71,13 @@ public:
             atEnd = i + 1 == m_chain.size();
             func(m_chain[i], atEnd);
         }
+    }
+
+    Structure* slotBaseStructure(Structure* baseStructure) const
+    {
+        if (m_chain.size())
+            return m_chain.last();
+        return baseStructure;
     }
 
 private:

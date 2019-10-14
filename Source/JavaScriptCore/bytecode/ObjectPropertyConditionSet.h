@@ -189,4 +189,13 @@ ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
 ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
     VM&, JSGlobalObject*, Structure* headStructure, UniquedStringImpl* uid);
 
+struct PrototypeChainCachingStatus {
+    bool usesPolyProto;
+    bool flattenedDictionary;
+};
+
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject*, JSCell* base, const PropertySlot&);
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject*, JSCell* base, JSObject* target);
+Optional<PrototypeChainCachingStatus> preparePrototypeChainForCaching(JSGlobalObject*, Structure* base, JSObject* target);
+
 } // namespace JSC
