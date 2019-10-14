@@ -1,3 +1,13 @@
+2019-10-14  Russell Epstein  <repstein@apple.com>
+
+        [ iOS13 ] Layout test imported/w3c/web-platform-tests/html/dom/idlharness.https.html is consistently Failing (202960)
+        https://bugs.webkit.org/show_bug.cgi?id=202960
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations: Changed expectation from Crash
+	to Failure for imported/w3c/web-platform-tests/html/dom/idlharness.https.html
+
 2019-10-14  Truitt Savell  <tsavell@apple.com>
 
         Mass Marking failing tests on Windows

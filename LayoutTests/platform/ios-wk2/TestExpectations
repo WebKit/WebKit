@@ -1236,7 +1236,6 @@ webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Crash ]
 webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Pass Failure ]
 
 webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure ]
@@ -1365,3 +1364,7 @@ fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
+
+# rdar://56267775 ([ iOS13 ] Layout test imported/w3c/web-platform-tests/html/dom/idlharness.https.html is consistently Failing (202960))
+webkit.org/b/202960 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Failure ]
+
