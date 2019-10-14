@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div{
+    text-rendering: optimizeLegibility;
+    font-family: -apple-system, sans-serif;
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="target" contenteditable="true">Lorem ipsum</div>
+<script>
+window.jsTestIsAsync = true;
+description("This test makes sure that contenteditable with optical size doesn't hang the browser. The test passes if there is no hang when typing occurs in the contenteditable element.");
+let target = document.getElementById("target");
+function handleFocus() {
+    if (window.testRunner) {
+        // For some reason, "await" doesn't seem to work...
+        UIHelper.ensurePresentationUpdate().then(function() {
+            UIHelper.keyDown("a").then(function() {
+                UIHelper.keyDown("b").then(function() {
+                    UIHelper.keyDown("c").then(function() {
+                        UIHelper.keyDown("d").then(function() {
+                            UIHelper.keyDown("e").then(function() {
+                                UIHelper.ensurePresentationUpdate().then(function() {
+                                    finishJSTest();
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    }
+}
+target.addEventListener("focus", handleFocus, { once: true });
+if (window.testRunner)
+    UIHelper.activateFormControl(target);
+else
+    target.focus();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

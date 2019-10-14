@@ -1,0 +1,9 @@
+This test makes sure that contenteditable with optical size doesn't hang the browser. The test passes if there is no hang when typing occurs in the contenteditable element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Lorem ipsumabcde
