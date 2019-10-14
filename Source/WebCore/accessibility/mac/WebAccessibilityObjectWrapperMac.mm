@@ -2023,7 +2023,7 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
         children.reserveInitialCapacity(nodeChildren.size());
         auto tree = treeNode->tree();
         for (auto childID : nodeChildren)
-            children.uncheckedAppend(tree->nodeForID(childID));
+            children.uncheckedAppend(tree->nodeForID(child));
         return convertToNSArray(children);
     }
 #endif
