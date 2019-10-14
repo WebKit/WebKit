@@ -34,7 +34,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
     _WKFindOptionsShowOverlay = 1 << 5,
     _WKFindOptionsShowFindIndicator = 1 << 6,
     _WKFindOptionsShowHighlight = 1 << 7,
-    _WKFindOptionsDetermineMatchIndex = 1 << 8,
+    _WKFindOptionsNoIndexChange = 1 << 8,
+    _WKFindOptionsDetermineMatchIndex = 1 << 9,
 
     _WKFindOptionsIrrelevantForIncrementalResults = _WKFindOptionsShowOverlay | _WKFindOptionsShowFindIndicator | _WKFindOptionsShowHighlight | _WKFindOptionsDetermineMatchIndex,
     _WKFindOptionsIrrelevantForBatchResults = _WKFindOptionsBackwards | _WKFindOptionsWrapAround | _WKFindOptionsIrrelevantForIncrementalResults

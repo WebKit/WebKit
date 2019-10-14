@@ -5660,6 +5660,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         findOptions |= WebKit::FindOptionsShowFindIndicator;
     if (wkFindOptions & _WKFindOptionsShowHighlight)
         findOptions |= WebKit::FindOptionsShowHighlight;
+    if (wkFindOptions & _WKFindOptionsNoIndexChange)
+        findOptions |= WebKit::FindOptionsNoIndexChange;
     if (wkFindOptions & _WKFindOptionsDetermineMatchIndex)
         findOptions |= WebKit::FindOptionsDetermineMatchIndex;
 

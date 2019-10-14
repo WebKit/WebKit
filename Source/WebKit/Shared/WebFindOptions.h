@@ -37,6 +37,7 @@ enum FindOptions : uint16_t {
     FindOptionsShowFindIndicator = 1 << 6,
     FindOptionsShowHighlight = 1 << 7,
     FindOptionsDetermineMatchIndex = 1 << 8,
+    FindOptionsNoIndexChange = 1 << 9,
 };
 
 } // namespace WebKit

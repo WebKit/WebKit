@@ -268,7 +268,7 @@ void FindController::findString(const String& string, FindOptions options, unsig
         if (!foundStringStartsAfterSelection) {
             if (options & FindOptionsBackwards)
                 m_foundStringMatchIndex--;
-            else
+            else if (!(options & FindOptionsNoIndexChange))
                 m_foundStringMatchIndex++;
         }
     }
