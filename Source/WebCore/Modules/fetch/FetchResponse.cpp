@@ -307,6 +307,8 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
         m_response.m_readableStreamSource = nullptr;
     }
 #endif
+    if (m_response.m_body)
+        m_response.m_body->loadingFailed(*m_response.loadingException());
 
     // Check whether didFail is called as part of FetchLoader::start.
     if (m_loader && m_loader->isStarted()) {

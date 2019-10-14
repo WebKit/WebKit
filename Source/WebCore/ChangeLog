@@ -1,3 +1,16 @@
+2019-10-14  Youenn Fablet  <youenn@apple.com>
+
+        A response body promise should be rejected in case of a failure happening after the HTTP response
+        https://bugs.webkit.org/show_bug.cgi?id=202792
+
+        Reviewed by Chris Dumez.
+
+        Test: imported/w3c/web-platform-tests/service-workers/service-worker/fetch-error.https.html
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        Propagate error to fetch body consumer if any.
+
 2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support writing multiple PasteboardCustomData with SharedBuffers to the pasteboard
