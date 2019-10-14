@@ -3466,12 +3466,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        if (base.value() && base.value().isObject()) {
-            setForNode(node, asObject(base.value())->globalObject()->getterSetterStructure());
-            break;
-        }
-
-        setTypeForNode(node, SpecObjectOther);
+        setForNode(node, m_vm.getterSetterStructure.get());
         break;
     }
         

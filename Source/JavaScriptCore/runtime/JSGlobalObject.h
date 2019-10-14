@@ -306,8 +306,8 @@ public:
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
     WriteBarrier<JSObject> m_regExpProtoExec;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
-    WriteBarrier<JSObject> m_regExpProtoGlobalGetter;
-    WriteBarrier<JSObject> m_regExpProtoUnicodeGetter;
+    WriteBarrier<GetterSetter> m_regExpProtoGlobalGetter;
+    WriteBarrier<GetterSetter> m_regExpProtoUnicodeGetter;
     WriteBarrier<GetterSetter> m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter;
 
     LazyProperty<JSGlobalObject, JSModuleLoader> m_moduleLoader;
@@ -365,7 +365,6 @@ public:
 
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
-    WriteBarrier<Structure> m_getterSetterStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_regExpStructure;
@@ -622,8 +621,8 @@ public:
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSObject* regExpProtoExecFunction() const { return m_regExpProtoExec.get(); }
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
-    JSObject* regExpProtoGlobalGetter() const { return m_regExpProtoGlobalGetter.get(); }
-    JSObject* regExpProtoUnicodeGetter() const { return m_regExpProtoUnicodeGetter.get(); }
+    GetterSetter* regExpProtoGlobalGetter() const { return m_regExpProtoGlobalGetter.get(); }
+    GetterSetter* regExpProtoUnicodeGetter() const { return m_regExpProtoUnicodeGetter.get(); }
     GetterSetter* throwTypeErrorArgumentsCalleeAndCallerGetterSetter()
     {
         return m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter.get();
@@ -748,7 +747,6 @@ public:
 
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
     Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
-    Structure* getterSetterStructure() const { return m_getterSetterStructure.get(); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(this); }
