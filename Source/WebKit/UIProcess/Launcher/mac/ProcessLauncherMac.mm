@@ -58,7 +58,8 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return "com.apple.WebKit.Networking";
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
-        return "com.apple.WebKit.Plugin.32";
+        ASSERT_NOT_REACHED();
+        return nullptr;
     case ProcessLauncher::ProcessType::Plugin64:
         return "com.apple.WebKit.Plugin.64";
 #endif

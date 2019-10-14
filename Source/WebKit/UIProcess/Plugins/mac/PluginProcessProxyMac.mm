@@ -60,10 +60,8 @@ namespace WebKit {
     
 void PluginProcessProxy::platformGetLaunchOptionsWithAttributes(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
-    if (pluginProcessAttributes.moduleInfo.pluginArchitecture == CPU_TYPE_X86)
-        launchOptions.processType = ProcessLauncher::ProcessType::Plugin32;
-    else
-        launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
+    ASSERT(pluginProcessAttributes.moduleInfo.pluginArchitecture == CPU_TYPE_X86);
+    launchOptions.processType = ProcessLauncher::ProcessType::Plugin64;
 
     launchOptions.extraInitializationData.add("plugin-path", pluginProcessAttributes.moduleInfo.path);
 
