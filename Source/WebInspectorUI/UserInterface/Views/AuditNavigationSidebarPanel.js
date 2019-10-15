@@ -315,7 +315,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _handleImportButtonNavigationItemClicked(event)
     {
-        WI.FileUtilities.importJSON((result) => WI.auditManager.processJSON(result));
+        WI.FileUtilities.importJSON((result) => WI.auditManager.processJSON(result), {multiple: true});
     }
 
     _handleEditButtonNavigationItemClicked(event)

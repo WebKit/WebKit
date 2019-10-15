@@ -2150,7 +2150,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _importHAR()
     {
-        WI.FileUtilities.importJSON((result) => this.processHAR(result));
+        WI.FileUtilities.importJSON((result) => this.processHAR(result), {multiple: true});
     }
 
     _waterfallPopoverContent()

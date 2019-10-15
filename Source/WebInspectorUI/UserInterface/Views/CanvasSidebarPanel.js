@@ -322,7 +322,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _handleImportButtonNavigationItemClicked(event)
     {
-        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
+        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result), {multiple: true});
     }
 
     _treeSelectionDidChange(event)

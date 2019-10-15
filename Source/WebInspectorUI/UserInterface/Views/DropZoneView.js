@@ -30,7 +30,7 @@
 
 WI.DropZoneView = class DropZoneView extends WI.View
 {
-    constructor(delegate, {text} = {})
+    constructor(delegate)
     {
         console.assert(delegate);
         console.assert(typeof delegate.dropZoneShouldAppearForDragEvent === "function");
@@ -40,9 +40,6 @@ WI.DropZoneView = class DropZoneView extends WI.View
         this._delegate = delegate;
         this._targetElement = null;
         this._activelyHandlingDrag = false;
-
-        if (text)
-            this.element.textContent = text;
 
         this.element.classList.add("drop-zone");
     }
@@ -73,6 +70,11 @@ WI.DropZoneView = class DropZoneView extends WI.View
 
         if (this._targetElement)
             this._targetElement.addEventListener("dragenter", this._boundHandleDragEnter);
+    }
+
+    set text(text)
+    {
+        this.element.textContent = text;
     }
 
     // Protected

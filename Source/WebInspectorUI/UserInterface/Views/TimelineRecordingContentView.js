@@ -621,7 +621,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _importButtonNavigationItemClicked(event)
     {
-        WI.FileUtilities.importJSON((result) => WI.timelineManager.processJSON(result));
+        WI.FileUtilities.importJSON((result) => WI.timelineManager.processJSON(result), {multiple: true});
     }
 
     _clearTimeline(event)

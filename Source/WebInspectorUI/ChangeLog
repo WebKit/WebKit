@@ -1,3 +1,80 @@
+2019-10-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Local Resource Overrides: automatically create an image/font local override when dragging content over a non-overridden resource
+        https://bugs.webkit.org/show_bug.cgi?id=202957
+
+        Reviewed by Joseph Pecoraro.
+
+        Since non-text resources aren't editable, some users of local resource overrides kept trying
+        to drag image/font files over the actual resource content view (not the local override),
+        which didn't do anything. Rather than having to click "Create Local Override" and then do a
+        drag/drop, we should support the "shorter" workflow of drag/drop over the actual resource.
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.import): Added.
+        (WI.FileUtilities.importText):
+        (WI.FileUtilities.importJSON):
+        (WI.FileUtilities.importData): Added.
+        (WI.FileUtilities.async readText):
+        (WI.FileUtilities.async readJSON):
+        (WI.FileUtilities.async readData): Added.
+        (WI.FileUtilities.async _read): Added.
+        Create utility functions for importing non-text content as data.
+        Drive-by: fix a bug in the `import*` functions where the `callback` would be bound on the
+                  first call, meaning that since the `<input>` was cached for all calls, we'd only
+                  ever use the first `callback` in subsequent calls.
+
+        * UserInterface/Views/DropZoneView.js:
+        (WI.DropZoneView):
+        (WI.DropZoneView.prototype.set text): Added.
+        Support the text content of the drop zone changing after it's initialized.
+
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView):
+        (WI.FontResourceContentView.prototype.contentAvailable):
+        (WI.FontResourceContentView.prototype.dropZoneHandleDragEnter): Added.
+        (WI.FontResourceContentView.prototype.dropZoneHandleDrop):
+        (WI.FontResourceContentView.prototype._handleLocalResourceContentDidChange): Added.
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView):
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDragEnter): Added.
+        (WI.ImageResourceContentView.prototype.dropZoneHandleDrop):
+        (WI.ImageResourceContentView.prototype._handleLocalResourceContentDidChange): Added.
+        Support drag/drop on non-override image/font content views, which will create/update the
+        local resource override for that resource.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.get navigationItems):
+        (WI.ResourceContentView.prototype._handleImportLocalResourceOverride): Added.
+        When viewing a local resource override, add an "Import" navigation item for non-drag/drop
+        updating of the contents of the local resource override. This is also exposed for text-based
+        local resource overrides, since drag/drop inserts the contents of the file (if it's text),
+        which attempts to determine whether the dropped file is text or data based on the MIME type.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._handleImportButtonNavigationItemClicked):
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._handleImportButtonNavigationItemClicked):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._handleImportButtonNavigationItemClicked):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView.prototype._importButtonNavigationItemClicked):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._importHAR):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._importButtonNavigationItemClicked):
+        Explicitly allow multiple files to be imported at the same time.
+
+        * UserInterface/Base/BlobUtilities.js:
+        (WI.BlobUtilities.blobForContent):
+        Drive-by: remove extra `base64Encoded` argument when calling `decodeBase64ToBlob`, which
+                  caused SVG-based image local resource overrides to show a broken image when
+                  closing and reopening Web Inspector.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-10-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r250991): Sources: local resource overrides should be enabled when not in tests

@@ -91,37 +91,104 @@ WI.FileUtilities = class FileUtilities {
         fileReader.readAsDataURL(saveData.content);
     }
 
-    static importText(callback)
+    static import(callback, {multiple} = {})
     {
-        if (!FileUtilities._importTextInputElement) {
-            let inputElement = FileUtilities._importTextInputElement = document.createElement("input");
-            inputElement.type = "file";
-            inputElement.multiple = true;
-            inputElement.addEventListener("change", (event) => {
-                WI.FileUtilities.readText(inputElement.files, callback);
-            });
-        }
+        let inputElement = document.createElement("input");
+        inputElement.type = "file";
+        inputElement.value = null;
+        inputElement.multiple = !!multiple;
+        inputElement.addEventListener("change", (event) => {
+            callback(inputElement.files);
+        });
 
-        FileUtilities._importTextInputElement.value = null;
-        FileUtilities._importTextInputElement.click();
+        inputElement.click();
+
+        // Cache the last used import element so that it doesn't get GCd while the native file
+        // picker is shown, which would prevent the "change" event listener from firing.
+        FileUtilities.importInputElement = inputElement;
     }
 
-    static importJSON(callback)
+    static importText(callback, options = {})
     {
-        if (!FileUtilities._importJSONInputElement) {
-            let inputElement = FileUtilities._importJSONInputElement = document.createElement("input");
-            inputElement.type = "file";
-            inputElement.multiple = true;
-            inputElement.addEventListener("change", (event) => {
-                WI.FileUtilities.readJSON(inputElement.files, callback);
-            });
-        }
+        FileUtilities.import((files) => {
+            FileUtilities.readText(files, callback);
+        }, options);
+    }
 
-        FileUtilities._importJSONInputElement.value = null;
-        FileUtilities._importJSONInputElement.click();
+    static importJSON(callback, options = {})
+    {
+        FileUtilities.import((files) => {
+            FileUtilities.readJSON(files, callback);
+        }, options);
+    }
+
+    static importData(callback, options = {})
+    {
+        FileUtilities.import((files) => {
+            FileUtilities.readData(files, callback);
+        }, options);
     }
 
     static async readText(fileOrList, callback)
+    {
+        await FileUtilities._read(fileOrList, async (file, result) => {
+            await new Promise((resolve, reject) => {
+                let reader = new FileReader;
+                reader.addEventListener("loadend", (event) => {
+                    result.text = reader.result;
+                    resolve(event);
+                });
+                reader.addEventListener("error", reject);
+                reader.readAsText(file);
+            });
+        }, callback);
+    }
+
+    static async readJSON(fileOrList, callback)
+    {
+        await WI.FileUtilities.readText(fileOrList, async (result) => {
+            if (result.text && !result.error) {
+                try {
+                    result.json = JSON.parse(result.text);
+                } catch (e) {
+                    result.error = e;
+                }
+            }
+
+            await callback(result);
+        });
+    }
+
+    static async readData(fileOrList, callback)
+    {
+        await FileUtilities._read(fileOrList, async (file, result) => {
+            await new Promise((resolve, reject) => {
+                let reader = new FileReader;
+                reader.addEventListener("loadend", (event) => {
+                    let {mimeType, base64, data} = parseDataURL(reader.result);
+
+                    // In case no mime type was determined, try to derive one from the file extension.
+                    if (!mimeType || mimeType === "text/plain") {
+                        let extension = WI.fileExtensionForFilename(result.filename);
+                        if (extension)
+                            mimeType = WI.mimeTypeForFileExtension(extension);
+                    }
+
+                    result.mimeType = mimeType;
+                    result.base64Encoded = base64;
+                    result.content = data;
+
+                    resolve(event);
+                });
+                reader.addEventListener("error", reject);
+                reader.readAsDataURL(file);
+            });
+        }, callback);
+    }
+
+    // Private
+
+    static async _read(fileOrList, operation, callback)
     {
         console.assert(fileOrList instanceof File || fileOrList instanceof FileList);
 
@@ -137,37 +204,12 @@ WI.FileUtilities = class FileUtilities {
             };
 
             try {
-                await new Promise((resolve, reject) => {
-                    let reader = new FileReader;
-                    reader.addEventListener("loadend", (event) => {
-                        result.text = reader.result;
-                        resolve(event);
-                    });
-                    reader.addEventListener("error", reject);
-                    reader.readAsText(file);
-                });
+                await operation(file, result);
             } catch (e) {
                 result.error = e;
             }
 
-            let promise = callback(result);
-            if (promise instanceof Promise)
-                await promise;
+            await callback(result);
         }
-    }
-
-    static async readJSON(fileOrList, callback)
-    {
-        return WI.FileUtilities.readText(fileOrList, (result) => {
-            if (result.text && !result.error) {
-                try {
-                    result.json = JSON.parse(result.text);
-                } catch (e) {
-                    result.error = e;
-                }
-            }
-
-            return callback(result);
-        });
     }
 };

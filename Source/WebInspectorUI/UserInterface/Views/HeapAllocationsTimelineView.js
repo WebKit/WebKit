@@ -403,7 +403,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
                 WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
                 this.dispatchEventToListeners(WI.TimelineView.Event.NeedsEntireSelectedRange);
             });
-        });
+        }, {multiple: true});
     }
 
     _takeHeapSnapshotClicked()

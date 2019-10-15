@@ -336,7 +336,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _handleImportButtonNavigationItemClicked(event)
     {
-        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
+        WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result), {multiple: true});
     }
 
     _handleRecordingSaved(event)

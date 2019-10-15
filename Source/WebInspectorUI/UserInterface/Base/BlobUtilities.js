@@ -27,7 +27,7 @@ WI.BlobUtilities = class BlobUtilities {
     static blobForContent(content, base64Encoded, mimeType)
     {
         if (base64Encoded)
-            return BlobUtilities.decodeBase64ToBlob(content, base64Encoded, mimeType);
+            return BlobUtilities.decodeBase64ToBlob(content, mimeType);
         return BlobUtilities.textToBlob(content, mimeType);
     }
 

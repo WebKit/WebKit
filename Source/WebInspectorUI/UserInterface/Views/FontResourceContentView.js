@@ -32,9 +32,6 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         this._styleElement = null;
         this._previewElement = null;
         this._previewContainer = null;
-
-        if (this.showingLocalResourceOverride)
-            this._dropZoneView = new WI.DropZoneView(this, {text: WI.UIString("Drop Font")});
     }
 
     // Public
@@ -68,9 +65,13 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
 
         this._updatePreviewElement();
 
-        if (this._dropZoneView) {
-            this._dropZoneView.targetElement = this._previewContainer;
-            this.addSubview(this._dropZoneView);
+        if (WI.NetworkManager.supportsLocalResourceOverrides()) {
+            let dropZoneView = new WI.DropZoneView(this);
+            dropZoneView.targetElement = this._previewContainer;
+            this.addSubview(dropZoneView);
+
+            if (this.showingLocalResourceOverride)
+                this.resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleLocalResourceContentDidChange, this);
         }
     }
 
@@ -118,38 +119,39 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         return event.dataTransfer.types.includes("Files");
     }
 
+    dropZoneHandleDragEnter(dropZone, event)
+    {
+        if (this.showingLocalResourceOverride)
+            dropZone.text = WI.UIString("Update Font");
+        else if (WI.networkManager.localResourceOverrideForURL(this.resource.url))
+            dropZone.text = WI.UIString("Update Local Override");
+        else
+            dropZone.text = WI.UIString("Create Local Override");
+    }
+
     dropZoneHandleDrop(dropZone, event)
     {
         let files = event.dataTransfer.files;
-        let file = files.length === 1 ? files[0] : null;
-        if (!file) {
+        if (files.length !== 1) {
             InspectorFrontendHost.beep();
             return;
         }
 
-        let fileReader = new FileReader;
-        fileReader.addEventListener("loadend", (event) => {
+        WI.FileUtilities.readData(files, async ({dataURL, mimeType, base64Encoded, content}) => {
             let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
-            if (!localResourceOverride)
-                return;
-
-            let dataURL = fileReader.result;
-            let {base64, data, mimeType} = parseDataURL(dataURL);
-
-            // In case no mime type was determined, try to derive one from the file extension.
-            if (!mimeType || mimeType === "text/plain") {
-                let extension = WI.fileExtensionForFilename(file.name);
-                if (extension)
-                    mimeType = WI.mimeTypeForFileExtension(extension);
+            if (!localResourceOverride && !this.showingLocalResourceOverride) {
+                localResourceOverride = await this.resource.createLocalResourceOverride();
+                WI.networkManager.addLocalResourceOverride(localResourceOverride);
             }
 
-            let revision = localResourceOverride.localResource.currentRevision;
-            revision.updateRevisionContent(data, {base64Encoded: base64, mimeType});
+            console.assert(localResourceOverride);
 
-            this._fontObjectURL = this.resource.createObjectURL();
-            this._updatePreviewElement();
+            let revision = localResourceOverride.localResource.currentRevision;
+            revision.updateRevisionContent(content, {base64Encoded, mimeType});
+
+            if (!this.showingLocalResourceOverride)
+                WI.showLocalResourceOverride(localResourceOverride);
         });
-        fileReader.readAsDataURL(file);
     }
 
     // Private
@@ -207,6 +209,12 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         this._previewContainer.appendChild(this._previewElement);
 
         this.sizeToFit();
+    }
+
+    _handleLocalResourceContentDidChange(event)
+    {
+        this._fontObjectURL = this.resource.createObjectURL();
+        this._updatePreviewElement();
     }
 };
 

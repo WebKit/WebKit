@@ -66,9 +66,13 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
                 this._localResourceOverrideBannerView = new WI.LocalResourceOverrideLabelView(resource);
 
+                this._importLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("import-local-resource-override", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+                this._importLocalResourceOverrideButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+                this._importLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+                this._importLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportLocalResourceOverride, this);
+
                 this._removeLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("remove-local-resource-override", WI.UIString("Remove Local Override"), "Images/NavigationItemTrash.svg", 15, 15);
                 this._removeLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleRemoveLocalResourceOverride, this);
-                this._removeLocalResourceOverrideButtonNavigationItem.enabled = true;
                 this._removeLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             } else {
                 this._localResourceOverrideBannerView = new WI.LocalResourceOverrideWarningView(resource);
@@ -93,6 +97,8 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     {
         let items = [];
 
+        if (this._importLocalResourceOverrideButtonNavigationItem)
+            items.push(this._importLocalResourceOverrideButtonNavigationItem, new WI.DividerNavigationItem);
         if (this._removeLocalResourceOverrideButtonNavigationItem)
             items.push(this._removeLocalResourceOverrideButtonNavigationItem);
         if (this._createLocalResourceOverrideButtonNavigationItem)
@@ -230,6 +236,35 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         let localResourceOverride = await this._resource.createLocalResourceOverride(initialContent);
         WI.networkManager.addLocalResourceOverride(localResourceOverride);
         WI.showLocalResourceOverride(localResourceOverride);
+    }
+
+    _handleImportLocalResourceOverride(event)
+    {
+        console.assert(this._showingLocalResourceOverride);
+
+        WI.FileUtilities.import(async (fileList) => {
+            console.assert(fileList.length === 1);
+
+            let localResourceOverride = WI.networkManager.localResourceOverrideForURL(this.resource.url);
+            console.assert(localResourceOverride);
+
+            let revision = localResourceOverride.localResource.currentRevision;
+
+            let file = fileList[0];
+            let mimeType = file.type || WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(file.name));
+            if (WI.shouldTreatMIMETypeAsText(mimeType)) {
+                await WI.FileUtilities.readText(file, ({text}) => {
+                    revision.updateRevisionContent(text, {base64Encoded: false, mimeType});
+                });
+            } else {
+                await WI.FileUtilities.readData(file, ({dataURL, mimeType, base64Encoded, content}) => {
+                    revision.updateRevisionContent(content, {base64Encoded, mimeType});
+                });
+            }
+
+            if (!this.showingLocalResourceOverride)
+                WI.showLocalResourceOverride(localResourceOverride);
+        });
     }
 
     _handleRemoveLocalResourceOverride(event)
