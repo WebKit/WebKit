@@ -1,5 +1,30 @@
 2019-10-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Adjust computed width value when box sizing is border-box
+        https://bugs.webkit.org/show_bug.cgi?id=202966
+        <rdar://problem/56277954>
+
+        Reviewed by Antti Koivisto.
+
+        box-sizing: border-box; means the width value sets the size of the border box (and not the content box).
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::computedContentWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMinWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::computedMaxWidth const):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin const):
+
+2019-10-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add <col> element's width attribute value to Layout::Box rare data
         https://bugs.webkit.org/show_bug.cgi?id=202988
         <rdar://problem/56291048>

@@ -133,6 +133,9 @@ protected:
         Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
         Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
 
+        Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth) const;
+        Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth) const;
+
         FormattingContext::IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints) const;
 
         LayoutUnit contentHeightForFormattingContextRoot(const Box&) const;
@@ -144,6 +147,7 @@ protected:
         enum class HeightType { Min, Max, Normal };
         Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight) const;
         Optional<LayoutUnit> computedContentHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+        Optional<LayoutUnit> computedContentWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
         const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
         LayoutState& layoutState() { return m_formattingContext.layoutState(); }

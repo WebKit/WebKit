@@ -374,13 +374,13 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
 
     auto contentWidthAndMargin = compute({ });
 
-    if (auto maxWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), availableWidth)) {
+    if (auto maxWidth = geometry().computedMaxWidth(layoutBox, availableWidth)) {
         auto maxWidthAndMargin = compute(maxWidth);
         if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
             contentWidthAndMargin = maxWidthAndMargin;
     }
 
-    auto minWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), availableWidth).valueOr(0);
+    auto minWidth = geometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
     auto minWidthAndMargin = compute(minWidth);
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;

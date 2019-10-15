@@ -87,13 +87,13 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     };
 
     auto horizontalGeometry = compute({ });
-    if (auto maxWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
+    if (auto maxWidth = geometry().computedMaxWidth(layoutBox, containingBlockWidth)) {
         auto maxHorizontalGeometry = compute(maxWidth);
         if (horizontalGeometry.contentWidthAndMargin.contentWidth > maxHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
-    if (auto minWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
+    if (auto minWidth = geometry().computedMinWidth(layoutBox, containingBlockWidth)) {
         auto minHorizontalGeometry = compute(minWidth);
         if (horizontalGeometry.contentWidthAndMargin.contentWidth < minHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = minHorizontalGeometry;
