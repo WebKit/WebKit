@@ -23,36 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebBackForwardCacheEntry.h"
 
-#include <WebCore/BackForwardItemIdentifier.h>
-#include <WebCore/ProcessIdentifier.h>
-#include <wtf/Forward.h>
+#include "SuspendedPageProxy.h"
+#include "WebProcessMessages.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
-class SuspendedPageProxy;
-class WebBackForwardCache;
-class WebProcessProxy;
+WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
+    : m_backForwardCache(backForwardCache)
+    , m_processIdentifier(processIdentifier)
+    , m_backForwardItemID(backForwardItemID)
+    , m_suspendedPage(WTFMove(suspendedPage))
+{
+}
 
-class WebBackForwardCacheEntry {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, std::unique_ptr<SuspendedPageProxy>&& = nullptr);
-    ~WebBackForwardCacheEntry();
+WebBackForwardCacheEntry::~WebBackForwardCacheEntry()
+{
+    if (m_backForwardItemID && !m_suspendedPage) {
+        auto& process = this->process();
+        process.sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(m_backForwardItemID), [token = process.throttler().backgroundActivityToken()] { });
+    }
+}
 
-    WebBackForwardCache& backForwardCache() const { return m_backForwardCache; }
+std::unique_ptr<SuspendedPageProxy> WebBackForwardCacheEntry::takeSuspendedPage()
+{
+    ASSERT(m_suspendedPage);
+    m_backForwardItemID = { };
+    return std::exchange(m_suspendedPage, nullptr);
+}
 
-    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage();
-    WebCore::ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
-    WebProcessProxy& process() const;
-
-private:
-    WebBackForwardCache& m_backForwardCache;
-    WebCore::ProcessIdentifier m_processIdentifier;
-    WebCore::BackForwardItemIdentifier m_backForwardItemID;
-    std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
-};
+WebProcessProxy& WebBackForwardCacheEntry::process() const
+{
+    auto* process = WebProcessProxy::processForIdentifier(m_processIdentifier);
+    ASSERT(process);
+    ASSERT(!m_suspendedPage || process == &m_suspendedPage->process());
+    return *process;
+}
 
 } // namespace WebKit

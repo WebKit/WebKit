@@ -1,3 +1,13 @@
+2019-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Stop using inheritance for WebBackForwardCacheEntry
+        https://bugs.webkit.org/show_bug.cgi?id=202989
+
+        Reviewed by Alex Christensen.
+
+        * history/BackForwardItemIdentifier.h:
+        (WebCore::BackForwardItemIdentifier::operator bool const):
+
 2019-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global

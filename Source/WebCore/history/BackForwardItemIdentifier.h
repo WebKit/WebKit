@@ -38,6 +38,7 @@ struct BackForwardItemIdentifier {
     ObjectIdentifier<ItemIdentifierType> itemIdentifier;
 
     unsigned hash() const;
+    explicit operator bool() const { return processIdentifier && itemIdentifier; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<BackForwardItemIdentifier> decode(Decoder&);

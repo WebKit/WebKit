@@ -3205,6 +3205,7 @@
 		463236842314825C00A48FA7 /* WebRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
 		463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIRemoteObjectRegistry.h; sourceTree = "<group>"; };
 		463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
+		463473B623561D2A00BE1A84 /* WebBackForwardCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardCacheEntry.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
 		4651ECE622178A850067EB95 /* WebProcessCacheCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessCacheCocoa.mm; sourceTree = "<group>"; };
@@ -7828,6 +7829,7 @@
 				1A60224918C16B0800C3E8C9 /* VisitedLinkStore.messages.in */,
 				4603011A234BE31D009C8217 /* WebBackForwardCache.cpp */,
 				4603011B234BE31E009C8217 /* WebBackForwardCache.h */,
+				463473B623561D2A00BE1A84 /* WebBackForwardCacheEntry.cpp */,
 				46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,

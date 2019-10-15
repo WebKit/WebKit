@@ -38,54 +38,6 @@
 
 namespace WebKit {
 
-class EntryWithSuspendedPage final : public WebBackForwardCacheEntry {
-public:
-    EntryWithSuspendedPage(WebBackForwardCache& backForwardCache, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
-        : WebBackForwardCacheEntry(backForwardCache)
-        , m_suspendedPage(WTFMove(suspendedPage))
-    {
-    }
-
-    SuspendedPageProxy* suspendedPage() const final { return m_suspendedPage.get(); }
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage() final { return std::exchange(m_suspendedPage, nullptr); }
-    WebCore::ProcessIdentifier processIdentifier() const final { return process().coreProcessIdentifier(); }
-    WebProcessProxy& process() const final { return m_suspendedPage->process(); }
-
-private:
-    std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
-};
-
-class EntryWithoutSuspendedPage final : public WebBackForwardCacheEntry {
-public:
-    EntryWithoutSuspendedPage(WebBackForwardCache& backForwardCache, const WebCore::BackForwardItemIdentifier& backForwardItemID, WebCore::ProcessIdentifier processIdentifier)
-        : WebBackForwardCacheEntry(backForwardCache)
-        , m_processIdentifier(processIdentifier)
-        , m_backForwardItemID(backForwardItemID)
-    {
-    }
-
-    ~EntryWithoutSuspendedPage()
-    {
-        auto& process = this->process();
-        process.sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(m_backForwardItemID), [token = process.throttler().backgroundActivityToken()] { });
-    }
-
-    WebCore::ProcessIdentifier processIdentifier() const final { return m_processIdentifier; }
-    WebProcessProxy& process() const final
-    {
-        auto* process = WebProcessProxy::processForIdentifier(m_processIdentifier);
-        ASSERT(process);
-        return *process;
-    }
-
-private:
-    SuspendedPageProxy* suspendedPage() const final { return nullptr; }
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage() final { return nullptr; }
-
-    WebCore::ProcessIdentifier m_processIdentifier;
-    WebCore::BackForwardItemIdentifier m_backForwardItemID;
-};
-
 WebBackForwardCache::WebBackForwardCache(WebProcessPool& processPool)
     : m_processPool(processPool)
 {
@@ -136,12 +88,12 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, std::unique_ptr
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
 {
-    addEntry(item, makeUnique<EntryWithSuspendedPage>(*this, WTFMove(suspendedPage)));
+    addEntry(item, makeUnique<WebBackForwardCacheEntry>(*this, item.itemID(), suspendedPage->process().coreProcessIdentifier(), WTFMove(suspendedPage)));
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, WebCore::ProcessIdentifier processIdentifier)
 {
-    addEntry(item, makeUnique<EntryWithoutSuspendedPage>(*this, item.itemID(), WTFMove(processIdentifier)));
+    addEntry(item, makeUnique<WebBackForwardCacheEntry>(*this, item.itemID(), WTFMove(processIdentifier)));
 }
 
 void WebBackForwardCache::removeEntry(WebBackForwardListItem& item)

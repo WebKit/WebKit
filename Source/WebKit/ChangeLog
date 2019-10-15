@@ -1,3 +1,27 @@
+2019-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Stop using inheritance for WebBackForwardCacheEntry
+        https://bugs.webkit.org/show_bug.cgi?id=202989
+
+        Reviewed by Alex Christensen.
+
+        Stop using inheritance for WebBackForwardCacheEntry. This simplifies the code a bit.
+
+        * Sources.txt:
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::addEntry):
+        (): Deleted.
+        * UIProcess/WebBackForwardCacheEntry.cpp: Copied from Source/WebKit/UIProcess/WebBackForwardCacheEntry.h.
+        (WebKit::WebBackForwardCacheEntry::WebBackForwardCacheEntry):
+        (WebKit::WebBackForwardCacheEntry::~WebBackForwardCacheEntry):
+        (WebKit::WebBackForwardCacheEntry::takeSuspendedPage):
+        (WebKit::WebBackForwardCacheEntry::process const):
+        * UIProcess/WebBackForwardCacheEntry.h:
+        (WebKit::WebBackForwardCacheEntry::suspendedPage const):
+        (WebKit::WebBackForwardCacheEntry::processIdentifier const):
+        (WebKit::WebBackForwardCacheEntry::WebBackForwardCacheEntry): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global
