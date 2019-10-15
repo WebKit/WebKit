@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 // Must follow CSSValueKeywords.in order
@@ -156,4 +160,9 @@ enum ThemeColor {
     FocusRingColor
 };
 
-}
+WTF::TextStream& operator<<(WTF::TextStream&, ControlPart);
+WTF::TextStream& operator<<(WTF::TextStream&, SelectionPart);
+WTF::TextStream& operator<<(WTF::TextStream&, ThemeFont);
+WTF::TextStream& operator<<(WTF::TextStream&, ThemeColor);
+
+} // namespace WebCore
