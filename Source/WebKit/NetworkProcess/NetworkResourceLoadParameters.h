@@ -29,6 +29,7 @@
 #include "SandboxExtension.h"
 #include "UserContentControllerIdentifier.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/FetchOptions.h>
 #include <wtf/Seconds.h>
 
@@ -59,6 +60,12 @@ public:
     bool shouldEnableCrossOriginResourcePolicy { false };
     Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
     bool isHTTPSUpgradeEnabled { false };
+
+#if ENABLE(SERVICE_WORKER)
+    WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };
+    Optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    WebCore::HTTPHeaderNameSet httpHeadersToKeep;
+#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

@@ -32,13 +32,20 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
+#include "WebLoaderStrategy.h"
+#include "WebPage.h"
 #include "WebProcess.h"
+#include "WebURLSchemeHandlerProxy.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
@@ -216,6 +223,47 @@ void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkL
 
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
     m_coreLoader->didFinishLoading(networkLoadMetrics);
+}
+
+void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
+{
+    if (auto* document = m_coreLoader->frame() ? m_coreLoader->frame()->document() : nullptr) {
+        if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString || error.isGeneral())
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
+        if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString)
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cannot load ", error.failingURL().string(), "."));
+    }
+
+    didFailResourceLoad(error);
+}
+
+void WebResourceLoader::serviceWorkerDidNotHandle()
+{
+#if ENABLE(SERVICE_WORKER)
+    RELEASE_LOG_IF_ALLOWED("serviceWorkerDidNotHandle: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
+
+    if (m_coreLoader->options().serviceWorkersMode != ServiceWorkersMode::Only) {
+        auto* webFrameLoaderClient = toWebFrameLoaderClient(m_coreLoader->frameLoader()->client());
+        auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+        auto* webPage = webFrame ? webFrame->page() : nullptr;
+
+        if (auto* handler = webPage->urlSchemeHandlerForScheme(m_coreLoader->request().url().protocol().toStringWithoutCopying())) {
+            RELEASE_LOG_IF_ALLOWED("resource loaded by URL scheme handler: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
+
+            auto loader = m_coreLoader;
+            WebProcess::singleton().webLoaderStrategy().remove(m_coreLoader.get());
+
+            handler->startNewTask(*loader);
+            return;
+        }
+    }
+
+    auto error = internalError(m_coreLoader->request().url());
+    error.setType(ResourceError::Type::Cancellation);
+    m_coreLoader->didFail(error);
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)

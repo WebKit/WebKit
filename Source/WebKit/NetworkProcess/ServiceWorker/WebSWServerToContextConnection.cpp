@@ -61,9 +61,14 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
         m_server->removeContextConnection(*this);
 }
 
+IPC::Connection& WebSWServerToContextConnection::ipcConnection() const
+{
+    return m_connection.connection();
+}
+
 IPC::Connection* WebSWServerToContextConnection::messageSenderConnection() const
 {
-    return &m_connection.connection();
+    return &ipcConnection();
 }
 
 uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
@@ -141,39 +146,9 @@ void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)
     send(Messages::WebSWContextManagerConnection::SetThrottleState { isThrottleable });
 }
 
-void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, WebSWServerConnection& contentConnection, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& data, const String& referrer)
+void WebSWServerToContextConnection::startFetch(ServiceWorkerFetchTask& task)
 {
-    auto serverConnectionIdentifier = contentConnection.identifier();
-    auto fetchIdentifier = FetchIdentifier::generate();
-
-    auto result = m_ongoingFetches.add(fetchIdentifier, makeUnique<ServiceWorkerFetchTask>(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_connection.networkProcess().serviceWorkerFetchTimeout()));
-
-    ASSERT(!m_ongoingFetchIdentifiers.contains({ serverConnectionIdentifier, contentFetchIdentifier }));
-    m_ongoingFetchIdentifiers.add({ serverConnectionIdentifier, contentFetchIdentifier }, fetchIdentifier);
-
-    if (!send(Messages::WebSWContextManagerConnection::StartFetch { serverConnectionIdentifier, serviceWorkerIdentifier, fetchIdentifier, request, options, data, referrer }))
-        result.iterator->value->didNotHandle();
-}
-
-void WebSWServerToContextConnection::cancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    auto iterator = m_ongoingFetchIdentifiers.find({ serverConnectionIdentifier, contentFetchIdentifier });
-    if (iterator == m_ongoingFetchIdentifiers.end())
-        return;
-
-    send(Messages::WebSWContextManagerConnection::CancelFetch { serverConnectionIdentifier, serviceWorkerIdentifier, iterator->value });
-
-    m_ongoingFetches.remove(iterator->value);
-    m_ongoingFetchIdentifiers.remove(iterator);
-}
-
-void WebSWServerToContextConnection::continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    auto iterator = m_ongoingFetchIdentifiers.find({ serverConnectionIdentifier, contentFetchIdentifier });
-    if (iterator == m_ongoingFetchIdentifiers.end())
-        return;
-    
-    send(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { serverConnectionIdentifier, serviceWorkerIdentifier, iterator->value });
+    task.start(*this);
 }
 
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -181,51 +156,41 @@ void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection&
     auto iterator = m_ongoingFetches.find(makeObjectIdentifier<FetchIdentifierType>(decoder.destinationID()));
     if (iterator == m_ongoingFetches.end())
         return;
-    
-    bool shouldRemove = decoder.messageName() == Messages::ServiceWorkerFetchTask::DidFail::name()
-        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidNotHandle::name()
-        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidFinish::name()
-        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidReceiveRedirectResponse::name();
 
     iterator->value->didReceiveMessage(connection, decoder);
-
-    if (shouldRemove) {
-        ASSERT(m_ongoingFetchIdentifiers.contains(iterator->value->identifier()));
-        m_ongoingFetchIdentifiers.remove(iterator->value->identifier());
-        m_ongoingFetches.remove(iterator);
-    }
 }
 
-void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerFetchTask& task)
+void WebSWServerToContextConnection::registerFetch(ServiceWorkerFetchTask& task)
 {
-    ASSERT(m_ongoingFetchIdentifiers.contains(task.identifier()));
-    auto takenIdentifier = m_ongoingFetchIdentifiers.take(task.identifier());
+    ASSERT(!m_ongoingFetches.contains(task.fetchIdentifier()));
+    m_ongoingFetches.add(task.fetchIdentifier(), makeWeakPtr(task));
+}
 
-    ASSERT(m_ongoingFetches.contains(takenIdentifier));
-    auto takenTask = m_ongoingFetches.take(takenIdentifier);
-    ASSERT(takenTask);
-    ASSERT(takenTask.get() == &task);
+void WebSWServerToContextConnection::unregisterFetch(ServiceWorkerFetchTask& task)
+{
+    ASSERT(m_ongoingFetches.contains(task.fetchIdentifier()));
+    m_ongoingFetches.remove(task.fetchIdentifier());
+}
 
-    // Gather all other fetches in this service worker
-    Vector<ServiceWorkerFetchTask*> otherFetches;
+void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    // Gather all fetches in this service worker
+    Vector<ServiceWorkerFetchTask*> fetches;
     for (auto& fetchTask : m_ongoingFetches.values()) {
-        if (fetchTask->serviceWorkerIdentifier() == task.serviceWorkerIdentifier())
-            otherFetches.append(fetchTask.get());
+        if (fetchTask->serviceWorkerIdentifier() == serviceWorkerIdentifier)
+            fetches.append(fetchTask.get());
     }
 
     // Signal load failure for them
-    for (auto* fetchTask : otherFetches) {
+    for (auto* fetchTask : fetches) {
         if (fetchTask->wasHandled())
             fetchTask->fail({ errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
         else
             fetchTask->didNotHandle();
-
-        auto identifier = m_ongoingFetchIdentifiers.take(fetchTask->identifier());
-        m_ongoingFetches.remove(identifier);
     }
 
     if (m_server) {
-        if (auto* worker = m_server->workerByID(task.serviceWorkerIdentifier())) {
+        if (auto* worker = m_server->workerByID(serviceWorkerIdentifier)) {
             worker->setHasTimedOutAnyFetchTasks();
             if (worker->isRunning())
                 m_server->syncTerminateWorker(*worker);

@@ -379,6 +379,11 @@ void NetworkResourceLoader::abort()
         return;
     }
 
+#if ENABLE(SERVICE_WORKER)
+    if (auto task = WTFMove(m_serviceWorkerFetchTask))
+        task->cancelFromClient();
+#endif
+
     if (m_networkLoad) {
         if (canUseCache(m_networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
@@ -612,8 +617,16 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     if (isSynchronous()) {
         m_synchronousLoadData->error = error;
         sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
-    } else if (auto* connection = messageSenderConnection())
+    } else if (auto* connection = messageSenderConnection()) {
+#if ENABLE(SERVICE_WORKER)
+        if (m_serviceWorkerFetchTask)
+            connection->send(Messages::WebResourceLoader::DidFailServiceWorkerLoad(error), messageSenderDestinationID());
+        else
+            connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
+#else
         connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
+#endif
+    }
 
     cleanup(LoadResult::Failure);
 }
@@ -747,6 +760,10 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
+    if (m_serviceWorkerFetchTask) {
+        m_serviceWorkerFetchTask->continueFetchTaskWith(WTFMove(newRequest));
+        return;
+    }
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
 
@@ -792,6 +809,11 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
+    if (m_serviceWorkerFetchTask) {
+        m_serviceWorkerFetchTask->continueDidReceiveFetchResponse();
+        return;
+    }
+
     if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
         sendResultForCacheEntry(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
         cleanup(LoadResult::Success);
@@ -1195,6 +1217,31 @@ bool NetworkResourceLoader::isCrossOriginPrefetch() const
     auto& request = originalRequest();
     return request.httpHeaderField(HTTPHeaderName::Purpose) == "prefetch" && !m_parameters.sourceOrigin->canRequest(request.url());
 }
+
+#if ENABLE(SERVICE_WORKER)
+void NetworkResourceLoader::startWithServiceWorker(WebSWServerConnection* swConnection)
+{
+    ASSERT(!m_serviceWorkerFetchTask);
+    m_serviceWorkerFetchTask = swConnection ? swConnection->createFetchTask(*this) : nullptr;
+    if (m_serviceWorkerFetchTask)
+        return;
+
+    serviceWorkerDidNotHandle();
+}
+
+void NetworkResourceLoader::serviceWorkerDidNotHandle()
+{
+    if (m_parameters.serviceWorkersMode == ServiceWorkersMode::Only) {
+        send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, identifier());
+        abort();
+        return;
+    }
+
+    m_serviceWorkerFetchTask = nullptr;
+    start();
+}
+
+#endif
 
 } // namespace WebKit
 

@@ -85,6 +85,8 @@ private:
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
+    void didFailServiceWorkerLoad(const WebCore::ResourceError&);
+    void serviceWorkerDidNotHandle();
     void didBlockAuthenticationChallenge();
 
     void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(const WebCore::ResourceResponse&);

@@ -52,24 +52,28 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class WebSWServerConnection;
 
-class WebSWServerToContextConnection : public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWServerToContextConnection: public CanMakeWeakPtr<WebSWServerToContextConnection>, public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebCore::RegistrableDomain&&, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 
+    IPC::Connection& ipcConnection() const;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    void startFetch(PAL::SessionID, WebSWServerConnection&, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&, const String&);
+    void startFetch(ServiceWorkerFetchTask&);
     void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
-    void continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
 
     void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Decoder&);
 
     void setThrottleState(bool isThrottleable);
     bool isThrottleable() const { return m_isThrottleable; }
 
-    void fetchTaskTimedOut(ServiceWorkerFetchTask&);
+    void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
+
+    void registerFetch(ServiceWorkerFetchTask&);
+    void unregisterFetch(ServiceWorkerFetchTask&);
 
 private:
     // IPC::MessageSender
@@ -96,9 +100,7 @@ private:
 
     NetworkConnectionToWebProcess& m_connection;
     WeakPtr<WebCore::SWServer> m_server;
-
-    HashMap<ServiceWorkerFetchTask::Identifier, WebCore::FetchIdentifier> m_ongoingFetchIdentifiers;
-    HashMap<WebCore::FetchIdentifier, std::unique_ptr<ServiceWorkerFetchTask>> m_ongoingFetches;
+    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
     bool m_isThrottleable { true };
 }; // class WebSWServerToContextConnection
 

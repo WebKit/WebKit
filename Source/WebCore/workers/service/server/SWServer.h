@@ -164,7 +164,7 @@ public:
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
 
     const HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>>& connections() const { return m_connections; }
-    const HashSet<String> registeredSchemes() const { return m_registeredSchemes; }
+    WEBCORE_EXPORT bool canHandleScheme(StringView) const;
 
     SWOriginStore& originStore() { return m_originStore; }
 

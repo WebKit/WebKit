@@ -31,6 +31,7 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "CrossOriginAccessControl.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderNames.h"
 #include "ServiceWorkerTypes.h"
@@ -151,7 +152,7 @@ struct ResourceLoaderOptions : public FetchOptions {
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
 #endif
-    HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> httpHeadersToKeep;
+    HTTPHeaderNameSet httpHeadersToKeep;
     Optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     unsigned maxRedirectCount { 20 };
 
@@ -175,3 +176,16 @@ struct ResourceLoaderOptions : public FetchOptions {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ServiceWorkersMode> {
+    using values = EnumValues<
+        WebCore::ServiceWorkersMode,
+        WebCore::ServiceWorkersMode::All,
+        WebCore::ServiceWorkersMode::None,
+        WebCore::ServiceWorkersMode::Only
+    >;
+};
+
+} // namespace WTF

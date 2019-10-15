@@ -105,7 +105,6 @@ $(PROJECT_DIR)/WebProcess/Notifications/WebNotificationManager.messages.in
 $(PROJECT_DIR)/WebProcess/Plugins/PluginProcessConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Plugins/PluginProcessConnectionManager.messages.in
 $(PROJECT_DIR)/WebProcess/Plugins/PluginProxy.messages.in
-$(PROJECT_DIR)/WebProcess/Storage/ServiceWorkerClientFetch.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in

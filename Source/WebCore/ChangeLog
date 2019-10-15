@@ -1,3 +1,23 @@
+2019-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Handle service worker loads through NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=202309
+
+        Reviewed by Alex Christensen.
+
+        Allow to serialize HTTP header names as enumeration.
+        Updated SWServer ability to handle schemes by adding built-in support for HTTP and HTTPS as done in LegacySchemeRegistry.
+
+        Covered by existing tests.
+
+        * loader/ResourceLoaderOptions.h:
+        * platform/network/create-http-header-name-table:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::canHandleScheme const):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::runRegisterJob):
+
 2019-10-14  Tim Horton  <timothy_horton@apple.com>
 
         Unify sources for bindings more densely

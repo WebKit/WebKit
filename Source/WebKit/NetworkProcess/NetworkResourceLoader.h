@@ -51,6 +51,8 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class NetworkLoad;
 class NetworkLoadChecker;
+class ServiceWorkerFetchTask;
+class WebSWServerConnection;
 
 namespace NetworkCache {
 class Entry;
@@ -88,7 +90,8 @@ public:
     ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return m_parameters.webPageID; }
-    
+    const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
+
     NetworkCache::GlobalFrameID globalFrameID() { return { m_parameters.webPageProxyID, pageID(), frameID() }; }
 
     struct SynchronousLoadData;
@@ -121,6 +124,11 @@ public:
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }
 
     bool isKeptAlive() const { return m_isKeptAlive; }
+
+#if ENABLE(SERVICE_WORKER)
+    void startWithServiceWorker(WebSWServerConnection*);
+    void serviceWorkerDidNotHandle();
+#endif
 
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&&);
@@ -220,6 +228,9 @@ private:
     bool m_isKeptAlive { false };
 
     Optional<NetworkActivityTracker> m_networkActivityTracker;
+#if ENABLE(SERVICE_WORKER)
+    std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
+#endif
 };
 
 } // namespace WebKit

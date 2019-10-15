@@ -1,3 +1,12 @@
+2019-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Handle service worker loads through NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=202309
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+
 2019-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import W3C tests for requestidlecallback

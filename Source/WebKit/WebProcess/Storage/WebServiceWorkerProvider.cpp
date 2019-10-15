@@ -66,48 +66,6 @@ WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConn
     return networkProcessConnection->existingServiceWorkerConnection();
 }
 
-static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
-{
-    if (options.serviceWorkersMode == ServiceWorkersMode::None)
-        return false;
-
-    if (isPotentialNavigationOrSubresourceRequest(options.destination))
-        return false;
-
-    return !!options.serviceWorkerRegistrationIdentifier;
-}
-
-void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
-{
-    if (!LegacySchemeRegistry::canServiceWorkersHandleURLScheme(loader.request().url().protocol().toStringWithoutCopying()) || !shouldHandleFetch(loader.options())) {
-        callback(ServiceWorkerClientFetch::Result::Unhandled);
-        return;
-    }
-
-    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
-    auto fetchIdentifier = makeObjectIdentifier<FetchIdentifierType>(loader.identifier());
-    m_ongoingFetchTasks.add(fetchIdentifier, ServiceWorkerClientFetch::create(*this, loader, fetchIdentifier, connection, shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback)));
-}
-
-bool WebServiceWorkerProvider::cancelFetch(FetchIdentifier fetchIdentifier)
-{
-    auto fetch = m_ongoingFetchTasks.take(fetchIdentifier);
-    if (fetch)
-        (*fetch)->cancel();
-    return !!fetch;
-}
-
-void WebServiceWorkerProvider::fetchFinished(FetchIdentifier fetchIdentifier)
-{
-    m_ongoingFetchTasks.take(fetchIdentifier);
-}
-
-void WebServiceWorkerProvider::didReceiveServiceWorkerClientFetchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (auto fetch = m_ongoingFetchTasks.get(makeObjectIdentifier<FetchIdentifierType>(decoder.destinationID())))
-        fetch->didReceiveMessage(connection, decoder);
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

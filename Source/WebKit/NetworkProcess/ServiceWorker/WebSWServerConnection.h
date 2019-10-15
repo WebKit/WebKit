@@ -52,6 +52,8 @@ struct ServiceWorkerClientData;
 namespace WebKit {
 
 class NetworkProcess;
+class NetworkResourceLoader;
+class ServiceWorkerFetchTask;
 
 class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
@@ -65,6 +67,8 @@ public:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     
     PAL::SessionID sessionID() const;
+
+    std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
@@ -82,9 +86,9 @@ private:
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 
-    void startFetch(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::FetchIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&, String&& referrer);
-    void cancelFetch(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::FetchIdentifier);
-    void continueDidReceiveFetchResponse(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::FetchIdentifier);
+    bool handleFetch(NetworkResourceLoader&);
+
+    void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const URL& clientURL);

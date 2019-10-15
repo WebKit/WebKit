@@ -1,3 +1,99 @@
+2019-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Handle service worker loads through NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=202309
+
+        Reviewed by Alex Christensen.
+
+        Remove ServiceWorkerFetchClient.
+        Instead we use the normal NetworkResourceLoader/WebResourceLoader communication channel.
+        We pass additional parameters, in particular service worker mode and registration identifier.
+
+        Based on that information, network process will decide whether to load from service worker or network.
+        The first advantage is that in case of service worker not handling the load, going to the network is faster.
+        This will also allow us to do the registration matching in network process when receiving a navigation request.
+
+        ServiceWorkerFetchTask is now beefed up to do the link between service worker and NetworkResourceLoader/WebResourceLoader.
+        To support the same console logging, we add a new message called DidFailServiceWorkerLoad.
+
+        To support API tests, we continue to go to the service worker before trying to go to URL scheme handlers.
+        This adds some burden as we need to go to network process/service worker process and, in case load is not handled
+        by service worker, we go back to the web process to do the load through URL scheme handlers.
+        For that purpose we use ServiceWorkersMode::Only.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        (WebKit::NetworkResourceLoader::startWithServiceWorker):
+        (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::~ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::sendToServiceWorker):
+        (WebKit::ServiceWorkerFetchTask::sendToClient):
+        (WebKit::ServiceWorkerFetchTask::start):
+        (WebKit::ServiceWorkerFetchTask::startFetch):
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::didReceiveFormData):
+        (WebKit::ServiceWorkerFetchTask::didFinish):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        (WebKit::ServiceWorkerFetchTask::cancelFromClient):
+        (WebKit::ServiceWorkerFetchTask::continueDidReceiveFetchResponse):
+        (WebKit::ServiceWorkerFetchTask::continueFetchTaskWith):
+        (WebKit::ServiceWorkerFetchTask::timeoutTimerFired):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        (WebKit::ServiceWorkerFetchTask::fetchIdentifier const):
+        (WebKit::ServiceWorkerFetchTask::serviceWorkerIdentifier const):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::cancelFetch):
+        (WebKit::WebSWServerConnection::createFetchTask):
+        (WebKit::WebSWServerConnection::startFetch):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::startFetch):
+        (WebKit::WebSWServerToContextConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWServerToContextConnection::didReceiveFetchTaskMessage):
+        (WebKit::WebSWServerToContextConnection::registerFetch):
+        (WebKit::WebSWServerToContextConnection::unregisterFetch):
+        (WebKit::WebSWServerToContextConnection::fetchTaskTimedOut):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        (WebKit::WebSWServerToContextConnection::ipcConnection const):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didFailServiceWorkerLoad):
+        (WebKit::WebResourceLoader::serviceWorkerDidNotHandle):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp: Removed.
+        * WebProcess/Storage/ServiceWorkerClientFetch.h: Removed.
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in: Removed.
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+
 2019-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] White pages in AC mode: Cannot get default EGL display: EGL_BAD_PARAMETER

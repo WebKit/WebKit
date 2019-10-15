@@ -27,6 +27,8 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveData(IPC::SharedBufferDataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(WebCore::NetworkLoadMetrics networkLoadMetrics)
     DidFailResourceLoad(WebCore::ResourceError error)
+    DidFailServiceWorkerLoad(WebCore::ResourceError error)
+    ServiceWorkerDidNotHandle()
     DidBlockAuthenticationChallenge()
 
     StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(WebCore::ResourceResponse response)

@@ -974,6 +974,21 @@ void SWServer::createContextConnection(const RegistrableDomain& registrableDomai
     m_createContextConnectionCallback(registrableDomain);
 }
 
+bool SWServer::canHandleScheme(StringView scheme) const
+{
+    if (scheme.isNull())
+        return false;
+
+    if (equalLettersIgnoringASCIICase(scheme.substring(0, 4), "http")) {
+        if (scheme.length() == 4)
+            return true;
+        if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
+            return true;
+    }
+
+    return m_registeredSchemes.contains(scheme.toStringWithoutCopying());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

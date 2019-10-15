@@ -215,41 +215,20 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (!!resourceLoader.options().serviceWorkerRegistrationIdentifier)
-        RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled through ServiceWorker or Network Process (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
+    auto url = resourceLoader.request().url();
+    auto* data = url.string().utf8().data();
+    if (data)
+        url.string();
 
-    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, shouldClearReferrerOnHTTPSToHTTPRedirect, [this, trackingParameters, identifier, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
-        if (result != ServiceWorkerClientFetch::Result::Unhandled) {
-            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
-            RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled through ServiceWorker handle fetch algorithm (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
-            return;
-        }
-        if (resourceLoader->options().serviceWorkersMode == ServiceWorkersMode::Only) {
-            RELEASE_LOG_ERROR_IF_ALLOWED("scheduleLoad: unable to schedule URL through ServiceWorker handle fetch algorithm (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
-            callOnMainThread([resourceLoader = WTFMove(resourceLoader)] {
-                auto error = internalError(resourceLoader->request().url());
-                error.setType(ResourceError::Type::Cancellation);
-                resourceLoader->didFail(error);
-            });
-            return;
-        }
-
-        if (!WebProcess::singleton().webLoaderStrategy().tryLoadingUsingURLSchemeHandler(resourceLoader)) {
-            RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled with the NetworkProcess (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
-            WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
-            return;
-        }
-
-        RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
-    });
+    if ((resourceLoader.options().serviceWorkerRegistrationIdentifier && resourceLoader.options().serviceWorkersMode != ServiceWorkersMode::None) || !tryLoadingUsingURLSchemeHandler(resourceLoader)) {
 #else
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader)) {
+#endif
         RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled with the NetworkProcess (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
         scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
         return;
     }
     RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL not handled by any handlers (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
-#endif
 }
 
 bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resourceLoader)
@@ -271,6 +250,10 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
 {
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
+
     ResourceLoadIdentifier identifier = resourceLoader.identifier();
     ASSERT(identifier);
 
@@ -301,6 +284,17 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.options = resourceLoader.options();
     loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
     loadParameters.isHTTPSUpgradeEnabled = resourceLoader.frame() ? resourceLoader.frame()->settings().HTTPSUpgradeEnabled() : false;
+
+#if ENABLE(SERVICE_WORKER)
+    // In case of URL scheme handler, we will try to load on service workers and if unhandled, fallback to URL scheme handler.
+    if (resourceLoader.options().serviceWorkersMode == ServiceWorkersMode::All && webPage &&  webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying()))
+        loadParameters.serviceWorkersMode = ServiceWorkersMode::Only;
+    else
+        loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
+
+    loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
+    loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
+#endif
 
     auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)
@@ -437,11 +431,6 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
         LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
         return;
     }
-
-#if ENABLE(SERVICE_WORKER)
-    if (WebServiceWorkerProvider::singleton().cancelFetch(makeObjectIdentifier<FetchIdentifierType>(identifier)))
-        return;
-#endif
 
     RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
     // Loader may not be registered if we created it, but haven't scheduled yet (a bundle client can decide to cancel such request via willSendRequest).

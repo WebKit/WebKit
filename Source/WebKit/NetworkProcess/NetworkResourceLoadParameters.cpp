@@ -107,6 +107,12 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << frameAncestorOrigins;
     encoder << isHTTPSUpgradeEnabled;
 
+#if ENABLE(SERVICE_WORKER)
+    encoder << serviceWorkersMode;
+    encoder << serviceWorkerRegistrationIdentifier;
+    encoder << httpHeadersToKeep;
+#endif
+
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << mainDocumentURL;
     encoder << userContentControllerIdentifier;
@@ -242,7 +248,27 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (!isHTTPSUpgradeEnabled)
         return WTF::nullopt;
     result.isHTTPSUpgradeEnabled = *isHTTPSUpgradeEnabled;
-    
+
+#if ENABLE(SERVICE_WORKER)
+    Optional<ServiceWorkersMode> serviceWorkersMode;
+    decoder >> serviceWorkersMode;
+    if (!serviceWorkersMode)
+        return WTF::nullopt;
+    result.serviceWorkersMode = *serviceWorkersMode;
+
+    Optional<Optional<ServiceWorkerRegistrationIdentifier>> serviceWorkerRegistrationIdentifier;
+    decoder >> serviceWorkerRegistrationIdentifier;
+    if (!serviceWorkerRegistrationIdentifier)
+        return WTF::nullopt;
+    result.serviceWorkerRegistrationIdentifier = *serviceWorkerRegistrationIdentifier;
+
+    Optional<HTTPHeaderNameSet> httpHeadersToKeep;
+    decoder >> httpHeadersToKeep;
+    if (!httpHeadersToKeep)
+        return WTF::nullopt;
+    result.httpHeadersToKeep = WTFMove(*httpHeadersToKeep);
+#endif
+
 #if ENABLE(CONTENT_EXTENSIONS)
     if (!decoder.decode(result.mainDocumentURL))
         return WTF::nullopt;
