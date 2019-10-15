@@ -1,5 +1,16 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix several GTK tests in /WebKit2Gtk/TestUIClient crashing since r241988
+
+        Show a warning message and return nullptr from WebKitWebView::create if the new web view is not related to the
+        given one. Also make it clear in the documentation that the new web view should be related to the given one.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewCreateNewPage):
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK test /webkit/Authentication/authentication-storage after r249962
 
         * UIProcess/API/glib/WebKitWebView.cpp:

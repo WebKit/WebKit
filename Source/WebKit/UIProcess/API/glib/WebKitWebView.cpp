@@ -1353,10 +1353,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The #WebKitNavigationAction parameter contains information about the
      * navigation action that triggered this signal.
      *
-     * When using %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES
-     * process model, the new #WebKitWebView should be related to
-     * @web_view to share the same web process, see webkit_web_view_new_with_related_view()
-     * for more details.
+     * The new #WebKitWebView must be related to @web_view, see
+     * webkit_web_view_new_with_related_view() for more details.
      *
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::ready-to-show signal is emitted.
@@ -2216,7 +2214,12 @@ WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFea
     WebKitWebView* newWebView;
     g_signal_emit(webView, signals[CREATE], 0, navigationAction, &newWebView);
     if (!newWebView)
-        return 0;
+        return nullptr;
+
+    if (&getPage(webView).process() != &getPage(newWebView).process()) {
+        g_warning("WebKitWebView returned by WebKitWebView::create signal was not created with the related WebKitWebView");
+        return nullptr;
+    }
 
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 

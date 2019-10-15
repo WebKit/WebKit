@@ -330,7 +330,7 @@ public:
         g_assert_true(webView == m_webView);
         g_assert_nonnull(navigation);
 
-        auto* newWebView = Test::createWebView(webkit_web_view_get_context(webView));
+        auto* newWebView = Test::createWebView(webView);
 #if PLATFORM(GTK)
         g_object_ref_sink(newWebView);
 #endif
@@ -479,7 +479,7 @@ static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gcon
     test->loadHTML("<html><body onLoad=\"window.open();\"></html>");
     test->waitUntilMainLoopFinishes();
 
-    g_assert_cmpstr(webkit_uri_request_get_uri(webkit_navigation_action_get_request(test->m_navigation)), ==, "about:blank");
+    g_assert_cmpstr(webkit_uri_request_get_uri(webkit_navigation_action_get_request(test->m_navigation)), ==, "");
     g_assert_cmpuint(webkit_navigation_action_get_navigation_type(test->m_navigation), ==, WEBKIT_NAVIGATION_TYPE_OTHER);
     g_assert_cmpuint(webkit_navigation_action_get_mouse_button(test->m_navigation), ==, 0);
     g_assert_cmpuint(webkit_navigation_action_get_modifiers(test->m_navigation), ==, 0);

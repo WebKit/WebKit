@@ -1,5 +1,17 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix several GTK tests in /WebKit2Gtk/TestUIClient crashing since r241988
+
+        This was not caused by r241988, but revealed the existing bug. We were not creating the new WebKitWebView in
+        UIClientTest with the related WebKitWebView. Since r241988, the new WebPageProxy drawing area is passed to
+        creationParameters(), but it's nullptr because the WebPageProxy hasn't been initialized yet. When using related
+        views, the new WebPageProxy is already initialized because it has running processes on creation.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK test /WebKit2Gtk/TestWebViewEditor
 
         It's failing since we delay the web process launch until the first load. Load about:blank in the test
