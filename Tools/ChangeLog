@@ -1,5 +1,14 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK test /WebKit2Gtk/TestWebViewEditor
+
+        It's failing since we delay the web process launch until the first load. Load about:blank in the test
+        constructor to fix it.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK test /webkit/Authentication/authentication-storage after r249962
 
         The test was still using the legacy private browsing API that is a no-op since r249962. This partch updates the
