@@ -4886,6 +4886,7 @@
 		F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F44EBBD81DB5D21400277334 /* StaticRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F46C447E234654540039A79D /* ClipboardItemBindingsDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */; };
 		F478755419983AFF0024A287 /* ScrollSnapAnimatorState.h in Headers */ = {isa = PBXBuildFile; fileRef = F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A09CF20A939F600240FAE /* DisabledAdaptations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4901,6 +4902,8 @@
 		F4B422C4220C0568009E1E7D /* DOMPasteAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
+		F4D07558234D822D00881E73 /* ClipboardItemDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */; };
+		F4D07559234D823300881E73 /* ClipboardItemPasteboardDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = F46C44802346547A0039A79D /* ClipboardItemPasteboardDataSource.h */; };
 		F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4E57EDC213F3F5F004EA98E /* FontAttributeChanges.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E57EDA213F3F5F004EA98E /* FontAttributeChanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4E57EE1213F434A004EA98E /* WebCoreNSFontManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E57EDF213F434A004EA98E /* WebCoreNSFontManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15205,6 +15208,11 @@
 		F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisScrollSnapOffsets.h; sourceTree = "<group>"; };
 		F4628A9E234D3BBF00BC884C /* PlatformPasteboardCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardCocoa.mm; sourceTree = "<group>"; };
 		F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapOffsetsInfo.h; sourceTree = "<group>"; };
+		F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardItemDataSource.h; sourceTree = "<group>"; };
+		F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardItemBindingsDataSource.h; sourceTree = "<group>"; };
+		F46C447D234654540039A79D /* ClipboardItemBindingsDataSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClipboardItemBindingsDataSource.cpp; sourceTree = "<group>"; };
+		F46C44802346547A0039A79D /* ClipboardItemPasteboardDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClipboardItemPasteboardDataSource.h; sourceTree = "<group>"; };
+		F46C44812346547A0039A79D /* ClipboardItemPasteboardDataSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClipboardItemPasteboardDataSource.cpp; sourceTree = "<group>"; };
 		F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapAnimatorState.h; sourceTree = "<group>"; };
 		F478755319983AFF0024A287 /* ScrollSnapAnimatorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollSnapAnimatorState.mm; sourceTree = "<group>"; };
 		F47A09CF20A939F600240FAE /* DisabledAdaptations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisabledAdaptations.h; sourceTree = "<group>"; };
@@ -26853,6 +26861,11 @@
 				F440E775233D94D60063F9AB /* ClipboardItem.cpp */,
 				F440E770233D94D40063F9AB /* ClipboardItem.h */,
 				F440E777233D94D70063F9AB /* ClipboardItem.idl */,
+				F46C447D234654540039A79D /* ClipboardItemBindingsDataSource.cpp */,
+				F46C447C234654540039A79D /* ClipboardItemBindingsDataSource.h */,
+				F46C447A2346535E0039A79D /* ClipboardItemDataSource.h */,
+				F46C44812346547A0039A79D /* ClipboardItemPasteboardDataSource.cpp */,
+				F46C44802346547A0039A79D /* ClipboardItemPasteboardDataSource.h */,
 				F440E773233D94D50063F9AB /* NavigatorClipboard.cpp */,
 				F440E76F233D94D30063F9AB /* NavigatorClipboard.h */,
 				F440E771233D94D40063F9AB /* NavigatorClipboard.idl */,
@@ -28831,6 +28844,9 @@
 				7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
 				F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */,
+				F46C447E234654540039A79D /* ClipboardItemBindingsDataSource.h in Headers */,
+				F4D07558234D822D00881E73 /* ClipboardItemDataSource.h in Headers */,
+				F4D07559234D823300881E73 /* ClipboardItemPasteboardDataSource.h in Headers */,
 				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				580371621A66F00A00BAF519 /* ClipRect.h in Headers */,
 				97AABD1314FA09D5007457AE /* CloseEvent.h in Headers */,

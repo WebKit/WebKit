@@ -23,45 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ClipboardItemPasteboardDataSource.h"
 
-#include "EventTarget.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+#include "PasteboardItemInfo.h"
 
 namespace WebCore {
 
-class ClipboardItem;
-class DeferredPromise;
-class Navigator;
+ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource(ClipboardItem& item, const PasteboardItemInfo& info, size_t itemIndex)
+    : ClipboardItemDataSource(item)
+    , m_types(info.webSafeTypesByFidelity)
+    , m_itemIndex(itemIndex)
+    , m_initialChangeCount(info.changeCount)
+{
+}
 
-class Clipboard final : public RefCounted<Clipboard>, public EventTargetWithInlineData, public CanMakeWeakPtr<Clipboard> {
-    WTF_MAKE_ISO_ALLOCATED(Clipboard);
-public:
-    static Ref<Clipboard> create(Navigator&);
+ClipboardItemPasteboardDataSource::~ClipboardItemPasteboardDataSource() = default;
 
-    EventTargetInterface eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+Vector<String> ClipboardItemPasteboardDataSource::types() const
+{
+    return m_types;
+}
 
-    Navigator* navigator();
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-    void readText(Ref<DeferredPromise>&&);
-    void writeText(const String& data, Ref<DeferredPromise>&&);
-
-    void read(Ref<DeferredPromise>&&);
-    void write(const Vector<RefPtr<ClipboardItem>>& data, Ref<DeferredPromise>&&);
-
-private:
-    Clipboard(Navigator&);
-
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    WeakPtr<Navigator> m_navigator;
-};
+void ClipboardItemPasteboardDataSource::getType(const String& type, Ref<DeferredPromise>&& promise)
+{
+    // FIXME: Not implemented.
+    UNUSED_PARAM(m_initialChangeCount);
+    UNUSED_PARAM(m_itemIndex);
+    UNUSED_PARAM(type);
+    promise->reject(NotSupportedError);
+}
 
 } // namespace WebCore

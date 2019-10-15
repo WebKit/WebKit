@@ -4471,6 +4471,7 @@ webkit.org/b/202938 fast/images/reset-image-animation.html [ Failure Pass ]
 webkit.org/b/202939 fast/workers/worker-exception-during-navigation.html [ Failure Pass ]
 
 webkit.org/b/202940 editing/async-clipboard/clipboard-interfaces.html [ Failure ]
+webkit.org/b/202940 editing/async-clipboard/clipboard-item-basic.html [ Failure ]
 
 webkit.org/b/202945 fast/css/invalidation-errors-2.html [ Failure ]
 webkit.org/b/202945 fast/css/invalidation-errors.html [ Failure ]

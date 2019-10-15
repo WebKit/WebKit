@@ -1,3 +1,30 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Implement getType() for ClipboardItems created from bindings
+        https://bugs.webkit.org/show_bug.cgi?id=202943
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that we can create and ask ClipboardItems for data. Exercises the following
+        corner cases:
+        - Promise rejection when returning item data.
+        - Resolving promises to incorrect data types.
+        - Setting types to custom strings (including emojis and non-ASCII characters).
+        - Returning values with emojis and non-ASCII characters.
+        - Resolving promises using both Blobs and DOMStrings.
+        - Delayed promise rejection/resolution (using setTimeout).
+
+        * editing/async-clipboard/clipboard-item-basic-expected.txt: Added.
+        * editing/async-clipboard/clipboard-item-basic.html: Added.
+        * editing/async-clipboard/resources/async-clipboard-helpers.js: Added.
+
+        Add a resource file with some helper functions for creating blobs, and loading images and text from blobs.
+
+        * platform/win/TestExpectations:
+
+        Temporarily mark a test as failing; I'll fix this and some other failing tests in a followup. See
+        <https://webkit.org/b/202940>.
+
 2019-10-15  Rob Buis  <rbuis@igalia.com>
 
         Remove duplicate MathML tests

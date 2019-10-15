@@ -1,3 +1,76 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Implement getType() for ClipboardItems created from bindings
+        https://bugs.webkit.org/show_bug.cgi?id=202943
+
+        Reviewed by Tim Horton.
+
+        Adds basic support for ClipboardItem.getType(), in the case where the ClipboardItems are created by the page. To
+        achieve this, we introduce ClipboardItemDataSource, which represents the data source backing a given clipboard
+        item. This backing may either consist of a list of types and their corresponding DOMPromises (for ClipboardItems
+        that come from the page), or may consist of a list of items that will ask the platformr pasteboard for their
+        data (to be supported in a future patch).
+
+        See below for more details.
+
+        Test: editing/async-clipboard/clipboard-item-basic.html
+
+        * Modules/async-clipboard/Clipboard.h:
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        (WebCore::clipboardItemPresentationStyle):
+        (WebCore::ClipboardItem::ClipboardItem):
+
+        Pass in the parent Clipboard object for ClipboardItems that are backed by the platform pasteboard (which are
+        returned by Clipboard.read()). (Note that this doesn't make any difference until this codepath is actually
+        exercised when we add support for Clipboard.read()).
+
+        (WebCore::ClipboardItem::create):
+        (WebCore::ClipboardItem::types const):
+        (WebCore::ClipboardItem::getType):
+
+        Plumb types() and getType() to the clipboard item's datasource.
+
+        (WebCore::ClipboardItem::navigator):
+
+        Make navigator() return the parent Clipboard object's navigator.
+
+        * Modules/async-clipboard/ClipboardItem.h:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp: Added.
+        (WebCore::blobFromString):
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemBindingsDataSource):
+
+        Store the given list of types and DOM promises.
+
+        (WebCore::ClipboardItemBindingsDataSource::types const):
+        (WebCore::ClipboardItemBindingsDataSource::getType):
+
+        Implement getType() by finding the matching promised type in the item's array of types, and waiting for the
+        promise to either resolve or reject. If the promise resolves to either a string or blob, we deliver the result
+        back to the page by resolving the promise returned by getType(). Otherwise, we reject it.
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.h:
+        * Modules/async-clipboard/ClipboardItemDataSource.h:
+        (WebCore::ClipboardItemDataSource::ClipboardItemDataSource):
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp:
+
+        Add a stub implementation of a clipboard item data source that is backed by data in the platform pasteboard. In
+        a future patch, this will implement getType() by calling out to the platform pasteboard.
+
+        (WebCore::ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource):
+        (WebCore::ClipboardItemPasteboardDataSource::types const):
+        (WebCore::ClipboardItemPasteboardDataSource::getType):
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.h:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+
+        Unrelated build fixes, due to changes in unified source groupings.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/mac/UTIUtilities.mm:
+
+        More build fixes, due to changes in unified source groupings.
+
 2019-10-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for text-transform: uppercase/lowercase

@@ -35,6 +35,8 @@ loader/cache/CachedApplicationManifest.cpp
 
 Modules/async-clipboard/Clipboard.cpp
 Modules/async-clipboard/ClipboardItem.cpp
+Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
+Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp
 Modules/async-clipboard/NavigatorClipboard.cpp
 
 Modules/beacon/NavigatorBeacon.cpp

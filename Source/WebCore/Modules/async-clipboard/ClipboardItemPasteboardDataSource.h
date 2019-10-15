@@ -25,43 +25,25 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+#include "ClipboardItemDataSource.h"
 
 namespace WebCore {
 
-class ClipboardItem;
-class DeferredPromise;
-class Navigator;
+struct PasteboardItemInfo;
 
-class Clipboard final : public RefCounted<Clipboard>, public EventTargetWithInlineData, public CanMakeWeakPtr<Clipboard> {
-    WTF_MAKE_ISO_ALLOCATED(Clipboard);
+class ClipboardItemPasteboardDataSource : public ClipboardItemDataSource {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Clipboard> create(Navigator&);
-
-    EventTargetInterface eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
-
-    Navigator* navigator();
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-    void readText(Ref<DeferredPromise>&&);
-    void writeText(const String& data, Ref<DeferredPromise>&&);
-
-    void read(Ref<DeferredPromise>&&);
-    void write(const Vector<RefPtr<ClipboardItem>>& data, Ref<DeferredPromise>&&);
+    ClipboardItemPasteboardDataSource(ClipboardItem&, const PasteboardItemInfo&, size_t itemIndex);
+    ~ClipboardItemPasteboardDataSource();
 
 private:
-    Clipboard(Navigator&);
+    Vector<String> types() const final;
+    void getType(const String&, Ref<DeferredPromise>&&) final;
 
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    WeakPtr<Navigator> m_navigator;
+    Vector<String> m_types;
+    size_t m_itemIndex { 0 };
+    int m_initialChangeCount { 0 };
 };
 
 } // namespace WebCore

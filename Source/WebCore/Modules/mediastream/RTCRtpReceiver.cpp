@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "JSDOMPromiseDeferred.h"
 #include "PeerConnectionBackend.h"
 #include "RTCRtpCapabilities.h"
 #include <wtf/IsoMallocInlines.h>

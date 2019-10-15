@@ -27,6 +27,7 @@
 #import "UTIUtilities.h"
 #import <wtf/MainThread.h>
 #import <wtf/TinyLRUCache.h>
+#import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

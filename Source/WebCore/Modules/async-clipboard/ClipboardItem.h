@@ -29,13 +29,18 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Blob;
+class Clipboard;
+class ClipboardItemDataSource;
 class DeferredPromise;
 class DOMPromise;
 class Navigator;
+struct PasteboardItemInfo;
 
 class ClipboardItem : public RefCounted<ClipboardItem> {
 public:
@@ -48,6 +53,7 @@ public:
     };
 
     static Ref<ClipboardItem> create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
+    static Ref<ClipboardItem> create(Clipboard&, const PasteboardItemInfo&, size_t index);
 
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);
@@ -55,9 +61,14 @@ public:
     PresentationStyle presentationStyle() const { return m_presentationStyle; };
     Navigator* navigator();
 
+protected:
+    WeakPtr<Clipboard> m_clipboard;
+
 private:
     ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
+    ClipboardItem(Clipboard&, const PasteboardItemInfo&, size_t index);
 
+    std::unique_ptr<ClipboardItemDataSource> m_dataSource;
     PresentationStyle m_presentationStyle { PresentationStyle::Unspecified };
 };
 
