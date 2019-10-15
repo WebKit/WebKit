@@ -1,3 +1,14 @@
+2019-10-14  Ling Ho  <lingcherd_ho@apple.com>
+
+        Update WebKit Build Archives page on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=202871
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added Catalina and remove Sierra.
+
+        * wp-content/themes/webkit/build-archives.php:
+
 2019-09-19  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Update messaging to reflect STP 92 requirement for demos
