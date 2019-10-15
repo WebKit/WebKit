@@ -94,7 +94,7 @@ static String retrievedString;
 @implementation SWMessageHandlerWithExpectedMessage
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    EXPECT_TRUE([[message body] isEqualToString:expectedMessage]);
+    EXPECT_WK_STREQ(message.body, expectedMessage);
     done = true;
 }
 @end

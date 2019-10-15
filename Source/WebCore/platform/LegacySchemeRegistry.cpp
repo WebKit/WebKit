@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LegacySchemeRegistry.h"
 
+#include "RuntimeApplicationChecks.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
@@ -421,6 +422,7 @@ bool LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& s
 
 void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
 {
+    ASSERT(!isInNetworkProcess());
     if (scheme.isNull())
         return;
     CORSEnabledSchemes().add(scheme);
@@ -428,7 +430,14 @@ void LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
 
 bool LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(const String& scheme)
 {
+    ASSERT(!isInNetworkProcess());
     return !scheme.isNull() && CORSEnabledSchemes().contains(scheme);
+}
+
+Vector<String> LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()
+{
+    ASSERT(!isInNetworkProcess());
+    return copyToVector(CORSEnabledSchemes());
 }
 
 void LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)

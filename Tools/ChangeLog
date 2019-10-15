@@ -1,3 +1,14 @@
+2019-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global
+        https://bugs.webkit.org/show_bug.cgi?id=202891
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandlerWithExpectedMessage userContentController:didReceiveScriptMessage:]):
+        Use EXPECT_WK_STREQ so I can see what is going on on EWS.
+
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix several GTK tests in /WebKit2Gtk/TestUIClient crashing since r241988
