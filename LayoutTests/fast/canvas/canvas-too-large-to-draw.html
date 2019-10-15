@@ -23,8 +23,6 @@
         const MAX_WIDTH = 2000;
         const MAX_HEIGHT = MAX_WIDTH;
 
-        window.internals.setMaxCanvasPixelMemory(MAX_WIDTH * MAX_HEIGHT * 4);
-
         function fillCanvas(id, width, height) {
             const canvas = document.getElementById(id);
             canvas.width = width;
@@ -40,6 +38,8 @@
     
         // This one should always work.
         fillCanvas("canvas2", 10, 10);
+
+        window.internals.setMaxCanvasPixelMemory(MAX_WIDTH * MAX_HEIGHT * 4);
 
         // And this one should exceed the memory limit.
         fillCanvas("canvas1", MAX_WIDTH + 1, MAX_HEIGHT + 1);

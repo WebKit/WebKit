@@ -1,3 +1,14 @@
+2019-10-15  Dean Jackson  <dino@apple.com>
+
+        Reset maxCanvasPixelMemory between tests
+        https://bugs.webkit.org/show_bug.cgi?id=202941
+        <rdar://problem/56260865>
+
+        Attempt to fix flakiness.
+
+        * fast/canvas/canvas-too-large-to-draw-expected.txt:
+        * fast/canvas/canvas-too-large-to-draw.html:
+
 2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Implement getType() for ClipboardItems created from bindings
