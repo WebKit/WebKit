@@ -187,9 +187,12 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
             childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (displayType == DisplayType::TableColumn) {
             childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
-            auto columnWidth = static_cast<HTMLTableColElement&>(*renderer.element()).width();
+            auto& tableColElement = static_cast<HTMLTableColElement&>(*renderer.element());
+            auto columnWidth = tableColElement.width();
             if (!columnWidth.isEmpty())
                 childLayoutBox->setColumnWidth(columnWidth.toInt());
+            if (tableColElement.span() > 1)
+                childLayoutBox->setColumnSpan(tableColElement.span());
         } else {
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };

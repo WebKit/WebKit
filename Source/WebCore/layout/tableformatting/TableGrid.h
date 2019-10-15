@@ -82,11 +82,13 @@ public:
 
     private:
         friend class ColumnsContext;
-        Column() = default;
+        Column(const Box* columnBox);
 
         FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
         LayoutUnit m_computedLogicalWidth;
         LayoutUnit m_computedLogicalLeft;
+        WeakPtr<const Box> m_columnBox;
+
 #ifndef NDEBUG
         bool m_hasWidthConstraints { false };
         bool m_hasComputedWidth { false };
@@ -99,11 +101,12 @@ public:
         using ColumnList = Vector<Column>;
         ColumnList& columns() { return m_columns; }
         const ColumnList& columns() const { return m_columns; }
+        void addColumn(const Box* columnBox = nullptr);
+
         LayoutUnit logicalWidth() const { return columns().last().logicalRight() - columns().first().logicalLeft(); }
 
     private:
         friend class TableGrid;
-        void addColumn();
 
         ColumnList m_columns;
     };

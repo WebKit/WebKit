@@ -168,7 +168,32 @@ void TableFormattingContext::ensureTableGrid()
     tableGrid.setHorizontalSpacing(LayoutUnit { tableWrapperBox.style().horizontalBorderSpacing() });
     tableGrid.setVerticalSpacing(LayoutUnit { tableWrapperBox.style().verticalBorderSpacing() });
 
-    for (auto* section = tableWrapperBox.firstChild(); section; section = section->nextSibling()) {
+    auto* firstChild = tableWrapperBox.firstChild();
+    const Box* tableCaption = nullptr;
+    const Box* colgroup = nullptr;
+    // Table caption is an optional element; if used, it is always the first child of a <table>.
+    if (firstChild->isTableCaption())
+        tableCaption = firstChild;
+    // The <colgroup> must appear after any optional <caption> element but before any <thead>, <th>, <tbody>, <tfoot> and <tr> element.
+    auto* colgroupCandidate = firstChild;
+    if (tableCaption)
+        colgroupCandidate = tableCaption->nextSibling();
+    if (colgroupCandidate->isTableColumnGroup())
+        colgroup = colgroupCandidate;
+
+    if (colgroup) {
+        auto& columnsContext = tableGrid.columnsContext();
+        for (auto* column = downcast<Container>(*colgroup).firstChild(); column; column = column->nextSibling()) {
+            ASSERT(column->isTableColumn());
+            auto columnSpanCount = column->columnSpan();
+            ASSERT(columnSpanCount > 0);
+            while (columnSpanCount--)
+                columnsContext.addColumn(column);
+        }
+    }
+
+    auto* firstSection = colgroup ? colgroup->nextSibling() : tableCaption ? tableCaption->nextSibling() : firstChild;
+    for (auto* section = firstSection; section; section = section->nextSibling()) {
         ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
         for (auto* row = downcast<Container>(*section).firstChild(); row; row = row->nextSibling()) {
             ASSERT(row->isTableRow());

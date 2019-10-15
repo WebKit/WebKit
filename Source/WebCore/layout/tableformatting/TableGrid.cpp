@@ -35,6 +35,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
 
+TableGrid::Column::Column(const Box* columnBox)
+    : m_columnBox(makeWeakPtr(columnBox))
+{
+}
+
 void TableGrid::Column::setWidthConstraints(FormattingContext::IntrinsicWidthConstraints widthConstraints)
 {
 #ifndef NDEBUG
@@ -77,9 +82,9 @@ LayoutUnit TableGrid::Column::logicalLeft() const
     return m_computedLogicalLeft;
 }
 
-void TableGrid::ColumnsContext::addColumn()
+void TableGrid::ColumnsContext::addColumn(const Box* columnBox)
 {
-    m_columns.append({ });
+    m_columns.append({ columnBox });
 }
 
 TableGrid::Row::Row(const Box& rowBox)
