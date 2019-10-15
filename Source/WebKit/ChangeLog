@@ -1,5 +1,15 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK test /webkit/WebKitSettings/webkit-settings after r249962.
+
+        Legacy private browsing was removed in r249962, so webkit_settings_set_enable_private_browsing() is now no-op.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Only call webkit_settings_set_enable_private_browsing() when trying to enable it.
+        (webkit_settings_set_enable_private_browsing): Show a warning to let users know that it does nothing now.
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] WebKitWebContext should identify web views by their WebPageProxy identifier
         https://bugs.webkit.org/show_bug.cgi?id=202924
 
