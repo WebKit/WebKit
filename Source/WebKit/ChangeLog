@@ -1,3 +1,17 @@
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] WebKitWebContext should identify web views by their WebPageProxy identifier
+        https://bugs.webkit.org/show_bug.cgi?id=202924
+
+        Reviewed by Adrian Perez de Castro.
+
+        Instead of the WebPage identifier, since it maps WebPageProxy to WebKitWebView.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextCreatePageForWebView):
+        (webkitWebContextWebViewDestroyed):
+        (webkitWebContextGetWebViewForPage):
+
 2019-10-15  youenn fablet  <youenn@apple.com>
 
         Handle service worker loads through NetworkResourceLoader

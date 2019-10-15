@@ -205,7 +205,7 @@ struct _WebKitWebContextPrivate {
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
     WebKitProcessModel processModel;
 
-    HashMap<uint64_t, WebKitWebView*> webViews;
+    HashMap<WebPageProxyIdentifier, WebKitWebView*> webViews;
 
     CString webExtensionsDirectory;
     GRefPtr<GVariant> webExtensionsInitializationUserData;
@@ -1748,15 +1748,15 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
         page.setURLSchemeHandlerForScheme(WTFMove(handler), it.key);
     }
 
-    context->priv->webViews.set(webkit_web_view_get_page_id(webView), webView);
+    context->priv->webViews.set(page.identifier(), webView);
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)
 {
-    context->priv->webViews.remove(webkit_web_view_get_page_id(webView));
+    context->priv->webViews.remove(webkitWebViewGetPage(webView).identifier());
 }
 
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext* context, WebPageProxy* page)
 {
-    return page ? context->priv->webViews.get(page->webPageID().toUInt64()) : nullptr;
+    return page ? context->priv->webViews.get(page->identifier()) : nullptr;
 }
