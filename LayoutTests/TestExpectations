@@ -1218,6 +1218,7 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/available-images.html [ Pass ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ ImageOnlyFailure ]
+webkit.org/b/186045 imported/w3c/web-platform-tests/apng/animated-png-timeout.html [ Skip ]
 
 # These W3C tests time out.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/autoplay-overrides-preload.html [ Skip ]
@@ -3881,3 +3882,5 @@ webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fal
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
 webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ ImageOnlyFailure ]
 webkit.org/b/202813 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
+
+webkit.org/b/202785 imported/w3c/web-platform-tests/apng/supported-in-source-type.html [ Failure ]

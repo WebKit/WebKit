@@ -1,4 +1,5 @@
 {
+    "apng": "import", 
     "css/geometry": "import", 
     "custom-elements": "import", 
     "shadow-dom": "import", 

@@ -1,3 +1,16 @@
+2019-10-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Import apng testcases from WPT.
+        https://bugs.webkit.org/show_bug.cgi?id=202783
+
+        Reviewed by Simon Fraser.
+
+        Import apng tests from WTP
+
+        * TestExpectations: Mark the new imported test as failing. One already
+        has a fix and the other would pass once the support for reftest-wait
+        is implemented in the tooling.
+
 2019-10-15  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()

@@ -1,0 +1,3 @@
+
+PASS Animated PNG MIME type (image/apng) is recognized by <source type> 
+
