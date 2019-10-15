@@ -28,6 +28,7 @@
 
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCache.h"
+#include "WebBackForwardCacheEntry.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
@@ -54,6 +55,7 @@ WebBackForwardListItem::~WebBackForwardListItem()
 {
     ASSERT(allItems().get(m_itemState.identifier) == this);
     allItems().remove(m_itemState.identifier);
+    removeFromBackForwardCache();
 }
 
 HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
@@ -160,38 +162,30 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
 
 void WebBackForwardListItem::wasRemovedFromBackForwardList()
 {
-    if (m_suspendedPage)
-        m_suspendedPage->backForwardCache().removeEntry(*this);
-    ASSERT(!m_suspendedPage);
+    removeFromBackForwardCache();
 }
 
-void WebBackForwardListItem::setSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
+void WebBackForwardListItem::removeFromBackForwardCache()
 {
-    if (m_suspendedPage)
-        m_suspendedPage->clearBackForwardListItem();
-
-    m_suspendedPage = WTFMove(suspendedPage);
-
-    if (m_suspendedPage)
-        m_suspendedPage->setBackForwardListItem(*this);
+    if (m_backForwardCacheEntry)
+        m_backForwardCacheEntry->backForwardCache().removeEntry(*this);
+    ASSERT(!m_backForwardCacheEntry);
 }
 
-std::unique_ptr<SuspendedPageProxy> WebBackForwardListItem::takeSuspendedPage()
+void WebBackForwardListItem::setBackForwardCacheEntry(std::unique_ptr<WebBackForwardCacheEntry>&& backForwardCacheEntry)
 {
-    if (m_suspendedPage)
-        m_suspendedPage->clearBackForwardListItem();
-    return std::exchange(m_suspendedPage, nullptr);
+    m_backForwardCacheEntry = WTFMove(backForwardCacheEntry);
 }
 
 SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
 {
-    return m_suspendedPage.get();
+    return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
 }
 
 #if !LOG_DISABLED
 const char* WebBackForwardListItem::loggingString()
 {
-    return debugString("Back/forward item ID ", itemID().logString(), ", original URL ", originalURL(), ", current URL ", url(), m_suspendedPage ? "(has a suspended page)" : "");
+    return debugString("Back/forward item ID ", itemID().logString(), ", original URL ", originalURL(), ", current URL ", url(), m_backForwardCacheEntry ? "(has a back/forward cache entry)" : "");
 }
 #endif // !LOG_DISABLED
 

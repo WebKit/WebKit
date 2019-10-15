@@ -81,7 +81,6 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add("DidNavigateWithNavigationData");
         messageNames.get().add("DidReachLayoutMilestone");
         messageNames.get().add("DidRestoreScrollPosition");
-        messageNames.get().add("DidSaveToPageCache");
         messageNames.get().add("DidStartProgress");
         messageNames.get().add("DidStartProvisionalLoadForFrame");
         messageNames.get().add("EditorStateChanged");
@@ -134,18 +133,6 @@ SuspendedPageProxy::~SuspendedPageProxy()
     }
 
     m_process->decrementSuspendedPageCount();
-}
-
-void SuspendedPageProxy::setBackForwardListItem(WebBackForwardListItem& item)
-{
-    ASSERT(!m_backForwardListItem);
-    m_backForwardListItem = &item;
-}
-
-void SuspendedPageProxy::clearBackForwardListItem()
-{
-    ASSERT(m_backForwardListItem);
-    m_backForwardListItem = nullptr;
 }
 
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
@@ -245,12 +232,8 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 
 void SuspendedPageProxy::suspensionTimedOut()
 {
-    if (!m_backForwardListItem)
-        return;
-
     RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspensionTimedOut() destroying the suspended page because it failed to suspend in time", this);
-    ASSERT(m_backForwardListItem->suspendedPage() == this);
-    backForwardCache().removeEntry(*m_backForwardListItem); // Will destroy |this|.
+    backForwardCache().removeEntry(*this); // Will destroy |this|.
 }
 
 void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)

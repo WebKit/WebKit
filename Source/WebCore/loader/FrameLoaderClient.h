@@ -278,7 +278,6 @@ public:
 #endif
     virtual void transitionToCommittedForNewPage() = 0;
 
-    virtual void didSaveToPageCache() = 0;
     virtual void didRestoreFromPageCache() = 0;
 
     virtual void dispatchDidBecomeFrameset(bool) = 0; // Can change due to navigation or DOM modification.

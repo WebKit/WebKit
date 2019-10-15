@@ -1533,16 +1533,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 #endif
 }
 
-void WebFrameLoaderClient::didSaveToPageCache()
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    if (m_frame->isMainFrame())
-        webPage->send(Messages::WebPageProxy::DidSaveToPageCache());
-}
-
 void WebFrameLoaderClient::didRestoreFromPageCache()
 {
     m_frameCameFromPageCache = true;

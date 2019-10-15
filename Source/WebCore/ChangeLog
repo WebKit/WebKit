@@ -1,3 +1,41 @@
+2019-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Have WebBackForwardCache class coordinate page caching in all WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=202929
+        <rdar://problem/56250421>
+
+        Reviewed by Alex Christensen.
+
+        Drop FrameLoaderClient::didSaveToPageCache() function as it is no longer needed.
+        Instead, we now call HistoryItem::notifyChanged() whenever HistoryItem::m_cachedPage
+        changes. This communicates to the UIProcess whether or not a HistoryItem has an
+        associated CachedPage.
+
+        I also added more release logging to the PageCache and renamed its logging channel
+        from PageCache to WebBackForwardCache to match the UIProcess's channel.
+
+        * history/BackForwardItemIdentifier.h:
+        (WebCore::BackForwardItemIdentifier::string const):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setCachedPage):
+        (WebCore::HistoryItem::takeCachedPage):
+        * history/HistoryItem.h:
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable):
+        (WebCore::PageCache::take):
+        (WebCore::PageCache::removeAllItemsForPage):
+        (WebCore::PageCache::get):
+        (WebCore::PageCache::remove):
+        (WebCore::PageCache::prune):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        * loader/FrameLoaderClient.h:
+        * platform/Logging.h:
+
 2019-10-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Outsets for referenced SVG filters are always zero

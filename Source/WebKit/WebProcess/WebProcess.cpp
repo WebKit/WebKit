@@ -386,6 +386,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
+    setBackForwardCacheCapacity(parameters.backForwardCacheCapacity);
+
     setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
 
     setShouldUseFontSmoothing(parameters.shouldUseFontSmoothing);
@@ -1292,11 +1294,6 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
     }
 }
 
-void WebProcess::releasePageCache()
-{
-    PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
-}
-
 void WebProcess::fetchWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, CompletionHandler<void(WebsiteData&&)>&& completionHandler)
 {
     WebsiteData websiteData;
@@ -1775,6 +1772,21 @@ bool WebProcess::hasVisibleWebPage() const
             return true;
     }
     return false;
+}
+
+void WebProcess::setBackForwardCacheCapacity(unsigned capacity)
+{
+    PageCache::singleton().setMaxSize(capacity);
+}
+
+void WebProcess::clearCachedPage(BackForwardItemIdentifier backForwardItemID, CompletionHandler<void()>&& completionHandler)
+{
+    HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
+    if (!item)
+        return completionHandler();
+
+    PageCache::singleton().remove(*item);
+    completionHandler();
 }
 
 LibWebRTCNetwork& WebProcess::libWebRTCNetwork()

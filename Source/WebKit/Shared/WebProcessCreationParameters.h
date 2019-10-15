@@ -114,6 +114,7 @@ struct WebProcessCreationParameters {
     CacheModel cacheModel;
 
     double defaultRequestTimeoutInterval { INT_MAX };
+    unsigned backForwardCacheCapacity { 0 };
 
     bool shouldAlwaysUseComplexTextCodePath { false };
     bool shouldEnableMemoryPressureReliefLogging { false };

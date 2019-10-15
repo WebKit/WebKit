@@ -45,6 +45,7 @@ namespace WebKit {
 
 class SuspendedPageProxy;
 class WebBackForwardCache;
+class WebBackForwardCacheEntry;
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
@@ -81,6 +82,7 @@ public:
 
     void wasRemovedFromBackForwardList();
 
+    WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
     SuspendedPageProxy* suspendedPage() const;
 
 #if !LOG_DISABLED
@@ -90,16 +92,17 @@ public:
 private:
     WebBackForwardListItem(BackForwardListItemState&&, WebPageProxyIdentifier);
 
+    void removeFromBackForwardCache();
+
     // WebBackForwardCache.
     friend class WebBackForwardCache;
-    void setSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage();
+    void setBackForwardCacheEntry(std::unique_ptr<WebBackForwardCacheEntry>&&);
 
     BackForwardListItemState m_itemState;
     URL m_resourceDirectoryURL;
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
-    std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
+    std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

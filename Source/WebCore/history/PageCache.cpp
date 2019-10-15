@@ -57,7 +57,7 @@
 
 namespace WebCore {
 
-#define PCLOG(...) LOG(PageCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
+#define PCLOG(...) LOG(BackForwardCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
 
 static inline void logPageCacheFailureDiagnosticMessage(DiagnosticLoggingClient& client, const String& reason)
 {
@@ -460,11 +460,14 @@ bool PageCache::addIfCacheable(HistoryItem& item, Page* page)
         // Make sure we don't fire any JS events in this scope.
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        item.m_cachedPage = makeUnique<CachedPage>(*page);
+        item.setCachedPage(makeUnique<CachedPage>(*page));
         item.m_pruningReason = PruningReason::None;
         m_items.add(&item);
     }
     prune(PruningReason::ReachedMaxSize);
+
+    RELEASE_LOG(BackForwardCache, "PageCache::addIfCacheable item: %s, size: %u / %u", item.identifier().string().utf8().data(), pageCount(), maxSize());
+
     return true;
 }
 
@@ -477,10 +480,12 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
     }
 
     m_items.remove(&item);
-    std::unique_ptr<CachedPage> cachedPage = WTFMove(item.m_cachedPage);
+    std::unique_ptr<CachedPage> cachedPage = item.takeCachedPage();
+
+    RELEASE_LOG(BackForwardCache, "PageCache::take item: %s, size: %u / %u", item.identifier().string().utf8().data(), pageCount(), maxSize());
 
     if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabled())) {
-        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
+        LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         return nullptr;
     }
@@ -500,7 +505,8 @@ void PageCache::removeAllItemsForPage(Page& page)
         auto current = it;
         ++it;
         if (&(*current)->m_cachedPage->page() == &page) {
-            (*current)->m_cachedPage = nullptr;
+            RELEASE_LOG(BackForwardCache, "PageCache::removeAllItemsForPage removing item: %s, size: %u / %u", (*current)->identifier().string().utf8().data(), pageCount() - 1, maxSize());
+            (*current)->setCachedPage(nullptr);
             m_items.remove(current);
         }
     }
@@ -516,7 +522,7 @@ CachedPage* PageCache::get(HistoryItem& item, Page* page)
     }
 
     if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabled())) {
-        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
+        LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         remove(item);
         return nullptr;
@@ -531,15 +537,19 @@ void PageCache::remove(HistoryItem& item)
         return;
 
     m_items.remove(&item);
-    item.m_cachedPage = nullptr;
+    item.setCachedPage(nullptr);
+
+    RELEASE_LOG(BackForwardCache, "PageCache::remove item: %s, size: %u / %u", item.identifier().string().utf8().data(), pageCount(), maxSize());
+
 }
 
 void PageCache::prune(PruningReason pruningReason)
 {
     while (pageCount() > maxSize()) {
         auto oldestItem = m_items.takeFirst();
-        oldestItem->m_cachedPage = nullptr;
+        oldestItem->setCachedPage(nullptr);
         oldestItem->m_pruningReason = pruningReason;
+        RELEASE_LOG(BackForwardCache, "PageCache::prune removing item: %s, size: %u / %u", oldestItem->identifier().string().utf8().data(), pageCount(), maxSize());
     }
 }
 

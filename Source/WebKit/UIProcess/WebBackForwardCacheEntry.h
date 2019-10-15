@@ -26,48 +26,34 @@
 #pragma once
 
 #include <WebCore/ProcessIdentifier.h>
-#include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebKit {
 
 class SuspendedPageProxy;
-class WebBackForwardCacheEntry;
-class WebBackForwardListItem;
-class WebPageProxy;
-class WebProcessPool;
+class WebBackForwardCache;
 class WebProcessProxy;
 
-class WebBackForwardCache {
+class WebBackForwardCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WebBackForwardCache(WebProcessPool&);
-    ~WebBackForwardCache();
+    virtual ~WebBackForwardCacheEntry() = default;
 
-    void setCapacity(unsigned);
-    unsigned capacity() const { return m_capacity; }
-    unsigned size() const { return m_itemsWithCachedPage.size(); }
+    WebBackForwardCache& backForwardCache() const { return m_backForwardCache; }
 
-    void clear();
-    void removeEntriesForProcess(WebProcessProxy&);
-    void removeEntriesForPage(WebPageProxy&);
-    void removeEntriesForSession(PAL::SessionID);
+    virtual SuspendedPageProxy* suspendedPage() const = 0;
+    virtual std::unique_ptr<SuspendedPageProxy> takeSuspendedPage() = 0;
+    virtual WebCore::ProcessIdentifier processIdentifier() const = 0;
+    virtual WebProcessProxy& process() const = 0;
 
-    void addEntry(WebBackForwardListItem&, std::unique_ptr<SuspendedPageProxy>&&);
-    void addEntry(WebBackForwardListItem&, WebCore::ProcessIdentifier);
-    void removeEntry(WebBackForwardListItem&);
-    void removeEntry(SuspendedPageProxy&);
-    std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
+protected:
+    explicit WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache)
+        : m_backForwardCache(backForwardCache)
+    {
+    }
 
 private:
-    void removeOldestEntry();
-    void removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>&);
-    void addEntry(WebBackForwardListItem&, std::unique_ptr<WebBackForwardCacheEntry>&&);
-
-    WebProcessPool& m_processPool;
-    unsigned m_capacity { 0 };
-    Vector<WebBackForwardListItem*, 2> m_itemsWithCachedPage;
+    WebBackForwardCache& m_backForwardCache;
 };
 
 } // namespace WebKit

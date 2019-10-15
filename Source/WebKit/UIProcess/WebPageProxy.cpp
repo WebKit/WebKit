@@ -2971,7 +2971,9 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.
             auto preventNavigationProcessShutdown = processForNavigation->makeScopePreventingShutdown();
 
-            auto suspendedPage = destinationSuspendedPage ? backForwardCache().takeEntry(*destinationSuspendedPage->backForwardListItem()) : nullptr;
+            ASSERT(!destinationSuspendedPage || navigation->targetItem());
+            auto suspendedPage = destinationSuspendedPage ? backForwardCache().takeSuspendedPage(*navigation->targetItem()) : nullptr;
+            ASSERT(suspendedPage.get() == destinationSuspendedPage);
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
@@ -8052,11 +8054,6 @@ void WebPageProxy::cancelComposition()
     process().send(Messages::WebPage::CancelComposition(), m_webPageID);
 }
 #endif // PLATFORM(GTK)
-
-void WebPageProxy::didSaveToPageCache()
-{
-    m_process->didSaveToPageCache();
-}
 
 void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {

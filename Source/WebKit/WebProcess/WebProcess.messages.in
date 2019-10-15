@@ -75,8 +75,6 @@ messages -> WebProcess LegacyReceiver {
     SetInjectedBundleParameters(IPC::DataReference parameters);
     HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
 
-    ReleasePageCache()
-
     FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Async
     DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Async
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
@@ -152,6 +150,9 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
     ClearCurrentModifierStateForTesting()
+
+    SetBackForwardCacheCapacity(unsigned capacity);
+    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> () Async
 
 #if PLATFORM(IOS_FAMILY)
     UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)

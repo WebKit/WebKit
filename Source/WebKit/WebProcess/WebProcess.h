@@ -86,6 +86,7 @@ class CertificateInfo;
 class PageGroup;
 class ResourceRequest;
 class UserGestureToken;
+struct BackForwardItemIdentifier;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
@@ -368,13 +369,14 @@ private:
     void registerServiceWorkerClients();
 #endif
 
-    void releasePageCache();
-
     void fetchWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
 
     void setMemoryCacheDisabled(bool);
+
+    void setBackForwardCacheCapacity(unsigned);
+    void clearCachedPage(WebCore::BackForwardItemIdentifier, CompletionHandler<void()>&&);
 
 #if ENABLE(SERVICE_CONTROLS)
     void setEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices);

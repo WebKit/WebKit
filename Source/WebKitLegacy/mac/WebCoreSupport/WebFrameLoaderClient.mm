@@ -1495,10 +1495,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     }
 }
 
-void WebFrameLoaderClient::didSaveToPageCache()
-{
-}
-
 void WebFrameLoaderClient::didRestoreFromPageCache()
 {
 #if PLATFORM(IOS_FAMILY)

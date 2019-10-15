@@ -1278,8 +1278,6 @@ public:
 
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
-
-    void didSaveToPageCache();
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
     WebCore::ScrollPinningBehavior scrollPinningBehavior() const { return m_scrollPinningBehavior; }

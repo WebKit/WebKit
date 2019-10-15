@@ -2018,7 +2018,7 @@ void FrameLoader::commitProvisionalLoad()
     if (m_loadingFromCachedPage && history().provisionalItem())
         cachedPage = PageCache::singleton().take(*history().provisionalItem(), m_frame.page());
 
-    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s' with cached page %p", m_frame.tree().uniqueName().string().utf8().data(),
+    LOG(BackForwardCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s' with cached page %p", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
         pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>", cachedPage.get());
 
@@ -3680,7 +3680,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 void FrameLoader::loadProvisionalItemFromCachedPage()
 {
     DocumentLoader* provisionalLoader = provisionalDocumentLoader();
-    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
+    LOG(BackForwardCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
 
     prepareForLoadStart();
 

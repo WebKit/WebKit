@@ -219,6 +219,9 @@ private:
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle);
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle, BackForwardItemIdentifier);
 
+    void setCachedPage(std::unique_ptr<CachedPage>&&);
+    std::unique_ptr<CachedPage> takeCachedPage();
+
     HistoryItem(const HistoryItem&);
 
     static int64_t generateSequenceNumber();

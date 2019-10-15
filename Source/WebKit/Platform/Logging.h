@@ -45,6 +45,7 @@ extern "C" {
     M(AutomationInteractions) \
     M(ActivityState) \
     M(BackForward) \
+    M(BackForwardCache) \
     M(CacheStorage) \
     M(ContentObservation) \
     M(ContextMenu) \

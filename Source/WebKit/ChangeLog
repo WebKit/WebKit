@@ -1,3 +1,139 @@
+2019-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Have WebBackForwardCache class coordinate page caching in all WebProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=202929
+        <rdar://problem/56250421>
+
+        Reviewed by Alex Christensen.
+
+        Have WebBackForwardCache class coordinate page caching in all WebProcesses. To achieve this, the
+        following changes were made:
+        1. Whenever HistoryItem::m_cachedPage changes in WebCore, we notify the client that the HistoryItem
+           has changed. I added a "hasCachedPage" boolean to the item info being passed the the UIProcess
+           that is set based on whether or not HistoryItem::m_cachedPage is null.
+        2. The WebBackForwardCache now contains WebBackForwardCacheEntry objects instead of SuspendedPage
+           objects. A WebBackForwardCacheEntry may have a SuspendedPage or not. As a result, we can now
+           add the the back/forward cache CachedPage entries from the WebContent process, which do not have
+           a SuspendedPageProxy in the UIProcess.
+        3. Now that WebBackForwardCache is aware of all CachedPages, it can properly enforce a cache capacity
+           across call processes. Whenever a WebBackForwardCacheEntry is pruned from the cache and this entry
+           does not have a SuspendedPageProxy, we send an IPC to the WebContent process to remove this
+           cached page from the PageCache in WebCore.
+
+        Previously, as soon as we would cache a page in the WebContent process, we would send an IPC to the
+        UIProcess so that it would clear the PageCache in any previous WebContent process. This was a stop-gap
+        measure to avoid blowing up memory in a multi-process model by keeping a PageCache around in all
+        WebContent process. This would make sure only one process could have a PageCache at any point in time.
+        This logic is now dropped since the WebBackForwardCache can keep track of all cached pages across all
+        processes and enforce a cross-process limit on the number of cached pages. This means we can now have
+        PageCache entries across several WebContent processes, as long as we do not exceed the maximum number
+        of cached pages.
+
+        * Platform/Logging.h:
+        Add new BackForwardCache logging channel.
+
+        * Shared/SessionState.cpp:
+        (WebKit::BackForwardListItemState::encode const):
+        (WebKit::BackForwardListItemState::decode):
+        * Shared/SessionState.h:
+        Add new bit to BackForwardListItemState to indicate whether a HistoryItem has an associated
+        CachedPage or not.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::~WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::wasRemovedFromBackForwardList):
+        (WebKit::WebBackForwardListItem::removeFromBackForwardCache):
+        (WebKit::WebBackForwardListItem::setBackForwardCacheEntry):
+        (WebKit::WebBackForwardListItem::suspendedPage const):
+        (WebKit::WebBackForwardListItem::loggingString):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::backForwardCacheEntry const):
+        WebBackForwardListItem now own a WebBackForwardCacheEntry instead of simply a
+        SuspendedPage. The WebBackForwardCacheEntry may have a SuspendedPage or not.
+        Now, whenever a HistoryItem has a CachedPage in WebCore, its corresponding
+        WebBackForwardListItem in the UIProcess has an associated WebBackForwardCacheEntry
+        whether we have a SuspendedPageProxy for it in the UIProcess or not.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Pass the PageCache capacity to the WebContent process on creation, so that it matches the
+        capacity of the WebBackForwardCache in the UIProcess.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::messageNamesToIgnoreWhileSuspended):
+        (WebKit::SuspendedPageProxy::suspensionTimedOut):
+        * UIProcess/SuspendedPageProxy.h:
+        Stop storing the WebBackForwardListItem on the SuspendedPageProxy. This avoids having to
+        keep this pointer up to date. We do not really need it as we can now ask the WebBackForwardCache
+        to clear an entry by giving it a SuspendedPageProxy to match. Given how many entries we have at
+        most in the cache (2), iterating over them to find the one with a given suspended page is cheap.
+
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::WebBackForwardCache):
+        (WebKit::WebBackForwardCache::~WebBackForwardCache):
+
+        (WebKit::WebBackForwardCache::setCapacity):
+        Send an IPC of each WebProcess whenever the capacity of the WebBackForwardCache changes, in order
+        to update the capacity of the PageCache in those processes.
+
+        (WebKit::WebBackForwardCache::addEntry):
+        (WebKit::WebBackForwardCache::removeEntry):
+        (WebKit::WebBackForwardCache::takeSuspendedPage):
+        (WebKit::WebBackForwardCache::removeEntriesForProcess):
+        (WebKit::WebBackForwardCache::removeEntriesForSession):
+        (WebKit::WebBackForwardCache::removeEntriesMatching):
+        (WebKit::WebBackForwardCache::clear):
+
+        * UIProcess/WebBackForwardCache.h:
+        Use a Vector instead of a ListHashSet to store the entries. Given that we have at most 2 entries, using
+        a Vector will likely be more efficient and definitely use less memory.
+
+        * UIProcess/WebBackForwardCacheEntry.h: Added.
+        (WebKit::WebBackForwardCacheEntry::backForwardCache const):
+        (WebKit::WebBackForwardCacheEntry::WebBackForwardCacheEntry):
+        Add new WebBackForwardCacheEntry abstraction to match the concept of WebCore::CachedPage in the UIProcess.
+        A WebBackForwardCacheEntry may have a SuspendedPageProxy associated with it in the UIProcess or not.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Drop didSaveToPageCache as it is no longer necessary.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        Whenever we get a BackForwardItem from the WebContent process, we now check it now has
+        an associated CachedPage or not. If it does, we make sure we add a corresponding
+        entry in the WebBackForwardCache so that the UIProcess knows about it. If it no longer
+        has a CachedPage and we don't have a SuspendedPageProxy for this item in the UIProcess,
+        then we remove the corresponding entry from the back/forward cache. Note that we don't
+        drop SuspendedPageProxy objects in the UIProcess simply because their corresponding
+        CachedPage in the WebProcess is gone, to maintain previous behavior. This is an
+        optimization that is useful on iOS, where we do not have a WebProcessCache, since we
+        can reuse processes from SuspendedPageProxies on navigation.
+
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toBackForwardListItemState):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setBackForwardCacheCapacity):
+        (WebKit::WebProcess::clearCachedPage):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor custom pasteboard writing codepaths to handle multiple items

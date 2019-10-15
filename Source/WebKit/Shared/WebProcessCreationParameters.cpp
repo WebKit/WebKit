@@ -90,6 +90,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << textCheckerState;
     encoder << fullKeyboardAccessEnabled;
     encoder << defaultRequestTimeoutInterval;
+    encoder << backForwardCacheCapacity;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
@@ -268,6 +269,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.fullKeyboardAccessEnabled))
         return false;
     if (!decoder.decode(parameters.defaultRequestTimeoutInterval))
+        return false;
+    if (!decoder.decode(parameters.backForwardCacheCapacity))
         return false;
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.uiProcessBundleIdentifier))

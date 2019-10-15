@@ -992,10 +992,6 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     core(m_webFrame)->createView(enclosingIntRect(logicalFrame).size(), backgroundColor, /* fixedLayoutSize */ { }, /* fixedVisibleContentRect */ { });
 }
 
-void WebFrameLoaderClient::didSaveToPageCache()
-{
-}
-
 void WebFrameLoaderClient::didRestoreFromPageCache()
 {
 }

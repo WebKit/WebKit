@@ -631,6 +631,13 @@ void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& item
         return;
 
     item->setPageState(PageState { itemState.pageState });
+
+    if (!!item->backForwardCacheEntry() != itemState.hasCachedPage) {
+        if (itemState.hasCachedPage)
+            processPool().backForwardCache().addEntry(*item, coreProcessIdentifier());
+        else if (!item->suspendedPage())
+            processPool().backForwardCache().removeEntry(*item);
+    }
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -985,17 +992,6 @@ void WebProcessProxy::updateTextCheckerState()
 {
     if (canSendMessage())
         send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
-}
-
-void WebProcessProxy::didSaveToPageCache()
-{
-    m_processPool->processDidCachePage(this);
-}
-
-void WebProcessProxy::releasePageCache()
-{
-    if (canSendMessage())
-        send(Messages::WebProcess::ReleasePageCache(), 0);
 }
 
 void WebProcessProxy::windowServerConnectionStateChanged()

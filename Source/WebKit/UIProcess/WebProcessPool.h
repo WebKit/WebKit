@@ -409,8 +409,6 @@ public:
     static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(const IPC::StringReference& messageReceiverName, const IPC::StringReference& messageName);
 
-    void processDidCachePage(WebProcessProxy*);
-
     bool isURLKnownHSTSHost(const String& urlString) const;
     void resetHSTSHosts();
     void resetHSTSHostsAddedAfterDate(double startDateIntervalSince1970);
@@ -603,7 +601,6 @@ private:
     WebProcessProxy* m_prewarmedProcess { nullptr };
     WebProcessProxy* m_dummyProcessProxy { nullptr }; // A lightweight WebProcessProxy without backing process.
 
-    WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)
     using RegistrableDomainWithSessionID = std::pair<WebCore::RegistrableDomain, PAL::SessionID>;
     HashMap<RegistrableDomainWithSessionID, WebProcessProxy*> m_serviceWorkerProcesses;

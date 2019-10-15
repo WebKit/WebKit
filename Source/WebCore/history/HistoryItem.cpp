@@ -172,6 +172,22 @@ bool HistoryItem::hasCachedPageExpired() const
     return m_cachedPage ? m_cachedPage->hasExpired() : false;
 }
 
+void HistoryItem::setCachedPage(std::unique_ptr<CachedPage>&& cachedPage)
+{
+    bool wasInPageCache = isInPageCache();
+    m_cachedPage = WTFMove(cachedPage);
+    if (wasInPageCache != isInPageCache())
+        notifyChanged();
+}
+
+std::unique_ptr<CachedPage> HistoryItem::takeCachedPage()
+{
+    ASSERT(m_cachedPage);
+    auto cachedPage = std::exchange(m_cachedPage, nullptr);
+    notifyChanged();
+    return cachedPage;
+}
+
 URL HistoryItem::url() const
 {
     return URL({ }, m_urlString);

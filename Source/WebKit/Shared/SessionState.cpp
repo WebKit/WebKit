@@ -229,6 +229,7 @@ void BackForwardListItemState::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
     encoder << pageState;
+    encoder << hasCachedPage;
 }
 
 Optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder& decoder)
@@ -241,6 +242,9 @@ Optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder
     result.identifier = *identifier;
 
     if (!decoder.decode(result.pageState))
+        return WTF::nullopt;
+
+    if (!decoder.decode(result.hasCachedPage))
         return WTF::nullopt;
 
     return result;

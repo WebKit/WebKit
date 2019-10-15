@@ -206,7 +206,6 @@ private:
 #endif
     void transitionToCommittedForNewPage() final;
 
-    void didSaveToPageCache() final;
     void didRestoreFromPageCache() final;
 
     void dispatchDidBecomeFrameset(bool) final;

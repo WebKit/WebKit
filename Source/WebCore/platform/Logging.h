@@ -42,6 +42,7 @@ namespace WebCore {
     M(Animations) \
     M(ApplePay) \
     M(Archives) \
+    M(BackForwardCache) \
     M(ClipRects) \
     M(Compositing) \
     M(CompositingOverlap) \
@@ -80,7 +81,6 @@ namespace WebCore {
     M(MessagePorts) \
     M(Network) \
     M(NotYetImplemented) \
-    M(PageCache) \
     M(PerformanceLogging) \
     M(PlatformLeaks) \
     M(Plugins) \

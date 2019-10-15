@@ -198,13 +198,11 @@ CachedFrame::CachedFrame(Frame& frame)
     if (!m_isMainFrame)
         frame.page()->decrementSubframeCount();
 
-    frame.loader().client().didSaveToPageCache();
-
 #ifndef NDEBUG
     if (m_isMainFrame)
-        LOG(PageCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+        LOG(BackForwardCache, "Finished creating CachedFrame for main frame url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
     else
-        LOG(PageCache, "Finished creating CachedFrame for child frame with url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
+        LOG(BackForwardCache, "Finished creating CachedFrame for child frame with url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
 #endif
 
 #if PLATFORM(IOS_FAMILY)

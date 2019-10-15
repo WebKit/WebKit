@@ -137,6 +137,7 @@ struct BackForwardListItemState {
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> snapshot;
 #endif
+    bool hasCachedPage { false };
 };
 
 struct BackForwardListState {

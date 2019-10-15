@@ -236,7 +236,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
 #endif
-    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
+    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
 {
     static std::once_flag onceFlag;
@@ -783,13 +783,6 @@ void WebProcessPool::didReceiveInvalidMessage(const IPC::StringReference& messag
     s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).ptr()));
 }
 
-void WebProcessPool::processDidCachePage(WebProcessProxy* process)
-{
-    if (m_processWithPageCache && m_processWithPageCache != process)
-        m_processWithPageCache->releasePageCache();
-    m_processWithPageCache = process;
-}
-
 void WebProcessPool::resolvePathsForSandboxExtensions()
 {
     m_resolvedPaths.injectedBundlePath = resolvePathForSandboxExtension(injectedBundlePath());
@@ -974,6 +967,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.defaultRequestTimeoutInterval = API::URLRequest::defaultTimeoutInterval();
 
+    parameters.backForwardCacheCapacity = backForwardCache().capacity();
+
 #if ENABLE(NOTIFICATIONS)
     // FIXME: There should be a generic way for supplements to add to the intialization parameters.
     parameters.notificationPermissions = supplement<WebNotificationManagerProxy>()->notificationPermissions();
@@ -1127,8 +1122,6 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     RefPtr<WebProcessProxy> protect(process);
-    if (m_processWithPageCache == process)
-        m_processWithPageCache = nullptr;
 
     m_backForwardCache->removeEntriesForProcess(*process);
 
