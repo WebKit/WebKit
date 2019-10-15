@@ -85,7 +85,6 @@ class NativeCallFrameTracer {
 public:
     ALWAYS_INLINE NativeCallFrameTracer(VM& vm, CallFrame* callFrame)
     {
-        ASSERT(&vm);
         ASSERT(callFrame);
         ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm.topEntryFrame));
         assertStackPointerIsAligned();
