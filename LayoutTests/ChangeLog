@@ -1,3 +1,14 @@
+2019-10-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Outsets for referenced SVG filters are always zero
+        https://bugs.webkit.org/show_bug.cgi?id=202826
+
+        Reviewed by Simon Fraser.
+
+        * css3/filters/svg-blur-filter-clipped-expected.html: Added.
+        * css3/filters/svg-blur-filter-clipped.html: Added.
+        * platform/ios/TestExpectations:
+
 2019-10-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Update fast/text/font-cursive-italic-cjk-2.html for Catalina

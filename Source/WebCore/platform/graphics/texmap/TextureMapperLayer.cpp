@@ -298,7 +298,7 @@ void TextureMapperLayer::computeOverlapRegions(Region& overlapRegion, Region& no
         boundingRect = m_state.contentsRect;
 
     if (m_currentFilters.hasOutsets()) {
-        FilterOutsets outsets = m_currentFilters.outsets();
+        auto outsets = m_currentFilters.outsets();
         IntRect unfilteredTargetRect(boundingRect);
         boundingRect.move(std::max(0, -outsets.left()), std::max(0, -outsets.top()));
         boundingRect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,22 +28,13 @@
  * SUCH DAMAGE.
  */
 
-#ifndef IntRectExtent_h
-#define IntRectExtent_h
-
-#include "LayoutRect.h"
+#pragma once
 
 namespace WebCore {
 
 class IntRectExtent {
 public:
-    IntRectExtent()
-        : m_top(0)
-        , m_right(0)
-        , m_bottom(0)
-        , m_left(0)
-    {
-    }
+    IntRectExtent() = default;
 
     IntRectExtent(int top, int right, int bottom, int left)
         : m_top(top)
@@ -64,30 +56,18 @@ public:
     int left() const { return m_left; }
     void setLeft(int left) { m_left = left; }
 
-    void expandRect(LayoutRect& rect) const
-    {
-        if (isZero())
-            return;
-
-        rect.move(-left(), -top());
-        rect.expand(left() + right(), top() + bottom());
-    }
-
-private:
     bool isZero() const { return !left() && !right() && !top() && !bottom(); }
 
-    int m_top;
-    int m_right;
-    int m_bottom;
-    int m_left;
+private:
+    int m_top { 0 };
+    int m_right { 0 };
+    int m_bottom { 0 };
+    int m_left { 0 };
 };
 
 inline bool operator==(const IntRectExtent& a, const IntRectExtent& b)
 {
-    return a.top() == b.top()
-        && a.right() == b.right()
-        && a.bottom() == b.bottom()
-        && a.left() == b.left();
+    return a.top() == b.top() && a.right() == b.right() && a.bottom() == b.bottom() && a.left() == b.left();
 }
 
 inline bool operator!=(const IntRectExtent& a, const IntRectExtent& b)
@@ -95,14 +75,23 @@ inline bool operator!=(const IntRectExtent& a, const IntRectExtent& b)
     return !(a == b);
 }
 
-inline void operator+=(IntRectExtent& a, const IntRectExtent& b)
+template<typename RectType>
+inline RectType& operator+=(RectType& rect, const IntRectExtent& extent)
+{
+    rect.move(-extent.left(), -extent.top());
+    rect.expand(extent.left() + extent.right(), extent.top() + extent.bottom());
+    return rect;
+}
+
+inline IntRectExtent& operator+=(IntRectExtent& a, const IntRectExtent& b)
 {
     a.setTop(a.top() + b.top());
     a.setRight(a.right() + b.right());
     a.setBottom(a.bottom() + b.bottom());
     a.setLeft(a.left() + b.left());
+    return a;
 }
 
-} // namespace WebCore
+using IntOutsets = IntRectExtent;
 
-#endif // IntRectExtent_h
+} // namespace WebCore

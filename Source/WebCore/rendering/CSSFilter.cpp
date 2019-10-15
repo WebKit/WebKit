@@ -133,10 +133,9 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
 {
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     m_hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
-    if (m_hasFilterThatMovesPixels)
-        m_outsets = operations.outsets();
 
     m_effects.clear();
+    m_outsets = { };
 
     RefPtr<FilterEffect> previousEffect = m_sourceGraphic.ptr();
     for (auto& operation : operations.operations()) {
@@ -374,12 +373,8 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
 {
     // The result of this function is the area in the "filterBoxRect" that needs to be repainted, so that we fully cover the "dirtyRect".
     auto rectForRepaint = dirtyRect;
-    if (hasFilterThatMovesPixels()) {
-        // Note that the outsets are reversed here because we are going backwards -> we have the dirty rect and
-        // need to find out what is the rectangle that might influence the result inside that dirty rect.
-        rectForRepaint.move(-m_outsets.right(), -m_outsets.bottom());
-        rectForRepaint.expand(m_outsets.left() + m_outsets.right(), m_outsets.top() + m_outsets.bottom());
-    }
+    if (hasFilterThatMovesPixels())
+        rectForRepaint += outsets();
     rectForRepaint.intersect(filterBoxRect);
     return rectForRepaint;
 }
@@ -397,7 +392,6 @@ void CSSFilter::setSourceImageRect(const FloatRect& sourceImageRect)
     m_graphicsBufferAttached = false;
 }
 
-
 void CSSFilter::setMaxEffectRects(const FloatRect& effectRect)
 {
     for (auto& effect : m_effects)
@@ -410,6 +404,19 @@ IntRect CSSFilter::outputRect() const
     if (!lastEffect.hasResult())
         return { };
     return lastEffect.requestedRegionOfInputImageData(IntRect { m_filterRegion });
+}
+
+IntOutsets CSSFilter::outsets() const
+{
+    if (!m_hasFilterThatMovesPixels)
+        return { };
+
+    if (!m_outsets.isZero())
+        return m_outsets;
+
+    for (auto& effect : m_effects)
+        m_outsets += effect->outsets();
+    return m_outsets;
 }
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "IntRectExtent.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCounted.h>
@@ -102,6 +103,8 @@ public:
     virtual void determineAbsolutePaintRect();
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
+
+    virtual IntOutsets outsets() const { return IntOutsets(); }
 
     enum class RepresentationType { TestOutput, Debugging };
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;

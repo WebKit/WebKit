@@ -34,17 +34,6 @@
 
 namespace WebCore {
 
-static inline IntSize outsetSizeForBlur(float stdDeviation)
-{
-    auto kernelSize = FEGaussianBlur::calculateUnscaledKernelSize({ stdDeviation, stdDeviation });
-
-    // We take the half kernel size and multiply it with three, because we run box blur three times.
-    return {
-        3 * kernelSize.width() / 2,
-        3 * kernelSize.height() / 2
-    };
-}
-
 bool FilterOperations::operator==(const FilterOperations& other) const
 {
     size_t size = m_operations.size();
@@ -78,33 +67,24 @@ bool FilterOperations::hasReferenceFilter() const
     return false;
 }
 
-bool FilterOperations::hasOutsets() const
+IntOutsets FilterOperations::outsets() const
 {
-    for (auto& operation : m_operations) {
-        auto type = operation->type();
-        if (type == FilterOperation::BLUR || type == FilterOperation::DROP_SHADOW)
-            return true;
-    }
-    return false;
-}
-
-FilterOutsets FilterOperations::outsets() const
-{
-    FilterOutsets totalOutsets;
+    IntOutsets totalOutsets;
     for (auto& operation : m_operations) {
         switch (operation->type()) {
         case FilterOperation::BLUR: {
             auto& blurOperation = downcast<BlurFilterOperation>(*operation);
             float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-            IntSize outsetSize = outsetSizeForBlur(stdDeviation);
-            FilterOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
+            IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
+            IntOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
             totalOutsets += outsets;
             break;
         }
         case FilterOperation::DROP_SHADOW: {
             auto& dropShadowOperation = downcast<DropShadowFilterOperation>(*operation);
-            IntSize outsetSize = outsetSizeForBlur(dropShadowOperation.stdDeviation());
-            FilterOutsets outsets {
+            float stdDeviation = dropShadowOperation.stdDeviation();
+            IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
+            IntOutsets outsets {
                 std::max(0, outsetSize.height() - dropShadowOperation.y()),
                 std::max(0, outsetSize.width() + dropShadowOperation.x()),
                 std::max(0, outsetSize.height() + dropShadowOperation.y()),
@@ -113,6 +93,9 @@ FilterOutsets FilterOperations::outsets() const
             totalOutsets += outsets;
             break;
         }
+        case FilterOperation::REFERENCE:
+            ASSERT_NOT_REACHED();
+            break;
         default:
             break;
         }

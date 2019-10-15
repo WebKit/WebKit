@@ -487,6 +487,14 @@ IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdD
     return calculateUnscaledKernelSize(filter.scaledByFilterResolution(stdDeviation));
 }
 
+IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
+{
+    auto kernelSize = calculateUnscaledKernelSize(stdDeviation);
+
+    // We take the half kernel size and multiply it with three, because we run box blur three times.
+    return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
+}
+
 void FEGaussianBlur::determineAbsolutePaintRect()
 {
     IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
@@ -536,6 +544,12 @@ void FEGaussianBlur::platformApplySoftware()
         return;
 
     platformApply(*resultPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
+}
+
+IntOutsets FEGaussianBlur::outsets() const
+{
+    IntSize outsetSize = calculateOutsetSize({ m_stdX, m_stdY });
+    return { outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width() };
 }
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, RepresentationType representation) const

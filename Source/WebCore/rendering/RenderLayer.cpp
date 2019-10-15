@@ -1929,7 +1929,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
         return;
     
     LayoutRect rectForRepaint = rect;
-    renderer().style().filterOutsets().expandRect(rectForRepaint);
+    rectForRepaint += filterOutsets();
 
     m_filters->expandDirtySourceRect(rectForRepaint);
     
@@ -1964,7 +1964,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 bool RenderLayer::hasAncestorWithFilterOutsets() const
 {
     for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        if (curr->renderer().style().hasFilterOutsets())
+        if (curr->hasFilterOutsets())
             return true;
     }
     return false;
@@ -2087,7 +2087,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // paints unfragmented.
         LayoutRect clipRect = layer.boundingBox(&layer);
         expandClipRectForDescendantsAndReflection(clipRect, layer, &layer, transparencyBehavior, paintBehavior);
-        layer.renderer().style().filterOutsets().expandRect(clipRect);
+        clipRect += layer.filterOutsets();
         LayoutRect result = transform.mapRect(clipRect);
         if (!paginationLayer)
             return result;
@@ -2103,7 +2103,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     
     LayoutRect clipRect = layer.boundingBox(rootLayer, layer.offsetFromAncestor(rootLayer), transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::UseFragmentBoxesIncludingCompositing : RenderLayer::UseFragmentBoxesExcludingCompositing);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior);
-    layer.renderer().style().filterOutsets().expandRect(clipRect);
+    clipRect += layer.filterOutsets();
 
     return clipRect;
 }
@@ -6114,7 +6114,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         computeLayersUnion(*childLayer);
 
     if (flags.contains(IncludeFilterOutsets) || (flags.contains(IncludePaintedFilterOutsets) && paintsWithFilters()))
-        renderer().style().filterOutsets().expandRect(unionBounds);
+        unionBounds += filterOutsets();
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehavior::Normal)) {
         TransformationMatrix* affineTrans = transform();
@@ -6835,6 +6835,13 @@ void RenderLayer::filterNeedsRepaint()
         element->invalidateStyleAndLayerComposition();
     }
     renderer().repaint();
+}
+
+IntOutsets RenderLayer::filterOutsets() const
+{
+    if (m_filters)
+        return m_filters->filter() ? m_filters->filter()->outsets() : IntOutsets();
+    return renderer().style().filterOutsets();
 }
 
 bool RenderLayer::isTransparentRespectingParentFrames() const

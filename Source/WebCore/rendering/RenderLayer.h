@@ -790,6 +790,8 @@ public:
 
     void filterNeedsRepaint();
     bool hasFilter() const { return renderer().hasFilter(); }
+    bool hasFilterOutsets() const { return !filterOutsets().isZero(); }
+    IntOutsets filterOutsets() const;
     bool hasBackdropFilter() const
     {
 #if ENABLE(FILTERS_LEVEL_2)

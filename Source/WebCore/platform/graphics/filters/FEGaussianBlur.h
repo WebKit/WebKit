@@ -42,6 +42,7 @@ public:
 
     static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
     static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);
+    static IntSize calculateOutsetSize(FloatSize stdDeviation);
 
 private:
     FEGaussianBlur(Filter&, float, float, EdgeModeType);
@@ -66,6 +67,8 @@ private:
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override;
+
+    IntOutsets outsets() const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 

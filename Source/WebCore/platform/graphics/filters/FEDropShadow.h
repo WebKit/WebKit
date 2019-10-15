@@ -56,6 +56,8 @@ private:
 
     void determineAbsolutePaintRect() override;
 
+    IntOutsets outsets() const override;
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     float m_stdX;

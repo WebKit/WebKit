@@ -1,3 +1,84 @@
+2019-10-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Outsets for referenced SVG filters are always zero
+        https://bugs.webkit.org/show_bug.cgi?id=202826
+
+        Reviewed by Simon Fraser.
+
+        Sometimes the filter is applied only to a part of the image, so we need
+        to enlarge the source rectangle such that the border of the result image
+        looks like as if the filter were applied to the whole image.
+
+        The filter outsets should only be calculated for the blur and the drop
+        shadow filters. The problem is FilterOperations::outsets() was returning
+        empty outsets always for the referenced filters.
+
+        Since the referenced filters must be software filters, the fix is to rely
+        on CSSFilter in calculating the filter outsets for software filters.
+
+        By adding a virtual function called outset() to the FilterEffect class, 
+        we can loop through the CSSFilter::m_effects asking every FilterEffect
+        to return its outset(). This function is only overridden by FEDropShadow
+        and FEGaussianBlur.
+
+        This should work because RenderLayer builds the CSSFilter when the styleChanged()
+        happens through its updateFilterPaintingStrategy(). This will guarantee 
+        that m_filters->filter()->outsets() will return the correct outsets for
+        the referenced and the non-referenced software filters.
+
+        We should keep FilterOperations::outsets() because it has be used for
+        the hardware non-referenced filters. In that case, RenderLayer does not
+        build the the filter effects. Therefore m_filters can't be used because
+        it is null in this case.
+
+        For accuracy, hasOutsets() implementation is deleted. Having a blur or
+        drop shadow filter effect is not enough to say hasOutsets() is true. We
+        need to calculate the outsets first and then ask if it isZero() or not.
+
+        Test: css3/filters/svg-blur-filter-clipped.html
+
+        * platform/graphics/IntRectExtent.h:
+        (WebCore::operator==):
+        (WebCore::operator+=):
+        (WebCore::IntRectExtent::expandRect const): Deleted.
+        IntRectExtent is only used as a filter outsets. So add the definition of
+        IntOutsets in IntRectExtent.h.
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::outsets const):
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateOutsetSize):
+        (WebCore::FEGaussianBlur::outsets const):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::outsets const):
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::outsets const):
+        (WebCore::outsetSizeForBlur): Deleted.
+        (WebCore::FilterOperations::hasOutsets const): Deleted.
+        * platform/graphics/filters/FilterOperations.h:
+        (WebCore::FilterOperations::hasOutsets const):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeOverlapRegions):
+
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build):
+        (WebCore::CSSFilter::computeSourceImageRectForDirtyRect):
+        (WebCore::CSSFilter::outsets const):
+        Calculate m_outsets once and cache its value for later uses.
+
+        * rendering/CSSFilter.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::hasAncestorWithFilterOutsets const):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::filterOutsets const):
+        (WebCore::RenderStyle::hasFilterOutsets const): Deleted.
+
 2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor custom pasteboard writing codepaths to handle multiple items

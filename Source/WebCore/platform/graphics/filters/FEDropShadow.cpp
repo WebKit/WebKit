@@ -115,6 +115,17 @@ void FEDropShadow::platformApplySoftware()
     resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
 }
 
+IntOutsets FEDropShadow::outsets() const
+{
+    IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ m_stdX, m_stdY });
+    return {
+        std::max<int>(0, outsetSize.height() - m_dy),
+        std::max<int>(0, outsetSize.width() + m_dx),
+        std::max<int>(0, outsetSize.height() + m_dy),
+        std::max<int>(0, outsetSize.width() - m_dx)
+    };
+}
+
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent <<"[feDropShadow";
