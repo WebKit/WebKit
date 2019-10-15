@@ -73,7 +73,9 @@ IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
+    runOrDelayTaskForImport([this, jobData] {
+        send(Messages::WebSWServerConnection::ScheduleJobInServer { jobData });
+    });
 }
 
 void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)

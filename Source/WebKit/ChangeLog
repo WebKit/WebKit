@@ -1,3 +1,15 @@
+2019-10-15  youenn fablet  <youenn@apple.com>
+
+        Scheduling a service worker job in server should wait for finishing the registration import
+        https://bugs.webkit.org/show_bug.cgi?id=202975
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::scheduleJobInServer):
+        We should not schedule a job until the registrations are fully imported.
+        Covered by ServiceWorkerBasic API test flakily hitting debug asserts.
+
 2019-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r251138.
