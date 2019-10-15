@@ -93,6 +93,24 @@ static Optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuation(con
     return block.relativePositionOffset();
 }
 
+static String applyTextTransform(const String& text, const RenderStyle& style)
+{
+    switch (style.textTransform()) {
+    case TextTransform::None:
+        return text;
+    case TextTransform::Capitalize: {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return text;
+    }
+    case TextTransform::Uppercase:
+        return text.convertToUppercaseWithLocale(style.locale());
+    case TextTransform::Lowercase:
+        return text.convertToLowercaseWithLocale(style.locale());
+    }
+    ASSERT_NOT_REACHED();
+    return text;
+}
+
 std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRenderer, const RenderObject& childRenderer)
 {
     auto elementAttributes = [] (const RenderElement& renderer) -> Optional<Box::ElementAttributes> {
@@ -115,11 +133,13 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
 
     std::unique_ptr<Box> childLayoutBox;
     if (is<RenderText>(childRenderer)) {
+        auto& textRenderer = downcast<RenderText>(childRenderer);
+        auto textContent = applyTextTransform(textRenderer.originalText(), parentRenderer.style());
         // FIXME: Clearly there must be a helper function for this.
         if (parentRenderer.style().display() == DisplayType::Inline)
-            childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::clone(parentRenderer.style()));
+            childLayoutBox = makeUnique<Box>(textContent, RenderStyle::clone(parentRenderer.style()));
         else
-            childLayoutBox = makeUnique<Box>(downcast<RenderText>(childRenderer).originalText(), RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
+            childLayoutBox = makeUnique<Box>(textContent, RenderStyle::createAnonymousStyleWithDisplay(parentRenderer.style(), DisplayType::Inline));
         childLayoutBox->setIsAnonymous();
         return childLayoutBox;
     }

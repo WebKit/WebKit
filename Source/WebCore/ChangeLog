@@ -1,3 +1,17 @@
+2019-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for text-transform: uppercase/lowercase
+        https://bugs.webkit.org/show_bug.cgi?id=202968
+        <rdar://problem/56278141>
+
+        Reviewed by Antti Koivisto.
+
+        The text content on the layout box should be in its final state (This might change if we actually need the original content for some reason though).
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::applyTextTransform):
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
 2019-10-14  Youenn Fablet  <youenn@apple.com>
 
         Handle service worker loads through NetworkResourceLoader
