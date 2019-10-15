@@ -27,12 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import re
 import sys
 
 from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.system.executive import Executive
+
+
+_log = logging.getLogger(__name__)
 
 
 class PlatformInfo(object):
@@ -62,11 +66,13 @@ class PlatformInfo(object):
             self.os_version = Version.from_string(platform_module.mac_ver()[0])
         elif self.os_name.startswith('win'):
             self.os_version = self._win_version()
-        elif self.os_name == 'linux' or self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
-            return
         else:
             # Most other platforms (namely iOS) return conforming version strings.
-            self.os_version = Version.from_string(platform_module.release())
+            version = re.search(r'\d+.\d+.\d+', platform_module.release())
+            if version:
+                self.os_version = Version.from_string(version.group(0))
+            else:
+                _log.debug('No OS version number found')
 
     def is_mac(self):
         return self.os_name == 'mac'
