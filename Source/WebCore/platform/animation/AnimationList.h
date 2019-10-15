@@ -60,5 +60,6 @@ private:
     Vector<Ref<Animation>, 0, CrashOnOverflow, 0> m_animations;
 };    
 
+WTF::TextStream& operator<<(WTF::TextStream&, const AnimationList&);
 
 } // namespace WebCore

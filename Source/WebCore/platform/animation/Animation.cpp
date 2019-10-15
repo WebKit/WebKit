@@ -23,6 +23,7 @@
 #include "Animation.h"
 
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -136,6 +137,45 @@ const String& Animation::initialName()
 {
     static NeverDestroyed<String> initialValue(MAKE_STATIC_STRING_IMPL("none"));
     return initialValue;
+}
+
+TextStream& operator<<(TextStream& ts, Animation::AnimationMode mode)
+{
+    switch (mode) {
+    case Animation::AnimateAll: ts << "all"; break;
+    case Animation::AnimateNone: ts << "none"; break;
+    case Animation::AnimateSingleProperty: ts << "single property"; break;
+    case Animation::AnimateUnknownProperty: ts << "unknown property"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, Animation::AnimationDirection direction)
+{
+    switch (direction) {
+    case Animation::AnimationDirectionNormal: ts << "normal"; break;
+    case Animation::AnimationDirectionAlternate: ts << "alternate"; break;
+    case Animation::AnimationDirectionReverse: ts << "reverse"; break;
+    case Animation::AnimationDirectionAlternateReverse: ts << "alternate-reverse"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const Animation& animation)
+{
+    ts.dumpProperty("property", getPropertyName(animation.property()));
+    ts.dumpProperty("name", animation.name());
+    ts.dumpProperty("iteration count", animation.iterationCount());
+    ts.dumpProperty("delay", animation.iterationCount());
+    ts.dumpProperty("duration", animation.duration());
+    if (animation.timingFunction())
+        ts.dumpProperty("timing function", *animation.timingFunction());
+    ts.dumpProperty("mode", animation.animationMode());
+    ts.dumpProperty("direction", animation.direction());
+    ts.dumpProperty("fill-mode", animation.fillMode());
+    ts.dumpProperty("play-state", animation.playState());
+
+    return ts;
 }
 
 } // namespace WebCore

@@ -199,4 +199,9 @@ public:
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
+WTF::TextStream& operator<<(WTF::TextStream&, Animation::AnimationMode);
+WTF::TextStream& operator<<(WTF::TextStream&, Animation::AnimationDirection);
+WTF::TextStream& operator<<(WTF::TextStream&, const Animation&);
+
 } // namespace WebCore
