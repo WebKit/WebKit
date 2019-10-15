@@ -2116,7 +2116,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent) {
         if (auto* window = targetNode->document().domWindow())
-            targetNode->document().domWindow()->incrementScrollEventListenersCount();
+            window->incrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
