@@ -1,3 +1,12 @@
+2019-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import W3C tests for requestidlecallback
+        https://bugs.webkit.org/show_bug.cgi?id=202946
+
+        Reviewed by Wenson Hsieh.
+
+        * tests-options.json:
+
 2019-10-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Outsets for referenced SVG filters are always zero

@@ -1802,6 +1802,21 @@
     "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-iframe.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-suspended.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-timeout.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html": [
         "slow"
     ],
