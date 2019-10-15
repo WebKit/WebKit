@@ -1,3 +1,12 @@
+2019-10-14  Zhifei FANG  <zhifei_fang@apple.com>
+
+        results.webkit.org: TypeError when evaluating empty commits
+        https://bugs.webkit.org/show_bug.cgi?id=202936
+
+        Reviewed by Jonathan Bedard.
+
+        *resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js: Draw empty line when invaild scales or dots state pass in
+
 2019-10-14  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.net.bugzilla

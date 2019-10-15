@@ -373,7 +373,10 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             context.moveTo(startX, radius);
             context.lineTo(startX + renderWidth, radius);
         });
-
+        if (!scales || !dots || !scales.length || !dots.length) {
+            colorBatchRender.batchRender(context);
+            return;
+        }
         // Draw the dots
         // First, Calculate the render range:
         let startScalesIndex = Math.floor((scrollLeft + startX) / dotWidth);
@@ -732,19 +735,6 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
         const usedLineColor = computedStyle.getPropertyValue('--borderColorInlineElement');
         const baseLineY = isTop ? canvasHeight - scaleBroadLineHeight : scaleBroadLineHeight;
         const context = element.getContext("2d", { alpha: false });
-        let currentStartScaleIndex = Math.floor(scrollLeft / scaleWidth);
-        if (currentStartScaleIndex < 0)
-            currentStartScaleIndex = 0;
-        const currentStartScaleKey = getScaleKey(scales[currentStartScaleIndex]);
-        let currentEndScaleIndex = Math.ceil((scrollLeft + renderWidth) / scaleWidth);
-        currentEndScaleIndex = currentEndScaleIndex >= scales.length ? scales.length - 1 : currentEndScaleIndex;
-        const currentEndScaleKey = getScaleKey(scales[currentEndScaleIndex]);
-        const currentStartNode = scalesMapLinkList.map.get(currentStartScaleKey);
-        const currentEndNode = scalesMapLinkList.map.get(currentEndScaleKey);
-        if (!currentEndNode) {
-            console.error(currentEndScaleKey);
-        }
-        let now = currentStartNode;
         // Clear pervious batch render
         colorBatchRender.clear();
         colorBatchRender.lazyCreateColorSeqs(usedLineColor, (context) => {
@@ -758,6 +748,24 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
             context.moveTo(0, baseLineY);
             context.lineTo(element.logicWidth, baseLineY);
         });
+        if (!scales || !scales.length) {
+            colorBatchRender.batchRender(context);
+            return;
+        }
+        let currentStartScaleIndex = Math.floor(scrollLeft / scaleWidth);
+        if (currentStartScaleIndex < 0)
+            currentStartScaleIndex = 0;
+        const currentStartScaleKey = getScaleKey(scales[currentStartScaleIndex]);
+        let currentEndScaleIndex = Math.ceil((scrollLeft + renderWidth) / scaleWidth);
+        currentEndScaleIndex = currentEndScaleIndex >= scales.length ? scales.length - 1 : currentEndScaleIndex;
+        const currentEndScaleKey = getScaleKey(scales[currentEndScaleIndex]);
+        const currentStartNode = scalesMapLinkList.map.get(currentStartScaleKey);
+        const currentEndNode = scalesMapLinkList.map.get(currentEndScaleKey);
+        if (!currentEndNode) {
+            console.error(currentEndScaleKey);
+        }
+        let now = currentStartNode;
+        
 
         onScreenScales = [];
         while (now != currentEndNode.next) {
