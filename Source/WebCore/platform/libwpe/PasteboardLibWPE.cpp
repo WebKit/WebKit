@@ -147,7 +147,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
     writeString("text/plain;charset=utf-8", text);
 }
 
-void Pasteboard::writeCustomData(const PasteboardCustomData&)
+void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>&)
 {
 }
 

@@ -168,7 +168,7 @@ Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String
     return PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin);
 }
 
-long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName)
+long WebPlatformStrategies::writeCustomData(const Vector<WebCore::PasteboardCustomData>& data, const String& pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).write(data);
 }

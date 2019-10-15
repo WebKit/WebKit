@@ -175,7 +175,7 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String& pasteboardN
     completionHandler(PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite(origin));
 }
 
-void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName, CompletionHandler<void(uint64_t)>&& completionHandler)
+void WebPasteboardProxy::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(PlatformPasteboard(pasteboardName).write(data));
 }

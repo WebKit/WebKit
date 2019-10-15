@@ -208,7 +208,7 @@ public:
     virtual WEBCORE_EXPORT void write(const PasteboardImage&);
     virtual WEBCORE_EXPORT void write(const PasteboardWebContent&);
 
-    virtual WEBCORE_EXPORT void writeCustomData(const PasteboardCustomData&);
+    virtual WEBCORE_EXPORT void writeCustomData(const Vector<PasteboardCustomData>&);
 
     enum class FileContentState { NoFileOrImageData, InMemoryImage, MayContainFilePaths };
     virtual WEBCORE_EXPORT FileContentState fileContentState();

@@ -127,6 +127,11 @@ long PlatformPasteboard::write(const PasteboardCustomData&)
     return 0;
 }
 
+long PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
+{
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWPE)

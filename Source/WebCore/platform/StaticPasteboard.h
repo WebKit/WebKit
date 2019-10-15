@@ -63,7 +63,7 @@ public:
     void write(const PasteboardImage&) final { }
     void write(const PasteboardWebContent&) final { }
 
-    void writeCustomData(const PasteboardCustomData&) final { }
+    void writeCustomData(const Vector<PasteboardCustomData>&) final { }
 
     Pasteboard::FileContentState fileContentState() final { return FileContentState::NoFileOrImageData; }
     bool canSmartReplace() final { return false; }

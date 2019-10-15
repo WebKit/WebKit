@@ -88,7 +88,7 @@ private:
     WebCore::PasteboardItemInfo informationForItemAtIndex(size_t index, const String& pasteboardName) override;
     Vector<WebCore::PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) override;
     Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) override;
-    long writeCustomData(const WebCore::PasteboardCustomData&, const String&) override;
+    long writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String&) override;
 };
 
 } // namespace WebKit

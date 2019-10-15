@@ -598,7 +598,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
     return representationsToRegister;
 }
 
-void PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+long PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 {
     auto registrationLists = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
     for (auto& data : itemData) {
@@ -606,6 +606,7 @@ void PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
             [registrationLists addObject:itemList.get()];
     }
     registerItemsToPasteboard(registrationLists.get(), m_pasteboard.get());
+    return [m_pasteboard changeCount];
 }
 
 #else
@@ -641,8 +642,9 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-void PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
+long PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
 {
+    return 0;
 }
 
 #endif
@@ -743,8 +745,7 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
 
 long PlatformPasteboard::write(const PasteboardCustomData& data)
 {
-    write(Vector<PasteboardCustomData> { data });
-    return [m_pasteboard changeCount];
+    return write(Vector<PasteboardCustomData> { data });
 }
 
 }

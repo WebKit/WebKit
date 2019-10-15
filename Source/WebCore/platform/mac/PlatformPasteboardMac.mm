@@ -494,13 +494,17 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
     return item;
 }
 
-void PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+long PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 {
+    if (itemData.size() == 1)
+        return write(itemData.first());
+
     auto platformItems = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
     for (auto& data : itemData)
         [platformItems addObject:createPasteboardItem(data).get()];
     [m_pasteboard clearContents];
     [m_pasteboard writeObjects:platformItems.get()];
+    return [m_pasteboard changeCount];
 }
 
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)

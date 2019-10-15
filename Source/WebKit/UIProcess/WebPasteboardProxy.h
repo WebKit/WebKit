@@ -102,7 +102,7 @@ private:
     void informationForItemAtIndex(size_t index, const String& pasteboardName, CompletionHandler<void(WebCore::PasteboardItemInfo&&)>&&);
     void allPasteboardItemInfo(const String& pasteboardName, CompletionHandler<void(Vector<WebCore::PasteboardItemInfo>&&)>&&);
 
-    void writeCustomData(const WebCore::PasteboardCustomData&, const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
+    void writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
     void typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&&);
 
 #if PLATFORM(GTK)

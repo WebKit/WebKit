@@ -318,7 +318,7 @@ Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String
     return types;
 }
 
-long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName)
+long WebPlatformStrategies::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName)
 {
     uint64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::WriteCustomData(data, pasteboardName), Messages::WebPasteboardProxy::WriteCustomData::Reply(newChangeCount), 0);

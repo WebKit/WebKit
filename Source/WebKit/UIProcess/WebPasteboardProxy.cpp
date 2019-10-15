@@ -70,7 +70,7 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, const Stri
     completionHandler({ });
 }
 
-void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData&, const String&, CompletionHandler<void(uint64_t)>&& completionHandler)
+void WebPasteboardProxy::writeCustomData(const Vector<PasteboardCustomData>&, const String&, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(0);
 }

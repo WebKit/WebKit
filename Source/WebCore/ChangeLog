@@ -1,3 +1,45 @@
+2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor custom pasteboard writing codepaths to handle multiple items
+        https://bugs.webkit.org/show_bug.cgi?id=202916
+
+        Reviewed by Tim Horton.
+
+        Adjusts the `Pasteboard::write` codepath for writing PasteboardCustomData to the platform pasteboard, such that
+        it accepts multiple PasteboardCustomDatas. No new tests, since there is no behavior change.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::commitToPasteboard):
+
+        Pass in the PasteboardCustomData as a single-item vector.
+
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/StaticPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::writeCustomData):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeCustomData):
+        * platform/gtk/PlatformPasteboardGtk.cpp:
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
+        Adjust this method to return the updated change count.
+
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::writeCustomData):
+        * platform/libwpe/PlatformPasteboardLibWPE.cpp:
+        (WebCore::PlatformPasteboard::write):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::write):
+
+        Add logic to fall back to writing legacy pasteboard types in the case where there is only one item.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeCustomData):
+
 2019-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in RadioButtonGroups and RadioButtonGroup

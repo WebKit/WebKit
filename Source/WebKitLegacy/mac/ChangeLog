@@ -1,3 +1,16 @@
+2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor custom pasteboard writing codepaths to handle multiple items
+        https://bugs.webkit.org/show_bug.cgi?id=202916
+
+        Reviewed by Tim Horton.
+
+        Adjust some method signatures.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::writeCustomData):
+
 2019-10-14  David Quesada  <david_quesada@apple.com>
 
         Remove WebCore::IOSApplication::isWebApp()

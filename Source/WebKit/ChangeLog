@@ -1,3 +1,23 @@
+2019-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor custom pasteboard writing codepaths to handle multiple items
+        https://bugs.webkit.org/show_bug.cgi?id=202916
+
+        Reviewed by Tim Horton.
+
+        Change more function and method signatures from `const PasteboardCustomData&` to
+        `const Vector<PasteboardCustomData>&`.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::writeCustomData):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2019-10-14  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(251087): Several API tests are failing
