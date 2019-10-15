@@ -1230,7 +1230,7 @@ class UploadBuiltProduct(transfer.FileUpload):
     def __init__(self, **kwargs):
         kwargs['workersrc'] = self.workersrc
         kwargs['masterdest'] = self.masterdest
-        kwargs['mode'] = 0644
+        kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
@@ -1507,7 +1507,7 @@ class UploadTestResults(transfer.FileUpload):
             identifier = '-{}'.format(identifier)
         kwargs['workersrc'] = self.workersrc
         kwargs['masterdest'] = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s{}.zip'.format(identifier))
-        kwargs['mode'] = 0644
+        kwargs['mode'] = 0o0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
 
