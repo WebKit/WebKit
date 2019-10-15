@@ -1780,6 +1780,14 @@ IsLoggedInAPIEnabled:
     humanReadableDescription: "Enable the proposed IsLoggedIn web API"
     category: experimental
 
+PictureInPictureAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Picture-in-Picture API"
+  humanReadableDescription: "Enable Picture-in-Picture API support"
+  category: experimental
+  condition: ENABLE(PICTURE_IN_PICTURE_API)
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

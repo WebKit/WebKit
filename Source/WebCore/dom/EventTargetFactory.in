@@ -33,6 +33,7 @@ OffscreenCanvas
 PaymentRequest conditional=PAYMENT_REQUEST
 PaymentResponse conditional=PAYMENT_REQUEST
 Performance
+PictureInPictureWindow conditional=PICTURE_IN_PICTURE_API
 RTCDataChannel conditional=WEB_RTC
 RTCDTMFSender conditional=WEB_RTC
 RTCPeerConnection conditional=WEB_RTC

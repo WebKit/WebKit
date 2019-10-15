@@ -51,6 +51,7 @@ VPATH = \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/paymentrequest \
+    $(WebCore)/Modules/pictureinpicture \
     $(WebCore)/Modules/plugins \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/speech \
@@ -203,8 +204,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilities.idl \
-	$(WebCore)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl \
-	$(WebCore)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesInfo.idl \
     $(WebCore)/Modules/mediacapabilities/MediaConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/MediaDecodingConfiguration.idl \
@@ -306,6 +307,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/paymentrequest/PaymentShippingOption.idl \
     $(WebCore)/Modules/paymentrequest/PaymentShippingType.idl \
     $(WebCore)/Modules/paymentrequest/PaymentValidationErrors.idl \
+    $(WebCore)/Modules/pictureinpicture/DocumentPictureInPicture.idl \
+    $(WebCore)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl \
+    $(WebCore)/Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl \
+    $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \
@@ -409,7 +414,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUValidationError.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUVertexBufferDescriptor.idl \
-	$(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
     $(WebCore)/Modules/webgpu/NavigatorGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
@@ -418,14 +423,14 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayout.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
-	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPUComputePassEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPUComputePipeline.idl \
     $(WebCore)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
-	$(WebCore)/Modules/webgpu/WebGPUDeviceErrorScopes.idl \
+    $(WebCore)/Modules/webgpu/WebGPUDeviceErrorScopes.idl \
     $(WebCore)/Modules/webgpu/WebGPUDeviceEventHandler.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
@@ -552,7 +557,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/typedom/StylePropertyMap.idl \
     $(WebCore)/css/typedom/StylePropertyMapReadOnly.idl \
-	$(WebCore)/css/typedom/TypedOMCSSImageValue.idl \
+    $(WebCore)/css/typedom/TypedOMCSSImageValue.idl \
     $(WebCore)/css/typedom/TypedOMCSSNumericValue.idl \
     $(WebCore)/css/typedom/TypedOMCSSStyleValue.idl \
     $(WebCore)/css/typedom/TypedOMCSSUnitValue.idl \

@@ -293,6 +293,8 @@ inlineMediaPlaybackRequiresPlaysInlineAttribute:
   initial: defaultInlineMediaPlaybackRequiresPlaysInlineAttribute
 allowsPictureInPictureMediaPlayback:
   initial: defaultAllowsPictureInPictureMediaPlayback
+pictureInPictureAPIEnabled:
+  initial: false
 mediaControlsScaleWithPageZoom:
   initial: defaultMediaControlsScaleWithPageZoom
 invisibleAutoplayNotPermitted:

@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/css-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/disable-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/enter-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/exit-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/mediastream.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-element.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/shadow-dom.html

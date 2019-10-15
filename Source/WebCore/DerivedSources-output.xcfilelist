@@ -483,6 +483,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFullscreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentFullscreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentOrShadowRoot.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentPictureInPicture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentPictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentStorageAccess.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentStorageAccess.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentTimeline.cpp
@@ -519,6 +521,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementCSSInlineStyle.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorEvent.cpp
@@ -855,6 +859,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElementPictureInPicture.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElementPictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.cpp
@@ -1241,6 +1247,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWave.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWave.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.cpp

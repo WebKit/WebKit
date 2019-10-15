@@ -235,6 +235,10 @@ $(PROJECT_DIR)/Modules/paymentrequest/PaymentResponse.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingOption.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingType.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentValidationErrors.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/DocumentPictureInPicture.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.css
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.js

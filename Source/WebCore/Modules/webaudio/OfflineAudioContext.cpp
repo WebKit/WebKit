@@ -28,6 +28,7 @@
 
 #include "OfflineAudioContext.h"
 
+#include "AudioBuffer.h"
 #include "Document.h"
 #include <wtf/IsoMallocInlines.h>
 

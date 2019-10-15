@@ -122,6 +122,7 @@ namespace WebCore {
     macro(endEvent) \
     macro(ended) \
     macro(enter) \
+    macro(enterpictureinpicture) \
     macro(error) \
     macro(exit) \
     macro(fetch) \
@@ -153,6 +154,7 @@ namespace WebCore {
     macro(keystatuseschange) \
     macro(keyup) \
     macro(languagechange) \
+    macro(leavepictureinpicture) \
     macro(levelchange) \
     macro(load) \
     macro(loadeddata) \

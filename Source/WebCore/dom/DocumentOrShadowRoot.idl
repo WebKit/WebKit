@@ -40,4 +40,7 @@
 
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-documentorshadowroot-mixin).
     [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;
+
+    // Extensions from Picture-in-Picture API (https://wicg.github.io/picture-in-picture/#documentorshadowroot-extension)
+    [Conditional=PICTURE_IN_PICTURE_API, EnabledBySetting=PictureInPictureAPI] readonly attribute Element? pictureInPictureElement;
 };

@@ -128,6 +128,7 @@ public:
     static void setWebGL2Enabled(bool);
     static void setWebGPUEnabled(bool);
     static void setWebVREnabled(bool);
+    static void setPictureInPictureAPIEnabled(bool);
     static void setScreenCaptureEnabled(bool);
 
     static bool webAnimationsCSSIntegrationEnabled();

@@ -204,6 +204,11 @@ Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
 Modules/paymentrequest/PaymentResponse.cpp
 
+Modules/pictureinpicture/DocumentPictureInPicture.cpp
+Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
+Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
+Modules/pictureinpicture/PictureInPictureWindow.cpp
+
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
@@ -2795,6 +2800,7 @@ JSDocument.cpp
 JSDocumentAndElementEventHandlers.cpp
 JSDocumentFragment.cpp
 JSDocumentOrShadowRoot.cpp
+JSDocumentPictureInPicture.cpp
 JSDocumentType.cpp
 JSDoubleRange.cpp
 JSDynamicsCompressorNode.cpp
@@ -2803,6 +2809,7 @@ JSEcdhKeyDeriveParams.cpp
 JSEcdsaParams.cpp
 JSElement.cpp
 JSElementCSSInlineStyle.cpp
+JSEnterPictureInPictureEvent.cpp
 JSErrorCallback.cpp
 JSErrorEvent.cpp
 JSEvent.cpp
@@ -2960,6 +2967,7 @@ JSHTMLTrackElement.cpp
 JSHTMLUListElement.cpp
 JSHTMLUnknownElement.cpp
 JSHTMLVideoElement.cpp
+JSHTMLVideoElementPictureInPicture.cpp
 JSHashChangeEvent.cpp
 JSHistory.cpp
 JSHkdfParams.cpp
@@ -3116,6 +3124,7 @@ JSPerformanceResourceTiming.cpp
 JSPerformanceServerTiming.cpp
 JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
+JSPictureInPictureWindow.cpp
 JSPlaybackDirection.cpp
 JSPointerEvent.cpp
 JSPopStateEvent.cpp

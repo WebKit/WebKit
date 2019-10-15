@@ -72,6 +72,7 @@ namespace WebCore {
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
     macro(DocumentTimeline) \
+    macro(EnterPictureInPictureEvent) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
     macro(FetchEvent) \
@@ -164,6 +165,7 @@ namespace WebCore {
     macro(PaymentRequest) \
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \
+    macro(PictureInPictureWindow) \
     macro(SQLError) \
     macro(SQLResultSet) \
     macro(SQLResultSetRowList) \

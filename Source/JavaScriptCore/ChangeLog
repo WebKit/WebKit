@@ -1,3 +1,14 @@
+2019-10-15  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()
+        https://bugs.webkit.org/show_bug.cgi?id=201024
+
+        Reviewed by Eric Carlson.
+
+        Add configurations for Picture-in-Picture API.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-10-15  Angelos Oikonomopoulos  <aoikonomopoulos@igalia.com>
 
         Interpreter: Don't assert that reference is nonnull

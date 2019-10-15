@@ -28,14 +28,16 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include "Supplementable.h"
 #include <memory>
 
 namespace WebCore {
 
 class HTMLImageLoader;
 class RenderVideo;
+class PictureInPictureObserver;
 
-class HTMLVideoElement final : public HTMLMediaElement {
+class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLVideoElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLVideoElement> create(Document&);
@@ -86,6 +88,10 @@ public:
     VideoPresentationMode webkitPresentationMode() const;
     void setFullscreenMode(VideoFullscreenMode);
     void fullscreenModeChanged(VideoFullscreenMode) final;
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    void setPictureInPictureObserver(PictureInPictureObserver*);
+#endif
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -123,6 +129,10 @@ private:
 
     unsigned m_lastReportedVideoWidth { 0 };
     unsigned m_lastReportedVideoHeight { 0 };
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
+#endif
 };
 
 } // namespace WebCore

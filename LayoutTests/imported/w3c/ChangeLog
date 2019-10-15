@@ -1,3 +1,33 @@
+2019-10-15  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()
+        https://bugs.webkit.org/show_bug.cgi?id=201024
+
+        Reviewed by Eric Carlson.
+
+        Import wpt/picture-in-picture.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/picture-in-picture/META.yml: Added.
+        * web-platform-tests/picture-in-picture/css-selector.html: Added.
+        * web-platform-tests/picture-in-picture/disable-picture-in-picture.html: Added.
+        * web-platform-tests/picture-in-picture/enter-picture-in-picture.html: Added.
+        * web-platform-tests/picture-in-picture/exit-picture-in-picture.html: Added.
+        * web-platform-tests/picture-in-picture/idlharness.window.html: Added.
+        * web-platform-tests/picture-in-picture/idlharness.window.js: Added.
+        * web-platform-tests/picture-in-picture/leave-picture-in-picture.html: Added.
+        * web-platform-tests/picture-in-picture/mediastream.html: Added.
+        * web-platform-tests/picture-in-picture/picture-in-picture-element.html: Added.
+        * web-platform-tests/picture-in-picture/picture-in-picture-window.html: Added.
+        * web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html: Added.
+        * web-platform-tests/picture-in-picture/request-picture-in-picture.html: Added.
+        * web-platform-tests/picture-in-picture/resources/picture-in-picture-helpers.js: Added.
+        (loadVideo):
+        (async.requestPictureInPictureWithTrustedClick):
+        * web-platform-tests/picture-in-picture/resources/w3c-import.log: Added.
+        * web-platform-tests/picture-in-picture/shadow-dom.html: Added.
+        * web-platform-tests/picture-in-picture/w3c-import.log: Added.
+
 2019-10-14  Youenn Fablet  <youenn@apple.com>
 
         Handle service worker loads through NetworkResourceLoader

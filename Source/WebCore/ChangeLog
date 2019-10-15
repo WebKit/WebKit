@@ -1,3 +1,93 @@
+2019-10-15  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()
+        https://bugs.webkit.org/show_bug.cgi?id=201024
+
+        Reviewed by Eric Carlson.
+
+        Implement the support to enter and exit PiP mode with the Picture-in-Picture API.
+        Majority work of this patch was done by Carlos Eduardo Ramalho <cadubentzen@gmail.com>.
+
+        Also, fix a build error of Modules/webaudio/OfflineAudioContext.cpp because of this patch (due to unified build).
+
+        Tests: imported/w3c/web-platform-tests/picture-in-picture/css-selector.html
+               imported/w3c/web-platform-tests/picture-in-picture/disable-picture-in-picture.html
+               imported/w3c/web-platform-tests/picture-in-picture/enter-picture-in-picture.html
+               imported/w3c/web-platform-tests/picture-in-picture/exit-picture-in-picture.html
+               imported/w3c/web-platform-tests/picture-in-picture/idlharness.window.html
+               imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html
+               imported/w3c/web-platform-tests/picture-in-picture/mediastream.html
+               imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-element.html
+               imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.html
+               imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html
+               imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture.html
+               imported/w3c/web-platform-tests/picture-in-picture/shadow-dom.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/pictureinpicture/DocumentPictureInPicture.cpp: Added.
+        (WebCore::DocumentPictureInPicture::exitPictureInPicture):
+        (WebCore::DocumentPictureInPicture::from):
+        * Modules/pictureinpicture/DocumentPictureInPicture.h: Added.
+        (WebCore::DocumentPictureInPicture::pictureInPictureEnabled):
+        (WebCore::DocumentPictureInPicture::supplementName):
+        * Modules/pictureinpicture/DocumentPictureInPicture.idl: Added.
+        * Modules/pictureinpicture/EnterPictureInPictureEvent.cpp: Added.
+        (WebCore::EnterPictureInPictureEvent::create):
+        (WebCore::EnterPictureInPictureEvent::EnterPictureInPictureEvent):
+        * Modules/pictureinpicture/EnterPictureInPictureEvent.h: Added.
+        * Modules/pictureinpicture/EnterPictureInPictureEvent.idl: Added.
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp: Added.
+        (WebCore::HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::~HTMLVideoElementPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::from):
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::autoPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::setAutoPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::disablePictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::setDisablePictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::exitPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didEnterPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didExitPictureInPicture):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.h: Added.
+        (WebCore::HTMLVideoElementPictureInPicture::supplementName):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl: Added.
+        * Modules/pictureinpicture/PictureInPictureWindow.cpp: Added.
+        (WebCore::PictureInPictureWindow::create):
+        (WebCore::PictureInPictureWindow::PictureInPictureWindow):
+        (WebCore::PictureInPictureWindow::activeDOMObjectName const):
+        (WebCore::PictureInPictureWindow::canSuspendForDocumentSuspension const):
+        (WebCore::PictureInPictureWindow::eventTargetInterface const):
+        (WebCore::PictureInPictureWindow::scriptExecutionContext const):
+        * Modules/pictureinpicture/PictureInPictureWindow.h: Added.
+        * Modules/pictureinpicture/PictureInPictureWindow.idl: Added.
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::pictureInPictureElement const):
+        (WebCore::Document::setPictureInPictureElement):
+        * dom/Document.h:
+        * dom/DocumentOrShadowRoot.idl:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::pictureInPictureElement const):
+        * dom/ShadowRoot.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+        (WebCore::HTMLVideoElement::setPictureInPictureObserver):
+        * html/HTMLVideoElement.h:
+        * page/Settings.yaml:
+        * platform/PictureInPictureObserver.h: Added.
+        (WebCore::PictureInPictureObserver::~PictureInPictureObserver):
+        * testing/InternalSettings.h:
+
 2019-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add TextStream dumping for ThemeTypes enums

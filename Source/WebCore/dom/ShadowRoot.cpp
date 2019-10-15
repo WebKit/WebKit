@@ -32,6 +32,9 @@
 #include "ElementTraversal.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
+#if ENABLE(PICTURE_IN_PICTURE_API)
+#include "NotImplemented.h"
+#endif
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SlotAssignment.h"
@@ -355,5 +358,13 @@ Vector<ShadowRoot*> assignedShadowRootsIfSlotted(const Node& node)
     }
     return result;
 }
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+HTMLVideoElement* ShadowRoot::pictureInPictureElement() const
+{
+    notImplemented();
+    return nullptr;
+}
+#endif
 
 }

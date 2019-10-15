@@ -129,6 +129,7 @@ public:
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
     void setEncryptedMediaAPIEnabled(bool);
+    void setPictureInPictureAPIEnabled(bool);
     void setMediaDevicesEnabled(bool);
     void setWebRTCMDNSICECandidatesEnabled(bool);
     void setCustomUserAgent(JSStringRef);

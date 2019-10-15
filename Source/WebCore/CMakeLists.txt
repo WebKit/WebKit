@@ -401,6 +401,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentShippingType.idl
     Modules/paymentrequest/PaymentValidationErrors.idl
 
+    Modules/pictureinpicture/DocumentPictureInPicture.idl
+    Modules/pictureinpicture/EnterPictureInPictureEvent.idl
+    Modules/pictureinpicture/HTMLVideoElementPictureInPicture.idl
+    Modules/pictureinpicture/PictureInPictureWindow.idl
+
     Modules/speech/DOMWindowSpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl
     Modules/speech/SpeechSynthesisEvent.idl

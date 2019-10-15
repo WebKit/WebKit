@@ -140,6 +140,7 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
+class HTMLVideoElement;
 class HTMLPictureElement;
 class HTMLScriptElement;
 class HitTestLocation;
@@ -1545,6 +1546,11 @@ public:
     WEBCORE_EXPORT void dispatchSystemPreviewActionEvent(const String& message);
 #endif
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    HTMLVideoElement* pictureInPictureElement() const;
+    void setPictureInPictureElement(HTMLVideoElement*);
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2066,6 +2072,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
     std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    WeakPtr<HTMLVideoElement> m_pictureInPictureElement;
 #endif
 
     HashMap<Element*, ElementIdentifier> m_identifiedElementsMap;

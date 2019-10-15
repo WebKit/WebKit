@@ -548,6 +548,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_testRunner->setReadableByteStreamAPIEnabled(true);
 
     m_testRunner->setEncryptedMediaAPIEnabled(true);
+    m_testRunner->setPictureInPictureAPIEnabled(true);
 
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);

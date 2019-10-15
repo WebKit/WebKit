@@ -609,6 +609,11 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         @"~/Library/WebKit/MediaKeys", WebKitMediaKeysStorageDirectoryKey,
 #endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        @NO, WebKitPictureInPictureAPIEnabledKey,
+#endif
+
 #if ENABLE(MEDIA_STREAM)
         @NO, WebKitMockCaptureDevicesEnabledPreferenceKey,
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
@@ -3328,6 +3333,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setEncryptedMediaAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitEncryptedMediaAPIEnabledKey];
+}
+
+- (BOOL)pictureInPictureAPIEnabled
+{
+    return [self _boolValueForKey:WebKitPictureInPictureAPIEnabledKey];
+}
+
+- (void)setPictureInPictureAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPictureInPictureAPIEnabledKey];
 }
 
 - (BOOL)viewportFitEnabled

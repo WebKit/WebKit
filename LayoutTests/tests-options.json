@@ -1799,6 +1799,15 @@
     "imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
         "slow"
     ],

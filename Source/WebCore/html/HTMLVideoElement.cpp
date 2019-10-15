@@ -47,6 +47,7 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+#include "PictureInPictureObserver.h"
 #include "VideoFullscreenModel.h"
 #endif
 
@@ -485,6 +486,18 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
     if (mode != fullscreenMode()) {
         ALWAYS_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
         scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+        if (m_pictureInPictureObserver) {
+            HTMLVideoElement::VideoPresentationMode targetVideoPresentationMode = toPresentationMode(mode);
+            HTMLVideoElement::VideoPresentationMode sourceVideoPresentationMode = toPresentationMode(fullscreenMode());
+
+            if (targetVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+                m_pictureInPictureObserver->didEnterPictureInPicture();
+            else if (targetVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+                m_pictureInPictureObserver->didExitPictureInPicture();
+        }
+#endif
     }
 
     if (player())
@@ -492,6 +505,13 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
 
     HTMLMediaElement::fullscreenModeChanged(mode);
 }
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* observer)
+{
+    m_pictureInPictureObserver = observer;
+}
+#endif
 
 #endif
 

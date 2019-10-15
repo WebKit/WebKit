@@ -325,6 +325,10 @@
 #include "PointerCaptureController.h"
 #endif
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+#include "HTMLVideoElement.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
@@ -8296,5 +8300,16 @@ void Document::dispatchSystemPreviewActionEvent(const String& message)
 }
 #endif
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+HTMLVideoElement* Document::pictureInPictureElement() const
+{
+    return m_pictureInPictureElement.get();
+};
+
+void Document::setPictureInPictureElement(HTMLVideoElement* element)
+{
+    m_pictureInPictureElement = makeWeakPtr(element);
+}
+#endif
 
 } // namespace WebCore
