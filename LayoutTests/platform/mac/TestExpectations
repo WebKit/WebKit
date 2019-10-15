@@ -1171,7 +1171,7 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 webkit.org/b/158649 [ Sierra+ ] fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 # fast/text/font-cursive-italic-cjk.html can be deleted when Catalina is the oldest supported OS
-[ Sierra HighSierra Mojave ] fast/text/font-cursive-italic-cjk.html [ Pass ImageOnlyFailure ]
+[ Sierra HighSierra Mojave ] fast/text/font-cursive-italic-cjk.html [ Skip ]
 [ Catalina+ ] fast/text/font-cursive-italic-cjk-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
