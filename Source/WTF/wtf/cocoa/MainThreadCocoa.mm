@@ -56,49 +56,38 @@
 
 @end
 
+#define LOG_CHANNEL_PREFIX Log
+
 namespace WTF {
+
+#if RELEASE_LOG_DISABLED
+WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel::Error };
+#else
+WTFLogChannel LogThreading = { WTFLogChannelState::On, "Threading", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
+#endif
+
 
 static JSWTFMainThreadCaller* staticMainThreadCaller;
 static bool isTimerPosted; // This is only accessed on the main thread.
-static bool mainThreadEstablishedAsPthreadMain { false };
+
+#if USE(WEB_THREAD)
+// When the Web thread is enabled, we consider it to be the main thread, not pthread main.
 static pthread_t mainThreadPthread { nullptr };
 static NSThread* mainThreadNSThread { nullptr };
 
-#if USE(WEB_THREAD)
 static Thread* sApplicationUIThread;
 static Thread* sWebThread;
 #endif
 
 void initializeMainThreadPlatform()
 {
-    ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
-
-#if !USE(WEB_THREAD)
-    mainThreadEstablishedAsPthreadMain = false;
-    mainThreadPthread = pthread_self();
-    mainThreadNSThread = [NSThread currentThread];
-#else
-    mainThreadEstablishedAsPthreadMain = true;
-    ASSERT(!mainThreadPthread);
-    ASSERT(!mainThreadNSThread);
-#endif
-}
-
-#if !USE(WEB_THREAD)
-void initializeMainThreadToProcessMainThreadPlatform()
-{
     if (!pthread_main_np())
-        NSLog(@"WebKit Threading Violation - initial use of WebKit from a secondary thread.");
+        RELEASE_LOG_FAULT(Threading, "WebKit Threading Violation - initial use of WebKit from a secondary thread.");
+    ASSERT(pthread_main_np());
 
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
-
-    mainThreadEstablishedAsPthreadMain = true;
-    mainThreadPthread = 0;
-    mainThreadNSThread = nil;
 }
-#endif // !USE(WEB_THREAD)
 
 static void timerFired(CFRunLoopTimerRef timer, void*)
 {
@@ -124,20 +113,25 @@ static void postTimer()
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
-
+    
+#if USE(WEB_THREAD)
     if (isWebThread()) {
         postTimer();
         return;
     }
-    
-    if (mainThreadEstablishedAsPthreadMain) {
-        ASSERT(!mainThreadNSThread);
-        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+
+    if (mainThreadPthread) {
+        [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
         return;
     }
+#else
+    if (isMainThread()) {
+        postTimer();
+        return;
+    }
+#endif
 
-    ASSERT(mainThreadNSThread);
-    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
+    [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
 }
 
 void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())
@@ -166,6 +160,7 @@ void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())
 }
 
 #if USE(WEB_THREAD)
+
 static bool webThreadIsUninitializedOrLockedOrDisabled()
 {
     return !WebCoreWebThreadIsLockedOrDisabled || WebCoreWebThreadIsLockedOrDisabled();
@@ -174,16 +169,6 @@ static bool webThreadIsUninitializedOrLockedOrDisabled()
 bool isMainThread()
 {
     return (isWebThread() || pthread_main_np()) && webThreadIsUninitializedOrLockedOrDisabled();
-}
-
-bool isMainThreadIfInitialized()
-{
-    return isMainThread();
-}
-
-bool isMainThreadInitialized()
-{
-    return true;
 }
 
 bool isUIThread()
@@ -203,15 +188,15 @@ void initializeApplicationUIThread()
     sApplicationUIThread = &Thread::current();
 }
 
-void initializeWebThreadPlatform()
+void initializeWebThread()
 {
-    ASSERT(!pthread_main_np());
-
-    mainThreadEstablishedAsPthreadMain = false;
-    mainThreadPthread = pthread_self();
-    mainThreadNSThread = [NSThread currentThread];
-
-    sWebThread = &Thread::current();
+    static std::once_flag initializeKey;
+    std::call_once(initializeKey, [] {
+        ASSERT(!pthread_main_np());
+        mainThreadPthread = pthread_self();
+        mainThreadNSThread = [NSThread currentThread];
+        sWebThread = &Thread::current();
+    });
 }
 
 bool canAccessThreadLocalDataForThread(Thread& thread)
@@ -225,28 +210,12 @@ bool canAccessThreadLocalDataForThread(Thread& thread)
 
     return false;
 }
+
 #else
+
 bool isMainThread()
 {
-    if (mainThreadEstablishedAsPthreadMain) {
-        ASSERT(!mainThreadPthread);
-        return pthread_main_np();
-    }
-
-    ASSERT(mainThreadPthread);
-    return pthread_equal(pthread_self(), mainThreadPthread);
-}
-
-bool isMainThreadIfInitialized()
-{
-    if (mainThreadEstablishedAsPthreadMain)
-        return pthread_main_np();
-    return pthread_equal(pthread_self(), mainThreadPthread);
-}
-
-bool isMainThreadInitialized()
-{
-    return mainThreadEstablishedAsPthreadMain || mainThreadPthread;
+    return pthread_main_np();
 }
 
 #endif // USE(WEB_THREAD)

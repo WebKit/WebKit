@@ -91,8 +91,7 @@ protected:
     RefCountedBase()
         : m_refCount(1)
 #if !ASSERT_DISABLED
-        , m_isOwnedByMainThread(isMainThreadIfInitialized())
-        , m_areThreadingChecksEnabled(isMainThreadInitialized())
+        , m_isOwnedByMainThread(isMainThread())
 #endif
 #if CHECK_REF_COUNTED_LIFECYCLE
         , m_deletionHasBegun(false)
@@ -106,7 +105,7 @@ protected:
 #if !ASSERT_DISABLED
         if (hasOneRef()) {
             // Likely an ownership transfer across threads that may be safe.
-            m_isOwnedByMainThread = isMainThreadIfInitialized();
+            m_isOwnedByMainThread = isMainThread();
         } else if (areThreadingChecksEnabledGlobally && m_areThreadingChecksEnabled) {
             // If you hit this assertion, it means that the RefCounted object was ref/deref'd
             // from both the main thread and another in a way that is likely concurrent and unsafe.

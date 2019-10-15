@@ -167,7 +167,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 {
 #if !USE(WEB_THREAD)
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
+    WTF::initializeMainThread();
 #endif
 }
 

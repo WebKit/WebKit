@@ -45,7 +45,7 @@
 {
 #if !USE(WEB_THREAD)
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
+    WTF::initializeMainThread();
 #endif // !USE(WEB_THREAD)
 }
 

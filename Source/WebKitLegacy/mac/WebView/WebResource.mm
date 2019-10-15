@@ -68,7 +68,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
 }

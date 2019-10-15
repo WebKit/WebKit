@@ -77,16 +77,6 @@ bool isMainThread()
     return mainThread == Thread::currentID();
 }
 
-bool isMainThreadIfInitialized()
-{
-    return isMainThread();
-}
-
-bool isMainThreadInitialized()
-{
-    return true;
-}
-
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(threadingWindowHandle);

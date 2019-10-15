@@ -61,26 +61,6 @@ void initializeMainThread()
     });
 }
 
-#if PLATFORM(COCOA)
-#if !USE(WEB_THREAD)
-void initializeMainThreadToProcessMainThread()
-{
-    std::call_once(initializeKey, [] {
-        initializeThreading();
-        initializeMainThreadToProcessMainThreadPlatform();
-    });
-}
-#else
-void initializeWebThread()
-{
-    static std::once_flag initializeKey;
-    std::call_once(initializeKey, [] {
-        initializeWebThreadPlatform();
-    });
-}
-#endif // !USE(WEB_THREAD)
-#endif // PLATFORM(COCOA)
-
 #if !USE(WEB_THREAD)
 bool canAccessThreadLocalDataForThread(Thread& thread)
 {

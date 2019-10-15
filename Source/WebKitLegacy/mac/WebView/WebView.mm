@@ -5417,7 +5417,6 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
 

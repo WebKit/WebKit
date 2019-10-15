@@ -1,3 +1,33 @@
+2019-10-15  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Simplify main thread initialization
+        https://bugs.webkit.org/show_bug.cgi?id=203001
+
+        Reviewed by Geoff Garen.
+
+        Simplify main thread initialization on macOS by always using pthread main as main thread.
+        The complexity is now isolated to the USE(WEB_THREAD) code path.
+
+        This patch also adds a debug assertion in WTF::initializeWebThreadPlatform() to make sure
+        it gets called on the actual main thread. In release, it will log a fault message indicating
+        it was called on the wrong thread.
+
+        * wtf/MainThread.cpp:
+        * wtf/MainThread.h:
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::RefCountedBase):
+        (WTF::RefCountedBase::applyRefDerefThreadingCheck const):
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::initializeWebThreadPlatform):
+        (WTF::canAccessThreadLocalDataForThread):
+        (WTF::isMainThread):
+        * wtf/generic/MainThreadGeneric.cpp:
+        * wtf/text/cf/StringImplCF.cpp:
+        (WTF::StringImpl::createCFString):
+        * wtf/win/MainThreadWin.cpp:
+
 2019-10-14  Tim Horton  <timothy_horton@apple.com>
 
         Unify sources for bindings more densely

@@ -387,7 +387,6 @@ public:
 {
 #if !PLATFORM(IOS_FAMILY)
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
     bool attachmentElementEnabled = MacApplication::isAppleMail();
 #else

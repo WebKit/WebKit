@@ -98,7 +98,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 + (void)initialize
 {
     JSC::initializeThreading();
-    WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 }
 

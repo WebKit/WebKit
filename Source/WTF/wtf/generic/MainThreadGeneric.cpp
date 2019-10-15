@@ -89,16 +89,6 @@ bool isMainThread()
 #endif
 }
 
-bool isMainThreadIfInitialized()
-{
-    return isMainThread();
-}
-
-bool isMainThreadInitialized()
-{
-    return true;
-}
-
 void scheduleDispatchFunctionsOnMainThread()
 {
     // Use a RunLoop::Timer instead of RunLoop::dispatch() to be able to use a different priority and
