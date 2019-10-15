@@ -106,7 +106,12 @@ inline Optional<PhysicalBoxSide> imagePieceVerticalSide(ImagePiece piece)
 
 class NinePieceImage {
 public:
-    NinePieceImage();
+    enum class Type {
+        Normal,
+        Mask
+    };
+
+    NinePieceImage(Type = Type::Normal);
     NinePieceImage(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
 
     bool operator==(const NinePieceImage& other) const { return m_data == other.m_data; }
@@ -154,13 +159,6 @@ public:
     {
         m_data.access().horizontalRule = other.m_data->horizontalRule;
         m_data.access().verticalRule = other.m_data->verticalRule;
-    }
-
-    void setMaskDefaults()
-    {
-        m_data.access().imageSlices = LengthBox(0);
-        m_data.access().fill = true;
-        m_data.access().borderSlices = LengthBox();
     }
 
     static LayoutUnit computeOutset(const Length& outsetSide, LayoutUnit borderSide)
@@ -211,6 +209,7 @@ private:
     };
 
     static DataRef<Data>& defaultData();
+    static DataRef<Data>& defaultMaskData();
 
     DataRef<Data> m_data;
 };

@@ -1,3 +1,27 @@
+2019-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't mutate a NinePieceImage to create a mask default image
+        https://bugs.webkit.org/show_bug.cgi?id=202967
+
+        Reviewed by Dean Jackson.
+
+        For every StyleRareNonInheritedData, the maskBoxImage undergoes copy-on-write
+        via maskBoxImage.setMaskDefaults(). Fix by giving NinePieceImage a constructor
+        argument that cna make the mask flavor of image.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertBorderMask):
+        (WebCore::StyleBuilderConverter::convertReflection):
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::defaultMaskData):
+        (WebCore::NinePieceImage::NinePieceImage):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::setMaskDefaults): Deleted.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::StyleReflection):
+
 2019-10-15  youenn fablet  <youenn@apple.com>
 
         Move headers to keep from a HTTPHeaderNameSet to an OptionSet

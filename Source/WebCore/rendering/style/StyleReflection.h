@@ -55,8 +55,8 @@ public:
 private:
     StyleReflection()
         : m_offset(0, Fixed)
+        , m_mask(NinePieceImage::Type::Mask)
     {
-         m_mask.setMaskDefaults();
     }
     
     ReflectionDirection m_direction { ReflectionDirection::Below };

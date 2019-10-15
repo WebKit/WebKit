@@ -456,8 +456,7 @@ inline NinePieceImage StyleBuilderConverter::convertBorderImage(StyleResolver& s
 template<CSSPropertyID property>
 inline NinePieceImage StyleBuilderConverter::convertBorderMask(StyleResolver& styleResolver, CSSValue& value)
 {
-    NinePieceImage image;
-    image.setMaskDefaults();
+    NinePieceImage image(NinePieceImage::Type::Mask);
     styleResolver.styleMap()->mapNinePieceImage(property, &value, image);
     return image;
 }
@@ -752,8 +751,7 @@ inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleRes
     reflection->setDirection(reflectValue.direction());
     reflection->setOffset(reflectValue.offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
 
-    NinePieceImage mask;
-    mask.setMaskDefaults();
+    NinePieceImage mask(NinePieceImage::Type::Mask);
     styleResolver.styleMap()->mapNinePieceImage(CSSPropertyWebkitBoxReflect, reflectValue.mask(), mask);
     reflection->setMask(mask);
 

@@ -40,8 +40,18 @@ inline DataRef<NinePieceImage::Data>& NinePieceImage::defaultData()
     return data.get();
 }
 
-NinePieceImage::NinePieceImage()
-    : m_data(defaultData())
+inline DataRef<NinePieceImage::Data>& NinePieceImage::defaultMaskData()
+{
+    static NeverDestroyed<DataRef<Data>> maskData { Data::create() };
+    auto& data = maskData.get().access();
+    data.imageSlices = LengthBox(0);
+    data.fill = true;
+    data.borderSlices = LengthBox();
+    return maskData.get();
+}
+
+NinePieceImage::NinePieceImage(Type imageType)
+    : m_data(imageType == Type::Normal ? defaultData() : defaultMaskData())
 {
 }
 

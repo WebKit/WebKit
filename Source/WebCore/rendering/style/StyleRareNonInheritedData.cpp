@@ -34,6 +34,7 @@
 #include "StyleScrollSnapPoints.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -63,6 +64,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #endif
     , willChange(RenderStyle::initialWillChange())
     , mask(FillLayerType::Mask)
+    , maskBoxImage(NinePieceImage::Type::Mask)
     , objectPosition(RenderStyle::initialObjectPosition())
     , shapeOutside(RenderStyle::initialShapeOutside())
     , shapeMargin(RenderStyle::initialShapeMargin())
@@ -110,7 +112,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
 {
-    maskBoxImage.setMaskDefaults();
 }
 
 inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
