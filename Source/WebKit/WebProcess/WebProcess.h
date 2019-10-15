@@ -327,7 +327,7 @@ private:
     void registerURLSchemeAsLocal(const String&) const;
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsDisplayIsolated(const String&) const;
-    void registerURLSchemeAsCORSEnabled(const String&);
+    void registerURLSchemeAsCORSEnabled(const String&) const;
     void registerURLSchemeAsAlwaysRevalidated(const String&) const;
     void registerURLSchemeAsCachePartitioned(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;

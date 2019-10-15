@@ -1,3 +1,16 @@
+2019-10-15  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r251138.
+
+        Broke API tests
+
+        Reverted changeset:
+
+        "Pass CORS-enabled schemes through WebProcess instead of
+        having them NetworkProcess-global"
+        https://bugs.webkit.org/show_bug.cgi?id=202891
+        https://trac.webkit.org/changeset/251138
+
 2019-10-15  Chris Dumez  <cdumez@apple.com>
 
         Stop using inheritance for WebBackForwardCacheEntry

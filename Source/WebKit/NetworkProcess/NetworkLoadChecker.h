@@ -50,14 +50,13 @@ namespace WebKit {
 
 class NetworkCORSPreflightChecker;
 class NetworkProcess;
-class NetworkSchemeRegistry;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(Ref<NetworkProcess>&&, RefPtr<NetworkSchemeRegistry>&&, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    NetworkLoadChecker(NetworkProcess&, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, WebCore::PreflightPolicy, String&& referrer, bool isHTTPSUpgradeEnabled = false, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -156,7 +155,6 @@ private:
     WebCore::NetworkLoadInformation m_loadInformation;
 
     LoadType m_requestLoadType;
-    RefPtr<NetworkSchemeRegistry> m_schemeRegistry;
 };
 
 }
