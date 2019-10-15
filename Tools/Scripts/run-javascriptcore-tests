@@ -90,6 +90,7 @@ my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 
 my $createTarball = 0;
 my $remoteHost = 0;
+my $model = 0;
 my $failFast = 1;
 my %jsonData = ();
 my @testResults = ();
@@ -229,6 +230,7 @@ Usage: $programName [options] [options to pass to build system]
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
   --remote-config-file=         Same as remote, but read config from JSON file.
+  --model=                      Specify remote hardware model, this info used for determine what jsc tests should run on remote
   --extra-tests=                Path to a file containing extra tests
   --child-processes=            Specify the number of child processes.
   --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
@@ -286,6 +288,7 @@ GetOptions(
     'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
+    'model=s' => \$model,
     'remote-config-file=s' => \$remoteConfigFile,
     'child-processes=s' => \$childProcesses,
     'shell-runner' => \$shellRunner,
@@ -535,6 +538,11 @@ sub runJSCStressTests
     if ($remoteConfigFile) {
         push(@jscStressDriverCmd, "--remote-config-file");
         push(@jscStressDriverCmd, $remoteConfigFile);
+    }
+    
+    if ($model) {
+        push(@jscStressDriverCmd, "--model");
+        push(@jscStressDriverCmd, $model);
     }
 
     if ($childProcesses) {

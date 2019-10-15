@@ -114,6 +114,7 @@ $testWriter = "default"
 $remoteHosts = []
 $architecture = nil
 $hostOS = nil
+$model = nil
 $filter = nil
 $envVars = []
 $mode = "full"
@@ -183,6 +184,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
+               ['--model', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
@@ -241,6 +243,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $architecture = arg
     when '--os'
         $hostOS = arg
+    when '--model'
+        $model = arg
     when '--env-vars'
         $envVars = arg.gsub(/\s+/, ' ').split(' ')
     when '--quick'

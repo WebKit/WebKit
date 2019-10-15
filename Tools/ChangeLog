@@ -1,3 +1,14 @@
+2019-10-15  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Tool to mark jsc test skip/enable
+        https://bugs.webkit.org/show_bug.cgi?id=202063
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2019-10-15  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()
