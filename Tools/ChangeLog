@@ -1,3 +1,20 @@
+2019-10-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Write more tests for _WKWebAuthenticationPanel
+        https://bugs.webkit.org/show_bug.cgi?id=202565
+        <rdar://problem/55974128>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:dismissWebAuthenticationPanelWithResult:]):
+        (-[TestWebAuthenticationPanelUIDelegate init]):
+        (-[TestWebAuthenticationPanelUIDelegate webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc.html: Added.
+
 2019-10-15  Alex Christensen  <achristensen@webkit.org>
 
         Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global
