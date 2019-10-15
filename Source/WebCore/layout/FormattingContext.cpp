@@ -89,21 +89,21 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     auto horizontalGeometry = compute({ });
     if (auto maxWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
         auto maxHorizontalGeometry = compute(maxWidth);
-        if (horizontalGeometry.widthAndMargin.width > maxHorizontalGeometry.widthAndMargin.width)
+        if (horizontalGeometry.contentWidthAndMargin.contentWidth > maxHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
     if (auto minWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
         auto minHorizontalGeometry = compute(minWidth);
-        if (horizontalGeometry.widthAndMargin.width < minHorizontalGeometry.widthAndMargin.width)
+        if (horizontalGeometry.contentWidthAndMargin.contentWidth < minHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = minHorizontalGeometry;
     }
 
     auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.usedMargin.start);
-    displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
-    displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.usedMargin);
-    displayBox.setHorizontalComputedMargin(horizontalGeometry.widthAndMargin.computedMargin);
+    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.contentWidthAndMargin.usedMargin.start);
+    displayBox.setContentBoxWidth(horizontalGeometry.contentWidthAndMargin.contentWidth);
+    displayBox.setHorizontalMargin(horizontalGeometry.contentWidthAndMargin.usedMargin);
+    displayBox.setHorizontalComputedMargin(horizontalGeometry.contentWidthAndMargin.computedMargin);
 }
 
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
@@ -121,21 +121,21 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox)
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
         auto usedValuesForMaxHeight = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), maxHeight };
         auto maxVerticalGeometry = compute(usedHorizontalValues, usedValuesForMaxHeight);
-        if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
+        if (verticalGeometry.contentHeightAndMargin.contentHeight > maxVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = maxVerticalGeometry;
     }
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
         auto usedValuesForMinHeight = UsedVerticalValues { outOfFlowVerticalConstraints(containingBlockGeometry), minHeight };
         auto minVerticalGeometry = compute(usedHorizontalValues, usedValuesForMinHeight);
-        if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
+        if (verticalGeometry.contentHeightAndMargin.contentHeight < minVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = minVerticalGeometry;
     }
 
     auto& displayBox = formattingState().displayBox(layoutBox);
-    auto nonCollapsedVerticalMargin = verticalGeometry.heightAndMargin.nonCollapsedMargin;
+    auto nonCollapsedVerticalMargin = verticalGeometry.contentHeightAndMargin.nonCollapsedMargin;
     displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
-    displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
+    displayBox.setContentBoxHeight(verticalGeometry.contentHeightAndMargin.contentHeight);
     // Margins of absolutely positioned boxes do not collapse
     displayBox.setVerticalMargin({ nonCollapsedVerticalMargin, { } });
 }

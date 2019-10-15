@@ -47,8 +47,8 @@ LayoutState::LayoutState(const Container& root)
 
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox)
 {
-    return *m_layoutToDisplayBox.ensure(&layoutBox, [&layoutBox] {
-        return makeUnique<Display::Box>(layoutBox.style());
+    return *m_layoutToDisplayBox.ensure(&layoutBox, [] {
+        return makeUnique<Display::Box>();
     }).iterator->value;
 }
 

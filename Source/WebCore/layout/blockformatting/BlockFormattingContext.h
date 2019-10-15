@@ -74,8 +74,8 @@ private:
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
     public:
-        HeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
-        WidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
+        ContentHeightAndMargin inFlowHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
+        ContentWidthAndMargin inFlowWidthAndMargin(const Box&, UsedHorizontalValues);
 
         Point staticPosition(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
         LayoutUnit staticVerticalPosition(const Box&, UsedVerticalValues) const;
@@ -87,9 +87,9 @@ private:
         friend class BlockFormattingContext;
         Geometry(const BlockFormattingContext&);
 
-        HeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
-        WidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
-        WidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        ContentHeightAndMargin inFlowNonReplacedHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues);
+        ContentWidthAndMargin inFlowNonReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
+        ContentWidthAndMargin inFlowReplacedWidthAndMargin(const Box&, UsedHorizontalValues) const;
         Point staticPositionForOutOfFlowPositioned(const Box&) const;
 
         const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
@@ -140,7 +140,7 @@ private:
     class Quirks : public FormattingContext::Quirks {
     public:
         bool needsStretching(const Box&) const;
-        HeightAndMargin stretchedInFlowHeight(const Box&, HeightAndMargin);
+        ContentHeightAndMargin stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
 
         bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
         bool shouldIgnoreMarginBefore(const Box&) const;

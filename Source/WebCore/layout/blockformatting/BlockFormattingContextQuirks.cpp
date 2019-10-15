@@ -60,7 +60,7 @@ bool BlockFormattingContext::Quirks::needsStretching(const Box& layoutBox) const
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layoutBox, HeightAndMargin heightAndMargin)
+ContentHeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin)
 {
     ASSERT(layoutBox.isInFlow());
     ASSERT(layoutBox.isDocumentBox() || layoutBox.isBodyBox());
@@ -76,7 +76,7 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box&
     LayoutUnit totalVerticalMargin;
     if (layoutBox.isDocumentBox()) {
         // Document box's margins do not collapse.
-        auto verticalMargin = heightAndMargin.nonCollapsedMargin;
+        auto verticalMargin = contentHeightAndMargin.nonCollapsedMargin;
         totalVerticalMargin = verticalMargin.before + verticalMargin.after;
     } else if (layoutBox.isBodyBox()) {
         // Here is the quirky part for body box:
@@ -88,17 +88,17 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box&
         auto& bodyBoxGeometry = formattingContext.geometryForBox(layoutBox);
         strechedHeight -= bodyBoxGeometry.verticalBorder() + bodyBoxGeometry.verticalPadding().valueOr(0);
 
-        auto nonCollapsedMargin = heightAndMargin.nonCollapsedMargin;
+        auto nonCollapsedMargin = contentHeightAndMargin.nonCollapsedMargin;
         auto collapsedMargin = formattingContext.marginCollapse().collapsedVerticalValues(layoutBox, nonCollapsedMargin);
         totalVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
         totalVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     }
 
     // Stretch but never overstretch with the margins.
-    if (heightAndMargin.height + totalVerticalMargin < strechedHeight)
-        heightAndMargin.height = strechedHeight - totalVerticalMargin;
+    if (contentHeightAndMargin.contentHeight + totalVerticalMargin < strechedHeight)
+        contentHeightAndMargin.contentHeight = strechedHeight - totalVerticalMargin;
 
-    return heightAndMargin;
+    return contentHeightAndMargin;
 }
 
 bool BlockFormattingContext::Quirks::shouldIgnoreCollapsedQuirkMargin(const Box& layoutBox) const

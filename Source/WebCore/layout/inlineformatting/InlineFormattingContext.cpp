@@ -269,37 +269,37 @@ void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, Used
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues)
 {
-    WidthAndMargin widthAndMargin;
+    ContentWidthAndMargin contentWidthAndMargin;
     if (layoutBox.isFloatingPositioned())
-        widthAndMargin = geometry().floatingWidthAndMargin(layoutBox, usedHorizontalValues);
+        contentWidthAndMargin = geometry().floatingWidthAndMargin(layoutBox, usedHorizontalValues);
     else if (layoutBox.isInlineBlockBox())
-        widthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, usedHorizontalValues);
+        contentWidthAndMargin = geometry().inlineBlockWidthAndMargin(layoutBox, usedHorizontalValues);
     else if (layoutBox.replaced())
-        widthAndMargin = geometry().inlineReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
+        contentWidthAndMargin = geometry().inlineReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
     else
         ASSERT_NOT_REACHED();
 
     auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setContentBoxWidth(widthAndMargin.width);
-    displayBox.setHorizontalMargin(widthAndMargin.usedMargin);
-    displayBox.setHorizontalComputedMargin(widthAndMargin.computedMargin);
+    displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
+    displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
+    displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)
 {
-    HeightAndMargin heightAndMargin;
+    ContentHeightAndMargin contentHeightAndMargin;
     if (layoutBox.isFloatingPositioned())
-        heightAndMargin = geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+        contentHeightAndMargin = geometry().floatingHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else if (layoutBox.isInlineBlockBox())
-        heightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+        contentHeightAndMargin = geometry().inlineBlockHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else if (layoutBox.replaced())
-        heightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
+        contentHeightAndMargin = geometry().inlineReplacedHeightAndMargin(layoutBox, usedHorizontalValues, usedVerticalValues);
     else
         ASSERT_NOT_REACHED();
 
     auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setContentBoxHeight(heightAndMargin.height);
-    displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
+    displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
+    displayBox.setVerticalMargin({ contentHeightAndMargin.nonCollapsedMargin, { } });
 }
 
 void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedHorizontalValues, UsedVerticalValues usedVerticalValues)

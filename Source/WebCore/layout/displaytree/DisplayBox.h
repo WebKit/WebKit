@@ -29,20 +29,16 @@
 
 #include "DisplayRect.h"
 #include "LayoutUnits.h"
-#include "RenderStyleConstants.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Display {
 
 class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    Box(const RenderStyle&);
     Box(const Box&);
+    Box() = default;
     ~Box();
 
     LayoutUnit top() const;
@@ -138,12 +134,6 @@ public:
     void setPadding(Optional<Layout::Edges>);
 
 private:
-    struct Style {
-        Style(const RenderStyle&);
-
-        BoxSizing boxSizing { BoxSizing::ContentBox };
-    };
-
 #if !ASSERT_DISABLED
     void invalidateMargin();
     void invalidateBorder() { m_hasValidBorder = false; }
@@ -163,8 +153,6 @@ private:
     void setHasValidContentHeight() { m_hasValidContentHeight = true; }
     void setHasValidContentWidth() { m_hasValidContentWidth = true; }
 #endif
-
-    const Style m_style;
 
     LayoutPoint m_topLeft;
     LayoutUnit m_contentWidth;

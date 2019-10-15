@@ -33,16 +33,16 @@
 namespace WebCore {
 namespace Layout {
 
-HeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const Box& layoutBox) const
+ContentHeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargin(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isInFlow());
 
-    auto height = computedHeightValue(layoutBox, HeightType::Normal);
+    auto height = computedContentHeight(layoutBox);
     if (!height)
         height = contentHeightForFormattingContextRoot(layoutBox);
 
     // Margins don't apply to internal table elements.
-    return HeightAndMargin { *height, { } };
+    return ContentHeightAndMargin { *height, { } };
 }
 
 }

@@ -46,7 +46,7 @@ public:
 private:
     class Geometry : public FormattingContext::Geometry {
     public:
-        HeightAndMargin tableCellHeightAndMargin(const Box&) const;
+        ContentHeightAndMargin tableCellHeightAndMargin(const Box&) const;
 
     private:
         friend class TableFormattingContext;

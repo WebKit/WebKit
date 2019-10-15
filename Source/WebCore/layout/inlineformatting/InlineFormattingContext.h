@@ -63,8 +63,8 @@ private:
 
     class Geometry : public FormattingContext::Geometry {
     public:
-        HeightAndMargin inlineBlockHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
-        WidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
+        ContentHeightAndMargin inlineBlockHeightAndMargin(const Box&, UsedHorizontalValues, UsedVerticalValues) const;
+        ContentWidthAndMargin inlineBlockWidthAndMargin(const Box&, UsedHorizontalValues);
 
     private:
         friend class InlineFormattingContext;

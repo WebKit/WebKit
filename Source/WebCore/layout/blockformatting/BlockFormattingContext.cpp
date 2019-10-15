@@ -360,7 +360,7 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
         availableWidth = containingBlockGeometry.contentBoxWidth();
     auto constraints = UsedHorizontalValues::Constraints { containingBlockGeometry.contentBoxLeft(), availableWidth };
 
-    auto compute = [&](Optional<LayoutUnit> usedWidth) -> WidthAndMargin {
+    auto compute = [&](Optional<LayoutUnit> usedWidth) -> ContentWidthAndMargin {
         auto usedValues = UsedHorizontalValues { constraints, usedWidth, { } };
         if (layoutBox.isInFlow())
             return geometry().inFlowWidthAndMargin(layoutBox, usedValues);
@@ -372,29 +372,29 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox, Optiona
         return { };
     };
 
-    auto widthAndMargin = compute({ });
+    auto contentWidthAndMargin = compute({ });
 
     if (auto maxWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), availableWidth)) {
         auto maxWidthAndMargin = compute(maxWidth);
-        if (widthAndMargin.width > maxWidthAndMargin.width)
-            widthAndMargin = maxWidthAndMargin;
+        if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
+            contentWidthAndMargin = maxWidthAndMargin;
     }
 
     auto minWidth = geometry().computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), availableWidth).valueOr(0);
     auto minWidthAndMargin = compute(minWidth);
-    if (widthAndMargin.width < minWidthAndMargin.width)
-        widthAndMargin = minWidthAndMargin;
+    if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
+        contentWidthAndMargin = minWidthAndMargin;
 
     auto& displayBox = formattingState().displayBox(layoutBox);
-    displayBox.setContentBoxWidth(widthAndMargin.width);
-    displayBox.setHorizontalMargin(widthAndMargin.usedMargin);
-    displayBox.setHorizontalComputedMargin(widthAndMargin.computedMargin);
+    displayBox.setContentBoxWidth(contentWidthAndMargin.contentWidth);
+    displayBox.setHorizontalMargin(contentWidthAndMargin.usedMargin);
+    displayBox.setHorizontalComputedMargin(contentWidthAndMargin.computedMargin);
 }
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
 {
     auto& containingBlockGeometry = geometryForBox(*layoutBox.containingBlock());
-    auto compute = [&](auto usedVerticalValues) -> HeightAndMargin {
+    auto compute = [&](auto usedVerticalValues) -> ContentHeightAndMargin {
 
         auto usedHorizontalValues = UsedHorizontalValues { UsedHorizontalValues::Constraints { containingBlockGeometry } };
         if (layoutBox.isInFlow())
@@ -408,36 +408,36 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
     };
 
     auto verticalConstraints = UsedVerticalValues::Constraints { containingBlockGeometry };
-    auto heightAndMargin = compute(UsedVerticalValues { verticalConstraints });
+    auto contentHeightAndMargin = compute(UsedVerticalValues { verticalConstraints });
     if (auto maxHeight = geometry().computedMaxHeight(layoutBox)) {
-        if (heightAndMargin.height > *maxHeight) {
+        if (contentHeightAndMargin.contentHeight > *maxHeight) {
             auto maxHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, maxHeight });
             // Used height should remain the same.
-            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.height == *maxHeight);
-            heightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
+            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.contentHeight == *maxHeight);
+            contentHeightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
         }
     }
 
     if (auto minHeight = geometry().computedMinHeight(layoutBox)) {
-        if (heightAndMargin.height < *minHeight) {
+        if (contentHeightAndMargin.contentHeight < *minHeight) {
             auto minHeightAndMargin = compute(UsedVerticalValues { verticalConstraints, minHeight });
             // Used height should remain the same.
-            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.height == *minHeight);
-            heightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
+            ASSERT((layoutState().inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.contentHeight == *minHeight);
+            contentHeightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };
         }
     }
 
     // 1. Compute collapsed margins.
     // 2. Adjust vertical position using the collapsed values
     // 3. Adjust previous in-flow sibling margin after using this margin.
-    auto collapsedMargin = marginCollapse().collapsedVerticalValues(layoutBox, heightAndMargin.nonCollapsedMargin);
-    auto verticalMargin = UsedVerticalMargin { heightAndMargin.nonCollapsedMargin, collapsedMargin };
+    auto collapsedMargin = marginCollapse().collapsedVerticalValues(layoutBox, contentHeightAndMargin.nonCollapsedMargin);
+    auto verticalMargin = UsedVerticalMargin { contentHeightAndMargin.nonCollapsedMargin, collapsedMargin };
     auto& displayBox = formattingState().displayBox(layoutBox);
 
     // Out of flow boxes don't need vertical adjustment after margin collapsing.
     if (layoutBox.isOutOfFlowPositioned()) {
         ASSERT(!hasEstimatedMarginBefore(layoutBox));
-        displayBox.setContentBoxHeight(heightAndMargin.height);
+        displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
         displayBox.setVerticalMargin(verticalMargin);
         return;
     }
@@ -445,7 +445,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox)
     ASSERT(!hasEstimatedMarginBefore(layoutBox) || estimatedMarginBefore(layoutBox).usedValue() == verticalMargin.before());
     removeEstimatedMarginBefore(layoutBox);
     displayBox.setTop(verticalPositionWithMargin(layoutBox, verticalMargin));
-    displayBox.setContentBoxHeight(heightAndMargin.height);
+    displayBox.setContentBoxHeight(contentHeightAndMargin.contentHeight);
     displayBox.setVerticalMargin(verticalMargin);
 
     auto marginCollapse = this->marginCollapse();
