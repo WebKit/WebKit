@@ -341,6 +341,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitRequestIdleCallbackEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitAsyncClipboardAPIEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 #endif
 }
@@ -2290,6 +2292,20 @@ HRESULT WebPreferences::requestIdleCallbackEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setRequestIdleCallbackEnabled(BOOL enabled)
 {
     setBoolValue(WebKitRequestIdleCallbackEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::asyncClipboardAPIEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitAsyncClipboardAPIEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setAsyncClipboardAPIEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitAsyncClipboardAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

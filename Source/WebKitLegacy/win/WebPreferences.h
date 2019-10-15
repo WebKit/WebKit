@@ -291,6 +291,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCoreMathMLEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE requestIdleCallbackEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setRequestIdleCallbackEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE asyncClipboardAPIEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setAsyncClipboardAPIEnabled(BOOL);
 
     // WebPreferences
 

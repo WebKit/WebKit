@@ -1029,6 +1029,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.resizeObserverEnabled = options.enableResizeObserver;
     preferences.coreMathMLEnabled = options.enableCoreMathML;
     preferences.requestIdleCallbackEnabled = options.enableRequestIdleCallback;
+    preferences.asyncClipboardAPIEnabled = options.enableAsyncClipboardAPI;
     preferences.privateBrowsingEnabled = options.useEphemeralSession;
     preferences.usesPageCache = options.enablePageCache;
 }

@@ -125,6 +125,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableCoreMathML = parseBooleanTestHeaderValue(value);
         else if (key == "experimental:RequestIdleCallbackEnabled")
             enableRequestIdleCallback = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:AsyncClipboardAPIEnabled")
+            enableAsyncClipboardAPI = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

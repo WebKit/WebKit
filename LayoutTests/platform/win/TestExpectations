@@ -4470,9 +4470,6 @@ webkit.org/b/202938 fast/images/reset-image-animation.html [ Failure Pass ]
 
 webkit.org/b/202939 fast/workers/worker-exception-during-navigation.html [ Failure Pass ]
 
-webkit.org/b/202940 editing/async-clipboard/clipboard-interfaces.html [ Failure ]
-webkit.org/b/202940 editing/async-clipboard/clipboard-item-basic.html [ Failure ]
-
 webkit.org/b/202945 fast/css/invalidation-errors-2.html [ Failure ]
 webkit.org/b/202945 fast/css/invalidation-errors.html [ Failure ]
 
@@ -4487,8 +4484,6 @@ webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-b
 webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 
 webkit.org/b/202954 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure ]
-
-webkit.org/b/202950 editing/async-clipboard/clipboard-wrapper-stays-alive.html [ Timeout ]
 
 webkit.org/b/202951 fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-reset-image.html [ Timeout ]
 

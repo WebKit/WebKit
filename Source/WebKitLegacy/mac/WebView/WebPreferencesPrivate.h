@@ -615,6 +615,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setRequestIdleCallbackEnabled:(BOOL)flag;
 - (BOOL)requestIdleCallbackEnabled;
 
+- (void)setAsyncClipboardAPIEnabled:(BOOL)flag;
+- (BOOL)asyncClipboardAPIEnabled;
+
 - (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag;
 - (BOOL)linkPreloadResponsiveImagesEnabled;
 
@@ -656,6 +659,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
 @property (nonatomic) BOOL requestIdleCallbackEnabled;
+@property (nonatomic) BOOL asyncClipboardAPIEnabled;
 @property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 
 #if TARGET_OS_IPHONE

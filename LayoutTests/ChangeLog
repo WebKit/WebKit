@@ -1,3 +1,24 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: editing/async-clipboard/clipboard-interfaces.html is failing in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=202940
+        <rdar://problem/56262298>
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/async-clipboard/clipboard-interfaces.html:
+        * editing/async-clipboard/clipboard-item-basic.html:
+        * editing/async-clipboard/clipboard-wrapper-stays-alive.html:
+
+        Tweak a few layout tests to actually turn the experimental feature on (this previously worked because
+        experimental feature flags are already on by default in WebKit2).
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
+        Unskip and unmark these layout tests as failing in WebKit1 on iOS, macOS, and Windows.
+
 2019-10-15  Dean Jackson  <dino@apple.com>
 
         Reset maxCanvasPixelMemory between tests

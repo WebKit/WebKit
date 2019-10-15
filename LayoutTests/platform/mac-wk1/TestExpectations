@@ -44,9 +44,6 @@ css-custom-properties-api [ Skip ]
 css-typedom [ Skip ]
 css-dark-mode [ Skip ]
 
-# Async Clipboard API is not supported in WebKit1 yet.
-webkit.org/b/202654 editing/async-clipboard [ Skip ]
-
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]

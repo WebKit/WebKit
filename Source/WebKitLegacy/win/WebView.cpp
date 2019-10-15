@@ -5614,6 +5614,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setRequestIdleCallbackEnabled(!!enabled);
 
+    hr = prefsPrivate->asyncClipboardAPIEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setAsyncClipboardAPIEnabled(!!enabled);
+
     return S_OK;
 }
 

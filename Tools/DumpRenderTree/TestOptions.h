@@ -52,6 +52,7 @@ struct TestOptions {
     bool enableResizeObserver { false };
     bool enableCoreMathML { false };
     bool enableRequestIdleCallback { false };
+    bool enableAsyncClipboardAPI { false };
     std::string jscOptions;
     std::string additionalSupportedImageTypes;
 

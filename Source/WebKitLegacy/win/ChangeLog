@@ -1,3 +1,23 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: editing/async-clipboard/clipboard-interfaces.html is failing in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=202940
+        <rdar://problem/56262298>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for the asyncClipboardAPIEnabled feature flag in legacy WebKit on Windows.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::asyncClipboardAPIEnabled):
+        (WebPreferences::setAsyncClipboardAPIEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2019-10-14  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Have WebBackForwardCache class coordinate page caching in all WebProcesses

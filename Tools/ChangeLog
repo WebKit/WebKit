@@ -1,3 +1,16 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: editing/async-clipboard/clipboard-interfaces.html is failing in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=202940
+        <rdar://problem/56262298>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add some plumbing to support the async clipboard API experimental test option in Windows.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setWebPreferencesForTestOptions):
+
 2019-10-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Write more tests for _WKWebAuthenticationPanel

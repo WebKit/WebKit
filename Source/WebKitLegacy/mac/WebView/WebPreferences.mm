@@ -691,6 +691,7 @@ public:
 #endif
         @NO, WebKitCoreMathMLEnabledPreferenceKey,
         @NO, WebKitRequestIdleCallbackEnabledPreferenceKey,
+        @NO, WebKitAsyncClipboardAPIEnabledPreferenceKey,
         @NO, WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey,
         @YES, WebKitCSSShadowPartsEnabledPreferenceKey,
         nil];
@@ -3507,6 +3508,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setRequestIdleCallbackEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitRequestIdleCallbackEnabledPreferenceKey];
+}
+
+- (BOOL)asyncClipboardAPIEnabled
+{
+    return [self _boolValueForKey:WebKitAsyncClipboardAPIEnabledPreferenceKey];
+}
+
+- (void)setAsyncClipboardAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAsyncClipboardAPIEnabledPreferenceKey];
 }
 
 - (BOOL)linkPreloadResponsiveImagesEnabled

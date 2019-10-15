@@ -213,3 +213,5 @@
 #define WebKitCoreMathMLEnabledPreferenceKey "WebKitCoreMathMLEnabled"
 
 #define WebKitRequestIdleCallbackEnabledPreferenceKey "WebKitRequestIdleCallbackEnabled"
+
+#define WebKitAsyncClipboardAPIEnabledPreferenceKey "WebKitAsyncClipboardAPIEnabled"

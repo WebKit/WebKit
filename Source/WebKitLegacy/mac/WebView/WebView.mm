@@ -3236,6 +3236,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setCoreMathMLEnabled([preferences coreMathMLEnabled]);
     settings.setRequestIdleCallbackEnabled([preferences requestIdleCallbackEnabled]);
+    settings.setAsyncClipboardAPIEnabled(preferences.asyncClipboardAPIEnabled);
 
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
 
