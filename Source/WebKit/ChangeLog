@@ -1,3 +1,16 @@
+2019-10-15  youenn fablet  <youenn@apple.com>
+
+        Handle service worker loads through NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=202309
+
+        Unreviewed.
+        Fix !ENABLE(SERVICE_WORKER) builds.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
+
 2019-10-14  Youenn Fablet  <youenn@apple.com>
 
         Handle service worker loads through NetworkResourceLoader

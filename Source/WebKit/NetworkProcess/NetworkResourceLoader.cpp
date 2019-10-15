@@ -760,10 +760,12 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
+#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerFetchTask) {
         m_serviceWorkerFetchTask->continueFetchTaskWith(WTFMove(newRequest));
         return;
     }
+#endif
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
 
@@ -809,10 +811,12 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
+#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerFetchTask) {
         m_serviceWorkerFetchTask->continueDidReceiveFetchResponse();
         return;
     }
+#endif
 
     if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
         sendResultForCacheEntry(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
@@ -1240,7 +1244,6 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle()
     m_serviceWorkerFetchTask = nullptr;
     start();
 }
-
 #endif
 
 } // namespace WebKit
