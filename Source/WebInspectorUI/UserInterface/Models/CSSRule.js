@@ -62,13 +62,13 @@ WI.CSSRule = class CSSRule extends WI.Object
         return this._selectorText;
     }
 
-    set selectorText(selectorText)
+    setSelectorText(selectorText)
     {
         console.assert(this.editable);
         if (!this.editable)
-            return;
+            return Promise.reject();
 
-        this._nodeStyles.changeRuleSelector(this, selectorText).then(this._selectorResolved.bind(this), this._selectorRejected.bind(this));
+        return this._nodeStyles.changeRuleSelector(this, selectorText).then(this._selectorResolved.bind(this));
     }
 
     update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, groupings)
@@ -111,43 +111,36 @@ WI.CSSRule = class CSSRule extends WI.Object
 
     // Private
 
-    _selectorRejected(error)
-    {
-        this.dispatchEventToListeners(WI.CSSRule.Event.SelectorChanged, {valid: !error});
-    }
-
+    // This method only needs to be called for CSS rules that don't match the selected DOM node.
+    // CSS rules that match the selected DOM node get updated by WI.DOMNodeStyles.prototype._parseRulePayload.
     _selectorResolved(rulePayload)
     {
-        if (rulePayload) {
-            let selectorText = rulePayload.selectorList.text;
-            if (selectorText !== this._selectorText) {
-                let selectors = WI.DOMNodeStyles.parseSelectorListPayload(rulePayload.selectorList);
+        if (!rulePayload)
+            return;
 
-                let sourceCodeLocation = null;
-                let sourceRange = rulePayload.selectorList.range;
-                if (sourceRange) {
-                    sourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(rulePayload.sourceURL, {
-                        line: sourceRange.startLine,
-                        column: sourceRange.startColumn,
-                        documentNode: this._nodeStyles.node.ownerDocument,
-                    });
-                }
+        let selectorText = rulePayload.selectorList.text;
+        if (selectorText === this._selectorText)
+            return;
 
-                if (this._ownerStyleSheet) {
-                    if (!sourceCodeLocation && this._ownerStyleSheet.isInspectorStyleSheet())
-                        sourceCodeLocation = this._ownerStyleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
+        let selectors = WI.DOMNodeStyles.parseSelectorListPayload(rulePayload.selectorList);
 
-                    sourceCodeLocation = this._ownerStyleSheet.offsetSourceCodeLocation(sourceCodeLocation);
-                }
-
-                this.update(sourceCodeLocation, selectorText, selectors, [], this._style, this._groupings);
-            }
+        let sourceCodeLocation = null;
+        let sourceRange = rulePayload.selectorList.range;
+        if (sourceRange) {
+            sourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(rulePayload.sourceURL, {
+                line: sourceRange.startLine,
+                column: sourceRange.startColumn,
+                documentNode: this._nodeStyles.node.ownerDocument,
+            });
         }
 
-        this.dispatchEventToListeners(WI.CSSRule.Event.SelectorChanged, {valid: !!rulePayload});
-    }
-};
+        if (this._ownerStyleSheet) {
+            if (!sourceCodeLocation && this._ownerStyleSheet.isInspectorStyleSheet())
+                sourceCodeLocation = this._ownerStyleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
 
-WI.CSSRule.Event = {
-    SelectorChanged: "css-rule-invalid-selector"
+            sourceCodeLocation = this._ownerStyleSheet.offsetSourceCodeLocation(sourceCodeLocation);
+        }
+
+        this.update(sourceCodeLocation, selectorText, selectors, [], this._style, this._groupings);
+    }
 };

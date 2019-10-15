@@ -1,3 +1,26 @@
+2019-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Convert CSSRule selectorText setter to setSelectorText method because it's asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=202840
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule.prototype.setSelectorText):
+        (WI.CSSRule.prototype._selectorRejected):
+        (WI.CSSRule.prototype._selectorResolved):
+        Remove WI.CSSRule.Event.SelectorChanged event and since it wasn't used anywhere else.
+
+        (WI.CSSRule):
+        (WI.CSSRule.prototype.set selectorText): Deleted.
+        (WI.CSSRule.prototype.setSelectorText): Added.
+        (WI.CSSRule.prototype._selectorRejected): Deleted.
+        (WI.CSSRule.Event.SelectorChanged): Deleted.
+        Remove `{valid: ...}` object since it wasn't used.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidCommit):
+
 2019-10-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Local Resource Overrides: automatically create an image/font local override when dragging content over a non-overridden resource

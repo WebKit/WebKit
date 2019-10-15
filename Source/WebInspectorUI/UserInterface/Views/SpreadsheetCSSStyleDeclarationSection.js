@@ -231,8 +231,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let selectorText = this._selectorElement.textContent.trim();
         if (selectorText && changed) {
             this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorWillChange);
-            this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
-            this._style.ownerRule.selectorText = selectorText;
+            this._style.ownerRule.setSelectorText(selectorText).finally(this._renderSelector.bind(this));
         } else
             this._discardSelectorChange();
     }
