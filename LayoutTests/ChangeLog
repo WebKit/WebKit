@@ -1,3 +1,56 @@
+2019-10-15  Rob Buis  <rbuis@igalia.com>
+
+        Remove duplicate MathML tests
+        https://bugs.webkit.org/show_bug.cgi?id=202979
+
+        Reviewed by Frédéric Wang.
+
+        Remove mo-paint-lspace-rspace.html, this got imported
+        as presentation-markup/operators/mo-paint-lspace-rspace.html.
+
+        Remove mo-movablelimits.html, this got imported
+        as presentation-markup/operators/mo-movablelimits.html.
+
+        Remove mo-movablelimits-dynamic.html, this got imported as
+        presentation-markup/operators/mo-movablelimits-dynamic.html.
+
+        Remove mo-movablelimits-default.html, this got imported as
+        presentation-markup/operators/mo-movablelimits-default.html.
+
+        Remove direction.html, this got imported as
+        presentation-markup/direction/direction.html.
+
+        Remove direction-token.html, this got imported as
+        presentation-markup/direction/direction-token.html.
+
+        Remove direction-overall.html, this got imported as
+        presentation-markup/direction/direction-overall.html.
+
+        Remove inferred-mrow-baseline.html, this got imported as
+        presentation-markup/mrow/inferred-mrow-baseline.html.
+
+        Remove inferred-mrow-stretchy.html, this got imported as
+        presentation-markup/mrow/inferred-mrow-stretchy.html.
+
+        * mathml/presentation/direction-expected.html: Removed.
+        * mathml/presentation/direction-overall-expected.html: Removed.
+        * mathml/presentation/direction-overall.html: Removed.
+        * mathml/presentation/direction-token-expected.html: Removed.
+        * mathml/presentation/direction-token.html: Removed.
+        * mathml/presentation/direction.html: Removed.
+        * mathml/presentation/inferred-mrow-baseline-expected.txt: Removed.
+        * mathml/presentation/inferred-mrow-baseline.html: Removed.
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt: Removed.
+        * mathml/presentation/inferred-mrow-stretchy.html: Removed.
+        * mathml/presentation/mo-movablelimits-default-expected.html: Removed.
+        * mathml/presentation/mo-movablelimits-default.html: Removed.
+        * mathml/presentation/mo-movablelimits-dynamic-expected.html: Removed.
+        * mathml/presentation/mo-movablelimits-dynamic.html: Removed.
+        * mathml/presentation/mo-movablelimits-expected.html: Removed.
+        * mathml/presentation/mo-movablelimits.html: Removed.
+        * mathml/presentation/mo-paint-lspace-rspace-expected.html: Removed.
+        * mathml/presentation/mo-paint-lspace-rspace.html: Removed.
+
 2019-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import W3C tests for requestidlecallback
