@@ -439,6 +439,18 @@ unsigned Box::columnSpan() const
     return rareData().columnSpan;
 }
 
+void Box::setColumnWidth(LayoutUnit columnWidth)
+{
+    ensureRareData().columnWidth = columnWidth;
+}
+
+Optional<LayoutUnit> Box::columnWidth() const
+{
+    if (!hasRareData())
+        return { };
+    return rareData().columnWidth;
+}
+
 Box::RareDataMap& Box::rareDataMap()
 {
     static NeverDestroyed<RareDataMap> map;

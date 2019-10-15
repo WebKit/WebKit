@@ -31,6 +31,7 @@
 #include "DisplayBox.h"
 #include "DisplayRun.h"
 #include "HTMLTableCellElement.h"
+#include "HTMLTableColElement.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
@@ -182,8 +183,13 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
         else if (displayType == DisplayType::TableCaption || displayType == DisplayType::TableCell) {
             childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (displayType == DisplayType::TableRowGroup || displayType == DisplayType::TableHeaderGroup || displayType == DisplayType::TableFooterGroup
-            || displayType == DisplayType::TableRow || displayType == DisplayType::TableColumnGroup || displayType == DisplayType::TableColumn) {
+            || displayType == DisplayType::TableRow || displayType == DisplayType::TableColumnGroup) {
             childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+        } else if (displayType == DisplayType::TableColumn) {
+            childLayoutBox = makeUnique<Container>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            auto columnWidth = static_cast<HTMLTableColElement&>(*renderer.element()).width();
+            if (!columnWidth.isEmpty())
+                childLayoutBox->setColumnWidth(columnWidth.toInt());
         } else {
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
@@ -311,6 +317,10 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         stream << "TBODY";
     else if (layoutBox.isTableFooter())
         stream << "TFOOT";
+    else if (layoutBox.isTableColumnGroup())
+        stream << "COL GROUP";
+    else if (layoutBox.isTableColumn())
+        stream << "COL";
     else if (layoutBox.isTableCell())
         stream << "TD";
     else if (layoutBox.isTableRow())

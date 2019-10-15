@@ -146,9 +146,13 @@ public:
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(unsigned);
-    void setColumnSpan(unsigned);
     unsigned rowSpan() const;
+
+    void setColumnSpan(unsigned);
     unsigned columnSpan() const;
+
+    void setColumnWidth(LayoutUnit);
+    Optional<LayoutUnit> columnWidth() const;
 
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -171,6 +175,7 @@ private:
         std::unique_ptr<Replaced> replaced;
         unsigned rowSpan { 1 };
         unsigned columnSpan { 1 };
+        Optional<LayoutUnit> columnWidth;
     };
 
     bool hasRareData() const { return m_hasRareData; }
