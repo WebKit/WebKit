@@ -1,3 +1,10 @@
+2019-10-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r251018
+
+
+        * PlatformFTW.cmake: Add missing dxgi library.
+
 2019-10-12  Stephan Szabo  <stephan.szabo@sony.com>
 
         Regression (251018): Wincairo build broken: unresolved external symbol
