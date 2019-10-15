@@ -94,7 +94,7 @@ class DarwinTest(port_testcase.PortTestCase):
         port = self.make_port()
         self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/CrashReporter')
 
-        host = MockSystemHost(filesystem=MockFileSystem(files=['/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash']))
+        host = MockSystemHost(filesystem=MockFileSystem(files={'/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash': None}))
         port = self.make_port(host)
         self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/DiagnosticReports')
 

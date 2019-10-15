@@ -118,7 +118,7 @@ class Mock(object):
         self.call_count = 0
         self.call_args_list = []
         self.method_calls = []
-        for child in self._children.itervalues():
+        for child in self._children.values():
             child.reset_mock()
         if isinstance(self._return_value, Mock):
             self._return_value.reset_mock()

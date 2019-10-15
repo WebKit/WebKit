@@ -82,7 +82,7 @@ class JSONTestResult(object):
         return True
 
     def _tokenize(self, results_string):
-        tokens = map(TestExpectations.expectation_from_string, results_string.split(' '))
+        tokens = list(map(TestExpectations.expectation_from_string, results_string.split(' ')))
         if None in tokens:
             _log.warning("Unrecognized result in %s" % results_string)
         return set(tokens)

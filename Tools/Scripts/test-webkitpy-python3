@@ -34,6 +34,7 @@ import unittest
 PYTHON3_COMPATIBLE_DIRECTORIES = [
   'webkitpy.common.system',
   'webkitpy.common.thread',
+  'webkitpy.common.net.bugzilla',
 ]
 
 

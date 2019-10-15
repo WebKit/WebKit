@@ -48,7 +48,7 @@ class MockFileSystem(object):
                 value of None is used to indicate that the file should
                 not exist.
         """
-        self.files = files or {}
+        self.files = {name: unicode_compatibility.encode_if_necessary(contents) for name, contents in (files or {}).items()}
         self.written_files = {}
         self.last_tmpdir = None
         self.current_tmpno = 0

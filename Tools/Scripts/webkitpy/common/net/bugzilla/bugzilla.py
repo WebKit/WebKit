@@ -34,14 +34,15 @@
 import logging
 import mimetypes
 import re
-import StringIO
 import socket
+import sys
 import urllib
 
 from datetime import datetime  # used in timestamp()
 
-from .attachment import Attachment
-from .bug import Bug
+from webkitpy.common.unicode_compatibility import BytesIO, StringIO, unicode
+from webkitpy.common.net.bugzilla.attachment import Attachment
+from webkitpy.common.net.bugzilla.bug import Bug
 
 from webkitpy.common.config import committers
 import webkitpy.common.config.urls as config_urls
@@ -73,11 +74,11 @@ class EditUsersParser(object):
         return (login, user_id)
 
     def login_userid_pairs_from_edit_user_results(self, results_page):
-        soup = BeautifulSoup(results_page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        soup = BeautifulSoup(results_page, convertEntities=BeautifulSoup.HTML_ENTITIES)
         results_table = soup.find(id="admin_table")
         login_userid_pairs = [self._login_and_uid_from_row(row) for row in results_table('tr')]
         # Filter out None from the logins.
-        return filter(lambda pair: bool(pair), login_userid_pairs)
+        return list(filter(lambda pair: bool(pair), login_userid_pairs))
 
     def _group_name_and_string_from_row(self, row):
         label_element = row.find('label')
@@ -86,7 +87,7 @@ class EditUsersParser(object):
         return (group_name, group_string)
 
     def user_dict_from_edit_user_page(self, page):
-        soup = BeautifulSoup(page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        soup = BeautifulSoup(page, convertEntities=BeautifulSoup.HTML_ENTITIES)
         user_table = soup.find("table", {'class': 'main'})
         user_dict = {}
         for row in user_table('tr'):
@@ -209,7 +210,7 @@ class BugzillaQueries(object):
                 continue
             patch_id = int(digits.search(patch_tag["href"]).group(0))
             date_tag = row.find("td", text=date_format)
-            if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
+            if date_tag and datetime.strptime(date_format.search(unicode(date_tag)).group(0), "%Y-%m-%d %H:%M") < since:
                 continue
             patch_ids.append(patch_id)
         return patch_ids
@@ -418,8 +419,12 @@ class Bugzilla(object):
     def _parse_attachment_element(self, element, bug_id):
         attachment = {}
         attachment['bug_id'] = bug_id
-        attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
-        attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
+        if sys.version_info > (3, 0):
+            attachment['is_obsolete'] = (element.has_attr('isobsolete') and element['isobsolete'] == "1")
+            attachment['is_patch'] = (element.has_attr('ispatch') and element['ispatch'] == "1")
+        else:
+            attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
+            attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
         attachment['id'] = int(element.find('attachid').string)
         # FIXME: No need to parse out the url here.
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
@@ -637,7 +642,7 @@ class Bugzilla(object):
         # Only if file_or_string is not already encoded do we want to encode it.
         if isinstance(file_or_string, unicode):
             file_or_string = file_or_string.encode('utf-8')
-        return StringIO.StringIO(file_or_string)
+        return BytesIO(file_or_string)
 
     # timestamp argument is just for unittests.
     def _filename_for_upload(self, file_object, bug_id, extension="txt", timestamp=timestamp):
@@ -759,7 +764,7 @@ class Bugzilla(object):
             # _fill_attachment_form expects a file-like object
             # Patch files are already binary, so no encoding needed.
             assert(isinstance(diff, str))
-            patch_file_object = StringIO.StringIO(diff)
+            patch_file_object = StringIO(diff)
             commit_flag = CommitQueueFlag.mark_for_nothing
             if mark_for_commit_queue:
                 commit_flag = CommitQueueFlag.mark_for_commit_queue
@@ -923,7 +928,7 @@ Ignore this message if you don't have EditBugs privileges (https://bugs.webkit.o
         # This is a hack around the fact that ClientForm.ListControl seems to
         # have no simpler way to ask if a control has an item named "REOPENED"
         # without using exceptions for control flow.
-        possible_bug_statuses = map(lambda item: item.name, bug_status.items)
+        possible_bug_statuses = list(map(lambda item: item.name, bug_status.items))
         if "REOPENED" in possible_bug_statuses:
             bug_status.value = ["REOPENED"]
         # If the bug was never confirmed it will not have a "REOPENED"

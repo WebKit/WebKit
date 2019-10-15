@@ -26,8 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import cPickle
 import logging
+import sys
+
+if sys.version_info > (3, 0):
+    import pickle
+else:
+    import cPickle as pickle
+
 
 from webkitpy.layout_tests.models import test_expectations
 
@@ -91,7 +97,7 @@ class TestFailure(object):
     @staticmethod
     def loads(s):
         """Creates a TestFailure object from the specified string."""
-        return cPickle.loads(s)
+        return pickle.loads(s)
 
     def message(self):
         """Returns a string describing the failure in more detail."""
@@ -108,7 +114,7 @@ class TestFailure(object):
 
     def dumps(self):
         """Returns the string/JSON representation of a TestFailure."""
-        return cPickle.dumps(self)
+        return pickle.dumps(self)
 
     def driver_needs_restart(self):
         """Returns True if we should kill DumpRenderTree/WebKitTestRunner before the next test."""

@@ -113,7 +113,7 @@ class TestExpectationUpdater(object):
     # FIXME: Investigate the possibility to align what is done there with what single_test_runner is doing.
     # In particular the fact of not overwriting the file if content is the same.
     def _update_from_generic_attachment(self):
-        for test_name, expected_content in self._tests_to_update(self.generic_attachment).iteritems():
+        for test_name, expected_content in self._tests_to_update(self.generic_attachment).items():
             expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem))
             if expected_content != self._file_content_if_exists(expected_filename):
                 _log.info("Updating " + test_name + " (" + expected_filename + ")")
@@ -122,7 +122,7 @@ class TestExpectationUpdater(object):
     # FIXME: Investigate the possibility to align what is done there with what single_test_runner is doing.
     # In particular the ability to remove a new specific expectation if it is the same as the generic one.
     def _update_from_platform_specific_attachment(self, attachment, bot_type):
-        for test_name, expected_content in self._tests_to_update(attachment, bot_type).iteritems():
+        for test_name, expected_content in self._tests_to_update(attachment, bot_type).items():
             expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem, bot_type))
             generic_expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem))
             if expected_content != self._file_content_if_exists(generic_expected_filename):
@@ -138,7 +138,7 @@ class TestExpectationUpdater(object):
             return
         if self.generic_attachment:
             self._update_from_generic_attachment()
-        for bot_type, attachment in self.platform_specific_attachments.iteritems():
+        for bot_type, attachment in self.platform_specific_attachments.items():
             self._update_from_platform_specific_attachment(attachment, bot_type)
 
 

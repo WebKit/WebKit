@@ -30,9 +30,9 @@
 import datetime
 import logging
 
-from .bug import Bug
-from .bugzilla import Bugzilla
-from .attachment import Attachment
+from webkitpy.common.net.bugzilla.bug import Bug
+from webkitpy.common.net.bugzilla.bugzilla import Bugzilla
+from webkitpy.common.net.bugzilla.attachment import Attachment
 from webkitpy.common.config.committers import CommitterList, Reviewer
 
 _log = logging.getLogger(__name__)

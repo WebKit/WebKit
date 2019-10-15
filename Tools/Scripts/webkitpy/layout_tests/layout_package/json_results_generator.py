@@ -31,8 +31,14 @@ import logging
 import subprocess
 import sys
 import time
-import urllib2
 import xml.dom.minidom
+
+if sys.version_info > (3, 0):
+    from urllib.error import HTTPError, URLError
+    from urllib.parse import quote
+    from urllib.request import urlopen
+else:
+    from urllib2 import HTTPError, quote, URLError, urlopen
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
@@ -465,23 +471,23 @@ class JSONResultsGenerator(object):
             return {}, None
 
         results_file_url = (self.URL_FOR_TEST_LIST_JSON %
-            (urllib2.quote(self._test_results_servers[server_index]),
-             urllib2.quote(self._builder_name),
+            (quote(self._test_results_servers[server_index]),
+             quote(self._builder_name),
              self.RESULTS_FILENAME,
-             urllib2.quote(self._test_type),
-             urllib2.quote(self._master_name)))
+             quote(self._test_type),
+             quote(self._master_name)))
 
         try:
             # FIXME: We should talk to the network via a Host object.
-            results_file = urllib2.urlopen(results_file_url)
+            results_file = urlopen(results_file_url)
             info = results_file.info()
             old_results = results_file.read()
-        except urllib2.HTTPError as http_error:
+        except HTTPError as http_error:
             # A non-4xx status code means the bot is hosed for some reason
             # and we can't grab the results.json file off of it.
             if (http_error.code < 400 and http_error.code >= 500):
                 error = http_error
-        except urllib2.URLError as url_error:
+        except URLError as url_error:
             error = url_error
 
         if old_results:

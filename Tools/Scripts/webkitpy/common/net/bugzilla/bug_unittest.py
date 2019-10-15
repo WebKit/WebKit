@@ -28,7 +28,7 @@
 
 import unittest
 
-from .bug import Bug
+from webkitpy.common.net.bugzilla.bug import Bug
 
 
 class BugTest(unittest.TestCase):

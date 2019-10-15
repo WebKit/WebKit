@@ -30,7 +30,7 @@
 
 import re
 
-from .attachment import Attachment
+from webkitpy.common.net.bugzilla.attachment import Attachment
 
 
 class Bug(object):
@@ -133,7 +133,7 @@ class Bug(object):
     def commit_revision(self):
         # Sort the comments in reverse order as we want the latest committed revision.
         r = re.compile("Committed r(?P<svn_revision>\d+)")
-        for comment in sorted(self.comments(), reverse=True):
+        for comment in sorted(self.comments(), key=lambda comment: comment['text'], reverse=True):
             rev = r.search(comment['text'])
             if rev:
                 return int(rev.group('svn_revision'))

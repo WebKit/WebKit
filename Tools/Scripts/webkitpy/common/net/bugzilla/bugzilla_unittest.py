@@ -26,18 +26,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
 import datetime
+import sys
 import unittest
-
-from .bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag, EditUsersParser
 
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import Reviewer, Committer, Contributor, CommitterList
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.net.web_mock import MockBrowser
-from webkitpy.thirdparty.mock import Mock
+from webkitpy.common.net.bugzilla.bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag, EditUsersParser
+from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.mock import Mock
 
 
 class BugzillaTest(unittest.TestCase):
@@ -67,7 +67,7 @@ class BugzillaTest(unittest.TestCase):
         </attachment>
 '''
     _expected_example_attachment_parsing = {
-        'attach_date': datetime.datetime(2009, 07, 29, 10, 23),
+        'attach_date': datetime.datetime(2009, 7, 29, 10, 23),
         'bug_id': 100,
         'is_obsolete': True,
         'is_patch': True,
@@ -212,7 +212,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
     # FIXME: This should move to a central location and be shared by more unit tests.
     def _assert_dictionaries_equal(self, actual, expected):
         # Make sure we aren't parsing more or less than we expect
-        self.assertItemsEqual(actual.keys(), expected.keys())
+        self.assertEqual(sorted(actual.keys()), sorted(expected.keys()))
 
         for key, expected_value in expected.items():
             self.assertEqual(actual[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, actual[key], expected_value)))
@@ -303,7 +303,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
     def test_file_object_for_upload(self):
         bugzilla = Bugzilla()
-        file_object = StringIO.StringIO()
+        file_object = StringIO()
         unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
         utf8_tor = unicode_tor.encode("utf-8")
         self.assertEqual(bugzilla._file_object_for_upload(file_object), file_object)
@@ -316,7 +316,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         mock_file.name = "foo"
         self.assertEqual(bugzilla._filename_for_upload(mock_file, 1234), 'foo')
         mock_timestamp = lambda: "now"
-        filename = bugzilla._filename_for_upload(StringIO.StringIO(), 1234, extension="patch", timestamp=mock_timestamp)
+        filename = bugzilla._filename_for_upload(StringIO(), 1234, extension="patch", timestamp=mock_timestamp)
         self.assertEqual(filename, "bug-1234-now.patch")
 
     def test_commit_queue_flag(self):

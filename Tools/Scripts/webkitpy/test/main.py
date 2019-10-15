@@ -221,7 +221,12 @@ class Tester(object):
             self._options.child_processes = 1
 
             import webkitpy.thirdparty.autoinstalled.coverage as coverage
-            cov = coverage.coverage(omit=["/usr/*", "*/webkitpy/thirdparty/autoinstalled/*", "*/webkitpy/thirdparty/BeautifulSoup.py"])
+            cov = coverage.coverage(omit=[
+                "/usr/*",
+                "*/webkitpy/thirdparty/autoinstalled/*",
+                "*/webkitpy/thirdparty/BeautifulSoup.py",
+                "*/webkitpy/thirdparty/BeautifulSoup_legacy.py",
+            ])
             cov.start()
 
         self.printer.write_update("Checking imports ...")

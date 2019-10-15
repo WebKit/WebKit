@@ -235,7 +235,7 @@ class TestExpectationParser(object):
     ]
 
     _configuration_tokens = dict((token, token.upper()) for token in _configuration_tokens_list)
-    _inverted_configuration_tokens = dict((value, name) for name, value in _configuration_tokens.iteritems())
+    _inverted_configuration_tokens = dict((value, name) for name, value in _configuration_tokens.items())
 
     # FIXME: Update the original modifiers list and remove this once the old syntax is gone.
     _expectation_tokens = {
@@ -252,7 +252,7 @@ class TestExpectationParser(object):
         'WontFix': 'WONTFIX',
     }
 
-    _inverted_expectation_tokens = dict([(value, name) for name, value in _expectation_tokens.iteritems()] +
+    _inverted_expectation_tokens = dict([(value, name) for name, value in _expectation_tokens.items()] +
                                         [('TEXT', 'Failure'), ('IMAGE+TEXT', 'Failure'), ('AUDIO', 'Failure')])
 
     # FIXME: Seems like these should be classmethods on TestExpectationLine instead of TestExpectationParser.

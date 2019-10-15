@@ -37,7 +37,7 @@ import re
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
-from webkitpy.thirdparty.autoinstalled import keyring
+import webkitpy.thirdparty.autoinstalled.keyring as keyring
 
 _log = logging.getLogger(__name__)
 

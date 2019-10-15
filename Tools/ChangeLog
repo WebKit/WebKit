@@ -1,3 +1,64 @@
+2019-10-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.net.bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=202465
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.net.bugzilla to the test list.
+        * Scripts/webkitpy/common/net/bugzilla/__init__.py: Use full import paths.
+        * Scripts/webkitpy/common/net/bugzilla/attachment_unittest.py: Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/bug.py: Ditto.
+        (Bug.commit_revision): Dictionary sorting is no longer well defined in Python 3.
+        * Scripts/webkitpy/common/net/bugzilla/bug_unittest.py: Use full import paths.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py: Ditto.
+        (EditUsersParser.login_userid_pairs_from_edit_user_results): Return list, not an iterator.
+        (EditUsersParser.user_dict_from_edit_user_page): HTML_ENTITIES is logically connected to BeautifulSoup, not
+        BeautifulStoneSoup. 
+        (BugzillaQueries._parse_attachment_ids_request_query): Explicitly cast date_tag to unicode.
+        (Bugzilla._parse_attachment_element): Legacy BeautifulSoup and bs4 Elements have different function calls.
+        (Bugzilla._file_object_for_upload): Use BytesIO instead of StringIO.
+        (Bugzilla.create_bug):
+        (reopen_bug): Access map as list, not iterator.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py: Use full import paths.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py: Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater.py:
+        (TestExpectationUpdater._update_from_generic_attachment): Use items over iteritems().
+        (TestExpectationUpdater._update_from_platform_specific_attachment): Ditto.
+        (TestExpectationUpdater.do_update): Ditto.
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py: Use Python 2/3 compatible urllib.
+        * Scripts/webkitpy/common/net/credentials.py: Use import statement to force autoinstall logic.
+        * Scripts/webkitpy/common/net/file_uploader.py: Use Python 2/3 compatible urllib.
+        (FileUploader._upload_data.callback):
+        (FileUploader):
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        (JSONTestResult._tokenize): Force map() call to return a list.
+        * Scripts/webkitpy/common/net/web_mock.py: Use Python 2/3 compatible urllib.
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller.install): Return True if install was required, otherwise, return False.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.__init__): Encode strings before writing them to the filesystem.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py: Use Python 2/3 compatible urllib.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser): Use items over iteritems().
+        * Scripts/webkitpy/layout_tests/models/test_failures.py: Use Python 3 compatible Pickle library.
+        * Scripts/webkitpy/layout_tests/models/test_results.py: Ditto.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_crashlog_path): Use dictionary for files.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Update directories excluded from testing.
+        * Scripts/webkitpy/thirdparty/BeautifulSoup.py: Replaced.
+        (BeautifulSoup):Wrapper class making bs4 BeautifulSoup compatible with legacy BeautifulSoup calls.
+        (BeautifulStoneSoup): Ditto.
+        * Scripts/webkitpy/thirdparty/BeautifulSoup_legacy.py: Copied from Tools/Scripts/webkitpy/thirdparty/BeautifulSoup.py.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.__init__): Accept executive.
+        (AutoinstallImportHook.find_module): Add beautifulsoup.
+        (AutoinstallImportHook._install_beautifulsoup): bs4 must be converted via 2to3 before use in Python 3.
+        (AutoinstallImportHook._install): Return result from installer.
+        * Scripts/webkitpy/thirdparty/mock.py:
+        (Mock.reset_mock): Use values() instead of itervalues().
+
 2019-10-14  Matt Mokary  <mmokary@apple.com>
 
         FindController::findString always updates foundStringMatchIndex even if match is the same as before

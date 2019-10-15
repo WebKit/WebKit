@@ -29,8 +29,8 @@
 import json
 import operator
 import re
+import sys
 import urllib
-import urllib2
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.memoized import memoized
@@ -39,8 +39,16 @@ from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+
+if sys.version_info > (3, 0):
+    from urllib.error import HTTPError, URLError
+    from urllib.parse import quote
+    from urllib.request import urlopen
+else:
+    from urllib2 import HTTPError, quote, URLError, urlopen
+
 
 
 _log = get_logger(__file__)
@@ -74,7 +82,7 @@ class Builder(object):
 
     def _fetch_file_from_results(self, results_url, file_name):
         # It seems this can return None if the url redirects and then returns 404.
-        result = urllib2.urlopen("%s/%s" % (results_url, file_name))
+        result = urlopen("%s/%s" % (results_url, file_name))
         if not result:
             return None
         # urlopen returns a file-like object which sometimes works fine with str()
@@ -161,7 +169,7 @@ class Builder(object):
             print("Loading revision/build list from %s." % self.results_url())
             print("This may take a while...")
             result_files = self._buildbot._fetch_twisted_directory_listing(self.results_url())
-        except urllib2.HTTPError as error:
+        except HTTPError as error:
             if error.code != 404:
                 raise
             _log.debug("Revision/build list failed to load.")
@@ -363,8 +371,8 @@ class BuildBot(object):
         # find a way to reduce the response size further.
         json_url = "%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_url, urllib.quote(builder.name()), build_number)
         try:
-            return json.load(urllib2.urlopen(json_url))
-        except urllib2.URLError as err:
+            return json.load(urlopen(json_url))
+        except URLError as err:
             build_url = Build.build_url(builder, build_number)
             _log.error("Error fetching data for %s build %s (%s, json: %s): %s" % (builder.name(), build_number, build_url, json_url, err))
             return None
@@ -375,7 +383,7 @@ class BuildBot(object):
 
     def _fetch_one_box_per_builder(self):
         build_status_url = "%s/one_box_per_builder" % self.buildbot_url
-        return urllib2.urlopen(build_status_url)
+        return urlopen(build_status_url)
 
     def _file_cell_text(self, file_cell):
         """Traverses down through firstChild elements until one containing a string is found, then returns that string"""
@@ -402,7 +410,7 @@ class BuildBot(object):
 
     # FIXME: There should be a better way to get this information directly from twisted.
     def _fetch_twisted_directory_listing(self, url):
-        return self._parse_twisted_directory_listing(urllib2.urlopen(url))
+        return self._parse_twisted_directory_listing(urlopen(url))
 
     def builders(self):
         return [self.builder_with_name(status["name"]) for status in self.builder_statuses()]
@@ -444,8 +452,8 @@ class BuildBot(object):
             build = build.previous_build()
 
     def _fetch_builder_page(self, builder):
-        builder_page_url = "%s/builders/%s?numbuilds=100" % (self.buildbot_url, urllib2.quote(builder.name()))
-        return urllib2.urlopen(builder_page_url)
+        builder_page_url = "%s/builders/%s?numbuilds=100" % (self.buildbot_url, quote(builder.name()))
+        return urlopen(builder_page_url)
 
     def _revisions_for_builder(self, builder):
         soup = BeautifulSoup(self._fetch_builder_page(builder))

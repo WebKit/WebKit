@@ -25,7 +25,7 @@ import unittest
 from datetime import datetime
 from webkitpy.common.net.bugzilla.constants import BUGZILLA_DATE_FORMAT
 
-from .attachment import Attachment
+from webkitpy.common.net.bugzilla.attachment import Attachment
 
 
 class AttachmentTest(unittest.TestCase):
