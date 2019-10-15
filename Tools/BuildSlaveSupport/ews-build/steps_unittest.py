@@ -390,7 +390,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='webkitperl-tests')
+        self.expectOutcome(result=SUCCESS, state_string='Passed webkitperl tests')
         return self.runStep()
 
     def test_failure(self):
@@ -407,7 +407,7 @@ Result: FAIL
 Failed 1/40 test programs. 10/630 subtests failed.''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='webkitperl-tests (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed webkitperl tests')
         return self.runStep()
 
 

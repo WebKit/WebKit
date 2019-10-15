@@ -603,6 +603,13 @@ class RunWebKitPerlTests(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(RunWebKitPerlTests, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            message = 'Passed webkitperl tests'
+            self.build.buildFinished([message], SUCCESS)
+            return {u'step': unicode(message)}
+        return {u'step': u'Failed webkitperl tests'}
+
 
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):
     name = 'build-webkit-org-unit-tests'
