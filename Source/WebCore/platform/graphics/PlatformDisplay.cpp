@@ -150,6 +150,8 @@ PlatformDisplay::~PlatformDisplay()
 #if USE(EGL)
     ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
 #endif
+    if (s_sharedDisplayForCompositing == this)
+        s_sharedDisplayForCompositing = nullptr;
 }
 
 #if USE(EGL) || USE(GLX)

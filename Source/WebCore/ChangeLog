@@ -1,3 +1,22 @@
+2019-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] White pages in AC mode: Cannot get default EGL display: EGL_BAD_PARAMETER
+        https://bugs.webkit.org/show_bug.cgi?id=202362
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The problem is that PlatformDisplayLibWPE::initialize() is failing to initialize the EGL display for some
+        reason. We need to understand why, but we should also handle the case of failing to initialize the EGL display
+        and simply disable accelerated compositing mode to avoid white pages and crashes in websites using WebGL. This
+        patch doesn't actually fix the bug, it just handles the EGL display initialization failure.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::~PlatformDisplay): Set s_sharedDisplayForCompositing to nullptr when the shared
+        display for compositing is destroyed.
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.cpp:
+        (WebCore::PlatformDisplayLibWPE::initialize): Return false when EGL display initialization fails.
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.h:
+
 2019-10-14  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Have WebBackForwardCache class coordinate page caching in all WebProcesses

@@ -235,6 +235,13 @@ void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)
 void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_webPage.corePage()->settings();
+#if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland
+        && &PlatformDisplay::sharedDisplayForCompositing() == &PlatformDisplay::sharedDisplay()) {
+        // We failed to create the shared display for compositing, disable accelerated compositing.
+        settings.setAcceleratedCompositingEnabled(false);
+    }
+#endif
     settings.setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
