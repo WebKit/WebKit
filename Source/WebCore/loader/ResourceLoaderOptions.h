@@ -152,7 +152,7 @@ struct ResourceLoaderOptions : public FetchOptions {
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
 #endif
-    HTTPHeaderNameSet httpHeadersToKeep;
+    OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     Optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     unsigned maxRedirectCount { 20 };
 

@@ -262,7 +262,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
         return WTF::nullopt;
     result.serviceWorkerRegistrationIdentifier = *serviceWorkerRegistrationIdentifier;
 
-    Optional<HTTPHeaderNameSet> httpHeadersToKeep;
+    Optional<OptionSet<HTTPHeadersToKeepFromCleaning>> httpHeadersToKeep;
     decoder >> httpHeadersToKeep;
     if (!httpHeadersToKeep)
         return WTF::nullopt;

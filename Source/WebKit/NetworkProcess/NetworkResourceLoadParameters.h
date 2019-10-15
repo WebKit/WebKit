@@ -64,7 +64,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };
     Optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
-    WebCore::HTTPHeaderNameSet httpHeadersToKeep;
+    OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

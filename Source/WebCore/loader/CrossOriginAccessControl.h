@@ -30,7 +30,7 @@
 #include "ReferrerPolicy.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -56,9 +56,16 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&&, Doc
 
 bool isValidCrossOriginRedirectionURL(const URL&);
 
-using HTTPHeaderNameSet = HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>>;
-HTTPHeaderNameSet httpHeadersToKeepFromCleaning(const HTTPHeaderMap&);
-WEBCORE_EXPORT void cleanHTTPRequestHeadersForAccessControl(ResourceRequest&, const HTTPHeaderNameSet& = { });
+enum class HTTPHeadersToKeepFromCleaning {
+    ContentType = 1 << 0,
+    Referer = 1 << 1,
+    Origin = 1 << 2,
+    UserAgent = 1 << 3,
+    AcceptEncoding = 1 << 4
+};
+
+OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeepFromCleaning(const HTTPHeaderMap&);
+WEBCORE_EXPORT void cleanHTTPRequestHeadersForAccessControl(ResourceRequest&, OptionSet<HTTPHeadersToKeepFromCleaning>);
 
 WEBCORE_EXPORT bool passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
 WEBCORE_EXPORT bool validatePreflightResponse(const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
