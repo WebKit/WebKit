@@ -1,3 +1,40 @@
+2019-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        Unify sources for bindings more densely
+        https://bugs.webkit.org/show_bug.cgi?id=202918
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a build time speedup.
+        For me, this is a reliable 17% boost on the WebCore Build Time Benchmark.
+
+        * Scripts/generate-unified-sources.sh:
+        Use dense bundles for JS* and bindings/js/*.
+        This seems acceptable for a few reasons:
+
+        - most of the time building these files is spent parsing the exact
+        same set of JSC headers, because the generated bindings code ends
+        up including the same set of things
+
+        - the incremental build cost of bundling more bindings sources together
+        is small, because the JSC headers dominate the time
+
+        - folks will frequently have to rebuild all of the bindings (on every
+        pull, for example, because they indirectly include most JSC headers),
+        but rarely end up rebuilding only a single one (in my experience)
+
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::readableStreamCallFunction):
+        (WebCore::ReadableStreamDefaultController::invoke):
+        (WebCore::callFunction): Deleted.
+        Deduplicate static functions that now get bundled together.
+
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::currentTimeToMediaTime):
+        * platform/graphics/ca/PlatformCALayer.h:
+        In older macOS SDKs, CABase.h included ApplicationServices.h, which
+        causes lots of trouble.
+
 2019-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] White pages in AC mode: Cannot get default EGL display: EGL_BAD_PARAMETER

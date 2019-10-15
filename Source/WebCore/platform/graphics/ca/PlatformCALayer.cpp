@@ -33,6 +33,7 @@
 #include "PlatformCALayerClient.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CoreText.h>
+#include <QuartzCore/CABase.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(WIN)
@@ -63,6 +64,11 @@ PlatformCALayer::~PlatformCALayer()
     // Clear the owner, which also clears it in the delegate to prevent attempts
     // to use the GraphicsLayerCA after it has been destroyed.
     setOwner(nullptr);
+}
+
+CFTimeInterval PlatformCALayer::currentTimeToMediaTime(MonotonicTime t)
+{
+    return CACurrentMediaTime() + (t - MonotonicTime::now()).seconds();
 }
 
 bool PlatformCALayer::canHaveBackingStore() const

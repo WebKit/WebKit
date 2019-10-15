@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
+static inline JSC::JSValue readableStreamCallFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
     JSC::CallData callData;
     auto callType = JSC::getCallData(state.vm(), jsFunction, callData);
@@ -67,7 +67,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
     arguments.append(parameter);
     ASSERT(!arguments.hasOverflowed());
 
-    return callFunction(state, function, &object, arguments);
+    return readableStreamCallFunction(state, function, &object, arguments);
 }
 
 } // namespace WebCore
