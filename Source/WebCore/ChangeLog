@@ -1,5 +1,23 @@
 2019-10-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Use <col> to adjust the preferred column width.
+        https://bugs.webkit.org/show_bug.cgi?id=202997
+        <rdar://problem/56300345>
+
+        Reviewed by Antti Koivisto.
+
+        The <col> elment can set the preferred width on the table column. Let's take these values into account while computing the preferred width for columns.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        * layout/tableformatting/TableFormattingContext.h:
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::computedColumnWidth const):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::columnBox const):
+
+2019-10-15  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add support for colgroup/col
         https://bugs.webkit.org/show_bug.cgi?id=202991
         <rdar://problem/56294715>

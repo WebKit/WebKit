@@ -80,6 +80,8 @@ public:
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
 
+        const Box* columnBox() const { return m_columnBox.get(); }
+
     private:
         friend class ColumnsContext;
         Column(const Box* columnBox);

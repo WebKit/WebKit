@@ -249,9 +249,15 @@ void TableFormattingContext::computePreferredWidthForColumns()
             columnIntrinsicWidths.minimum = std::max(slot->widthConstraints.minimum, columnIntrinsicWidths.minimum);
             columnIntrinsicWidths.maximum = std::max(slot->widthConstraints.maximum, columnIntrinsicWidths.maximum);
         }
+        // Now that we have the content driven min/max widths, check if <col> sets a preferred width on this column.
+        if (auto* columnBox = columns[columnIndex].columnBox()) {
+            if (auto columnPreferredWidth = geometry().computedColumnWidth(*columnBox)) {
+                // Let's stay at least as wide as the preferred width.
+                columnIntrinsicWidths.minimum = std::max(columnIntrinsicWidths.minimum, *columnPreferredWidth);
+            }
+        }
         columns[columnIndex].setWidthConstraints(columnIntrinsicWidths);
     }
-    // FIXME: Take column group elements into account.
 }
 
 LayoutUnit TableFormattingContext::computedTableWidth()

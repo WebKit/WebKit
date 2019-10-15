@@ -45,6 +45,15 @@ ContentHeightAndMargin TableFormattingContext::Geometry::tableCellHeightAndMargi
     return ContentHeightAndMargin { *height, { } };
 }
 
+Optional<LayoutUnit> TableFormattingContext::Geometry::computedColumnWidth(const Box& columnBox) const
+{
+    // Check both style and <col>'s width attribute.
+    // FIXME: Figure out what to do with calculated values, like <col style="width: 10%">.
+    if (auto computedWidthValue = computedContentWidth(columnBox, { }))
+        return computedWidthValue;
+    return columnBox.columnWidth();
+}
+
 }
 }
 
