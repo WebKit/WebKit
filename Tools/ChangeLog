@@ -1,5 +1,22 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK test /webkit/Authentication/authentication-storage after r249962
+
+        The test was still using the legacy private browsing API that is a no-op since r249962. This partch updates the
+        test to use a ephemeral WebView instead.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (EphemeralAuthenticationTest::setup):
+        (EphemeralAuthenticationTest::teardown):
+        (testWebViewAuthenticationEphemeral):
+        (testWebViewAuthenticationStorage):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::initializeWebView):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK test /webkit/WebKitSettings/webkit-settings after r249962.
 
         Stop testing WebKitSettings:enable-private-browsing.

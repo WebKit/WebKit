@@ -1,5 +1,12 @@
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK test /webkit/Authentication/authentication-storage after r249962
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewHandleAuthenticationChallenge): Do not use webkit_settings_get_enable_private_browsing().
+
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK test /webkit/WebKitSettings/webkit-settings after r249962.
 
         Legacy private browsing was removed in r249962, so webkit_settings_set_enable_private_browsing() is now no-op.

@@ -30,6 +30,7 @@ public:
     virtual ~WebViewTest();
 
     static bool shouldInitializeWebViewInConstructor;
+    static bool shouldCreateEphemeralWebView;
     void initializeWebView();
 
     void platformInitializeWebView();

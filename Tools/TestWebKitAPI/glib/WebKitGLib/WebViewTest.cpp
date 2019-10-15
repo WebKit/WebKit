@@ -24,6 +24,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 
 bool WebViewTest::shouldInitializeWebViewInConstructor = true;
+bool WebViewTest::shouldCreateEphemeralWebView = false;
 
 WebViewTest::WebViewTest()
     : m_userContentManager(adoptGRef(webkit_user_content_manager_new()))
@@ -56,6 +57,7 @@ void WebViewTest::initializeWebView()
 #endif
         "web-context", m_webContext.get(),
         "user-content-manager", m_userContentManager.get(),
+        "is-ephemeral", shouldCreateEphemeralWebView,
         nullptr));
     platformInitializeWebView();
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
