@@ -1,3 +1,29 @@
+2019-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Webview's drawing area may stay frozen on cross-site back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=203004
+
+        Reviewed by Tim Horton.
+
+        Whenever the UIScene becomes foreground / background, the WebPageProxy notifies its currently associated
+        WebPage in the committed WebProcess so that it can freeze / unfreeze its layer tree with the
+        BackgroundApplication reason. The issue is that if a WebPage gets suspended on cross-site navigation
+        (because the UIScene is in the background when the load commits), then the suspended WebPage kept its
+        a BackgroundApplication freeze. When the UIScene becomes foreground, the WebPage only notifies its
+        committed page so the suspended page keeps its BackgroundApplication freeze still. If the user now
+        navigates back, it will restore the suspended WebPage and the view will stay frozen.
+
+        To address the issue, we now have the WebPage drop its BackgroundApplication freeze reason, whenever
+        it transitions from committed to suspended.
+
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        Fix logging, [self isBackground] needs to be called *after* _applicationStateTracker has been
+        initialized, or it will return YES unconditionally.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsSuspended):
+
 2019-10-15  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Implement HTMLVideoElement.requestPictureInPicture() / Document.exitPictureInPicture()

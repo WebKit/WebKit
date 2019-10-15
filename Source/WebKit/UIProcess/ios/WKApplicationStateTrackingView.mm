@@ -69,9 +69,9 @@
         return;
 
     auto page = [_webViewToTrack _page];
-    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was added to a window, _lastObservedStateWasBackground: %d, isNowBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground, [self isBackground]);
     _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
-    
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was added to a window, _lastObservedStateWasBackground: %d, isNowBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground, [self isBackground]);
+
     if (_lastObservedStateWasBackground && ![self isBackground])
         [self _applicationWillEnterForeground];
     else if (!_lastObservedStateWasBackground && [self isBackground])

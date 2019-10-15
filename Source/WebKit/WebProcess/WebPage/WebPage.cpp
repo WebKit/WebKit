@@ -6499,6 +6499,10 @@ void WebPage::setIsSuspended(bool suspended)
     // Unfrozen on drawing area reset.
     freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
 
+    // Only the committed WebPage gets application visibility notifications from the UIProcess, so make sure
+    // we don't hold a BackgroundApplication freeze reason when transitioning from committed to suspended.
+    unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+
     WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
 
     suspendForProcessSwap();
