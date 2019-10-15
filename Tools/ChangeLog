@@ -1,3 +1,15 @@
+2019-10-15  Alicia Boya García  <aboya@igalia.com>
+
+        gdb webkit.py: Fix iterator error in Python3
+        https://bugs.webkit.org/show_bug.cgi?id=202926
+
+        Reviewed by Jonathan Bedard.
+
+        Some distros use Python3 for gdb, so the script needs to be compatible with both versions for it to work.
+
+        * gdb/webkit.py:
+        (WTFVectorPrinter.Iterator.__next__):
+
 2019-10-14  Zhifei FANG  <zhifei_fang@apple.com>
 
         results.webkit.org: TypeError when evaluating empty commits

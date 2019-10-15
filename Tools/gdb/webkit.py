@@ -277,6 +277,9 @@ class WTFVectorPrinter:
             self.item += 1
             return ('[%d]' % count, element)
 
+        def __next__(self):
+            return self.next()
+
     def __init__(self, val):
         self.val = val
 
