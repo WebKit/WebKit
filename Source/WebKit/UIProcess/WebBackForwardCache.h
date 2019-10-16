@@ -50,6 +50,7 @@ public:
     unsigned size() const { return m_itemsWithCachedPage.size(); }
 
     void clear();
+    void pruneToSize(unsigned);
     void removeEntriesForProcess(WebProcessProxy&);
     void removeEntriesForPage(WebPageProxy&);
     void removeEntriesForSession(PAL::SessionID);

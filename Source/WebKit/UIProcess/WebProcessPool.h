@@ -230,7 +230,8 @@ public:
     void populateVisitedLinks();
 
 #if PLATFORM(IOS_FAMILY)
-    static void applicationIsAboutToSuspend();
+    void applicationIsAboutToSuspend();
+    static void notifyProcessPoolsApplicationIsAboutToSuspend();
 #endif
 
     void handleMemoryPressureWarning(Critical);

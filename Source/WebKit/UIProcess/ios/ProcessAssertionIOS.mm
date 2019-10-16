@@ -84,7 +84,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
         _applicationIsBackgrounded = YES;
         
         if (_backgroundTask == UIBackgroundTaskInvalid)
-            WebKit::WebProcessPool::applicationIsAboutToSuspend();
+            WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
     }];
 
     return self;
@@ -188,7 +188,7 @@ static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - endBackgroundTask", self);
     if (_applicationIsBackgrounded)
-        WebKit::WebProcessPool::applicationIsAboutToSuspend();
+        WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
     [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
     _backgroundTask = UIBackgroundTaskInvalid;
 }

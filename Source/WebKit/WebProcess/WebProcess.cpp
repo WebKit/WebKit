@@ -306,7 +306,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             }
 #endif
 
-            auto maintainPageCache = m_isSuspending && hasPageRequiringPageCacheWhileSuspended() ? WebCore::MaintainPageCache::Yes : WebCore::MaintainPageCache::No;
+            auto maintainPageCache = m_isSuspending ? WebCore::MaintainPageCache::Yes : WebCore::MaintainPageCache::No;
             auto maintainMemoryCache = m_isSuspending && m_hasSuspendedPageProxy ? WebCore::MaintainMemoryCache::Yes : WebCore::MaintainMemoryCache::No;
             WebCore::releaseMemory(critical, synchronous, maintainPageCache, maintainMemoryCache);
         });

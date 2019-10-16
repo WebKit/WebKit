@@ -37,6 +37,7 @@
 #import "TextChecker.h"
 #import "VersionChecks.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
@@ -585,11 +586,18 @@ int webProcessThroughputQOS()
 #if PLATFORM(IOS_FAMILY)
 void WebProcessPool::applicationIsAboutToSuspend()
 {
-    RELEASE_LOG(ProcessSuspension, "Application is about to suspend so we simulate memory pressure to terminate non-critical processes");
-    // Simulate memory pressure handling so free as much memory as possible before suspending.
-    // In particular, this will terminate prewarmed and PageCache processes.
+    RELEASE_LOG(ProcessSuspension, "WebProcessPool::applicationIsAboutToSuspend() Terminating non-critical processes");
+
+    m_backForwardCache->pruneToSize(1);
+    if (m_prewarmedProcess)
+        m_prewarmedProcess->shutDown();
+    m_webProcessCache->clear();
+}
+
+void WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend()
+{
     for (auto* processPool : allProcessPools())
-        processPool->handleMemoryPressureWarning(Critical::Yes);
+        processPool->applicationIsAboutToSuspend();
 }
 #endif
 

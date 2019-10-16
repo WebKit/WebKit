@@ -1,3 +1,33 @@
+2019-10-15  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Maintain the last Back/Forward cache entry when the application gets suspended
+        https://bugs.webkit.org/show_bug.cgi?id=203014
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, we would clear all back/forward cache entries when the application is about to
+        be suspended. This means that we would lose fast-back when coming back to the application.
+        To be memory-friendly but maintain the fast-back when coming back to the application, we now
+        maintain the last back/forward cache entry when the application gets suspended.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::applicationIsAboutToSuspend):
+        (WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend):
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::pruneToSize):
+        * UIProcess/WebBackForwardCache.h:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        A WebProcess no longer clears its PageCache on suspension on iOS. We let the UIProcess's
+        back/forward cache control when PageCache entries should get destroyed. The back/forward
+        cache will properly wake up a suspended process to clear one of its PageCache entries if
+        needed.
+
 2019-10-15  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: Make AXIsolatedTree compile again

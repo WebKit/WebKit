@@ -164,4 +164,11 @@ void WebBackForwardCache::clear()
         item->setBackForwardCacheEntry(nullptr);
 }
 
+void WebBackForwardCache::pruneToSize(unsigned newSize)
+{
+    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::pruneToSize(%u)", newSize);
+    while (size() > newSize)
+        removeOldestEntry();
+}
+
 } // namespace WebKit.
