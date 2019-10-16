@@ -1109,7 +1109,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.shouldIncludeLocalhostInResourceLoadStatistics ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
     m_enableResourceLoadStatisticsDebugMode = parameters.enableResourceLoadStatisticsDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
     m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsManualPrevalentResource;
-    m_enableResourceLoadStatisticsNSURLSessionSwitching = parameters.enableResourceLoadStatisticsNSURLSessionSwitching ? EnableResourceLoadStatisticsNSURLSessionSwitching::Yes : EnableResourceLoadStatisticsNSURLSessionSwitching::No;
+    storageSession->setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled(parameters.enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction);
     setResourceLoadStatisticsEnabled(parameters.enableResourceLoadStatistics);
 #endif
 

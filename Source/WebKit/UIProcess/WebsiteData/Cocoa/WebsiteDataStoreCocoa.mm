@@ -29,6 +29,7 @@
 #import "CookieStorageUtilsCF.h"
 #import "SandboxUtilities.h"
 #import "StorageManager.h"
+#import "WebPreferencesKeys.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/RegistrableDomain.h>
@@ -68,11 +69,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
     bool enableResourceLoadStatisticsDebugMode = false;
-    bool enableResourceLoadStatisticsNSURLSessionSwitching = WebCore::RuntimeEnabledFeatures::sharedFeatures().isITPSessionSwitchingEnabled();
-    WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
+    bool enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = false;
     bool enableLegacyTLS = [defaults boolForKey:@"WebKitEnableLegacyTLS"];
+    WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
+    enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabledKey().createCFString().get()]];
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
         URL url { URL(), manualPrevalentResource };
@@ -136,7 +138,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         hasStatisticsTestingCallback(),
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
-        enableResourceLoadStatisticsNSURLSessionSwitching,
+        enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),

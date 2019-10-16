@@ -1,3 +1,16 @@
+2019-10-16  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=203017
+        <rdar://problem/56262708>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html: Added.
+
 2019-10-16  Russell Epstein  <repstein@apple.com>
 
         Correct TestExpectations from r251119.

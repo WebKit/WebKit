@@ -743,6 +743,7 @@ enum {
     StatisticsDidResetToConsistentStateCallbackID,
     StatisticsDidSetBlockCookiesForHostCallbackID,
     StatisticsDidSetShouldDowngradeReferrerCallbackID,
+    StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
@@ -2206,6 +2207,23 @@ void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef com
 void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
 {
     callTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID);
+}
+
+void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef completionHandler)
+{
+    if (m_hasSetBlockThirdPartyCookiesCallback)
+        return;
+    
+    cacheTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID, completionHandler);
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("SetStatisticsShouldBlockThirdPartyCookies"));
+    WKRetainPtr<WKBooleanRef> messageBody = adoptWK(WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    m_hasSetBlockThirdPartyCookiesCallback = true;
+}
+
+void TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID);
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

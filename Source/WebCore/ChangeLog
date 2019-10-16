@@ -1,3 +1,31 @@
+2019-10-16  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=203017
+        <rdar://problem/56262708>
+
+        Reviewed by Alex Christensen.
+
+        NetworkStorageSession::shouldBlockCookies() now checks if the first-party website has
+        received user interaction and if not, blocks all third-party cookies, regardless of the
+        status of those third-party domains (prevalent or not).
+
+        Bundled cleanup task: Remove the two month old feature flag for NSURLSession switching.
+
+        Tests: http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html
+               http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIsITPSessionSwitchingEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::isITPSessionSwitchingEnabled const): Deleted.
+        * page/Settings.yaml:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::hasHadUserInteractionAsFirstParty const):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty):
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled):
+
 2019-10-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add style and text content to Display::Run

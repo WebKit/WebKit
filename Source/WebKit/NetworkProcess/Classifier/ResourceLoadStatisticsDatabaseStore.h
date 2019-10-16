@@ -155,6 +155,7 @@ private:
     void setUserInteraction(const RegistrableDomain&, bool hadUserInteraction, WallTime);
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
+    Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
 
     struct PrevalentDomainData {
         unsigned domainID;

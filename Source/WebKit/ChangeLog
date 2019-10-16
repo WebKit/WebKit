@@ -1,3 +1,71 @@
+2019-10-16  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=203017
+        <rdar://problem/56262708>
+
+        Reviewed by Alex Christensen.
+
+        This enhancement is off by default and controlled by an internal feature flag.
+
+        The functional change is in WebCore::NetworkStorageSession::shouldBlockCookies() which is
+        called from:
+        - NetworkDataTaskCocoa::NetworkDataTaskCocoa()
+        - NetworkDataTaskCocoa::willPerformHTTPRedirection
+
+        shouldBlockCookies() now checks if the first-party website has received user interaction
+        and if not, blocks all third-party cookies, regardless of the status of those third-party
+        domains (prevalent or not).
+
+        The changes to ResourceLoadStatisticsDatabaseStore and ResourceLoadStatisticsMemoryStore
+        are about communicating which domains have received user interaction (prevalent or not)
+        to the network storage session so that it can enforce the new restriction.
+
+        The C API change and piping through the WebsiteDataStore is test infrastructure.
+
+        Bundled cleanup task: Remove the two month old feature flag for NSURLSession switching.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::CompletionHandler<void):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::clear):
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToBlockCookiesFor::isolatedCopy const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setShouldBlockThirdPartyCookiesForTesting):
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::setResourceLoadStatisticsLogTestingEvent):
+        (WebKit::NetworkSession::shouldIsolateSessionsForPrevalentTopFrames const): Deleted.
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-10-16  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebsiteDataStoreStatisticsResetToConsistentState() should call store.setUseITPDatabase(false)

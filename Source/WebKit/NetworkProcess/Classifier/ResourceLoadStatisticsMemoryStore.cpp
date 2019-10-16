@@ -697,7 +697,7 @@ void ResourceLoadStatisticsMemoryStore::clear(CompletionHandler<void()>&& comple
     removeAllStorageAccess([callbackAggregator = callbackAggregator.copyRef()] { });
 
     auto registrableDomainsToBlockAndDeleteCookiesFor = ensurePrevalentResourcesForDebugMode();
-    RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { } };
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { }, { } };
     updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
@@ -735,21 +735,22 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
 
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor;
+    Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-        if (resourceStatistic.isPrevalentResource) {
-            if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long))
-                domainsToBlockButKeepCookiesFor.append(resourceStatistic.registrableDomain);
-            else
-                domainsToBlockAndDeleteCookiesFor.append(resourceStatistic.registrableDomain);
-        }
+        if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long)) {
+            if (resourceStatistic.isPrevalentResource)
+                domainsToBlockButKeepCookiesFor.append(resourceStatistic.registrableDomain.isolatedCopy());
+            domainsWithUserInteractionAsFirstParty.append(resourceStatistic.registrableDomain);
+        } else if (resourceStatistic.isPrevalentResource)
+            domainsToBlockAndDeleteCookiesFor.append(resourceStatistic.registrableDomain);
     }
 
-    if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && !debugModeEnabled()) {
+    if (domainsToBlockAndDeleteCookiesFor.isEmpty() && domainsToBlockButKeepCookiesFor.isEmpty() && domainsWithUserInteractionAsFirstParty.isEmpty() && !debugModeEnabled()) {
         completionHandler();
         return;
     }
 
-    RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor };
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { domainsToBlockAndDeleteCookiesFor, domainsToBlockButKeepCookiesFor, domainsWithUserInteractionAsFirstParty };
 
     if (debugLoggingEnabled() && !domainsToBlockAndDeleteCookiesFor.isEmpty() && !domainsToBlockButKeepCookiesFor.isEmpty())
         debugLogDomainsInBatches("block", domainsToBlock);

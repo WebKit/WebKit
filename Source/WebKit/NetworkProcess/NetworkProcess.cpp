@@ -1258,6 +1258,15 @@ void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, Completi
     });
     completionHandler();
 }
+
+void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkStorageSession = storageSession(sessionID))
+        networkStorageSession->setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled(enabled);
+    else
+        ASSERT_NOT_REACHED();
+    completionHandler();
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const

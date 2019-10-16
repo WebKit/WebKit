@@ -3555,6 +3555,14 @@ void TestController::setStatisticsShouldDowngradeReferrer(bool value)
     m_currentInvocation->didSetShouldDowngradeReferrer();
 }
 
+void TestController::setStatisticsShouldBlockThirdPartyCookies(bool value)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(TestController::websiteDataStore(), value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetShouldBlockThirdPartyCookies();
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     ResourceStatisticsCallbackContext context(*this);

@@ -869,8 +869,8 @@ webRTCEncryptionEnabled:
   initial: true
   inspectorOverride: true
 
-isITPSessionSwitchingEnabled:
-  initial: true
+isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled:
+  initial: false
 
 isLoggedInAPIEnabled:
   initial: false

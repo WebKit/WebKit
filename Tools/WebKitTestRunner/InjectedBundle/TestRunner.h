@@ -440,6 +440,8 @@ public:
     bool hasStatisticsIsolatedSession(JSStringRef hostName);
     void setStatisticsShouldDowngradeReferrer(bool, JSValueRef callback);
     void statisticsCallDidSetShouldDowngradeReferrerCallback();
+    void setStatisticsShouldBlockThirdPartyCookies(bool, JSValueRef callback);
+    void statisticsCallDidSetShouldBlockThirdPartyCookiesCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();
 
@@ -573,6 +575,7 @@ private:
     bool m_userStyleSheetEnabled { false };
     bool m_dumpAllHTTPRedirectedResponseHeaders { false };
     bool m_hasSetDowngradeReferrerCallback { false };
+    bool m_hasSetBlockThirdPartyCookiesCallback { false };
 };
 
 } // namespace WTR
