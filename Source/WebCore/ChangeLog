@@ -1,3 +1,35 @@
+2019-10-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix various vertical alignment issues.
+        https://bugs.webkit.org/show_bug.cgi?id=203041
+
+        Reviewed by Antti Koivisto.
+
+        This patch fixes both regular inline box and inline-block baseline aligment. It also addresses a few related vertical positioning issues. 
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::alignContentVertically):
+        (WebCore::Layout::Line::appendInlineContainerStart):
+        (WebCore::Layout::Line::appendInlineContainerEnd):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendHardLineBreak):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        * layout/inlineformatting/InlineLine.h:
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::resetDescent):
+        (WebCore::Layout::LineBox::setLogicalHeightIfGreater):
+        (WebCore::Layout::LineBox::setBaselineOffsetIfGreater):
+        (WebCore::Layout::LineBox::setAscentIfGreater):
+        (WebCore::Layout::LineBox::setDescentIfGreater):
+        (WebCore::Layout::LineBox::resetBaseline):
+        (WebCore::Layout::LineBox::setBaseline): Deleted.
+        (WebCore::Layout::LineBox::baseline): Deleted.
+        (WebCore::Layout::LineBox::setBaselineOffset): Deleted.
+        (WebCore::Layout::LineBox::Baseline::setAscentIfGreater): Deleted.
+        (WebCore::Layout::LineBox::Baseline::setDescentIfGreater): Deleted.
+
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
         Drop unused WKPageSetResourceCachingDisabled() SPI

@@ -129,7 +129,7 @@ private:
     void alignContentHorizontally();
     void alignContentVertically();
 
-    void adjustBaselineAndLineHeight(const InlineItem&, LayoutUnit runHeight);
+    void adjustBaselineAndLineHeight(const InlineItem&);
     LayoutUnit inlineItemContentHeight(const InlineItem&) const;
     bool isVisuallyEmpty() const;
 
