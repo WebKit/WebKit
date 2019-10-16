@@ -1,0 +1,5 @@
+framework module WebKit_Private [system] [extern_c] {
+  umbrella header "WebKitPrivate.h"
+  module * { export * }
+  export *
+}
