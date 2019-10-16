@@ -3405,4 +3405,4 @@ webkit.org/b/202516 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.pa
 webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.fontBoundingBox.html [ Failure ]
 webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-the-canvas/2d.text.measure.emHeights.html [ Failure ]
 
-webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ Failure ]
+webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
