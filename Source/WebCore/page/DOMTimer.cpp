@@ -169,13 +169,6 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
     , m_currentTimerInterval(intervalClampedToMinimum())
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
-    RefPtr<DOMTimer> reference = adoptRef(this);
-
-    // Keep asking for the next id until we're given one that we don't already have.
-    do {
-        m_timeoutId = context.circularSequentialID();
-    } while (!context.addTimeout(m_timeoutId, *this));
-
     if (singleShot)
         startOneShot(m_currentTimerInterval);
     else
@@ -186,22 +179,25 @@ DOMTimer::~DOMTimer() = default;
 
 int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool singleShot)
 {
-    // DOMTimer constructor passes ownership of the initial ref on the object to the constructor.
-    // This reference will be released automatically when a one-shot timer fires, when the context
-    // is destroyed, or if explicitly cancelled by removeById. 
-    DOMTimer* timer = new DOMTimer(context, WTFMove(action), timeout, singleShot);
+    Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, singleShot));
     timer->suspendIfNeeded();
+
+    // Keep asking for the next id until we're given one that we don't already have.
+    do {
+        timer->m_timeoutId = context.circularSequentialID();
+    } while (!context.addTimeout(timer->m_timeoutId, timer.get()));
+
     InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
 
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
-        nestedTimers->add(timer->m_timeoutId, *timer);
+        nestedTimers->add(timer->m_timeoutId, timer.get());
 #if PLATFORM(IOS_FAMILY)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
-        document.contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
+        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, singleShot);
         if (DeferDOMTimersForScope::isDeferring())
-            document.domTimerHoldingTank().add(*timer);
+            document.domTimerHoldingTank().add(timer.get());
     }
 #endif
     return timer->m_timeoutId;
@@ -287,7 +283,7 @@ void DOMTimer::fired()
     // Retain this - if the timer is cancelled while this function is on the stack (implicitly and always
     // for one-shot timers, or if removeById is called on itself from within an interval timer fire) then
     // wait unit the end of this function to delete DOMTimer.
-    RefPtr<DOMTimer> reference = this;
+    Ref<DOMTimer> protectedThis(*this);
 
     ASSERT(scriptExecutionContext());
     ScriptExecutionContext& context = *scriptExecutionContext();
