@@ -56,7 +56,7 @@ protected:
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;
 
-    void updateMainFramePinState();
+    void updateMainFramePinAndRubberbandState();
 
     unsigned exposedUnfilledArea() const;
 

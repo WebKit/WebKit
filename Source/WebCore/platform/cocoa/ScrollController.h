@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollController_h
-#define ScrollController_h
+#pragma once
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
 
@@ -53,13 +52,13 @@ protected:
 
 public:
 #if ENABLE(RUBBER_BANDING)
-    virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) = 0;
-    virtual bool allowsVerticalStretching(const PlatformWheelEvent&) = 0;
-    virtual IntSize stretchAmount() = 0;
-    virtual bool pinnedInDirection(const FloatSize&) = 0;
-    virtual bool canScrollHorizontally() = 0;
-    virtual bool canScrollVertically() = 0;
-    virtual bool shouldRubberBandInDirection(ScrollDirection) = 0;
+    virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
+    virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
+    virtual IntSize stretchAmount() const = 0;
+    virtual bool pinnedInDirection(const FloatSize&) const = 0;
+    virtual bool canScrollHorizontally() const = 0;
+    virtual bool canScrollVertically() const = 0;
+    virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
     // FIXME: use ScrollClamping to collapse these to one.
     virtual void immediateScrollBy(const FloatSize&) = 0;
@@ -212,5 +211,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(RUBBER_BANDING)
-
-#endif // ScrollController_h

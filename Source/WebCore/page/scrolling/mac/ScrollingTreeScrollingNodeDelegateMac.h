@@ -64,16 +64,16 @@ public:
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 
 private:
-    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
+    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis) const;
 
     // ScrollControllerClient.
-    bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
-    bool allowsVerticalStretching(const PlatformWheelEvent&) override;
-    IntSize stretchAmount() override;
-    bool pinnedInDirection(const FloatSize&) override;
-    bool canScrollHorizontally() override;
-    bool canScrollVertically() override;
-    bool shouldRubberBandInDirection(ScrollDirection) override;
+    bool allowsHorizontalStretching(const PlatformWheelEvent&) const override;
+    bool allowsVerticalStretching(const PlatformWheelEvent&) const override;
+    IntSize stretchAmount() const override;
+    bool pinnedInDirection(const FloatSize&) const override;
+    bool canScrollHorizontally() const override;
+    bool canScrollVertically() const override;
+    bool shouldRubberBandInDirection(ScrollDirection) const override;
     void immediateScrollBy(const FloatSize&) override;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
     void stopSnapRubberbandTimer() override;

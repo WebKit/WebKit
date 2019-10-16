@@ -1,5 +1,68 @@
 2019-10-15  Simon Fraser  <simon.fraser@apple.com>
 
+        ScrollingTreeScrollingNodeDelegateMac::stretchAmount() should not have side effects
+        https://bugs.webkit.org/show_bug.cgi?id=203009
+
+        Reviewed by Dean Jackson.
+
+        Calling ScrollingTreeScrollingNodeDelegateMac::stretchAmount() had the side effect of calling
+        setMainFrameIsRubberBanding() on the scrolling tree.
+        
+        Remove this badness and replace it by modifying updateMainFramePinState() (which is called every time
+        the scroll position changes) to also compute if we're rubber-banding.
+        
+        Also make a bunch of methods on ScrollControllerClient const, which makes it clear that
+        they don't have side effects.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stretchAmount const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollVertically const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stretchAmount): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollVertically): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection): Deleted.
+        * platform/cocoa/ScrollController.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::shouldForwardWheelEventsToParent const):
+        (WebCore::ScrollAnimatorMac::pinnedInDirection const):
+        (WebCore::ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture const):
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching const):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching const):
+        (WebCore::ScrollAnimatorMac::stretchAmount const):
+        (WebCore::ScrollAnimatorMac::canScrollHorizontally const):
+        (WebCore::ScrollAnimatorMac::canScrollVertically const):
+        (WebCore::ScrollAnimatorMac::shouldRubberBandInDirection const):
+        (WebCore::ScrollAnimatorMac::shouldForwardWheelEventsToParent): Deleted.
+        (WebCore::ScrollAnimatorMac::pinnedInDirection): Deleted.
+        (WebCore::ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture): Deleted.
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching): Deleted.
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching): Deleted.
+        (WebCore::ScrollAnimatorMac::stretchAmount): Deleted.
+        (WebCore::ScrollAnimatorMac::canScrollHorizontally): Deleted.
+        (WebCore::ScrollAnimatorMac::canScrollVertically): Deleted.
+        (WebCore::ScrollAnimatorMac::shouldRubberBandInDirection): Deleted.
+        * platform/mock/ScrollAnimatorMock.h:
+
+2019-10-15  Simon Fraser  <simon.fraser@apple.com>
+
         WheelEventTestMonitor doesn't need to be threadsafe
         https://bugs.webkit.org/show_bug.cgi?id=203012
 

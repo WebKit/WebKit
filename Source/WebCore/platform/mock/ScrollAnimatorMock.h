@@ -45,13 +45,13 @@ public:
 private:
 
 #if ENABLE(RUBBER_BANDING)
-    bool allowsHorizontalStretching(const PlatformWheelEvent&) override { return false; }
-    bool allowsVerticalStretching(const PlatformWheelEvent&) override { return false; }
-    IntSize stretchAmount() override { return IntSize(); }
-    bool pinnedInDirection(const FloatSize&) override { return false; }
-    bool canScrollHorizontally() override { return false; }
-    bool canScrollVertically() override { return false; }
-    bool shouldRubberBandInDirection(ScrollDirection) override { return false; }
+    bool allowsHorizontalStretching(const PlatformWheelEvent&) const override { return false; }
+    bool allowsVerticalStretching(const PlatformWheelEvent&) const override { return false; }
+    IntSize stretchAmount() const override { return IntSize(); }
+    bool pinnedInDirection(const FloatSize&) const override { return false; }
+    bool canScrollHorizontally() const override { return false; }
+    bool canScrollVertically() const override { return false; }
+    bool shouldRubberBandInDirection(ScrollDirection) const override { return false; }
     void immediateScrollBy(const FloatSize&) override { }
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override { }
     void adjustScrollPositionToBoundsIfNecessary() override { }

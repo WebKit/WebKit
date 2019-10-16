@@ -1179,7 +1179,7 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 
 #if ENABLE(RUBBER_BANDING)
 
-bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEvent& wheelEvent) const
 {
     if (std::abs(wheelEvent.deltaY()) >= std::abs(wheelEvent.deltaX()))
         return !allowsVerticalStretching(wheelEvent);
@@ -1213,7 +1213,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     return didHandleEvent;
 }
 
-bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction)
+bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction) const
 {
     FloatSize limitDelta;
     if (fabsf(direction.height()) >= fabsf(direction.width())) {
@@ -1246,7 +1246,7 @@ static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
     return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
 }
 
-bool ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis)
+bool ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
 {
     switch (axis) {
     case ScrollEventAxis::Vertical:
@@ -1272,7 +1272,7 @@ static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, const V
 }
 #endif
 
-bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (m_scrollableArea.verticalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
@@ -1296,7 +1296,7 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
     return false;
 }
 
-bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (m_scrollableArea.horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
@@ -1320,12 +1320,12 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
     return false;
 }
 
-IntSize ScrollAnimatorMac::stretchAmount()
+IntSize ScrollAnimatorMac::stretchAmount() const
 {
     return m_scrollableArea.overhangAmount();
 }
 
-bool ScrollAnimatorMac::canScrollHorizontally()
+bool ScrollAnimatorMac::canScrollHorizontally() const
 {
     Scrollbar* scrollbar = m_scrollableArea.horizontalScrollbar();
     if (!scrollbar)
@@ -1333,7 +1333,7 @@ bool ScrollAnimatorMac::canScrollHorizontally()
     return scrollbar->enabled();
 }
 
-bool ScrollAnimatorMac::canScrollVertically()
+bool ScrollAnimatorMac::canScrollVertically() const
 {
     Scrollbar* scrollbar = m_scrollableArea.verticalScrollbar();
     if (!scrollbar)
@@ -1341,7 +1341,7 @@ bool ScrollAnimatorMac::canScrollVertically()
     return scrollbar->enabled();
 }
 
-bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection)
+bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection) const
 {
     return false;
 }

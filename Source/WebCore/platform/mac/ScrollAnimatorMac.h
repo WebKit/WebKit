@@ -84,7 +84,7 @@ private:
     void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
 
 #if ENABLE(RUBBER_BANDING)
-    bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&);
+    bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
     bool handleWheelEvent(const PlatformWheelEvent&) override;
 #endif
 
@@ -140,18 +140,18 @@ private:
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollControllerClient member functions.
-    IntSize stretchAmount() override;
-    bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
-    bool allowsVerticalStretching(const PlatformWheelEvent&) override;
-    bool pinnedInDirection(const FloatSize&) override;
-    bool canScrollHorizontally() override;
-    bool canScrollVertically() override;
-    bool shouldRubberBandInDirection(ScrollDirection) override;
+    IntSize stretchAmount() const override;
+    bool allowsHorizontalStretching(const PlatformWheelEvent&) const override;
+    bool allowsVerticalStretching(const PlatformWheelEvent&) const override;
+    bool pinnedInDirection(const FloatSize&) const override;
+    bool canScrollHorizontally() const override;
+    bool canScrollVertically() const override;
+    bool shouldRubberBandInDirection(ScrollDirection) const override;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
     void immediateScrollBy(const FloatSize&) override;
     void adjustScrollPositionToBoundsIfNecessary() override;
 
-    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
+    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis) const;
 #endif
 
     bool m_haveScrolledSincePageLoad;

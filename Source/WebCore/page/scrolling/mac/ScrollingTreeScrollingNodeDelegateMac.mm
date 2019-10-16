@@ -113,7 +113,7 @@ static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
     return wheelEvent.phase() == PlatformWheelEventPhaseMayBegin || wheelEvent.phase() == PlatformWheelEventPhaseBegan;
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis)
+bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
 {
     auto scrollPosition = currentScrollPosition();
     switch (axis) {
@@ -127,7 +127,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(
     return false;
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent)
+bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
@@ -145,7 +145,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     return false;
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent)
+bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (verticalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
@@ -163,7 +163,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     return false;
 }
 
-IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount()
+IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount() const
 {
     IntSize stretch;
     auto scrollPosition = currentScrollPosition();
@@ -178,18 +178,10 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount()
     else if (scrollPosition.x() > maximumScrollPosition().x())
         stretch.setWidth(scrollPosition.x() - maximumScrollPosition().x());
 
-    // FIXME: calling this function should not have these side-effects.
-    if (scrollingNode().isRootNode()) {
-        if (stretch.isZero())
-            scrollingTree().setMainFrameIsRubberBanding(false);
-        else
-            scrollingTree().setMainFrameIsRubberBanding(true);
-    }
-
     return stretch;
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& delta)
+bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& delta) const
 {
     FloatSize limitDelta;
     auto scrollPosition = currentScrollPosition();
@@ -218,17 +210,17 @@ bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& d
     return false;
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally()
+bool ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally() const
 {
     return hasEnabledHorizontalScrollbar();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::canScrollVertically()
+bool ScrollingTreeScrollingNodeDelegateMac::canScrollVertically() const
 {
     return hasEnabledVerticalScrollbar();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDirection)
+bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDirection) const
 {
     return true;
 }

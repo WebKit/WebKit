@@ -145,7 +145,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
         && (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize)))
-        updateMainFramePinState();
+        updateMainFramePinAndRubberbandState();
 }
 
 ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -180,7 +180,7 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged()
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << shouldUpdateScrollLayerPositionSynchronously());
 
     if (isRootNode())
-        updateMainFramePinState();
+        updateMainFramePinAndRubberbandState();
 
     if (shouldUpdateScrollLayerPositionSynchronously())
         scrollingTree().scrollingTreeNodeDidScroll(*this, ScrollingLayerPositionAction::Set);
@@ -256,7 +256,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
     return position;
 }
 
-void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState()
+void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState()
 {
     ASSERT(isRootNode());
 
@@ -267,6 +267,13 @@ void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState()
     bool pinnedToTheBottom = scrollPosition.y() >= maximumScrollPosition().y();
 
     scrollingTree().setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
+
+    bool rubberbanding = scrollPosition.x() < minimumScrollPosition().x()
+        || scrollPosition.x() > maximumScrollPosition().x()
+        || scrollPosition.y() < minimumScrollPosition().y()
+        || scrollPosition.y() > maximumScrollPosition().y();
+    
+    scrollingTree().setMainFrameIsRubberBanding(rubberbanding);
 }
 
 unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
