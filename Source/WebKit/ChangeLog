@@ -1,3 +1,30 @@
+2019-10-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebsiteDataStoreStatisticsResetToConsistentState() should call store.setUseITPDatabase(false)
+        https://bugs.webkit.org/show_bug.cgi?id=203020
+        <rdar://problem/56314484>
+
+        Reviewed by Chris Dumez.
+
+        The resourceLoadStatisticsStore should be reset between tests to use
+        a memory store, and any test that needs to use the database store
+        can use the setUseITPDatabase function.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setUseITPDatabase):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetUseITPDatabase):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setUseITPDatabase):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setUseITPDatabase):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Handle back/forward cache entry expiration in the UIProcess instead of the WebProcess
