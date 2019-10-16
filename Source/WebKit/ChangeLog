@@ -1,3 +1,14 @@
+2019-10-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Remove send-signal from mach-lookup rule
+        https://bugs.webkit.org/show_bug.cgi?id=201203
+
+        Reviewed by Brent Fulgham.
+
+        The send-signal can be removed, since crashes have not been reported from this rule.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-16  Dean Jackson  <dino@apple.com>
 
         Add Swift modulemap for WebKit Private APIs
