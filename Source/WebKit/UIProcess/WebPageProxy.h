@@ -1430,9 +1430,6 @@ public:
     void getWindowFrame(Messages::WebPageProxy::GetWindowFrame::DelayedReply&&);
     void getWindowFrameWithCallback(Function<void(WebCore::FloatRect)>&&);
 
-    bool isResourceCachingDisabled() const { return m_isResourceCachingDisabled; }
-    void setResourceCachingDisabled(bool);
-
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection);
 
@@ -2498,8 +2495,6 @@ private:
     Vector<CallbackID> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
-
-    bool m_isResourceCachingDisabled { false };
 
     bool m_hasHadSelectionChangesFromUserInteraction { false };
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };

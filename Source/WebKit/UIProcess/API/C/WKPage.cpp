@@ -2870,16 +2870,6 @@ void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKP
     });
 }
 
-bool WKPageGetResourceCachingDisabled(WKPageRef page)
-{
-    return toImpl(page)->isResourceCachingDisabled();
-}
-
-void WKPageSetResourceCachingDisabled(WKPageRef page, bool disabled)
-{
-    toImpl(page)->setResourceCachingDisabled(disabled);
-}
-
 void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits)
 {
 #if PLATFORM(IOS_FAMILY)

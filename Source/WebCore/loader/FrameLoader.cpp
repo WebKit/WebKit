@@ -2414,7 +2414,7 @@ FrameLoadType FrameLoader::loadType() const
 CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
 {
     if (Page* page = m_frame.page()) {
-        if (page->isResourceCachingDisabled())
+        if (page->isResourceCachingDisabledByWebInspector())
             return CachePolicyReload;
     }
 
@@ -2955,7 +2955,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     Page* page = frame().page();
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
 
-    if (page && page->isResourceCachingDisabled()) {
+    if (page && page->isResourceCachingDisabledByWebInspector()) {
         request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         loadType = FrameLoadType::ReloadFromOrigin;
     } else if (!hasSpecificCachePolicy)

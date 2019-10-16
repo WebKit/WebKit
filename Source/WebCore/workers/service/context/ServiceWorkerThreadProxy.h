@@ -88,7 +88,7 @@ private:
 
     // WorkerDebuggerProxy
     void postMessageToDebugger(const String&) final;
-    void setResourceCachingDisabled(bool) final;
+    void setResourceCachingDisabledByWebInspector(bool) final;
 
     UniqueRef<Page> m_page;
     Ref<Document> m_document;

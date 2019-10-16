@@ -61,7 +61,7 @@ Vector<WebSocket*> WorkerNetworkAgent::activeWebSockets(const LockHolder&)
 
 void WorkerNetworkAgent::setResourceCachingDisabled(bool disabled)
 {
-    m_workerGlobalScope.thread().workerDebuggerProxy().setResourceCachingDisabled(disabled);
+    m_workerGlobalScope.thread().workerDebuggerProxy().setResourceCachingDisabledByWebInspector(disabled);
 }
 
 ScriptExecutionContext* WorkerNetworkAgent::scriptExecutionContext(ErrorString&, const String&)

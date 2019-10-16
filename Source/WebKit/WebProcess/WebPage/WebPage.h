@@ -1580,7 +1580,6 @@ private:
     void didEndRequestInstallMissingMediaPlugins(uint32_t result);
 #endif
 
-    void setResourceCachingDisabled(bool);
     void setUserInterfaceLayoutDirection(uint32_t);
 
     bool canPluginHandleResponse(const WebCore::ResourceResponse&);

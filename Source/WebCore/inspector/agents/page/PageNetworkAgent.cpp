@@ -97,7 +97,7 @@ Vector<WebSocket*> PageNetworkAgent::activeWebSockets(const LockHolder& lock)
 
 void PageNetworkAgent::setResourceCachingDisabled(bool disabled)
 {
-    m_inspectedPage.setResourceCachingDisabledOverride(disabled);
+    m_inspectedPage.setResourceCachingDisabledByWebInspector(disabled);
 }
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(ErrorString& errorString, const String& frameId)

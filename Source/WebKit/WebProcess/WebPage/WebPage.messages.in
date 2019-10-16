@@ -523,8 +523,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndRequestInstallMissingMediaPlugins(uint32_t result)
 #endif
 
-    SetResourceCachingDisabled(bool disabled)
-
     SetUserInterfaceLayoutDirection(uint32_t direction)
 
     DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier, WebKit::OptionalCallbackID newCallbackID)

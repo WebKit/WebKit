@@ -7104,7 +7104,7 @@ const MediaResourceLoader* HTMLMediaElement::lastMediaResourceLoaderForTesting()
 bool HTMLMediaElement::mediaPlayerShouldUsePersistentCache() const
 {
     if (Page* page = document().page())
-        return !page->usesEphemeralSession() && !page->isResourceCachingDisabled();
+        return !page->usesEphemeralSession() && !page->isResourceCachingDisabledByWebInspector();
 
     return false;
 }

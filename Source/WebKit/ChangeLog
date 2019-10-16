@@ -1,3 +1,23 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused WKPageSetResourceCachingDisabled() SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203035
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetResourceCachingDisabled): Deleted.
+        (WKPageSetResourceCachingDisabled): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setResourceCachingDisabled): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isResourceCachingDisabled const): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResourceCachingDisabled): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal macOS 10.13 and 10.14 builds after r251171

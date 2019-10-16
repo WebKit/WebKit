@@ -173,12 +173,12 @@ void WorkerMessagingProxy::postMessageToDebugger(const String& message)
     });
 }
 
-void WorkerMessagingProxy::setResourceCachingDisabled(bool disabled)
+void WorkerMessagingProxy::setResourceCachingDisabledByWebInspector(bool disabled)
 {
     postTaskToLoader([disabled] (ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         if (auto* page = downcast<Document>(context).page())
-            page->setResourceCachingDisabled(disabled);
+            page->setResourceCachingDisabledByWebInspector(disabled);
     });
 }
 

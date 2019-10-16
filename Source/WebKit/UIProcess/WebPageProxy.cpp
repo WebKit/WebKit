@@ -8685,19 +8685,6 @@ void WebPageProxy::finishedLoadingIcon(CallbackID callbackID, const IPC::DataRef
     dataCallback(data, callbackID);
 }
 
-void WebPageProxy::setResourceCachingDisabled(bool disabled)
-{
-    if (m_isResourceCachingDisabled == disabled)
-        return;
-
-    m_isResourceCachingDisabled = disabled;
-
-    if (!hasRunningProcess())
-        return;
-
-    m_process->send(Messages::WebPage::SetResourceCachingDisabled(disabled), m_webPageID);
-}
-
 WebCore::UserInterfaceLayoutDirection WebPageProxy::userInterfaceLayoutDirection()
 {
     return pageClient().userInterfaceLayoutDirection();

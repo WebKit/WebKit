@@ -1350,7 +1350,7 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
         return frame->loader().subresourceCachePolicy(url);
 
     if (Page* page = frame->page()) {
-        if (page->isResourceCachingDisabled())
+        if (page->isResourceCachingDisabledByWebInspector())
             return CachePolicyReload;
     }
 

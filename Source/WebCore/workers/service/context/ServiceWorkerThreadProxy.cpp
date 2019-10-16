@@ -147,11 +147,11 @@ void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
     });
 }
 
-void ServiceWorkerThreadProxy::setResourceCachingDisabled(bool disabled)
+void ServiceWorkerThreadProxy::setResourceCachingDisabledByWebInspector(bool disabled)
 {
     postTaskToLoader([this, protectedThis = makeRef(*this), disabled] (ScriptExecutionContext&) {
         ASSERT(isMainThread());
-        m_page->setResourceCachingDisabled(disabled);
+        m_page->setResourceCachingDisabledByWebInspector(disabled);
     });   
 }
 
