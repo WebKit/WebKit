@@ -1,3 +1,14 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Move back/forward cache entry expiration from the WebProcess to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=203034
+        <rdar://problem/56332453>
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-10-15  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Simplify main thread initialization

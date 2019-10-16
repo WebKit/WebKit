@@ -1,3 +1,19 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Handle back/forward cache entry expiration in the UIProcess instead of the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=203034
+        <rdar://problem/56332453>
+
+        Reviewed by Antti Koivisto.
+
+        Use Seconds type for backForwardCacheExpirationInterval setting instead of
+        double, for clarity.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::hasExpired const):
+        * page/Settings.yaml:
+
 2019-10-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix various vertical alignment issues.

@@ -28,6 +28,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -49,10 +50,13 @@ public:
     WebProcessProxy& process() const;
 
 private:
+    void expirationTimerFired();
+
     WebBackForwardCache& m_backForwardCache;
     WebCore::ProcessIdentifier m_processIdentifier;
     WebCore::BackForwardItemIdentifier m_backForwardItemID;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
+    RunLoop::Timer<WebBackForwardCacheEntry> m_expirationTimer;
 };
 
 } // namespace WebKit

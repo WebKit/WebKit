@@ -55,7 +55,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedPageCounter, ("Cached
 
 CachedPage::CachedPage(Page& page)
     : m_page(page)
-    , m_expirationTime(MonotonicTime::now() + Seconds(page.settings().backForwardCacheExpirationInterval()))
+    , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(makeUnique<CachedFrame>(page.mainFrame()))
 {
 #ifndef NDEBUG

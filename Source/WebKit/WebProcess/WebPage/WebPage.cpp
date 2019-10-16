@@ -521,6 +521,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setScrollingCoordinatorEnabled(m_useAsyncScrolling);
 #endif
 
+    // Disable Back/Forward cache expiration in the WebContent process since management happens in the UIProcess
+    // in modern WebKit.
+    m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
+
     m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
     m_drawingArea->updatePreferences(parameters.store);
 

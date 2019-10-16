@@ -422,8 +422,8 @@ logsPageMessagesToSystemConsoleEnabled:
   initial: false
 
 backForwardCacheExpirationInterval:
-  type: double
-  initial: 1800
+  type: Seconds
+  initial: 30_min
 
 # Some apps could have a default video poster if it is not set.
 defaultVideoPosterURL:

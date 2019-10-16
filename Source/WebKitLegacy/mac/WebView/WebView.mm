@@ -2913,7 +2913,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings.setUsesPageCache([self usesPageCache]);
     settings.setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
-    settings.setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
+    settings.setBackForwardCacheExpirationInterval(Seconds { [preferences _backForwardCacheExpirationInterval] });
 
     settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
     settings.setJavaScriptRuntimeFlags(JSC::RuntimeFlags([preferences javaScriptRuntimeFlags]));
