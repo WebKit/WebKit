@@ -589,8 +589,6 @@ void WebProcessPool::applicationIsAboutToSuspend()
     RELEASE_LOG(ProcessSuspension, "WebProcessPool::applicationIsAboutToSuspend() Terminating non-critical processes");
 
     m_backForwardCache->pruneToSize(1);
-    if (m_prewarmedProcess)
-        m_prewarmedProcess->shutDown();
     m_webProcessCache->clear();
 }
 

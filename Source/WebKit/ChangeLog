@@ -1,5 +1,19 @@
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] Stop terminating the prewarmed process on application suspension
+        https://bugs.webkit.org/show_bug.cgi?id=203033
+
+        Reviewed by Alex Christensen.
+
+        Stop terminating the prewarmed process on application suspension. Having no prewarmed process when the
+        application resumes means the next cross-site load will be significantly slower. If the system needs
+        memory, this process can be jetsammed.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::applicationIsAboutToSuspend):
+
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
         Drop unused WKPageSetResourceCachingDisabled() SPI
         https://bugs.webkit.org/show_bug.cgi?id=203035
 
