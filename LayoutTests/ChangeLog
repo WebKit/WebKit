@@ -1,3 +1,15 @@
+2019-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (~244100) [Mac WK2 Debug] Layout Test http/tests/resourceLoadStatistics/prune-statistics.html is a flaky failure (197285)
+        https://bugs.webkit.org/show_bug.cgi?id=197285
+        <rdar://problem/50208370>
+
+        Reviewed by Chris Dumez.
+
+        Remove a "skipped" expectation for a previously flaky test that should 
+        be fixed by this patch.
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         editing/async-clipboard/clipboard-item-basic.html is a flaky failure on macOS and iOS

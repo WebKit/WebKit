@@ -1,3 +1,19 @@
+2019-10-15  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (~244100) [Mac WK2 Debug] Layout Test http/tests/resourceLoadStatistics/prune-statistics.html is a flaky failure (197285)
+        https://bugs.webkit.org/show_bug.cgi?id=197285
+        <rdar://problem/50208370>
+
+        Reviewed by Chris Dumez.
+
+        This patch fixes a flaky failure which was being caused by other
+        resourceLoadStatistics tests scheduling processing checks which
+        were called during execution of prune-statistics.html.
+        Now, any pending processing checks are cancelled between tests.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+
 2019-10-15  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Maintain the last Back/Forward cache entry when the application gets suspended

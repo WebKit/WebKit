@@ -898,6 +898,8 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
                     RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent After being cleared, m_statisticsStore is null when trying to grandfather data.");
             }
         });
+        
+        m_statisticsStore->cancelPendingStatisticsProcessingRequest();
     });
 }
 
