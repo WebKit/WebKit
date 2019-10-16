@@ -1,3 +1,17 @@
+2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove an API test workaround that is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=203037
+
+        Reviewed by Tim Horton.
+
+        This worked around <rdar://problem/51510554> by avoiding codepaths that resulted in failure to read dropped
+        content from NSItemProviders on iOS. <rdar://problem/51510554> is fixed in iOS 13, so we can remove this hack.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+        (applyWorkaroundToAllowWritingAttributedStringsToItemProviders): Deleted.
+
 2019-10-16  Pablo Saavedra  <psaavedra@igalia.com>
 
         [Tools] Add a driver for cog for benchmark_runner.py
