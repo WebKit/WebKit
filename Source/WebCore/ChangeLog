@@ -1,3 +1,16 @@
+2019-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] ASSERTION FAILED: blob in SQLiteStatement.cpp(163) : int WebCore::SQLiteStatement::bindBlob()
+        https://bugs.webkit.org/show_bug.cgi?id=202976
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is because IconDatabases passes a nullptr blob to store emtpty icons. sqlite3_bind_blob() allows nullptr as
+        blob, so we shouldn't assert.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindBlob): Update the assert to only fail when blob is nullptr and size > 0.
+
 2019-10-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for Windows ports

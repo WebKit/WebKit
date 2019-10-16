@@ -160,7 +160,7 @@ int SQLiteStatement::bindBlob(int index, const void* blob, int size)
     ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
-    ASSERT(blob);
+    ASSERT(blob || !size);
     ASSERT(size >= 0);
 
     if (!m_statement)
