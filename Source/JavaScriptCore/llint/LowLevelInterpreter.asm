@@ -958,6 +958,12 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, dispatch, callee, callP
         call callee, callPtrTag
     end
 
+    if ARMv7
+        # Only required in ARMv7 since only here defineOSRExitReturnLabel
+        # inserts the global label words
+        restoreStackPointerAfterCall()
+        dispatchAfterCall(size, opcodeStruct, dispatch)
+    end
     defineOSRExitReturnLabel(opcodeName, size)
     restoreStackPointerAfterCall()
     dispatchAfterCall(size, opcodeStruct, dispatch)

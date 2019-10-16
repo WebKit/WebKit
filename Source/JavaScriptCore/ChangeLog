@@ -1,3 +1,19 @@
+2019-10-16  Paulo Matos  <pmatos@igalia.com> and Caio Lima  <ticaiolima@gmail.com>
+
+        Invalid instruction generated for ARM_THUMB2 in llint
+        https://bugs.webkit.org/show_bug.cgi?id=202844
+
+        Reviewed by Saam Barati.
+
+        Do not allow instruction execution to reach OSR return label on ARMv7.
+        Currently we are seeing the instruction execution hitting a .word directive in
+        the instruction stream and segfaulting. There are two words used to represent a
+        global label which was generated as part of the work on OSR Exit to LLInt work
+        (r250806). The double word generation only occurs in ARMv7 and therefore only here
+        the segfault manifests itself.
+
+        * llint/LowLevelInterpreter.asm:
+
 2019-10-16  Paulo Matos  <pmatos@linki.tools>
 
         Fix GCC warning on MIPS about dead variable metadata
