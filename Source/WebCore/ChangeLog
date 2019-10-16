@@ -1,3 +1,27 @@
+2019-10-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add style and text content to Display::Run
+        https://bugs.webkit.org/show_bug.cgi?id=203045
+        <rdar://problem/56340105>
+
+        Reviewed by Antti Koivisto.
+
+        Painting Display::Runs requires style and text content. Currently there's no mapping structure to connect Display::Runs to Display::Boxes to access style and content.
+
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::content const):
+        (WebCore::Display::Run::style const):
+        (WebCore::Display::Run::Run):
+        (WebCore::Display::Run::TextContext::TextContext):
+        (WebCore::Display::Run::TextContext::expand):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendHardLineBreak):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::expand):
+
 2019-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add dumping for BorderData and StyleBackgroundData
@@ -68,7 +92,8 @@
         (WebCore::Layout::LineBox::setAscentIfGreater):
         (WebCore::Layout::LineBox::setDescentIfGreater):
         (WebCore::Layout::LineBox::resetBaseline):
-        (WebCore::Layout::LineBox::setBaseline): Deleted.
+        (WebCore::
+        Layout::LineBox::setBaseline): Deleted.
         (WebCore::Layout::LineBox::baseline): Deleted.
         (WebCore::Layout::LineBox::setBaselineOffset): Deleted.
         (WebCore::Layout::LineBox::Baseline::setAscentIfGreater): Deleted.

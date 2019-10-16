@@ -29,6 +29,7 @@
 
 #include "DisplayRect.h"
 #include "LayoutUnit.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 namespace Display {
@@ -38,22 +39,23 @@ struct Run {
     struct TextContext {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContext(unsigned position, unsigned length);
+        TextContext(unsigned position, unsigned length, String content);
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
         unsigned length() const { return m_length; }
+        String content() const { return m_content; }
 
-        void expand(unsigned length) { m_length += length; }
+        void expand(const TextContext& other);
 
     private:
         unsigned m_start;
         unsigned m_length;
+        // FIXME: This is temporary. We should have some mapping setup to identify associated text content instead.
+        String m_content;
     };
 
-    Run(Rect logicalRect);
-    Run(Rect logicalRect, TextContext);
-    Run(const Run&);
+    Run(const RenderStyle&, Rect logicalRect, Optional<TextContext> = WTF::nullopt);
 
     const Rect& logicalRect() const { return m_logicalRect; }
 
@@ -79,32 +81,33 @@ struct Run {
     Optional<TextContext>& textContext() { return m_textContext; }
     Optional<TextContext> textContext() const { return m_textContext; }
 
+    const RenderStyle& style() const { return m_style; }
+
 private:
+    // FIXME: Find out the Display::Run <-> paint style setup.
+    const RenderStyle& m_style;
     Rect m_logicalRect;
     Optional<TextContext> m_textContext;
 };
 
-inline Run::Run(Rect logicalRect)
-    : m_logicalRect(logicalRect)
-{
-}
-
-inline Run::Run(Rect logicalRect, TextContext textContext)
-    : m_logicalRect(logicalRect)
+inline Run::Run(const RenderStyle& style, Rect logicalRect, Optional<TextContext> textContext)
+    : m_style(style)
+    , m_logicalRect(logicalRect)
     , m_textContext(textContext)
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length)
+inline Run::TextContext::TextContext(unsigned start, unsigned length, String content)
     : m_start(start)
     , m_length(length)
+    , m_content(content)
 {
 }
 
-inline Run::Run(const Run& other)
+inline void Run::TextContext::expand(const TextContext& other)
 {
-    m_logicalRect = other.m_logicalRect;
-    m_textContext = other.m_textContext;
+    m_content.append(other.content());
+    m_length += other.length();
 }
 
 }

@@ -299,7 +299,7 @@ void Line::append(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::Rect& logicalRect)
 {
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
     m_lineBox.expandHorizontally(logicalRect.width());
 }
 
@@ -359,7 +359,10 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
-    auto lineItem = makeUnique<Run>(inlineItem, Display::Run { logicalRect, Display::Run::TextContext { inlineItem.start(), inlineItem.isCollapsed() ? 1 : inlineItem.length() } });
+    auto contentStart = inlineItem.start();
+    auto contentLength = inlineItem.isCollapsed() ? 1 : inlineItem.length();
+    auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
+    auto lineItem = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
     auto isVisuallyEmpty = willCollapseCompletely();
     if (isVisuallyEmpty)
         lineItem->setVisuallyIsEmpty();
@@ -386,7 +389,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
         logicalRect.setHeight(runHeight);
     }
 
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
     m_trimmableContent.clear();
 }
@@ -406,7 +409,7 @@ void Line::appendHardLineBreak(const InlineItem& inlineItem)
         adjustBaselineAndLineHeight(inlineItem);
         logicalRect.setHeight(logicalHeight());
     }
-    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { logicalRect }));
+    m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
 }
 
 void Line::adjustBaselineAndLineHeight(const InlineItem& inlineItem)

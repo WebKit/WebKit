@@ -154,7 +154,7 @@ inline void Line::Run::expand(const Run& other)
 
     auto& otherDisplayRun = other.displayRun();
     m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
-    m_displayRun.textContext()->expand(otherDisplayRun.textContext()->length());
+    m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
 }
 
 }
