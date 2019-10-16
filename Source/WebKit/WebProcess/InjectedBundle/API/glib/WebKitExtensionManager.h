@@ -42,6 +42,8 @@ public:
 
     __attribute__((visibility("default"))) void initialize(InjectedBundle*, API::Object*);
 
+    WebKitWebExtension* extension() const { return m_extension.get(); }
+
 private:
     WebKitExtensionManager();
 

@@ -47,10 +47,12 @@
 #include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
+#include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebProcessMessages.h"
 #include "WebURLSchemeHandler.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
@@ -123,6 +125,7 @@ enum {
     INITIALIZE_WEB_EXTENSIONS,
     INITIALIZE_NOTIFICATION_PERMISSIONS,
     AUTOMATION_STARTED,
+    USER_MESSAGE_RECEIVED,
 
     LAST_SIGNAL
 };
@@ -372,6 +375,12 @@ static void webkitWebContextConstructed(GObject* object)
 
     priv->processPool = WebProcessPool::create(configuration);
     priv->processPool->setPrimaryDataStore(webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()));
+    priv->processPool->setUserMessageHandler([webContext](UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler) {
+        // Sink the floating ref.
+        GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), WTFMove(completionHandler));
+        gboolean returnValue;
+        g_signal_emit(webContext, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
+    });
 
     webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
 
@@ -413,6 +422,11 @@ static void webkitWebContextDispose(GObject* object)
     if (priv->faviconDatabase) {
         webkitFaviconDatabaseClose(priv->faviconDatabase.get());
         priv->faviconDatabase = nullptr;
+    }
+
+    if (priv->processPool) {
+        priv->processPool->setUserMessageHandler(nullptr);
+        priv->processPool = nullptr;
     }
 
     G_OBJECT_CLASS(webkit_web_context_parent_class)->dispose(object);
@@ -574,6 +588,32 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_AUTOMATION_SESSION);
+
+    /**
+     * WebKitWebContext::user-message-received:
+     * @context: the #WebKitWebContext
+     * @message: the #WebKitUserMessage received
+     *
+     * This signal is emitted when a #WebKitUserMessage is received from a
+     * #WebKitWebExtension. You can reply to the message using
+     * webkit_user_message_send_reply().
+     *
+     * You can handle the user message asynchronously by calling g_object_ref() on
+     * @message and returning %TRUE.
+     *
+     * Returns: %TRUE if the message was handled, or %FALSE otherwise.
+     *
+     * Since: 2.28
+     */
+    signals[USER_MESSAGE_RECEIVED] = g_signal_new(
+        "user-message-received",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebContextClass, user_message_received),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_USER_MESSAGE);
 }
 
 static gpointer createDefaultWebContext(gpointer)
@@ -1678,6 +1718,27 @@ void webkit_web_context_initialize_notification_permissions(WebKitWebContext* co
         addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, bool>*>(userData), false);
     }, &map);
     context->priv->notificationProvider->setNotificationPermissions(WTFMove(map));
+}
+
+/**
+ * webkit_web_context_send_message_to_all_extensions:
+ * @context: the #WebKitWebContext
+ * @message: a #WebKitUserMessage
+ *
+ * Send @message to all #WebKitWebExtension<!-- -->s associated to @context.
+ * If @message is floating, it's consumed.
+ *
+ * Since: 2.28
+ */
+void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context, WebKitUserMessage* message)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(WEBKIT_IS_USER_MESSAGE(message));
+
+    // We sink the reference in case of being floating.
+    GRefPtr<WebKitUserMessage> adoptedMessage = message;
+    for (auto& process : context->priv->processPool->processes())
+        process->send(Messages::WebProcess::SendMessageToWebExtension(webkitUserMessageGetMessage(message)), 0);
 }
 
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)

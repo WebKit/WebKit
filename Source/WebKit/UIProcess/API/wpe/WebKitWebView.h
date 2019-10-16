@@ -46,6 +46,7 @@
 #include <wpe/WebKitSettings.h>
 #include <wpe/WebKitURIRequest.h>
 #include <wpe/WebKitUserContentManager.h>
+#include <wpe/WebKitUserMessage.h>
 #include <wpe/WebKitWebContext.h>
 #include <wpe/WebKitWebResource.h>
 #include <wpe/WebKitWebViewBackend.h>
@@ -241,6 +242,9 @@ struct _WebKitWebViewClass {
                                                     WebKitNotification          *notification);
     void           (* web_process_terminated)      (WebKitWebView               *web_view,
                                                     WebKitWebProcessTerminationReason reason);
+    gboolean       (* user_message_received)       (WebKitWebView               *web_view,
+                                                    WebKitUserMessage           *message);
+
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
@@ -249,7 +253,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
     void (*_webkit_reserved6) (void);
-    void (*_webkit_reserved7) (void);
 };
 
 WEBKIT_API GType
@@ -524,6 +527,18 @@ webkit_web_view_set_background_color                 (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_get_background_color                 (WebKitWebView               *web_view,
                                                       WebKitColor                 *color);
+
+WEBKIT_API void
+webkit_web_view_send_message_to_page                 (WebKitWebView               *web_view,
+                                                      WebKitUserMessage           *message,
+                                                      GCancellable                *cancellable,
+                                                      GAsyncReadyCallback          callback,
+                                                      gpointer                     user_data);
+
+WEBKIT_API WebKitUserMessage *
+webkit_web_view_send_message_to_page_finish          (WebKitWebView               *web_view,
+                                                      GAsyncResult                *result,
+                                                      GError                     **error);
 
 G_END_DECLS
 

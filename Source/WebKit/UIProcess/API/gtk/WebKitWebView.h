@@ -49,6 +49,7 @@
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitUserContentManager.h>
+#include <webkit2/WebKitUserMessage.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebInspector.h>
 #include <webkit2/WebKitWebResource.h>
@@ -269,9 +270,10 @@ struct _WebKitWebViewClass {
                                                 WebKitOptionMenu            *menu);
     void       (* web_process_terminated)      (WebKitWebView               *web_view,
                                                 WebKitWebProcessTerminationReason reason);
+    gboolean   (* user_message_received)       (WebKitWebView               *web_view,
+                                                WebKitUserMessage           *message);
 
     void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
 };
 
 WEBKIT_API GType
@@ -551,6 +553,18 @@ webkit_web_view_get_session_state                    (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_restore_session_state                (WebKitWebView             *web_view,
                                                       WebKitWebViewSessionState *state);
+
+WEBKIT_API void
+webkit_web_view_send_message_to_page                 (WebKitWebView             *web_view,
+                                                      WebKitUserMessage         *message,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
+WEBKIT_API WebKitUserMessage *
+webkit_web_view_send_message_to_page_finish          (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
 
 G_END_DECLS
 

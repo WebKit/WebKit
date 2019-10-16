@@ -57,6 +57,7 @@
     <xi:include href="xml/WebKitApplicationInfo.xml"/>
     <xi:include href="xml/WebKitColor.xml"/>
     <xi:include href="xml/WebKitGeolocationManager.xml"/>
+    <xi:include href="xml/WebKitUserMessage.xml"/>
   </chapter>
 
   <chapter>
@@ -91,6 +92,11 @@
   <index id="api-index-2-26" role="2.26">
     <title>Index of new symbols in 2.26</title>
     <xi:include href="xml/api-index-2.26.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-28" role="2.28">
+    <title>Index of new symbols in 2.28</title>
+    <xi:include href="xml/api-index-2.28.xml"><xi:fallback /></xi:include>
   </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>

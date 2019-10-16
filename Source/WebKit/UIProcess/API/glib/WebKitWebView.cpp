@@ -56,12 +56,14 @@
 #include "WebKitUIClient.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include "WebKitUserMessagePrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewSessionStatePrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
+#include "WebPageMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <jsc/JSCContextPrivate.h>
@@ -162,6 +164,8 @@ enum {
 
     SHOW_OPTION_MENU,
 #endif
+
+    USER_MESSAGE_RECEIVED,
 
     LAST_SIGNAL
 };
@@ -442,6 +446,11 @@ private:
     void didChangePageID(WKWPE::View&) override
     {
         webkitWebViewDidChangePageID(m_webView);
+    }
+
+    void didReceiveUserMessage(WKWPE::View&, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler) override
+    {
+        webkitWebViewDidReceiveUserMessage(m_webView, WTFMove(message), WTFMove(completionHandler));
     }
 
     WebKitWebView* m_webView;
@@ -2079,6 +2088,34 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
         GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 #endif // PLATFORM(GTK)
+
+    /**
+     * WebKitWebView::user-message-received:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @message: the #WebKitUserMessage received
+     *
+     * This signal is emitted when a #WebKitUserMessage is received from the
+     * #WebKitWebPage corresponding to @web_view. You can reply to the message
+     * using webkit_user_message_send_reply().
+     *
+     * You can handle the user message asynchronously by calling g_object_ref() on
+     * @message and returning %TRUE. If the last reference of @message is removed
+     * and the message has not been replied to, the operation in the #WebKitWebPage will
+     * finish with error %WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE.
+     *
+     * Returns: %TRUE if the message was handled, or %FALSE otherwise.
+     *
+     * Since: 2.28
+     */
+    signals[USER_MESSAGE_RECEIVED] = g_signal_new(
+        "user-message-received",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, user_message_received),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_USER_MESSAGE);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -2580,6 +2617,14 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
 void webkitWebViewDidChangePageID(WebKitWebView* webView)
 {
     g_object_notify(G_OBJECT(webView), "page-id");
+}
+
+void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    // Sink the floating ref.
+    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), WTFMove(completionHandler));
+    gboolean returnValue;
+    g_signal_emit(webView, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
 }
 
 #if PLATFORM(WPE)
@@ -4218,3 +4263,70 @@ void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, uns
         webView->priv->frameDisplayedCallbacks.removeFirstMatching(matchFunction);
 }
 #endif // PLATFORM(WPE)
+
+/**
+ * webkit_web_view_send_message_to_page:
+ * @web_view: a #WebKitWebView
+ * @message: a #WebKitUserMessage
+ * @cancellable: (nullable): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Send @message to the #WebKitWebPage corresponding to @web_view. If @message is floating, it's consumed.
+ *
+ * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @callback.
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_send_message_to_page_finish() to get the message reply.
+ *
+ * Since: 2.28
+ */
+void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMessage* message, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_USER_MESSAGE(message));
+
+    // We sink the reference in case of being floating.
+    GRefPtr<WebKitUserMessage> adoptedMessage = message;
+    auto& page = getPage(webView);
+    if (!callback) {
+        page.ensureRunningProcess().send(Messages::WebPage::SendMessageToWebExtension(webkitUserMessageGetMessage(message)), page.webPageID().toUInt64());
+        return;
+    }
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTFMove(task)](UserMessage&& replyMessage) {
+        switch (replyMessage.type) {
+        case UserMessage::Type::Null:
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+            break;
+        case UserMessage::Type::Message:
+            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTFMove(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
+            break;
+        case UserMessage::Type::Error:
+            g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.data());
+            break;
+        }
+    };
+    page.ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::SendMessageToWebExtensionWithReply(webkitUserMessageGetMessage(message)),
+        WTFMove(completionHandler), page.webPageID().toUInt64());
+}
+
+/**
+ * webkit_web_view_send_message_to_page_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignor
+ *
+ * Finish an asynchronous operation started with webkit_web_view_send_message_to_page().
+ *
+ * Returns: (transfer full): a #WebKitUserMessage with the reply or %NULL in case of error.
+ *
+ * Since: 2.28
+ */
+WebKitUserMessage* webkit_web_view_send_message_to_page_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
+
+    return WEBKIT_USER_MESSAGE(g_task_propagate_pointer(G_TASK(result), error));
+}

@@ -47,6 +47,7 @@ webkit_web_context_allow_tls_certificate_for_host
 webkit_web_context_get_process_model
 webkit_web_context_set_process_model
 webkit_web_context_initialize_notification_permissions
+webkit_web_context_send_message_to_all_extensions
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback
@@ -251,6 +252,8 @@ webkit_web_view_add_frame_displayed_callback
 webkit_web_view_remove_frame_displayed_callback
 webkit_web_view_get_background_color
 webkit_web_view_set_background_color
+webkit_web_view_send_message_to_page
+webkit_web_view_send_message_to_page_finish
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -585,6 +588,35 @@ WEBKIT_URI_RESPONSE_GET_CLASS
 <SUBSECTION Private>
 WebKitURIResponsePrivate
 webkit_uri_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitUserMessage</FILE>
+WebKitUserMessage
+webkit_user_message_new
+webkit_user_message_new_with_fd_list
+webkit_user_message_get_name
+webkit_user_message_get_parameters
+webkit_user_message_get_fd_list
+webkit_user_message_send_reply
+
+<SUBSECTION WebKitUserMessageError>
+WEBKIT_USER_MESSAGE_ERROR
+WebKitUserMessageError
+webkit_user_message_error_quark
+
+<SUBSECTION Standard>
+WebKitUserMessageClass
+WEBKIT_TYPE_USER_MESSAGE
+WEBKIT_USER_MESSAGE
+WEBKIT_IS_USER_MESSAGE
+WEBKIT_USER_MESSAGE_CLASS
+WEBKIT_IS_USER_MESSAGE_CLASS
+WEBKIT_USER_MESSAGE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitUserMessagePrivate
+webkit_user_message_get_type
 </SECTION>
 
 <SECTION>

@@ -157,4 +157,8 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(IOS_FAMILY)
     UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
 #endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
+#endif
 }

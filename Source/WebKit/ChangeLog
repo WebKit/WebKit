@@ -1,3 +1,120 @@
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add user messages API
+        https://bugs.webkit.org/show_bug.cgi?id=202847
+
+        Reviewed by Adrian Perez de Castro.
+
+        We have never exposed an API to send/receive messages to/from Web extensions, to allow applications use their own
+        IPC. Now, with PSON enabled, it's a lot more difficult to implement the custom IPC on the application side,
+        because applications need to keep track of all the web processes launched, and the changes of web process in the
+        web view to send the messages to the right extension. That's already done internally by WebKit, so it would be
+        easier to provide a simple API so that apps don't need to worry about the web process being used. This patch adds
+        WebKitUserMessage, a simple message API consisting on a message name, parameters and file descriptors. Messages
+        can be sent from a WebKitWebContext to all the WebKitWebExtensions, or from a WebKitWebExtension to its
+        WebKitWebContext, or from a WebKitWebView to its WebKitWebPage (and vice versa).
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * Shared/API/glib/WebKitUserMessage.cpp: Added.
+        (webkitUserMessageDispose):
+        (webkitUserMessageGetProperty):
+        (webkitUserMessageSetProperty):
+        (webkit_user_message_class_init):
+        (webkitUserMessageCreate):
+        (webkitUserMessageGetMessage):
+        (webkit_user_message_new):
+        (webkit_user_message_new_with_fd_list):
+        (webkit_user_message_get_name):
+        (webkit_user_message_get_parameters):
+        (webkit_user_message_get_fd_list):
+        (webkit_user_message_send_reply):
+        * Shared/API/glib/WebKitUserMessagePrivate.h: Added.
+        * Shared/glib/ArgumentCodersGLib.cpp: Added.
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/glib/ArgumentCodersGLib.h: Added.
+        * Shared/glib/UserMessage.cpp: Added.
+        (WebKit::UserMessage::encode const):
+        (WebKit::UserMessage::decode):
+        * Shared/glib/UserMessage.h: Added.
+        (WebKit::UserMessage::UserMessage):
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        (webkit_web_context_send_message_to_all_extensions):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewDidReceiveUserMessage):
+        (webkit_web_view_send_message_to_page):
+        (webkit_web_view_send_message_to_page_finish):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitUserMessage.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/APIViewClient.h:
+        (API::ViewClient::didReceiveUserMessage):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::sendMessageToWebView):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::didReceiveUserMessage):
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WebKitUserMessage.h: Added.
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/docs/wpe-docs.sgml:
+        * UIProcess/API/wpe/webkit.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::sendMessageToWebContextWithReply):
+        (WebKit::WebProcessProxy::sendMessageToWebContext):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::sendMessageToWebViewWithReply):
+        (WebKit::WebPageProxy::sendMessageToWebView):
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::sendMessageToWebViewWithReply):
+        (WebKit::WebPageProxy::sendMessageToWebView):
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.h:
+        (WebKit::WebKitExtensionManager::extension const):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:
+        (webkitWebExtensionDidReceiveUserMessage):
+        (webkit_web_extension_send_message_to_context):
+        (webkit_web_extension_send_message_to_context_finish):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtensionPrivate.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+        (webkitWebPageDidReceiveUserMessage):
+        (webkit_web_page_send_message_to_view):
+        (webkit_web_page_send_message_to_view_finish):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPagePrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebExtension.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-1.0-sections.txt:
+        * WebProcess/InjectedBundle/API/wpe/webkit-web-extension.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/glib/WebPageGLib.cpp: Added.
+        (WebKit::WebPage::sendMessageToWebExtensionWithReply):
+        (WebKit::WebPage::sendMessageToWebExtension):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::sendMessageToWebExtension):
+
 2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the internal macOS build after r251171

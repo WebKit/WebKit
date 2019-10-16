@@ -68,6 +68,7 @@ Shared/API/glib/WebKitContextMenuItem.cpp @no-unify
 Shared/API/glib/WebKitHitTestResult.cpp @no-unify
 Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
+Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
 Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 Shared/CoordinatedGraphics/SimpleViewportController.cpp
@@ -81,7 +82,9 @@ Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
+Shared/glib/ArgumentCodersGLib.cpp
 Shared/glib/ProcessExecutablePathGLib.cpp
+Shared/glib/UserMessage.cpp
 Shared/glib/WebContextMenuItemGlib.cpp
 
 Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
@@ -246,6 +249,8 @@ WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
 WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp
+
+WebProcess/WebPage/glib/WebPageGLib.cpp
 
 WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 

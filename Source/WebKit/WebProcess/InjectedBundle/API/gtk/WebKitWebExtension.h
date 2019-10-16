@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitUserMessage.h>
 #include <webkit2/WebKitWebPage.h>
 
 G_BEGIN_DECLS
@@ -76,11 +77,23 @@ struct _WebKitWebExtensionClass {
 };
 
 WEBKIT_API GType
-webkit_web_extension_get_type (void);
+webkit_web_extension_get_type                       (void);
 
 WEBKIT_API WebKitWebPage *
-webkit_web_extension_get_page (WebKitWebExtension *extension,
-                               guint64             page_id);
+webkit_web_extension_get_page                       (WebKitWebExtension *extension,
+                                                     guint64             page_id);
+
+WEBKIT_API void
+webkit_web_extension_send_message_to_context        (WebKitWebExtension *extension,
+                                                     WebKitUserMessage  *message,
+                                                     GCancellable       *cancellable,
+                                                     GAsyncReadyCallback callback,
+                                                     gpointer            user_data);
+
+WEBKIT_API WebKitUserMessage *
+webkit_web_extension_send_message_to_context_finish (WebKitWebExtension *extension,
+                                                     GAsyncResult       *result,
+                                                     GError            **error);
 
 G_END_DECLS
 

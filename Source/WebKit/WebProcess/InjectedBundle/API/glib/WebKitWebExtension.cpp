@@ -23,10 +23,13 @@
 #include "APIDictionary.h"
 #include "APIInjectedBundleBundleClient.h"
 #include "APIString.h"
+#include "WebKitUserMessagePrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/GCController.h>
+#include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -111,6 +114,7 @@ using namespace WebKit;
 
 enum {
     PAGE_CREATED,
+    USER_MESSAGE_RECEIVED,
 
     LAST_SIGNAL
 };
@@ -146,6 +150,28 @@ static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
         g_cclosure_marshal_VOID__OBJECT,
         G_TYPE_NONE, 1,
         WEBKIT_TYPE_WEB_PAGE);
+
+    /**
+     * WebKitWebExtension::user-message-received:
+     * @extension: the #WebKitWebExtension on which the signal is emitted
+     * @message: the #WebKitUserMessage received
+     *
+     * This signal is emitted when a #WebKitUserMessage is received from the
+     * #WebKitWebContext corresponding to @extension. Messages sent by #WebKitWebContext
+     * are always broadcasted to all #WebKitWebExtension<!-- -->s and they can't be
+     * replied to. Calling webkit_user_message_send_reply() will do nothing.
+     *
+     * Since: 2.28
+     */
+    signals[USER_MESSAGE_RECEIVED] = g_signal_new(
+        "user-message-received",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        WEBKIT_TYPE_USER_MESSAGE);
 }
 
 class WebExtensionInjectedBundleClient final : public API::InjectedBundle::Client {
@@ -200,6 +226,13 @@ WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
     return extension;
 }
 
+void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension* extension, UserMessage&& message)
+{
+    // Sink the floating ref.
+    GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), [](UserMessage&&) { });
+    g_signal_emit(extension, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get());
+}
+
 void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension* extension)
 {
 #if ENABLE(DEVELOPER_MODE)
@@ -228,4 +261,69 @@ WebKitWebPage* webkit_web_extension_get_page(WebKitWebExtension* extension, guin
             return it->value.get();
 
     return 0;
+}
+
+/**
+ * webkit_web_extension_send_message_to_context:
+ * @extension: a #WebKitWebExtension
+ * @message: a #WebKitUserMessage
+ * @cancellable: (nullable): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Send @message to the #WebKitWebContext corresponding to @extension. If @message is floating, it's consumed.
+ *
+ * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @calback.
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_extension_send_message_to_context_finish() to get the message reply.
+ *
+ * Since: 2.28
+ */
+void webkit_web_extension_send_message_to_context(WebKitWebExtension* extension, WebKitUserMessage* message, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION(extension));
+    g_return_if_fail(WEBKIT_IS_USER_MESSAGE(message));
+
+    // We sink the reference in case of being floating.
+    GRefPtr<WebKitUserMessage> adoptedMessage = message;
+    if (!callback) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SendMessageToWebContext(webkitUserMessageGetMessage(message)), 0);
+        return;
+    }
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(extension, cancellable, callback, userData));
+    CompletionHandler<void(UserMessage&&)> completionHandler = [task = WTFMove(task)](UserMessage&& replyMessage) {
+        switch (replyMessage.type) {
+        case UserMessage::Type::Null:
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+            break;
+        case UserMessage::Type::Message:
+            g_task_return_pointer(task.get(), g_object_ref_sink(webkitUserMessageCreate(WTFMove(replyMessage))), static_cast<GDestroyNotify>(g_object_unref));
+            break;
+        case UserMessage::Type::Error:
+            g_task_return_new_error(task.get(), WEBKIT_USER_MESSAGE_ERROR, replyMessage.errorCode, _("Message %s was not handled"), replyMessage.name.data());
+            break;
+        }
+    };
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SendMessageToWebContextWithReply(webkitUserMessageGetMessage(message)), WTFMove(completionHandler));
+}
+
+/**
+ * webkit_web_extension_send_message_to_context_finish:
+ * @extension: a #WebKitWebExtension
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignor
+ *
+ * Finish an asynchronous operation started with webkit_web_extension_send_message_to_context().
+ *
+ * Returns: (transfer full): a #WebKitUserMessage with the reply or %NULL in case of error.
+ *
+ * Since: 2.28
+ */
+WebKitUserMessage* webkit_web_extension_send_message_to_context_finish(WebKitWebExtension* extension, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION(extension), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, extension), nullptr);
+
+    return WEBKIT_USER_MESSAGE(g_task_propagate_pointer(G_TASK(result), error));
 }

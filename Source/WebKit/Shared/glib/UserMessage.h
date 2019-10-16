@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,43 @@
 
 #pragma once
 
-#include "UserMessage.h"
-#include <wtf/CompletionHandler.h>
+#include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
-typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef struct _GUnixFDList GUnixFDList;
+typedef struct _GVariant GVariant;
+
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
 namespace WebKit {
-class DownloadProxy;
-}
 
-namespace WKWPE {
-class View;
-}
+struct UserMessage {
+    enum class Type { Null, Message, Error };
 
-namespace API {
+    UserMessage()
+        : type(Type::Null)
+    {
+    }
 
-class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~ViewClient() = default;
+    UserMessage(const CString& name, uint32_t errorCode)
+        : type(Type::Error)
+        , name(name)
+        , errorCode(errorCode)
+    {
+    }
 
-    virtual void frameDisplayed(WKWPE::View&) { }
-    virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
-    virtual void willStartLoad(WKWPE::View&) { }
-    virtual void didChangePageID(WKWPE::View&) { }
-    virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
+    void encode(IPC::Encoder&) const;
+    static Optional<UserMessage> decode(IPC::Decoder&);
+
+    Type type { Type::Null };
+    CString name;
+    GRefPtr<GVariant> parameters;
+    GRefPtr<GUnixFDList> fileDescriptors;
+    uint32_t errorCode { 0 };
 };
 
-} // namespace API
+}

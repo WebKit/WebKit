@@ -29,6 +29,7 @@
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitFrame, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitScriptWorld, g_object_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitUserMessage, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebEditor, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebExtension, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebHitTestResult, g_object_unref)

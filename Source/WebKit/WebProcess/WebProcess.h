@@ -117,6 +117,7 @@ class WebFrame;
 class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
+struct UserMessage;
 struct WebProcessCreationParameters;
 struct WebProcessDataStoreParameters;
 class WebProcessSupplement;
@@ -464,6 +465,10 @@ private:
 #endif
 
     void clearCurrentModifierStateForTesting();
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void sendMessageToWebExtension(UserMessage&&);
+#endif
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

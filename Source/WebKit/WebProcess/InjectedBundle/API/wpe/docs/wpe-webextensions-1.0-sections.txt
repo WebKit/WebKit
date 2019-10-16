@@ -13,6 +13,8 @@ WebKitWebExtension
 WebKitWebExtensionInitializeFunction
 WebKitWebExtensionInitializeWithUserDataFunction
 webkit_web_extension_get_page
+webkit_web_extension_send_message_to_context
+webkit_web_extension_send_message_to_context_finish
 
 <SUBSECTION Standard>
 WebKitWebExtensionClass
@@ -37,6 +39,8 @@ webkit_web_page_get_id
 webkit_web_page_get_uri
 webkit_web_page_get_main_frame
 webkit_web_page_get_editor
+webkit_web_page_send_message_to_view
+webkit_web_page_send_message_to_view_finish
 
 <SUBSECTION Standard>
 WebKitWebPageClass

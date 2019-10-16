@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,14 @@
 
 #pragma once
 
-#include "UserMessage.h"
-#include <wtf/CompletionHandler.h>
+#include "ArgumentCoders.h"
+#include <wtf/glib/GRefPtr.h>
 
-typedef struct OpaqueJSContext* JSGlobalContextRef;
+typedef struct _GVariant GVariant;
 
-namespace WebKit {
-class DownloadProxy;
-}
+namespace IPC {
 
-namespace WKWPE {
-class View;
-}
+void encode(Encoder&, GVariant*);
+Optional<GRefPtr<GVariant>> decode(Decoder&);
 
-namespace API {
-
-class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~ViewClient() = default;
-
-    virtual void frameDisplayed(WKWPE::View&) { }
-    virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
-    virtual void willStartLoad(WKWPE::View&) { }
-    virtual void didChangePageID(WKWPE::View&) { }
-    virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
-};
-
-} // namespace API
+} // namespace IPC

@@ -82,4 +82,14 @@ void WebPageProxy::updateEditorState(const EditorState&)
     notImplemented();
 }
 
+void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    static_cast<PageClientImpl&>(pageClient()).sendMessageToWebView(WTFMove(message), WTFMove(completionHandler));
+}
+
+void WebPageProxy::sendMessageToWebView(UserMessage&& message)
+{
+    sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
+}
+
 } // namespace WebKit

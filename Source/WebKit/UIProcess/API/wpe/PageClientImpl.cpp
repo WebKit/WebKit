@@ -425,4 +425,9 @@ void PageClientImpl::didChangeWebPageID() const
     m_view.didChangePageID();
 }
 
+void PageClientImpl::sendMessageToWebView(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    m_view.didReceiveUserMessage(WTFMove(message), WTFMove(completionHandler));
+}
+
 } // namespace WebKit

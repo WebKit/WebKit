@@ -42,6 +42,7 @@ enum class DOMPasteAccessResponse : uint8_t;
 namespace WebKit {
 
 class ScrollGestureController;
+struct UserMessage;
 
 enum class UndoOrRedo : bool;
 
@@ -59,6 +60,8 @@ public:
 #if ENABLE(ACCESSIBILITY)
     AtkObject* accessible();
 #endif
+
+    void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
 
 private:
     // PageClient

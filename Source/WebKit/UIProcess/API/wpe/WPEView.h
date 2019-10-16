@@ -49,6 +49,7 @@ namespace WebKit {
 class DownloadProxy;
 class WebPageGroup;
 class WebProcessPool;
+struct UserMessage;
 }
 
 namespace WKWPE {
@@ -68,6 +69,7 @@ public:
     void handleDownloadRequest(WebKit::DownloadProxy&);
     void willStartLoad();
     void didChangePageID();
+    void didReceiveUserMessage(WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
 

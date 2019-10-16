@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebPage.h"
 
 #include "UserMessage.h"
-#include <wtf/CompletionHandler.h>
-
-typedef struct OpaqueJSContext* JSGlobalContextRef;
+#include "WebKitExtensionManager.h"
+#include "WebKitUserMessage.h"
+#include "WebKitWebExtension.h"
+#include "WebKitWebPagePrivate.h"
 
 namespace WebKit {
-class DownloadProxy;
+
+void WebPage::sendMessageToWebExtensionWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    auto* extension = WebKitExtensionManager::singleton().extension();
+    if (!extension) {
+        completionHandler(UserMessage(message.name, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE));
+        return;
+    }
+
+    auto* page = webkit_web_extension_get_page(extension, m_identifier.toUInt64());
+    if (!page) {
+        completionHandler(UserMessage(message.name, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE));
+        return;
+    }
+
+    webkitWebPageDidReceiveUserMessage(page, WTFMove(message), WTFMove(completionHandler));
 }
 
-namespace WKWPE {
-class View;
+void WebPage::sendMessageToWebExtension(UserMessage&& message)
+{
+    sendMessageToWebExtensionWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-namespace API {
-
-class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~ViewClient() = default;
-
-    virtual void frameDisplayed(WKWPE::View&) { }
-    virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
-    virtual void willStartLoad(WKWPE::View&) { }
-    virtual void didChangePageID(WKWPE::View&) { }
-    virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
-};
-
-} // namespace API
+} // namespace WebKit

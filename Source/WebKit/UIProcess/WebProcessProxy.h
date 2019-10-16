@@ -80,6 +80,7 @@ class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 enum class WebsiteDataType;
+struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -424,6 +425,11 @@ private:
     void updateRegistrationWithDataStore();
 
     void maybeShutDown();
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void sendMessageToWebContext(UserMessage&&);
+    void sendMessageToWebContextWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+#endif
 
     enum class IsWeak { No, Yes };
     template<typename T> class WeakOrStrongPtr {

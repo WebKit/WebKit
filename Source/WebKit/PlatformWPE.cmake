@@ -134,6 +134,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserContentFilterStore.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserContentManager.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserMediaPermissionRequest.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserMessage.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebContext.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebResource.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebView.h

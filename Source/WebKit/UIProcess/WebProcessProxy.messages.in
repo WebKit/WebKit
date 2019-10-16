@@ -77,4 +77,9 @@ messages -> WebProcessProxy LegacyReceiver {
     # Plug-in messages.
     void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash)
     void PlugInDidReceiveUserInteraction(uint32_t hash)
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebContext(struct WebKit::UserMessage userMessage)
+    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
+#endif
 }

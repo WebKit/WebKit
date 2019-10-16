@@ -210,6 +210,11 @@ void View::didChangePageID()
     m_client->didChangePageID(*this);
 }
 
+void View::didReceiveUserMessage(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    m_client->didReceiveUserMessage(*this, WTFMove(message), WTFMove(completionHandler));
+}
+
 void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;

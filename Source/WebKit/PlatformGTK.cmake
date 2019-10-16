@@ -109,6 +109,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContentFilterStore.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserContentManager.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserMessage.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebContext.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebInspector.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebResource.h
@@ -694,12 +695,14 @@ if (ENABLE_INTROSPECTION)
             ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenu.cpp
             ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenuItem.cpp
             ${WEBKIT_DIR}/Shared/API/glib/WebKitHitTestResult.cpp
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitUserMessage.cpp
             ${WEBKIT_DIR}/Shared/API/glib/WebKitURIRequest.cpp
             ${WEBKIT_DIR}/Shared/API/glib/WebKitURIResponse.cpp
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitUserMessage.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
             ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/*.cpp

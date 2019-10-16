@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessProxy.h"
 
+#include "UserMessage.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/PlatformDisplay.h>
@@ -54,6 +55,17 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
         launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
     }
+}
+
+void WebProcessProxy::sendMessageToWebContextWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    if (const auto& userMessageHandler = m_processPool->userMessageHandler())
+        userMessageHandler(WTFMove(message), WTFMove(completionHandler));
+}
+
+void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
+{
+    sendMessageToWebContextWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
 };

@@ -79,6 +79,7 @@
 #include <webkit2/WebKitUserContentFilterStore.h>
 #include <webkit2/WebKitUserContentManager.h>
 #include <webkit2/WebKitUserMediaPermissionRequest.h>
+#include <webkit2/WebKitUserMessage.h>
 #include <webkit2/WebKitVersion.h>
 #include <webkit2/WebKitWebContext.h>
 #include <webkit2/WebKitWebInspector.h>

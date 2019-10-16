@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include "WebViewTest.h"
+#include <gio/gunixfdlist.h>
 #include <wtf/glib/GRefPtr.h>
 
 static GUniquePtr<char> scriptDialogResult;
@@ -537,6 +538,263 @@ static void testWebExtensionPageID(WebViewTest* test, gconstpointer)
     checkTitle(test, proxy.get(), "Title6");
 }
 
+class UserMessageTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(UserMessageTest);
+
+    static gboolean webViewUserMessageReceivedCallback(WebKitWebView*, WebKitUserMessage* message, UserMessageTest* test)
+    {
+        return test->viewUserMessageReceived(message);
+    }
+
+    static gboolean webContextUserMessageReceivedCallback(WebKitWebContext*, WebKitUserMessage* message, UserMessageTest* test)
+    {
+        return test->contextUserMessageReceived(message);
+    }
+
+    UserMessageTest()
+    {
+        g_signal_connect(m_webContext.get(), "user-message-received", G_CALLBACK(webContextUserMessageReceivedCallback), this);
+        g_signal_connect(m_webView, "user-message-received", G_CALLBACK(webViewUserMessageReceivedCallback), this);
+    }
+
+    ~UserMessageTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    }
+
+    WebKitUserMessage* sendMessage(WebKitUserMessage* message, GError** error = nullptr)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
+        m_receivedViewMessage = nullptr;
+        webkit_web_view_send_message_to_page(m_webView, message, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
+            auto* test = static_cast<UserMessageTest*>(userData);
+            test->m_receivedViewMessage = adoptGRef(webkit_web_view_send_message_to_page_finish(test->m_webView, result, &test->m_receivedError.outPtr()));
+            if (test->m_receivedViewMessage)
+                test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(test->m_receivedViewMessage.get()));
+            else
+                g_assert_nonnull(test->m_receivedError.get());
+            test->quitMainLoop();
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        if (error)
+            *error = m_receivedError.get();
+        return m_receivedViewMessage.get();
+    }
+
+    void sendMessageToAllExtensions(WebKitUserMessage* message)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
+        webkit_web_context_send_message_to_all_extensions(m_webContext.get(), message);
+    }
+
+    bool viewUserMessageReceived(WebKitUserMessage* message)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
+        if (!g_strcmp0(m_expectedViewMessageName.data(), webkit_user_message_get_name(message))) {
+            m_receivedViewMessage = message;
+            quitMainLoop();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool contextUserMessageReceived(WebKitUserMessage* message)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
+        if (!g_strcmp0(m_expectedContextMessageName.data(), webkit_user_message_get_name(message))) {
+            m_receivedContextMessage = message;
+            quitMainLoop();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    WebKitUserMessage* waitUntilViewMessageReceived(const char* messageName)
+    {
+        m_expectedViewMessageName = messageName;
+        g_main_loop_run(m_mainLoop);
+        m_expectedViewMessageName = { };
+        return m_receivedViewMessage.get();
+    }
+
+    WebKitUserMessage* waitUntilContextMessageReceived(const char* messageName)
+    {
+        m_expectedContextMessageName = messageName;
+        g_main_loop_run(m_mainLoop);
+        m_expectedContextMessageName = { };
+        return m_receivedContextMessage.get();
+    }
+
+    GRefPtr<WebKitUserMessage> m_receivedViewMessage;
+    GRefPtr<WebKitUserMessage> m_receivedContextMessage;
+    GUniqueOutPtr<GError> m_receivedError;
+    CString m_expectedViewMessageName;
+    CString m_expectedContextMessageName;
+};
+
+static bool readFileDescriptor(int fd, char** contents, gsize* length)
+{
+    GString* bufferString = g_string_new(nullptr);
+    while (true) {
+        gchar buffer[4096];
+        gssize bytesRead = read(fd, buffer, sizeof(buffer));
+        if (bytesRead == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+                continue;
+
+            g_string_free(bufferString, TRUE);
+
+            return false;
+        }
+
+        if (!bytesRead)
+            break;
+
+        g_string_append_len(bufferString, buffer, bytesRead);
+    }
+
+    *length = bufferString->len;
+    *contents = g_string_free(bufferString, FALSE);
+
+    return true;
+}
+
+static void testWebExtensionUserMessages(UserMessageTest* test, gconstpointer)
+{
+    // Normal message with a reply.
+    auto* message = webkit_user_message_new("Test.Hello", g_variant_new("s", "WebProcess"));
+    g_assert_cmpstr(webkit_user_message_get_name(message), ==, "Test.Hello");
+    auto* parameters = webkit_user_message_get_parameters(message);
+    g_assert_nonnull(parameters);
+    const char* parameter = nullptr;
+    g_variant_get(parameters, "&s", &parameter);
+    g_assert_cmpstr(parameter, ==, "WebProcess");
+    g_assert_null(webkit_user_message_get_fd_list(message));
+    auto* reply = test->sendMessage(message);
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
+    g_assert_cmpstr(webkit_user_message_get_name(reply), ==, "Test.Hello");
+    parameters = webkit_user_message_get_parameters(reply);
+    g_assert_nonnull(parameters);
+    parameter = nullptr;
+    g_variant_get(parameters, "&s", &parameter);
+    g_assert_cmpstr(parameter, ==, "UIProcess");
+    g_assert_null(webkit_user_message_get_fd_list(reply));
+
+    // Message with no parameters.
+    message = webkit_user_message_new("Test.Ping", nullptr);
+    g_assert_null(webkit_user_message_get_parameters(message));
+    reply = test->sendMessage(message);
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
+    g_assert_cmpstr(webkit_user_message_get_name(reply), ==, "Test.Pong");
+    g_assert_null(webkit_user_message_get_parameters(reply));
+
+    // Message with maybe type in parameters.
+    message = webkit_user_message_new("Test.Optional", g_variant_new("(sms)", "Hello", "World"));
+    reply = test->sendMessage(message);
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
+    g_assert_cmpstr(webkit_user_message_get_name(reply), ==, "Test.Optional");
+    parameters = webkit_user_message_get_parameters(reply);
+    g_assert_nonnull(parameters);
+    g_variant_get(parameters, "&s", &parameter);
+    g_assert_cmpstr(parameter, ==, "World");
+    message = webkit_user_message_new("Test.Optional", g_variant_new("(sms)", "Hello", nullptr));
+    reply = test->sendMessage(message);
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
+    g_assert_cmpstr(webkit_user_message_get_name(reply), ==, "Test.Optional");
+    parameters = webkit_user_message_get_parameters(reply);
+    g_assert_nonnull(parameters);
+    g_variant_get(parameters, "&s", &parameter);
+    g_assert_cmpstr(parameter, ==, "NULL");
+
+    // Message with file descriptors.
+    GUniquePtr<char> filename(g_build_filename(Test::getResourcesDir().data(), "simple.json", nullptr));
+    reply = test->sendMessage(webkit_user_message_new("Test.OpenFile", g_variant_new("s", filename.get())));
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(reply));
+    parameters = webkit_user_message_get_parameters(reply);
+    g_assert_nonnull(parameters);
+    gint32 handle;
+    g_variant_get(parameters, "h", &handle);
+    g_assert_cmpint(handle, ==, 0);
+    auto* fdList = webkit_user_message_get_fd_list(reply);
+    g_assert_true(G_IS_UNIX_FD_LIST(fdList));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(fdList));
+    g_assert_cmpint(g_unix_fd_list_get_length(fdList), ==, 1);
+    GUniqueOutPtr<GError> error;
+    int fd = g_unix_fd_list_get(fdList, handle, &error.outPtr());
+    g_assert_cmpint(fd, !=, -1);
+    g_assert_no_error(error.get());
+    GUniqueOutPtr<char> fdContents;
+    gsize fdContentsLength;
+    g_assert_true(readFileDescriptor(fd, &fdContents.outPtr(), &fdContentsLength));
+    close(fd);
+    GUniqueOutPtr<char> fileContents;
+    gsize fileContentsLength;
+    g_assert_true(g_file_get_contents(filename.get(), &fileContents.outPtr(), &fileContentsLength, nullptr));
+    g_assert_cmpmem(fdContents.get(), fdContentsLength, fileContents.get(), fileContentsLength);
+
+    // Unhandled message.
+    GError* messageError = nullptr;
+    reply = test->sendMessage(webkit_user_message_new("Test.Invalid", nullptr), &messageError);
+    g_assert_null(reply);
+    g_assert_error(messageError, WEBKIT_USER_MESSAGE_ERROR, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE);
+
+    // Message that is never replied.
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    webkit_web_view_send_message_to_page(webView.get(), webkit_user_message_new("Test.Infinite", nullptr), nullptr,
+        [](GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* test = static_cast<UserMessageTest*>(userData);
+            GUniqueOutPtr<GError> error;
+            g_assert_null(webkit_web_view_send_message_to_page_finish(WEBKIT_WEB_VIEW(object), result, &error.outPtr()));
+            g_assert_error(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED);
+            test->quitMainLoop();
+        }, test);
+    g_main_loop_run(test->m_mainLoop);
+
+    // Wait for received message.
+    test->loadHtml("<html><body></body></html>", nullptr);
+    message = test->waitUntilViewMessageReceived("DocumentLoaded");
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(message));
+    g_assert_cmpstr(webkit_user_message_get_name(message), ==, "DocumentLoaded");
+
+    // Reply to a message received from the web process.
+    webkit_web_view_send_message_to_page(test->m_webView, webkit_user_message_new("Test.AsyncPing", nullptr), nullptr, nullptr, nullptr);
+    message = test->waitUntilViewMessageReceived("Test.Ping");
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(message));
+    g_assert_cmpstr(webkit_user_message_get_name(message), ==, "Test.Ping");
+    webkit_user_message_send_reply(message, webkit_user_message_new("Test.Pong", nullptr));
+    message = test->waitUntilViewMessageReceived("Test.AsyncPong");
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(message));
+    g_assert_cmpstr(webkit_user_message_get_name(message), ==, "Test.AsyncPong");
+
+    // Create a new page and wait for page created message.
+    webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    webkit_web_view_load_html(webView.get(), "<html><body></body></html>", nullptr);
+    message = test->waitUntilContextMessageReceived("PageCreated");
+    g_assert_true(WEBKIT_IS_USER_MESSAGE(message));
+    g_assert_cmpstr(webkit_user_message_get_name(message), ==, "PageCreated");
+    parameters = webkit_user_message_get_parameters(message);
+    g_assert_nonnull(parameters);
+    guint64 pageID;
+    g_variant_get(parameters, "(t)", &pageID);
+    g_assert_cmpuint(pageID, ==, webkit_web_view_get_page_id(webView.get()));
+
+    // Request to start a ping to all processes.
+    test->sendMessageToAllExtensions(webkit_user_message_new("Test.RequestPing", nullptr));
+    // We should received two ping requests.
+    GRefPtr<WebKitUserMessage> ping1 = test->waitUntilContextMessageReceived("Ping");
+    GRefPtr<WebKitUserMessage> ping2 = test->waitUntilContextMessageReceived("Ping");
+    webkit_user_message_send_reply(ping1.get(), webkit_user_message_new("Pong", nullptr));
+    test->waitUntilContextMessageReceived("Test.FinishedPingRequest");
+    webkit_user_message_send_reply(ping2.get(), webkit_user_message_new("Pong", nullptr));
+    test->waitUntilContextMessageReceived("Test.FinishedPingRequest");
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
@@ -553,6 +811,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
     FormSubmissionTest::add("WebKitWebExtension", "form-submission-steps", testWebExtensionFormSubmissionSteps);
     WebViewTest::add("WebKitWebExtension", "page-id", testWebExtensionPageID);
+    UserMessageTest::add("WebKitWebExtension", "user-messages", testWebExtensionUserMessages);
 }
 
 void afterAll()

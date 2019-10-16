@@ -63,6 +63,7 @@
     <xi:include href="xml/WebKitAutomationSession.xml"/>
     <xi:include href="xml/WebKitApplicationInfo.xml"/>
     <xi:include href="xml/WebKitGeolocationManager.xml"/>
+    <xi:include href="xml/WebKitUserMessage.xml"/>
   </chapter>
 
   <chapter>

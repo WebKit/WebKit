@@ -34,6 +34,7 @@
 #include <webkit2/WebKitNetworkProxySettings.h>
 #include <webkit2/WebKitSecurityManager.h>
 #include <webkit2/WebKitURISchemeRequest.h>
+#include <webkit2/WebKitUserMessage.h>
 #include <webkit2/WebKitWebsiteDataManager.h>
 
 G_BEGIN_DECLS
@@ -143,17 +144,18 @@ struct _WebKitWebContext {
 struct _WebKitWebContextClass {
     GObjectClass parent;
 
-    void (* download_started)                    (WebKitWebContext        *context,
-                                                  WebKitDownload          *download);
-    void (* initialize_web_extensions)           (WebKitWebContext        *context);
-    void (* initialize_notification_permissions) (WebKitWebContext        *context);
-    void (* automation_started)                  (WebKitWebContext        *context,
-                                                  WebKitAutomationSession *session);
+    void     (* download_started)                    (WebKitWebContext        *context,
+                                                      WebKitDownload          *download);
+    void     (* initialize_web_extensions)           (WebKitWebContext        *context);
+    void     (* initialize_notification_permissions) (WebKitWebContext        *context);
+    void     (* automation_started)                  (WebKitWebContext        *context,
+                                                      WebKitAutomationSession *session);
+    gboolean (* user_message_received)               (WebKitWebContext        *context,
+                                                      WebKitUserMessage       *message);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
 };
 
 WEBKIT_API GType
@@ -317,6 +319,10 @@ webkit_web_context_initialize_notification_permissions
                                                     (WebKitWebContext              *context,
                                                      GList                         *allowed_origins,
                                                      GList                         *disallowed_origins);
+
+WEBKIT_API void
+webkit_web_context_send_message_to_all_extensions   (WebKitWebContext              *context,
+                                                     WebKitUserMessage             *message);
 
 G_END_DECLS
 

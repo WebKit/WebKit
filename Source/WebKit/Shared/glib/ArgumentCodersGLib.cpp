@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ArgumentCodersGLib.h"
 
-#include "UserMessage.h"
-#include <wtf/CompletionHandler.h>
+#include "DataReference.h"
+#include <glib.h>
+#include <wtf/text/CString.h>
 
-typedef struct OpaqueJSContext* JSGlobalContextRef;
+namespace IPC {
 
-namespace WebKit {
-class DownloadProxy;
+void encode(Encoder& encoder, GVariant* variant)
+{
+    if (!variant) {
+        encoder << CString();
+        return;
+    }
+
+    encoder << CString(g_variant_get_type_string(variant));
+    encoder << DataReference(static_cast<const uint8_t*>(g_variant_get_data(variant)), g_variant_get_size(variant));
 }
 
-namespace WKWPE {
-class View;
+Optional<GRefPtr<GVariant>> decode(Decoder& decoder)
+{
+    CString variantTypeString;
+    if (!decoder.decode(variantTypeString))
+        return WTF::nullopt;
+
+    if (variantTypeString.isNull())
+        return GRefPtr<GVariant>();
+
+    if (!g_variant_type_string_is_valid(variantTypeString.data()))
+        return WTF::nullopt;
+
+    DataReference data;
+    if (!decoder.decode(data))
+        return WTF::nullopt;
+
+    auto* variantType = g_variant_type_new(variantTypeString.data());
+    GRefPtr<GVariant> variant = g_variant_new_from_data(variantType, data.data(), data.size(), FALSE, nullptr, nullptr);
+    g_variant_type_free(variantType);
+    return variant;
 }
 
-namespace API {
-
-class ViewClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~ViewClient() = default;
-
-    virtual void frameDisplayed(WKWPE::View&) { }
-    virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
-    virtual void willStartLoad(WKWPE::View&) { }
-    virtual void didChangePageID(WKWPE::View&) { }
-    virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
-};
-
-} // namespace API
+} // namespace IPC

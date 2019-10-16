@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,13 +19,9 @@
 
 #pragma once
 
-#include "APIDictionary.h"
 #include "UserMessage.h"
-#include "WebKitWebPage.h"
-#include "WebPage.h"
+#include "WebKitUserMessage.h"
 
-WebKitWebPage* webkitWebPageCreate(WebKit::WebPage*);
-void webkitWebPageDidReceiveMessage(WebKitWebPage*, const String& messageName, API::Dictionary& message);
-void webkitWebPageDidReceiveUserMessage(WebKitWebPage*, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
-WebKit::WebPage* webkitWebPageGetPage(WebKitWebPage*);
-
+WebKitUserMessage* webkitUserMessageCreate(WebKit::UserMessage&&);
+WebKitUserMessage* webkitUserMessageCreate(WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
+WebKit::UserMessage& webkitUserMessageGetMessage(WebKitUserMessage*);

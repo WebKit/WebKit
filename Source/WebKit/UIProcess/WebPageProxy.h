@@ -301,6 +301,7 @@ struct PrintInfo;
 struct WebAutocorrectionData;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
+struct UserMessage;
 
 enum class ProcessSwapRequestedByClient;
 enum class UndoOrRedo : bool;
@@ -1735,6 +1736,11 @@ private:
     void exceededDatabaseQuota(WebCore::FrameIdentifier, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&&);
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, WebCore::FrameIdentifier, String originIdentifier);
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void sendMessageToWebView(UserMessage&&);
+    void sendMessageToWebViewWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();

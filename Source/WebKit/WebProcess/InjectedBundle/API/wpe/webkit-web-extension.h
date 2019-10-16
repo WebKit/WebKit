@@ -34,6 +34,7 @@
 #include <wpe/WebKitScriptWorld.h>
 #include <wpe/WebKitURIRequest.h>
 #include <wpe/WebKitURIResponse.h>
+#include <wpe/WebKitUserMessage.h>
 #include <wpe/WebKitWebEditor.h>
 #include <wpe/WebKitWebExtension.h>
 #include <wpe/WebKitWebHitTestResult.h>

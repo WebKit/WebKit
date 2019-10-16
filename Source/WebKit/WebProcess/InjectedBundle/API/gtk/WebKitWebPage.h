@@ -27,6 +27,7 @@
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitFrame.h>
+#include <webkit2/WebKitUserMessage.h>
 #include <webkit2/WebKitWebEditor.h>
 #include <webkitdom/webkitdom.h>
 
@@ -74,22 +75,34 @@ struct _WebKitWebPageClass {
 };
 
 WEBKIT_API GType
-webkit_web_page_get_type         (void);
+webkit_web_page_get_type                    (void);
 
 WEBKIT_API WebKitDOMDocument *
-webkit_web_page_get_dom_document (WebKitWebPage *web_page);
+webkit_web_page_get_dom_document            (WebKitWebPage *web_page);
 
 WEBKIT_API guint64
-webkit_web_page_get_id           (WebKitWebPage *web_page);
+webkit_web_page_get_id                      (WebKitWebPage *web_page);
 
 WEBKIT_API const gchar *
-webkit_web_page_get_uri          (WebKitWebPage *web_page);
+webkit_web_page_get_uri                     (WebKitWebPage *web_page);
 
 WEBKIT_API WebKitFrame *
-webkit_web_page_get_main_frame   (WebKitWebPage *web_page);
+webkit_web_page_get_main_frame              (WebKitWebPage *web_page);
 
 WEBKIT_API WebKitWebEditor *
-webkit_web_page_get_editor       (WebKitWebPage *web_page);
+webkit_web_page_get_editor                  (WebKitWebPage *web_page);
+
+WEBKIT_API void
+webkit_web_page_send_message_to_view        (WebKitWebPage      *web_page,
+                                             WebKitUserMessage  *message,
+                                             GCancellable       *cancellable,
+                                             GAsyncReadyCallback callback,
+                                             gpointer            user_data);
+
+WEBKIT_API WebKitUserMessage *
+webkit_web_page_send_message_to_view_finish (WebKitWebPage      *web_page,
+                                             GAsyncResult       *result,
+                                             GError            **error);
 
 G_END_DECLS
 

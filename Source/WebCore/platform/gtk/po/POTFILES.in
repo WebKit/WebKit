@@ -7,6 +7,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp
+../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp
 ../../../WebKit/Shared/WebErrors.cpp
 ../../../WebKit/Shared/gtk/WebErrorsGtk.cpp
 ../../../WebKit/Shared/soup/WebErrorsSoup.cpp
@@ -43,4 +44,5 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp
 ../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp
 ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp
+../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp
 ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp

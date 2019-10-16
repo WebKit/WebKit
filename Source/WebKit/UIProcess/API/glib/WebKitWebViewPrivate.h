@@ -28,6 +28,7 @@
 
 #include "APIPageConfiguration.h"
 #include "InstallMissingMediaPluginsPermissionRequest.h"
+#include "UserMessage.h"
 #include "WebContextMenuItemData.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
@@ -101,3 +102,4 @@ gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*)
 gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
 gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*);
 void webkitWebViewDidChangePageID(WebKitWebView*);
+void webkitWebViewDidReceiveUserMessage(WebKitWebView*, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);

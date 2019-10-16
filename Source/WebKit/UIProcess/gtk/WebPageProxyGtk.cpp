@@ -28,7 +28,9 @@
 #include "WebPageProxy.h"
 
 #include "PageClientImpl.h"
+#include "WebKitUserMessage.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebPageMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessProxy.h"
@@ -164,6 +166,21 @@ bool WebPageProxy::makeGLContextCurrent()
 void WebPageProxy::showEmojiPicker(const WebCore::IntRect& caretRect, CompletionHandler<void(String)>&& completionHandler)
 {
     webkitWebViewBaseShowEmojiChooser(WEBKIT_WEB_VIEW_BASE(viewWidget()), caretRect, WTFMove(completionHandler));
+}
+
+void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
+{
+    if (!WEBKIT_IS_WEB_VIEW(viewWidget())) {
+        completionHandler(UserMessage(message.name, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE));
+        return;
+    }
+
+    webkitWebViewDidReceiveUserMessage(WEBKIT_WEB_VIEW(viewWidget()), WTFMove(message), WTFMove(completionHandler));
+}
+
+void WebPageProxy::sendMessageToWebView(UserMessage&& message)
+{
+    sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
 } // namespace WebKit

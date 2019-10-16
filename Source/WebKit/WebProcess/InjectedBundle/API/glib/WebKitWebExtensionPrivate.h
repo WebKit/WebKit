@@ -20,7 +20,9 @@
 #pragma once
 
 #include "InjectedBundle.h"
+#include "UserMessage.h"
 #include "WebKitWebExtension.h"
 
 WebKitWebExtension* webkitWebExtensionCreate(WebKit::InjectedBundle*);
+void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension*, WebKit::UserMessage&&);
 void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension*);

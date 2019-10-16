@@ -1,3 +1,33 @@
+2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add user messages API
+        https://bugs.webkit.org/show_bug.cgi?id=202847
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a test to check the new API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (UserMessageTest::webViewUserMessageReceivedCallback):
+        (UserMessageTest::webContextUserMessageReceivedCallback):
+        (UserMessageTest::UserMessageTest):
+        (UserMessageTest::~UserMessageTest):
+        (UserMessageTest::sendMessage):
+        (UserMessageTest::sendMedssageToAllExtensions):
+        (UserMessageTest::viewUserMessageReceived):
+        (UserMessageTest::contextUserMessageReceived):
+        (UserMessageTest::waitUntilViewMessageReceived):
+        (UserMessageTest::waitUntilContextMessageReceived):
+        (readFileDescritpor):
+        (testWebExtensionUserMessages):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+        (pageMessageReceivedCallback):
+        (pageCreatedCallback):
+        (extensionMessageReceivedCallback):
+        (webkit_web_extension_initialize_with_user_data):
+
 2019-10-15  Aakash Jain  <aakash_jain@apple.com>
 
         Improve summary for WebKitPerl Tests build step
