@@ -33,6 +33,8 @@
 
 #else
 
+#if HAVE(AX_CLIENT_TYPE)
+
 typedef CF_ENUM(int32_t, AXClientType)
 {
     kAXClientTypeNoActiveRequestFound  = 0,
@@ -48,6 +50,8 @@ typedef CF_ENUM(int32_t, AXClientType)
     kAXClientTypeDictation,
 };
 
+#endif // HAVE(AX_CLIENT_TYPE)
+
 typedef enum {
     AXSuspendStatusRunning = 0,
     AXSuspendStatusSuspended,
@@ -55,6 +59,8 @@ typedef enum {
 
 #endif
 
+#if HAVE(AX_CLIENT_TYPE)
 extern AXClientType _AXGetClientForCurrentRequestUntrusted(void);
+#endif // HAVE(AX_CLIENT_TYPE)
 
 #endif // PLATFORM(MAC)

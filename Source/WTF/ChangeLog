@@ -1,3 +1,9 @@
+2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal macOS 10.13 and 10.14 builds after r251171
+
+        * wtf/Platform.h: Add a HAVE() macro for AXClientType, which is only available on macOS 10.15+ SDKs.
+
 2019-10-15  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Simplify main thread initialization
