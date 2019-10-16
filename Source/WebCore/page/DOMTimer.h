@@ -44,7 +44,7 @@ class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase 
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~DOMTimer();
+    WEBCORE_EXPORT virtual ~DOMTimer();
 
     static Seconds defaultMinimumInterval() { return 4_ms; }
     static Seconds defaultAlignmentInterval() { return 0_s; }
