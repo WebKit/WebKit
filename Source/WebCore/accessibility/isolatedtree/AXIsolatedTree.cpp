@@ -42,9 +42,9 @@ static unsigned newTreeID()
     return ++s_currentTreeID;
 }
 
-HashMap<uint64_t, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
+HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 {
-    static NeverDestroyed<HashMap<uint64_t, Ref<AXIsolatedTree>>> map;
+    static NeverDestroyed<HashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
     return map;
 }
 
@@ -65,16 +65,6 @@ Ref<AXIsolatedTree> AXIsolatedTree::create()
 {
     ASSERT(isMainThread());
     return adoptRef(*new AXIsolatedTree());
-}
-
-Ref<AXIsolatedTree> AXIsolatedTree::initializePageTreeForID(PageIdentifier pageID, AXObjectCache& cache)
-{
-    RELEASE_ASSERT(isMainThread());
-    auto tree = cache->generateIsolatedAccessibilityTree();
-    tree->setInitialRequestInProgress(true);
-    tree->applyPendingChanges();
-    tree->setInitialRequestInProgress(false);
-    return tree;
 }
 
 RefPtr<AXIsolatedTreeNode> AXIsolatedTree::nodeInTreeForID(AXIsolatedTreeID treeID, AXID axID)
@@ -109,7 +99,6 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedTreeNode> AXIsolatedTree::nodeForID(AXID axID) const
 {
-    RELEASE_ASSERT(!isMainThread() || initialRequest);
     if (!axID)
         return nullptr;
     return m_readerThreadNodeMap.get(axID);
@@ -150,14 +139,9 @@ void AXIsolatedTree::appendNodeChanges(Vector<Ref<AXIsolatedTreeNode>>& log)
         m_pendingAppends.append(node.copyRef());
 }
 
-void AXIsolatedTree::setInitialRequestInProgress(bool initialRequestInProgress)
-{
-    m_initialRequestInProgress = initialRequestInProgress;
-}
-
 void AXIsolatedTree::applyPendingChanges()
 {
-    RELEASE_ASSERT(!isMainThread() || initialRequest);
+    RELEASE_ASSERT(!isMainThread());
     LockHolder locker { m_changeLogLock };
     Vector<Ref<AXIsolatedTreeNode>> appendCopy;
     std::swap(appendCopy, m_pendingAppends);
@@ -169,10 +153,8 @@ void AXIsolatedTree::applyPendingChanges()
     m_rootNodeID = m_pendingRootNodeID;
     m_focusedNodeID = m_pendingFocusedNodeID;
     
-    for (auto& item : appendCopy) {
-        item->setTreeIdentifier(m_treeID);
+    for (auto& item : appendCopy)
         m_readerThreadNodeMap.add(item->identifier(), WTFMove(item));
-    }
 
     for (auto item : removeCopy)
         m_readerThreadNodeMap.remove(item);

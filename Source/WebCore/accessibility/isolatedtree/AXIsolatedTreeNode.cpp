@@ -95,7 +95,7 @@ void AXIsolatedTreeNode::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
 {
     m_treeIdentifier = treeIdentifier;
     if (auto tree = AXIsolatedTree::treeForID(m_treeIdentifier))
-        m_cachedTree = makeWeakPtr(tree.get());
+        m_cachedTree = tree;
 }
 
 AccessibilityObjectInterface* AXIsolatedTreeNode::focusedUIElement() const
@@ -132,7 +132,7 @@ FloatRect AXIsolatedTreeNode::rectAttributeValue(AXPropertyName propertyName) co
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
-        [&zeroRect] (Optional<FloatRect> typedValue) {
+        [&] (Optional<FloatRect> typedValue) {
             if (!typedValue)
                 return FloatRect { };
             return typedValue.value();

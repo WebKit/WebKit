@@ -730,8 +730,10 @@ void AXObjectCache::remove(AXID axID)
 
     m_idsInUse.remove(axID);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (auto pageID = m_document.pageID())
-        AXIsolatedTree::treeForPageID(*pageID)->removeNode(axID);
+    if (auto pageID = m_document.pageID()) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*pageID))
+            tree->removeNode(axID);
+    }
 #endif
 
     ASSERT(m_objects.size() >= m_idsInUse.size());
@@ -2946,6 +2948,7 @@ Ref<AXIsolatedTreeNode> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(
     auto isolatedTreeNode = AXIsolatedTreeNode::create(object);
     nodeChanges.append(isolatedTreeNode.copyRef());
 
+    isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
     isolatedTreeNode->setParent(parentID);
     associateIsolatedTreeNode(object, isolatedTreeNode, tree.treeIdentifier());
 

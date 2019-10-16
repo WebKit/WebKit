@@ -37,15 +37,14 @@ namespace WebCore {
 
 class Page;
 
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>, public CanMakeWeakPtr<AXIsolatedTree> {
+class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static Ref<AXIsolatedTree> create();
     virtual ~AXIsolatedTree();
 
-    static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
-    WEBCORE_EXPORT static Ref<AXIsolatedTree> initializePageTreeForID(PageIdentifier, AXObjectCache&);
+    WEBCORE_EXPORT static Ref<AXIsolatedTree> createTreeForPageID(PageIdentifier);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
 
@@ -64,7 +63,6 @@ public:
     // Call on AX thread
     WEBCORE_EXPORT void applyPendingChanges();
 
-    WEBCORE_EXPORT void setInitialRequestInProgress(bool);
     AXIsolatedTreeID treeIdentifier() const { return m_treeID; }
 
 private:
@@ -86,7 +84,6 @@ private:
     AXIsolatedTreeID m_treeID;
     AXID m_rootNodeID { InvalidAXID };
     AXID m_focusedNodeID { InvalidAXID };
-    bool m_initialRequestInProgress;
 };
 
 } // namespace WebCore

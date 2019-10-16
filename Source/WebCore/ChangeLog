@@ -1,3 +1,32 @@
+2019-10-15  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Make AXIsolatedTree compile again
+        https://bugs.webkit.org/show_bug.cgi?id=202702
+        <rdar://problem/56084968>
+
+        Reviewed by Joanmarie Diggs.
+
+        Re-submitting r251045 with a fix for internal builds.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::createIsolatedAccessibilityTreeHierarchy):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::treePageCache):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        (WebCore::AXIsolatedTree::initializePageTreeForID): Deleted.
+        (WebCore::AXIsolatedTree::setInitialRequestInProgress): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedTreeNode::setTreeIdentifier):
+        (WebCore::AXIsolatedTreeNode::rectAttributeValue const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper childrenVectorArray]):
+
 2019-10-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Crash in WebCore::DOMWindow::incrementScrollEventListenersCount

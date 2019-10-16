@@ -29,7 +29,11 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundef"
+
+#if PLATFORM(MAC)
 #include <HIServices/AccessibilityPriv.h>
+#endif
+
 #pragma clang diagnostic pop
 
 #else
