@@ -1,3 +1,21 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/async-clipboard/clipboard-item-basic.html is a flaky failure on macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=203015
+
+        Reviewed by Tim Horton.
+
+        This test, for the most part, finishes and dumps its final output before a couple of (intentionally) rejected
+        promises finish and log their uncaught rejections to the console. In the case where we lose this race and the
+        console messages happen earlier, we end up with a text diff failure.
+
+        Avoid this issue by making sure that we catch these promise rejections.
+
+        * editing/async-clipboard/clipboard-item-basic.html:
+
+        Also give this test a tiny bit more variety, by making one of the promises reject immediately, while the other
+        still waits for a short delay (50 ms).
+
 2019-10-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Import apng testcases from WPT.

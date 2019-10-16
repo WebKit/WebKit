@@ -143,8 +143,10 @@
             await (async function() {
                 item = tryToCreateClipboardItem({
                     "text/plain" : Promise.resolve("謝謝"),
-                    "text/html" : new Promise((_, reject) => setTimeout(() => reject(imageBlob()), 50)),
-                    "image/png" : new Promise((_, reject) => setTimeout(() => reject(imageBlob()), 50)),
+                    "text/html" : new Promise((_, reject) => {
+                        setTimeout(reject, 50);
+                    }).catch(() => { }),
+                    "image/png" : Promise.reject(imageBlob()).catch(() => { }),
                     "🤔🤔🤔" : Promise.resolve("מקור השם עברית"),
                     "מקור השם עברית" : Promise.resolve("🤔🤔🤔")
                 });
