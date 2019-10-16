@@ -82,6 +82,12 @@ LayoutUnit TableGrid::Column::logicalLeft() const
     return m_computedLogicalLeft;
 }
 
+bool TableGrid::Column::hasFixedWidth() const
+{
+    // FIXME: This only covers the <col> attribute case.
+    return columnBox() && columnBox()->columnWidth();
+}
+
 void TableGrid::ColumnsContext::addColumn(const Box* columnBox)
 {
     m_columns.append({ columnBox });
@@ -173,7 +179,7 @@ FormattingContext::IntrinsicWidthConstraints TableGrid::widthConstraints() const
     auto widthConstraints = FormattingContext::IntrinsicWidthConstraints { };
     for (auto& column : m_columnsContext.columns())
         widthConstraints += column.widthConstraints();
-    widthConstraints.expand((m_columnsContext.columns().size() + 1) * m_horizontalSpacing); 
+    widthConstraints.expand(totalHorizontalSpacing()); 
     return widthConstraints;
 }
 

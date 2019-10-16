@@ -48,6 +48,7 @@ public:
 
     void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
     LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
+    LayoutUnit totalHorizontalSpacing() const { return columnsContext().columns().size() * horizontalSpacing(); }
 
     void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
@@ -79,6 +80,8 @@ public:
         LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
+
+        bool hasFixedWidth() const;
 
         const Box* columnBox() const { return m_columnBox.get(); }
 
@@ -112,6 +115,7 @@ public:
 
         ColumnList m_columns;
     };
+    const ColumnsContext& columnsContext() const { return m_columnsContext; }
     ColumnsContext& columnsContext() { return m_columnsContext; }
 
     struct Row {
