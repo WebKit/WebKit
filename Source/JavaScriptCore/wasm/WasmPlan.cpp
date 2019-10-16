@@ -130,9 +130,9 @@ bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 
 void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
 {
-    ASSERT(errorMessage);
     if (failed())
         return;
+    ASSERT(errorMessage);
     dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
     complete(locker);

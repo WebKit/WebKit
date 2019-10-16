@@ -1,3 +1,20 @@
+2019-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Move assert in Wasm::Plan::fail.
+        https://bugs.webkit.org/show_bug.cgi?id=203052
+
+        Reviewed by Mark Lam.
+
+        * wasm/regress/wasm-plan-fail-bad-error-message-assert.js: Added.
+        (Binary):
+        (Binary.prototype.trunc_buffer):
+        (Binary.prototype.emit_leb_u):
+        (Binary.prototype.emit_u32v):
+        (Binary.prototype.emit_bytes):
+        (Binary.prototype.emit_header):
+        (__f_576):
+        (__f_587):
+
 2019-10-15  Mark Lam  <mark.lam@apple.com>
 
         operationSwitchCharWithUnknownKeyType failed to handle OOME when resolving rope string.
