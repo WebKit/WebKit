@@ -60,4 +60,20 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
     return outline == other.outline;
 }
 
+void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
+{
+    if (behavior == DumpStyleValues::All || background != FillLayer(FillLayerType::Background))
+        ts.dumpProperty("background-image", background);
+    if (behavior == DumpStyleValues::All || color != RenderStyle::initialBackgroundColor())
+        ts.dumpProperty("background-color", color);
+    if (behavior == DumpStyleValues::All || outline != OutlineValue())
+        ts.dumpProperty("outline", outline);
+}
+
+TextStream& operator<<(TextStream& ts, const StyleBackgroundData& backgroundData)
+{
+    backgroundData.dump(ts);
+    return ts;
+}
+
 } // namespace WebCore

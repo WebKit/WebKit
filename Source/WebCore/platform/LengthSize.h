@@ -28,6 +28,7 @@ struct LengthSize {
     Length height;
 
     bool isEmpty() const { return width.isZero() || height.isZero(); }
+    bool isZero() const { return width.isZero() && height.isZero(); }
 };
 
 ALWAYS_INLINE bool operator==(const LengthSize& a, const LengthSize& b)

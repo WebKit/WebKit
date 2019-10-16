@@ -33,6 +33,11 @@ class TextStream;
 
 namespace WebCore {
 
+enum class DumpStyleValues {
+    All,
+    NonInitial,
+};
+
 static const size_t PrintColorAdjustBits = 1;
 enum class PrintColorAdjust : uint8_t {
     Economy,

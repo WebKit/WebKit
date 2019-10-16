@@ -46,9 +46,13 @@ public:
     Color color;
     OutlineValue outline;
 
+    void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
+
 private:
     StyleBackgroundData();
     StyleBackgroundData(const StyleBackgroundData&);
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const StyleBackgroundData&);
 
 } // namespace WebCore

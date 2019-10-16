@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class OutlineValue;
+
 class BorderData {
 friend class RenderStyle;
 public:
@@ -122,6 +124,8 @@ public:
     const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
     const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
 
+    void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
+
 private:
     BorderValue m_left;
     BorderValue m_right;
@@ -135,5 +139,9 @@ private:
     LengthSize m_bottomLeftRadius;
     LengthSize m_bottomRightRadius;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const BorderValue&);
+WTF::TextStream& operator<<(WTF::TextStream&, const OutlineValue&);
+WTF::TextStream& operator<<(WTF::TextStream&, const BorderData&);
 
 } // namespace WebCore
