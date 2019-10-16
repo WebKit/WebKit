@@ -1,3 +1,17 @@
+2019-10-16  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [Tools] Add a driver for cog for benchmark_runner.py
+        https://bugs.webkit.org/show_bug.cgi?id=202995
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_cog_driver.py: Added.
+        (CogBrowserDriver):
+        (CogBrowserDriver.launch_url):
+        (CogBrowserDriver.launch_driver):
+        (CogFdoBrowserDriver):
+        (CogFdoBrowserDriver.launch_url):
+
 2019-10-16  Youenn Fablet  <youenn@apple.com>
 
         WebAudioSourceProviderAVFObjC::provideInput should set its WebAudioBufferList parameters correctly
