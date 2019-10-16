@@ -1,3 +1,26 @@
+2019-10-16  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.net.bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=202468
+
+        Reviewed by Stephanie Lewis.
+
+        Make the irc library we use Python 3 compatible.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.net.bugzilla to the test list.
+        * Scripts/webkitpy/thirdparty/irc/ircbot.py: Use full import paths.
+        * Scripts/webkitpy/thirdparty/irc/irclib.py: Fix exceptions, printing for Python 3.
+        (Connection._get_socket): 
+        (ServerConnection.connect):
+        (ServerConnection.process_data):
+        (ServerConnection.disconnect):
+        (ServerConnection.send_raw):
+        (DCCConnection.connect):
+        (DCCConnection.listen):
+        (DCCConnection.disconnect):
+        (DCCConnection.process_data):
+        (DCCConnection.privmsg):
+
 2019-10-16  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction

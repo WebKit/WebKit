@@ -25,12 +25,16 @@ write simpler bots.
 """
 
 import sys
-from UserDict import UserDict
 
-from irclib import SimpleIRCClient
-from irclib import nm_to_n, irc_lower, all_events
-from irclib import parse_channel_modes, is_channel
-from irclib import ServerConnectionError
+if sys.version_info > (3, 0):
+    from collections import UserDict
+else:
+    from UserDict import UserDict
+
+from webkitpy.thirdparty.irc.irclib import SimpleIRCClient
+from webkitpy.thirdparty.irc.irclib import nm_to_n, irc_lower, all_events
+from webkitpy.thirdparty.irc.irclib import parse_channel_modes, is_channel
+from webkitpy.thirdparty.irc.irclib import ServerConnectionError
 
 class SingleServerIRCBot(SimpleIRCClient):
     """A single-server IRC bot class.
