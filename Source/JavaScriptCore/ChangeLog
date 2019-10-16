@@ -1,3 +1,17 @@
+2019-10-16  Keith Miller  <keith_miller@apple.com>
+
+        checkConsistency in Air O0 should only run when validation is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=203050
+
+        Reviewed by Saam Barati.
+
+        I resued the validateGraph and validateGraphAtEachPhase options
+        because adding a new option and threading it through all our
+        testing infrastructure didn't seem worthwhile for this.
+
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::GenerateAndAllocateRegisters::checkConsistency):
+
 2019-10-16  Paulo Matos  <pmatos@igalia.com> and Caio Lima  <ticaiolima@gmail.com>
 
         Invalid instruction generated for ARM_THUMB2 in llint

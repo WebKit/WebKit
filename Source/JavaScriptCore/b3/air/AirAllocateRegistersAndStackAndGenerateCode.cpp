@@ -47,30 +47,31 @@ GenerateAndAllocateRegisters::GenerateAndAllocateRegisters(Code& code)
 
 ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
 {
-#if !ASSERT_DISABLED
-    m_code.forEachTmp([&] (Tmp tmp) {
-        Reg reg = m_map[tmp].reg;
-        if (!reg)
-            return;
+    // This isn't exactly the right option for this but adding a new one for just this seems silly.
+    if (Options::validateGraph() || Options::validateGraphAtEachPhase()) {
+        m_code.forEachTmp([&] (Tmp tmp) {
+            Reg reg = m_map[tmp].reg;
+            if (!reg)
+                return;
 
-        ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
-        ASSERT(m_currentAllocation->at(reg) == tmp);
-    });
+            ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+            ASSERT(m_currentAllocation->at(reg) == tmp);
+        });
 
-    for (Reg reg : RegisterSet::allRegisters()) {
-        if (isDisallowedRegister(reg))
-            continue;
+        for (Reg reg : RegisterSet::allRegisters()) {
+            if (isDisallowedRegister(reg))
+                continue;
 
-        Tmp tmp = m_currentAllocation->at(reg);
-        if (!tmp) {
-            ASSERT(m_availableRegs[bankForReg(reg)].contains(reg));
-            continue;
+            Tmp tmp = m_currentAllocation->at(reg);
+            if (!tmp) {
+                ASSERT(m_availableRegs[bankForReg(reg)].contains(reg));
+                continue;
+            }
+
+            ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+            ASSERT(m_map[tmp].reg == reg);
         }
-
-        ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
-        ASSERT(m_map[tmp].reg == reg);
     }
-#endif
 }
 
 void GenerateAndAllocateRegisters::buildLiveRanges(UnifiedTmpLiveness& liveness)
