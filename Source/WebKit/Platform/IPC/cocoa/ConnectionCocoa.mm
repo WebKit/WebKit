@@ -55,14 +55,7 @@
 
 #if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
-#else
-typedef enum {
-    AXSuspendStatusRunning = 0,
-    AXSuspendStatusSuspended,
-} AXSuspendStatus;
-#endif
+#import "ApplicationServicesSPI.h"
 
 extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
 

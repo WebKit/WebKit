@@ -25,16 +25,11 @@
 
 #pragma once
 
+#if PLATFORM(MAC)
+
 #if USE(APPLE_INTERNAL_SDK)
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundef"
-
-#if PLATFORM(MAC)
-#include <HIServices/AccessibilityPriv.h>
-#endif
-
-#pragma clang diagnostic pop
+#import <ApplicationServices/ApplicationServicesPriv.h>
 
 #else
 
@@ -53,6 +48,13 @@ typedef CF_ENUM(int32_t, AXClientType)
     kAXClientTypeDictation,
 };
 
+typedef enum {
+    AXSuspendStatusRunning = 0,
+    AXSuspendStatusSuspended,
+} AXSuspendStatus;
+
+#endif
+
 extern AXClientType _AXGetClientForCurrentRequestUntrusted(void);
 
-#endif // PLATFORM(APPLE_INTERNAL_SDK)
+#endif // PLATFORM(MAC)

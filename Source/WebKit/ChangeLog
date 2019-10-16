@@ -1,3 +1,31 @@
+2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix the internal macOS build after r251171
+        https://bugs.webkit.org/show_bug.cgi?id=203022
+
+        Reviewed by Dan Bernstein.
+
+        Attempts to include <HIServices/AccessibilityPriv.h> in WebKit result in:
+
+        ```
+        fatal error: 'HIServices/AccessibilityPriv.h' file not found
+        ```
+
+        At least on macOS 10.15, it appears that HIServices.framework exists within the ApplicationServices framework.
+        To fix this build error, we can instead turn AccessibilityPrivSPI.h into an SPI header for ApplicationServices,
+        ApplicationServicesSPI.h, and use it in several places where we currently directly import <ApplicationServices/
+        ApplicationServicesPriv.h>.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+
+        Bring some more constants that were defined in the !USE(APPLE_INTERNAL_SDK) case into the ApplicationServices
+        SPI header.
+
+        * Platform/spi/mac/ApplicationServicesSPI.h: Renamed from Source/WebKit/Platform/spi/mac/AccessibilityPrivSPI.h.
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+
 2019-10-15  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (~244100) [Mac WK2 Debug] Layout Test http/tests/resourceLoadStatistics/prune-statistics.html is a flaky failure (197285)

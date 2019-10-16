@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import "AuxiliaryProcess.h"
 
+#import "ApplicationServicesSPI.h"
 #import "CodeSigning.h"
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
@@ -56,7 +57,6 @@
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <ApplicationServices/ApplicationServicesPriv.h>
 #import <rootless.h>
 #endif
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 
-#import "AccessibilityPrivSPI.h"
+#import "ApplicationServicesSPI.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WKArray.h"
