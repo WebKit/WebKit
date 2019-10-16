@@ -1,3 +1,16 @@
+2019-10-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: prevent source mapped resources from being blackboxed
+        https://bugs.webkit.org/show_bug.cgi?id=203007
+
+        Reviewed by Matt Baker.
+
+        Since source mapped resources are entirely a frontend concept, it doesn't make sense to
+        allow them to be blackboxed.
+
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.get supportsScriptBlackboxing):
+
 2019-10-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Convert CSSRule selectorText setter to setSelectorText method because it's asynchronous
