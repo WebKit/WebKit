@@ -1,3 +1,19 @@
+2019-10-16  Youenn Fablet  <youenn@apple.com>
+
+        WebAudioSourceProviderAVFObjC::provideInput should set its WebAudioBufferList parameters correctly
+        https://bugs.webkit.org/show_bug.cgi?id=202930
+        <rdar://problem/56006776>
+
+        Reviewed by Eric Carlson.
+
+        Add a test that has an audio track that goes from 1 to 2 channels while being piped to a WebAudio pipeline.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (-[GUMMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/getUserMedia-webaudio.html: Added.
+
 2019-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add user messages API

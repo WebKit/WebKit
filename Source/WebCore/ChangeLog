@@ -1,3 +1,25 @@
+2019-10-16  Youenn Fablet  <youenn@apple.com>
+
+        WebAudioSourceProviderAVFObjC::provideInput should set its WebAudioBufferList parameters correctly
+        https://bugs.webkit.org/show_bug.cgi?id=202930
+        <rdar://problem/56006776>
+
+        Reviewed by Eric Carlson.
+
+        There is a time where the bus channel number and audio source channel numbers may be different.
+        In case the bus channel number is less than the audio source channel number, initialization of
+        the WebAudioBufferList might not be fully done.
+        In that case, output silence and return early.
+        Reduce the number of frames to process based on the number of frames the output audio bus plans to process.
+
+        Partially covered by new API test (this a race so we cannot reproduce the crash easily).
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::process):
+        Make sure to process the number of frames the output bus expect.
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+
 2019-10-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] TableFormattingContext::distributeExtraHorizontalSpace should not ignore fixed width columns

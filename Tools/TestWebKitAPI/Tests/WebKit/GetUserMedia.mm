@@ -30,11 +30,15 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+
+static bool done;
 
 @interface GetUserMediaCaptureUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
@@ -50,6 +54,17 @@
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
 {
     decisionHandler(@"0x9876543210", YES);
+}
+@end
+
+@interface GUMMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation GUMMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(@"PASS", [message body]);
+    done = true;
 }
 @end
 
@@ -111,6 +126,37 @@ TEST(WebKit2, CaptureMute)
     [webView stringByEvaluatingJavaScript:@"stop()"];
     waitUntilCaptureState(webView, _WKMediaCaptureStateNone);
 }
+
+#if WK_HAVE_C_SPI
+TEST(WebKit, WebAudioAndGetUserMedia)
+{
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    configuration.get().processPool._configuration.shouldCaptureAudioInUIProcess = NO;
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mediaDevicesEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()];
+
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    auto url = adoptWK(Util::createURLForResource("getUserMedia-webaudio", "html"));
+    [webView loadTestPageNamed:@"getUserMedia-webaudio"];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+#endif
 
 } // namespace TestWebKitAPI
 
