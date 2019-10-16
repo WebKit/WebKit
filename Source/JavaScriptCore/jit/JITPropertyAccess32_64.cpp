@@ -1215,7 +1215,7 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
     emitLoadPayload(base, regT2);
     load32(Address(regT2, JSInternalFieldObjectImpl<>::offsetOfInternalField(index) + TagOffset), regT1);
     load32(Address(regT2, JSInternalFieldObjectImpl<>::offsetOfInternalField(index) + PayloadOffset), regT0);
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitValueProfilingSite(metadata);
     emitStore(dst, regT1, regT0);
 }
 

@@ -1,3 +1,13 @@
+2019-10-16  Paulo Matos  <pmatos@linki.tools>
+
+        Fix GCC warning on MIPS about dead variable metadata
+        https://bugs.webkit.org/show_bug.cgi?id=202987
+
+        Reviewed by Keith Miller.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_internal_field):
+
 2019-10-15  Mark Lam  <mark.lam@apple.com>
 
         operationSwitchCharWithUnknownKeyType failed to handle OOME when resolving rope string.
