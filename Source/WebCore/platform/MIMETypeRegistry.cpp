@@ -75,6 +75,7 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImag
         "image/jpeg"_s,
         "image/vnd.microsoft.icon"_s,
         "image/jp2"_s,
+        "image/apng"_s,
         "image/png"_s,
         "image/bmp"_s,
 
@@ -135,6 +136,9 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedImag
         "image/vnd.microsoft.icon"_s, // ico
         "image/x-icon"_s, // ico
         "image/x-xbitmap"_s, // xbm
+#if ENABLE(APNG)
+        "image/apng"_s,
+#endif
 #if USE(OPENJPEG)
         "image/jp2"_s,
         "image/jpeg2000"_s,
