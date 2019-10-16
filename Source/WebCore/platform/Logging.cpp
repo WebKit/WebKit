@@ -27,6 +27,7 @@
 #include "Logging.h"
 #include "LogInitialization.h"
 
+#include <wtf/LoggingAccumulator.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -66,6 +67,17 @@ void setLogChannelToAccumulate(const String& name)
         return;
 
     channel->state = WTFLogChannelState::OnWithAccumulation;
+    logChannelsNeedInitialization = true;
+}
+
+void clearAllLogChannelsToAccumulate()
+{
+    resetAccumulatedLogs();
+    for (auto* channel : logChannels) {
+        if (channel->state == WTFLogChannelState::OnWithAccumulation)
+            channel->state = WTFLogChannelState::Off;
+    }
+
     logChannelsNeedInitialization = true;
 }
 

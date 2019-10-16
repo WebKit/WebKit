@@ -93,7 +93,6 @@
 #import <getopt.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/LoggingAccumulator.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
@@ -1945,7 +1944,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     [LayoutTestSpellChecker uninstallAndReset];
 #endif
 
-    resetAccumulatedLogs();
+    WebCoreTestSupport::clearAllLogChannelsToAccumulate();
     WebCoreTestSupport::initializeLogChannelsIfNecessary();
 }
 

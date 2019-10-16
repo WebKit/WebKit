@@ -120,6 +120,13 @@ void setLogChannelToAccumulate(const String& name)
 #endif
 }
 
+void clearAllLogChannelsToAccumulate()
+{
+#if !LOG_DISABLED
+    WebCore::clearAllLogChannelsToAccumulate();
+#endif
+}
+
 void initializeLogChannelsIfNecessary()
 {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED

@@ -1052,6 +1052,9 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 
     COMPtr<IWebViewPrivate5> webViewPrivate5(Query, webView);
     webViewPrivate5->exitFullscreenIfNeeded();
+
+    WebCoreTestSupport::clearAllLogChannelsToAccumulate();
+    WebCoreTestSupport::initializeLogChannelsIfNecessary();
 }
 
 static void sizeWebViewForCurrentTest()

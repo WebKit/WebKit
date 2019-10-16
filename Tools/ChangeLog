@@ -1,3 +1,24 @@
+2019-10-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        DumpRenderTree should clear WTFLogChannelState::OnWithAccumulation state set by testRunner.accummulateLogsForChannel
+        https://bugs.webkit.org/show_bug.cgi?id=203024
+
+        Reviewed by Alex Christensen.
+
+        If a test case calls testRunner.accummulateLogsForChannel("IndexedDB"),
+        all subsequent IndexedDB tests also dump the log.
+        This is unnecessarily bloating DumpRenderTree log because
+        DumpRenderTree is run with --debug-rwt-logging switch on Buildbot.
+
+        Add a function to clear WTFLogChannelState::OnWithAccumulation
+        state, and call it for every test execution.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        Call WebCoreTestSupport::clearAllLogChannelsToAccumulate.
+
 2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove an API test workaround that is no longer needed
