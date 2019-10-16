@@ -1,0 +1,4 @@
+The following text should be green: 
+
+FAIL Part in selected host is styled assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+
