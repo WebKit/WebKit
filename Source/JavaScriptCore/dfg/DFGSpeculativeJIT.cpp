@@ -10719,16 +10719,15 @@ void SpeculativeJIT::emitSwitchCharStringJump(
 {
     m_jit.loadPtr(MacroAssembler::Address(value, JSString::offsetOfValue()), scratch);
     auto isRope = m_jit.branchIfRopeStringImpl(scratch);
-
+    addSlowPathGenerator(slowPathCall(isRope, this, operationResolveRope, scratch, value));
+    
     addBranch(
         m_jit.branch32(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(scratch, StringImpl::lengthMemoryOffset()),
             TrustedImm32(1)),
         data->fallThrough.block);
-    
-    addSlowPathGenerator(slowPathCall(isRope, this, operationResolveRope, scratch, value));
-    
+
     m_jit.loadPtr(MacroAssembler::Address(scratch, StringImpl::dataOffset()), value);
     
     JITCompiler::Jump is8Bit = m_jit.branchTest32(

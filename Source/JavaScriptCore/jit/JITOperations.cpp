@@ -2303,6 +2303,7 @@ char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, Encod
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = exec->codeBlock();
 
@@ -2310,9 +2311,12 @@ char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, Encod
     void* result = jumpTable.ctiDefault.executableAddress();
 
     if (key.isString()) {
-        StringImpl* value = asString(key)->value(exec).impl();
-        if (value->length() == 1)
-            result = jumpTable.ctiForValue((*value)[0]).executableAddress();
+        JSString* string = asString(key);
+        if (string->length() == 1) {
+            String value = string->value(exec);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
+            result = jumpTable.ctiForValue(value[0]).executableAddress();
+        }
     }
 
     assertIsTaggedWith(result, JSSwitchPtrTag);
