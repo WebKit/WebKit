@@ -65,7 +65,6 @@ private:
     WTF::Function<void()> m_completionCallback;
     RunLoop::Timer<WheelEventTestMonitor> m_testForCompletionTimer;
 
-    mutable Lock m_reasonsLock;
     ScrollableAreaReasonMap m_deferCompletionReasons;
 };
 
