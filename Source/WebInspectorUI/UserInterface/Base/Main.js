@@ -2716,8 +2716,8 @@ WI._enableControlFlowProfilerSettingChanged = function(event)
 
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
-    let target = WI.assumingMainTarget();
-    target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+    for (let target of WI.targets)
+        target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 };
 
 WI.measureElement = function(element)
