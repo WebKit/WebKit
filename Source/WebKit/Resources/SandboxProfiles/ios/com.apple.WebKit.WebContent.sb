@@ -40,9 +40,6 @@
     (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     (global-name-regex #"^com\.apple\.uikit\.viewservice\..+"))
 
-;; Any app could use ubiquity.
-(ubiquity-client)
-
 ;; Any app can play audio & movies.
 (play-audio)
 (play-media)
@@ -405,8 +402,6 @@
 ;; established, see https://bugs.webkit.org/show_bug.cgi?id=193840
 (deny mach-lookup
     (global-name "com.apple.CoreAuthentication.daemon.libxpc")
-    (global-name "com.apple.FileCoordination")
-    (global-name "com.apple.FileProvider")
     (global-name "com.apple.Honeybee.event-notify")
     (global-name "com.apple.MediaPlayer.RemotePlayerService")
     (global-name "com.apple.ReportCrash.SimulateCrash")
@@ -415,8 +410,6 @@
     (global-name "com.apple.assertiond.processassertionconnection")
     (global-name "com.apple.audio.reporting.xpc")
     (global-name "com.apple.backboard.hid.services")
-    (global-name "com.apple.bird")
-    (global-name "com.apple.bird.token")
     (global-name "com.apple.cfprefsd.agent")
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.coremedia.assetcacheinspector")
@@ -434,7 +427,6 @@
     (global-name "com.apple.hangtracerd")
     (global-name "com.apple.itunescloudd.xpc")
     (global-name "com.apple.itunesstored.xpc")
-    (global-name "com.apple.librariand")
     (global-name "com.apple.locationd.spi")
     (global-name "com.apple.locationd.synchronous")
     (global-name "com.apple.lsd")
@@ -450,8 +442,6 @@
     (global-name "com.apple.pegasus")
     (global-name "com.apple.pluginkit.pkd")
     (global-name "com.apple.pluginkit.plugin-service")
-    (global-name "com.apple.quicklook.ThumbnailsAgent")
-    (global-name "com.apple.revisiond")
     (global-name "com.apple.springboard.backgroundappservices")
     (global-name "com.apple.system.libinfo.muser")
     (global-name "com.apple.webkit.camera")

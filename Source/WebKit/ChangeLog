@@ -1,3 +1,15 @@
+2019-10-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Remove ubiquity client rule from sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=201347
+
+        Reviewed by Brent Fulgham.
+
+        This rule is most likely not needed, since we have already blocked all of its associated mach services,
+        and no issues have been reported.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-16  Tim Horton  <timothy_horton@apple.com>
 
         iOS: inputmode=none is not respected with a hardware keyboard attached
