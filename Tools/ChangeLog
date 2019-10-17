@@ -1,3 +1,16 @@
+2019-10-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] status bubbles should show details from all the builds in case build is retried
+        https://bugs.webkit.org/show_bug.cgi?id=203117
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Display messages from all the builds (including retried builds) for a patch on a queue.
+        (StatusBubble._steps_messages_from_multiple_builds): Method to generate status using information from all the retried builds. 
+        (StatusBubble.get_all_builds_for_queue): Method to get all the builds instead of just the latest one.
+        (StatusBubble.get_latest_build_for_queue): Modified to use the new get_all_builds_for_queue() method.
+
 2019-10-17  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         [GTK] Explicitly use Python 2 in jhbuild-wrapper

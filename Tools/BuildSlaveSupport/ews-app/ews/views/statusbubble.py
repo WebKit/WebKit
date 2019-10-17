@@ -73,7 +73,10 @@ class StatusBubble(View):
             if self._is_builder_queue(queue):
                 bubble['name'] = StatusBubble.BUILDER_ICON + '  ' + bubble['name']
 
-        build, is_parent_build = self.get_latest_build_for_queue(patch, queue, self._get_parent_queue(queue))
+        builds, is_parent_build = self.get_all_builds_for_queue(patch, queue, self._get_parent_queue(queue))
+        build = None
+        if builds:
+            build = builds[0]
         if not self._should_show_bubble_for_build(build):
             return None
 
@@ -94,7 +97,7 @@ class StatusBubble(View):
                 bubble['state'] = 'provisional-fail'
             else:
                 bubble['state'] = 'started'
-            bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'Build is in-progress. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
                 if patch.modified < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)):
@@ -103,13 +106,13 @@ class StatusBubble(View):
                     # added after the patch was submitted, or build request for that patch was cancelled.
                     return None
                 bubble['state'] = 'started'
-                bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build) + '\n\nWaiting to run tests.'
+                bubble['details_message'] = 'Build is in-progress. Recent messages:' + self._steps_messages_from_multiple_builds(builds) + '\n\nWaiting to run tests.'
             else:
                 bubble['state'] = 'pass'
                 bubble['details_message'] = 'Pass'
         elif build.result == Buildbot.WARNINGS:
             bubble['state'] = 'pass'
-            bubble['details_message'] = 'Warning\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'Warning' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.FAILURE:
             bubble['state'] = 'fail'
             bubble['details_message'] = self._most_recent_step_message(build)
@@ -125,16 +128,16 @@ class StatusBubble(View):
 
         elif build.result == Buildbot.EXCEPTION:
             bubble['state'] = 'error'
-            bubble['details_message'] = 'An unexpected error occured. Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'An unexpected error occured. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.RETRY:
             bubble['state'] = 'provisional-fail'
-            bubble['details_message'] = 'Build is being retried. Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'Build is being retried. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
         elif build.result == Buildbot.CANCELLED:
             bubble['state'] = 'fail'
-            bubble['details_message'] = 'Build was cancelled. Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'Build was cancelled. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
         else:
             bubble['state'] = 'error'
-            bubble['details_message'] = 'An unexpected error occured. Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'An unexpected error occured. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
 
         if 'details_message' in bubble:
             bubble['details_message'] = builder_full_name + '\n\n' + bubble['details_message']
@@ -180,6 +183,12 @@ class StatusBubble(View):
     def _steps_messages(self, build):
         return '\n'.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
 
+    def _steps_messages_from_multiple_builds(self, builds):
+        message = ''
+        for build in reversed(builds):
+            message += '\n\n' + self._steps_messages(build)
+        return message
+
     def _should_display_step(self, step):
         return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
 
@@ -196,6 +205,12 @@ class StatusBubble(View):
         return recent_step.state_string
 
     def get_latest_build_for_queue(self, patch, queue, parent_queue=None):
+        builds, is_parent_build = self.get_all_builds_for_queue(patch, queue, parent_queue)
+        if not builds:
+            return (None, None)
+        return (builds[0], is_parent_build)
+
+    def get_all_builds_for_queue(self, patch, queue, parent_queue=None):
         builds = self.get_builds_for_queue(patch, queue)
         is_parent_build = False
         if not builds and parent_queue:
@@ -204,7 +219,7 @@ class StatusBubble(View):
         if not builds:
             return (None, None)
         builds.sort(key=lambda build: build.started_at, reverse=True)
-        return (builds[0], is_parent_build)
+        return (builds, is_parent_build)
 
     def get_builds_for_queue(self, patch, queue):
         return [build for build in patch.build_set.all() if build.builder_display_name == queue]
