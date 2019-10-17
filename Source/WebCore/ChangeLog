@@ -1,3 +1,46 @@
+2019-10-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add Display::Run/LineBox mapping
+        https://bugs.webkit.org/show_bug.cgi?id=203051
+        <rdar://problem/56342487>
+
+        Reviewed by Antti Koivisto.
+
+        Mapping enables us to paint baseline aligned runs on the current line. This is temporary until after we figure out the final run/line structure.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingSimpleLineInformationIfNeeded):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::addLineBox):
+        (WebCore::Layout::InlineFormattingState::lineBoxForRun const):
+        (WebCore::Layout::InlineFormattingState::addInlineRun):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::alignContentVertically):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::displayRun const):
+        (WebCore::Layout::Line::Run::logicalRect const):
+        (WebCore::Layout::Line::Run::adjustLogicalTop):
+        (WebCore::Layout::Line::Run::moveVertically):
+        (WebCore::Layout::Line::Run::moveHorizontally):
+        (WebCore::Layout::Line::Run::expand):
+        * layout/inlineformatting/InlineLineBox.h:
+        * layout/inlineformatting/InlineLineLayout.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
 2019-10-17  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Enable the Web Animations JavaScript API by default

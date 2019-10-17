@@ -39,8 +39,8 @@ namespace Layout {
 
 // Temp
 using InlineItems = Vector<std::unique_ptr<InlineItem>>;
-using InlineRuns = Vector<Display::Run>;
-using LineBoxes = Vector<LineBox>;
+using InlineRuns = Vector<std::unique_ptr<Display::Run>>;
+using LineBoxes = Vector<std::unique_ptr<LineBox>>;
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
@@ -54,17 +54,28 @@ public:
 
     const InlineRuns& inlineRuns() const { return m_inlineRuns; }
     InlineRuns& inlineRuns() { return m_inlineRuns; }
-    void addInlineRun(const Display::Run& inlineRun) { m_inlineRuns.append(inlineRun); }
+    void addInlineRun(const Display::Run&, const LineBox&);
 
     const LineBoxes& lineBoxes() const { return m_lineBoxes; }
     LineBoxes& lineBoxes() { return m_lineBoxes; }
-    void addLineBox(LineBox lineBox) { m_lineBoxes.append(lineBox); }
+    void addLineBox(const LineBox& lineBox) { m_lineBoxes.append(makeUnique<LineBox>(lineBox)); }
+
+    const LineBox& lineBoxForRun(const Display::Run& inlineRun) const { return *m_inlineRunToLineMap.get(&inlineRun); }
 
 private:
     InlineItems m_inlineItems;
     InlineRuns m_inlineRuns;
     LineBoxes m_lineBoxes;
+    // This is temporary until after we figure out the display run/line relationships.
+    HashMap<const Display::Run*, const LineBox*> m_inlineRunToLineMap;
 };
+
+inline void InlineFormattingState::addInlineRun(const Display::Run& inlineRun, const LineBox& line)
+{
+    auto run = makeUnique<Display::Run>(inlineRun);
+    m_inlineRunToLineMap.set(run.get(), &line);
+    m_inlineRuns.append(WTFMove(run));
+}
 
 }
 }

@@ -113,11 +113,11 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
             auto& inlineTextItem = downcast<Layout::InlineTextItem>(*inlineItem);
             auto inlineContent = inlineTextItem.layoutBox().textContent();
             while (true) {
-                auto& run = inlineRuns[runIndex++];
+                auto& run = *inlineRuns[runIndex++];
                 auto textContext = run.textContext().value();
                 auto runContent = inlineContent.substring(textContext.start(), textContext.length());
                 auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
-                context.drawText(style.fontCascade(), TextRun { runContent }, { logicalTopLeft.x(), logicalTopLeft.y() + formattingState.lineBoxes()[0].baselineOffset() });
+                context.drawText(style.fontCascade(), TextRun { runContent }, { logicalTopLeft.x(), logicalTopLeft.y() + formattingState.lineBoxes()[0]->baselineOffset() });
                 if (inlineTextItem.end() == textContext.end())
                     break;
                 if (runIndex == inlineRuns.size())
@@ -127,7 +127,7 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
         }
 
         if (inlineItem->isBox()) {
-            auto& run = inlineRuns[runIndex++];
+            auto& run = *inlineRuns[runIndex++];
             auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
             context.fillRect({ logicalTopLeft, FloatSize { run.logicalWidth(), run.logicalHeight() } });
             continue;

@@ -418,6 +418,9 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
     }
 
     // Add final display runs to state.
+    formattingState.addLineBox(lineContent.lineBox);
+    // FIXME: This is tempoary.
+    auto& currentLine = *formattingState.lineBoxes().last();
     for (auto& lineRun : lineContent.runList) {
         // Inline level containers (<span>) don't generate inline runs.
         if (lineRun->isContainerStart() || lineRun->isContainerEnd())
@@ -425,7 +428,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         // Collapsed line runs don't generate display runs.
         if (lineRun->isVisuallyEmpty())
             continue;
-        formattingState.addInlineRun(lineRun->displayRun());
+        formattingState.addInlineRun(lineRun->displayRun(), currentLine);
     }
 
     // Compute box final geometry.
@@ -491,7 +494,6 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         }
         ASSERT_NOT_REACHED();
     }
-    formattingState.addLineBox(lineContent.lineBox);
 }
 
 }

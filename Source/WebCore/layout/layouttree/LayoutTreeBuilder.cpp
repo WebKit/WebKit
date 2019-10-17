@@ -274,7 +274,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
 
     stream << "lines are -> ";
     for (auto& lineBox : lineBoxes)
-        stream << "[" << lineBox.logicalLeft() << "," << lineBox.logicalTop() << " " << lineBox.logicalWidth() << "x" << lineBox.logicalHeight() << "] ";
+        stream << "[" << lineBox->logicalLeft() << "," << lineBox->logicalTop() << " " << lineBox->logicalWidth() << "x" << lineBox->logicalHeight() << "] ";
     stream.nextLine();
 
     for (auto& inlineRun : inlineRuns) {
@@ -282,13 +282,13 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
         while (++printedCharacters <= depth * 2)
             stream << " ";
         stream << "  ";
-        if (inlineRun.textContext())
+        if (inlineRun->textContext())
             stream << "inline text box";
         else
             stream << "inline box";
-        stream << " at (" << inlineRun.logicalLeft() << "," << inlineRun.logicalTop() << ") size " << inlineRun.logicalWidth() << "x" << inlineRun.logicalHeight();
-        if (inlineRun.textContext())
-            stream << " run(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->end() << ")";
+        stream << " at (" << inlineRun->logicalLeft() << "," << inlineRun->logicalTop() << ") size " << inlineRun->logicalWidth() << "x" << inlineRun->logicalHeight();
+        if (inlineRun->textContext())
+            stream << " run(" << inlineRun->textContext()->start() << ", " << inlineRun->textContext()->end() << ")";
         stream.nextLine();
     }
 }

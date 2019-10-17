@@ -33,6 +33,7 @@ namespace WebCore {
 namespace Layout {
 
 class LineBox {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Baseline {
         Baseline(LayoutUnit ascent, LayoutUnit descent);
