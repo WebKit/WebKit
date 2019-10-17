@@ -95,6 +95,15 @@ int PlatformPasteboard::numberOfFiles() const
     return [m_pasteboard respondsToSelector:@selector(numberOfFiles)] ? [m_pasteboard numberOfFiles] : 0;
 }
 
+static bool shouldTreatAtLeastOneTypeAsFile(NSArray<NSString *> *platformTypes)
+{
+    for (NSString *type in platformTypes) {
+        if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
+            return true;
+    }
+    return false;
+}
+
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 
 static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
@@ -154,15 +163,6 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 }
 
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
-
-static bool shouldTreatAtLeastOneTypeAsFile(NSArray <NSString *> *platformTypes)
-{
-    for (NSString *type in platformTypes) {
-        if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
-            return true;
-    }
-    return false;
-}
 
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
 {

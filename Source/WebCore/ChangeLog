@@ -1,3 +1,13 @@
+2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix watchOS and tvOS builds after r251224
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::shouldTreatAtLeastOneTypeAsFile):
+
+        Move the `shouldTreatAtLeastOneTypeAsFile` helper function out of the `PASTEBOARD_SUPPORTS_ITEM_PROVIDERS`
+        section, and into generic iOS-family code so that it can be used in `pasteboardMayContainFilePaths`.
+
 2019-10-17  Youenn Fablet  <youenn@apple.com>
 
         MultiChannelResampler does not need to recreate a ChannelProvider for every process call
