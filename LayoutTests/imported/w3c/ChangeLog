@@ -1,3 +1,15 @@
+2019-10-17  Rob Buis  <rbuis@igalia.com>
+
+        Remove duplicate MathML tests
+        https://bugs.webkit.org/show_bug.cgi?id=202979
+
+        Reviewed by Frédéric Wang.
+
+        Commit r251187 removed operators/mo-form-fallback-expected.html by
+        accident, add it again.
+
+        * web-platform-tests/mathml/presentation-markup/operators/mo-form-fallback-expected.html: Added.
+
 2019-10-16  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] Import css/css-shadow-parts/simple-inline.html WPT
