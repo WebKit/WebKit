@@ -1,3 +1,47 @@
+2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] [iOS] Refactor logic for suppressing URL data when the pasteboard may contain files
+        https://bugs.webkit.org/show_bug.cgi?id=203065
+
+        Reviewed by Tim Horton.
+
+        Platform-specific pasteboard refactoring before tackling webkit.org/b/203021. See below for details. No new
+        tests, as there is no change in behavior.
+
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::changeCount const):
+
+        Add a stub for Pasteboard::changeCount() on non-Cocoa platforms.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+
+        Move this helper function farther up the file, so it can be used in more places.
+
+        (WebCore::webSafeTypes):
+
+        Add a separate helper to compute the list of web-safe MIME types (for instance, "text/plain") given a list of
+        platform types, and a function to determine whether to avoid exposing a given URL to the DOM.
+
+        (WebCore::shouldTreatAtLeastOneTypeAsFile):
+
+        Split this out into a separate helper function, so that it can be invoked when determining whether a given
+        NSItemProvider is suspected to contain file paths. In the case where we're getting the full list of types that
+        are safe for the DOM to read, we want to pass in the entire pasteboard object and iterate through all of the
+        available types in search for something that could feasibly accompany a file URL.
+
+        In the case of computing the web-safe types per item, we only have an item provider, in which case we only
+        iterate through the types in that NSItemProvider. See call sites below for examples.
+
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+        Invoke the new `webSafeTypes` helper method.
+
+        (WebCore::pasteboardMayContainFilePaths):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
+        Invoke the new `webSafeTypes` helper method.
+
 2019-10-16  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Correct radial gradient handling of various radius orderings

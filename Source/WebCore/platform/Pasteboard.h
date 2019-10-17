@@ -253,6 +253,8 @@ public:
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     long changeCount() const;
     const PasteboardCustomData& readCustomData();
+#else
+    long changeCount() const { return 0; }
 #endif
 
 #if PLATFORM(COCOA)

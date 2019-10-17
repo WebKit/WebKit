@@ -97,6 +97,45 @@ int PlatformPasteboard::numberOfFiles() const
 
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 
+static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
+{
+    auto cfType = platformType.createCFString();
+    if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
+        return "text/plain"_s;
+
+    if (UTTypeConformsTo(cfType.get(), kUTTypeHTML) || UTTypeConformsTo(cfType.get(), (CFStringRef)WebArchivePboardType)
+        || UTTypeConformsTo(cfType.get(), kUTTypeRTF) || UTTypeConformsTo(cfType.get(), kUTTypeFlatRTFD))
+        return "text/html"_s;
+
+    if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
+        return "text/uri-list"_s;
+
+    return nullptr;
+}
+
+static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, Function<bool()>&& shouldAvoidExposingURLType)
+{
+    ListHashSet<String> domPasteboardTypes;
+    for (NSString *type in platformTypes) {
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
+            continue;
+
+        if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
+            domPasteboardTypes.add(type);
+            continue;
+        }
+
+        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
+            auto domTypeAsString = String::fromUTF8(coercedType);
+            if (domTypeAsString == "text/uri-list"_s && ([platformTypes containsObject:(__bridge NSString *)kUTTypeFileURL] || shouldAvoidExposingURLType()))
+                continue;
+
+            domPasteboardTypes.add(WTFMove(domTypeAsString));
+        }
+    }
+    return copyToVector(domPasteboardTypes);
+}
+
 #if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
 static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferredPresentationStyle style)
@@ -115,6 +154,15 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 }
 
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
+
+static bool shouldTreatAtLeastOneTypeAsFile(NSArray <NSString *> *platformTypes)
+{
+    for (NSString *type in platformTypes) {
+        if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
+            return true;
+    }
+    return false;
+}
 
 PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
 {
@@ -183,6 +231,9 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
     }
 
     info.changeCount = changeCount();
+    info.webSafeTypesByFidelity = webSafeTypes(registeredTypeIdentifiers, [&] {
+        return shouldTreatAtLeastOneTypeAsFile(registeredTypeIdentifiers) && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(index, kUTTypeURL));
+    });
 
     return info;
 }
@@ -202,12 +253,7 @@ static bool pasteboardMayContainFilePaths(id<AbstractPasteboard> pasteboard)
     if ([pasteboard isKindOfClass:[WebItemProviderPasteboard class]])
         return false;
 #endif
-
-    for (NSString *type in pasteboard.pasteboardTypes) {
-        if (Pasteboard::shouldTreatCocoaTypeAsFile(type))
-            return true;
-    }
-    return false;
+    return shouldTreatAtLeastOneTypeAsFile(pasteboard.pasteboardTypes);
 }
 
 String PlatformPasteboard::stringForType(const String& type) const
@@ -480,22 +526,6 @@ void PlatformPasteboard::write(const PasteboardURL& url)
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
 }
 
-static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
-{
-    auto cfType = platformType.createCFString();
-    if (UTTypeConformsTo(cfType.get(), kUTTypePlainText))
-        return "text/plain"_s;
-
-    if (UTTypeConformsTo(cfType.get(), kUTTypeHTML) || UTTypeConformsTo(cfType.get(), (CFStringRef)WebArchivePboardType)
-        || UTTypeConformsTo(cfType.get(), kUTTypeRTF) || UTTypeConformsTo(cfType.get(), kUTTypeFlatRTFD))
-        return "text/html"_s;
-
-    if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
-        return "text/uri-list"_s;
-
-    return nullptr;
-}
-
 static const char originKeyForTeamData[] = "com.apple.WebKit.drag-and-drop-team-data.origin";
 static const char customTypesKeyForTeamData[] = "com.apple.WebKit.drag-and-drop-team-data.custom-types";
 
@@ -534,28 +564,13 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         }
     }
 
-    for (NSString *type in [m_pasteboard pasteboardTypes]) {
-        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
-            continue;
+    auto webSafePasteboardTypes = webSafeTypes([m_pasteboard pasteboardTypes], [&] {
+        BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
+        return ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty();
+    });
 
-        if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
-            domPasteboardTypes.add(type);
-            continue;
-        }
-
-        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
-            auto domTypeAsString = String::fromUTF8(coercedType);
-            if (domTypeAsString == "text/uri-list") {
-                BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
-                if (ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty())
-                    continue;
-
-                if ([[m_pasteboard pasteboardTypes] containsObject:(__bridge NSString *)kUTTypeFileURL])
-                    continue;
-            }
-            domPasteboardTypes.add(WTFMove(domTypeAsString));
-        }
-    }
+    for (auto& type : webSafePasteboardTypes)
+        domPasteboardTypes.add(type);
 
     return copyToVector(domPasteboardTypes);
 }
