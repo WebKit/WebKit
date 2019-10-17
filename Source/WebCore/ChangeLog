@@ -1,3 +1,34 @@
+2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make requestIdleCallback suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=203023
+
+        Reviewed by Chris Dumez.
+
+        Make requestIdleCallback suspendable by making WindowEventLoop itself suspendable.
+        Because WindowEventLoop can be shared across documents, we don't want to make it an ActiveDOMObject.
+
+        Instead, we would make CachedFrameBase::restore and CachedFrame manually invoke suspend & resume.
+
+        Test: requestidlecallback/requestidlecallback-in-page-cache.html
+
+        * dom/Document.h:
+        (WebCore::Document::eventLoopIfExists): Added. This should probably go away once most of the event loop
+        is implemented since we're almost always going to have this object then.
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::queueTask): Because m_tasks may contain tasks of suspended documents,
+        we check m_activeTaskCount, which is only positive when there is a task for non-suspended documents,
+        to decide whether we schedule a callback or not.
+        (WebCore::WindowEventLoop::suspend): Added. No-op for now.
+        (WebCore::WindowEventLoop::resume): Added. Schedule a callback if there is a task associated with
+        this document.
+        (WebCore::WindowEventLoop::run): Skip a task for a suspended document, and add it back to m_tasks along
+        with other tasks that got scheduled by running the current working set of tasks.
+        * dom/WindowEventLoop.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+
 2019-10-17  Chris Dumez  <cdumez@apple.com>
 
         Don't put pages that have not reached the non-visually empty layout milestone in the back/forward cache

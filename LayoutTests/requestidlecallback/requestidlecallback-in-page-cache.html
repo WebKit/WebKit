@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:RequestIdleCallbackEnabled=true enableBackForwardCache=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is not enabled, requestIdleCallback and IdleDeadline are not defined.');
+jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+let isInitialLoad = true;
+const logs = [];
+if (window.testRunner)
+  setTimeout(() => testRunner.notifyDone(), 3000);
+
+window.addEventListener("pageshow", function(event) {
+    if (isInitialLoad) {
+        isInitialLoad = false;
+        return;
+    }
+  
+    if (window.testRunner)
+      setTimeout(() => testRunner.notifyDone(), 3000);
+
+    shouldBeTrue('event.persisted');
+    shouldBe('logs.length', '0');
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B3'));
+    requestIdleCallback(() => logs.push('A4'));
+    requestIdleCallback(() => {
+        shouldBe('logs.length', '7');
+        shouldBeEqualToString('logs.join(", ")', 'A1, B1, A2, B2, A3, B3, A4');
+        finishJSTest();
+    });
+});
+
+window.addEventListener("pagehide", function(event) {
+    requestIdleCallback(() => logs.push('A1'));
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B1'));
+    requestIdleCallback(() => logs.push('A2'));
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B2'));
+    requestIdleCallback(() => logs.push('A3'));
+});
+
+onload = () => {
+    setTimeout(() => {
+        window.location = 'resources/page-cache-helper.html';
+    }, 0);
+}
+
+</script>
+</body>
+</html>

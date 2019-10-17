@@ -47,6 +47,7 @@
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
 #include "StyleTreeResolver.h"
+#include "WindowEventLoop.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 
@@ -105,6 +106,9 @@ void CachedFrameBase::restore()
 
         if (m_document->svgExtensions())
             m_document->accessSVGExtensions().unpauseAnimations();
+
+        if (auto* eventLoop = m_document->eventLoopIfExists())
+            eventLoop->resume(*m_document);
 
         m_document->resume(ReasonForSuspension::BackForwardCache);
 
@@ -170,6 +174,9 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // Active DOM objects must be suspended before we cache the frame script data.
     m_document->suspend(ReasonForSuspension::BackForwardCache);
+
+    if (auto* eventLoop = m_document->eventLoopIfExists())
+        eventLoop->suspend(*m_document);
 
     m_cachedFrameScriptData = makeUnique<ScriptCachedFrameData>(frame);
 

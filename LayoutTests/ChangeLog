@@ -1,3 +1,15 @@
+2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make requestIdleCallback suspendable
+        https://bugs.webkit.org/show_bug.cgi?id=203023
+
+        Reviewed by Chris Dumez.
+
+        * requestidlecallback/requestidlecallback-in-page-cache-expected.txt: Added.
+        * requestidlecallback/requestidlecallback-in-page-cache.html: Added.
+        * requestidlecallback/resources: Added.
+        * requestidlecallback/resources/page-cache-helper.html: Added.
+
 2019-10-17  Dirk Schulze  <krit@webkit.org>
 
         transform-box: content-box, stroke-box missing

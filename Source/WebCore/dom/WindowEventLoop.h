@@ -27,7 +27,8 @@
 
 #include "DocumentIdentifier.h"
 #include <memory>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -47,6 +48,9 @@ public:
 
     void queueTask(TaskSource, Document&, TaskFunction&&);
 
+    void suspend(Document&);
+    void resume(Document&);
+
 private:
     WindowEventLoop();
 
@@ -60,6 +64,8 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<Task> m_tasks;
+    size_t m_activeTaskCount { 0 };
+    HashSet<DocumentIdentifier> m_documentIdentifiersForSuspendedTasks;
 };
 
 } // namespace WebCore
