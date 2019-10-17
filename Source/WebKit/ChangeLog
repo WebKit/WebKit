@@ -1,3 +1,12 @@
+2019-10-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enable the Web Animations JavaScript API by default
+        https://bugs.webkit.org/show_bug.cgi?id=203075
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/WebPreferences.yaml:
+
 2019-10-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] File and Directory Entries API is not enabled

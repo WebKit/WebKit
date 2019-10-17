@@ -1,3 +1,12 @@
+2019-10-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enable the Web Animations JavaScript API by default
+        https://bugs.webkit.org/show_bug.cgi?id=203075
+
+        Reviewed by Antti Koivisto.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix watchOS and tvOS builds after r251224

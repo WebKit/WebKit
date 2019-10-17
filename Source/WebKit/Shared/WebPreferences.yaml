@@ -1306,7 +1306,7 @@ BlockingOfSmallPluginsEnabled:
 
 WebAnimationsEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  defaultValue: true
   humanReadableName: "Web Animations"
   humanReadableDescription: "Web Animations prototype"
   category: experimental
