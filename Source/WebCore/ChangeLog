@@ -1,3 +1,16 @@
+2019-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r251255.
+
+        This is causing the existing back/forward tests to be flaky
+
+        Reverted changeset:
+
+        "Don't put pages that have not reached the non-visually empty
+        layout milestone in the back/forward cache"
+        https://bugs.webkit.org/show_bug.cgi?id=203108
+        https://trac.webkit.org/changeset/251255
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr in more places and remove some unnecessary external linkage.
