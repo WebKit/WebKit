@@ -1,3 +1,17 @@
+2019-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: inputmode=none is not respected with a hardware keyboard attached
+        https://bugs.webkit.org/show_bug.cgi?id=203061
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldShowAutomaticKeyboardUI]):
+        We can resolve this FIXME, as the underlying bug was fixed in <rdar://problem/52706523>.
+        This now means that we will respect inputmode=none even when a hardware
+        keyboard is attached, significantly improving the experience on sites that use it
+        by avoiding an intermittent input bar.
+
 2019-10-16  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove send-signal from mach-lookup rule

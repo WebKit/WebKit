@@ -1,3 +1,14 @@
+2019-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: inputmode=none is not respected with a hardware keyboard attached
+        https://bugs.webkit.org/show_bug.cgi?id=203061
+
+        Reviewed by Daniel Bates.
+
+        * fast/forms/ios/inputmode-none-with-hardware-keyboard.html: Added.
+        Clone inputmode-none.html to inputmode-none-with-hardware-keyboard.html
+        and remove the line to faux-detach the hardware keyboard.
+
 2019-10-16  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction

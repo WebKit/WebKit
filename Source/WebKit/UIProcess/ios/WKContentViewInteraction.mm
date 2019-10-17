@@ -1797,10 +1797,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)shouldShowAutomaticKeyboardUI
 {
-    // FIXME: We should support inputmode="none" when the hardware keyboard is attached.
-    // We currently refrain from doing so because that would prevent UIKit from showing
-    // the language picker when pressing the globe key to change the input language.
-    if (_focusedElementInformation.inputMode == WebCore::InputMode::None && !GSEventIsHardwareKeyboardAttached())
+    if (_focusedElementInformation.inputMode == WebCore::InputMode::None)
         return NO;
 
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode];
