@@ -61,7 +61,6 @@ private:
     void dispatchOneEvent();
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     void stop() final;
     void suspend(ReasonForSuspension) final;
     void resume() final;

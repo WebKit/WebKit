@@ -403,11 +403,6 @@ const char* EventSource::activeDOMObjectName() const
     return "EventSource";
 }
 
-bool EventSource::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void EventSource::suspend(ReasonForSuspension reason)
 {
     if (reason != ReasonForSuspension::BackForwardCache)

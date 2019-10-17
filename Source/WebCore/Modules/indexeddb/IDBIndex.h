@@ -99,7 +99,6 @@ private:
     ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::ExecState&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
 
     IDBIndexInfo m_info;
     IDBIndexInfo m_originalInfo;

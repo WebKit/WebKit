@@ -336,9 +336,10 @@ const char* UserMediaRequest::activeDOMObjectName() const
     return "UserMediaRequest";
 }
 
-bool UserMediaRequest::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool UserMediaRequest::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 Document* UserMediaRequest::document() const

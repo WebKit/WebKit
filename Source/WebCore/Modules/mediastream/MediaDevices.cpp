@@ -219,11 +219,6 @@ const char* MediaDevices::activeDOMObjectName() const
     return "MediaDevices";
 }
 
-bool MediaDevices::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void MediaDevices::listenForDeviceChanges()
 {
     if (m_listeningForDeviceChanges || (!m_canAccessCamera && !m_canAccessMicrophone))

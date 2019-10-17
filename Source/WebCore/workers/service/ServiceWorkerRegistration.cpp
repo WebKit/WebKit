@@ -238,11 +238,6 @@ const char* ServiceWorkerRegistration::activeDOMObjectName() const
     return "ServiceWorkerRegistration";
 }
 
-bool ServiceWorkerRegistration::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void ServiceWorkerRegistration::suspend(ReasonForSuspension)
 {
     m_isSuspended = true;

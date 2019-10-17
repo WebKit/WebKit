@@ -81,12 +81,6 @@ void PublicURLManager::stop()
     m_registryToURL.clear();
 }
 
-bool PublicURLManager::canSuspendForDocumentSuspension() const
-{
-    // Suspending an PublicURLManager is safe as it does not cause any JS to be executed.
-    return true;
-}
-
 const char* PublicURLManager::activeDOMObjectName() const
 {
     return "PublicURLManager";

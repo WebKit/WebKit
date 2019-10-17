@@ -150,11 +150,6 @@ void Worker::terminate()
     m_eventQueue->cancelAllEvents();
 }
 
-bool Worker::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 const char* Worker::activeDOMObjectName() const
 {
     return "Worker";

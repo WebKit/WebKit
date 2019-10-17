@@ -157,11 +157,6 @@ Page* Geolocation::page() const
 {
     return document() ? document()->page() : nullptr;
 }
-
-bool Geolocation::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
     
 void Geolocation::suspend(ReasonForSuspension reason)
 {

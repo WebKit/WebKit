@@ -413,9 +413,4 @@ const char* MessagePort::activeDOMObjectName() const
     return "MessagePort";
 }
 
-bool MessagePort::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 } // namespace WebCore

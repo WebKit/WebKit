@@ -75,11 +75,6 @@ const char* IDBObjectStore::activeDOMObjectName() const
     return "IDBObjectStore";
 }
 
-bool IDBObjectStore::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 bool IDBObjectStore::hasPendingActivity() const
 {
     return m_transaction.hasPendingActivity();

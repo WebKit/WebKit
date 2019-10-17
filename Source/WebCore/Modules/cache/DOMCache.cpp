@@ -608,11 +608,6 @@ const char* DOMCache::activeDOMObjectName() const
     return "Cache";
 }
 
-bool DOMCache::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 bool DOMCache::hasPendingActivity() const
 {
     return m_taskQueue->hasPendingTasks() || ActiveDOMObject::hasPendingActivity();

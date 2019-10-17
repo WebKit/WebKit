@@ -211,7 +211,7 @@ private:
     // ActiveDOMObject
     WEBCORE_EXPORT void stop() final;
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
 

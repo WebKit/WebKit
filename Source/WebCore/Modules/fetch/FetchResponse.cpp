@@ -536,10 +536,10 @@ const char* FetchResponse::activeDOMObjectName() const
     return "Response";
 }
 
-bool FetchResponse::canSuspendForDocumentSuspension() const
+bool FetchResponse::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    // FIXME: We can probably do the same strategy as XHR.
-    return !isActive();
+    // FIXME: This should never prevent entering the back/forward cache.
+    return isActive();
 }
 
 ResourceResponse FetchResponse::resourceResponse() const

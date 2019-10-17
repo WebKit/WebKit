@@ -78,7 +78,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     void stop() final;
-    bool canSuspendForDocumentSuspension() const final;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     const char* activeDOMObjectName() const final;
 
     EventTargetInterface eventTargetInterface() const final { return WebKitMediaKeySessionEventTargetInterfaceType; }

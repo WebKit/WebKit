@@ -82,7 +82,6 @@ public:
     using ThreadSafeRefCounted<IDBDatabase>::deref;
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     void stop() final;
 
     const IDBDatabaseInfo& info() const { return m_info; }

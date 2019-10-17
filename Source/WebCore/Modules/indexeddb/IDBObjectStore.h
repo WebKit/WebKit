@@ -125,7 +125,6 @@ private:
     ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::ExecState&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
 
     IDBObjectStoreInfo m_info;
     IDBObjectStoreInfo m_originalInfo;

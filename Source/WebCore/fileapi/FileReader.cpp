@@ -65,9 +65,10 @@ FileReader::~FileReader()
         m_loader->cancel();
 }
 
-bool FileReader::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool FileReader::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 const char* FileReader::activeDOMObjectName() const

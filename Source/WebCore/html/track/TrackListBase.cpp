@@ -178,11 +178,6 @@ bool TrackListBase::isAnyTrackEnabled() const
     return false;
 }
 
-bool TrackListBase::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 } // namespace WebCore
 
 #endif

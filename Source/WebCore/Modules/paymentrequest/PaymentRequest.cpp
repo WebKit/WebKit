@@ -539,9 +539,10 @@ Optional<PaymentShippingType> PaymentRequest::shippingType() const
     return WTF::nullopt;
 }
 
-bool PaymentRequest::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool PaymentRequest::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)

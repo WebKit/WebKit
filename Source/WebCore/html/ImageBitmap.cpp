@@ -561,11 +561,6 @@ private:
         return "PendingImageBitmap";
     }
 
-    bool canSuspendForDocumentSuspension() const final
-    {
-        return true;
-    }
-
     void stop() final
     {
         delete this;

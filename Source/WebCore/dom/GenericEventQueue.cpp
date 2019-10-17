@@ -133,12 +133,6 @@ void GenericEventQueueBase<T>::setPaused(bool shouldPause)
 }
 
 template<typename T>
-bool GenericEventQueueBase<T>::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
-template<typename T>
 void GenericEventQueueBase<T>::suspend(ReasonForSuspension)
 {
     if (m_isSuspended)

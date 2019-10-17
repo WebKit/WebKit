@@ -495,11 +495,6 @@ void WebSocket::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-bool WebSocket::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void WebSocket::suspend(ReasonForSuspension reason)
 {
     if (m_resumeTimer.isActive())

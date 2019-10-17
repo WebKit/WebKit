@@ -149,7 +149,6 @@ private:
 
     void stop() final;
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
 
     void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
     void sourceBufferPrivateDidReceiveSample(MediaSample&) final;

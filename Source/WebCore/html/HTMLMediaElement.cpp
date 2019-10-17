@@ -5663,11 +5663,6 @@ void HTMLMediaElement::clearMediaPlayer()
     updateSleepDisabling();
 }
 
-bool HTMLMediaElement::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 const char* HTMLMediaElement::activeDOMObjectName() const
 {
     return "HTMLMediaElement";

@@ -75,8 +75,6 @@ protected:
 private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
 
-    bool canSuspendForDocumentSuspension() const final;
-
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

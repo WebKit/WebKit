@@ -54,11 +54,6 @@ const char* PictureInPictureWindow::activeDOMObjectName() const
     return "PictureInPictureWindow";
 }
 
-bool PictureInPictureWindow::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 EventTargetInterface PictureInPictureWindow::eventTargetInterface() const
 {
     return PictureInPictureWindowEventTargetInterfaceType;

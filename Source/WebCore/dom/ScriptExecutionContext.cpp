@@ -229,7 +229,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vec
     bool canSuspend = true;
 
     forEachActiveDOMObject([&](auto& activeDOMObject) {
-        if (!activeDOMObject.canSuspendForDocumentSuspension()) {
+        if (activeDOMObject.shouldPreventEnteringBackForwardCache_DEPRECATED()) {
             canSuspend = false;
             if (unsuspendableObjects)
                 unsuspendableObjects->append(&activeDOMObject);

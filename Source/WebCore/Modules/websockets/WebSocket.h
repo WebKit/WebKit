@@ -106,7 +106,6 @@ private:
     void dispatchOrQueueEvent(Ref<Event>&&);
 
     void contextDestroyed() final;
-    bool canSuspendForDocumentSuspension() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;

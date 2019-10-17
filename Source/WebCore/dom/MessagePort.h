@@ -85,7 +85,6 @@ public:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     void contextDestroyed() final;
     void stop() final { close(); }
     bool hasPendingActivity() const final;

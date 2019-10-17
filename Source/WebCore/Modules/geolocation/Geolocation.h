@@ -83,7 +83,6 @@ private:
 
     // ActiveDOMObject
     void stop() override;
-    bool canSuspendForDocumentSuspension() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     const char* activeDOMObjectName() const override;

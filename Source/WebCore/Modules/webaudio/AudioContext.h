@@ -339,7 +339,7 @@ private:
 
     // ActiveDOMObject API.
     void stop() override;
-    bool canSuspendForDocumentSuspension() const override;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     const char* activeDOMObjectName() const override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.

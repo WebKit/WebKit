@@ -105,7 +105,6 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "FontFaceSet"; }
-    bool canSuspendForDocumentSuspension() const final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return FontFaceSetEventTargetInterfaceType; }

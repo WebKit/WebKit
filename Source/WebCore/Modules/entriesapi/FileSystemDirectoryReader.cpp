@@ -53,9 +53,10 @@ const char* FileSystemDirectoryReader::activeDOMObjectName() const
     return "FileSystemDirectoryReader";
 }
 
-bool FileSystemDirectoryReader::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool FileSystemDirectoryReader::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 // https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-readentries

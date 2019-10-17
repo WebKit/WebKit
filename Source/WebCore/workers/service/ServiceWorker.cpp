@@ -144,11 +144,6 @@ const char* ServiceWorker::activeDOMObjectName() const
     return "ServiceWorker";
 }
 
-bool ServiceWorker::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void ServiceWorker::suspend(ReasonForSuspension)
 {
     m_isSuspended = true;

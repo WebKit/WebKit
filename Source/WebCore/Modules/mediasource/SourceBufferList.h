@@ -78,7 +78,6 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    bool canSuspendForDocumentSuspension() const final;
     const char* activeDOMObjectName() const final;
 
     UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;

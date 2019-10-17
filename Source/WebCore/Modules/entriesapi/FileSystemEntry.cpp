@@ -60,9 +60,10 @@ const char* FileSystemEntry::activeDOMObjectName() const
     return "FileSystemEntry";
 }
 
-bool FileSystemEntry::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool FileSystemEntry::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 void FileSystemEntry::getParent(ScriptExecutionContext& context, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)

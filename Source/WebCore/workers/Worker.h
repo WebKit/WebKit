@@ -83,7 +83,6 @@ private:
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
     void notifyFinished() final;
 
-    bool canSuspendForDocumentSuspension() const final;
     void stop() final;
     const char* activeDOMObjectName() const final;
 

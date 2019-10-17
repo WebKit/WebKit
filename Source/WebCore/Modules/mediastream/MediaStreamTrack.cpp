@@ -556,9 +556,10 @@ const char* MediaStreamTrack::activeDOMObjectName() const
     return "MediaStreamTrack";
 }
 
-bool MediaStreamTrack::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool MediaStreamTrack::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 bool MediaStreamTrack::hasPendingActivity() const

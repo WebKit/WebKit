@@ -323,12 +323,6 @@ const char* IDBTransaction::activeDOMObjectName() const
     return "IDBTransaction";
 }
 
-bool IDBTransaction::canSuspendForDocumentSuspension() const
-{
-    ASSERT(&m_database->originThread() == &Thread::current());
-    return true;
-}
-
 bool IDBTransaction::hasPendingActivity() const
 {
     ASSERT(&m_database->originThread() == &Thread::current() || Thread::mayBeGCThread());

@@ -157,7 +157,6 @@ private:
     EventTargetInterface eventTargetInterface() const override;
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     void stop() final;
     virtual void cancelForStop();
 

@@ -78,11 +78,6 @@ void SuspendableTimerBase::resume()
         start(m_savedNextFireInterval, m_savedRepeatInterval);
 }
 
-bool SuspendableTimerBase::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void SuspendableTimerBase::didStop()
 {
 }

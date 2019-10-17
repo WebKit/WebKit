@@ -100,7 +100,6 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     void stop() final;
     bool hasPendingActivity() const final;
 

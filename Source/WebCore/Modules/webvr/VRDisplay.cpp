@@ -239,9 +239,10 @@ const char* VRDisplay::activeDOMObjectName() const
     return "VRDisplay";
 }
 
-bool VRDisplay::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool VRDisplay::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return false;
+    return true;
 }
 
 void VRDisplay::stop()

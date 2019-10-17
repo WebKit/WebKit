@@ -119,10 +119,10 @@ const char* Notification::activeDOMObjectName() const
     return "Notification";
 }
 
-bool Notification::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool Notification::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    // We can suspend if the Notification is not shown yet or after it is closed.
-    return m_state == Idle || m_state == Closed;
+    return m_state != Idle && m_state != Closed;
 }
 
 void Notification::stop()

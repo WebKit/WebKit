@@ -159,11 +159,6 @@ ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)
     return { };
 }
 
-bool HTMLMarqueeElement::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void HTMLMarqueeElement::suspend(ReasonForSuspension)
 {
     if (RenderMarquee* marqueeRenderer = renderMarquee())

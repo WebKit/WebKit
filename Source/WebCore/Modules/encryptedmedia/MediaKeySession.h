@@ -104,7 +104,7 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     void stop() override;
 
     WeakPtr<MediaKeys> m_keys;

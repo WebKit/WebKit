@@ -94,7 +94,9 @@ private:
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
-    bool canSuspendForDocumentSuspension() const final { return m_readyState != RTCDataChannelState::Open; }
+
+    // FIXME: This should never prevent entering the back/forward cache.
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return m_readyState == RTCDataChannelState::Open; }
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;

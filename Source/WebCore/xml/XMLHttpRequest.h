@@ -137,7 +137,7 @@ private:
 
     // ActiveDOMObject
     void contextDestroyed() override;
-    bool canSuspendForDocumentSuspension() const override;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;

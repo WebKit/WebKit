@@ -104,9 +104,9 @@ const char* MediaRecorder::activeDOMObjectName() const
     return "MediaRecorder";
 }
 
-bool MediaRecorder::canSuspendForDocumentSuspension() const
+bool MediaRecorder::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return false; // FIXME: We should do better here as this prevents entering BackForwardCache.
+    return true; // FIXME: We should do better here as this prevents entering BackForwardCache.
 }
 
 ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)

@@ -1,3 +1,208 @@
+2019-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Deprecate ActiveDOMObject::canSuspendForDocumentSuspension()
+        https://bugs.webkit.org/show_bug.cgi?id=203086
+
+        Reviewed by Geoffrey Garen.
+
+        Rename ActiveDOMObject::canSuspendForDocumentSuspension() to shouldPreventEnteringBackForwardCache_DEPRECATED()
+        to make it clear that no new overrides should be added and that it is no longer OK to prevent the page from
+        entering the back/forward cache. Also provide a default implementation that returns false so that well-behaved
+        classes no longer need to override this.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::ApplePaySession::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/cache/DOMCache.h:
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/cache/DOMCacheStorage.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::MediaKeySession::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::WebKitMediaKeySession::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::FileSystemDirectoryReader::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/entriesapi/FileSystemDirectoryReader.h:
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::FileSystemEntry::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/entriesapi/FileSystemEntry.h:
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::FetchRequest::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::FetchResponse::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/fetch/FetchResponse.h:
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::page const):
+        (WebCore::Geolocation::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/geolocation/Geolocation.h:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::MediaRecorder::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::MediaStream::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::MediaStreamTrack::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::RTCDTMFSender::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::RTCPeerConnection::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::UserMediaRequest::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/mediastream/UserMediaRequest.h:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::Notification::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/notifications/Notification.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::PaymentRequest::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        (WebCore::PaymentResponse::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::PaymentResponse::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/pictureinpicture/PictureInPictureWindow.cpp:
+        (WebCore::PictureInPictureWindow::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/pictureinpicture/PictureInPictureWindow.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::AudioContext::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::DatabaseContext::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webgpu/GPUCanvasContext.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/websockets/WebSocket.h:
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::VRDisplay::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/webvr/VRDisplay.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::WebAnimation::canSuspendForDocumentSuspension const): Deleted.
+        * animation/WebAnimation.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::canSuspendForDocumentSuspension const): Deleted.
+        * css/FontFaceSet.h:
+        * dom/ActiveDOMObject.h:
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueueBase<T>::canSuspendForDocumentSuspension const): Deleted.
+        * dom/GenericEventQueue.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::canSuspendForDocumentSuspension const): Deleted.
+        * dom/MessagePort.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::FileReader::canSuspendForDocumentSuspension const): Deleted.
+        * fileapi/FileReader.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::canSuspendForDocumentSuspension const): Deleted.
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canSuspendForDocumentSuspension const): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::canSuspendForDocumentSuspension const): Deleted.
+        * html/HTMLSourceElement.h:
+        * html/ImageBitmap.cpp:
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::canSuspendForDocumentSuspension const): Deleted.
+        * html/PublicURLManager.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::canSuspendForDocumentSuspension const): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::canSuspendForDocumentSuspension const): Deleted.
+        * html/track/TrackListBase.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::canSuspendForDocumentSuspension const): Deleted.
+        * page/EventSource.h:
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::canSuspendForDocumentSuspension const): Deleted.
+        * page/IntersectionObserver.h:
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::canSuspendForDocumentSuspension const): Deleted.
+        * page/ResizeObserver.h:
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimerBase::canSuspendForDocumentSuspension const): Deleted.
+        * page/SuspendableTimer.h:
+        * platform/SuspendableTaskQueue.cpp:
+        (WebCore::SuspendableTaskQueue::canSuspendForDocumentSuspension const): Deleted.
+        * platform/SuspendableTaskQueue.h:
+        * testing/Internals.cpp:
+        * workers/Worker.cpp:
+        (WebCore::Worker::canSuspendForDocumentSuspension const): Deleted.
+        * workers/Worker.h:
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::canSuspendForDocumentSuspension const): Deleted.
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::canSuspendForDocumentSuspension const): Deleted.
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::canSuspendForDocumentSuspension const): Deleted.
+        * workers/service/ServiceWorkerRegistration.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::shouldPreventEnteringBackForwardCache_DEPRECATED const):
+        (WebCore::XMLHttpRequest::canSuspendForDocumentSuspension const): Deleted.
+        * xml/XMLHttpRequest.h:
+
 2019-10-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Table formatting context accesses geometry information from parent BFC

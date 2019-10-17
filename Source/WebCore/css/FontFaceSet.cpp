@@ -192,11 +192,6 @@ auto FontFaceSet::status() const -> LoadStatus
     return LoadStatus::Loaded;
 }
 
-bool FontFaceSet::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void FontFaceSet::startedLoading()
 {
     // FIXME: Fire a "loading" event asynchronously.

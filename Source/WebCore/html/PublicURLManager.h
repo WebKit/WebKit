@@ -50,7 +50,6 @@ public:
 private:
     // ActiveDOMObject API.
     void stop() override;
-    bool canSuspendForDocumentSuspension() const override;
     const char* activeDOMObjectName() const override;
     
     typedef HashSet<String> URLSet;

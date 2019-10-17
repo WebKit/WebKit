@@ -313,15 +313,6 @@ const char* IDBDatabase::activeDOMObjectName() const
     return "IDBDatabase";
 }
 
-bool IDBDatabase::canSuspendForDocumentSuspension() const
-{
-    ASSERT(&originThread() == &Thread::current());
-
-    // FIXME: This value will sometimes be false when database operations are actually in progress.
-    // Such database operations do not yet exist.
-    return true;
-}
-
 void IDBDatabase::stop()
 {
     LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier);

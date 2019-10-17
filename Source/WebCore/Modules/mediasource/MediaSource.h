@@ -127,7 +127,6 @@ private:
     explicit MediaSource(ScriptExecutionContext&);
 
     void stop() final;
-    bool canSuspendForDocumentSuspension() const final;
     const char* activeDOMObjectName() const final;
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;

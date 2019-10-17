@@ -97,7 +97,7 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     void stop() final;
 
     void refEventTarget() final { ref(); }

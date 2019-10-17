@@ -81,11 +81,6 @@ const char* SuspendableTaskQueue::activeDOMObjectName() const
     return "SuspendableTaskQueue";
 }
 
-bool SuspendableTaskQueue::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void SuspendableTaskQueue::stop()
 {
     close();

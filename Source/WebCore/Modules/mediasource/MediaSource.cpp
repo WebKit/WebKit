@@ -987,11 +987,6 @@ void MediaSource::stop()
     m_private = nullptr;
 }
 
-bool MediaSource::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 const char* MediaSource::activeDOMObjectName() const
 {
     return "MediaSource";

@@ -513,11 +513,6 @@ const char* ServiceWorkerContainer::activeDOMObjectName() const
     return "ServiceWorkerContainer";
 }
 
-bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());

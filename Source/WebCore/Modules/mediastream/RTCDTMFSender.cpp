@@ -148,9 +148,10 @@ const char* RTCDTMFSender::activeDOMObjectName() const
     return "RTCDTMFSender";
 }
 
-bool RTCDTMFSender::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool RTCDTMFSender::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    return !m_sender || m_sender->isStopped();
+    return m_sender && !m_sender->isStopped();
 }
 
 } // namespace WebCore

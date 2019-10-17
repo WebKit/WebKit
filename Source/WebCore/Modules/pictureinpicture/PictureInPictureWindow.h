@@ -48,7 +48,6 @@ public:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
 
     using RefCounted<PictureInPictureWindow>::ref;
     using RefCounted<PictureInPictureWindow>::deref;

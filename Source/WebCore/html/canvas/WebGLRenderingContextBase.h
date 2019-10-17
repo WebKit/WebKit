@@ -393,7 +393,6 @@ protected:
     // ActiveDOMObject
     void stop() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
 

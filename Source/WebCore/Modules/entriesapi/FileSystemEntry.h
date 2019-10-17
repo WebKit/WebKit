@@ -55,7 +55,7 @@ protected:
 
 private:
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
 
     Ref<DOMFileSystem> m_filesystem;
     String m_name;

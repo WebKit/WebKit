@@ -125,10 +125,11 @@ void PaymentResponse::settleRetryPromise(ExceptionOr<void>&& result)
     m_retryPromise = nullptr;
 }
 
-bool PaymentResponse::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool PaymentResponse::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
     ASSERT(m_state != State::Stopped);
-    return !hasPendingActivity();
+    return hasPendingActivity();
 }
 
 void PaymentResponse::stop()

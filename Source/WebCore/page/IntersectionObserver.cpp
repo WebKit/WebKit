@@ -279,11 +279,6 @@ const char* IntersectionObserver::activeDOMObjectName() const
     return "IntersectionObserver";
 }
 
-bool IntersectionObserver::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void IntersectionObserver::stop()
 {
     disconnect();

@@ -944,7 +944,7 @@ private:
         suspendIfNeeded();
     }
 
-    bool canSuspendForDocumentSuspension() const final { return false; }
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return true; }
     const char* activeDOMObjectName() const { return "UnsuspendableActiveDOMObject"; }
 };
 

@@ -171,11 +171,6 @@ const char* ResizeObserver::activeDOMObjectName() const
     return "ResizeObserver";
 }
 
-bool ResizeObserver::canSuspendForDocumentSuspension() const
-{
-    return true;
-}
-
 void ResizeObserver::stop()
 {
     disconnect();

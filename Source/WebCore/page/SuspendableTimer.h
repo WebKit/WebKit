@@ -67,7 +67,6 @@ private:
     // ActiveDOMObject API.
     bool hasPendingActivity() const final;
     void stop() final;
-    bool canSuspendForDocumentSuspension() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
 

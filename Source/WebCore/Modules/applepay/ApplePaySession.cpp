@@ -823,14 +823,14 @@ const char* ApplePaySession::activeDOMObjectName() const
     return "ApplePaySession";
 }
 
-bool ApplePaySession::canSuspendForDocumentSuspension() const
+bool ApplePaySession::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
     switch (m_state) {
     case State::Idle:
     case State::Aborted:
     case State::Completed:
     case State::Canceled:
-        return true;
+        return false;
 
     case State::Active:
     case State::Authorized:
@@ -838,7 +838,8 @@ bool ApplePaySession::canSuspendForDocumentSuspension() const
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
     case State::CancelRequested:
-        return false;
+        // FIXME: This should never prevent entering the back/forward cache.
+        return true;
     }
 }
 

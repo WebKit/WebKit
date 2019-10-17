@@ -60,7 +60,7 @@ private:
     const char* activeDOMObjectName() const final { return "GPUCanvasContext"; }
     // FIXME: Stubs.
     void stop() final { }
-    bool canSuspendForDocumentSuspension() const final { return false; }
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return true; } // FIXME: This should never prevent entering the back/forward cache.
 
     RefPtr<WebGPUSwapChain> m_swapChain;
 };

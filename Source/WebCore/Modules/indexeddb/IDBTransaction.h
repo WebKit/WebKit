@@ -92,7 +92,6 @@ public:
     using ThreadSafeRefCounted<IDBTransaction>::deref;
 
     const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
     bool hasPendingActivity() const final;
     void stop() final;
 

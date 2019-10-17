@@ -498,10 +498,10 @@ const char* RTCPeerConnection::activeDOMObjectName() const
     return "RTCPeerConnection";
 }
 
-bool RTCPeerConnection::canSuspendForDocumentSuspension() const
+// FIXME: This should never prevent entering the back/forward cache.
+bool RTCPeerConnection::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
-    // FIXME: Evaluate whether to extend this to connected cases as well.
-    return m_iceConnectionState != RTCIceConnectionState::Completed && m_iceConnectionState != RTCIceConnectionState::Connected;
+    return m_iceConnectionState == RTCIceConnectionState::Completed || m_iceConnectionState == RTCIceConnectionState::Connected;
 }
 
 void RTCPeerConnection::suspend(ReasonForSuspension reason)

@@ -340,10 +340,10 @@ void AudioContext::stop()
     clear();
 }
 
-bool AudioContext::canSuspendForDocumentSuspension() const
+bool AudioContext::shouldPreventEnteringBackForwardCache_DEPRECATED() const
 {
     // FIXME: We should be able to suspend while rendering as well with some more code.
-    return m_state == State::Suspended || m_state == State::Closed;
+    return m_state != State::Suspended && m_state != State::Closed;
 }
 
 const char* AudioContext::activeDOMObjectName() const
