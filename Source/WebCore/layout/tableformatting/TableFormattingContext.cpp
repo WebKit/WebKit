@@ -274,7 +274,7 @@ LayoutUnit TableFormattingContext::computedTableWidth()
     auto& tableWrapperBox = root();
     auto& style = tableWrapperBox.style();
     auto& containingBlock = *tableWrapperBox.containingBlock();
-    auto containingBlockWidth = geometryForBox(containingBlock).contentBoxWidth();
+    auto containingBlockWidth = geometryForBox(containingBlock, EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
 
     auto& grid = formattingState().tableGrid();
     auto& columnsContext = grid.columnsContext();

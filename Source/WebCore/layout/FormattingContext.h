@@ -86,7 +86,8 @@ public:
     enum class EscapeType {
         AccessChildFormattingContext,
         AccessParentFormattingContext,
-        AccessAncestorFormattingContext
+        AccessAncestorFormattingContext,
+        TableFormattingContextAccessParentTableWrapperBlockFormattingContext
     };
     const Display::Box& geometryForBox(const Box&, Optional<EscapeType> = WTF::nullopt) const;
 

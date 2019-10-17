@@ -1,5 +1,23 @@
 2019-10-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Table formatting context accesses geometry information from parent BFC
+        https://bugs.webkit.org/show_bug.cgi?id=203082
+        <rdar://problem/56370827>
+
+        Reviewed by Antti Koivisto.
+
+        Tables are wrapped in a 2 level formatting context structure. A <table> element initiates a block formatting context for its principal table box
+        where the caption and the table content live. It also initiates a table wrapper box which establishes the table formatting context.
+        In many cases the TFC needs access to the parent (generated) BFC.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::geometryForBox const):
+        * layout/FormattingContext.h:
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedTableWidth):
+
+2019-10-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Painting] Add support for image/background image painting
         https://bugs.webkit.org/show_bug.cgi?id=203054
         <rdar://problem/56347733>

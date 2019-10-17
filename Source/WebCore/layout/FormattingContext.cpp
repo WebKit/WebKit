@@ -252,8 +252,15 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
                     return false;
                 ancestorFormattingContextRoot = &ancestorFormattingContextRoot->formattingContextRoot();
             }
-
         }
+
+        // 7. Tables are wrapped in a 2 level formatting context structure. A <table> element initiates a block formatting context for its principal table box
+        // where the caption and the table content live. It also initiates a table wrapper box which establishes the table formatting context.
+        // In many cases the TFC needs access to the parent (generated) BFC.
+        if (*escapeType == EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext
+            && (&layoutBox == &root().formattingContextRoot() || &layoutBox.formattingContextRoot() == &root().formattingContextRoot()))
+            return true;
+
         return false;
     };
 #endif
