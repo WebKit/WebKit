@@ -1,3 +1,19 @@
+2019-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/font-cursive-italic-cjk.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=203072
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of naming STKaiti by name, we can just use an -expected-mismatch test.
+
+        * fast/text/font-cursive-italic-cjk-2-expected.html: Removed.
+        * fast/text/font-cursive-italic-cjk-2.html: Removed.
+        * fast/text/font-cursive-italic-cjk-expected-mismatch.html: Added.
+        * fast/text/font-cursive-italic-cjk-expected.html: Removed.
+        * fast/text/font-cursive-italic-cjk.html:
+        * platform/mac/TestExpectations:
+
 2019-10-17  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] media/video-seek-after-end.html is no longer flakey
