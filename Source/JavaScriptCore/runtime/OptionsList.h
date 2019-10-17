@@ -25,15 +25,18 @@
 
 #pragma once
 
+#include "GCLogging.h"
+#include <wtf/PrintStream.h>
+
 namespace JSC {
 
 // How do JSC VM options work?
 // ===========================
 // The FOR_EACH_JSC_OPTION() macro below defines a list of all JSC options in use,
 // along with their types and default values. The options values are actually
-// realized as an array of OptionEntry elements in JSC::Config.
+// realized as arrays of each of the OptionTypes in JSC::Config.
 //
-//     Options::initialize() will initialize the array of options values with
+//     Options::initialize() will initialize the arrays of options values with
 // the defaults specified in FOR_EACH_JSC_OPTION() below. After that, the values can
 // be programmatically read and written to using an accessor method with the
 // same name as the option. For example, the option "useJIT" can be read and
@@ -54,6 +57,68 @@ namespace JSC {
 // checks are done after the option values are set. If you alter the option
 // values after the sanity checks (for your own testing), then you're liable to
 // ensure that the new values set are sane and reasonable for your own run.
+//
+// Any modifications to options must be done before the first VM is instantiate.
+// On instantiation of the first VM instance, the Options will be write protected
+// and cannot be modified thereafter.
+
+class OptionRange {
+private:
+    enum RangeState { Uninitialized, InitError, Normal, Inverted };
+public:
+    OptionRange& operator= (const int& rhs)
+    { // Only needed for initialization
+        if (!rhs) {
+            m_state = Uninitialized;
+            m_rangeString = 0;
+            m_lowLimit = 0;
+            m_highLimit = 0;
+        }
+        return *this;
+    }
+
+    bool init(const char*);
+    bool isInRange(unsigned);
+    const char* rangeString() const { return (m_state > InitError) ? m_rangeString : s_nullRangeStr; }
+    
+    void dump(PrintStream& out) const;
+
+private:
+    static const char* const s_nullRangeStr;
+
+    RangeState m_state;
+    const char* m_rangeString;
+    unsigned m_lowLimit;
+    unsigned m_highLimit;
+};
+
+#define FOR_EACH_JSC_OPTION_TYPE(v) \
+    v(Bool, bool) \
+    v(Unsigned, unsigned) \
+    v(Double, double) \
+    v(Int32, int32_t) \
+    v(Size, size_t) \
+    v(OptionRange, OptionRange) \
+    v(OptionString, const char*) \
+    v(GCLogLevel, GCLogging::Level) \
+
+namespace OptionTypes {
+
+#define DECLARE_TYPES(OptionType_, type_) \
+    using OptionType_ = type_;
+    FOR_EACH_JSC_OPTION_TYPE(DECLARE_TYPES)
+#undef DECLARE_TYPES
+
+} // namespace OptionTypes
+
+enum class OptionTypeID : uint8_t {
+
+#define DECLARE_TYPEID(OptionType_, type_) \
+    OptionType_,
+    FOR_EACH_JSC_OPTION_TYPE(DECLARE_TYPEID)
+#undef DECLARE_TYPEID
+
+};
 
 #define FOR_EACH_JSC_OPTION(v)                                          \
     v(Bool, useKernTCSM, true, Normal, "Note: this needs to go before other options since they depend on this value.") \
@@ -510,6 +575,14 @@ enum OptionEquivalence {
     v(maximumFTLCandidateInstructionCount, maximumFTLCandidateBytecodeCost, SameOption) \
     v(maximumInliningCallerSize, maximumInliningCallerBytecodeCost, SameOption) \
 
+#define DECLARE_OPTION_ID(type_, name_, defaultValue_, availability_, description_) \
+    name_,
+enum class OptionID : uint16_t {
+    FOR_EACH_JSC_OPTION(DECLARE_OPTION_ID)
+};
+#undef DECLARE_OPTION_ID
+
+static constexpr size_t InvalidOptionIndex = std::numeric_limits<size_t>::max();
 
 constexpr size_t countNumberOfJSCOptions()
 {
@@ -522,5 +595,24 @@ constexpr size_t countNumberOfJSCOptions()
 
 constexpr size_t NumberOfOptions = countNumberOfJSCOptions();
 
-} // namespace JSC
+constexpr size_t countNumberOfJSCOptionsOfType(OptionTypeID type)
+{
+    size_t count = 0;
+#define COUNT_OPTION(type_, name_, defaultValue_, availability_, description_) \
+    if (type == OptionTypeID::type_) \
+        count++;
+    FOR_EACH_JSC_OPTION(COUNT_OPTION);
+#undef COUNT_OPTION
+    return count;
+}
 
+constexpr size_t NumberOfBoolOptions = countNumberOfJSCOptionsOfType(OptionTypeID::Bool);
+constexpr size_t NumberOfUnsignedOptions = countNumberOfJSCOptionsOfType(OptionTypeID::Unsigned);
+constexpr size_t NumberOfDoubleOptions = countNumberOfJSCOptionsOfType(OptionTypeID::Double);
+constexpr size_t NumberOfInt32Options = countNumberOfJSCOptionsOfType(OptionTypeID::Int32);
+constexpr size_t NumberOfSizeOptions = countNumberOfJSCOptionsOfType(OptionTypeID::Size);
+constexpr size_t NumberOfOptionRangeOptions = countNumberOfJSCOptionsOfType(OptionTypeID::OptionRange);
+constexpr size_t NumberOfOptionStringOptions = countNumberOfJSCOptionsOfType(OptionTypeID::OptionString);
+constexpr size_t NumberOfGCLogLevelOptions = countNumberOfJSCOptionsOfType(OptionTypeID::GCLogLevel);
+
+} // namespace JSC

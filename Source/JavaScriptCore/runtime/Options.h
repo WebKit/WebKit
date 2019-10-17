@@ -29,7 +29,6 @@
 #include "JSExportMacros.h"
 #include <stdint.h>
 #include <stdio.h>
-#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -53,37 +52,17 @@ constexpr bool enableWebAssemblyStreamingApi = false;
 
 class Options {
 public:
-    enum class DumpLevel {
+    enum class DumpLevel : uint8_t {
         None = 0,
         Overridden,
         All,
         Verbose
     };
 
-    enum class Availability {
+    enum class Availability : uint8_t {
         Normal = 0,
         Restricted,
         Configurable
-    };
-
-#define DECLARE_OPTION_ID(type_, name_, defaultValue_, availability_, description_) \
-    name_##ID,
-
-    enum ID {
-        FOR_EACH_JSC_OPTION(DECLARE_OPTION_ID)
-        numberOfOptions
-    };
-#undef DECLARE_OPTION_ID
-
-    enum class Type {
-        Bool,
-        Unsigned,
-        Double,
-        Int32,
-        Size,
-        OptionRange,
-        OptionString,
-        GCLogLevel,
     };
 
     JS_EXPORT_PRIVATE static void initialize();
@@ -101,14 +80,21 @@ public:
 
     JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
 
-#define DECLARE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
-    ALWAYS_INLINE static OptionEntry::type_& name_() { return g_jscConfig.options[name_##ID].val##type_; }  \
-    ALWAYS_INLINE static OptionEntry::type_& name_##Default() { return g_jscConfig.defaultOptions[name_##ID].val##type_; }
+// FIXME: This is a workaround for MSVC's inability to handle large sources.
+// See https://developercommunity.visualstudio.com/content/problem/653301/fatal-error-c1002-compiler-is-out-of-heap-space-in.html
+#if COMPILER(MSVC)
+#define OPTION_ACCESSOR_LINKAGE JS_EXPORT_PRIVATE
+#else
+#define OPTION_ACCESSOR_LINKAGE ALWAYS_INLINE
+#endif
 
+#define DECLARE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
+    OPTION_ACCESSOR_LINKAGE static OptionTypes::type_& name_(); \
+    OPTION_ACCESSOR_LINKAGE static OptionTypes::type_& name_##Default();
     FOR_EACH_JSC_OPTION(DECLARE_OPTION_ACCESSORS)
 #undef DECLARE_OPTION_ACCESSORS
 
-    static bool isAvailable(ID, Availability);
+    static bool isAvailable(OptionID, Availability);
 
 private:
 
@@ -116,8 +102,9 @@ private:
     struct EntryInfo {
         const char* name;
         const char* description;
-        Type type;
+        OptionTypeID type;
         Availability availability;
+        unsigned typeSpecificIndex;
     };
 
     Options();
@@ -129,122 +116,89 @@ private:
     static void dumpOptionsIfNeeded();
     static void dumpAllOptions(StringBuilder&, DumpLevel, const char* title,
         const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
-    static void dumpOption(StringBuilder&, DumpLevel, ID,
+    static void dumpOption(StringBuilder&, DumpLevel, OptionID,
         const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
 
     static bool setOptionWithoutAlias(const char* arg);
     static bool setAliasedOption(const char* arg);
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 
-    static const EntryInfo s_optionsInfo[numberOfOptions];
+    static const EntryInfo s_optionsInfo[NumberOfOptions];
 
     friend class Option;
 };
 
 class Option {
 public:
-    Option(Options::ID id)
-        : m_id(id)
-        , m_entry(g_jscConfig.options[m_id])
-    {
-    }
-    
+    Option(OptionID);
+
     void dump(StringBuilder&) const;
 
     bool operator==(const Option& other) const;
     bool operator!=(const Option& other) const { return !(*this == other); }
     
-    Options::ID id() const { return m_id; }
-    const char* name() const;
-    const char* description() const;
-    Options::Type type() const;
-    Options::Availability availability() const;
-    bool isOverridden() const;
+    OptionID id() const { return m_id; }
+    const char* name() const { return Options::s_optionsInfo[idIndex()].name; }
+    const char* description() const { return Options::s_optionsInfo[idIndex()].description; }
+    OptionTypeID type() const { return Options::s_optionsInfo[idIndex()].type; }
+    Options::Availability availability() const { return Options::s_optionsInfo[idIndex()].availability; }
+    bool isOverridden() const { return *this != defaultOption(); }
     const Option defaultOption() const;
-    
-    bool& boolVal();
-    unsigned& unsignedVal();
-    double& doubleVal();
-    int32_t& int32Val();
-    OptionRange optionRangeVal();
-    const char* optionStringVal();
-    GCLogging::Level& gcLogLevelVal();
-    
+
+#define DECLARE_ACCESSOR(OptionType_, type_) \
+    type_ val##OptionType_() const { return m_val##OptionType_; }
+    FOR_EACH_JSC_OPTION_TYPE(DECLARE_ACCESSOR)
+#undef DECLARE_ACCESSOR
+
 private:
-    // Only used for constructing default Options.
-    Option(Options::ID id, OptionEntry& entry)
-        : m_id(id)
-        , m_entry(entry)
-    {
-    }
-    
-    Options::ID m_id;
-    OptionEntry& m_entry;
+    Option() { }
+
+    size_t idIndex() const { return static_cast<size_t>(m_id); }
+
+    OptionID m_id;
+    union {
+
+#define DECLARE_MEMBER(OptionType_, type_) \
+        type_ m_val##OptionType_;
+    FOR_EACH_JSC_OPTION_TYPE(DECLARE_MEMBER)
+#undef DECLARE_MEMBER
+
+    };
 };
 
-inline const char* Option::name() const
+// FIXME: This is a workaround for MSVC's inability to handle large sources.
+// Once the MSVC bug has been fixed, we can make the following unconditional and
+// remove its counterpart MSVC version in Options.cpp.
+// See https://developercommunity.visualstudio.com/content/problem/653301/fatal-error-c1002-compiler-is-out-of-heap-space-in.html
+#if !COMPILER(MSVC)
+
+template<OptionTypeID type, OptionID id>
+constexpr size_t optionTypeSpecificIndex()
 {
-    return Options::s_optionsInfo[m_id].name;
+    size_t index = 0;
+#define COUNT_INDEX_AND_FIND_MATCH(type_, name_, defaultValue_, availability_, description_) \
+    if (id == OptionID::name_) \
+        return index; \
+    if (type == OptionTypeID::type_) \
+        index++;
+
+    FOR_EACH_JSC_OPTION(COUNT_INDEX_AND_FIND_MATCH);
+#undef COUNT_INDEX_AND_FIND_MATCH
+    return InvalidOptionIndex;
 }
 
-inline const char* Option::description() const
-{
-    return Options::s_optionsInfo[m_id].description;
-}
+#define DEFINE_OPTION_ACCESSORS(type_, name_, defaultValue_, availability_, description_) \
+    ALWAYS_INLINE OptionTypes::type_& Options::name_() \
+    { \
+        return g_jscConfig.type##type_##Options[optionTypeSpecificIndex<OptionTypeID::type_, OptionID::name_>()]; \
+    }  \
+    ALWAYS_INLINE OptionTypes::type_& Options::name_##Default() \
+    { \
+        return g_jscConfig.type##type_##DefaultOptions[optionTypeSpecificIndex<OptionTypeID::type_, OptionID::name_>()]; \
+    }
+    FOR_EACH_JSC_OPTION(DEFINE_OPTION_ACCESSORS)
+#undef DEFINE_OPTION_ACCESSORS
 
-inline Options::Type Option::type() const
-{
-    return Options::s_optionsInfo[m_id].type;
-}
-
-inline Options::Availability Option::availability() const
-{
-    return Options::s_optionsInfo[m_id].availability;
-}
-
-inline bool Option::isOverridden() const
-{
-    return *this != defaultOption();
-}
-
-inline const Option Option::defaultOption() const
-{
-    return Option(m_id, g_jscConfig.defaultOptions[m_id]);
-}
-
-inline bool& Option::boolVal()
-{
-    return m_entry.valBool;
-}
-
-inline unsigned& Option::unsignedVal()
-{
-    return m_entry.valUnsigned;
-}
-
-inline double& Option::doubleVal()
-{
-    return m_entry.valDouble;
-}
-
-inline int32_t& Option::int32Val()
-{
-    return m_entry.valInt32;
-}
-
-inline OptionRange Option::optionRangeVal()
-{
-    return m_entry.valOptionRange;
-}
-
-inline const char* Option::optionStringVal()
-{
-    return m_entry.valOptionString;
-}
-
-inline GCLogging::Level& Option::gcLogLevelVal()
-{
-    return m_entry.valGCLogLevel;
-}
+#endif // !COMPILER(MSVC)
 
 } // namespace JSC

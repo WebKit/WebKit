@@ -1864,6 +1864,7 @@
 		FE1BD0211E72027900134BC9 /* CellProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0201E72027000134BC9 /* CellProfile.h */; };
 		FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0231E72052F00134BC9 /* HeapVerifier.h */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1D6D4523580E1F007A5C26 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
 		FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1872,7 +1873,6 @@
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE3842322324D51B009DD445 /* OptionEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3842302324D51A009DD445 /* OptionEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3842332324D51B009DD445 /* OptionsList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3842312324D51B009DD445 /* OptionsList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; };
@@ -5073,7 +5073,6 @@
 		FE35C2FA21B1E6C7000F4CA8 /* Options.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Options.rb; sourceTree = "<group>"; };
 		FE35C2FB21B1E6C7000F4CA8 /* OpcodeGroup.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = OpcodeGroup.rb; sourceTree = "<group>"; };
 		FE35C2FC21B1E6C7000F4CA8 /* Metadata.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Metadata.rb; sourceTree = "<group>"; };
-		FE3842302324D51A009DD445 /* OptionEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionEntry.h; sourceTree = "<group>"; };
 		FE3842312324D51B009DD445 /* OptionsList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsList.h; sourceTree = "<group>"; };
 		FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVM.cpp; sourceTree = "<group>"; };
 		FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVM.h; sourceTree = "<group>"; };
@@ -7382,7 +7381,6 @@
 				E39EEAF22281244C008474F4 /* ObjectToStringAdaptiveStructureWatchpoint.h */,
 				F692A8770255597D01FF60F7 /* Operations.cpp */,
 				F692A8780255597D01FF60F7 /* Operations.h */,
-				FE3842302324D51A009DD445 /* OptionEntry.h */,
 				0FE228EA1436AB2300196C48 /* Options.cpp */,
 				0FE228EB1436AB2300196C48 /* Options.h */,
 				FE3842312324D51B009DD445 /* OptionsList.h */,
@@ -9905,7 +9903,6 @@
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
 				A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */,
 				BC18C4480E16F5CD00B34460 /* Operations.h in Headers */,
-				FE3842322324D51B009DD445 /* OptionEntry.h in Headers */,
 				0FE228ED1436AB2700196C48 /* Options.h in Headers */,
 				FE3842332324D51B009DD445 /* OptionsList.h in Headers */,
 				E356987222841187008CDCCB /* PackedCellPtr.h in Headers */,
@@ -11134,6 +11131,7 @@
 				536B314A1F71C5990037FC33 /* UnifiedSource87.cpp in Sources */,
 				536B315C1F71C5990037FC33 /* UnifiedSource88.cpp in Sources */,
 				536B31621F71C5990037FC33 /* UnifiedSource89.cpp in Sources */,
+				FE1D6D4523580E1F007A5C26 /* Options.cpp in Sources */,
 				536B31421F71C5990037FC33 /* UnifiedSource90.cpp in Sources */,
 				536B31491F71C5990037FC33 /* UnifiedSource91.cpp in Sources */,
 				536B31521F71C5990037FC33 /* UnifiedSource92.cpp in Sources */,
