@@ -1,3 +1,17 @@
+2019-10-17  Paulo Matos  <pmatos@igalia.com>
+
+        Check values of variables before extracting index in perl
+        https://bugs.webkit.org/show_bug.cgi?id=202333
+
+        Reviewed by Jonathan Bedard.
+
+        If compiler doesn't properly report the host and target it was
+        compiled for, lacking better information we just go ahead and assume
+        there is no cross compilation involved.
+        
+        * Scripts/webkitdirs.pm:
+        (isCrossCompilation):
+
 2019-10-17  Pablo Saavedra  <psaavedra@igalia.com>
 
         Add a driver for MiniBrowser running with WPE for

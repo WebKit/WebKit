@@ -1390,7 +1390,12 @@ sub isCrossCompilation()
         my $compilerOptions = `$compiler -v 2>&1`;
         my @host = $compilerOptions =~ m/--host=(.*?)\s/;
         my @target = $compilerOptions =~ m/--target=(.*?)\s/;
-        if ($target[0] ne "" && $host[0] ne "") {
+        if (!@target || !@host) {
+            # Sometimes a compiler does not report the host of target it was compiled for,
+            # in which case, lacking better information we assume we are not cross-compiling.
+            return 0;
+        }
+        elsif ($target[0] ne "" && $host[0] ne "") {
                 return ($host[0] ne $target[0]);
         } else {
                 # $tempDir gets automatically deleted when goes out of scope
