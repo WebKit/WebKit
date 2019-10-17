@@ -1,3 +1,16 @@
+2019-10-17  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Add a driver for MiniBrowser running with WPE for
+        benchmark_runner
+        https://bugs.webkit.org/show_bug.cgi?id=202994
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowserwpe_driver.py: Added.
+        (WPEMiniBrowserDriver):
+        (WPEMiniBrowserDriver.launch_url):
+        (WPEMiniBrowserDriver.launch_driver):
+
 2019-10-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         run-buildbot-test: sqlalchemy exception when upgrading the database
