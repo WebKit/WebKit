@@ -1,3 +1,16 @@
+2019-10-17  Dirk Schulze  <krit@webkit.org>
+
+        transform-box: content-box, stroke-box missing
+        https://bugs.webkit.org/show_bug.cgi?id=201892
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/transform-box-parsing.html:
+        * svg/transforms/svg-transform-box-expected.html:
+        * svg/transforms/svg-transform-box.html:
+        * transforms/transform-box-expected.html: Added.
+        * transforms/transform-box.html: Added.
+
 2019-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS Sim] Layout Test scrollingcoordinator/ios/ui-scroll-fixed.html is a flaky failure

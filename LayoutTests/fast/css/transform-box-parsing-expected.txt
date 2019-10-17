@@ -6,14 +6,20 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS testPropertyValue("transform-box: border-box", "transform-box") is "border-box"
 PASS testPropertyValue("transform-box: fill-box", "transform-box") is "fill-box"
 PASS testPropertyValue("transform-box: view-box", "transform-box") is "view-box"
+PASS testPropertyValue("transform-box: content-box", "transform-box") is "content-box"
+PASS testPropertyValue("transform-box: stroke-box", "transform-box") is "stroke-box"
 
 PASS testComputedStyle("", "transform-box") is "border-box"
 PASS testComputedStyle("transform-box: fill-box", "transform-box") is "fill-box"
 PASS testComputedStyle("transform-box: view-box", "transform-box") is "view-box"
+PASS testComputedStyle("transform-box: content-box", "transform-box") is "content-box"
+PASS testComputedStyle("transform-box: stroke-box", "transform-box") is "stroke-box"
 
 PASS testSVGComputedStyle("", "transform-box") is "view-box"
 PASS testSVGComputedStyle("transform-box: fill-box", "transform-box") is "fill-box"
 PASS testSVGComputedStyle("transform-box: border-box", "transform-box") is "border-box"
+PASS testSVGComputedStyle("transform-box: content-box", "transform-box") is "content-box"
+PASS testSVGComputedStyle("transform-box: stroke-box", "transform-box") is "stroke-box"
 
 PASS testComputedStyleOnElementWithId("foreignObject") is "view-box"
 

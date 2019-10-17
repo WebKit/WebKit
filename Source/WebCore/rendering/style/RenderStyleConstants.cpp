@@ -1224,6 +1224,8 @@ TextStream& operator<<(TextStream& ts, TransformBox box)
     case TransformBox::BorderBox: ts << "border-box"; break;
     case TransformBox::FillBox: ts << "fill-box"; break;
     case TransformBox::ViewBox: ts << "view-box"; break;
+    case TransformBox::StrokeBox: ts << "stroke-box"; break;
+    case TransformBox::ContentBox: ts << "content-box"; break;
     }
     return ts;
 }

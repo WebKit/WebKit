@@ -1,3 +1,32 @@
+2019-10-17  Dirk Schulze  <krit@webkit.org>
+
+        transform-box: content-box, stroke-box missing
+        https://bugs.webkit.org/show_bug.cgi?id=201892
+
+        Reviewed by Simon Fraser.
+
+        Added the keywords content-box and stroke-box to the
+        transform-box CSS property.
+        Those keywords were added to the spec after the implementation
+        in WebKit.
+
+        Test: transforms/transform-box.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TransformBox const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeReferenceBox):
+        (WebCore::transformBoxToCSSBoxType):
+        (WebCore::RenderLayer::currentTransform const):
+        * rendering/style/RenderStyleConstants.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const):
+
 2019-10-17  Youenn Fablet  <youenn@apple.com>
 
         SincResampler does not need to create a new AudioBus for each consumeSource call

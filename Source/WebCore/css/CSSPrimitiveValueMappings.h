@@ -4391,6 +4391,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TransformBox box)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (box) {
+    case TransformBox::StrokeBox:
+        m_value.valueID = CSSValueStrokeBox;
+        break;
+    case TransformBox::ContentBox:
+        m_value.valueID = CSSValueContentBox;
+        break;
     case TransformBox::BorderBox:
         m_value.valueID = CSSValueBorderBox;
         break;
@@ -4408,6 +4414,10 @@ template<> inline CSSPrimitiveValue::operator TransformBox() const
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
+    case CSSValueStrokeBox:
+        return TransformBox::StrokeBox;
+    case CSSValueContentBox:
+        return TransformBox::ContentBox;
     case CSSValueBorderBox:
         return TransformBox::BorderBox;
     case CSSValueFillBox:
