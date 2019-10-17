@@ -31,6 +31,7 @@
 
 #include "AudioArray.h"
 #include "AudioSourceProvider.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -80,6 +81,8 @@ protected:
 
     // The buffer is primed once at the very beginning of processing.
     bool m_isBufferPrimed;
+
+    RefPtr<AudioBus> m_internalBus;
 };
 
 } // namespace WebCore
