@@ -45,7 +45,7 @@ class JSCallee : public JSNonFinalObject {
 
 public:
     typedef JSNonFinalObject Base;
-    const static unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;
 
     static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
     {

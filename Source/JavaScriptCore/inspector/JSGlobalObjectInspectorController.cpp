@@ -156,8 +156,8 @@ void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String
 
 void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& callStack)
 {
-    static const int framesToShow = 31;
-    static const int framesToSkip = 3; // WTFGetBacktrace, appendAPIBacktrace, reportAPIException.
+    static constexpr int framesToShow = 31;
+    static constexpr int framesToSkip = 3; // WTFGetBacktrace, appendAPIBacktrace, reportAPIException.
 
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;

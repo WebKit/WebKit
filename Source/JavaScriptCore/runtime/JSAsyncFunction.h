@@ -36,7 +36,7 @@ class JSAsyncFunction final : public JSFunction {
 public:
     typedef JSFunction Base;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_EXPORT_INFO;
 

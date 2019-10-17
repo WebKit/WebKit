@@ -36,7 +36,7 @@ namespace JSC {
 
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
-        static const int ThisArgument = -1;
+        static constexpr int ThisArgument = -1;
         SpecializedThunkJIT(VM& vm, int expectedArgCount)
             : JSInterfaceJIT(&vm)
         {

@@ -49,7 +49,7 @@ class WebAssemblyFunction final : public WebAssemblyFunctionBase {
 public:
     using Base = WebAssemblyFunctionBase;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);

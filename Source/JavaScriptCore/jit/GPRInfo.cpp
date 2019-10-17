@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +38,6 @@ void JSValueRegs::dump(PrintStream& out) const
     out.print("(tag:", tagGPR(), ", payload:", payloadGPR(), ")");
 #endif
 }
-
-// This is in the .cpp file to work around clang issues.
-#if CPU(X86_64)
-const GPRReg GPRInfo::patchpointScratchRegister = MacroAssembler::s_scratchRegister;
-#elif CPU(ARM64)
-const GPRReg GPRInfo::patchpointScratchRegister = ARM64Registers::ip0;
-#endif
 
 } // namespace JSC
 

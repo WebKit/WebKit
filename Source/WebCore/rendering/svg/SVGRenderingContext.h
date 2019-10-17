@@ -90,7 +90,7 @@ private:
     };
 
     // List of those flags which require actions during the destructor.
-    const static int ActionsNeeded = RestoreGraphicsContext | EndOpacityLayer | EndShadowLayer | EndFilterLayer;
+    static constexpr int ActionsNeeded = RestoreGraphicsContext | EndOpacityLayer | EndShadowLayer | EndFilterLayer;
 
     RenderElement* m_renderer { nullptr };
     PaintInfo* m_paintInfo { nullptr };

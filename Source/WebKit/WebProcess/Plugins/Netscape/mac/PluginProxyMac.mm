@@ -34,7 +34,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 
-const static double fadeInDuration = 0.5;
+static constexpr double fadeInDuration = 0.5;
 
 namespace WebKit {
 

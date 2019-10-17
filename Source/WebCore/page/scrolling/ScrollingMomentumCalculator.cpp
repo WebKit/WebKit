@@ -38,7 +38,7 @@ static inline float projectedInertialScrollDistance(float initialWheelDelta)
     // by multiplying the initial wheel delta by a constant factor. By running a few experiments (i.e. logging scroll destination and initial
     // wheel delta for many scroll gestures) we determined that this is a reasonable way to approximate where scrolling will take us without
     // using _NSScrollingMomentumCalculator.
-    const static double inertialScrollPredictionFactor = 16.7;
+    static constexpr double inertialScrollPredictionFactor = 16.7;
     return inertialScrollPredictionFactor * initialWheelDelta;
 }
 

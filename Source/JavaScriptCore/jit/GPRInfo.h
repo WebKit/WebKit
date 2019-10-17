@@ -469,7 +469,7 @@ public:
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better
     // if we instead had a more explicit way of saying that we don't have a scratch register.
-    static const GPRReg patchpointScratchRegister;
+    static constexpr GPRReg patchpointScratchRegister = MacroAssembler::s_scratchRegister;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -655,7 +655,7 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARM64Registers::x8;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARM64Registers::x9;
-    static const GPRReg patchpointScratchRegister;
+    static constexpr GPRReg patchpointScratchRegister = ARM64Registers::ip0;
 
     // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.

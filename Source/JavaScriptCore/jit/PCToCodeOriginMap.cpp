@@ -55,7 +55,7 @@ public:
     void write(T item)
     {
         RELEASE_ASSERT(m_offset + sizeof(T) <= m_maxSize);
-        static const uint8_t mask = std::numeric_limits<uint8_t>::max();
+        static constexpr uint8_t mask = std::numeric_limits<uint8_t>::max();
         for (unsigned i = 0; i < sizeof(T); i++) {
             *(m_buffer + m_offset) = static_cast<uint8_t>(item & mask);
             item = item >> (sizeof(uint8_t) * 8);
@@ -145,8 +145,8 @@ void PCToCodeOriginMapBuilder::appendItem(MacroAssembler::Label label, const Cod
 }
 
 
-static const uint8_t sentinelPCDelta = 0;
-static const int8_t sentinelBytecodeDelta = 0;
+static constexpr uint8_t sentinelPCDelta = 0;
+static constexpr int8_t sentinelBytecodeDelta = 0;
 
 PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuffer& linkBuffer)
 {

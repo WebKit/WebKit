@@ -195,7 +195,7 @@ private:
 
     void fillTokenInfo(JSToken*, JSTokenType, int lineNumber, int endOffset, int lineStartOffset, JSTextPosition endPosition);
 
-    static const size_t initialReadBufferCapacity = 32;
+    static constexpr size_t initialReadBufferCapacity = 32;
 
     int m_lineNumber;
     int m_lastLineNumber;

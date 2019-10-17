@@ -2492,7 +2492,7 @@ namespace JSC {
 
     private:
         SwitchInfo::SwitchType tryTableSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
-        static const size_t s_tableSwitchMinimum = 3;
+        static constexpr size_t s_tableSwitchMinimum = 3;
         ClauseListNode* m_list1;
         CaseClauseNode* m_defaultClause;
         ClauseListNode* m_list2;

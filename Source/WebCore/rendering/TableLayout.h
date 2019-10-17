@@ -46,7 +46,7 @@ public:
 protected:
     // FIXME: Once we enable SATURATED_LAYOUT_ARITHMETHIC, this should just be LayoutUnit::nearlyMax().
     // Until then though, using nearlyMax causes overflow in some tests, so we just pick a large number.
-    const static int tableMaxWidth = 1000000;
+    static constexpr int tableMaxWidth = 1000000;
 
     RenderTable* m_table;
 };

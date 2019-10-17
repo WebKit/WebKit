@@ -38,7 +38,7 @@ class WebAssemblyFunctionBase : public JSFunction {
 public:
     using Base = JSFunction;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_INFO;
 

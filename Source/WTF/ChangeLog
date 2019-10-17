@@ -1,3 +1,17 @@
+2019-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Use constexpr in more places and remove some unnecessary external linkage.
+        https://bugs.webkit.org/show_bug.cgi?id=203115
+
+        Reviewed by Yusuke Suzuki.
+
+        Also removed unused lockSpinLimit in Threading.h.
+
+        * wtf/MD5.h:
+        * wtf/SHA1.h:
+        * wtf/StackBounds.h:
+        * wtf/Threading.h:
+
 2019-10-17  Sihui Liu  <sihui_liu@apple.com>
 
         Using version 1 CFRunloopSource for faster task dispatch

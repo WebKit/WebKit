@@ -42,8 +42,6 @@ namespace MarkedBlockInternal {
 static constexpr bool verbose = false;
 }
 
-const size_t MarkedBlock::blockSize;
-
 static constexpr bool computeBalance = false;
 static size_t balance;
 

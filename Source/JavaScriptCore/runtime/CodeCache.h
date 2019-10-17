@@ -179,18 +179,18 @@ private:
 
     // This constant factor biases cache capacity toward allowing a minimum
     // working set to enter the cache before it starts evicting.
-    static const Seconds workingSetTime;
-    static const int64_t workingSetMaxBytes = 16000000;
-    static const size_t workingSetMaxEntries = 2000;
+    static constexpr Seconds workingSetTime = 10_s;
+    static constexpr int64_t workingSetMaxBytes = 16000000;
+    static constexpr size_t workingSetMaxEntries = 2000;
 
     // This constant factor biases cache capacity toward recent activity. We
     // want to adapt to changing workloads.
-    static const int64_t recencyBias = 4;
+    static constexpr int64_t recencyBias = 4;
 
     // This constant factor treats a sampled event for one old object as if it
     // happened for many old objects. Most old objects are evicted before we can
     // sample them, so we need to extrapolate from the ones we do sample.
-    static const int64_t oldObjectSamplingMultiplier = 32;
+    static constexpr int64_t oldObjectSamplingMultiplier = 32;
 
     size_t numberOfEntries() const { return static_cast<size_t>(m_map.size()); }
     bool canPruneQuickly() const { return numberOfEntries() < workingSetMaxEntries; }
@@ -243,20 +243,20 @@ template <typename T> struct CacheTypes { };
 
 template <> struct CacheTypes<UnlinkedProgramCodeBlock> {
     typedef JSC::ProgramNode RootNode;
-    static const SourceCodeType codeType = SourceCodeType::ProgramType;
-    static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
+    static constexpr SourceCodeType codeType = SourceCodeType::ProgramType;
+    static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
     typedef JSC::EvalNode RootNode;
-    static const SourceCodeType codeType = SourceCodeType::EvalType;
-    static const SourceParseMode parseMode = SourceParseMode::ProgramMode;
+    static constexpr SourceCodeType codeType = SourceCodeType::EvalType;
+    static constexpr SourceParseMode parseMode = SourceParseMode::ProgramMode;
 };
 
 template <> struct CacheTypes<UnlinkedModuleProgramCodeBlock> {
     typedef JSC::ModuleProgramNode RootNode;
-    static const SourceCodeType codeType = SourceCodeType::ModuleType;
-    static const SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
+    static constexpr SourceCodeType codeType = SourceCodeType::ModuleType;
+    static constexpr SourceParseMode parseMode = SourceParseMode::ModuleEvaluateMode;
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>

@@ -121,7 +121,7 @@ public:
     JS_EXPORT_PRIVATE Optional<Seconds> timeUntilFire();
 
 protected:
-    static const Seconds s_decade;
+    static constexpr Seconds s_decade { 60 * 60 * 24 * 365 * 10 };
     Ref<JSLock> m_apiLock;
 
 private:

@@ -38,7 +38,7 @@ class JSNativeStdFunction final : public JSFunction {
 public:
     typedef JSFunction Base;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

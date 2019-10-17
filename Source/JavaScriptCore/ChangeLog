@@ -1,3 +1,53 @@
+2019-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Use constexpr in more places and remove some unnecessary external linkage.
+        https://bugs.webkit.org/show_bug.cgi?id=203115
+
+        Reviewed by Yusuke Suzuki.
+
+        * API/JSWrapperMap.mm:
+        * heap/MarkedBlock.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        * inspector/ScriptCallStack.h:
+        * interpreter/CLoopStack.h:
+        * interpreter/CallFrame.h:
+        * interpreter/ShadowChicken.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::emitRandomThunkImpl):
+        * jit/GPRInfo.cpp:
+        * jit/GPRInfo.h:
+        * jit/JIT.h:
+        * jit/PCToCodeOriginMap.cpp:
+        * jit/SpecializedThunkJIT.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::roundThunkGenerator):
+        * jit/UnusedPointer.h:
+        * llint/LLIntData.h:
+        * llint/LLIntPCRanges.h:
+        * parser/Lexer.h:
+        * parser/Nodes.h:
+        * runtime/CodeCache.cpp:
+        * runtime/CodeCache.h:
+        * runtime/ErrorInstance.h:
+        * runtime/JSAsyncFunction.h:
+        * runtime/JSAsyncGeneratorFunction.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGeneratorFunction.h:
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSRunLoopTimer.cpp:
+        (): Deleted.
+        * runtime/JSRunLoopTimer.h:
+        * runtime/ProxyObject.h:
+        * runtime/Watchdog.cpp:
+        (): Deleted.
+        * runtime/Watchdog.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2019-10-17  Brent Fulgham  <bfulgham@apple.com>
 
         Build fix for newer versions of MSVC.

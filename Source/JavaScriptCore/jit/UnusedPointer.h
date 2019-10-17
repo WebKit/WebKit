@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-static const uintptr_t unusedPointer = 0xd1e7beef;
+static constexpr uintptr_t unusedPointer = 0xd1e7beef;
 
 } // namespace JSC
 

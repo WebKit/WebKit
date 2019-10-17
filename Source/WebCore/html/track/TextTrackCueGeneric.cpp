@@ -47,7 +47,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 // This default value must be the same as the one specified in mediaControlsApple.css for -webkit-media-controls-closed-captions-container
-const static int DEFAULTCAPTIONFONTSIZE = 10;
+static constexpr int DEFAULTCAPTIONFONTSIZE = 10;
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);

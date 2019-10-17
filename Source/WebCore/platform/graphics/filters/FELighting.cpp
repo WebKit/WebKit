@@ -84,15 +84,15 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
     return true;
 }
 
-const static int cPixelSize = 4;
-const static int cAlphaChannelOffset = 3;
-const static uint8_t cOpaqueAlpha = static_cast<uint8_t>(0xFF);
+static constexpr int cPixelSize = 4;
+static constexpr int cAlphaChannelOffset = 3;
+static constexpr uint8_t cOpaqueAlpha = static_cast<uint8_t>(0xFF);
 
 // These factors and the normal coefficients come from the table under https://www.w3.org/TR/SVG/filters.html#feDiffuseLightingElement.
-const static float cFactor1div2 = -1 / 2.f;
-const static float cFactor1div3 = -1 / 3.f;
-const static float cFactor1div4 = -1 / 4.f;
-const static float cFactor2div3 = -2 / 3.f;
+static constexpr float cFactor1div2 = -1 / 2.f;
+static constexpr float cFactor1div3 = -1 / 3.f;
+static constexpr float cFactor1div4 = -1 / 4.f;
+static constexpr float cFactor2div3 = -2 / 3.f;
 
 inline IntSize FELighting::LightingData::topLeftNormal(int offset) const
 {

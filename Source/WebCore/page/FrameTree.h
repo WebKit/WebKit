@@ -32,7 +32,7 @@ class TreeScope;
 class FrameTree {
     WTF_MAKE_NONCOPYABLE(FrameTree);
 public:
-    const static unsigned invalidCount = static_cast<unsigned>(-1);
+    static constexpr unsigned invalidCount = static_cast<unsigned>(-1);
 
     FrameTree(Frame& thisFrame, Frame* parentFrame)
         : m_thisFrame(thisFrame)

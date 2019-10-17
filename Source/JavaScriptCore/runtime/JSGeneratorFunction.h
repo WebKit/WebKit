@@ -43,7 +43,7 @@ class JSGeneratorFunction final : public JSFunction {
 public:
     using Base = JSFunction;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     DECLARE_EXPORT_INFO;
 

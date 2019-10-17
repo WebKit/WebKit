@@ -31,11 +31,11 @@
 #import <wtf/RetainPtr.h>
 
 static bool didFinishTest;
-const static NSURL *targetUrl = [[NSURL alloc] initWithString:@"http://www.example.com/"];
-const static unsigned expectedModifierFlags = 0;
-const static int expectedButtonNumber = -2;
+static const NSURL *targetUrl = [[NSURL alloc] initWithString:@"http://www.example.com/"];
+static constexpr unsigned expectedModifierFlags = 0;
+static constexpr int expectedButtonNumber = -2;
 
-const static int expectedWKButtonNumber = 0; // unlike DOM spec, 0 is the value for no button in Cocoa.
+static constexpr int expectedWKButtonNumber = 0; // unlike DOM spec, 0 is the value for no button in Cocoa.
 
 @interface NavigationActionDelegate : NSObject <WKNavigationDelegate>
 @end

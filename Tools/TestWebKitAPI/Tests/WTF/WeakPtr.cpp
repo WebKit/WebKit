@@ -560,7 +560,7 @@ TEST(WTF_WeakPtr, WeakHashSetConstObjects)
 TEST(WTF_WeakPtr, WeakHashSetExpansion)
 {
     unsigned initialCapacity;
-    const static unsigned maxLoadCap = 3;
+    static constexpr unsigned maxLoadCap = 3;
     {
         WeakHashSet<Base> weakHashSet;
         Base object;

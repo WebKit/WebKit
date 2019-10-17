@@ -44,8 +44,6 @@
 
 namespace JSC {
 
-const Seconds JSRunLoopTimer::s_decade { 60 * 60 * 24 * 365 * 10 };
-
 static inline JSRunLoopTimer::Manager::EpochTime epochTime(Seconds delay)
 {
 #if USE(CF)

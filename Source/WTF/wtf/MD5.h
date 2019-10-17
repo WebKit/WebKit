@@ -51,7 +51,7 @@ public:
     WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
 
     // Size of the SHA1 hash
-    WTF_EXPORT_PRIVATE static const size_t hashSize = 16;
+    WTF_EXPORT_PRIVATE static constexpr size_t hashSize = 16;
 
     // type for computing MD5 hash
     typedef std::array<uint8_t, hashSize> Digest;

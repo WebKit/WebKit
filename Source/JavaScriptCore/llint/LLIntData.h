@@ -197,19 +197,19 @@ ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
 
 #if ENABLE(JIT)
 struct Registers {
-    static const GPRReg pcGPR = GPRInfo::regT4;
+    static constexpr GPRReg pcGPR = GPRInfo::regT4;
 
 #if CPU(X86_64) && !OS(WINDOWS)
-    static const GPRReg metadataTableGPR = GPRInfo::regCS1;
-    static const GPRReg pbGPR = GPRInfo::regCS2;
+    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS1;
+    static constexpr GPRReg pbGPR = GPRInfo::regCS2;
 #elif CPU(X86_64) && OS(WINDOWS)
-    static const GPRReg metadataTableGPR = GPRInfo::regCS3;
-    static const GPRReg pbGPR = GPRInfo::regCS4;
+    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS3;
+    static constexpr GPRReg pbGPR = GPRInfo::regCS4;
 #elif CPU(ARM64)
-    static const GPRReg metadataTableGPR = GPRInfo::regCS6;
-    static const GPRReg pbGPR = GPRInfo::regCS7;
+    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS6;
+    static constexpr GPRReg pbGPR = GPRInfo::regCS7;
 #elif CPU(MIPS) || CPU(ARM_THUMB2)
-    static const GPRReg metadataTableGPR = GPRInfo::regCS0;
+    static constexpr GPRReg metadataTableGPR = GPRInfo::regCS0;
 #endif
 };
 #endif

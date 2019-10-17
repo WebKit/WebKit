@@ -63,9 +63,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
 WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCue);
 
 // This constant should correspond with the percentage returned by CaptionUserPreferences::captionFontSizeScaleAndImportance.
-const static double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
+static constexpr double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
 
-static const int undefinedPosition = -1;
+static constexpr int undefinedPosition = -1;
 
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr

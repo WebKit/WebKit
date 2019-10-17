@@ -185,11 +185,11 @@ namespace JSC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
-        static const uintptr_t patchGetByIdDefaultStructure = unusedPointer;
-        static const int patchGetByIdDefaultOffset = 0;
+        static constexpr uintptr_t patchGetByIdDefaultStructure = unusedPointer;
+        static constexpr int patchGetByIdDefaultOffset = 0;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
         // will compress the displacement, and we may not be able to fit a patched offset.
-        static const int patchPutByIdDefaultOffset = 256;
+        static constexpr int patchPutByIdDefaultOffset = 256;
 
     public:
         JIT(VM&, CodeBlock* = 0, unsigned loopOSREntryBytecodeOffset = 0);

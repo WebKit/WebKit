@@ -52,7 +52,7 @@ struct FourCharacterTagHashTraits : WTF::GenericHashTraits<FontTag> {
     static bool isDeletedValue(const FontTag& value) { return value == FontTag({{ ff, ff, ff, ff }}); }
 
 private:
-    const static char ff = static_cast<char>(0xFF);
+    static constexpr char ff = static_cast<char>(0xFF);
 };
 
 template <typename T>

@@ -62,7 +62,7 @@ static constexpr uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; /
 
 @end
 
-static const constexpr unsigned InitialBufferSize { 256 };
+static constexpr unsigned InitialBufferSize { 256 };
 
 // Default conversion of selectors to property names.
 // All semicolons are removed, lowercase letters following a semicolon are capitalized.

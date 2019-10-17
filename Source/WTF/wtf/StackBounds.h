@@ -40,7 +40,7 @@ class StackBounds {
     // functions was seen to be as high as 27k. Hence, 64k is chosen as a
     // conservative availability value that is not too large but comfortably
     // exceeds 27k with some buffer for error.
-    const static size_t s_defaultAvailabilityDelta = 64 * 1024;
+    static constexpr size_t s_defaultAvailabilityDelta = 64 * 1024;
 
 public:
     enum class StackDirection { Upward, Downward };

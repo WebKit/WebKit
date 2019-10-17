@@ -143,7 +143,6 @@ public:
     static void initializeCurrentThreadInternal(const char* threadName);
     static void initializeCurrentThreadEvenIfNonWTFCreated();
     
-    WTF_EXPORT_PRIVATE static const unsigned lockSpinLimit;
     WTF_EXPORT_PRIVATE static void yield();
 
     WTF_EXPORT_PRIVATE static bool exchangeIsCompilationThread(bool newValue);

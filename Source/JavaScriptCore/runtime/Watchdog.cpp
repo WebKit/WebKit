@@ -32,8 +32,6 @@
 
 namespace JSC {
 
-const Seconds Watchdog::noTimeLimit { Seconds::infinity() };
-
 Watchdog::Watchdog(VM* vm)
     : m_vm(vm)
     , m_timeLimit(noTimeLimit)

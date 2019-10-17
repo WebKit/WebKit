@@ -54,7 +54,7 @@ public:
     void enteredVM();
     void exitedVM();
 
-    static const Seconds noTimeLimit;
+    static constexpr Seconds noTimeLimit = Seconds::infinity();
 
 private:
     void startTimer(Seconds timeLimit);
