@@ -132,6 +132,11 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::noCurrentHistoryItemKey());
         isCacheable = false;
     }
+    if (frame.isMainFrame() && frame.view() && !frame.view()->isVisuallyNonEmpty()) {
+        PCLOG("   -Main frame is visually empty");
+        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::visuallyEmptyKey());
+        isCacheable = false;
+    }
     if (frameLoader.quickRedirectComing()) {
         PCLOG("   -Quick redirect is coming");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::quirkRedirectComingKey());

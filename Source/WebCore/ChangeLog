@@ -1,3 +1,18 @@
+2019-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Don't put pages that have not reached the non-visually empty layout milestone in the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203108
+
+        Reviewed by Geoffrey Garen.
+
+        We don't want to go back to a visually empty page on back/forward navigation.
+
+        * history/BackForwardCache.cpp:
+        (WebCore::canCacheFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::visuallyEmptyKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2019-10-17  Dirk Schulze  <krit@webkit.org>
 
         transform-box: content-box, stroke-box missing
