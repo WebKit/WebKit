@@ -1,3 +1,31 @@
+2019-10-17  Saam Barati  <sbarati@apple.com>
+
+        Have a CLI version of JetStream 2 to run on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=202998
+        <rdar://problem/56208554>
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch adds a CLI version of JS2 to run on watchOS. We run most subtests
+        from the browser version of JS2, but skip a few tests that are particularly
+        long running, like WSL and some of WTB. We also don't run the Wasm tests
+        as we don't JIT on watchOS. Each test runs for fewer iterations in the watch
+        version. 15 is the default iteration count. This benchmark runs in 7 minutes on
+        a Series 4 watch.
+
+        * JetStream2/JetStreamDriver.js:
+        (getIterationCount):
+        (getWorstCaseCount):
+        (Driver.prototype.async.start):
+        (Driver.prototype.resultsJSON):
+        (Driver.prototype.dumpJSONResultsIfNeeded):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+        (DefaultBenchmark):
+        * JetStream2/RexBench/UniPoker/benchmark.js:
+        (Benchmark.prototype.validate):
+        (Benchmark):
+        * JetStream2/watch-cli.js: Added.
+
 2019-10-17  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Linux] Avoid usage of <sys/sysctl.h> in MallocBench

@@ -34,6 +34,15 @@ if (typeof RAMification === "undefined")
 if (typeof testIterationCount === "undefined")
     var testIterationCount = undefined;
 
+if (typeof testIterationCountMap === "undefined")
+    var testIterationCountMap = new Map;
+
+if (typeof testWorstCaseCountMap === "undefined")
+    var testWorstCaseCountMap = new Map;
+
+if (typeof dumpJSONResults === "undefined")
+    var dumpJSONResults = false;
+
 // Used for the promise representing the current benchmark run.
 this.currentResolve = null;
 this.currentReject = null;
@@ -53,6 +62,24 @@ function displayCategoryScores() {
         summaryElement.innerHTML += `<p> ${category}: ${uiFriendlyNumber(geomean(scores))}</p>`
 
     categoryScores = null;
+}
+
+function getIterationCount(plan) {
+    if (testIterationCountMap.has(plan.name))
+        return testIterationCountMap.get(plan.name);
+    if (testIterationCount)
+        return testIterationCount;
+    if (plan.iterations)
+        return plan.iterations;
+    return defaultIterationCount;
+}
+
+function getWorstCaseCount(plan) {
+    if (testWorstCaseCountMap.has(plan.name))
+        return testWorstCaseCountMap.get(plan.name);
+    if (plan.worstCaseCount)
+        return plan.worstCaseCount;
+    return defaultWorstCaseCount;
 }
 
 if (isInBrowser) {
@@ -250,6 +277,7 @@ class Driver {
         }
 
         this.reportScoreToRunBenchmarkRunner();
+        this.dumpJSONResultsIfNeeded();
     }
 
     runCode(string)
@@ -355,14 +383,8 @@ class Driver {
         }
     }
 
-    async reportScoreToRunBenchmarkRunner()
+    resultsJSON()
     {
-        if (!isInBrowser)
-            return;
-
-        if (window.location.search !== '?report=true')
-            return;
-
         let results = {};
         for (let benchmark of this.benchmarks) {
             const subResults = {}
@@ -381,7 +403,27 @@ class Driver {
 
         results = {"JetStream2.0": {"metrics" : {"Score" : ["Geometric"]}, "tests" : results}};
 
-        const content = JSON.stringify(results);
+        return JSON.stringify(results);
+    }
+
+    dumpJSONResultsIfNeeded()
+    {
+        if (dumpJSONResults) {
+            print("\n");
+            print(this.resultsJSON());
+            print("\n");
+        }
+    }
+
+    async reportScoreToRunBenchmarkRunner()
+    {
+        if (!isInBrowser)
+            return;
+
+        if (window.location.search !== '?report=true')
+            return;
+
+        const content = this.resultsJSON();
         await fetch("/report", {
             method: "POST",
             heeaders: {
@@ -398,7 +440,7 @@ class Benchmark {
     constructor(plan)
     {
         this.plan = plan;
-        this.iterations = testIterationCount || plan.iterations || defaultIterationCount;
+        this.iterations = getIterationCount(plan);
         this.isAsync = !!plan.isAsync;
 
         this.scripts = null;
@@ -623,7 +665,7 @@ class DefaultBenchmark extends Benchmark {
     constructor(...args) {
         super(...args);
 
-        this.worstCaseCount = this.plan.worstCaseCount || defaultWorstCaseCount;
+        this.worstCaseCount = getWorstCaseCount(this.plan);
         this.firstIteration = null;
         this.worst4 = null;
         this.average = null;
