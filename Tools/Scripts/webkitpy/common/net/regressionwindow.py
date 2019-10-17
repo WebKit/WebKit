@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -47,6 +48,6 @@ class RegressionWindow(object):
     def revisions(self):
         # Cache revisions to avoid excessive allocations.
         if not self._revisions:
-            self._revisions = range(self._failing_build.revision(), self._build_before_failure.revision(), -1)
+            self._revisions = list(range(self._failing_build.revision(), self._build_before_failure.revision(), -1))
             self._revisions.reverse()
         return self._revisions

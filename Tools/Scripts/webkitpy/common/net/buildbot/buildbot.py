@@ -1,4 +1,5 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -39,6 +40,7 @@ from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
+from webkitpy.common.unicode_compatibility import decode_for, unicode
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
@@ -95,7 +97,7 @@ class Builder(object):
         return LayoutTestResults.results_from_string(results_file)
 
     def url_encoded_name(self):
-        return urllib.quote(self._name)
+        return quote(self._name)
 
     def url(self):
         return "%s/builders/%s" % (self._buildbot.buildbot_url, self.url_encoded_name())
@@ -191,7 +193,7 @@ class Builder(object):
         return self._revision_to_build_number
 
     def revision_build_pairs_with_results(self):
-        return self._revision_to_build_map().items()
+        return list(self._revision_to_build_map().items())
 
     # This assumes there can be only one build per revision, which is false, but we don't care for now.
     def build_for_revision(self, revision, allow_failed_lookups=False):
@@ -274,7 +276,7 @@ class Build(object):
 
     def results_url(self):
         results_directory = "r%s (%s)" % (self.revision(), self._number)
-        return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
+        return "%s/%s" % (self._builder.results_url(), quote(results_directory))
 
     def results_zip_url(self):
         return "%s.zip" % self.results_url()
@@ -312,15 +314,13 @@ class BuildBot(object):
             # Will be either a revision number or a build number
             revision_string = status_link.string
             # If revision_string has non-digits assume it's not a revision number.
-            builder['built_revision'] = int(revision_string) \
-                                        if not re.match('\D', revision_string) \
-                                        else None
+            builder['built_revision'] = int(revision_string) if not re.match(r'\D', revision_string) else None
 
             # FIXME: We treat slave lost as green even though it is not to
             # work around the Qts bot being on a broken internet connection.
             # The real fix is https://bugs.webkit.org/show_bug.cgi?id=37099
-            builder['is_green'] = not re.search('fail', cell.renderContents()) or \
-                                  not not re.search('lost', cell.renderContents())
+            builder['is_green'] = not re.search('fail', decode_for(cell.renderContents(), str)) or \
+                                 bool(re.search('lost', decode_for(cell.renderContents(), str)))
 
             status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
             link_match = re.match(status_link_regexp, status_link['href'])
@@ -335,7 +335,15 @@ class BuildBot(object):
             builder['build_number'] = None
 
     def _parse_current_build_cell(self, builder, cell):
-        activity_lines = cell.renderContents().split("<br />")
+        # Convert rendered contents to native string
+        rendered = decode_for(cell.renderContents(), str)
+
+        # BeautifulSoup and bs4 render differently
+        if '<br/>' in rendered:
+            activity_lines = rendered.split('<br/>')
+        else:
+            activity_lines = rendered.split('<br />')
+
         builder["activity"] = activity_lines[0]  # normally "building" or "idle"
         # The middle lines document how long left for any current builds.
         match = re.match("(?P<pending_builds>\d) pending", activity_lines[-1])
@@ -369,7 +377,7 @@ class BuildBot(object):
         # cause keys to be missing which you might otherwise expect.
         # FIXME: The bot sends a *huge* amount of data for each request, we should
         # find a way to reduce the response size further.
-        json_url = "%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_url, urllib.quote(builder.name()), build_number)
+        json_url = "%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_url, quote(builder.name()), build_number)
         try:
             return json.load(urlopen(json_url))
         except URLError as err:

@@ -1,3 +1,21 @@
+2019-10-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.net.buildbot 
+        https://bugs.webkit.org/show_bug.cgi?id=202466
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.net.buildbot to the test list.
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder.url_encoded_name): Call compatible urllib quote.
+        (Builder.revision_build_pairs_with_results): Convert iterator to list before returning.
+        (Build.results_url): Call compatible urllib quote.
+        (BuildBot._parse_last_build_cell):renderContents needs to be decoded in Python 3.
+        (BuildBot._parse_current_build_cell): BeautifulSoup and bs4 render breaks differently.
+        (BuildBot._fetch_build_dictionary): Call compatible urllib quote.
+        * Scripts/webkitpy/common/net/regressionwindow.py:
+        (RegressionWindow.revisions): Convert range(...) to list.
+
 2019-10-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] status bubbles should show details from all the builds in case build is retried
