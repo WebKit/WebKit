@@ -2083,6 +2083,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     parameters.perOriginStorageQuota = perOriginStorageQuota();
     parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
+    parameters.networkSessionParameters.networkCacheDirectory = resolvedNetworkCacheDirectory();
 
     platformSetNetworkParameters(parameters);
 
