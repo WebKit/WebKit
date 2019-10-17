@@ -36,19 +36,21 @@
 
 namespace WebCore {
 
-namespace {
-
 // ChannelProvider provides a single channel of audio data (one channel at a time) for each channel
 // of data provided to us in a multi-channel provider.
-
-class ChannelProvider : public AudioSourceProvider {
+class MultiChannelResampler::ChannelProvider : public AudioSourceProvider {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    ChannelProvider(AudioSourceProvider* multiChannelProvider, unsigned numberOfChannels)
-        : m_multiChannelProvider(multiChannelProvider)
-        , m_numberOfChannels(numberOfChannels)
-        , m_currentChannel(0)
-        , m_framesToProcess(0)
+    explicit ChannelProvider(unsigned numberOfChannels)
+        : m_numberOfChannels(numberOfChannels)
     {
+    }
+
+    void setProvider(AudioSourceProvider* multiChannelProvider)
+    {
+        m_currentChannel = 0;
+        m_framesToProcess = 0;
+        m_multiChannelProvider = multiChannelProvider;
     }
 
     // provideInput() will be called once for each channel, starting with the first channel.
@@ -83,22 +85,23 @@ public:
     }
 
 private:
-    AudioSourceProvider* m_multiChannelProvider;
+    AudioSourceProvider* m_multiChannelProvider { nullptr };
     RefPtr<AudioBus> m_multiChannelBus;
-    unsigned m_numberOfChannels;
-    unsigned m_currentChannel;
-    size_t m_framesToProcess; // Used to verify that all channels ask for the same amount.
+    unsigned m_numberOfChannels { 0 };
+    unsigned m_currentChannel { 0 };
+    size_t m_framesToProcess { 0 }; // Used to verify that all channels ask for the same amount.
 };
-
-} // namespace
 
 MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned numberOfChannels)
     : m_numberOfChannels(numberOfChannels)
+    , m_channelProvider(makeUnique<ChannelProvider>(m_numberOfChannels))
 {
     // Create each channel's resampler.
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex)
         m_kernels.append(makeUnique<SincResampler>(scaleFactor));
 }
+
+MultiChannelResampler::~MultiChannelResampler() = default;
 
 void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* destination, size_t framesToProcess)
 {
@@ -107,17 +110,19 @@ void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* des
     // The provider can provide us with multi-channel audio data. But each of our single-channel resamplers (kernels)
     // below requires a provider which provides a single unique channel of data.
     // channelProvider wraps the original multi-channel provider and dishes out one channel at a time.
-    ChannelProvider channelProvider(provider, m_numberOfChannels);
+    m_channelProvider->setProvider(provider);
 
     for (unsigned channelIndex = 0; channelIndex < m_numberOfChannels; ++channelIndex) {
         // Depending on the sample-rate scale factor, and the internal buffering used in a SincResampler
         // kernel, this call to process() will only sometimes call provideInput() on the channelProvider.
         // However, if it calls provideInput() for the first channel, then it will call it for the remaining
         // channels, since they all buffer in the same way and are processing the same number of frames.
-        m_kernels[channelIndex]->process(&channelProvider,
+        m_kernels[channelIndex]->process(m_channelProvider.get(),
                                          destination->channel(channelIndex)->mutableData(),
                                          framesToProcess);
     }
+
+    m_channelProvider->setProvider(nullptr);
 }
 
 } // namespace WebCore
