@@ -385,7 +385,7 @@ private:
                     return m_pureMap[i].value;
             }
         
-            ASSERT(m_pureLength < capacity);
+            RELEASE_ASSERT(m_pureLength < capacity);
             m_pureMap[m_pureLength++] = WTF::KeyValuePair<PureValue, Node*>(value, node);
             return nullptr;
         }
@@ -407,7 +407,7 @@ private:
                 return nullptr;
             if (LazyNode result = findReplacement(location))
                 return result;
-            ASSERT(m_impureLength < capacity);
+            RELEASE_ASSERT(m_impureLength < capacity);
             m_impureMap[m_impureLength++] = WTF::KeyValuePair<HeapLocation, LazyNode>(location, node);
             return nullptr;
         }
