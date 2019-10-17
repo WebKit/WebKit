@@ -425,14 +425,20 @@ TEST(QuickLook, ReloadAndSameDocumentNavigation)
     Util::run(&isDone);
 }
 
-@interface QuickLookFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
+@interface QuickLookLegacyDelegate : NSObject <WebFrameLoadDelegate, WebPolicyDelegate>
 @end
 
-@implementation QuickLookFrameLoadDelegate
+@implementation QuickLookLegacyDelegate
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     isDone = true;
+}
+
+- (void)webView:(WebView *)webView decidePolicyForMIMEType:(NSString *)type request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    EXPECT_WK_STREQ(pagesDocumentPreviewMIMEType, type);
+    [listener use];
 }
 
 @end
@@ -444,8 +450,9 @@ TEST(QuickLook, LegacyQuickLookContent)
 
     auto webView = adoptNS([[WebView alloc] init]);
 
-    auto frameLoadDelegate = adoptNS([[QuickLookFrameLoadDelegate alloc] init]);
-    [webView setFrameLoadDelegate:frameLoadDelegate.get()];
+    auto delegate = adoptNS([[QuickLookLegacyDelegate alloc] init]);
+    [webView setFrameLoadDelegate:delegate.get()];
+    [webView setPolicyDelegate:delegate.get()];
 
     auto webPreferences = adoptNS([[WebPreferences alloc] initWithIdentifier:@"LegacyQuickLookContent"]);
     [webPreferences setQuickLookDocumentSavingEnabled:YES];
