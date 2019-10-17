@@ -26,9 +26,12 @@
 #include "CPUCount.h"
 #include <stdlib.h>
 #include <sys/param.h>
-#include <sys/sysctl.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#ifdef __APPLE__
+#include <sys/sysctl.h>
+#endif
 
 static size_t count;
 

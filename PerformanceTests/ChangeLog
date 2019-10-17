@@ -1,3 +1,13 @@
+2019-10-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Linux] Avoid usage of <sys/sysctl.h> in MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=203109
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * MallocBench/MallocBench/CPUCount.cpp: Only include <sys/sysctl.h> if
+        the sysctl() function will be used.
+
 2019-10-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Perf test IndexedDB/basic/index-cursor-delete.html timeouts
