@@ -1,3 +1,15 @@
+2019-10-17  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        [GTK] Explicitly use Python 2 in jhbuild-wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=202790
+
+        Reviewed by Adrian Perez de Castro.
+
+        jhbuildutils.py requires Python 2 for the moment, so using just
+        `python` fails in distros where Python 3 is the default.
+
+        * jhbuild/jhbuild-wrapper:
+
 2019-10-17  Paulo Matos  <pmatos@igalia.com>
 
         Check values of variables before extracting index in perl
