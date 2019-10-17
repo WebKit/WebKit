@@ -12,11 +12,11 @@ PASS: There should be 0 node with the class ".test-pseudo-without-content".
 
 Calling "createElementWithClass("test-pseudo-with-content")"...
 Checking for nodes with class ".test-pseudo-with-content"...
-PASS: Created ::before pseudo element
 PASS: There should be 1 node with the class ".test-pseudo-with-content".
+PASS: Created ::before pseudo element
 
 Calling "removeElementWithClass("test-pseudo-with-content")"...
 Checking for nodes with class ".test-pseudo-with-content"...
-PASS: Removed ::before pseudo element
 PASS: There should be 0 node with the class ".test-pseudo-with-content".
+PASS: Removed ::before pseudo element
 

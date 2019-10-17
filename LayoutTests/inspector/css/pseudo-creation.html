@@ -26,7 +26,8 @@ function removeElementWithClass(className) {
 
 function test() {
     let documentNode = null;
-    let pseudoElement = null;
+    let pseudoElementAdded = null;
+    let pseudoElementRemoved = null;
 
     function handlePromiseReject(error) {
         console.log(error);
@@ -56,27 +57,37 @@ function test() {
         .catch(handlePromiseReject);
     }
 
-    function createElementWithClass(className) {
+    function createElementWithClass(className, shouldCheckElement) {
         return evaluateWithLog(`createElementWithClass("${className}")`)
         .then(() => checkElementsWithClass(className, 1))
+        .then(() => {
+            if (shouldCheckElement) {
+                if (pseudoElementAdded)
+                    ProtocolTest.pass(`Created ::${pseudoElementAdded.pseudoType} pseudo element`);
+                else
+                    return pseudoElementAddedPromise.then(() => { ProtocolTest.pass(`Created ::${pseudoElementAdded.pseudoType} pseudo element`); });
+            }
+        })
         .catch(handlePromiseReject);
     }
 
-    function removeElementWithClass(className) {
+    function removeElementWithClass(className, shouldCheckElement) {
         return evaluateWithLog(`removeElementWithClass("${className}")`)
         .then(() => checkElementsWithClass(className, 0))
+        .then(() => {
+            if (shouldCheckElement) {
+                if (pseudoElementRemoved)
+                    ProtocolTest.expectEqual(pseudoElementRemoved.pseudoElementId, pseudoElementAdded.nodeId, `Removed ::${pseudoElementAdded.pseudoType} pseudo element`);
+                else
+                    return pseudoElementRemovedPromise.then(() => { ProtocolTest.expectEqual(pseudoElementRemoved.pseudoElementId, pseudoElementAdded.nodeId, `Removed ::${pseudoElementAdded.pseudoType} pseudo element`); });
+            }
+        })
         .catch(handlePromiseReject);
     }
 
-    InspectorProtocol.eventHandler["DOM.pseudoElementAdded"] = (response) => {
-        pseudoElement = response.params.pseudoElement;
+    let pseudoElementAddedPromise = InspectorProtocol.awaitEvent({event: "DOM.pseudoElementAdded"}).then((event) => { pseudoElementAdded = event.params.pseudoElement});
+    let pseudoElementRemovedPromise = InspectorProtocol.awaitEvent({event: "DOM.pseudoElementRemoved"}).then((event) => { pseudoElementRemoved = event.params});
 
-        ProtocolTest.pass(`Created ::${pseudoElement.pseudoType} pseudo element`);
-    };
-
-    InspectorProtocol.eventHandler["DOM.pseudoElementRemoved"] = (response) => {
-        ProtocolTest.expectEqual(response.params.pseudoElementId, pseudoElement.nodeId, `Removed ::${pseudoElement.pseudoType} pseudo element`);
-    };
 
     ProtocolTest.log("Requesting document...");
     InspectorProtocol.sendCommand("DOM.getDocument", {}, (response) => {
@@ -85,10 +96,10 @@ function test() {
         documentNode = response.result.root;
 
         Promise.resolve()
-        .then(() => createElementWithClass("test-pseudo-without-content"))
-        .then(() => removeElementWithClass("test-pseudo-without-content"))
-        .then(() => createElementWithClass("test-pseudo-with-content"))
-        .then(() => removeElementWithClass("test-pseudo-with-content"))
+        .then(() => createElementWithClass("test-pseudo-without-content"), false)
+        .then(() => removeElementWithClass("test-pseudo-without-content"), false)
+        .then(() => createElementWithClass("test-pseudo-with-content", true))
+        .then(() => removeElementWithClass("test-pseudo-with-content", true))
         .then(() => ProtocolTest.completeTest())
         .catch(handlePromiseReject);
     });

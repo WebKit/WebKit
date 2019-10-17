@@ -28,26 +28,29 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <dispatch/dispatch.h>
+#include <mach/mach.h>
 #include <wtf/AutodrainedPool.h>
 
 namespace WTF {
 
-void RunLoop::performWork(void* context)
+void RunLoop::performWork(CFMachPortRef, void*, CFIndex, void* info)
 {
     AutodrainedPool pool;
-    static_cast<RunLoop*>(context)->performWork();
+    static_cast<RunLoop*>(info)->performWork();
 }
 
 RunLoop::RunLoop()
     : m_runLoop(CFRunLoopGetCurrent())
 {
-    CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
-    m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context));
+    CFMachPortContext context = { 0, this, nullptr, nullptr, nullptr };
+    m_port = adoptCF(CFMachPortCreate(kCFAllocatorDefault, performWork, &context, nullptr));
+    m_runLoopSource = adoptCF(CFMachPortCreateRunLoopSource(kCFAllocatorDefault, m_port.get(), 0));
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopCommonModes);
 }
 
 RunLoop::~RunLoop()
 {
+    CFMachPortInvalidate(m_port.get());
     CFRunLoopSourceInvalidate(m_runLoopSource.get());
 }
 
@@ -58,8 +61,16 @@ void RunLoop::runForDuration(Seconds duration)
 
 void RunLoop::wakeUp()
 {
-    CFRunLoopSourceSignal(m_runLoopSource.get());
-    CFRunLoopWakeUp(m_runLoop.get());
+    mach_msg_header_t header;
+    header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
+    header.msgh_size = sizeof(mach_msg_header_t);
+    header.msgh_remote_port = CFMachPortGetPort(m_port.get());
+    header.msgh_local_port = MACH_PORT_NULL;
+    header.msgh_id = 0;
+    mach_msg_return_t result = mach_msg(&header, MACH_SEND_MSG | MACH_SEND_TIMEOUT, header.msgh_size, 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
+    RELEASE_ASSERT(result == MACH_MSG_SUCCESS || result == MACH_SEND_TIMED_OUT);
+    if (result == MACH_SEND_TIMED_OUT)
+        mach_msg_destroy(&header);
 }
 
 RunLoop::CycleResult RunLoop::cycle(const String& mode)

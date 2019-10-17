@@ -1,3 +1,29 @@
+2019-10-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Using version 1 CFRunloopSource for faster task dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=202874
+
+        Reviewed by Geoffrey Garen.
+
+        We used CFRunLoopWakeUp to wake up runloop to process source, which seems to be slow according to profiling. To 
+        avoid calling CFRunLoopWakeUp, we should use version 1 CFRunloopSource instead of version 0. This patch brings
+        about 15% speedup for test PerformanceTests/IndexedDB/basic/objectstore-get.html.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::initializeWebRunLoop):
+        (WTF::RunLoop::web):
+        * wtf/RunLoop.h:
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::wakeUp):
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::initializeWebThread):
+        (-[JSWTFMainThreadCaller call]): Deleted.
+
 2019-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal macOS 10.13 and 10.14 builds after r251171

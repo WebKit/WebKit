@@ -1,3 +1,15 @@
+2019-10-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Using version 1 CFRunloopSource for faster task dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=202874
+
+        Reviewed by Geoffrey Garen.
+
+        Fix a flaky test.
+
+        * inspector/css/pseudo-creation-expected.txt:
+        * inspector/css/pseudo-creation.html:
+
 2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make requestIdleCallback suspendable
