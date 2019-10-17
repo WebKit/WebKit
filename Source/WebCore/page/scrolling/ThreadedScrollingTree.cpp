@@ -110,8 +110,20 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction] {
+    bool monitoringWheelEvents = false;
+#if PLATFORM(MAC)
+    monitoringWheelEvents = isMonitoringWheelEvents();
+    if (monitoringWheelEvents)
+        deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
+#endif
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction, monitoringWheelEvents] {
         scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
+#if PLATFORM(MAC)
+        if (monitoringWheelEvents)
+            scrollingCoordinator->removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
+#else
+        UNUSED_PARAM(monitoringWheelEvents);
+#endif
     });
 }
 

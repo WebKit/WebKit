@@ -90,15 +90,18 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     }
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
-    if (scrollingNode().isMonitoringWheelEvents()) {
-        if (scrollingTree().shouldHandleWheelEventSynchronously(wheelEvent))
-            removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
-        else
-            deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
-    }
+    if (scrollingTree().isMonitoringWheelEvents())
+        deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent);
 #endif
 
-    return m_scrollController.handleWheelEvent(wheelEvent);
+    auto handled = m_scrollController.handleWheelEvent(wheelEvent);
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    if (scrollingTree().isMonitoringWheelEvents())
+        removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestMonitor::HandlingWheelEvent);
+#endif
+
+    return handled;
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
@@ -301,7 +304,7 @@ FloatSize ScrollingTreeScrollingNodeDelegateMac::viewportSize() const
 
 void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!scrollingNode().isMonitoringWheelEvents())
+    if (!scrollingTree().isMonitoringWheelEvents())
         return;
 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: STARTING deferral for " << identifier << " because of " << reason);
@@ -310,7 +313,7 @@ void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReas
     
 void ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const
 {
-    if (!scrollingNode().isMonitoringWheelEvents())
+    if (!scrollingTree().isMonitoringWheelEvents())
         return;
     
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << isMainThread() << "  ScrollingTreeScrollingNodeDelegateMac::deferForReason: ENDING deferral for " << identifier << " because of " << reason);

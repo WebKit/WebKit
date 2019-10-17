@@ -1,3 +1,44 @@
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [ Mojave+ ] Layout Test compositing/fixed-with-main-thread-scrolling.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=198757
+
+        Reviewed by Tim Horton.
+        
+        WheelEventTestMonitor depends on "deferral reasons" getting added and removed, such that there is always
+        at least one reason active until scrolling quiesces.
+
+        WheelEventTestMonitor made the incorrect assumption that every call into ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent()
+        would result in a scroll change making it to the main thread, so it would defer "ScrollingThreadSyncNeeded" there,
+        and rely on AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll() to remove that deferral reason.
+        That assumption is wrong, because wheel events may coalesce, or have no impact on scroll position if already scrolled
+        to the max/min extent (e.g. when rubber banding).
+        
+        Fix by adding a new "HandlingWheelEvent" deferral reason for the duration that the scrolling thread is processing an wheel event,
+        and then having ScrollingThreadSyncNeeded just represent the phase where any resulting scroll is being sent to the UI process.
+        These phases should always overlap.
+        
+        This required moving isMonitoringWheelEvents() from the root scrolling node to the ScrollingTree.
+
+        * page/WheelEventTestMonitor.cpp:
+        (WebCore::operator<<):
+        * page/WheelEventTestMonitor.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::isMonitoringWheelEvents const):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReason const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::removeWheelEventTestCompletionDeferralForReason const):
+
 2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make requestIdleCallback suspendable

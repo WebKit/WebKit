@@ -47,10 +47,11 @@ public:
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferReason {
-        RubberbandInProgress        = 1 << 0,
-        ScrollSnapInProgress        = 1 << 1,
-        ScrollingThreadSyncNeeded   = 1 << 2,
-        ContentScrollInProgress     = 1 << 3
+        HandlingWheelEvent          = 1 << 0,
+        RubberbandInProgress        = 1 << 1,
+        ScrollSnapInProgress        = 1 << 2,
+        ScrollingThreadSyncNeeded   = 1 << 3,
+        ContentScrollInProgress     = 1 << 4,
     };
     typedef const void* ScrollableAreaIdentifier;
 

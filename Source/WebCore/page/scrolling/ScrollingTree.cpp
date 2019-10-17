@@ -151,7 +151,8 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)
             || rootNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
-            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))) {
+            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled)
+            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::IsMonitoringWheelEvents))) {
         LockHolder lock(m_treeStateMutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
@@ -162,6 +163,9 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))
             m_asyncFrameOrOverflowScrollingEnabled = scrollingStateTree->rootStateNode()->asyncFrameOrOverflowScrollingEnabled();
+
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::IsMonitoringWheelEvents))
+            m_isMonitoringWheelEvents = scrollingStateTree->rootStateNode()->isMonitoringWheelEvents();
     }
     
     // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.

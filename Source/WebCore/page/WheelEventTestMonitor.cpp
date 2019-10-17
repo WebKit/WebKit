@@ -105,6 +105,7 @@ void WheelEventTestMonitor::triggerTestTimerFired()
 TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason)
 {
     switch (reason) {
+    case WheelEventTestMonitor::HandlingWheelEvent: ts << "handling wheel event"; break;
     case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
     case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
     case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;

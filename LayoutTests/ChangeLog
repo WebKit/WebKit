@@ -1,3 +1,14 @@
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [ Mojave+ ] Layout Test compositing/fixed-with-main-thread-scrolling.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=198757
+
+        Reviewed by Tim Horton.
+        
+        Remove expectation for compositing/fixed-with-main-thread-scrolling.html.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-17  Sihui Liu  <sihui_liu@apple.com>
 
         Using version 1 CFRunloopSource for faster task dispatch

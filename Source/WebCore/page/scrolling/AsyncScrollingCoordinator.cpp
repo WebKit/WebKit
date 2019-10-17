@@ -350,15 +350,6 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
 
     if (scrollingNodeID == frameView.scrollingNodeID()) {
         reconcileScrollingState(frameView, scrollPosition, layoutViewportOrigin, scrollType, ViewportRectStability::Stable, scrollingLayerPositionAction);
-
-#if PLATFORM(COCOA)
-        if (m_page->isMonitoringWheelEvents()) {
-            frameView.scrollAnimator().setWheelEventTestMonitor(m_page->wheelEventTestMonitor());
-            if (const auto& monitor = m_page->wheelEventTestMonitor())
-                monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
-        }
-#endif
-        
         return;
     }
 
@@ -371,14 +362,6 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
 
         if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
             m_page->editorClient().overflowScrollPositionChanged();
-
-#if PLATFORM(COCOA)
-        if (m_page->isMonitoringWheelEvents()) {
-            frameView.scrollAnimator().setWheelEventTestMonitor(m_page->wheelEventTestMonitor());
-            if (const auto& monitor = m_page->wheelEventTestMonitor())
-                monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestMonitor::ScrollingThreadSyncNeeded);
-        }
-#endif
     }
 }
 

@@ -158,6 +158,8 @@ public:
 
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
 
+    bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
+
 protected:
     void setMainFrameScrollPosition(FloatPoint);
 
@@ -211,6 +213,7 @@ private:
 
     unsigned m_fixedOrStickyNodeCount { 0 };
     bool m_isHandlingProgrammaticScroll { false };
+    bool m_isMonitoringWheelEvents { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wasScrolledByDelegatedScrollingSincePreviousCommit { false };
