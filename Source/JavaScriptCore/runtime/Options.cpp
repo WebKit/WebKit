@@ -291,7 +291,9 @@ void OptionRange::dump(PrintStream& out) const
 template<OptionTypeID type, OptionID id>
 constexpr size_t optionTypeSpecificIndex()
 {
-    size_t index = 0;
+    size_t index;
+    index = 0; // MSVC (16.3.5) improperly optimizes away the inline initialization of index, so use an explicit assignment.
+
 #define COUNT_INDEX_AND_FIND_MATCH(type_, name_, defaultValue_, availability_, description_) \
     if (id == OptionID::name_) \
         return index; \
