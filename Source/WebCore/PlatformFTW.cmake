@@ -1,5 +1,7 @@
 include(platform/Curl.cmake)
-include(platform/ImageDecoders.cmake)
+if (NOT APPLE_BUILD)
+    include(platform/ImageDecoders.cmake)
+endif ()
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES

@@ -1,3 +1,22 @@
+2019-10-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Correct radial gradient handling of various radius orderings
+        https://bugs.webkit.org/show_bug.cgi?id=202815
+
+        Reviewed by Per Arne Vollan.
+
+        Revise the 'generateGradient' implementation to recognize that the
+        radius arguments might not be in increasing order. Direct2D's
+        implementation does expect this, so we need to swap order and
+        revise the gradient range to match.
+
+        Drive-by fix: Stop building unused image decoders if building with
+        the Apple stack.
+
+        * PlatformFTW.cmake: Stop building unused image decoders.
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient):
+
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
         Rename PageCache to BackForwardCache

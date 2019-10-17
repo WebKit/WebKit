@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,15 @@ ID2D1Brush* Gradient::createPlatformGradientIfNecessary(ID2D1RenderTarget* conte
     return m_gradient;
 }
 
+static bool circleIsEntirelyContained(const FloatPoint& centerA, float radiusA, const FloatPoint& centerB, float radiusB)
+{
+    double deltaX = centerB.x() - centerA.x();
+    double deltaY = centerB.y() - centerA.y();
+    double deltaRadius = radiusB - radiusA;
+
+    return deltaX * deltaX + deltaY * deltaY < deltaRadius * deltaRadius && radiusA < radiusB;
+}
+
 void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
 {
     sortStopsIfNecessary();
@@ -75,11 +84,23 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
         [&] (const LinearData&) {
             // No action needed.
         },
-        [&] (const RadialData& data) {
-            if (data.startRadius && data.endRadius) {
-                float startPosition = std::abs(data.startRadius / data.endRadius);
-                if (startPosition > 1.0)
-                    startPosition = 1.0 / startPosition;
+        [&] (RadialData& data) {
+            RELEASE_ASSERT(data.startRadius >= 0);
+            RELEASE_ASSERT(data.endRadius >= 0);
+
+            if (data.startRadius > data.endRadius) {
+                gradientStops.reverse();
+                for (auto& stop : gradientStops)
+                    stop.position = 1.0 - stop.position;
+
+                std::swap(data.startRadius, data.endRadius);
+                std::swap(data.point0, data.point1);
+            }
+
+            if (data.startRadius) {
+                RELEASE_ASSERT(data.endRadius > 0);
+                float startPosition = data.startRadius / data.endRadius;
+                RELEASE_ASSERT(startPosition <= 1.0);
                 float availableRange = 1.0 - startPosition;
                 RELEASE_ASSERT(availableRange <= 1.0 && availableRange >= 0);
 
@@ -90,9 +111,10 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
 
                 // Restore the 'start' position
                 auto firstStop = gradientStops.first();
-                firstStop.position = 0;
-
-                gradientStops.insert(0, firstStop);
+                if (!WTF::areEssentiallyEqual(firstStop.position, 0.0f)) {
+                    firstStop.position = 0;
+                    gradientStops.insert(0, firstStop);
+                }
             }
         },
         [&] (const ConicData&) {
@@ -120,7 +142,12 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
             m_gradient = linearGradient;
         },
         [&] (const RadialData& data) {
-            FloatSize offset = data.point0 - data.point1;
+            FloatSize offset;
+            if (!circleIsEntirelyContained(data.point0, data.startRadius, data.point1, data.endRadius))
+                offset = (data.point1.scaled(data.startRadius) - data.point0.scaled(data.endRadius)) / (data.endRadius - data.startRadius);
+            else
+                offset = data.point0 - data.point1;
+
             FloatPoint center = data.point1;
             float radiusX = data.endRadius;
             float radiusY = radiusX / data.aspectRatio;
