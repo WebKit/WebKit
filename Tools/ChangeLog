@@ -1,3 +1,15 @@
+2019-10-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        run-buildbot-test: sqlalchemy exception when upgrading the database
+        https://bugs.webkit.org/show_bug.cgi?id=202927
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update the version of sqlalchemy-migrate for pip used for the test.
+        That fixes the exception when upgrading the database.
+
+        * BuildSlaveSupport/build.webkit.org-config/run-buildbot-test.py:
+
 2019-10-16  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Test that legacy web views load previews before deciding content policy

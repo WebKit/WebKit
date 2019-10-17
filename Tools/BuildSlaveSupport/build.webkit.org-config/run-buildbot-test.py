@@ -260,7 +260,7 @@ def setup_virtualenv(base_workdir_temp):
                     'twisted==12.1.0',
                     'jinja2==2.6',
                     'sqlalchemy==0.7.8',
-                    'sqlalchemy-migrate==0.7.2']
+                    'sqlalchemy-migrate==0.12.0']
         pip_process = subprocess.Popen(pip_cmd, cwd=base_workdir_temp,
                                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = pip_process.communicate()
