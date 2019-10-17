@@ -33,14 +33,14 @@
 
 namespace WebKit {
 
-void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& pageCacheCapacity)
+void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& backForwardCacheCapacity)
 {
     uint64_t memorySize = ramSize() / MB;
 
     switch (cacheModel) {
     case CacheModel::DocumentViewer: {
-        // Page cache capacity (in pages)
-        pageCacheCapacity = 0;
+        // back/forward cache capacity (in pages)
+        backForwardCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
         if (memorySize >= 2048)
@@ -60,13 +60,13 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
         break;
     }
     case CacheModel::DocumentBrowser: {
-        // Page cache capacity (in pages)
+        // back/forward cache capacity (in pages)
         if (memorySize >= 512)
-            pageCacheCapacity = 2;
+            backForwardCacheCapacity = 2;
         else if (memorySize >= 256)
-            pageCacheCapacity = 1;
+            backForwardCacheCapacity = 1;
         else
-            pageCacheCapacity = 0;
+            backForwardCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
         if (memorySize >= 2048)
@@ -86,13 +86,13 @@ void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapaci
         break;
     }
     case CacheModel::PrimaryWebBrowser: {
-        // Page cache capacity (in pages)
+        // back/forward cache capacity (in pages)
         if (memorySize >= 512)
-            pageCacheCapacity = 2;
+            backForwardCacheCapacity = 2;
         else if (memorySize >= 256)
-            pageCacheCapacity = 1;
+            backForwardCacheCapacity = 1;
         else
-            pageCacheCapacity = 0;
+            backForwardCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
         // (Testing indicates that value / MB depends heavily on content and

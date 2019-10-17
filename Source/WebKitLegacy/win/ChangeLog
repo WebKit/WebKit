@@ -1,3 +1,28 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Rename PageCache to BackForwardCache
+        https://bugs.webkit.org/show_bug.cgi?id=203048
+
+        Reviewed by Alex Christensen.
+
+        Rename PageCache to BackForwardCache for clarity and consistency with the UIProcess's WebBackForwardCache.
+
+        * BackForwardList.cpp:
+        (BackForwardList::addItem):
+        (BackForwardList::setCapacity):
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::cachedPageCount):
+        (WebCoreStatistics::cachedFrameCount):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::didRestoreFromBackForwardCache):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        * WebFrame.cpp:
+        (WebFrame::accessible const):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+        (WebView::notifyPreferencesChanged):
+
 2019-10-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: editing/async-clipboard/clipboard-interfaces.html is failing in WebKit1

@@ -126,7 +126,7 @@ JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperW
     return windowProxy;
 }
 
-void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoPageCache)
+void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoBackForwardCache)
 {
     if (m_jsWindowProxies.isEmpty())
         return;
@@ -146,7 +146,7 @@ void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* ne
 
     // It's likely that resetting our windows created a lot of garbage, unless
     // it went in a back/forward cache.
-    if (!goingIntoPageCache)
+    if (!goingIntoBackForwardCache)
         collectGarbageAfterWindowProxyDestruction();
 }
 

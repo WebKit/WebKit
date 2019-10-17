@@ -43,9 +43,9 @@
 #import "WebPluginController.h"
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/BackForwardCache.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/Assertions.h>
@@ -598,9 +598,9 @@ WebHistoryItem *kit(HistoryItem* item)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-- (BOOL)_isInPageCache
+- (BOOL)_isInBackForwardCache
 {
-    return core(_private)->isInPageCache();
+    return core(_private)->isInBackForwardCache();
 }
 
 - (BOOL)_hasCachedPageExpired

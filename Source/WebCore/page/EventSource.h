@@ -118,7 +118,7 @@ private:
     Vector<UChar> m_receiveBuffer;
     bool m_discardTrailingNewline { false };
     bool m_requestInFlight { false };
-    bool m_isSuspendedForPageCache { false };
+    bool m_isSuspendedForBackForwardCache { false };
     bool m_isDoingExplicitCancellation { false };
     bool m_shouldReconnectOnResume { false };
 

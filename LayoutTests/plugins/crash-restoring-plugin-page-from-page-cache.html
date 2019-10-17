@@ -1,10 +1,10 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <head>
 <script>
 if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    internals.settings.setPageCacheSupportsPlugins(true);
+    internals.settings.setBackForwardCacheSupportsPlugins(true);
 }
 
 function pageShown() {

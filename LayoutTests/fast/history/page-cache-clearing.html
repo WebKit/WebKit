@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -13,9 +13,9 @@ if (!window.internals)
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
     if (event.persisted) {
-        shouldBeTrue("window.internals.pageCacheSize() > 0");
-        evalAndLog("window.internals.clearPageCache()");
-        shouldBe("window.internals.pageCacheSize()", "0");
+        shouldBeTrue("window.internals.backForwardCacheSize() > 0");
+        evalAndLog("window.internals.clearBackForwardCache()");
+        shouldBe("window.internals.backForwardCacheSize()", "0");
         finishJSTest();
     }
 }, false);

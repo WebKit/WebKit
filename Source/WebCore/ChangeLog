@@ -1,3 +1,218 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Rename PageCache to BackForwardCache
+        https://bugs.webkit.org/show_bug.cgi?id=203048
+
+        Reviewed by Alex Christensen.
+
+        Rename PageCache to BackForwardCache for clarity and consistency with the UIProcess's WebBackForwardCache.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::suspend):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::canSuspendForDocumentSuspension const):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::suspend):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::suspend):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::canSuspendForDocumentSuspension const):
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow):
+        * bindings/js/WindowProxy.h:
+        * dom/ActiveDOMObject.h:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::needsStyleRecalc const):
+        (WebCore::Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::attachToCachedFrame):
+        (WebCore::Document::detachFromCachedFrame):
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::takeDOMWindowFrom):
+        (WebCore::Document::setBackForwardCacheState):
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+        (WebCore::Document::topDocument const):
+        * dom/Document.h:
+        (WebCore::Document::backForwardCacheState const):
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::willEnterFullscreen):
+        (WebCore::FullscreenManager::didEnterFullscreen):
+        (WebCore::FullscreenManager::willExitFullscreen):
+        (WebCore::FullscreenManager::didExitFullscreen):
+        * dom/FullscreenManager.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        * history/BackForwardCache.cpp: Renamed from Source/WebCore/history/PageCache.cpp.
+        (WebCore::logBackForwardCacheFailureDiagnosticMessage):
+        (WebCore::canCacheFrame):
+        (WebCore::canCachePage):
+        (WebCore::BackForwardCache::singleton):
+        (WebCore::BackForwardCache::BackForwardCache):
+        (WebCore::BackForwardCache::dump const):
+        (WebCore::BackForwardCache::canCache const):
+        (WebCore::BackForwardCache::pruneToSizeNow):
+        (WebCore::BackForwardCache::setMaxSize):
+        (WebCore::BackForwardCache::frameCount const):
+        (WebCore::BackForwardCache::markPagesForDeviceOrPageScaleChanged):
+        (WebCore::BackForwardCache::markPagesForContentsSizeChanged):
+        (WebCore::BackForwardCache::markPagesForCaptionPreferencesChanged):
+        (WebCore::setBackForwardCacheState):
+        (WebCore::BackForwardCache::addIfCacheable):
+        (WebCore::BackForwardCache::take):
+        (WebCore::BackForwardCache::removeAllItemsForPage):
+        (WebCore::BackForwardCache::get):
+        (WebCore::BackForwardCache::remove):
+        (WebCore::BackForwardCache::prune):
+        * history/BackForwardCache.h: Renamed from Source/WebCore/history/PageCache.h.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::clear):
+        (WebCore::CachedFrame::destroy):
+        * history/CachedFramePlatformData.h:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setCachedPage):
+        (WebCore::HistoryItem::setURL):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::isInBackForwardCache const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::suspend):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::autoplayPermitted const):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        * loader/DocumentLoader.h:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::closeURL):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::stopForBackForwardCache):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::frameDetached):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::receivedMainResourceError):
+        (WebCore::FrameLoader::shouldPerformFragmentNavigation):
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::invalidateCurrentItemCachedPage):
+        (WebCore::HistoryController::updateForReload):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::canCacheInBackForwardCache):
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::suspendForBackForwardCache):
+        (WebCore::DOMWindow::resumeFromBackForwardCache):
+        (WebCore::DOMWindow::decrementScrollEventListenersCount):
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::suspendForBackForwardCache):
+        (WebCore::DOMWindowExtension::resumeFromBackForwardCache):
+        * page/DOMWindowExtension.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::backForwardCacheKey):
+        (WebCore::DiagnosticLoggingKeys::backForwardCacheFailureKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::scheduleReconnect):
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::didReceiveData):
+        (WebCore::EventSource::didFinishLoading):
+        (WebCore::EventSource::didFail):
+        (WebCore::EventSource::abortConnectionAttempt):
+        (WebCore::EventSource::suspend):
+        (WebCore::EventSource::resume):
+        (WebCore::EventSource::dispatchMessageEvent):
+        * page/EventSource.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+        (WebCore::Frame::setDocument):
+        (WebCore::Frame::willDetachPage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didRestoreFromBackForwardCache):
+        (WebCore::FrameView::setContentsSize):
+        * page/FrameView.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        (WebCore::FrameViewLayoutContext::scheduleLayout):
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+        (WebCore::releaseMemory):
+        * page/MemoryRelease.h:
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore::Page::setViewScaleFactor):
+        (WebCore::Page::setDeviceScaleFactor):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferencesChanged):
+        * page/PerformanceLogging.cpp:
+        (WebCore::PerformanceLogging::memoryUsageStatistics):
+        * page/Settings.yaml:
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::usesBackForwardCacheChanged):
+        * page/SettingsBase.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::updateAnimations):
+        (WebCore::CSSAnimationControllerPrivate::addElementChangeToDispatch):
+        (WebCore::CSSAnimationController::cancelAnimations):
+        (WebCore::CSSAnimationController::updateAnimations):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.h:
+        * rendering/SimpleLineLayoutCoverage.cpp:
+        (WebCore::SimpleLineLayout::collectNonEmptyLeafRenderBlockFlowsForCurrentPage):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * testing/Internals.cpp:
+        (WebCore::Internals::clearBackForwardCache):
+        (WebCore::Internals::backForwardCacheSize const):
+        (WebCore::Internals::preventDocumentForEnteringBackForwardCache):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::suspend):
+
 2019-10-16  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Block all third-party cookies on websites without prior user interaction

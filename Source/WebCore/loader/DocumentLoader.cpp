@@ -1654,17 +1654,17 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
 
 #if !ASSERT_DISABLED
     if (document()) {
-        switch (document()->pageCacheState()) {
-        case Document::NotInPageCache:
+        switch (document()->backForwardCacheState()) {
+        case Document::NotInBackForwardCache:
             break;
-        case Document::AboutToEnterPageCache: {
-            // A page about to enter PageCache should only be able to start ping loads.
+        case Document::AboutToEnterBackForwardCache: {
+            // A page about to enter the BackForwardCache should only be able to start ping loads.
             auto* cachedResource = MemoryCache::singleton().resourceForRequest(loader->request(), loader->frameLoader()->frame().page()->sessionID());
             ASSERT(cachedResource && CachedResource::shouldUsePingLoad(cachedResource->type()));
             break;
         }
-        case Document::InPageCache:
-            // A page in the PageCache should not be able to start loads.
+        case Document::InBackForwardCache:
+            // A page in the BackForwardCache should not be able to start loads.
             ASSERT_NOT_REACHED();
             break;
         }

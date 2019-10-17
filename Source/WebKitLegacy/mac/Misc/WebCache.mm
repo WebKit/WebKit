@@ -46,9 +46,9 @@
 #if PLATFORM(IOS_FAMILY)
 #import "MemoryMeasure.h"
 #import "WebFrameInternal.h"
+#import <WebCore/BackForwardCache.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/Frame.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/WebCoreThreadRun.h>
 #endif
 

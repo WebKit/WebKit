@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -13,7 +13,7 @@ if (window.testRunner) {
     testRunner.clearBackForwardList();
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    internals.clearPageCache();
+    internals.clearBackForwardCache();
 }
 sessionStorage.testStage = 'initial';
 let persisted = false;

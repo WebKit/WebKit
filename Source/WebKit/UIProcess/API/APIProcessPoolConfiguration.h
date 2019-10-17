@@ -68,8 +68,8 @@ public:
     bool clientWouldBenefitFromAutomaticProcessPrewarming() const { return m_clientWouldBenefitFromAutomaticProcessPrewarming; }
     void setClientWouldBenefitFromAutomaticProcessPrewarming(bool value) { m_clientWouldBenefitFromAutomaticProcessPrewarming = value; }
 
-    void setUsesPageCache(bool value) { m_usesPageCache = value; }
-    bool usesPageCache() const { return m_usesPageCache; }
+    void setUsesBackForwardCache(bool value) { m_usesBackForwardCache = value; }
+    bool usesBackForwardCache() const { return m_usesBackForwardCache; }
 
     const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
@@ -169,7 +169,7 @@ private:
     bool m_processSwapsOnWindowOpenWithOpener { false };
     Optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
     bool m_usesWebProcessCache { false };
-    bool m_usesPageCache { true };
+    bool m_usesBackForwardCache { true };
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_shouldConfigureJSCForTesting { false };

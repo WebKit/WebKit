@@ -64,7 +64,7 @@ bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item
     return false;
 }
 
-bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef itemRef)
+bool WKBundleBackForwardListItemIsInBackForwardCache(WKBundleBackForwardListItemRef itemRef)
 {
     return false;
 }

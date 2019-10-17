@@ -94,7 +94,7 @@ struct TestOptions {
     bool shouldHandleRunOpenPanel { true };
     bool shouldPresentPopovers { true };
     bool enableAppNap { false };
-    bool enablePageCache { false };
+    bool enableBackForwardCache { false };
     bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
 
@@ -154,7 +154,7 @@ struct TestOptions {
             || contentInsetTop != options.contentInsetTop
             || contentMode != options.contentMode
             || enableAppNap != options.enableAppNap
-            || enablePageCache != options.enablePageCache
+            || enableBackForwardCache != options.enableBackForwardCache
             || enableLazyImageLoading != options.enableLazyImageLoading
             || allowsLinkPreview != options.allowsLinkPreview)
             return false;

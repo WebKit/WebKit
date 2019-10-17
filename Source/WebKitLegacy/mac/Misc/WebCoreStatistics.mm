@@ -33,6 +33,7 @@
 #import "WebFrameInternal.h"
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/MemoryStatistics.h>
+#import <WebCore/BackForwardCache.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
@@ -40,7 +41,6 @@
 #import <WebCore/GlyphPage.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/JSDOMWindow.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/PageConsoleClient.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>
@@ -224,12 +224,12 @@ using namespace WebCore;
 
 + (int)cachedPageCount
 {
-    return PageCache::singleton().pageCount();
+    return BackForwardCache::singleton().pageCount();
 }
 
 + (int)cachedFrameCount
 {
-    return PageCache::singleton().frameCount();
+    return BackForwardCache::singleton().frameCount();
 }
 
 // Deprecated

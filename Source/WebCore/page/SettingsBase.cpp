@@ -27,6 +27,7 @@
 #include "SettingsBase.h"
 
 #include "AudioSession.h"
+#include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "CachedResourceLoader.h"
 #include "CookieStorage.h"
@@ -40,7 +41,6 @@
 #include "FrameView.h"
 #include "HistoryItem.h"
 #include "Page.h"
-#include "PageCache.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
 #include "Settings.h"
@@ -362,13 +362,13 @@ void SettingsBase::userStyleSheetLocationChanged()
         m_page->userStyleSheetLocationChanged();
 }
 
-void SettingsBase::usesPageCacheChanged()
+void SettingsBase::usesBackForwardCacheChanged()
 {
     if (!m_page)
         return;
 
-    if (!m_page->settings().usesPageCache())
-        PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
+    if (!m_page->settings().usesBackForwardCache())
+        BackForwardCache::singleton().pruneToSizeNow(0, PruningReason::None);
 }
 
 void SettingsBase::dnsPrefetchingEnabledChanged()

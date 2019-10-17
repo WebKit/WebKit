@@ -81,7 +81,7 @@ void AnimationBase::setNeedsStyleRecalc(Element* element)
     if (!element || element->document().renderTreeBeingDestroyed())
         return;
 
-    ASSERT(element->document().pageCacheState() == Document::NotInPageCache);
+    ASSERT(element->document().backForwardCacheState() == Document::NotInBackForwardCache);
     element->invalidateStyle();
 }
 

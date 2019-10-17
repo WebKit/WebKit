@@ -1,3 +1,51 @@
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
+        Rename PageCache to BackForwardCache
+        https://bugs.webkit.org/show_bug.cgi?id=203048
+
+        Reviewed by Alex Christensen.
+
+        Rename PageCache to BackForwardCache for clarity and consistency with the UIProcess's WebBackForwardCache.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestRunner.cpp:
+        (overridePreferenceCallback):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        (setWebPreferencesForTestOptions):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionNoCache::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::didReconnectDOMWindowExtensionToGlobalObject):
+        * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp:
+        (TestWebKitAPI::DidRemoveFrameFromHiearchyInBackForwardCacheTest::DidRemoveFrameFromHiearchyInBackForwardCacheTest):
+        (TestWebKitAPI::DidRemoveFrameFromHiearchyInBackForwardCacheTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::overridePreference):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * lldb/lldb_webkit.py:
+        (WebCoreFrame_SummaryProvider):
+        (WebCoreDocument_SummaryProvider):
+        (WebCoreDocumentProvider.page_cache_state):
+
 2019-10-16  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.net.bugzilla

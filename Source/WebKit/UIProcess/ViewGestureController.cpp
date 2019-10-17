@@ -217,7 +217,7 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
     if (!m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::MainFrameLoad))
         return;
 
-    // Coming back from the page cache will result in getting a load event, but no first visually non-empty layout.
+    // Coming back from the back/forward cache will result in getting a load event, but no first visually non-empty layout.
     // WebCore considers a loaded document enough to be considered visually non-empty, so that's good
     // enough for us too.
     m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);

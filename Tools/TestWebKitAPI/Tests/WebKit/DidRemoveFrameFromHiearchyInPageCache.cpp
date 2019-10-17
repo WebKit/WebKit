@@ -70,9 +70,9 @@ static void setInjectedBundleClient(WKPageRef page)
     WKPageSetPageInjectedBundleClient(page, &injectedBundleClient.base);
 }
 
-TEST(WebKit, DidRemoveFrameFromHiearchyInPageCache)
+TEST(WebKit, DidRemoveFrameFromHiearchyInBackForwardCache)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DidRemoveFrameFromHiearchyInPageCache"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DidRemoveFrameFromHiearchyInBackForwardCache"));
     // Enable the page cache so we can test the WKBundlePageDidRemoveFrameFromHierarchyCallback API
     WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser);
 

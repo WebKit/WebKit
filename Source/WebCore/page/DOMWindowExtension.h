@@ -44,8 +44,8 @@ public:
 
     WEBCORE_EXPORT ~DOMWindowExtension();
 
-    void suspendForPageCache() final;
-    void resumeFromPageCache() final;
+    void suspendForBackForwardCache() final;
+    void resumeFromBackForwardCache() final;
     void willDestroyGlobalObjectInCachedFrame() final;
     void willDestroyGlobalObjectInFrame() final;
     void willDetachGlobalObjectFromFrame() final;

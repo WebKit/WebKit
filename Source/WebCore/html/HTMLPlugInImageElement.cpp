@@ -184,13 +184,13 @@ bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& relativeURL, const 
 
 RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
-    ASSERT(document().pageCacheState() == Document::NotInPageCache);
+    ASSERT(document().backForwardCacheState() == Document::NotInBackForwardCache);
 
     if (displayState() >= PreparingPluginReplacement)
         return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
 
     // Once a plug-in element creates its renderer, it needs to be told when the document goes
-    // inactive or reactivates so it can clear the renderer before going into the page cache.
+    // inactive or reactivates so it can clear the renderer before going into the back/forward cache.
     if (!m_needsDocumentActivationCallbacks) {
         m_needsDocumentActivationCallbacks = true;
         document().registerForDocumentSuspensionCallbacks(*this);

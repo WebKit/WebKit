@@ -294,7 +294,7 @@ void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest&
     }
 }
 
-bool ApplicationCacheHost::canCacheInPageCache()
+bool ApplicationCacheHost::canCacheInBackForwardCache()
 {
     return !applicationCache() && !candidateApplicationCacheGroup();
 }

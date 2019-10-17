@@ -57,7 +57,7 @@ Frame* DOMWindowExtension::frame() const
     return m_window ? m_window->frame() : nullptr;
 }
 
-void DOMWindowExtension::suspendForPageCache()
+void DOMWindowExtension::suspendForBackForwardCache()
 {
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
@@ -69,7 +69,7 @@ void DOMWindowExtension::suspendForPageCache()
     m_disconnectedFrame = WTFMove(frame);
 }
 
-void DOMWindowExtension::resumeFromPageCache()
+void DOMWindowExtension::resumeFromBackForwardCache()
 {
     ASSERT(frame());
     ASSERT(m_disconnectedFrame == frame());

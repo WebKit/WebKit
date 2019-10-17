@@ -1161,7 +1161,7 @@ bool WebAnimation::canSuspendForDocumentSuspension() const
 {
     // Use the base class's implementation of hasPendingActivity() since we wouldn't want the custom implementation
     // in this class designed to keep JS wrappers alive to interfere with the ability for a page using animations
-    // to enter the page cache.
+    // to enter the back/forward cache.
     return !ActiveDOMObject::hasPendingActivity();
 }
 

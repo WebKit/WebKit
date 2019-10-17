@@ -35,14 +35,14 @@
 
 namespace TestWebKitAPI {
 
-class DidRemoveFrameFromHiearchyInPageCacheTest : public InjectedBundleTest {
+class DidRemoveFrameFromHiearchyInBackForwardCacheTest : public InjectedBundleTest {
 public:
-    DidRemoveFrameFromHiearchyInPageCacheTest(const std::string& identifier);
+    DidRemoveFrameFromHiearchyInBackForwardCacheTest(const std::string& identifier);
 
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef);
 };
 
-static InjectedBundleTest::Register<DidRemoveFrameFromHiearchyInPageCacheTest> registrar("DidRemoveFrameFromHiearchyInPageCache");
+static InjectedBundleTest::Register<DidRemoveFrameFromHiearchyInBackForwardCacheTest> registrar("DidRemoveFrameFromHiearchyInBackForwardCache");
 
 static unsigned didRemoveFrameFromHierarchyCount;
 
@@ -56,12 +56,12 @@ void didRemoveFrameFromHierarchyCallback(WKBundlePageRef page, WKBundleFrameRef 
     WKBundlePagePostMessage(page, message.get(), message.get());
 }
 
-DidRemoveFrameFromHiearchyInPageCacheTest::DidRemoveFrameFromHiearchyInPageCacheTest(const std::string& identifier)
+DidRemoveFrameFromHiearchyInBackForwardCacheTest::DidRemoveFrameFromHiearchyInBackForwardCacheTest(const std::string& identifier)
     : InjectedBundleTest(identifier)
 {
 }
 
-void DidRemoveFrameFromHiearchyInPageCacheTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+void DidRemoveFrameFromHiearchyInBackForwardCacheTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
     WKBundlePageLoaderClientV8 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));

@@ -363,7 +363,7 @@ static void unwrapFullscreenRenderer(RenderFullScreen* fullscreenRenderer, Eleme
 
 void FullscreenManager::willEnterFullscreen(Element& element)
 {
-    if (!document().hasLivingRenderTree() || document().pageCacheState() != Document::NotInPageCache)
+    if (!document().hasLivingRenderTree() || document().backForwardCacheState() != Document::NotInBackForwardCache)
         return;
 
     // Protect against being called after the document has been removed from the page.
@@ -417,7 +417,7 @@ void FullscreenManager::didEnterFullscreen()
     if (!m_fullscreenElement)
         return;
 
-    if (!hasLivingRenderTree() || pageCacheState() != Document::NotInPageCache)
+    if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
         return;
 
     m_fullscreenElement->didBecomeFullscreenElement();
@@ -429,7 +429,7 @@ void FullscreenManager::willExitFullscreen()
     if (!fullscreenElement)
         return;
 
-    if (!hasLivingRenderTree() || pageCacheState() != Document::NotInPageCache)
+    if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
         return;
 
     fullscreenElement->willStopBeingFullscreenElement();
@@ -441,7 +441,7 @@ void FullscreenManager::didExitFullscreen()
     if (!fullscreenElement)
         return;
 
-    if (!hasLivingRenderTree() || pageCacheState() != Document::NotInPageCache)
+    if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
         return;
     fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 

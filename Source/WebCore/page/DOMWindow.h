@@ -123,8 +123,8 @@ public:
     public:
         virtual ~Observer() { }
 
-        virtual void suspendForPageCache() { }
-        virtual void resumeFromPageCache() { }
+        virtual void suspendForBackForwardCache() { }
+        virtual void resumeFromBackForwardCache() { }
         virtual void willDestroyGlobalObjectInCachedFrame() { }
         virtual void willDestroyGlobalObjectInFrame() { }
         virtual void willDetachGlobalObjectFromFrame() { }
@@ -134,8 +134,8 @@ public:
     void unregisterObserver(Observer&);
 
     void resetUnlessSuspendedForDocumentSuspension();
-    void suspendForPageCache();
-    void resumeFromPageCache();
+    void suspendForBackForwardCache();
+    void resumeFromBackForwardCache();
 
     WEBCORE_EXPORT Frame* frame() const final;
 

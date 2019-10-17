@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 - (void)webView:(WebView *)webView elementDidFocusNode:(DOMNode *)node;
 - (void)webView:(WebView *)webView elementDidBlurNode:(DOMNode *)node;
 
-// PageCache support
+// BackForwardCache support
 - (void)webViewDidRestoreFromPageCache:(WebView *)webView;
 
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package;

@@ -5759,7 +5759,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
     m_resumeTaskQueue.cancelTask();
 
     switch (reason) {
-    case ReasonForSuspension::PageCache:
+    case ReasonForSuspension::BackForwardCache:
         stopWithoutDestroyingMediaPlayer();
         setBufferingPolicy(BufferingPolicy::MakeResourcesPurgeable);
         m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
@@ -5787,7 +5787,7 @@ void HTMLMediaElement::resume()
     m_mediaSession->updateBufferingPolicy();
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED && !m_resumeTaskQueue.hasPendingTask()) {
-        // Restart the load if it was aborted in the middle by moving the document to the page cache.
+        // Restart the load if it was aborted in the middle by moving the document to the back/forward cache.
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.

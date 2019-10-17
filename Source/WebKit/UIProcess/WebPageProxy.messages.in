@@ -230,7 +230,7 @@ messages -> WebPageProxy {
     BackForwardBackListCount() -> (uint32_t count) Synchronous
     BackForwardForwardListCount() -> (uint32_t count) Synchronous
     BackForwardClear()
-    WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inPageCache)
+    WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inBackForwardCache)
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, String label)

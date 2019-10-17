@@ -1,5 +1,39 @@
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
+        Rename PageCache to BackForwardCache
+        https://bugs.webkit.org/show_bug.cgi?id=203048
+
+        Reviewed by Alex Christensen.
+
+        Rename PageCache to BackForwardCache for clarity and consistency with the UIProcess's WebBackForwardCache.
+
+        * History/BackForwardList.mm:
+        (BackForwardList::addItem):
+        (BackForwardList::setCapacity):
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList pageCacheSize]):
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemPrivate.h:
+        * Misc/WebCache.mm:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics cachedPageCount]):
+        (+[WebCoreStatistics cachedFrameCount]):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache):
+        (WebFrameLoaderClient::didRestoreFromBackForwardCache):
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView layoutToMinimumPageWidth:height:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustingViewSize:]):
+        (-[WebHTMLView setNeedsLayout:]):
+        (-[WebHTMLView setNeedsToApplyStyles:]):
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView _preferencesChanged:]):
+        (+[WebView _setCacheModel:]):
+
+2019-10-16  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Move back/forward cache entry expiration from the WebProcess to the UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=203034
         <rdar://problem/56332453>

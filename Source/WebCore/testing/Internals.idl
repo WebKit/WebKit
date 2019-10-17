@@ -207,9 +207,9 @@ enum CompositingPolicy {
     void setOverrideResourceLoadPriority(ResourceLoadPriority priority);
     void setStrictRawResourceValidationPolicyDisabled(boolean disabled);
 
-    void clearPageCache();
-    unsigned long pageCacheSize();
-    void preventDocumentForEnteringPageCache();
+    void clearBackForwardCache();
+    unsigned long backForwardCacheSize();
+    void preventDocumentForEnteringBackForwardCache();
 
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 

@@ -106,7 +106,7 @@ const char* MediaRecorder::activeDOMObjectName() const
 
 bool MediaRecorder::canSuspendForDocumentSuspension() const
 {
-    return false; // FIXME: We should do better here as this prevents entering PageCache.
+    return false; // FIXME: We should do better here as this prevents entering BackForwardCache.
 }
 
 ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)

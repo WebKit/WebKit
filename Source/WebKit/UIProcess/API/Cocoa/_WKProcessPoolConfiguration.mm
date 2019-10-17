@@ -313,12 +313,12 @@
 
 - (BOOL)pageCacheEnabled
 {
-    return _processPoolConfiguration->usesPageCache();
+    return _processPoolConfiguration->usesBackForwardCache();
 }
 
 - (void)setPageCacheEnabled:(BOOL)enabled
 {
-    return _processPoolConfiguration->setUsesPageCache(enabled);
+    return _processPoolConfiguration->setUsesBackForwardCache(enabled);
 }
 
 - (BOOL)usesSingleWebProcess

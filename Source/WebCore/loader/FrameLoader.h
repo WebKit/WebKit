@@ -147,7 +147,7 @@ public:
     void stopAllLoadersAndCheckCompleteness();
     WEBCORE_EXPORT void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem, StopLoadingPolicy = StopLoadingPolicy::PreventDuringUnloadEvents);
     WEBCORE_EXPORT void stopForUserCancel(bool deferCheckLoadComplete = false);
-    void stopForPageCache();
+    void stopForBackForwardCache();
     void stop();
     void stopLoading(UnloadEventPolicy);
     bool closeURL();

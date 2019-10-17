@@ -312,7 +312,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
 bool MediaElementSession::autoplayPermitted() const
 {
     const Document& document = m_element.document();
-    if (document.pageCacheState() != Document::NotInPageCache)
+    if (document.backForwardCacheState() != Document::NotInBackForwardCache)
         return false;
     if (document.activeDOMObjectsAreSuspended())
         return false;

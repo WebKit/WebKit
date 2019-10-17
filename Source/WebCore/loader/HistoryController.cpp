@@ -31,6 +31,7 @@
 #include "config.h"
 #include "HistoryController.h"
 
+#include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "CachedPage.h"
 #include "Document.h"
@@ -44,7 +45,6 @@
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PageCache.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
 #include "SharedStringHash.h"
@@ -74,7 +74,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     if (!item || !frameView)
         return;
 
-    if (m_frame.document()->pageCacheState() != Document::NotInPageCache)
+    if (m_frame.document()->backForwardCacheState() != Document::NotInBackForwardCache)
         item->setScrollPosition(frameView->cachedScrollPosition());
     else
         item->setScrollPosition(frameView->scrollPosition());
@@ -137,9 +137,9 @@ void HistoryController::restoreScrollPositionAndViewState()
     auto view = makeRefPtr(m_frame.view());
 
     // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
-    // page cache and similar work that needs to occur when it comes out. This is where we do the work
+    // back/forward cache and similar work that needs to occur when it comes out. This is where we do the work
     // that needs to happen when we exit, and the work that needs to happen when we enter is in
-    // Document::setIsInPageCache(bool). It would be nice if there was more symmetry in these spots.
+    // Document::setIsInBackForwardCache(bool). It would be nice if there was more symmetry in these spots.
     // https://bugs.webkit.org/show_bug.cgi?id=98698
     if (view) {
         Page* page = m_frame.page();
@@ -261,8 +261,8 @@ void HistoryController::invalidateCurrentItemCachedPage()
     if (!currentItem())
         return;
 
-    // When we are pre-commit, the currentItem is where any page cache data resides.
-    std::unique_ptr<CachedPage> cachedPage = PageCache::singleton().take(*currentItem(), m_frame.page());
+    // When we are pre-commit, the currentItem is where any back/forward cache data resides.
+    std::unique_ptr<CachedPage> cachedPage = BackForwardCache::singleton().take(*currentItem(), m_frame.page());
     if (!cachedPage)
         return;
 
@@ -272,7 +272,7 @@ void HistoryController::invalidateCurrentItemCachedPage()
     
     ASSERT(cachedPage->document() == m_frame.document());
     if (cachedPage->document() == m_frame.document()) {
-        cachedPage->document()->setPageCacheState(Document::NotInPageCache);
+        cachedPage->document()->setBackForwardCacheState(Document::NotInBackForwardCache);
         cachedPage->clear();
     }
 }
@@ -355,7 +355,7 @@ void HistoryController::updateForReload()
     LOG(History, "HistoryController %p updateForReload: Updating History for reload in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
 
     if (m_currentItem) {
-        PageCache::singleton().remove(*m_currentItem);
+        BackForwardCache::singleton().remove(*m_currentItem);
     
         if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());

@@ -195,23 +195,23 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
     Frame& frame = *cachedResourceLoader.frame();
 
-    // Prevent new loads if we are in the PageCache or being added to the PageCache.
+    // Prevent new loads if we are in the BackForwardCache or being added to the BackForwardCache.
     // We query the top document because new frames may be created in pagehide event handlers
-    // and their pageCacheState will not reflect the fact that they are about to enter page
+    // and their backForwardCacheState will not reflect the fact that they are about to enter page
     // cache.
     if (auto* topDocument = frame.mainFrame().document()) {
-        switch (topDocument->pageCacheState()) {
-        case Document::NotInPageCache:
+        switch (topDocument->backForwardCacheState()) {
+        case Document::NotInBackForwardCache:
             break;
-        case Document::AboutToEnterPageCache:
+        case Document::AboutToEnterBackForwardCache:
             // Beacons are allowed to go through in 'pagehide' event handlers.
             if (shouldUsePingLoad(type()))
                 break;
-            RELEASE_LOG_IF_ALLOWED("load: About to enter page cache (frame = %p)", &frame);
+            RELEASE_LOG_IF_ALLOWED("load: About to enter back/forward cache (frame = %p)", &frame);
             failBeforeStarting();
             return;
-        case Document::InPageCache:
-            RELEASE_LOG_IF_ALLOWED("load: Already in page cache (frame = %p)", &frame);
+        case Document::InBackForwardCache:
+            RELEASE_LOG_IF_ALLOWED("load: Already in back/forward cache (frame = %p)", &frame);
             failBeforeStarting();
             return;
         }

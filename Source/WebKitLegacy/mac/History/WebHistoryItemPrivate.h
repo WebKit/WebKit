@@ -77,7 +77,7 @@ extern NSString *WebViewportFitCoverValue;
 - (void)_setScrollPoint:(CGPoint)scrollPoint;
 #endif
 
-- (BOOL)_isInPageCache;
+- (BOOL)_isInBackForwardCache;
 - (BOOL)_hasCachedPageExpired;
 
 @end

@@ -278,7 +278,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
     checkConsistency();
 
     if (m_activeDOMObjectsAreSuspended) {
-        // A page may subsequently suspend DOM objects, say as part of entering the page cache, after the embedding
+        // A page may subsequently suspend DOM objects, say as part of entering the back/forward cache, after the embedding
         // client requested the page be suspended. We ignore such requests so long as the embedding client requested
         // the suspension first. See <rdar://problem/13754896> for more details.
         ASSERT(m_reasonForSuspendingActiveDOMObjects == ReasonForSuspension::PageWillBeSuspended);
@@ -308,8 +308,8 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
         return ShouldContinue::Yes;
     });
 
-    // In case there were pending messages at the time the script execution context entered PageCache,
-    // make sure those get dispatched shortly after restoring from PageCache.
+    // In case there were pending messages at the time the script execution context entered the BackForwardCache,
+    // make sure those get dispatched shortly after restoring from the BackForwardCache.
     processMessageWithMessagePortsSoon();
 }
 

@@ -95,7 +95,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
 
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
 
-    // Disable the page cache.
+    // Disable the back/forward cache.
     WKContextSetCacheModel(context.get(), kWKCacheModelDocumentViewer);
 
     PlatformWebView webView(context.get(), pageGroup.get());

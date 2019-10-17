@@ -716,8 +716,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     m_updateCompositingLayersTimer.stop();
 
-    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache
-        || m_renderView.document().pageCacheState() == Document::AboutToEnterPageCache);
+    ASSERT(m_renderView.document().backForwardCacheState() == Document::NotInBackForwardCache
+        || m_renderView.document().backForwardCacheState() == Document::AboutToEnterBackForwardCache);
     
     // Compositing layers will be updated in Document::setVisualUpdatesAllowed(bool) if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())
@@ -4652,7 +4652,7 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
+    ASSERT(m_renderView.document().backForwardCacheState() == Document::NotInBackForwardCache);
     if (m_legacyScrollingLayerCoordinator)
         m_legacyScrollingLayerCoordinator->removeScrollingLayer(layer, backing);
 #else
@@ -4668,7 +4668,7 @@ void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    ASSERT(m_renderView.document().pageCacheState() == Document::NotInPageCache);
+    ASSERT(m_renderView.document().backForwardCacheState() == Document::NotInBackForwardCache);
     if (m_legacyScrollingLayerCoordinator)
         m_legacyScrollingLayerCoordinator->addScrollingLayer(layer);
 #else

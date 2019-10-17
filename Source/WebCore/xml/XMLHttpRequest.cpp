@@ -1163,8 +1163,8 @@ void XMLHttpRequest::suspend(ReasonForSuspension reason)
         m_dispatchErrorOnResuming = true;
     }
 
-    if (reason == ReasonForSuspension::PageCache && m_loader) {
-        // Going into PageCache, abort the request and dispatch a network error on resuming.
+    if (reason == ReasonForSuspension::BackForwardCache && m_loader) {
+        // Going into the BackForwardCache, abort the request and dispatch a network error on resuming.
         genericError();
         m_dispatchErrorOnResuming = true;
         bool aborted = internalAbort();

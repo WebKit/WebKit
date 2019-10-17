@@ -78,7 +78,7 @@ public:
 
     WEBCORE_EXPORT JSDOMGlobalObject* globalObject(DOMWrapperWorld&);
 
-    void clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow*, bool goingIntoPageCache);
+    void clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow*, bool goingIntoBackForwardCache);
 
     WEBCORE_EXPORT void setDOMWindow(AbstractDOMWindow*);
 

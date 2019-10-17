@@ -169,9 +169,9 @@ public:
 
     void setGridMaxTracksLimit(unsigned);
 
-    void clearPageCache();
-    unsigned pageCacheSize() const;
-    void preventDocumentForEnteringPageCache();
+    void clearBackForwardCache();
+    unsigned backForwardCacheSize() const;
+    void preventDocumentForEnteringBackForwardCache();
 
     void disableTileSizeUpdateDelay();
 

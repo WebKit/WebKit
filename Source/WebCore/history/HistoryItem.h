@@ -59,7 +59,7 @@ enum class PruningReason;
 WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem&);
 
 class HistoryItem : public RefCounted<HistoryItem> {
-    friend class PageCache;
+    friend class BackForwardCache;
 
 public: 
     static Ref<HistoryItem> create()
@@ -95,7 +95,7 @@ public:
     WEBCORE_EXPORT const String& urlString() const;
     WEBCORE_EXPORT const String& title() const;
     
-    bool isInPageCache() const { return m_cachedPage.get(); }
+    bool isInBackForwardCache() const { return m_cachedPage.get(); }
     WEBCORE_EXPORT bool hasCachedPageExpired() const;
 
     WEBCORE_EXPORT void setAlternateTitle(const String&);
@@ -266,7 +266,7 @@ private:
     RefPtr<FormData> m_formData;
     String m_formContentType;
 
-    // PageCache controls these fields.
+    // BackForwardCache controls these fields.
     std::unique_ptr<CachedPage> m_cachedPage;
     PruningReason m_pruningReason;
 

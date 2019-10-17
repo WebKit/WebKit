@@ -235,13 +235,13 @@ void DOMWindowExtensionNoCache::globalObjectIsAvailableForFrame(WKBundleFrameRef
 
 void DOMWindowExtensionNoCache::willDisconnectDOMWindowExtensionFromGlobalObject(WKBundleDOMWindowExtensionRef extension)
 {
-    // No items should be going into a 0-capacity page cache.
+    // No items should be going into a 0-capacity back/forward cache.
     ASSERT_NOT_REACHED();
 }
 
 void DOMWindowExtensionNoCache::didReconnectDOMWindowExtensionToGlobalObject(WKBundleDOMWindowExtensionRef)
 {
-    // No items should be coming out of a 0-capacity page cache.
+    // No items should be coming out of a 0-capacity back/forward cache.
     ASSERT_NOT_REACHED();
 }
 

@@ -79,6 +79,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
+#include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/CacheStorageProvider.h>
@@ -131,8 +132,6 @@
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/Page.h>
-#include <WebCore/PageCache.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PathUtilities.h>
@@ -540,13 +539,13 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     unsigned cacheMaxDeadCapacity = 0;
     Seconds deadDecodedDataDeletionInterval;
 
-    unsigned pageCacheSize = 0;
+    unsigned backForwardCacheSize = 0;
 
 
     switch (cacheModel) {
     case WebCacheModelDocumentViewer: {
-        // Page cache capacity (in pages)
-        pageCacheSize = 0;
+        // Back/forward cache capacity (in pages)
+        backForwardCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
@@ -571,15 +570,15 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         break;
     }
     case WebCacheModelDocumentBrowser: {
-        // Page cache capacity (in pages)
+        // Back/forward cache capacity (in pages)
         if (memSize >= 1024)
-            pageCacheSize = 3;
+            backForwardCacheSize = 3;
         else if (memSize >= 512)
-            pageCacheSize = 2;
+            backForwardCacheSize = 2;
         else if (memSize >= 256)
-            pageCacheSize = 1;
+            backForwardCacheSize = 1;
         else
-            pageCacheSize = 0;
+            backForwardCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
@@ -617,18 +616,18 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         break;
     }
     case WebCacheModelPrimaryWebBrowser: {
-        // Page cache capacity (in pages)
+        // Back/forward cache capacity (in pages)
         // (Research indicates that value / page drops substantially after 3 pages.)
         if (memSize >= 2048)
-            pageCacheSize = 5;
+            backForwardCacheSize = 5;
         else if (memSize >= 1024)
-            pageCacheSize = 4;
+            backForwardCacheSize = 4;
         else if (memSize >= 512)
-            pageCacheSize = 3;
+            backForwardCacheSize = 3;
         else if (memSize >= 256)
-            pageCacheSize = 2;
+            backForwardCacheSize = 2;
         else
-            pageCacheSize = 1;
+            backForwardCacheSize = 1;
 
         // Object cache capacities (in bytes)
         // (Testing indicates that value / MB depends heavily on content and
@@ -686,7 +685,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     auto& memoryCache = MemoryCache::singleton();
     memoryCache.setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::singleton().setMaxSize(pageCacheSize);
+    BackForwardCache::singleton().setMaxSize(backForwardCacheSize);
 
 #if USE(CFURLCONNECTION)
     // Don't shrink a big disk cache, since that would cause churn.
@@ -5385,7 +5384,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->usesPageCache(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setUsesPageCache(!!enabled);
+    settings.setUsesBackForwardCache(!!enabled);
 
     hr = preferences->isDOMPasteAllowed(&enabled);
     if (FAILED(hr))

@@ -239,19 +239,19 @@ def WebCoreFrame_SummaryProvider(valobj, dict):
     if document:
         origin = document.origin()
         url = document.url()
-        pageCacheState = document.page_cache_state()
+        backForwardCacheState = document.page_cache_state()
     else:
         origin = ''
         url = ''
-        pageCacheState = ''
-    return '{ origin = %s, url = %s, isMainFrame = %d, pageCacheState = %s }' % (origin, url, provider.is_main_frame(), pageCacheState)
+        backForwardCacheState = ''
+    return '{ origin = %s, url = %s, isMainFrame = %d, backForwardCacheState = %s }' % (origin, url, provider.is_main_frame(), backForwardCacheState)
 
 
 def WebCoreDocument_SummaryProvider(valobj, dict):
     provider = WebCoreDocumentProvider(valobj, dict)
     frame = provider.frame()
     in_main_frame = '%d' % frame.is_main_frame() if frame else 'Detached'
-    return '{ origin = %s, url = %s, inMainFrame = %s, pageCacheState = %s }' % (provider.origin(), provider.url(), in_main_frame, provider.page_cache_state())
+    return '{ origin = %s, url = %s, inMainFrame = %s, backForwardCacheState = %s }' % (provider.origin(), provider.url(), in_main_frame, provider.page_cache_state())
 
 
 def btjs(debugger, command, result, internal_dict):
@@ -723,7 +723,7 @@ class WebCoreDocumentProvider:
         return WebCoreSecurityOriginProvider(security_origin_ptr, dict()).to_string()
 
     def page_cache_state(self):
-        return self.valobj.GetChildMemberWithName('m_pageCacheState').GetValue()
+        return self.valobj.GetChildMemberWithName('m_backForwardCacheState').GetValue()
 
     def frame(self):
         frame_ptr = self.valobj.GetChildMemberWithName('m_frame')

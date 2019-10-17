@@ -135,7 +135,7 @@ bool HTMLSourceElement::canSuspendForDocumentSuspension() const
 void HTMLSourceElement::suspend(ReasonForSuspension reason)
 {
     // FIXME: Shouldn't this also stop the timer for PageWillBeSuspended?
-    if (reason == ReasonForSuspension::PageCache) {
+    if (reason == ReasonForSuspension::BackForwardCache) {
         m_shouldRescheduleErrorEventOnResume = m_errorEventTimer.isActive();
         m_errorEventTimer.stop();
     }

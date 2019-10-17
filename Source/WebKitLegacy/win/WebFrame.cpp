@@ -2119,7 +2119,7 @@ COMPtr<IAccessible> WebFrame::accessible() const
     else if (!m_accessible || m_accessible->document() != currentDocument) {
         // Either we've never had a wrapper for this frame's top-level Document,
         // the Document renderer was destroyed and its wrapper was detached, or
-        // the previous Document is in the page cache, and the current document
+        // the previous Document is in the back/forward cache, and the current document
         // needs to be wrapped.
         m_accessible = new AccessibleDocument(currentDocument, webView()->viewWindow());
     }

@@ -2484,7 +2484,7 @@ TEST(ProcessSwap, ReuseSuspendedProcess)
 static const char* failsToEnterPageCacheTestBytes = R"PSONRESOURCE(
 <body>
 <script>
-// Pages with dedicated workers do not go into page cache.
+// Pages with dedicated workers do not go into back/forward cache.
 var myWorker = new Worker('worker.js');
 </script>
 </body>
@@ -3699,7 +3699,7 @@ TEST(ProcessSwap, PageShowHide)
     }
 }
 
-// Disabling the page cache explicitly is (for some reason) not available on iOS.
+// Disabling the back/forward cache explicitly is (for some reason) not available on iOS.
 #if !TARGET_OS_IPHONE
 static const char* loadUnloadBytes = R"PSONRESOURCE(
 <script>
@@ -5782,7 +5782,7 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     auto pid3 = [createdWebView _webProcessIdentifier];
     EXPECT_NE(pid1, pid3); // Should have process-swapped.
 
-    // Navigate back to the suspended page (should use the page cache).
+    // Navigate back to the suspended page (should use the back/forward cache).
     [createdWebView goBack];
     TestWebKitAPI::Util::run(&receivedMessage);
     receivedMessage = false;
@@ -5819,7 +5819,7 @@ body {
 </head>
 <body>
 <script>
-// Pages with dedicated workers do not go into page cache.
+// Pages with dedicated workers do not go into back/forward cache.
 var myWorker = new Worker('worker.js');
 </script>
 <a id="testLink" href="pson://www.apple.com/main.html">Test</a>
@@ -5927,7 +5927,7 @@ static const char* contentBlockingAfterProcessSwapTestBytes = R"PSONRESOURCE(
 <body>
 <script>
 let wasSubframeLoaded = false;
-// Pages with dedicated workers do not go into page cache.
+// Pages with dedicated workers do not go into back/forward cache.
 var myWorker = new Worker('worker.js');
 </script>
 <iframe src="blockme.html"></iframe>

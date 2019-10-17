@@ -95,7 +95,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionBasic)
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
     
     // The default cache model has a capacity of 0, so it is necessary to switch to a cache
-    // model that actually allows for a page cache.
+    // model that actually allows for a back/forward cache.
     WKContextSetCacheModel(context.get(), kWKCacheModelDocumentBrowser);
 
     PlatformWebView webView(context.get(), pageGroup.get());
@@ -120,7 +120,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionBasic)
     Util::run(&finished);
     finished = false;
 
-    // Make sure the 2 disconnected extensions in the page cache and the 4 active extensions are all removed.
+    // Make sure the 2 disconnected extensions in the back/forward cache and the 4 active extensions are all removed.
     WKPageClose(webView.page());
 
     Util::run(&finished);
@@ -150,7 +150,7 @@ TEST(WebKit, DOMWindowExtensionCrashOnReload)
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
 
     // The default cache model has a capacity of 0, so it is necessary to switch to a cache
-    // model that actually allows for a page cache.
+    // model that actually allows for a back/forward cache.
     WKContextSetCacheModel(context.get(), kWKCacheModelDocumentBrowser);
 
     PlatformWebView webView(context.get(), pageGroup.get());

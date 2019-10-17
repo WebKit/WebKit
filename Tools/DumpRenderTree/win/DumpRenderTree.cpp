@@ -914,7 +914,7 @@ static void setWebPreferencesForTestOptions(IWebPreferences* preferences, const 
     prefsPrivate->setRequestIdleCallbackEnabled(options.enableRequestIdleCallback);
     prefsPrivate->setAsyncClipboardAPIEnabled(options.enableAsyncClipboardAPI);
     preferences->setPrivateBrowsingEnabled(options.useEphemeralSession);
-    preferences->setUsesPageCache(options.enablePageCache);
+    preferences->setUsesPageCache(options.enableBackForwardCache);
 }
 
 static String applicationId()

@@ -1572,7 +1572,7 @@ void WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&
 
 void WebProcessPool::updateBackForwardCacheCapacity()
 {
-    if (!m_configuration->usesPageCache())
+    if (!m_configuration->usesBackForwardCache())
         return;
 
     unsigned dummy = 0;

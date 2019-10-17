@@ -38,11 +38,12 @@ class Page;
 
 enum class PruningReason { None, ProcessSuspended, MemoryPressure, ReachedMaxSize };
 
-class PageCache {
-    WTF_MAKE_NONCOPYABLE(PageCache); WTF_MAKE_FAST_ALLOCATED;
+class BackForwardCache {
+    WTF_MAKE_NONCOPYABLE(BackForwardCache);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    // Function to obtain the global page cache.
-    WEBCORE_EXPORT static PageCache& singleton();
+    // Function to obtain the global back/forward cache.
+    WEBCORE_EXPORT static BackForwardCache& singleton();
 
     bool canCache(Page&) const;
 
@@ -68,8 +69,8 @@ public:
 #endif
 
 private:
-    PageCache();
-    ~PageCache() = delete; // Make sure nobody accidentally calls delete -- WebCore does not delete singletons.
+    BackForwardCache();
+    ~BackForwardCache() = delete; // Make sure nobody accidentally calls delete -- WebCore does not delete singletons.
 
     static bool canCachePageContainingThisFrame(Frame&);
 
@@ -83,7 +84,7 @@ private:
     bool m_isInRemoveAllItemsForPage { false };
 #endif
 
-    friend class WTF::NeverDestroyed<PageCache>;
+    friend class WTF::NeverDestroyed<BackForwardCache>;
 };
 
 } // namespace WebCore

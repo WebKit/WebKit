@@ -29,13 +29,13 @@
 #include "COMPropertyBag.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
+#include <WebCore/BackForwardCache.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
 #include <WebCore/JSDOMWindow.h>
-#include <WebCore/PageCache.h>
 #include <WebCore/PageConsoleClient.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/SharedBuffer.h>
@@ -320,7 +320,7 @@ HRESULT WebCoreStatistics::cachedPageCount(_Out_ INT* count)
     if (!count)
         return E_POINTER;
 
-    *count = PageCache::singleton().pageCount();
+    *count = BackForwardCache::singleton().pageCount();
     return S_OK;
 }
 
@@ -329,6 +329,6 @@ HRESULT WebCoreStatistics::cachedFrameCount(_Out_ INT* count)
     if (!count)
         return E_POINTER;
 
-    *count = PageCache::singleton().frameCount();
+    *count = BackForwardCache::singleton().frameCount();
     return S_OK;
 }

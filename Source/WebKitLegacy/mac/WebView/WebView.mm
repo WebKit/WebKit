@@ -130,6 +130,7 @@
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/BackForwardCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/CSSAnimationController.h>
 #import <WebCore/CacheStorageProvider.h>
@@ -185,7 +186,6 @@
 #import <WebCore/Notification.h>
 #import <WebCore/NotificationController.h>
 #import <WebCore/Page.h>
-#import <WebCore/PageCache.h>
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PathUtilities.h>
@@ -2367,8 +2367,8 @@ static bool fastDocumentTeardownEnabled()
 
     _private->group->removeWebView(self);
 
-    // Deleteing the WebCore::Page will clear the page cache so we call destroy on
-    // all the plug-ins in the page cache to break any retain cycles.
+    // Deleteing the WebCore::Page will clear the back/forward cache so we call destroy on
+    // all the plug-ins in the back/forward cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
     auto* page = _private->page;
     _private->page = nullptr;
@@ -2911,8 +2911,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setEditableLinkBehavior(core([preferences editableLinkBehavior]));
     settings.setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
     settings.setDOMPasteAllowed([preferences isDOMPasteAllowed]);
-    settings.setUsesPageCache([self usesPageCache]);
-    settings.setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
+    settings.setUsesBackForwardCache([self usesPageCache]);
+    settings.setBackForwardCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
     settings.setBackForwardCacheExpirationInterval(Seconds { [preferences _backForwardCacheExpirationInterval] });
 
     settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
@@ -4359,7 +4359,7 @@ IGNORE_WARNINGS_END
 #endif // ENABLE(TOUCH_EVENTS)
 
 // For backwards compatibility with the WebBackForwardList API, we honor both
-// a per-WebView and a per-preferences setting for whether to use the page cache.
+// a per-WebView and a per-preferences setting for whether to use the back/forward cache.
 
 - (BOOL)usesPageCache
 {
@@ -8797,7 +8797,7 @@ FORWARD(toggleUnderline)
 
     switch (cacheModel) {
     case WebCacheModelDocumentViewer: {
-        // Page cache capacity (in pages)
+        // Back/forward cache capacity (in pages)
         pageCacheSize = 0;
 
         // Object cache capacities (in bytes)
@@ -8833,7 +8833,7 @@ FORWARD(toggleUnderline)
         break;
     }
     case WebCacheModelDocumentBrowser: {
-        // Page cache capacity (in pages)
+        // Back/forward cache capacity (in pages)
         if (memSize >= 512)
             pageCacheSize = 2;
         else if (memSize >= 256)
@@ -8884,7 +8884,7 @@ FORWARD(toggleUnderline)
         break;
     }
     case WebCacheModelPrimaryWebBrowser: {
-        // Page cache capacity (in pages)
+        // Back/forward cache capacity (in pages)
         if (memSize >= 512)
             pageCacheSize = 2;
         else if (memSize >= 256)
@@ -8967,7 +8967,7 @@ FORWARD(toggleUnderline)
     memoryCache.setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
 
-    auto& pageCache = WebCore::PageCache::singleton();
+    auto& pageCache = WebCore::BackForwardCache::singleton();
     pageCache.setMaxSize(pageCacheSize);
 #if PLATFORM(IOS_FAMILY)
     nsurlCacheMemoryCapacity = std::max(nsurlCacheMemoryCapacity, [nsurlCache memoryCapacity]);

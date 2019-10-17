@@ -944,22 +944,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (void)_setUsesPageCache:(BOOL)enabled
 {
-    _preferences->setUsesPageCache(enabled);
+    _preferences->setUsesBackForwardCache(enabled);
 }
 
 - (BOOL)_usesPageCache
 {
-    return _preferences->usesPageCache();
+    return _preferences->usesBackForwardCache();
 }
 
 - (void)_setPageCacheSupportsPlugins:(BOOL)enabled
 {
-    _preferences->setPageCacheSupportsPlugins(enabled);
+    _preferences->setBackForwardCacheSupportsPlugins(enabled);
 }
 
 - (BOOL)_pageCacheSupportsPlugins
 {
-    return _preferences->pageCacheSupportsPlugins();
+    return _preferences->backForwardCacheSupportsPlugins();
 }
 
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled

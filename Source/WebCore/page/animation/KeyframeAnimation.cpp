@@ -362,7 +362,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomString& eventType, double e
         // Dispatch the event
         auto element = makeRefPtr(this->element());
 
-        ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
+        ASSERT(!element || element->document().backForwardCacheState() == Document::NotInBackForwardCache);
         if (!element)
             return false;
 

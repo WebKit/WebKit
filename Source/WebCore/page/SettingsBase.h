@@ -185,7 +185,7 @@ protected:
     void imagesEnabledChanged();
     void pluginsEnabledChanged();
     void userStyleSheetLocationChanged();
-    void usesPageCacheChanged();
+    void usesBackForwardCacheChanged();
     void dnsPrefetchingEnabledChanged();
     void storageBlockingPolicyChanged();
     void backgroundShouldExtendBeyondPageChanged();

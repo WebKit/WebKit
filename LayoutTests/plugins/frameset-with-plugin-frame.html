@@ -1,11 +1,11 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <html>
 <script type="text/javascript" charset="utf-8">
     if (window.testRunner && window.internals) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
         internals.settings.setFrameFlattening("FullyEnabled")
-        internals.settings.setPageCacheSupportsPlugins(true);
+        internals.settings.setBackForwardCacheSupportsPlugins(true);
     }
 </script>
 

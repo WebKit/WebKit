@@ -30,7 +30,7 @@
 #import "WebHistoryDelegate.h"
 #import "WebHistoryInternal.h"
 #import "WebViewInternal.h"
-#import <WebCore/PageCache.h>
+#import <WebCore/BackForwardCache.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 

@@ -165,7 +165,7 @@ bool Geolocation::canSuspendForDocumentSuspension() const
     
 void Geolocation::suspend(ReasonForSuspension reason)
 {
-    if (reason == ReasonForSuspension::PageCache) {
+    if (reason == ReasonForSuspension::BackForwardCache) {
         stop();
         m_resetOnResume = true;
     }

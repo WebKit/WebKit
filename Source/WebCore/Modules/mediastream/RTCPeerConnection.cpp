@@ -506,7 +506,7 @@ bool RTCPeerConnection::canSuspendForDocumentSuspension() const
 
 void RTCPeerConnection::suspend(ReasonForSuspension reason)
 {
-    if (reason != ReasonForSuspension::PageCache)
+    if (reason != ReasonForSuspension::BackForwardCache)
         return;
 
     m_shouldDelayTasks = true;

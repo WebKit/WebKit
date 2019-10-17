@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -10,7 +10,7 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows();
-    internals.settings.setPageCacheSupportsPlugins(true);
+    internals.settings.setBackForwardCacheSupportsPlugins(true);
 }
 
 let newWindow;

@@ -193,7 +193,7 @@ public:
     // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();
-    // This is used to cancel any pending update timers when the document goes into page cache.
+    // This is used to cancel any pending update timers when the document goes into back/forward cache.
     void cancelCompositingLayerUpdate();
 
     // Update the compositing state of the given layer. Returns true if that state changed.

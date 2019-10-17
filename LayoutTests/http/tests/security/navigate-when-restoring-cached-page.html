@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ enablePageCache=true ] -->
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
 <!DOCTYPE html>
 <html>
 <body>
@@ -63,7 +63,7 @@ function runTest()
 
           // Prevent entering PageCache.
           if (w.internals)
-            w.internals.preventDocumentForEnteringPageCache();
+            w.internals.preventDocumentForEnteringBackForwardCache();
 
           child_frame = w.document.body.appendChild(document.createElement('iframe'));
           child_frame.contentWindow.onunload = () => {

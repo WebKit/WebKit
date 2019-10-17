@@ -53,7 +53,7 @@ void WebFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
     notImplemented();
 }
 
-bool WebFrameLoaderClient::forceLayoutOnRestoreFromPageCache()
+bool WebFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache()
 {
     return false;
 }

@@ -145,8 +145,8 @@ void FrameViewLayoutContext::layout()
     ASSERT(!view().isPainting());
     ASSERT(frame().view() == &view());
     ASSERT(frame().document());
-    ASSERT(frame().document()->pageCacheState() == Document::NotInPageCache
-        || frame().document()->pageCacheState() == Document::AboutToEnterPageCache);
+    ASSERT(frame().document()->backForwardCacheState() == Document::NotInBackForwardCache
+        || frame().document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
     if (!canPerformLayout()) {
         LOG(Layout, "  is not allowed, bailing");
         return;
@@ -334,7 +334,7 @@ void FrameViewLayoutContext::disableSetNeedsLayout()
 
 void FrameViewLayoutContext::scheduleLayout()
 {
-    // FIXME: We should assert the page is not in the page cache, but that is causing
+    // FIXME: We should assert the page is not in the back/forward cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
     ASSERT(frame().view() == &view());
 

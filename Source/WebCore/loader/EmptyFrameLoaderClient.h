@@ -46,7 +46,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 
     void makeRepresentation(DocumentLoader*) final { }
 #if PLATFORM(IOS_FAMILY)
-    bool forceLayoutOnRestoreFromPageCache() final { return false; }
+    bool forceLayoutOnRestoreFromBackForwardCache() final { return false; }
 #endif
     void forceLayoutForNonHTML() final { }
 
@@ -164,7 +164,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 #endif
     void transitionToCommittedForNewPage() final { }
 
-    void didRestoreFromPageCache() final { }
+    void didRestoreFromBackForwardCache() final { }
 
     void dispatchDidBecomeFrameset(bool) final { }
 

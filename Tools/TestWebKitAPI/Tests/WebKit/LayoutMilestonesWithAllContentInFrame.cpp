@@ -76,7 +76,7 @@ TEST(WebKit, FirstVisuallyNonEmptyLayoutAfterPageCacheRestore)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser); // Enables the Page Cache.
+    WKContextSetCacheModel(context.get(), kWKCacheModelPrimaryWebBrowser); // Enables the back/forward cache.
 
     PlatformWebView webView(context.get());
 

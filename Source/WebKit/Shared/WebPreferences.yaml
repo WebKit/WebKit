@@ -155,11 +155,11 @@ LocalFileContentSniffingEnabled:
   type: bool
   defaultValue: false
 
-UsesPageCache:
+UsesBackForwardCache:
   type: bool
   defaultValue: true
 
-PageCacheSupportsPlugins:
+BackForwardCacheSupportsPlugins:
   type: bool
   defaultValue: true
 

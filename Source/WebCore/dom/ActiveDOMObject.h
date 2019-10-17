@@ -39,7 +39,7 @@ class Document;
 enum class ReasonForSuspension {
     JavaScriptDebuggerPaused,
     WillDeferLoading,
-    PageCache,
+    BackForwardCache,
     PageWillBeSuspended,
 };
 
@@ -64,7 +64,7 @@ public:
 
     // These three functions must not have a side effect of creating or destroying
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
-    virtual bool canSuspendForDocumentSuspension() const = 0; // Returning false in canSuspendForDocumentSuspension() will prevent the page from entering the PageCache.
+    virtual bool canSuspendForDocumentSuspension() const = 0; // Returning false in canSuspendForDocumentSuspension() will prevent the page from entering the BackForwardCache.
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
 

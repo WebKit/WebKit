@@ -1030,7 +1030,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.requestIdleCallbackEnabled = options.enableRequestIdleCallback;
     preferences.asyncClipboardAPIEnabled = options.enableAsyncClipboardAPI;
     preferences.privateBrowsingEnabled = options.useEphemeralSession;
-    preferences.usesPageCache = options.enablePageCache;
+    preferences.usesPageCache = options.enableBackForwardCache;
 }
 
 // Called once on DumpRenderTree startup.

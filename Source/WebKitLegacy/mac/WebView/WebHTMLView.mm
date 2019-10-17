@@ -3342,7 +3342,7 @@ IGNORE_WARNINGS_END
     if (!coreFrame)
         return;
     if (coreFrame->document()) {
-        if (coreFrame->document()->pageCacheState() != WebCore::Document::NotInPageCache)
+        if (coreFrame->document()->backForwardCacheState() != WebCore::Document::NotInBackForwardCache)
             return;
         coreFrame->document()->updateStyleIfNeeded();
     }
@@ -3854,7 +3854,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     if (!flag)
         return; // There's no way to say you don't need a layout.
     if (auto* frame = core([self _frame])) {
-        if (frame->document() && frame->document()->pageCacheState() != WebCore::Document::NotInPageCache)
+        if (frame->document() && frame->document()->backForwardCacheState() != WebCore::Document::NotInBackForwardCache)
             return;
         if (auto* view = frame->view())
             view->setNeedsLayoutAfterViewConfigurationChange();
@@ -3867,7 +3867,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     if (!flag)
         return; // There's no way to say you don't need a style recalc.
     if (auto* frame = core([self _frame])) {
-        if (frame->document() && frame->document()->pageCacheState() != WebCore::Document::NotInPageCache)
+        if (frame->document() && frame->document()->backForwardCacheState() != WebCore::Document::NotInBackForwardCache)
             return;
         frame->document()->scheduleFullStyleRebuild();
     }

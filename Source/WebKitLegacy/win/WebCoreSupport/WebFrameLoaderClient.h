@@ -176,7 +176,7 @@ public:
     void didFinishLoad() override;
     void prepareForDataSourceReplacement() override;
 
-    void didRestoreFromPageCache() override;
+    void didRestoreFromBackForwardCache() override;
 
     void dispatchDidBecomeFrameset(bool) override;
 

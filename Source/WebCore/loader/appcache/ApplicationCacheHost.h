@@ -105,7 +105,7 @@ public:
     bool maybeLoadSynchronously(ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>&);
     void maybeLoadFallbackSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>&);
 
-    bool canCacheInPageCache();
+    bool canCacheInBackForwardCache();
 
     Status status() const;
     bool update();

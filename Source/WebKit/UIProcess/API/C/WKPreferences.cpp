@@ -610,22 +610,22 @@ bool WKPreferencesGetLocalFileContentSniffingEnabled(WKPreferencesRef preference
 
 void WKPreferencesSetPageCacheEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setUsesPageCache(enabled);
+    toImpl(preferencesRef)->setUsesBackForwardCache(enabled);
 }
 
 bool WKPreferencesGetPageCacheEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->usesPageCache();
+    return toImpl(preferencesRef)->usesBackForwardCache();
 }
 
-void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef, bool pageCacheSupportsPlugins)
+void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef, bool backForwardCacheSupportsPlugins)
 {
-    toImpl(preferencesRef)->setPageCacheSupportsPlugins(pageCacheSupportsPlugins);
+    toImpl(preferencesRef)->setBackForwardCacheSupportsPlugins(backForwardCacheSupportsPlugins);
 }
 
 bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->pageCacheSupportsPlugins();
+    return toImpl(preferencesRef)->backForwardCacheSupportsPlugins();
 }
 
 void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef, bool enabled)
