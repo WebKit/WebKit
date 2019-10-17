@@ -1,5 +1,25 @@
 2019-10-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Two fast/scrolling/ios/touch-scroll* tests failing in iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=203070
+        rdar://problem/51756254
+
+        Reviewed by Wenson Hsieh.
+        
+        For some reason the uiController.dragFromPointToPoint() in these tests was too long
+        to trigger scrolling (maybe an OS change). Fix them to use UIHelper and a shorter
+        duration, and also to not be sensitive to the exact distance scrolled.
+
+        * fast/scrolling/ios/touch-scroll-pointer-events-none-expected.txt:
+        * fast/scrolling/ios/touch-scroll-pointer-events-none.html:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden-expected.txt:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden.html:
+        * platform/ios-wk2/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.dragFromPointToPoint):
+
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r245483) [iPad Simulator] 2 Layout tests fast/scrolling/ios/overflow-scroll-inherited.html fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=203069
         rdar://problem/51868813

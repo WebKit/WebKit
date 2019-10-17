@@ -42,21 +42,13 @@
         }
     </style>
     <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         window.jsTestIsAsync = true;
 
-        function getUIScript()
-        {
-            return `
-            (function() {
-                uiController.dragFromPointToPoint(60, 200, 60, 100, 0.5, function() {
-                    uiController.uiScriptComplete("");
-                });
-            })();`
-        }
-
         var hitElement;
-        function runTest()
+        var documentDidScroll;
+        async function runTest()
         {
             hitElement = document.elementFromPoint(20, 20);
             shouldBeEqualToString("hitElement.id", "under-target");
@@ -64,16 +56,16 @@
             var scroller = document.getElementById('scroller');
             shouldBe("scroller.scrollTop", "0");
 
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(getUIScript(), function() {
-                    setTimeout(function() {
-                        debug("swipe complete");
-                        shouldBe("scroller.scrollTop", "0");
-                        shouldBe("document.scrollingElement.scrollTop", "90");
-                        finishJSTest();
-                    }, 0);
-                });
-            }
+            await UIHelper.callFunctionAndWaitForScrollToFinish(async () => {
+                await UIHelper.dragFromPointToPoint(60, 200, 60, 100, 0.25);
+            });
+
+            debug("swipe complete");
+            shouldBe("scroller.scrollTop", "0");
+            
+            documentDidScroll = document.scrollingElement.scrollTop > 0;
+            shouldBeTrue("documentDidScroll");
+            finishJSTest();
         }
         window.addEventListener('load', runTest, false);
     </script>

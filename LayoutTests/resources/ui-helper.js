@@ -1007,7 +1007,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => {
-                    uiController.uiScriptComplete("");
+                    uiController.uiScriptComplete();
                 });
             })();`, resolve);
         });
