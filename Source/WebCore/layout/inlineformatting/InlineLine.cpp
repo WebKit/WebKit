@@ -378,7 +378,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
-    auto horizontalMargin = boxGeometry.horizontalMargin();    
+    auto horizontalMargin = boxGeometry.horizontalMargin();
     auto logicalRect = Display::Rect { };
 
     logicalRect.setLeft(contentLogicalWidth() + horizontalMargin.start);
@@ -396,8 +396,11 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
 
 void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
-    // FIXME Surely replaced boxes behave differently.
+    ASSERT(inlineItem.layoutBox().isReplaced());
+    // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
+    if (auto* replaced = inlineItem.layoutBox().replaced(); replaced && replaced->cachedImage())
+        m_runList.last()->m_displayRun.setImage(*replaced->cachedImage());
 }
 
 void Line::appendHardLineBreak(const InlineItem& inlineItem)

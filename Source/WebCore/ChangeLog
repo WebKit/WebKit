@@ -1,5 +1,33 @@
 2019-10-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Painting] Add support for image/background image painting
+        https://bugs.webkit.org/show_bug.cgi?id=203054
+        <rdar://problem/56347733>
+
+        Reviewed by Antti Koivisto.
+
+        In addition to image rendering, this patch also addresses various run/decoration painting issues.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecoration):
+        (WebCore::Display::paintInlineContent):
+        (WebCore::Display::absoluteDisplayBox):
+        (WebCore::Display::paintBoxDecorationAndChildren):
+        (WebCore::Display::Painter::paint):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::setImage):
+        (WebCore::Display::Run::image const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendReplacedInlineBox):
+        * layout/layouttree/LayoutReplaced.h:
+        (WebCore::Layout::Replaced::setCachedImage):
+        (WebCore::Layout::Replaced::cachedImage const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+
+2019-10-17  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add Display::Run/LineBox mapping
         https://bugs.webkit.org/show_bug.cgi?id=203051
         <rdar://problem/56342487>

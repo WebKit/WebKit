@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "CachedImage.h"
 #include "Color.h"
 #include "DisplayBox.h"
 #include "GraphicsContext.h"
@@ -42,17 +43,28 @@
 namespace WebCore {
 namespace Display {
 
-static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style)
+static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisplayBox, const RenderStyle& style, bool needsMarginPainting)
 {
-    auto borderBoxAbsoluteTopLeft = absoluteDisplayBox.topLeft();
+    auto decorationBoxTopLeft = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().topLeft() : absoluteDisplayBox.topLeft();
+    auto decorationBoxSize = needsMarginPainting ? absoluteDisplayBox.rectWithMargin().size() : LayoutSize(absoluteDisplayBox.borderBoxWidth(), absoluteDisplayBox.borderBoxHeight());
     // Background color
-    if (style.hasBackground())
-        context.fillRect({ borderBoxAbsoluteTopLeft, FloatSize { absoluteDisplayBox.borderBoxWidth(), absoluteDisplayBox.borderBoxHeight() } }, style.backgroundColor());
+    if (style.hasBackground()) {
+        context.fillRect({ decorationBoxTopLeft, decorationBoxSize }, style.backgroundColor());
+        if (style.hasBackgroundImage()) {
+            auto& backgroundLayer = style.backgroundLayers();
+            if (backgroundLayer.image() && backgroundLayer.image()->cachedImage() && backgroundLayer.image()->cachedImage()->image())
+                context.drawImage(*backgroundLayer.image()->cachedImage()->image(), { decorationBoxTopLeft, backgroundLayer.image()->cachedImage()->image()->size() });
+        }
+    }
 
     // Border
-    if (style.hasBorder()) {
+    if (style.hasVisibleBorder()) {
 
         auto drawBorderSide = [&](auto start, auto end, const auto& borderStyle) {
+            if (!borderStyle.width())
+                return;
+            if (borderStyle.style() == BorderStyle::None || borderStyle.style() == BorderStyle::Hidden)
+                return;
             context.setStrokeColor(borderStyle.color());
             context.setStrokeThickness(borderStyle.width());
             context.drawLine(start, end);
@@ -60,38 +72,38 @@ static void paintBoxDecoration(GraphicsContext& context, const Box& absoluteDisp
 
         context.setFillColor(Color::transparent);
 
-        auto borderBoxWidth = absoluteDisplayBox.borderBoxWidth();
-        auto borderBoxHeight = absoluteDisplayBox.borderBoxHeight();
+        auto decorationBoxWidth = decorationBoxSize.width();
+        auto decorationBoxHeight = decorationBoxSize.height();
 
         // Top
         {
             auto borderWidth = style.borderTop().width();
-            auto start = LayoutPoint { borderBoxAbsoluteTopLeft };
-            auto end = LayoutPoint { start.x() + borderBoxWidth, start.y() + borderWidth };
+            auto start = LayoutPoint { decorationBoxTopLeft };
+            auto end = LayoutPoint { start.x() + decorationBoxWidth, start.y() + borderWidth };
             drawBorderSide(start, end, style.borderTop());
         }
 
         // Right
         {
             auto borderWidth = style.borderRight().width();
-            auto start = LayoutPoint { borderBoxAbsoluteTopLeft.x() + borderBoxWidth - borderWidth, borderBoxAbsoluteTopLeft.y() };
-            auto end = LayoutPoint { start.x() + borderWidth, borderBoxAbsoluteTopLeft.y() + borderBoxHeight };
+            auto start = LayoutPoint { decorationBoxTopLeft.x() + decorationBoxWidth - borderWidth, decorationBoxTopLeft.y() };
+            auto end = LayoutPoint { start.x() + borderWidth, decorationBoxTopLeft.y() + decorationBoxHeight };
             drawBorderSide(start, end, style.borderRight());
         }
 
         // Bottom
         {
             auto borderWidth = style.borderBottom().width();
-            auto start = LayoutPoint { borderBoxAbsoluteTopLeft.x(), borderBoxAbsoluteTopLeft.y() + borderBoxHeight - borderWidth };
-            auto end = LayoutPoint { start.x() + borderBoxWidth, start.y() + borderWidth };
+            auto start = LayoutPoint { decorationBoxTopLeft.x(), decorationBoxTopLeft.y() + decorationBoxHeight - borderWidth };
+            auto end = LayoutPoint { start.x() + decorationBoxWidth, start.y() + borderWidth };
             drawBorderSide(start, end, style.borderBottom());
         }
 
         // Left
         {
             auto borderWidth = style.borderLeft().width();
-            auto start = borderBoxAbsoluteTopLeft;
-            auto end = LayoutPoint { start.x() + borderWidth, borderBoxAbsoluteTopLeft.y() + borderBoxHeight };
+            auto start = decorationBoxTopLeft;
+            auto end = LayoutPoint { start.x() + borderWidth, decorationBoxTopLeft.y() + decorationBoxHeight };
             drawBorderSide(start, end, style.borderLeft());
         }
     }
@@ -102,64 +114,69 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
     auto& inlineRuns = formattingState.inlineRuns();
     if (inlineRuns.isEmpty())
         return;
-    // FIXME: We should be able to paint runs independently from inline items.
-    unsigned runIndex = 0;
-    for (auto& inlineItem : formattingState.inlineItems()) {
-        auto& style = inlineItem->style();
-        context.setStrokeColor(style.color());
-        context.setFillColor(style.color());
 
-        if (inlineItem->isText()) {
-            auto& inlineTextItem = downcast<Layout::InlineTextItem>(*inlineItem);
-            auto inlineContent = inlineTextItem.layoutBox().textContent();
-            while (true) {
-                auto& run = *inlineRuns[runIndex++];
-                auto textContext = run.textContext().value();
-                auto runContent = inlineContent.substring(textContext.start(), textContext.length());
-                auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
-                context.drawText(style.fontCascade(), TextRun { runContent }, { logicalTopLeft.x(), logicalTopLeft.y() + formattingState.lineBoxes()[0]->baselineOffset() });
-                if (inlineTextItem.end() == textContext.end())
-                    break;
-                if (runIndex == inlineRuns.size())
-                    return;
-            }
-            continue;
-        }
+    for (auto& run : inlineRuns) {
+        if (run->textContext()) {
+            auto& style = run->style();
+            context.setStrokeColor(style.color());
+            context.setFillColor(style.color());
 
-        if (inlineItem->isBox()) {
-            auto& run = *inlineRuns[runIndex++];
-            auto logicalTopLeft = rootAbsoluteDisplayBox.topLeft() + run.logicalTopLeft();
-            context.fillRect({ logicalTopLeft, FloatSize { run.logicalWidth(), run.logicalHeight() } });
-            continue;
+            auto logicalLeft = rootAbsoluteDisplayBox.left() + run->logicalLeft();
+            // FIXME: Add non-baseline align painting
+            auto& lineBox = formattingState.lineBoxForRun(*run);
+            auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset(); 
+            context.drawText(style.fontCascade(), TextRun { run->textContext()->content() }, { logicalLeft, baselineOffset });
+        } else if (auto* cachedImage = run->image()) {
+            auto runAbsoluteRect = FloatRect { rootAbsoluteDisplayBox.left() + run->logicalLeft(), rootAbsoluteDisplayBox.top() + run->logicalTop(), run->logicalWidth(), run->logicalHeight() };
+            context.drawImage(*cachedImage->image(), runAbsoluteRect);
         }
+    }
+}
+
+static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layout::Box& layoutBox)
+{
+    // Should never really happen but table code is way too incomplete.
+    if (!layoutState.hasDisplayBox(layoutBox))
+        return { };
+
+    auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
+    for (auto* container = layoutBox.containingBlock(); container != &layoutBox.initialContainingBlock(); container = container->containingBlock())
+        absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
+    return absoluteBox;
+}
+
+static void paintBoxDecorationAndChildren(GraphicsContext& context, const Layout::LayoutState& layoutState, const Layout::Box& layoutBox)
+{
+    if (!layoutBox.isAnonymous())
+        paintBoxDecoration(context, absoluteDisplayBox(layoutState, layoutBox), layoutBox.style(), layoutBox.isBodyBox());
+
+    if (!is<Layout::Container>(layoutBox))
+        return;
+    for (auto& childLayoutBox : Layout::childrenOfType<Layout::Box>(downcast<Layout::Container>(layoutBox))) {
+        if (childLayoutBox.style().visibility() != Visibility::Visible)
+            continue;
+        paintBoxDecorationAndChildren(context, layoutState, childLayoutBox);
     }
 }
 
 void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& context)
 {
-    auto absoluteDisplayBox = [&](const auto& layoutBox) {
-        auto absoluteBox = Box { layoutState.displayBoxForLayoutBox(layoutBox) };
-        for (auto* container = layoutBox.containingBlock(); container != &layoutBox.initialContainingBlock(); container = container->containingBlock())
-            absoluteBox.moveBy(layoutState.displayBoxForLayoutBox(*container).topLeft());
-        return absoluteBox;
-    };
-
     auto& layoutRoot = layoutState.root();
     auto& rootDisplayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
     context.fillRect({ FloatPoint { }, FloatSize { rootDisplayBox.borderBoxWidth(), rootDisplayBox.borderBoxHeight() } }, Color::white);
+    if (!layoutRoot.firstChild())
+        return;
 
     // 1. Paint box decoration (both block and inline).
-    for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
-        if (layoutBox.isAnonymous())
-            continue;
-        paintBoxDecoration(context, absoluteDisplayBox(layoutBox), layoutBox.style());
-    }
+    paintBoxDecorationAndChildren(context, layoutState, *layoutRoot.firstChild());
 
     // 2. Paint content
     for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
+        if (layoutBox.style().visibility() != Visibility::Visible)
+            continue;
         if (layoutBox.establishesInlineFormattingContext()) {
             auto& container = downcast<Layout::Container>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox(container), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
+            paintInlineContent(context, absoluteDisplayBox(layoutState, container), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
             continue;
         }
     }

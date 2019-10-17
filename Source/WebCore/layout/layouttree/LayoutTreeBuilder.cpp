@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "CachedImage.h"
 #include "DisplayBox.h"
 #include "DisplayRun.h"
 #include "HTMLTableCellElement.h"
@@ -166,6 +167,8 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const RenderElement& parentRen
             auto& imageRenderer = downcast<RenderImage>(renderer);
             if (imageRenderer.shouldDisplayBrokenImageIcon())
                 childLayoutBox->replaced()->setIntrinsicRatio(1);
+            if (imageRenderer.cachedImage())
+                childLayoutBox->replaced()->setCachedImage(*imageRenderer.cachedImage());
         }
     } else {
         if (displayType == DisplayType::Block) {

@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "CachedImage.h"
 #include "LayoutSize.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
@@ -43,6 +44,9 @@ class Replaced {
 public:
     Replaced(const Box&);
     ~Replaced() = default;
+
+    void setCachedImage(CachedImage& cachedImage) { m_cachedImage = &cachedImage; }
+    CachedImage* cachedImage() const { return m_cachedImage; }
 
     // FIXME: Temporary until after intrinsic size change is tracked internallys.
     void setIntrinsicSize(LayoutSize size) { m_intrinsicSize = size; }
@@ -61,6 +65,7 @@ private:
     WeakPtr<const Box> m_layoutBox;
     Optional<LayoutSize> m_intrinsicSize;
     Optional<LayoutUnit> m_intrinsicRatio;
+    CachedImage* m_cachedImage { nullptr };
 };
 
 }

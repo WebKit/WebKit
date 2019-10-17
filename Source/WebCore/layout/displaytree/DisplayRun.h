@@ -32,6 +32,9 @@
 #include "RenderStyle.h"
 
 namespace WebCore {
+
+class CachedImage;
+
 namespace Display {
 
 struct Run {
@@ -81,11 +84,15 @@ struct Run {
     Optional<TextContext>& textContext() { return m_textContext; }
     Optional<TextContext> textContext() const { return m_textContext; }
 
+    void setImage(CachedImage& image) { m_cachedImage = &image; }
+    CachedImage* image() const { return m_cachedImage; }
+
     const RenderStyle& style() const { return m_style; }
 
 private:
     // FIXME: Find out the Display::Run <-> paint style setup.
     const RenderStyle& m_style;
+    CachedImage* m_cachedImage { nullptr };
     Rect m_logicalRect;
     Optional<TextContext> m_textContext;
 };
