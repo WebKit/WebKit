@@ -1,5 +1,17 @@
 2019-10-17  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, rolling out r251245.
+
+        Addressing this issue differently
+
+        Reverted changeset:
+
+        "Marking media/video-seek-after-end.html as failing"
+        https://bugs.webkit.org/show_bug.cgi?id=203111
+        https://trac.webkit.org/changeset/251245
+
+2019-10-17  Truitt Savell  <tsavell@apple.com>
+
         Marking media/video-seek-after-end.html as failing 
         https://bugs.webkit.org/show_bug.cgi?id=203111
 

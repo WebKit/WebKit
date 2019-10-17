@@ -2026,5 +2026,3 @@ webkit.org/b/202516 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.pa
 webkit.org/b/202523 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.stroke.scale2.html [ Failure ]
 
 webkit.org/b/202598 imported/w3c/web-platform-tests/2dcontext/line-styles/2d.line.cap.round.html [ Failure ]
-
-webkit.org/b/203111 media/video-seek-after-end.html [ Pass Failure ]
