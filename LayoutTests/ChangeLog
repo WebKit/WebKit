@@ -1,3 +1,9 @@
+2019-10-17  Tim Horton  <timothy_horton@apple.com>
+
+        Land a missing test baseline
+
+        * fast/forms/ios/inputmode-none-with-hardware-keyboard-expected.txt: Added.
+
 2019-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         [ Mojave+ ] Layout Test compositing/fixed-with-main-thread-scrolling.html is a flaky timeout
