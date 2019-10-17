@@ -145,7 +145,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
             this._cookies.splice(rowIndex, 1);
 
-            PageAgent.deleteCookie(cookie.name, cookie.url);
+            let target = WI.assumingMainTarget();
+            target.PageAgent.deleteCookie(cookie.name, cookie.url);
         }
     }
 
@@ -321,7 +322,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     _reloadCookies()
     {
-        PageAgent.getCookies().then((payload) => {
+        let target = WI.assumingMainTarget();
+        target.PageAgent.getCookies().then((payload) => {
             this._cookies = this._filterCookies(payload.cookies.map(WI.Cookie.fromPayload));
             this._updateSort();
             this._table.reloadData();

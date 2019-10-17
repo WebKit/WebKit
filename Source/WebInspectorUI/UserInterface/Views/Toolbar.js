@@ -101,7 +101,7 @@ WI.Toolbar = class Toolbar extends WI.NavigationBar
             return;
 
         // Force collapsed style for non-Web debuggables.
-        if (WI.sharedApp.debuggableType !== WI.DebuggableType.Web) {
+        if (!WI.sharedApp.isWebDebuggable()) {
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
             return;
         }

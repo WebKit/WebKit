@@ -294,13 +294,15 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             }
         }
 
+        let target = WI.assumingMainTarget();
+
         let agentCommandFunction = null;
         let agentCommandArguments = {};
-        if (InspectorBackend.domains.Audit) {
-            agentCommandFunction = AuditAgent.run;
+        if (target.hasDomain("Audit")) {
+            agentCommandFunction = target.AuditAgent.run;
             agentCommandArguments.test = this._test;
         } else {
-            agentCommandFunction = RuntimeAgent.evaluate;
+            agentCommandFunction = target.RuntimeAgent.evaluate;
             agentCommandArguments.expression = `(function() { "use strict"; return eval(\`(${this._test.replace(/`/g, "\\`")})\`)(); })()`;
             agentCommandArguments.objectGroup = WI.AuditTestCase.ObjectGroup;
             agentCommandArguments.doNotPauseOnExceptionsAndMuteConsole = true;
@@ -314,7 +316,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             if (response.result.type === "object" && response.result.className === "Promise") {
                 if (WI.RuntimeManager.supportsAwaitPromise()) {
                     metadata.asyncTimestamp = metadata.endTimestamp;
-                    response = await RuntimeAgent.awaitPromise(response.result.objectId);
+                    response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
                     metadata.endTimestamp = new Date;
                 } else {
                     response = null;

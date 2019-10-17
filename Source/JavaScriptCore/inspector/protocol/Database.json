@@ -1,6 +1,7 @@
 {
     "domain": "Database",
-    "availability": ["web"],
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "DatabaseId",

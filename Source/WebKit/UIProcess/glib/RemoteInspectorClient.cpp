@@ -61,7 +61,7 @@ public:
 
     void load()
     {
-        m_proxy->load("web", m_inspectorClient.backendCommandsURL());
+        m_proxy->load("web-page", m_inspectorClient.backendCommandsURL());
     }
 
     void show()

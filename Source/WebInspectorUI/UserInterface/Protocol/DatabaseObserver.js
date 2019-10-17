@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DatabaseObserver = class DatabaseObserver
+WI.DatabaseObserver = class DatabaseObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Database" domain.
 

@@ -12,7 +12,7 @@ let worker = new Worker("resources/worker-debugger-pause.js");
 
 function test()
 {
-    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
     let workerDebuggerData = WI.debuggerManager.dataForTarget(workerTarget);
     if (!workerTarget) {
         InspectorTest.fail("Missing Worker Target");

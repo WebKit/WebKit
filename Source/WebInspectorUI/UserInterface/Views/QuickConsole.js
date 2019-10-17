@@ -113,7 +113,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     initializeMainExecutionContextPathComponent()
     {
-        if (!WI.mainTarget || !WI.mainTarget.executionContext)
+        if (!WI.mainTarget || WI.mainTarget instanceof WI.MultiplexingBackendTarget)
             return;
 
         this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
@@ -386,10 +386,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _targetAdded(event)
     {
         let target = event.data.target;
-        if (target.type !== WI.Target.Type.Worker)
+        if (target.type !== WI.TargetType.Worker)
             return;
 
-        console.assert(target.type === WI.Target.Type.Worker);
+        console.assert(target.type === WI.TargetType.Worker);
         let preferredName = WI.UIString("Worker \u2014 %s").format(target.displayName);
         let executionContextPathComponent = this._createExecutionContextPathComponent(target.executionContext, preferredName);
 
@@ -400,7 +400,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _targetRemoved(event)
     {
         let target = event.data.target;
-        if (target.type !== WI.Target.Type.Worker)
+        if (target.type !== WI.TargetType.Worker)
             return;
 
         let executionContextPathComponent = this._targetToPathComponent.take(target);

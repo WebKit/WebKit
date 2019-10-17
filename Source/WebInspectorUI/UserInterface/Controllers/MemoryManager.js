@@ -51,7 +51,7 @@ WI.MemoryManager = class MemoryManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.MemoryAgent)
+        if (target.hasDomain("Memory"))
             target.MemoryAgent.enable();
     }
 
@@ -74,7 +74,7 @@ WI.MemoryManager = class MemoryManager extends WI.Object
             return;
 
         for (let target of WI.targets) {
-            if (target.MemoryAgent)
+            if (target.hasDomain("Memory"))
                 target.MemoryAgent.disable();
         }
 

@@ -43,7 +43,7 @@ function test()
             let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
             let target = event.data.target;
             InspectorTest.assert(target instanceof WI.Target);
-            InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
+            InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Added Target should have Worker type.");
             InspectorTest.expectNotNull(target.executionContext, "Added Target should have an ExecutionContext.");
             InspectorTest.expectNotNull(target.RuntimeAgent, "Added Target should have a RuntimeAgent.");
             InspectorTest.expectNotEqual(target.RuntimeAgent, RuntimeAgent, "Added Target RuntimeAgent should not be the global RuntimeAgent.");
@@ -59,7 +59,7 @@ function test()
             let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
             let target = event.data.target;
             InspectorTest.assert(target instanceof WI.Target);
-            InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Removed Target should have Worker type.");
+            InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Removed Target should have Worker type.");
             dumpTargets();
         }
     });

@@ -1,3 +1,121 @@
+2019-10-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rework frontend agent construction to allow commands/events to be controlled by the related target's type
+        https://bugs.webkit.org/show_bug.cgi?id=200384
+        <rdar://problem/53850352>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.generate_domain):
+        (JSBackendCommandsGenerator.generate_domain.generate_parameter_object):
+        * inspector/scripts/codegen/models.py:
+        (validate_target_types): Added.
+        (Protocol.parse_domain):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        (Domain.__init__):
+        (Domains):
+        (Command.__init__):
+        (Event.__init__):
+        * inspector/protocol/ApplicationCache.json:
+        * inspector/protocol/Audit.json:
+        * inspector/protocol/CPUProfiler.json:
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/Canvas.json:
+        * inspector/protocol/Console.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMDebugger.json:
+        * inspector/protocol/DOMStorage.json:
+        * inspector/protocol/Database.json:
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/Heap.json:
+        * inspector/protocol/IndexedDB.json:
+        * inspector/protocol/Inspector.json:
+        * inspector/protocol/LayerTree.json:
+        * inspector/protocol/Memory.json:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Recording.json:
+        * inspector/protocol/Runtime.json:
+        * inspector/protocol/ScriptProfiler.json:
+        * inspector/protocol/Security.json:
+        * inspector/protocol/ServiceWorker.json:
+        * inspector/protocol/Target.json:
+        * inspector/protocol/Timeline.json:
+        * inspector/protocol/Worker.json:
+        Add `debuggableTypes` and `targetTypes` arrays to domains/commands/events that are used when
+        generating InspectorBackendCommands.js for more accurate compatibility checks.
+
+        * inspector/InspectorTarget.h:
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/agents/InspectorTargetAgent.cpp:
+        (Inspector::targetTypeToProtocolType):
+        (Inspector::InspectorTargetAgent::exists): Deleted.
+        Remove `Target.exists` now that the frontend can do proper feature checking.
+
+        * inspector/remote/RemoteControllableTarget.h:
+        * inspector/remote/RemoteInspectionTarget.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::listingForInspectionTarget const):
+        Split the `Web` debuggable type into `Page` (WebCore::Page) and `WebPage` (WebKit::WebPageProxy).
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/command-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/domain-availability.json: Removed.
+        * inspector/scripts/tests/generic/domain-debuggableTypes.json: Added.
+        * inspector/scripts/tests/generic/domain-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/domain-targetTypes.json: Added.
+        * inspector/scripts/tests/generic/event-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/expected/command-targetType-matching-domain-debuggableType.json-result: Added.
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domain-debuggableTypes.json-result: Added.
+        * inspector/scripts/tests/generic/expected/domain-targetType-matching-domain-debuggableType.json-result: Added.
+        * inspector/scripts/tests/generic/expected/domain-targetTypes.json-result: Added.
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/event-targetType-matching-domain-debuggableType.json-result: Added.
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/fail-on-command-targetType-matching-domain-debuggableType.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-command-targetTypes-type.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-command-targetTypes-value.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability-type.json-error: Removed.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability-value.json-error: Removed.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability.json-error: Removed.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-debuggableTypes-type.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-debuggableTypes-value.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-targetType-matching-domain-debuggableType.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-targetTypes-type.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-targetTypes-value.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-event-targetType-matching-domain-debuggableType.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-event-targetTypes-type.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-event-targetTypes-value.json-error: Added.
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/version.json-result:
+        * inspector/scripts/tests/generic/fail-on-command-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/fail-on-command-targetTypes-type.json: Added.
+        * inspector/scripts/tests/generic/fail-on-command-targetTypes-value.json: Added.
+        * inspector/scripts/tests/generic/fail-on-domain-debuggableTypes-type.json: Added.
+        * inspector/scripts/tests/generic/fail-on-domain-debuggableTypes-value.json: Added.
+        * inspector/scripts/tests/generic/fail-on-domain-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/fail-on-domain-targetTypes-type.json: Added.
+        * inspector/scripts/tests/generic/fail-on-domain-targetTypes-value.json: Added.
+        * inspector/scripts/tests/generic/fail-on-event-targetType-matching-domain-debuggableType.json: Added.
+        * inspector/scripts/tests/generic/fail-on-event-targetTypes-type.json: Added.
+        * inspector/scripts/tests/generic/fail-on-event-targetTypes-value.json: Added.
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        Update test results, as well as added new tests for `debuggableTypes` and `targetTypes`.
+
 2019-10-16  Mark Lam  <mark.lam@apple.com>
 
         Reduce the amount of memory needed to store Options.

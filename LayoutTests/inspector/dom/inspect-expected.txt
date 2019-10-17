@@ -1,10 +1,8 @@
-Test for DOM.inspect.
+Test for basic DOM.events.inspect functionality.
 
-
-== Running test suite: DOM.inspect
--- Running test case: DOM.inspect.valid
-PASS: DOMNodeWasInspected event
-
--- Running test case: DOM.inspect.invalid
-PASS: No error
+PASS: Got document.
+PASS: Queryied for target node.
+PASS: Set $0 to the target node.
+PASS: Evaluate $0.
+PASS: Id of $0 is "target".
 

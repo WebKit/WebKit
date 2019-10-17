@@ -80,7 +80,7 @@ WI.CSSCompletions = class CSSCompletions
 
     static initializeCSSCompletions(target)
     {
-        console.assert(target.CSSAgent);
+        console.assert(target.hasDomain("CSS"));
 
         if (WI.CSSCompletions.cssNameCompletions)
             return;
@@ -167,7 +167,7 @@ WI.CSSCompletions = class CSSCompletions
         target.CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 
         // COMPATIBILITY (iOS 9): CSS.getSupportedSystemFontFamilyNames did not exist.
-        if (target.CSSAgent.getSupportedSystemFontFamilyNames)
+        if (target.hasCommand("CSS.getSupportedSystemFontFamilyNames"))
             target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
     }
 

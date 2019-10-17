@@ -54,7 +54,7 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.ApplicationCacheAgent) {
+        if (target.hasDomain("ApplicationCache")) {
             target.ApplicationCacheAgent.enable();
             target.ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
         }
@@ -95,7 +95,7 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
 
         for (let target of WI.targets) {
             // COMPATIBILITY (iOS 13): ApplicationCache.disable did not exist yet.
-            if (target.ApplicationCacheAgent && target.ApplicationCacheAgent.disable)
+            if (target.hasCommand("ApplicationCache.disable"))
                 target.ApplicationCacheAgent.disable();
         }
 
@@ -118,7 +118,8 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
             callback(applicationCache);
         }
 
-        ApplicationCacheAgent.getApplicationCacheForFrame(frame.id, callbackWrapper);
+        let target = WI.assumingMainTarget();
+        target.ApplicationCacheAgent.getApplicationCacheForFrame(frame.id, callbackWrapper);
     }
 
     // ApplicationCacheObserver
@@ -162,8 +163,9 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
             return;
         }
 
-        if (window.ApplicationCacheAgent)
-            ApplicationCacheAgent.getManifestForFrame(event.target.id, this._manifestForFrameLoaded.bind(this, event.target.id));
+        let target = WI.assumingMainTarget();
+        if (target.hasDomain("ApplicationCache"))
+            target.ApplicationCacheAgent.getManifestForFrame(event.target.id, this._manifestForFrameLoaded.bind(this, event.target.id));
     }
 
     _childFrameWasRemoved(event)

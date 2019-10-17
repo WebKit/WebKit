@@ -168,10 +168,10 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
             this._conditionCodeMirror.focus();
         }, 0);
 
-        // COMPATIBILITY (iOS 9): Legacy backends don't support breakpoint ignore count. Since support
-        // can't be tested directly, check for CSS.getSupportedSystemFontFamilyNames.
+        // COMPATIBILITY (iOS 9): Legacy backends don't support breakpoint ignore count.
+        // Since support can't be tested directly, check for Runtime.run (iOS 9.3) or Console.heapSnapshot (iOS 10.0+).
         // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
-        if (InspectorBackend.domains.CSS.getSupportedSystemFontFamilyNames) {
+        if (InspectorBackend.hasCommand("Console.heapSnapshot") || InspectorBackend.hasCommand("Runtime.run")) {
             let ignoreCountRow = table.appendChild(document.createElement("tr"));
             let ignoreCountHeader = ignoreCountRow.appendChild(document.createElement("th"));
             let ignoreCountLabel = ignoreCountHeader.appendChild(document.createElement("label"));

@@ -33,15 +33,15 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
         this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
-        this._compositingBordersButtonNavigationItem.enabled = !!InspectorBackend.domains.Page;
+        this._compositingBordersButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
         this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         // COMPATIBILITY (iOS 9)
         WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
         this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
         this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
-        this._paintFlashingButtonNavigationItem.enabled = InspectorBackend.domains.Page && !!InspectorBackend.domains.Page.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = InspectorBackend.domains.Page && InspectorBackend.domains.Page.setShowPaintRects && WI.settings.showPaintRects.value;
+        this._paintFlashingButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setShowPaintRects");
+        this._paintFlashingButtonNavigationItem.activated = this._paintFlashingButtonNavigationItem.enabled && WI.settings.showPaintRects.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
@@ -52,7 +52,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force print media styles"), WI.UIString("Use default media styles"), "Images/Printer.svg", 16, 16);
         this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
-        this._showPrintStylesButtonNavigationItem.enabled = !!InspectorBackend.domains.Page;
+        this._showPrintStylesButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
         this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showPrintStylesChanged();
 
@@ -60,7 +60,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
         this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show rulers"), WI.UIString("Hide rulers"), "Images/Rulers.svg", 16, 16);
         this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);
-        this._showRulersButtonNavigationItem.enabled = InspectorBackend.domains.Page && !!InspectorBackend.domains.Page.setShowRulers;
+        this._showRulersButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setShowRulers");
         this._showRulersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showRulersChanged();
 
@@ -285,8 +285,10 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         if (this._searchQuery === query)
             return;
 
+        let target = WI.assumingMainTarget();
+
         if (this._searchIdentifier) {
-            DOMAgent.discardSearchResults(this._searchIdentifier);
+            target.DOMAgent.discardSearchResults(this._searchIdentifier);
             this._hideSearchHighlights();
         }
 
@@ -321,7 +323,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
                 nodeIds,
                 caseSensitive: WI.SearchUtilities.defaultSettings.caseSensitive.value,
             };
-            DOMAgent.performSearch.invoke(commandArguments, searchResultsReady.bind(this));
+            target.DOMAgent.performSearch.invoke(commandArguments, searchResultsReady.bind(this));
         }
 
         this.getSearchContextNodes(contextNodesReady.bind(this));
@@ -330,14 +332,15 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     getSearchContextNodes(callback)
     {
         // Overwrite this to limit the search to just a subtree.
-        // Passing undefined will make DOMAgent.performSearch search through all the documents.
+        // Passing undefined will make DOM.performSearch search through all the documents.
         callback(undefined);
     }
 
     searchCleared()
     {
         if (this._searchIdentifier) {
-            DOMAgent.discardSearchResults(this._searchIdentifier);
+            let target = WI.assumingMainTarget();
+            target.DOMAgent.discardSearchResults(this._searchIdentifier);
             this._hideSearchHighlights();
         }
 
@@ -420,7 +423,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
                 selectedTreeElement.emphasizeSearchHighlight();
         }
 
-        DOMAgent.getSearchResults(this._searchIdentifier, index, index + 1, revealResult.bind(this));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getSearchResults(this._searchIdentifier, index, index + 1, revealResult.bind(this));
     }
 
     _restoreSelectedNodeAfterUpdate(documentURL, defaultNode)
@@ -576,7 +580,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._compositingBordersButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
-            if (target.PageAgent)
+            if (target.hasDomain("Page"))
                 target.PageAgent.setCompositingBordersVisible(activated);
         }
     }
@@ -595,14 +599,12 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             return;
         }
 
-        if (!window.PageAgent)
-            return;
-
         var button = this._compositingBordersButtonNavigationItem;
 
         // We need to sync with the page settings since these can be controlled
         // in a different way than just using the navigation bar button.
-        PageAgent.getCompositingBordersVisible(function(error, compositingBordersVisible) {
+        let target = WI.assumingMainTarget();
+        target.PageAgent.getCompositingBordersVisible(function(error, compositingBordersVisible) {
             button.activated = error ? false : compositingBordersVisible;
             button.enabled = error !== "unsupported";
         });
@@ -614,7 +616,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._paintFlashingButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
-            if (target.PageAgent && target.PageAgent.setShowPaintRects)
+            if (target.hasCommand("Page.setShowPaintRects"))
                 target.PageAgent.setShowPaintRects(activated);
         }
     }
@@ -635,7 +637,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         let mediaType = WI.printStylesEnabled ? "print" : "";
         for (let target of WI.targets) {
-            if (target.PageAgent)
+            if (target.hasDomain("Page"))
                 target.PageAgent.setEmulatedMedia(mediaType);
         }
 
@@ -710,7 +712,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showRulersButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
-            if (target.PageAgent && target.PageAgent.setShowRulers)
+            if (target.hasCommand("Page.setShowRulers"))
                 target.PageAgent.setShowRulers(activated);
         }
     }
@@ -730,7 +732,8 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         var searchIdentifier = this._searchIdentifier;
 
-        DOMAgent.getSearchResults(this._searchIdentifier, 0, this._numberOfSearchResults, function(error, nodeIdentifiers) {
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getSearchResults(this._searchIdentifier, 0, this._numberOfSearchResults, function(error, nodeIdentifiers) {
             if (error)
                 return;
 

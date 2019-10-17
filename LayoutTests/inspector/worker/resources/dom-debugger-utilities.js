@@ -10,7 +10,7 @@ TestPage.registerInitializer(() => {
     InspectorTest.Worker.DOMDebugger.createWorkerTarget = function(callback) {
         let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
             let {target} = event.data;
-            if (target.type !== WI.Target.Type.Worker)
+            if (target.type !== WI.TargetType.Worker)
                 return;
 
             WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);

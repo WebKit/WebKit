@@ -30,25 +30,27 @@ WI.AppController = class AppController extends WI.AppControllerBase
         super();
 
         this._hasExtraDomains = false;
-        this._debuggableType = AppController.debuggableTypeFromHost();
-    }
 
-    // Static
-
-    static debuggableTypeFromHost()
-    {
-        let type = InspectorFrontendHost.debuggableType();
-        switch (type) {
+        switch (InspectorFrontendHost.debuggableType()) {
         case "javascript":
-            return WI.DebuggableType.JavaScript;
+            this._debuggableType = WI.DebuggableType.JavaScript;
+            break;
+
+        case "page":
+            this._debuggableType = WI.DebuggableType.Page;
+            break;
+
         case "service-worker":
-            return WI.DebuggableType.ServiceWorker;
-        case "web":
-            return WI.DebuggableType.Web;
-        default:
-            console.assert(false, "Unexpected debuggable type", type);
-            return WI.DebuggableType.JavaScript;
+            this._debuggableType = WI.DebuggableType.ServiceWorker;
+            break;
+
+        case "web-page":
+            this._debuggableType = WI.DebuggableType.WebPage;
+            break;
         }
+        console.assert(this._debuggableType);
+        if (!this._debuggableType)
+            this._debuggableType = WI.DebuggableType.JavaScript;
     }
 
     // Properties.
@@ -66,7 +68,7 @@ WI.AppController = class AppController extends WI.AppControllerBase
         this._hasExtraDomains = true;
 
         console.assert(WI.mainTarget instanceof WI.DirectBackendTarget);
-        console.assert(WI.mainTarget.type === WI.Target.Type.JSContext);
+        console.assert(WI.mainTarget.type === WI.TargetType.JavaScript);
         console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript);
         console.assert(WI.targets.length === 1);
 

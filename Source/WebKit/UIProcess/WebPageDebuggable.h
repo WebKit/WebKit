@@ -41,7 +41,7 @@ public:
     WebPageDebuggable(WebPageProxy&);
     ~WebPageDebuggable() = default;
 
-    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Web; }
+    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::WebPage; }
 
     String name() const final;
     String url() const final;
@@ -62,6 +62,6 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebKit::WebPageDebuggable, Web);
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebKit::WebPageDebuggable, WebPage);
 
 #endif // ENABLE(REMOTE_INSPECTOR)

@@ -127,7 +127,8 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 
         this._disabled = disabled;
 
-        CanvasAgent.setShaderProgramDisabled(this._identifier, disabled);
+        let target = WI.assumingMainTarget();
+        target.CanvasAgent.setShaderProgramDisabled(this._identifier, disabled);
 
         this.dispatchEventToListeners(ShaderProgram.Event.DisabledChanged);
     }
@@ -137,8 +138,10 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         console.assert(Object.values(ShaderProgram.ShaderType).includes(shaderType));
         console.assert(ShaderProgram.programTypeSupportsShaderType(this._programType, shaderType));
 
+        let target = WI.assumingMainTarget();
+
         // COMPATIBILITY (iOS 13): `content` was renamed to `source`.
-        CanvasAgent.requestShaderSource(this._identifier, shaderType, (error, source) => {
+        target.CanvasAgent.requestShaderSource(this._identifier, shaderType, (error, source) => {
             if (error) {
                 WI.reportInternalError(error);
                 callback(null);
@@ -154,7 +157,8 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         console.assert(Object.values(ShaderProgram.ShaderType).includes(shaderType));
         console.assert(ShaderProgram.programTypeSupportsShaderType(this._programType, shaderType));
 
-        CanvasAgent.updateShader(this._identifier, shaderType, source);
+        let target = WI.assumingMainTarget();
+        target.CanvasAgent.updateShader(this._identifier, shaderType, source);
     }
 
     showHighlight()
@@ -162,7 +166,8 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         console.assert(this._programType === ShaderProgram.ProgramType.Render);
         console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
 
-        CanvasAgent.setShaderProgramHighlighted(this._identifier, true);
+        let target = WI.assumingMainTarget();
+        target.CanvasAgent.setShaderProgramHighlighted(this._identifier, true);
     }
 
     hideHighlight()
@@ -170,7 +175,8 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         console.assert(this._programType === ShaderProgram.ProgramType.Render);
         console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
 
-        CanvasAgent.setShaderProgramHighlighted(this._identifier, false);
+        let target = WI.assumingMainTarget();
+        target.CanvasAgent.setShaderProgramHighlighted(this._identifier, false);
     }
 };
 

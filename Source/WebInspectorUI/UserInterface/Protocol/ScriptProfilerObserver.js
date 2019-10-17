@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ScriptProfilerObserver = class ScriptProfilerObserver
+WI.ScriptProfilerObserver = class ScriptProfilerObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "ScriptProfiler" domain.
 

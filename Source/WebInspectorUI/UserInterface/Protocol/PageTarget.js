@@ -27,7 +27,7 @@ WI.PageTarget = class PageTarget extends WI.Target
 {
     constructor(targetId, name, connection)
     {
-        super(targetId, name, WI.Target.Type.Page, connection);
+        super(targetId, name, WI.TargetType.Page, connection);
 
         const isPageContext = true;
         this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, isPageContext, null);

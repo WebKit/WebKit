@@ -80,10 +80,11 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
     evaluateInPage(expression, callback, options = {})
     {
         let remoteObjectOnly = !!options.remoteObjectOnly;
+        let target = WI.assumingMainTarget();
 
         // If we load this page outside of the inspector, or hit an early error when loading
         // the test frontend, then defer evaluating the commands (indefinitely in the former case).
-        if (this._originalConsole && !window.RuntimeAgent) {
+        if (this._originalConsole && (!target || !target.hasDomain("Runtime"))) {
             this._originalConsole["error"]("Tried to evaluate in test page, but connection not yet established:", expression);
             return;
         }
@@ -94,7 +95,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
             return (!remoteObjectOnly && remoteObject.hasValue()) ? remoteObject.value : remoteObject;
         }
 
-        let response = RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false});
+        let response = target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false});
         if (callback && typeof callback === "function") {
             response = response.then(({result, wasThrown}) => callback(null, translateResult(result), wasThrown));
             response = response.catch((error) => callback(error, null, false));
@@ -151,7 +152,8 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         ignoreCache = !!ignoreCache;
         revalidateAllResources = !!revalidateAllResources;
 
-        return PageAgent.reload.invoke({ignoreCache, revalidateAllResources})
+        let target = WI.assumingMainTarget();
+        return target.PageAgent.reload.invoke({ignoreCache, revalidateAllResources})
             .then(() => {
                 this._shouldResendResults = true;
                 this._testPageReloadedOnce = true;

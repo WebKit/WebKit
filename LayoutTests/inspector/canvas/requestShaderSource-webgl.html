@@ -36,7 +36,7 @@ function test() {
                 return;
             }
 
-            CanvasAgent.requestShaderSource(shaderProgram.identifier, CanvasAgent.ShaderType.Vertex)
+            CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex)
             .then(({source}) => InspectorTest.log(source))
             .then(resolve, reject);
         }
@@ -52,7 +52,7 @@ function test() {
                 return;
             }
 
-            CanvasAgent.requestShaderSource(shaderProgram.identifier, CanvasAgent.ShaderType.Fragment)
+            CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment)
             .then(({source}) => InspectorTest.log(source))
             .then(resolve, reject);
         }

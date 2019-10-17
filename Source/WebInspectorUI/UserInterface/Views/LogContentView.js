@@ -154,7 +154,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (this._hasNonDefaultLogChannelMessage && this._messageSourceBar)
             navigationItems.push(this._messageSourceBar, new WI.DividerNavigationItem);
 
-        if (window.HeapAgent && HeapAgent.gc)
+        if (InspectorBackend.hasCommand("Heap.gc"))
             navigationItems.push(this._garbageCollectNavigationItem);
 
         navigationItems.push(this._clearLogNavigationItem);
@@ -856,9 +856,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _garbageCollect()
     {
-        // COMPATIBILITY (iOS 10.3): Worker targets did not support HeapAgent.
+        // COMPATIBILITY (iOS 10.3): Worker targets did not support Heap.gc.
         for (let target of WI.targets) {
-            if (target.HeapAgent)
+            if (target.hasDomain("Heap"))
                 target.HeapAgent.gc();
         }
     }

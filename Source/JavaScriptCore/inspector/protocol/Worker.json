@@ -1,6 +1,7 @@
 {
     "domain": "Worker",
-    "availability": ["web"],
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "commands": [
         {
             "name": "enable",

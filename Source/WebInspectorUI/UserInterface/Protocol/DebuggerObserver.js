@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DebuggerObserver = class DebuggerObserver
+WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
 {
-    constructor()
+    constructor(target)
     {
-        this._legacyScriptParsed = InspectorBackend.domains.Debugger.hasEventParameter("scriptParsed", "hasSourceURL");
+        super(target);
+
+        this._legacyScriptParsed = this._target.hasEvent("Debugger.scriptParsed", "hasSourceURL");
     }
 
     // Events defined by the "Debugger" domain.
@@ -46,32 +48,32 @@ WI.DebuggerObserver = class DebuggerObserver
             let legacySourceMapURL = arguments[7];
             let hasSourceURL = arguments[8];
             let legacySourceURL = hasSourceURL ? url : undefined;
-            WI.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, legacySourceURL, legacySourceMapURL);
+            WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, legacySourceURL, legacySourceMapURL);
             return;
         }
 
-        WI.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL);
+        WI.debuggerManager.scriptDidParse(this._target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL);
     }
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)
     {
         // NOTE: A Console.messageAdded event will handle the error message.
-        WI.debuggerManager.scriptDidFail(this.target, url, scriptSource);
+        WI.debuggerManager.scriptDidFail(this._target, url, scriptSource);
     }
 
     breakpointResolved(breakpointId, location)
     {
-        WI.debuggerManager.breakpointResolved(this.target, breakpointId, location);
+        WI.debuggerManager.breakpointResolved(this._target, breakpointId, location);
     }
 
     paused(callFrames, reason, data, asyncStackTrace)
     {
-        WI.debuggerManager.debuggerDidPause(this.target, callFrames, reason, data, asyncStackTrace);
+        WI.debuggerManager.debuggerDidPause(this._target, callFrames, reason, data, asyncStackTrace);
     }
 
     resumed()
     {
-        WI.debuggerManager.debuggerDidResume(this.target);
+        WI.debuggerManager.debuggerDidResume(this._target);
     }
 
     playBreakpointActionSound(breakpointActionIdentifier)
@@ -81,6 +83,6 @@ WI.DebuggerObserver = class DebuggerObserver
 
     didSampleProbe(sample)
     {
-        WI.debuggerManager.didSampleProbe(this.target, sample);
+        WI.debuggerManager.didSampleProbe(this._target, sample);
     }
 };

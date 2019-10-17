@@ -254,17 +254,17 @@ WI.Resource = class Resource extends WI.SourceCode
             return WI.Resource.ResponseSource.Unknown;
 
         switch (source) {
-        case NetworkAgent.ResponseSource.Unknown:
+        case InspectorBackend.Enum.Network.ResponseSource.Unknown:
             return WI.Resource.ResponseSource.Unknown;
-        case NetworkAgent.ResponseSource.Network:
+        case InspectorBackend.Enum.Network.ResponseSource.Network:
             return WI.Resource.ResponseSource.Network;
-        case NetworkAgent.ResponseSource.MemoryCache:
+        case InspectorBackend.Enum.Network.ResponseSource.MemoryCache:
             return WI.Resource.ResponseSource.MemoryCache;
-        case NetworkAgent.ResponseSource.DiskCache:
+        case InspectorBackend.Enum.Network.ResponseSource.DiskCache:
             return WI.Resource.ResponseSource.DiskCache;
-        case NetworkAgent.ResponseSource.ServiceWorker:
+        case InspectorBackend.Enum.Network.ResponseSource.ServiceWorker:
             return WI.Resource.ResponseSource.ServiceWorker;
-        case NetworkAgent.ResponseSource.InspectorOverride:
+        case InspectorBackend.Enum.Network.ResponseSource.InspectorOverride:
             return WI.Resource.ResponseSource.InspectorOverride;
         default:
             console.error("Unknown response source type", source);
@@ -275,11 +275,11 @@ WI.Resource = class Resource extends WI.SourceCode
     static networkPriorityFromPayload(priority)
     {
         switch (priority) {
-        case NetworkAgent.MetricsPriority.Low:
+        case InspectorBackend.Enum.Network.MetricsPriority.Low:
             return WI.Resource.NetworkPriority.Low;
-        case NetworkAgent.MetricsPriority.Medium:
+        case InspectorBackend.Enum.Network.MetricsPriority.Medium:
             return WI.Resource.NetworkPriority.Medium;
-        case NetworkAgent.MetricsPriority.High:
+        case InspectorBackend.Enum.Network.MetricsPriority.High:
             return WI.Resource.NetworkPriority.High;
         default:
             console.error("Unknown metrics priority", priority);
@@ -850,11 +850,11 @@ WI.Resource = class Resource extends WI.SourceCode
         // If we have the requestIdentifier we can get the actual response for this specific resource.
         // Otherwise the content will be cached resource data, which might not exist anymore.
         if (this._requestIdentifier)
-            return NetworkAgent.getResponseBody(this._requestIdentifier);
+            return this._target.NetworkAgent.getResponseBody(this._requestIdentifier);
 
         // There is no request identifier or frame to request content from.
         if (this._parentFrame)
-            return PageAgent.getResourceContent(this._parentFrame.id, this._url);
+            return this._target.PageAgent.getResourceContent(this._parentFrame.id, this._url);
 
         return Promise.reject(new Error("Content request failed."));
     }
@@ -1168,7 +1168,7 @@ WI.Resource = class Resource extends WI.SourceCode
         let errorString = WI.UIString("Unable to show certificate for \u201C%s\u201D").format(this.url);
 
         try {
-            let {serializedCertificate} = await NetworkAgent.getSerializedCertificate(this._requestIdentifier);
+            let {serializedCertificate} = await this._target.NetworkAgent.getSerializedCertificate(this._requestIdentifier);
             if (InspectorFrontendHost.showCertificate(serializedCertificate))
                 return;
         } catch (e) {

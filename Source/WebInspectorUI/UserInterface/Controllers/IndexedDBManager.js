@@ -55,7 +55,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.IndexedDBAgent)
+        if (target.hasDomain("IndexedDB"))
             target.IndexedDBAgent.enable();
     }
 
@@ -85,7 +85,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         this._enabled = false;
 
         for (let target of WI.targets) {
-            if (target.IndexedDBAgent)
+            if (target.hasDomain("IndexedDB"))
                 target.IndexedDBAgent.disable();
         }
 
@@ -97,7 +97,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
     requestIndexedDatabaseData(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
     {
         console.assert(this._enabled);
-        console.assert(window.IndexedDBAgent);
+        console.assert(InspectorBackend.hasDomain("IndexedDB"));
         console.assert(objectStore);
         console.assert(callback);
 
@@ -130,7 +130,8 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
             pageSize: maximumEntryCount || 100
         };
 
-        IndexedDBAgent.requestData.invoke(requestArguments, processData);
+        let target = WI.assumingMainTarget();
+        target.IndexedDBAgent.requestData.invoke(requestArguments, processData);
     }
 
     clearObjectStore(objectStore)
@@ -141,7 +142,8 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         let databaseName = objectStore.parentDatabase.name;
         let objectStoreName = objectStore.name;
 
-        IndexedDBAgent.clearObjectStore(securityOrigin, databaseName, objectStoreName);
+        let target = WI.assumingMainTarget();
+        target.IndexedDBAgent.clearObjectStore(securityOrigin, databaseName, objectStoreName);
     }
 
     // Private
@@ -161,7 +163,8 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (!window.IndexedDBAgent)
+        let target = WI.assumingMainTarget();
+        if (!target.hasDomain("IndexedDB"))
             return;
 
         var securityOrigin = frame.securityOrigin;
@@ -176,7 +179,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
                 return;
 
             for (var name of names)
-                IndexedDBAgent.requestDatabase(securityOrigin, name, processDatabase.bind(this));
+                target.IndexedDBAgent.requestDatabase(securityOrigin, name, processDatabase.bind(this));
         }
 
         function processDatabase(error, databasePayload)
@@ -194,11 +197,11 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
         function processKeyPath(keyPathPayload)
         {
             switch (keyPathPayload.type) {
-            case IndexedDBAgent.KeyPathType.Null:
+            case InspectorBackend.Enum.IndexedDB.KeyPathType.Null:
                 return null;
-            case IndexedDBAgent.KeyPathType.String:
+            case InspectorBackend.Enum.IndexedDB.KeyPathType.String:
                 return keyPathPayload.string;
-            case IndexedDBAgent.KeyPathType.Array:
+            case InspectorBackend.Enum.IndexedDB.KeyPathType.Array:
                 return keyPathPayload.array;
             default:
                 console.error("Unknown KeyPath type:", keyPathPayload.type);
@@ -219,7 +222,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
             return new WI.IndexedDatabaseObjectStoreIndex(objectStoreIndexPayload.name, keyPath, objectStoreIndexPayload.unique, objectStoreIndexPayload.multiEntry);
         }
 
-        IndexedDBAgent.requestDatabaseNames(securityOrigin, processDatabaseNames.bind(this));
+        target.IndexedDBAgent.requestDatabaseNames(securityOrigin, processDatabaseNames.bind(this));
     }
 
     _mainResourceDidChange(event)

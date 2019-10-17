@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSObserver = class CSSObserver
+WI.CSSObserver = class CSSObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "CSS" domain.
 

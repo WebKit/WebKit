@@ -62,7 +62,7 @@ function test()
             WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 workerTarget = event.data.target;
                 InspectorTest.assert(workerTarget instanceof WI.Target);
-                InspectorTest.expectEqual(workerTarget.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
+                InspectorTest.expectEqual(workerTarget.type, WI.TargetType.Worker, "Added Target should have Worker type.");
             });
 
             let seen = 0;

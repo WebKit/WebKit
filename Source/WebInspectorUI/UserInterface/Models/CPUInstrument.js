@@ -37,7 +37,7 @@ WI.CPUInstrument = class CPUInstrument extends WI.Instrument
     static supported()
     {
         // COMPATIBILITY (iOS 12): CPUProfiler domain did not exist.
-        return InspectorBackend.domains.CPUProfiler;
+        return InspectorBackend.hasDomain("CPUProfiler");
     }
 
     // Protected
@@ -49,13 +49,17 @@ WI.CPUInstrument = class CPUInstrument extends WI.Instrument
 
     startInstrumentation(initiatedByBackend)
     {
-        if (!initiatedByBackend)
-            CPUProfilerAgent.startTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.CPUProfilerAgent.startTracking();
+        }
     }
 
     stopInstrumentation(initiatedByBackend)
     {
-        if (!initiatedByBackend)
-            CPUProfilerAgent.stopTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.CPUProfilerAgent.stopTracking();
+        }
     }
 };

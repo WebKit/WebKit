@@ -72,7 +72,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     static sourceCodeTimelinesSupported()
     {
         // FIXME: Support Network Timeline in ServiceWorker.
-        return WI.sharedApp.debuggableType === WI.DebuggableType.Web;
+        return WI.sharedApp.isWebDebuggable();
     }
 
     // Import / Export

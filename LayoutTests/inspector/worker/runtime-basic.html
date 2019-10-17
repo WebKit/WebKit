@@ -9,7 +9,7 @@ let worker = new Worker("resources/worker-1.js");
 function test()
 {
     let mainTarget = WI.mainTarget;
-    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
     if (!workerTarget) {
         InspectorTest.fail("Missing Worker Target");
         InspectorTest.completeTest();

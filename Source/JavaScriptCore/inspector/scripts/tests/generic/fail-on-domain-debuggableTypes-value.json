@@ -1,6 +1,6 @@
 {
     "domain": "WebOnly",
-    "availability": ["webb"],
+    "debuggableTypes": ["webb"],
     "commands": [
         {
             "name": "enable"

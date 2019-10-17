@@ -128,7 +128,7 @@ WI.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSidebarPanel
             this._indexKeyPathRow.value = this._keyPathString(this._index.keyPath);
             this._indexUniqueRow.value = this._index.unique ? WI.UIString("Yes") : WI.UIString("No");
 
-            if (this._index.keyPath.type !== IndexedDBAgent.KeyPathType.Array)
+            if (this._index.keyPath.type !== InspectorBackend.Enum.IndexedDB.KeyPathType.Array)
                 this._indexMultiEntryRow.value = null;
             else
                 this._indexMultiEntryRow.value = this._index.multiEntry ? WI.UIString("Yes") : WI.UIString("No");

@@ -55,7 +55,7 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.DatabaseAgent)
+        if (target.hasDomain("Database"))
             target.DatabaseAgent.enable();
     }
 
@@ -84,7 +84,7 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
         this._enabled = false;
 
         for (let target of WI.targets) {
-            if (target.DatabaseAgent)
+            if (target.hasDomain("Database"))
                 target.DatabaseAgent.disable();
         }
 

@@ -53,7 +53,7 @@ WI.HeapManager = class HeapManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.HeapAgent)
+        if (target.hasDomain("Heap"))
             target.HeapAgent.enable();
     }
 
@@ -76,7 +76,7 @@ WI.HeapManager = class HeapManager extends WI.Object
             return;
 
         for (let target of WI.targets) {
-            if (target.HeapAgent)
+            if (target.hasDomain("Heap"))
                 target.HeapAgent.disable();
         }
 
@@ -86,8 +86,9 @@ WI.HeapManager = class HeapManager extends WI.Object
     snapshot(callback)
     {
         console.assert(this._enabled);
-        console.assert(window.HeapAgent);
-        HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+
+        let target = WI.assumingMainTarget();
+        target.HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
             if (error)
                 WI.reportInternalError(error);
             callback(error, timestamp, snapshotStringData);
@@ -97,9 +98,10 @@ WI.HeapManager = class HeapManager extends WI.Object
     getPreview(node, callback)
     {
         console.assert(this._enabled);
-        console.assert(window.HeapAgent);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
-        HeapAgent.getPreview(node.id, (error, string, functionDetails, preview) => {
+
+        let target = WI.assumingMainTarget();
+        target.HeapAgent.getPreview(node.id, (error, string, functionDetails, preview) => {
             if (error)
                 WI.reportInternalError(error);
             callback(error, string, functionDetails, preview);
@@ -109,9 +111,10 @@ WI.HeapManager = class HeapManager extends WI.Object
     getRemoteObject(node, objectGroup, callback)
     {
         console.assert(this._enabled);
-        console.assert(window.HeapAgent);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
-        HeapAgent.getRemoteObject(node.id, objectGroup, (error, result) => {
+
+        let target = WI.assumingMainTarget();
+        target.HeapAgent.getRemoteObject(node.id, objectGroup, (error, result) => {
             if (error)
                 WI.reportInternalError(error);
             callback(error, result);

@@ -33,7 +33,6 @@ namespace Inspector {
 // FIXME: Add DedicatedWorker Inspector Targets
 // FIXME: Add ServiceWorker Inspector Targets
 enum class InspectorTargetType : uint8_t {
-    JavaScriptContext,
     Page,
     DedicatedWorker,
     ServiceWorker,
@@ -60,7 +59,6 @@ namespace WTF {
 template<> struct EnumTraits<Inspector::InspectorTargetType> {
     using values = EnumValues<
         Inspector::InspectorTargetType,
-        Inspector::InspectorTargetType::JavaScriptContext,
         Inspector::InspectorTargetType::Page,
         Inspector::InspectorTargetType::DedicatedWorker,
         Inspector::InspectorTargetType::ServiceWorker

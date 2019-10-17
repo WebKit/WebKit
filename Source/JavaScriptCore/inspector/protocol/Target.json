@@ -1,6 +1,7 @@
 {
     "domain": "Target",
-    "availability": ["web"],
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
     "types": [
         {
             "id": "TargetInfo",
@@ -8,15 +9,11 @@
             "description": "Description of a target.",
             "properties": [
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
-                { "name": "type", "type": "string", "enum": ["javascript", "page", "worker", "serviceworker"] }
+                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] }
             ]
         }
     ],
     "commands": [
-        {
-            "name": "exists",
-            "description": "FIXME: Remove this when the local inspector has switched over to the modern path."
-        },
         {
             "name": "sendMessageToTarget",
             "description": "Send an Inspector Protocol message to be dispatched to a Target's agents.",

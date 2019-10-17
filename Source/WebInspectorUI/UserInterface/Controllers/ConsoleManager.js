@@ -46,7 +46,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     static supportsLogChannels()
     {
-        return !!ConsoleAgent.getLoggingChannels;
+        return InspectorBackend.hasCommand("Console.getLoggingChannels");
     }
 
     static issueMatchSourceCode(issue, sourceCode)
@@ -147,7 +147,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     initializeLogChannels(target)
     {
-        console.assert(target.ConsoleAgent);
+        console.assert(target.hasDomain("Console"));
 
         if (!WI.ConsoleManager.supportsLogChannels())
             return;

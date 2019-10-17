@@ -34,8 +34,10 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
 
     startInstrumentation(initiatedByBackend)
     {
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfilerAgent. They use TimelineAgent.
-        if (!window.ScriptProfilerAgent) {
+        let target = WI.assumingMainTarget();
+
+        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfiler. They use Timeline.
+        if (!target.hasDomain("ScriptProfiler")) {
             super.startInstrumentation();
             return;
         }
@@ -44,18 +46,20 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
         const includeSamples = true;
 
         if (!initiatedByBackend)
-            ScriptProfilerAgent.startTracking(includeSamples);
+            target.ScriptProfilerAgent.startTracking(includeSamples);
     }
 
     stopInstrumentation(initiatedByBackend)
     {
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfilerAgent. They use TimelineAgent.
-        if (!window.ScriptProfilerAgent) {
+        let target = WI.assumingMainTarget();
+
+        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfiler. They use Timeline.
+        if (!target.hasDomain("ScriptProfiler")) {
             super.stopInstrumentation();
             return;
         }
 
         if (!initiatedByBackend)
-            ScriptProfilerAgent.stopTracking();
+            target.ScriptProfilerAgent.stopTracking();
     }
 };

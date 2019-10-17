@@ -45,13 +45,13 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
         this._workersData = null;
 
         for (let thread of this._threads) {
-            if (thread.type === InspectorBackend.domains.CPUProfiler.ThreadInfoType.Main) {
+            if (thread.type === InspectorBackend.Enum.CPUProfiler.ThreadInfoType.Main) {
                 console.assert(!this._mainThreadUsage, "There should only be one main thread.");
                 this._mainThreadUsage += thread.usage;
                 continue;
             }
 
-            if (thread.type === InspectorBackend.domains.CPUProfiler.ThreadInfoType.WebKit) {
+            if (thread.type === InspectorBackend.Enum.CPUProfiler.ThreadInfoType.WebKit) {
                 if (thread.targetId) {
                     if (!this._workersData)
                         this._workersData = [];

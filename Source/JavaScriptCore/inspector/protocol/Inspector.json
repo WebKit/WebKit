@@ -1,6 +1,7 @@
 {
     "domain": "Inspector",
-    "availability": ["javascript", "web"],
+    "debuggableTypes": ["javascript", "page", "web-page"],
+    "targetTypes": ["javascript", "page"],
     "commands": [
         {
             "name": "enable",

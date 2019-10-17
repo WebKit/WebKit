@@ -59,7 +59,9 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._frame = null;
 
         // COMPATIBILITY (iOS 12.2): DOM.Node.frameId was changed to represent the owner frame, not the content frame.
-        if (InspectorBackend.domains.Timeline && !InspectorBackend.domains.Timeline.hasEvent("programmaticCaptureStarted")) {
+        // Since support can't be tested directly, check for Audit (iOS 13.0+).
+        // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+        if (InspectorBackend.hasDomain("Audit")) {
             if (payload.frameId)
                 this._frame = WI.networkManager.frameForIdentifier(payload.frameId);
         }
@@ -376,7 +378,8 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     setNodeName(name, callback)
     {
-        DOMAgent.setNodeName(this.id, name, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.setNodeName(this.id, name, this._makeUndoableCallback(callback));
     }
 
     localName()
@@ -431,7 +434,8 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     setNodeValue(value, callback)
     {
-        DOMAgent.setNodeValue(this.id, value, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.setNodeValue(this.id, value, this._makeUndoableCallback(callback));
     }
 
     getAttribute(name)
@@ -442,12 +446,14 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     setAttribute(name, text, callback)
     {
-        DOMAgent.setAttributesAsText(this.id, text, name, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.setAttributesAsText(this.id, text, name, this._makeUndoableCallback(callback));
     }
 
     setAttributeValue(name, value, callback)
     {
-        DOMAgent.setAttributeValue(this.id, name, value, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.setAttributeValue(this.id, name, value, this._makeUndoableCallback(callback));
     }
 
     attributes()
@@ -471,7 +477,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
             this._makeUndoableCallback(callback)(error);
         }
-        DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
+
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
     }
 
     toggleClass(className, flag)
@@ -522,7 +530,8 @@ WI.DOMNode = class DOMNode extends WI.Object
                 callback(this.children);
         }
 
-        DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
     }
 
     getSubtree(depth, callback)
@@ -533,17 +542,20 @@ WI.DOMNode = class DOMNode extends WI.Object
                 callback(error ? null : this.children);
         }
 
-        DOMAgent.requestChildNodes(this.id, depth, mycallback.bind(this));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.requestChildNodes(this.id, depth, mycallback.bind(this));
     }
 
     getOuterHTML(callback)
     {
-        DOMAgent.getOuterHTML(this.id, callback);
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getOuterHTML(this.id, callback);
     }
 
     setOuterHTML(html, callback)
     {
-        DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.setOuterHTML(this.id, html, this._makeUndoableCallback(callback));
     }
 
     insertAdjacentHTML(position, html)
@@ -551,8 +563,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this.nodeType() !== Node.ELEMENT_NODE)
             return;
 
+        let target = WI.assumingMainTarget();
+
         // COMPATIBILITY (iOS 11.0): DOM.insertAdjacentHTML did not exist.
-        if (!DOMAgent.insertAdjacentHTML) {
+        if (!target.hasCommand("DOM.insertAdjacentHTML")) {
             WI.RemoteObject.resolveNode(this).then((object) => {
                 function inspectedPage_node_insertAdjacentHTML(position, html) {
                     this.insertAdjacentHTML(position, html);
@@ -564,12 +578,13 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        DOMAgent.insertAdjacentHTML(this.id, position, html, this._makeUndoableCallback());
+        target.DOMAgent.insertAdjacentHTML(this.id, position, html, this._makeUndoableCallback());
     }
 
     removeNode(callback)
     {
-        DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.removeNode(this.id, this._makeUndoableCallback(callback));
     }
 
     copyNode()
@@ -579,13 +594,17 @@ WI.DOMNode = class DOMNode extends WI.Object
             if (!error)
                 InspectorFrontendHost.copyText(text);
         }
-        DOMAgent.getOuterHTML(this.id, copy);
+
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getOuterHTML(this.id, copy);
     }
 
     getEventListeners(callback)
     {
         console.assert(WI.domManager.inspectedNode === this);
-        DOMAgent.getEventListenersForNode(this.id, callback);
+
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getEventListenersForNode(this.id, callback);
     }
 
     accessibilityProperties(callback)
@@ -631,7 +650,9 @@ WI.DOMNode = class DOMNode extends WI.Object
                 });
             }
         }
-        DOMAgent.getAccessibilityPropertiesForNode(this.id, accessibilityPropertiesCallback.bind(this));
+
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.getAccessibilityPropertiesForNode(this.id, accessibilityPropertiesCallback.bind(this));
     }
 
     path()
@@ -903,7 +924,8 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     moveTo(targetNode, anchorNode, callback)
     {
-        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, this._makeUndoableCallback(callback));
+        let target = WI.assumingMainTarget();
+        target.DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, this._makeUndoableCallback(callback));
     }
 
     isXMLNode()
@@ -935,18 +957,20 @@ WI.DOMNode = class DOMNode extends WI.Object
                 this.dispatchEventToListeners(WI.DOMNode.Event.EnabledPseudoClassesChanged);
         }
 
-        CSSAgent.forcePseudoState(this.id, pseudoClasses, changed.bind(this));
+        let target = WI.assumingMainTarget();
+        target.CSSAgent.forcePseudoState(this.id, pseudoClasses, changed.bind(this));
     }
 
     _makeUndoableCallback(callback)
     {
-        return function(error)
-        {
-            if (!error)
-                DOMAgent.markUndoableState();
+        return (...args) => {
+            if (!args[0]) { // error
+                let target = WI.assumingMainTarget();
+                target.DOMAgent.markUndoableState();
+            }
 
             if (callback)
-                callback.apply(null, arguments);
+                callback.apply(null, args);
         };
     }
 };

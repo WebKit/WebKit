@@ -28,7 +28,7 @@ function test()
             InspectorTest.log("Expected Error: " + defaultResult.data.error);
 
             InspectorTest.log("Overriding MockCaptureDevicesEnabled to true...");
-            await PageAgent.overrideSetting(PageAgent.Setting.MockCaptureDevicesEnabled, true);
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, true);
 
             let [overriddenResult] = await Promise.all([
                 InspectorTest.awaitEvent("GetUserMedia"),
@@ -37,7 +37,7 @@ function test()
             InspectorTest.expectTrue(overriddenResult.data.success, "getUserMedia should not fail when no devices are available");
 
             InspectorTest.log("Removing MockCaptureDevicesEnabled override...");
-            await PageAgent.overrideSetting(PageAgent.Setting.MockCaptureDevicesEnabled);
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled);
 
             let [originalResult] = await Promise.all([
                 InspectorTest.awaitEvent("GetUserMedia"),

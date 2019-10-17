@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ApplicationCacheObserver = class ApplicationCacheObserver
+WI.ApplicationCacheObserver = class ApplicationCacheObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "ApplicationCache" domain.
 

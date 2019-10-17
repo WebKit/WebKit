@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.InspectorObserver = class InspectorObserver
+WI.InspectorObserver = class InspectorObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Inspector" domain.
 

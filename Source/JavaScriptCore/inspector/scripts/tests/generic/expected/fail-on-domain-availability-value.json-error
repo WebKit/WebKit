@@ -1,1 +1,0 @@
-ERROR: Malformed domain specification: availability is an unsupported string. Was: "[u'webb']", Allowed values: web, service-worker, javascript, worker

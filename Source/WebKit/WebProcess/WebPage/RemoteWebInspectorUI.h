@@ -62,8 +62,8 @@ public:
 
     bool isRemote() const final { return true; }
     String localizedStringsURL() override;
-    String backendCommandsURL() override { return m_backendCommandsURL; }
-    String debuggableType() override { return m_debuggableType; }
+    String backendCommandsURL() const final { return m_backendCommandsURL; }
+    String debuggableType() const final { return m_debuggableType; }
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 

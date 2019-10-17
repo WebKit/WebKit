@@ -1,7 +1,8 @@
 {"domains":[
 {
     "domain": "ApplicationCache",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "ApplicationCacheResource",
@@ -90,7 +91,8 @@
 {
     "domain": "CSS",
     "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "StyleSheetId",
@@ -475,7 +477,8 @@
 ,
 {
     "domain": "Canvas",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
     "types": [
         {
@@ -699,6 +702,8 @@
 {
     "domain": "Console",
     "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> command in order to start receiving the console messages. Browser collects messages issued while console domain is not enabled as well and reports them using <code>messageAdded</code> notification upon enabling.",
+    "debuggableTypes": ["javascript", "page", "service-worker"],
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
     "types": [
         {
             "id": "ChannelSource",
@@ -826,7 +831,8 @@
 {
     "domain": "DOM",
     "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.<p>Note that <code>iframe</code> owner elements will return corresponding document elements as their child nodes.</p>",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "NodeId",
@@ -1447,7 +1453,8 @@
 {
     "domain": "DOMDebugger",
     "description": "DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript execution will stop on these operations as if there was a regular breakpoint set.",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "DOMBreakpointType",
@@ -1522,7 +1529,8 @@
 {
     "domain": "DOMStorage",
     "description": "Query and modify DOM storage.",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "StorageId",
@@ -1610,7 +1618,8 @@
 ,
 {
     "domain": "Database",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "DatabaseId",
@@ -1683,6 +1692,8 @@
 {
     "domain": "Debugger",
     "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
+    "debuggableTypes": ["javascript", "page", "service-worker"],
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
     "types": [
         {
             "id": "BreakpointId",
@@ -2060,6 +2071,8 @@
 {
     "domain": "Heap",
     "description": "Heap domain exposes JavaScript heap attributes and capabilities.",
+    "debuggableTypes": ["javascript", "page", "service-worker"],
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
     "types": [
         {
             "id": "GarbageCollection",
@@ -2160,7 +2173,8 @@
 {
     "domain": "IndexedDB",
     "featureGuard": "ENABLE(INDEXED_DATABASE)",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "DatabaseWithObjectStores",
@@ -2303,7 +2317,8 @@
 ,
 {
     "domain": "Inspector",
-    "availability": ["javascript", "web"],
+    "debuggableTypes": ["javascript", "page"],
+    "targetTypes": ["javascript", "page"],
     "types": [],
     "commands": [
         {
@@ -2345,7 +2360,8 @@
 ,
 {
     "domain": "LayerTree",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "LayerId",
@@ -2463,7 +2479,8 @@
     "domain": "Memory",
     "description": "Memory domain exposes page memory tracking.",
     "featureGuard": "ENABLE(RESOURCE_USAGE)",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "Event",
@@ -2533,7 +2550,8 @@
 {
     "domain": "Network",
     "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
-    "availability": ["web", "service-worker"],
+    "debuggableTypes": ["page", "service-worker"],
+    "targetTypes": ["page", "service-worker"],
     "types": [
         {
             "id": "LoaderId",
@@ -2985,7 +3003,8 @@
 {
     "domain": "Page",
     "description": "Actions and events related to the inspected page belong to the page domain.",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "ResourceType",
@@ -3329,6 +3348,8 @@
 {
     "domain": "Runtime",
     "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
+    "debuggableTypes": ["javascript", "page", "service-worker"],
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
     "types": [
         {
             "id": "RemoteObjectId",
@@ -3701,7 +3722,8 @@
 {
     "domain": "ScriptProfiler",
     "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
-    "availability": ["javascript", "web"],
+    "debuggableTypes": ["javascript", "page"],
+    "targetTypes": ["javascript", "page"],
     "types": [
         {
             "id": "EventType",
@@ -3802,7 +3824,8 @@
 {
     "domain": "ServiceWorker",
     "description": "Actions and events related to the inspected service worker.",
-    "availability": ["service-worker"],
+    "debuggableTypes": ["service-worker"],
+    "targetTypes": ["service-worker"],
     "types": [
         {
             "id": "Configuration",
@@ -3830,7 +3853,8 @@
 {
     "domain": "Timeline",
     "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "EventType",
@@ -3948,7 +3972,8 @@
 ,
 {
     "domain": "Worker",
-    "availability": ["web"],
+    "debuggableTypes": ["page"],
+    "targetTypes": ["page"],
     "types": [],
     "commands": [
         {

@@ -80,12 +80,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     static supportsShowCertificate()
     {
-        return InspectorFrontendHost.supportsShowCertificate && window.NetworkAgent && NetworkAgent.getSerializedCertificate;
+        return InspectorFrontendHost.supportsShowCertificate
+            && InspectorBackend.hasCommand("Network.getSerializedCertificate");
     }
 
     static supportsLocalResourceOverrides()
     {
-        return window.NetworkAgent && InspectorBackend.domains.Network && InspectorBackend.domains.Network.setInterceptionEnabled;
+        return InspectorBackend.hasCommand("Network.setInterceptionEnabled");
     }
 
     static synthesizeImportError(message)
@@ -107,34 +108,34 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.PageAgent) {
+        if (target.hasDomain("Page")) {
             target.PageAgent.enable();
             target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
         }
 
-        if (target.ServiceWorkerAgent)
+        if (target.hasDomain("ServiceWorker"))
             target.ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
 
-        if (target.NetworkAgent) {
+        if (target.hasDomain("Network")) {
             target.NetworkAgent.enable();
 
             // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
-            if (target.NetworkAgent.setResourceCachingDisabled)
+            if (target.hasCommand("Network.setResourceCachingDisabled"))
                 target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 
             // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
-            if (target.NetworkAgent.setInterceptionEnabled) {
+            if (target.hasCommand("Network.setInterceptionEnabled")) {
                 if (this._interceptionEnabled)
                     target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
 
                 for (let [url, localResourceOverride] of this._localResourceOverrideMap) {
                     if (!localResourceOverride.disabled)
-                        target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                        target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.Enum.Network.NetworkStage.Response);
                 }
             }
         }
 
-        if (target.type === WI.Target.Type.Worker)
+        if (target.type === WI.TargetType.Worker)
             this.adoptOrphanedResourcesForTarget(target);
     }
 
@@ -175,7 +176,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         for (let target of WI.targets) {
             // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
-            if (target.NetworkAgent && target.NetworkAgent.setInterceptionEnabled)
+            if (target.hasCommand("Network.setInterceptionEnabled"))
                 target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
         }
     }
@@ -245,8 +246,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!localResourceOverride.disabled) {
             // COMPATIBILITY (iOS 13.0): Network.addInterception did not exist.
             for (let target of WI.targets) {
-                if (target.NetworkAgent && target.NetworkAgent.addInterception)
-                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                if (target.hasCommand("Network.addInterception"))
+                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.Enum.Network.NetworkStage.Response);
             }
         }
 
@@ -271,8 +272,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!localResourceOverride.disabled) {
             // COMPATIBILITY (iOS 13.0): Network.removeInterception did not exist.
             for (let target of WI.targets) {
-                if (target.NetworkAgent && target.NetworkAgent.removeInterception)
-                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                if (target.hasCommand("Network.removeInterception"))
+                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.Enum.Network.NetworkStage.Response);
             }
         }
 
@@ -553,7 +554,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
 
         // COMPATIBILITY(iOS 10.3): `walltime` did not exist in 10.3 and earlier.
-        if (!InspectorBackend.domains.Network.hasEventParameter("webSocketWillSendHandshakeRequest", "walltime")) {
+        if (!InspectorBackend.hasEvent("Network.webSocketWillSendHandshakeRequest", "walltime")) {
             request = arguments[2];
             walltime = NaN;
         }
@@ -645,7 +646,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
-        // We don't want to assert in this case since we do likely have the resource, via PageAgent.getResourceTree. The Resource
+        // We don't want to assert in this case since we do likely have the resource, via Page.getResourceTree. The Resource
         // just doesn't have a requestIdentifier for us to look it up.
         if (!resource)
             return;
@@ -663,7 +664,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let elapsedTime = WI.timelineManager.computeElapsedTime(timestamp);
         let response = cachedResourcePayload.response;
-        const responseSource = NetworkAgent.ResponseSource.MemoryCache;
+        const responseSource = InspectorBackend.Enum.Network.ResponseSource.MemoryCache;
 
         let resource = this._addNewResourceToFrameOrTarget(cachedResourcePayload.url, frameIdentifier, {
             type: cachedResourcePayload.type,
@@ -700,14 +701,14 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
-        // We don't want to assert in this case since we do likely have the resource, via PageAgent.getResourceTree. The Resource
+        // We don't want to assert in this case since we do likely have the resource, via Page.getResourceTree. The Resource
         // just doesn't have a requestIdentifier for us to look it up, but we can try to look it up by its URL.
         if (!resource) {
             var frame = this.frameForIdentifier(frameIdentifier);
             if (frame)
                 resource = frame.resourceForURL(response.url);
 
-            // If we find the resource this way we had marked it earlier as finished via PageAgent.getResourceTree.
+            // If we find the resource this way we had marked it earlier as finished via Page.getResourceTree.
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
             // and roll it back to an unfinished state, we know now it is still loading.
             if (resource) {
@@ -748,7 +749,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         var elapsedTime = WI.timelineManager.computeElapsedTime(timestamp);
 
         // We might not have a resource if the inspector was opened during the page load (after resourceRequestWillBeSent is called).
-        // We don't want to assert in this case since we do likely have the resource, via PageAgent.getResourceTree. The Resource
+        // We don't want to assert in this case since we do likely have the resource, via Page.getResourceTree. The Resource
         // just doesn't have a requestIdentifier for us to look it up.
         if (!resource)
             return;
@@ -766,7 +767,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
 
         // By now we should always have the Resource. Either it was fetched when the inspector first opened with
-        // PageAgent.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
+        // Page.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         console.assert(resource);
         if (!resource)
@@ -791,7 +792,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
 
         // By now we should always have the Resource. Either it was fetched when the inspector first opened with
-        // PageAgent.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
+        // Page.getResourceTree, or it was a currently loading resource that we learned about in resourceRequestDidReceiveResponse.
         let resource = this._resourceRequestIdentifierMap.get(requestIdentifier);
         console.assert(resource);
         if (!resource)
@@ -1191,7 +1192,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return;
         }
 
-        if (!window.NetworkAgent) {
+        if (!InspectorBackend.hasDomain("Network")) {
             this._sourceMapLoadAndParseFailed(sourceMapURL);
             return;
         }
@@ -1203,7 +1204,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!frameIdentifier)
             frameIdentifier = WI.networkManager.mainFrame ? WI.networkManager.mainFrame.id : "";
 
-        NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
+        let target = WI.assumingMainTarget();
+        target.NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded);
     }
 
     _sourceMapLoadAndParseFailed(sourceMapURL)
@@ -1273,19 +1275,20 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         // COMPATIBILITY (iOS 13.0): Network.addInterception / Network.removeInterception did not exist.
         for (let target of WI.targets) {
-            if (target.NetworkAgent) {
+            if (target.hasDomain("Network")) {
                 if (localResourceOverride.disabled)
-                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                    target.NetworkAgent.removeInterception(localResourceOverride.url, InspectorBackend.Enum.Network.NetworkStage.Response);
                 else
-                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.domains.Network.NetworkStage.Response);
+                    target.NetworkAgent.addInterception(localResourceOverride.url, InspectorBackend.Enum.Network.NetworkStage.Response);
             }
         }
     }
 
     _extraDomainsActivated(event)
     {
-        if (event.data.domains.includes("Page") && window.PageAgent)
-            PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
+        let target = WI.assumingMainTarget();
+        if (target.hasDomain("Page") && event.data.domains.includes("Page"))
+            target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));
     }
 
     _handleFrameMainResourceDidChange(event)

@@ -69,17 +69,20 @@ WI.DOMStorageObject = class DOMStorageObject extends WI.Object
             callback(error, entries);
         }
 
-        DOMStorageAgent.getDOMStorageItems(this._id, innerCallback.bind(this));
+        let target = WI.assumingMainTarget();
+        target.DOMStorageAgent.getDOMStorageItems(this._id, innerCallback.bind(this));
     }
 
     removeItem(key)
     {
-        DOMStorageAgent.removeDOMStorageItem(this._id, key);
+        let target = WI.assumingMainTarget();
+        target.DOMStorageAgent.removeDOMStorageItem(this._id, key);
     }
 
     setItem(key, value)
     {
-        DOMStorageAgent.setDOMStorageItem(this._id, key, value);
+        let target = WI.assumingMainTarget();
+        target.DOMStorageAgent.setDOMStorageItem(this._id, key, value);
     }
 
     itemsCleared()

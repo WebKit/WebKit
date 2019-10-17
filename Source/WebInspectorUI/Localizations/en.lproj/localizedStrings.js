@@ -1251,6 +1251,7 @@ localizedStrings["Warnings"] = "Warnings";
 localizedStrings["Watch Expressions"] = "Watch Expressions";
 localizedStrings["Waterfall"] = "Waterfall";
 localizedStrings["Web Inspector"] = "Web Inspector";
+localizedStrings["Web Page"] = "Web Page";
 localizedStrings["WebKit Threads"] = "WebKit Threads";
 localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";

@@ -89,6 +89,7 @@ public:
     WEBCORE_EXPORT bool isUnderTest() final;
     bool isRemote() const final { return false; }
     WEBCORE_EXPORT unsigned inspectionLevel() const final;
+    String backendCommandsURL() const final { return String(); };
 
     WEBCORE_EXPORT bool canAttachWindow();
     WEBCORE_EXPORT void setDockingUnavailable(bool);

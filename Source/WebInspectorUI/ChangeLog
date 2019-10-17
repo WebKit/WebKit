@@ -1,3 +1,212 @@
+2019-10-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rework frontend agent construction to allow commands/events to be controlled by the related target's type
+        https://bugs.webkit.org/show_bug.cgi?id=200384
+        <rdar://problem/53850352>
+
+        Reviewed by Joseph Pecoraro.
+
+        `InspectorBackend.domains.${domain}` isn't a truly valid way to feature check, as it
+        indicates what's supported by the WebKit framework underlying whatever's currently being
+        inspected, not what the current inspection target supports.
+
+        As an example, inspecting an iOS `JSContext` will still show `InspectorBackend.domains.DOM`
+        as the `DOMAgent` is supported by WebKit, even though `JSContext`s have no concept of the
+        DOM. In this example, however, `window.DOMAgent` would NOT exist, as the `availability`
+        check for the `DOM` domain wouldn't pass, meaning that the agent never gets connected.
+
+        In order to do proper feature checking, `InspectorBackend.domains` needs to be accurate
+        depending on the debuggable type. Furthermore, each target underneath that debuggable needs
+        to be able to "choose" what commands/events are supported based on that target's type.
+
+        This patch modifies how InspectorBackendCommands.js ties into `InspectorBackend`. Rather
+        than directly creating an `InspectorBackend.Agent` for each domain, we now create more of a
+        "blueprint" of the domain, and wait to actually create an `InspectorBackend.Agent` until we
+        have a `WI.Target` (and therefore an `InspectorBackend.Connection`). Each "concept" of the
+        protocol now directly maps to an object.
+         - InspectorBackend.Domain
+         - InspectorBackend.Command
+         - InspectorBackend.Event
+         - InspectorBackend.Dispatcher
+        When a `WI.Target` is created, it gets the list of `InspectorBackend.Domain` that support
+        that `WI.Target`'s type (specified in the protocol JSON files) and generates an
+        `InspectorBackend.Agent` for each, which in turn generates an `InspectorBackend.Callable`
+        for each supported `InspectorBackend.Command` and instantiates `InspectorBackend.Dispatcher`.
+
+        Activating a `InspectorBackend.Domain` means it's visible for `InspectorBackend` feature
+        checking. This must be done this way for older ITML backends that will still appear as
+        "JSContext" targets and therefore go through the "extra domains" path. Ideally, the process
+        of registering a domain should be enough to activate it. <https://webkit.org/b/201150>
+
+        Feature checking can now only be done via `hasDomain`, `hasCommand`, and `hasEvent` on
+        `InspectorBackend` or a specific `WI.Target`, and there are different implications for each:
+         - `InspectorBackend.hasDomain(DOM)` asks whether the `DOM` domain is supported by the
+           current debuggable, but says nothing about whether any `WI.Target` support `DOM`.
+         - `target.hasDomain("DOM")` asks whether the given `target` supports `DOM`, which is
+           limited by `InspectorBackend.hasDomain("DOM")`.
+
+        Now that `InspectorBackend.Agent` is only created by a `WI.Target`, it's no longer valid to
+        write `window.DOMAgent`, as there is no "global" agent. All protocol logic _must_ go through
+        a `WI.Target`. <https://webkit.org/b/201149>
+
+        Debuggable Types:
+         - JavaScript (JSC::JSGlobalObject)
+         - Page (WebCore::Page)
+         - ServiceWorker (WebCore::ServiceWorkerThreadProxy)
+         - WebPage (WebKit::WebPageProxy)
+
+        Target Types:
+         - JavaScript (direct connection)
+         - Page (multi-target connection to any Worker)
+         - ServiceWorker (direct connection)
+         - WebPage (multi-target connection to 1+ Page)
+         - Worker (direct connection, only available for Page debuggables)
+
+        * UserInterface/Base/DebuggableType.js:
+        * UserInterface/Base/TargetType.js: Copied from Source/WebInspectorUI/UserInterface/Base/DebuggableType.js.
+        * UserInterface/Protocol/Connection.js:
+        * UserInterface/Protocol/InspectorBackend.js:
+
+        * UserInterface/Protocol/ApplicationCacheObserver.js:
+        * UserInterface/Protocol/CPUProfilerObserver.js:
+        * UserInterface/Protocol/CSSObserver.js:
+        * UserInterface/Protocol/CanvasObserver.js:
+        * UserInterface/Protocol/ConsoleObserver.js:
+        * UserInterface/Protocol/DOMObserver.js:
+        * UserInterface/Protocol/DOMStorageObserver.js:
+        * UserInterface/Protocol/DatabaseObserver.js:
+        * UserInterface/Protocol/DebuggerObserver.js:
+        * UserInterface/Protocol/HeapObserver.js:
+        * UserInterface/Protocol/InspectorObserver.js:
+        * UserInterface/Protocol/LayerTreeObserver.js:
+        * UserInterface/Protocol/MemoryObserver.js:
+        * UserInterface/Protocol/NetworkObserver.js:
+        * UserInterface/Protocol/PageObserver.js:
+        * UserInterface/Protocol/RuntimeObserver.js:
+        * UserInterface/Protocol/ScriptProfilerObserver.js:
+        * UserInterface/Protocol/TargetObserver.js:
+        * UserInterface/Protocol/TimelineObserver.js:
+        * UserInterface/Protocol/WorkerObserver.js:
+        All observers now extend from `InspectorBackend.Dispatcher` and have a separate instance for
+        each `InspectorBackend.Agent`, each having their own `_target`.
+
+        * UserInterface/Protocol/Target.js:
+        * UserInterface/Protocol/DirectBackendTarget.js:
+        * UserInterface/Protocol/JavaScriptContextTarget.js: Removed.
+        * UserInterface/Protocol/MultiplexingBackendTarget.js:
+        * UserInterface/Protocol/PageTarget.js:
+        * UserInterface/Protocol/WorkerTarget.js:
+        Agents are now created per-target instead of copied from the "global" list. This means that
+        agents can have a different set of commands/events depending on the associated target.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Controllers/AppController.js:
+        * UserInterface/Controllers/AppControllerBase.js:
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        * UserInterface/Controllers/AuditManager.js:
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        * UserInterface/Controllers/CSSManager.js:
+        * UserInterface/Controllers/CanvasManager.js:
+        * UserInterface/Controllers/ConsoleManager.js:
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        * UserInterface/Controllers/DOMManager.js:
+        * UserInterface/Controllers/DOMStorageManager.js:
+        * UserInterface/Controllers/DatabaseManager.js:
+        * UserInterface/Controllers/DebuggerManager.js:
+        * UserInterface/Controllers/HeapManager.js:
+        * UserInterface/Controllers/IndexedDBManager.js:
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        * UserInterface/Controllers/LayerTreeManager.js:
+        * UserInterface/Controllers/MemoryManager.js:
+        * UserInterface/Controllers/NetworkManager.js:
+        * UserInterface/Controllers/RuntimeManager.js:
+        * UserInterface/Controllers/TargetManager.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        * UserInterface/Controllers/WorkerManager.js:
+        * UserInterface/Main.html:
+        * UserInterface/Models/AuditTestBase.js:
+        * UserInterface/Models/AuditTestCase.js:
+        * UserInterface/Models/AuditTestCaseResult.js:
+        * UserInterface/Models/CPUInstrument.js:
+        * UserInterface/Models/CPUTimelineRecord.js:
+        * UserInterface/Models/CSSCompletions.js:
+        * UserInterface/Models/CSSStyleSheet.js:
+        * UserInterface/Models/Canvas.js:
+        * UserInterface/Models/DOMNode.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        * UserInterface/Models/DOMStorageObject.js:
+        * UserInterface/Models/DOMTree.js:
+        * UserInterface/Models/DatabaseObject.js:
+        * UserInterface/Models/FPSInstrument.js:
+        * UserInterface/Models/GarbageCollection.js:
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        * UserInterface/Models/Instrument.js:
+        * UserInterface/Models/MediaInstrument.js:
+        * UserInterface/Models/MemoryInstrument.js:
+        * UserInterface/Models/MemoryPressureEvent.js:
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        * UserInterface/Models/Recording.js:
+        * UserInterface/Models/Resource.js:
+        * UserInterface/Models/ScriptInstrument.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Models/ShaderProgram.js:
+        * UserInterface/Models/SourceMapResource.js:
+        * UserInterface/Models/TimelineRecording.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        * UserInterface/Test.html:
+        * UserInterface/Test/FrontendTestHarness.js:
+        * UserInterface/Test/Test.js:
+        * UserInterface/Test/TestAppController.js:
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        * UserInterface/Views/AuditTabContentView.js:
+        * UserInterface/Views/CanvasTabContentView.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        * UserInterface/Views/IndexedDatabaseDetailsSidebarPanel.js:
+        * UserInterface/Views/Layers3DContentView.js:
+        * UserInterface/Views/LayersTabContentView.js:
+        * UserInterface/Views/LayoutTimelineView.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/NetworkTabContentView.js:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/NetworkTimelineView.js:
+        * UserInterface/Views/ObjectTreeView.js:
+        * UserInterface/Views/QuickConsole.js:
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        * UserInterface/Views/ScriptClusterTimelineView.js:
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        * UserInterface/Views/ScriptTreeElement.js:
+        * UserInterface/Views/SearchSidebarPanel.js:
+        * UserInterface/Views/SearchTabContentView.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        * UserInterface/Views/StorageTabContentView.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        * UserInterface/Views/TimelineTabContentView.js:
+        * UserInterface/Views/Toolbar.js:
+        * UserInterface/Views/WebSocketContentView.js:
+        * UserInterface/Views/WorkerTreeElement.js:
+        Replace all instances of `window.DomainAgent` with `target.DomainAgent`, where `target` is
+        either derived from an associated model object or `WI.assumingMainTarget()`.
+        Split the `WI.DebuggableType.Web` debuggable type into `WI.DebuggableType.Page` (WebCore::Page)
+        and `WI.DebuggableType.WebPage` (WebKit::WebPageProxy).
+
+        * UserInterface/Protocol/Legacy/*:
+        * Versions/*:
+        Update protocol files for older versions of iOS.
+
+        * .eslintrc:
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-10-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: prevent source mapped resources from being blackboxed

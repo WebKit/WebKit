@@ -54,7 +54,8 @@ WI.DatabaseObject = class DatabaseObject
                 callback(names.sort());
         }
 
-        DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
+        let target = WI.assumingMainTarget();
+        target.DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
     }
 
     executeSQL(query, successCallback, errorCallback)
@@ -84,7 +85,8 @@ WI.DatabaseObject = class DatabaseObject
             successCallback(columnNames, values);
         }
 
-        DatabaseAgent.executeSQL(this._id, query, queryCallback);
+        let target = WI.assumingMainTarget();
+        target.DatabaseAgent.executeSQL(this._id, query, queryCallback);
     }
 };
 

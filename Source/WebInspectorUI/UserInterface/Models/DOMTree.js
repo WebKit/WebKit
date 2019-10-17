@@ -187,8 +187,9 @@ WI.DOMTree = class DOMTree extends WI.Object
         if (this._frame.isMainFrame())
             WI.domManager.requestDocument(mainDocumentAvailable.bind(this));
         else {
+            let target = WI.assumingMainTarget();
             var contextId = this._frame.pageExecutionContext.id;
-            RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
+            target.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
         }
     }
 

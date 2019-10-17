@@ -2,7 +2,8 @@
     "domain": "CPUProfiler",
     "description": "CPUProfiler domain exposes cpu usage tracking.",
     "featureGuard": "ENABLE(RESOURCE_USAGE)",
-    "availability": ["web"],
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "ThreadInfo",

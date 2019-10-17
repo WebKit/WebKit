@@ -30,7 +30,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ElementsTabContentView.tabInfo());
 
         let detailsSidebarPanelConstructors = [WI.RulesStyleDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.ChangesDetailsSidebarPanel, WI.DOMNodeDetailsSidebarPanel];
-        if (window.LayerTreeAgent)
+        if (InspectorBackend.hasDomain("LayerTree"))
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
         super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
@@ -49,7 +49,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
 
     static isTabAllowed()
     {
-        return !!window.DOMAgent;
+        return InspectorBackend.hasDomain("DOM");
     }
 
     // Public

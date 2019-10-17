@@ -97,10 +97,17 @@ static String debuggableTypeString(WKRemoteWebInspectorDebuggableType debuggable
     switch (debuggableType) {
     case WKRemoteWebInspectorDebuggableTypeJavaScript:
         return "javascript"_s;
+    case WKRemoteWebInspectorDebuggableTypePage:
+        return "page"_s;
     case WKRemoteWebInspectorDebuggableTypeServiceWorker:
         return "service-worker"_s;
+    case WKRemoteWebInspectorDebuggableTypeWebPage:
+        return "web-page"_s;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case WKRemoteWebInspectorDebuggableTypeWeb:
-        return "web"_s;
+        return "web-page"_s;
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 

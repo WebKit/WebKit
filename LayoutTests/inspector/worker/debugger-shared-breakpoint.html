@@ -105,7 +105,7 @@ function test()
                     let targetData = WI.debuggerManager.dataForTarget(target);
 
                     InspectorTest.pass("All Targets paused.");
-                    InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Active CalleFrame should be in a Worker.");
+                    InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Active CalleFrame should be in a Worker.");
                     InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
                     window.loadLinesFromSourceCode(target.mainResource).then(() => {
                         logPauseLocation();

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CanvasObserver = class CanvasObserver
+WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Canvas" domain.
 

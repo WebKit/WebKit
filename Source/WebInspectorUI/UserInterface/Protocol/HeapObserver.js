@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.HeapObserver = class HeapObserver
+WI.HeapObserver = class HeapObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Heap" domain.
 
     garbageCollected(collection)
     {
-        WI.heapManager.garbageCollected(this.target, collection);
+        WI.heapManager.garbageCollected(this._target, collection);
     }
 
     trackingStart(timestamp, snapshotStringData)

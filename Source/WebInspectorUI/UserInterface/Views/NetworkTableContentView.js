@@ -143,7 +143,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
-        if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled) {
+        if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled")) {
             let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
             let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
             this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);

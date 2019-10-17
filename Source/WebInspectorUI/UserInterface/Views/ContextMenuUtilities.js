@@ -293,21 +293,22 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             });
         }
 
-        if (!options.excludeRevealElement && window.DOMAgent && attached) {
+        if (!options.excludeRevealElement && InspectorBackend.hasDomain("DOM") && attached) {
             contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
                 WI.domManager.inspectElement(domNode.id);
             });
         }
 
-        if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
+        if (WI.settings.experimentalEnableLayersTab.value && InspectorBackend.hasDomain("LayerTree") && attached) {
             contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
                 WI.showLayersTab({nodeToSelect: domNode});
             });
         }
 
-        if (window.PageAgent && attached) {
+        if (InspectorBackend.hasDomain("Page") && attached) {
             contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
-                PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
+                let target = WI.assumingMainTarget();
+                target.PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
                     if (error) {
                         const target = WI.mainTarget;
                         const source = WI.ConsoleMessage.MessageSource.Other;

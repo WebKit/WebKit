@@ -143,7 +143,8 @@ WI.RemoteObject = class RemoteObject
 
     static resolveNode(node, objectGroup)
     {
-        return DOMAgent.resolveNode(node.id, objectGroup)
+        let target = WI.assumingMainTarget();
+        return target.DOMAgent.resolveNode(node.id, objectGroup)
             .then(({object}) => WI.RemoteObject.fromPayload(object, WI.mainTarget));
     }
 
@@ -151,7 +152,8 @@ WI.RemoteObject = class RemoteObject
     {
         console.assert(typeof callback === "function");
 
-        NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
+        let target = WI.assumingMainTarget();
+        target.NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
             if (error || !object)
                 callback(null);
             else
@@ -170,13 +172,15 @@ WI.RemoteObject = class RemoteObject
                 callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
         }
 
+        let target = WI.assumingMainTarget();
+
         // COMPATIBILITY (iOS 13): Canvas.resolveCanvasContext was renamed to Canvas.resolveContext.
-        if (!CanvasAgent.resolveContext) {
-            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, wrapCallback);
+        if (!target.hasCommand("Canvas.resolveContext")) {
+            target.CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, wrapCallback);
             return;
         }
 
-        CanvasAgent.resolveContext(canvas.identifier, objectGroup, wrapCallback);
+        target.CanvasAgent.resolveContext(canvas.identifier, objectGroup, wrapCallback);
     }
 
     // Public
@@ -269,7 +273,7 @@ WI.RemoteObject = class RemoteObject
             return;
         }
 
-        if (!this._target.RuntimeAgent.getPreview) {
+        if (!this._target.hasCommand("Runtime.getPreview")) {
             this._failedToLoadPreview = true;
             callback(null);
             return;
@@ -304,9 +308,9 @@ WI.RemoteObject = class RemoteObject
             return;
         }
 
-        // COMPATIBILITY (iOS 8): RuntimeAgent.getDisplayableProperties did not exist.
+        // COMPATIBILITY (iOS 8): Runtime.getDisplayableProperties did not exist.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
-        if (!this._target.RuntimeAgent.getDisplayableProperties) {
+        if (!this._target.hasCommand("Runtime.getDisplayableProperties")) {
             this._getProperties(options, (error, allProperties) => {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
@@ -340,7 +344,7 @@ WI.RemoteObject = class RemoteObject
         }
 
         // FIXME: It doesn't look like setPropertyValue is used yet. This will need to be tested when it is again (editable ObjectTrees).
-        this._target.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole: true}, evaluatedCallback.bind(this), this._target.RuntimeAgent);
+        this._target.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole: true}, evaluatedCallback.bind(this));
 
         function evaluatedCallback(error, result, wasThrown)
         {
@@ -633,19 +637,19 @@ WI.RemoteObject = class RemoteObject
             fetchStart,
             fetchCount,
             generatePreview,
-        }, callback, this._target.RuntimeAgent);
+        }, callback);
     }
 
     _getDisplayableProperties(callback, {fetchStart, fetchCount, generatePreview} = {})
     {
-        console.assert(this._target.RuntimeAgent.getDisplayableProperties);
+        console.assert(this._target.hasCommand("Runtime.getDisplayableProperties"));
 
         this._target.RuntimeAgent.getDisplayableProperties.invoke({
             objectId: this._objectId,
             fetchStart,
             fetchCount,
             generatePreview,
-        }, callback, this._target.RuntimeAgent);
+        }, callback);
     }
 
     _getPropertyDescriptorsResolver(callback, error, properties, internalProperties)

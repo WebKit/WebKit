@@ -146,6 +146,15 @@ Object.defineProperty(Map.prototype, "getOrInitialize",
     }
 });
 
+Object.defineProperty(Set.prototype, "addAll",
+{
+    value(iterable)
+    {
+        for (let item of iterable)
+            this.add(item);
+    },
+});
+
 Object.defineProperty(Set.prototype, "take",
 {
     value(key)

@@ -58,10 +58,11 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.CanvasAgent) {
+        if (target.hasDomain("Canvas")) {
             target.CanvasAgent.enable();
 
-            if (target.CanvasAgent.setRecordingAutoCaptureFrameCount && WI.settings.canvasRecordingAutoCaptureEnabled.value && WI.settings.canvasRecordingAutoCaptureFrameCount.value)
+            // COMPATIBILITY (iOS 12): Canvas.setRecordingAutoCaptureFrameCount did not exist yet.
+            if (target.hasCommand("Canvas.setRecordingAutoCaptureFrameCount") && WI.settings.canvasRecordingAutoCaptureEnabled.value && WI.settings.canvasRecordingAutoCaptureFrameCount.value)
                 target.CanvasAgent.setRecordingAutoCaptureFrameCount(WI.settings.canvasRecordingAutoCaptureFrameCount.value);
         }
     }
@@ -70,7 +71,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     static supportsRecordingAutoCapture()
     {
-        return InspectorBackend.domains.Canvas && InspectorBackend.domains.Canvas.setRecordingAutoCaptureFrameCount;
+        return InspectorBackend.hasCommand("Canvas.setRecordingAutoCaptureFrameCount");
     }
 
     // Public
@@ -128,7 +129,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         console.assert(this._enabled);
 
         for (let target of WI.targets) {
-            if (target.CanvasAgent)
+            if (target.hasDomain("Canvas"))
                 target.CanvasAgent.disable();
         }
 
@@ -144,7 +145,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         console.assert(!isNaN(count) && count >= 0);
 
         for (let target of WI.targets) {
-            if (target.CanvasAgent)
+            // COMPATIBILITY (iOS 12): Canvas.setRecordingAutoCaptureFrameCount did not exist yet.
+            if (target.hasCommand("Canvas.setRecordingAutoCaptureFrameCount"))
                 target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
         }
 

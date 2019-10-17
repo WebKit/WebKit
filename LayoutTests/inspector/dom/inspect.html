@@ -1,55 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 function test()
 {
-    let documentNode;
+    function assertResponse(response, message) {
+        InspectorProtocol.checkForError(response);
+        ProtocolTest.log("PASS: " + message);
+    }
 
-    function dispatchDOMInspectEvent(nodeId) {
-        WI.dispatchMessageFromBackend({
-            "method": "DOM.inspect",
-            "params": {"nodeId": nodeId},
+    function evaluate$0() {
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "$0.id", "includeCommandLineAPI": true}, (response) => {
+            assertResponse(response, "Evaluate $0.");
+            ProtocolTest.expectEqual(response.result.result.value, "target", "Id of $0 is \"target\".");
+            ProtocolTest.completeTest();
         });
     }
 
-    let suite = InspectorTest.createAsyncSuite("DOM.inspect");
+    function setInspectedNode(nodeId) {
+        InspectorProtocol.sendCommand("DOM.setInspectedNode", {nodeId}, (response) => {
+            assertResponse(response, "Set $0 to the target node.");
+            evaluate$0();
+        });
+    }
 
-    suite.addTestCase({
-        name: "DOM.inspect.valid",
-        description: "Event given a valid nodeId should select it.",
-        test(resolve, reject) {
-            WI.domManager.querySelector(documentNode.id, "#element-to-select", (nodeId) => {
-                dispatchDOMInspectEvent(nodeId);
-            });
-            WI.domManager.awaitEvent(WI.DOMManager.Event.DOMNodeWasInspected).then((event) => {
-                InspectorTest.pass("DOMNodeWasInspected event");
-                resolve();
-            });
-        }
-    });
+    function queryForTarget(nodeId) {
+        InspectorProtocol.sendCommand("DOM.querySelector", {nodeId, selector: "#target"}, (response) => {
+            assertResponse(response, "Queryied for target node.");
+            setInspectedNode(response.result.nodeId);
+        });
+    }
 
-    suite.addTestCase({
-        name: "DOM.inspect.invalid",
-        description: "Event given an ivalid nodeId should not cause an exception.",
-        test(resolve, reject) {
-            dispatchDOMInspectEvent("DOES_NOT_EXIST");
-            setTimeout(() => {
-                InspectorTest.pass("No error");
-                resolve()
-            });
-        }
-    });
-
-    WI.domManager.requestDocument((node) => {
-        documentNode = node;
-        suite.runTestCasesAndFinish();
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, (response) => {
+        assertResponse(response, "Got document.");
+        queryForTarget(response.result.root.nodeId);
     });
 }
+
 </script>
 </head>
 <body onload="runTest()">
-<p id="element-to-select">Test for DOM.inspect.</p>
+<p>Test for basic DOM.events.inspect functionality.</p>
+<div id="target"></div>
 </body>
 </html>

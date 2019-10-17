@@ -348,7 +348,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         this._requestMethodRow.value = this._resource.requestMethod || emDash;
 
         // COMPATIBILITY(iOS 10.3): Network load metrics were not previously available.
-        if (InspectorBackend.domains.Network.hasEventParameter("loadingFinished", "metrics")) {
+        if (InspectorBackend.hasEvent("Network.loadingFinished", "metrics")) {
             let protocolDisplayName = WI.Resource.displayNameForProtocol(this._resource.protocol);
             this._protocolRow.value = protocolDisplayName || emDash;
             this._protocolRow.tooltip = protocolDisplayName ? this._resource.protocol : "";

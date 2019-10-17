@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.PageObserver = class PageObserver
+WI.PageObserver = class PageObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Page" domain.
 

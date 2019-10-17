@@ -33,14 +33,14 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
         this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
-        this._compositingBordersButtonNavigationItem.enabled = !!InspectorBackend.domains.Page;
+        this._compositingBordersButtonNavigationItem.enabled = InspectorBackend.hasDomain("Page");
         this._compositingBordersButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         WI.settings.showPaintRects.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
         this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/Paint.svg", 16, 16);
         this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
-        this._paintFlashingButtonNavigationItem.enabled = InspectorBackend.domains.Page && !!InspectorBackend.domains.Page.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = InspectorBackend.domains.Page.setShowPaintRects && WI.settings.showPaintRects.value;
+        this._paintFlashingButtonNavigationItem.enabled = InspectorBackend.hasCommand("Page.setShowPaintRects");
+        this._paintFlashingButtonNavigationItem.activated = this._paintFlashingButtonNavigationItem.enabled && WI.settings.showPaintRects.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this._layers = [];
@@ -401,7 +401,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._paintFlashingButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
-            if (target.PageAgent && target.PageAgent.setShowPaintRects)
+            if (target.hasCommand("Page.setShowPaintRects"))
                 target.PageAgent.setShowPaintRects(activated);
         }
     }
@@ -420,12 +420,10 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             return;
         }
 
-        if (!window.PageAgent)
-            return;
-
         // This value can be changed outside of Web Inspector.
         // FIXME: Have PageAgent dispatch a change event instead?
-        PageAgent.getCompositingBordersVisible((error, compositingBordersVisible) => {
+        let target = WI.assumingMainTarget();
+        target.PageAgent.getCompositingBordersVisible((error, compositingBordersVisible) => {
             this._compositingBordersButtonNavigationItem.activated = error ? false : compositingBordersVisible;
             this._compositingBordersButtonNavigationItem.enabled = error !== "unsupported";
         });
@@ -437,7 +435,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._compositingBordersButtonNavigationItem.activated = activated;
 
         for (let target of WI.targets) {
-            if (target.PageAgent)
+            if (target.hasDomain("Page"))
                 target.PageAgent.setCompositingBordersVisible(activated);
         }
     }

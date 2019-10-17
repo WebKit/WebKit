@@ -109,7 +109,7 @@ function test()
         async test() {
             await InspectorTest.Audit.setupAudit();
             await auditRun(`function() { return WebInspectorAudit.Version; }`, (result) => {
-                InspectorTest.expectEqual(result.value, InspectorBackend.domains.Audit.VERSION, "The injected WebInspectorAudit should hold the current Audit::Version.");
+                InspectorTest.expectEqual(result.value, InspectorBackend.getVersion("Audit"), "The injected WebInspectorAudit should hold the current Audit::Version.");
             });
             await InspectorTest.Audit.teardownAudit();
         },

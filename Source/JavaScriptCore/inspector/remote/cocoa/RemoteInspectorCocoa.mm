@@ -382,15 +382,20 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:target.name() forKey:WIRTitleKey];
         [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
+    case RemoteInspectionTarget::Type::Page:
+        [listing setObject:target.url() forKey:WIRURLKey];
+        [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:WIRTypePage forKey:WIRTypeKey];
+        break;
     case RemoteInspectionTarget::Type::ServiceWorker:
         [listing setObject:target.url() forKey:WIRURLKey];
         [listing setObject:target.name() forKey:WIRTitleKey];
         [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
         break;
-    case RemoteInspectionTarget::Type::Web:
+    case RemoteInspectionTarget::Type::WebPage:
         [listing setObject:target.url() forKey:WIRURLKey];
         [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypeWeb forKey:WIRTypeKey];
+        [listing setObject:WIRTypeWebPage forKey:WIRTypeKey];
         break;
     default:
         ASSERT_NOT_REACHED();

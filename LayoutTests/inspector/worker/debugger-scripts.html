@@ -9,7 +9,7 @@ let worker = new Worker("resources/worker-scripts.js");
 function test()
 {
     let mainTarget = WI.mainTarget;
-    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
     let mainDebuggerData = WI.debuggerManager.dataForTarget(mainTarget);
     let workerDebuggerData = WI.debuggerManager.dataForTarget(workerTarget);
     if (!workerTarget) {

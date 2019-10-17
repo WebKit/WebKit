@@ -41,7 +41,7 @@ public:
     PageDebuggable(Page&);
     ~PageDebuggable() = default;
 
-    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Web; }
+    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Page; }
 
     String name() const final;
     String url() const final;
@@ -62,6 +62,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebCore::PageDebuggable, Web);
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebCore::PageDebuggable, Page);
 
 #endif // ENABLE(REMOTE_INSPECTOR)

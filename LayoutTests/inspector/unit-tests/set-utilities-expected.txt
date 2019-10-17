@@ -1,5 +1,37 @@
 
 == Running test suite: Set
+-- Running test case: Set.prototype.pushAll
+Array:
+[1,2] => [1,2,"a1","a2"]
+
+Set:
+[1,2] => [1,2,"s1","s2"]
+[1,2] => [1,2,["s1","s1"],["s2","s2"]]
+[1,2] => [1,2,"s1","s2"]
+[1,2] => [1,2,"s1","s2"]
+
+Map:
+[1,2] => [1,2,["m1k","m1v"],["m2k","m2v"]]
+[1,2] => [1,2,["m1k","m1v"],["m2k","m2v"]]
+[1,2] => [1,2,"m1k","m2k"]
+[1,2] => [1,2,"m1v","m2v"]
+
+Object:
+[1,2] => [1,2,["o1k","o1v"],["o2k","o2v"]]
+[1,2] => [1,2,"o1k","o2k"]
+[1,2] => [1,2,"o1v","o2v"]
+
+Generator:
+[1,2] => [1,2,"g1","g2"]
+
+Node:
+[1,2] => [1,2,<n1>,<n2>]
+[1,2] => [1,2,<n1>,<n2>]
+
+Object (doesn't have [Symbol.iterator]):
+PASS: Should produce an exception.
+TypeError: undefined is not a function (near '...item of iterable...')
+
 -- Running test case: Set.prototype.take
 PASS: Set can take `key`.
 PASS: Set no longer has `key`.

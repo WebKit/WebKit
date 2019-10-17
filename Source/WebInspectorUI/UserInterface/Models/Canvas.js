@@ -60,22 +60,22 @@ WI.Canvas = class Canvas extends WI.Object
     {
         let contextType = null;
         switch (payload.contextType) {
-        case CanvasAgent.ContextType.Canvas2D:
+        case InspectorBackend.Enum.Canvas.ContextType.Canvas2D:
             contextType = WI.Canvas.ContextType.Canvas2D;
             break;
-        case CanvasAgent.ContextType.BitmapRenderer:
+        case InspectorBackend.Enum.Canvas.ContextType.BitmapRenderer:
             contextType = WI.Canvas.ContextType.BitmapRenderer;
             break;
-        case CanvasAgent.ContextType.WebGL:
+        case InspectorBackend.Enum.Canvas.ContextType.WebGL:
             contextType = WI.Canvas.ContextType.WebGL;
             break;
-        case CanvasAgent.ContextType.WebGL2:
+        case InspectorBackend.Enum.Canvas.ContextType.WebGL2:
             contextType = WI.Canvas.ContextType.WebGL2;
             break;
-        case CanvasAgent.ContextType.WebGPU:
+        case InspectorBackend.Enum.Canvas.ContextType.WebGPU:
             contextType = WI.Canvas.ContextType.WebGPU;
             break;
-        case CanvasAgent.ContextType.WebMetal:
+        case InspectorBackend.Enum.Canvas.ContextType.WebMetal:
             contextType = WI.Canvas.ContextType.WebMetal;
             break;
         default:
@@ -188,7 +188,8 @@ WI.Canvas = class Canvas extends WI.Object
             this._requestNodePromise = new Promise((resolve, reject) => {
                 WI.domManager.ensureDocument();
 
-                CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
+                let target = WI.assumingMainTarget();
+                target.CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
                     if (error) {
                         resolve(null);
                         return;
@@ -211,7 +212,9 @@ WI.Canvas = class Canvas extends WI.Object
     {
         if (!Canvas.supportsRequestContentForContextType(this._contextType))
             return Promise.resolve(null);
-        return CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
+
+        let target = WI.assumingMainTarget();
+        return target.CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
     }
 
     requestClientNodes(callback)
@@ -234,13 +237,15 @@ WI.Canvas = class Canvas extends WI.Object
             callback(this._clientNodes);
         };
 
+        let target = WI.assumingMainTarget();
+
         // COMPATIBILITY (iOS 13): Canvas.requestCSSCanvasClientNodes was renamed to Canvas.requestClientNodes.
-        if (!CanvasAgent.requestClientNodes) {
-            CanvasAgent.requestCSSCanvasClientNodes(this._identifier, wrappedCallback);
+        if (!target.hasCommand("Canvas.requestClientNodes")) {
+            target.CanvasAgent.requestCSSCanvasClientNodes(this._identifier, wrappedCallback);
             return;
         }
 
-        CanvasAgent.requestClientNodes(this._identifier, wrappedCallback);
+        target.CanvasAgent.requestClientNodes(this._identifier, wrappedCallback);
     }
 
     requestSize()
@@ -300,6 +305,8 @@ WI.Canvas = class Canvas extends WI.Object
 
     startRecording(singleFrame)
     {
+        let target = WI.assumingMainTarget();
+
         let handleStartRecording = (error) => {
             if (error) {
                 console.error(error);
@@ -308,8 +315,8 @@ WI.Canvas = class Canvas extends WI.Object
 
             this._recordingState = WI.Canvas.RecordingState.ActiveFrontend;
 
-            // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
-            if (InspectorBackend.domains.Canvas.hasEvent("recordingStarted"))
+            // COMPATIBILITY (iOS 12.1): Canvas.recordingStarted did not exist yet
+            if (target.hasEvent("Canvas.recordingStarted"))
                 return;
 
             this._recordingFrames = [];
@@ -319,24 +326,22 @@ WI.Canvas = class Canvas extends WI.Object
         };
 
         // COMPATIBILITY (iOS 12.1): `frameCount` did not exist yet.
-        if (InspectorBackend.domains.Canvas.startRecording.supports("singleFrame")) {
-            CanvasAgent.startRecording(this._identifier, singleFrame, handleStartRecording);
+        if (target.hasCommand("Canvas.startRecording", "singleFrame")) {
+            target.CanvasAgent.startRecording(this._identifier, singleFrame, handleStartRecording);
             return;
         }
 
         if (singleFrame) {
             const frameCount = 1;
-            CanvasAgent.startRecording(this._identifier, frameCount, handleStartRecording);
+            target.CanvasAgent.startRecording(this._identifier, frameCount, handleStartRecording);
         } else
-            CanvasAgent.startRecording(this._identifier, handleStartRecording);
+            target.CanvasAgent.startRecording(this._identifier, handleStartRecording);
     }
 
     stopRecording()
     {
-        CanvasAgent.stopRecording(this._identifier, (error) => {
-            if (error)
-                console.error(error);
-        });
+        let target = WI.assumingMainTarget();
+        target.CanvasAgent.stopRecording(this._identifier);
     }
 
     saveIdentityToCookie(cookie)
@@ -370,12 +375,12 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        if (initiator === RecordingAgent.Initiator.Console)
+        if (initiator === InspectorBackend.Enum.Recording.Initiator.Console)
             this._recordingState = WI.Canvas.RecordingState.ActiveConsole;
-        else if (initiator === RecordingAgent.Initiator.AutoCapture)
+        else if (initiator === InspectorBackend.Enum.Recording.Initiator.AutoCapture)
             this._recordingState = WI.Canvas.RecordingState.ActiveAutoCapture;
         else {
-            console.assert(initiator === RecordingAgent.Initiator.Frontend);
+            console.assert(initiator === InspectorBackend.Enum.Recording.Initiator.Frontend);
             this._recordingState = WI.Canvas.RecordingState.ActiveFrontend;
         }
 
@@ -402,8 +407,8 @@ WI.Canvas = class Canvas extends WI.Object
 
         let initiatedByUser = this._recordingState === WI.Canvas.RecordingState.ActiveFrontend;
 
-        // COMPATIBILITY (iOS 12.1): Canvas.event.recordingStarted did not exist yet
-        if (!initiatedByUser && !InspectorBackend.domains.Canvas.hasEvent("recordingStarted"))
+        // COMPATIBILITY (iOS 12.1): Canvas.recordingStarted did not exist yet
+        if (!initiatedByUser && !InspectorBackend.hasEvent("Canvas.recordingStarted"))
             initiatedByUser = !!this.recordingActive;
 
         let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload, this._recordingFrames) : null;

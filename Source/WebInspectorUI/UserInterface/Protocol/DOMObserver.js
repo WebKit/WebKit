@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DOMObserver = class DOMObserver
+WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "DOM" domain.
 

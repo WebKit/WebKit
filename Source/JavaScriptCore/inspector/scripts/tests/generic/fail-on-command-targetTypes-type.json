@@ -1,0 +1,9 @@
+{
+    "domain": "Domain",
+    "commands": [
+        {
+            "name": "PageOnly",
+            "targetTypes": "pagee"
+        }
+    ]
+}

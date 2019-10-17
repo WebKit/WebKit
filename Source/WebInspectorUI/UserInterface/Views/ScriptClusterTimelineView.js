@@ -140,7 +140,7 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
     _canShowProfileView()
     {
         // COMPATIBILITY (iOS 9): Legacy backends did not include CallingContextTree ScriptProfiler data.
-        return window.ScriptProfilerAgent;
+        return InspectorBackend.hasDomain("ScriptProfiler");
     }
 
     _pathComponentForContentView(contentView)

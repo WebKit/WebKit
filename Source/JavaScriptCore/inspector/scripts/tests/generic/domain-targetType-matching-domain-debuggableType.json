@@ -1,0 +1,8 @@
+[
+{
+    "domain": "Domain",
+    "debuggableTypes": ["page"],
+    "commands": [{"name": "Command", "targetTypes": ["page", "worker"]}],
+    "events": [{"name": "Event"}]
+}
+]

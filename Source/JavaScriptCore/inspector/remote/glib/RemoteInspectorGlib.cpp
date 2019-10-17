@@ -190,10 +190,10 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
         return nullptr;
 
-    ASSERT(target.type() == RemoteInspectionTarget::Type::Web || target.type() == RemoteInspectionTarget::Type::JavaScript);
+    ASSERT(target.type() == RemoteInspectionTarget::Type::JavaScript || target.type() == RemoteInspectionTarget::Type::Page || target.type() == RemoteInspectionTarget::Type::WebPage);
     return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
-        target.type() == RemoteInspectionTarget::Type::Web ? "Web" : "JavaScript",
-        target.name().utf8().data(), target.type() == RemoteInspectionTarget::Type::Web ? target.url().utf8().data() : "null",
+        target.type() == RemoteInspectionTarget::Type::JavaScript ? "JavaScript" : "Web",
+        target.name().utf8().data(), target.type() == RemoteInspectionTarget::Type::JavaScript ? "null" : target.url().utf8().data(),
         target.hasLocalDebugger());
 }
 

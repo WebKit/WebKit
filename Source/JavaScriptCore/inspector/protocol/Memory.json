@@ -2,7 +2,8 @@
     "domain": "Memory",
     "description": "Memory domain exposes page memory tracking.",
     "featureGuard": "ENABLE(RESOURCE_USAGE)",
-    "availability": ["web"],
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "Event",

@@ -51,46 +51,46 @@ WI.LayoutDirection = {
 WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
-    if (InspectorBackend.registerTargetDispatcher)
-        InspectorBackend.registerTargetDispatcher(new WI.TargetObserver);
-    if (InspectorBackend.registerInspectorDispatcher)
-        InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
-    if (InspectorBackend.registerPageDispatcher)
-        InspectorBackend.registerPageDispatcher(new WI.PageObserver);
-    if (InspectorBackend.registerConsoleDispatcher)
-        InspectorBackend.registerConsoleDispatcher(new WI.ConsoleObserver);
-    if (InspectorBackend.registerNetworkDispatcher)
-        InspectorBackend.registerNetworkDispatcher(new WI.NetworkObserver);
-    if (InspectorBackend.registerDOMDispatcher)
-        InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
-    if (InspectorBackend.registerDebuggerDispatcher)
-        InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
-    if (InspectorBackend.registerHeapDispatcher)
-        InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
-    if (InspectorBackend.registerMemoryDispatcher)
-        InspectorBackend.registerMemoryDispatcher(new WI.MemoryObserver);
-    if (InspectorBackend.registerDatabaseDispatcher)
-        InspectorBackend.registerDatabaseDispatcher(new WI.DatabaseObserver);
-    if (InspectorBackend.registerDOMStorageDispatcher)
-        InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
     if (InspectorBackend.registerApplicationCacheDispatcher)
-        InspectorBackend.registerApplicationCacheDispatcher(new WI.ApplicationCacheObserver);
+        InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
     if (InspectorBackend.registerCPUProfilerDispatcher)
-        InspectorBackend.registerCPUProfilerDispatcher(new WI.CPUProfilerObserver);
-    if (InspectorBackend.registerScriptProfilerDispatcher)
-        InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
-    if (InspectorBackend.registerTimelineDispatcher)
-        InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
+        InspectorBackend.registerCPUProfilerDispatcher(WI.CPUProfilerObserver);
     if (InspectorBackend.registerCSSDispatcher)
-        InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
-    if (InspectorBackend.registerLayerTreeDispatcher)
-        InspectorBackend.registerLayerTreeDispatcher(new WI.LayerTreeObserver);
-    if (InspectorBackend.registerRuntimeDispatcher)
-        InspectorBackend.registerRuntimeDispatcher(new WI.RuntimeObserver);
-    if (InspectorBackend.registerWorkerDispatcher)
-        InspectorBackend.registerWorkerDispatcher(new WI.WorkerObserver);
+        InspectorBackend.registerCSSDispatcher(WI.CSSObserver);
     if (InspectorBackend.registerCanvasDispatcher)
-        InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
+        InspectorBackend.registerCanvasDispatcher(WI.CanvasObserver);
+    if (InspectorBackend.registerConsoleDispatcher)
+        InspectorBackend.registerConsoleDispatcher(WI.ConsoleObserver);
+    if (InspectorBackend.registerDOMDispatcher)
+        InspectorBackend.registerDOMDispatcher(WI.DOMObserver);
+    if (InspectorBackend.registerDOMStorageDispatcher)
+        InspectorBackend.registerDOMStorageDispatcher(WI.DOMStorageObserver);
+    if (InspectorBackend.registerDatabaseDispatcher)
+        InspectorBackend.registerDatabaseDispatcher(WI.DatabaseObserver);
+    if (InspectorBackend.registerDebuggerDispatcher)
+        InspectorBackend.registerDebuggerDispatcher(WI.DebuggerObserver);
+    if (InspectorBackend.registerHeapDispatcher)
+        InspectorBackend.registerHeapDispatcher(WI.HeapObserver);
+    if (InspectorBackend.registerInspectorDispatcher)
+        InspectorBackend.registerInspectorDispatcher(WI.InspectorObserver);
+    if (InspectorBackend.registerLayerTreeDispatcher)
+        InspectorBackend.registerLayerTreeDispatcher(WI.LayerTreeObserver);
+    if (InspectorBackend.registerMemoryDispatcher)
+        InspectorBackend.registerMemoryDispatcher(WI.MemoryObserver);
+    if (InspectorBackend.registerNetworkDispatcher)
+        InspectorBackend.registerNetworkDispatcher(WI.NetworkObserver);
+    if (InspectorBackend.registerPageDispatcher)
+        InspectorBackend.registerPageDispatcher(WI.PageObserver);
+    if (InspectorBackend.registerRuntimeDispatcher)
+        InspectorBackend.registerRuntimeDispatcher(WI.RuntimeObserver);
+    if (InspectorBackend.registerScriptProfilerDispatcher)
+        InspectorBackend.registerScriptProfilerDispatcher(WI.ScriptProfilerObserver);
+    if (InspectorBackend.registerTargetDispatcher)
+        InspectorBackend.registerTargetDispatcher(WI.TargetObserver);
+    if (InspectorBackend.registerTimelineDispatcher)
+        InspectorBackend.registerTimelineDispatcher(WI.TimelineObserver);
+    if (InspectorBackend.registerWorkerDispatcher)
+        InspectorBackend.registerWorkerDispatcher(WI.WorkerObserver);
 
     // Listen for the ProvisionalLoadStarted event before registering for events so our code gets called before any managers or sidebars.
     // This lets us save a state cookie before any managers or sidebars do any resets that would affect state (namely TimelineManager).
@@ -158,24 +158,29 @@ WI.loaded = function()
     WI.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     WI.visible = false;
     WI._windowKeydownListeners = [];
-    WI._targetsAvailablePromise = new WI.WrappedPromise;
     WI._overridenDeviceUserAgent = null;
     WI._overridenDeviceSettings = new Map;
 
     // Targets.
     WI.backendTarget = null;
     WI.pageTarget = null;
+    WI._targetsAvailablePromise = new WI.WrappedPromise;
 
-    if (!window.TargetAgent)
+    // COMPATIBILITY (iOS 13.0): Target.exists was "replaced" by differentiating "web" debuggables
+    // into "page" (direct) and "web-page" debuggables (multiplexing).
+    if (InspectorBackend.hasDomain("Target")) {
+        if (InspectorBackend.hasCommand("Target.exists")) {
+            console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.WebPage);
+            InspectorBackend.invokeCommand("Target.exists", WI.TargetType.WebPage, InspectorBackend.backendConnection, {}, (error) => {
+                if (error) {
+                    WI.sharedApp._debuggableType = WI.DebuggableType.Page;
+                    WI.targetManager.createDirectBackendTarget();
+                }
+            });
+        } else
+            WI.targetManager.createMultiplexingBackendTarget();
+    } else
         WI.targetManager.createDirectBackendTarget();
-    else {
-        // FIXME: Eliminate `TargetAgent.exists` once the local inspector
-        // is configured to use the Multiplexing code path.
-        TargetAgent.exists((error) => {
-            if (error)
-                WI.targetManager.createDirectBackendTarget();
-        });
-    }
 };
 
 WI.initializeBackendTarget = function(target)
@@ -191,12 +196,10 @@ WI.initializeBackendTarget = function(target)
 
 WI.initializePageTarget = function(target)
 {
-    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
-    console.assert(target.type === WI.Target.Type.Page || target instanceof WI.DirectBackendTarget);
+    console.assert(WI.sharedApp.isWebDebuggable());
+    console.assert(target.type === WI.TargetType.Page || target instanceof WI.DirectBackendTarget);
 
     WI.pageTarget = target;
-
-    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
 
     WI.resetMainExecutionContext();
 };
@@ -204,12 +207,10 @@ WI.initializePageTarget = function(target)
 WI.transitionPageTarget = function(target)
 {
     console.assert(!WI.pageTarget);
-    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
-    console.assert(target.type === WI.Target.Type.Page);
+    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.WebPage);
+    console.assert(target.type === WI.TargetType.Page);
 
     WI.pageTarget = target;
-
-    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
 
     WI.resetMainExecutionContext();
 
@@ -224,16 +225,14 @@ WI.terminatePageTarget = function(target)
 {
     console.assert(WI.pageTarget);
     console.assert(WI.pageTarget === target);
-    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
+    console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.WebPage);
 
     // Remove any Worker targets associated with this page.
-    let workerTargets = WI.targets.filter((x) => x.type === WI.Target.Type.Worker);
+    let workerTargets = WI.targets.filter((x) => x.type === WI.TargetType.Worker);
     for (let workerTarget of workerTargets)
         WI.workerManager.workerTerminated(workerTarget.identifier);
 
     WI.pageTarget = null;
-
-    WI.redirectGlobalAgentsToConnection(WI.backendConnection);
 };
 
 WI.resetMainExecutionContext = function()
@@ -245,15 +244,6 @@ WI.resetMainExecutionContext = function()
         WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
         if (WI.quickConsole)
             WI.quickConsole.initializeMainExecutionContextPathComponent();
-    }
-};
-
-WI.redirectGlobalAgentsToConnection = function(connection)
-{
-    // This makes global window.FooAgent dispatch to the active page target.
-    for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
-        if (domain !== "Target")
-            agent.connection = connection;
     }
 };
 
@@ -450,7 +440,7 @@ WI.contentLoaded = function()
     WI._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode);
 
     // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if (InspectorFrontendHost.isRemote && WI.sharedApp.debuggableType === WI.DebuggableType.Web && InspectorBackend.domains.Page && InspectorBackend.domains.Page.overrideUserAgent && InspectorBackend.domains.Page.overrideSetting) {
+    if (InspectorFrontendHost.isRemote && InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
         const deviceSettingsTooltip = WI.UIString("Device Settings");
         WI._deviceSettingsToolbarButton = new WI.ActivateButtonToolbarItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, "Images/Device.svg");
         WI._deviceSettingsToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsToolbarButtonClicked);
@@ -601,12 +591,12 @@ WI.contentLoaded = function()
 
 WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 {
-    if (!WI.__didPerformConsoleInitialization && target.ConsoleAgent) {
+    if (!WI.__didPerformConsoleInitialization && target.hasDomain("Console")) {
         WI.__didPerformConsoleInitialization = true;
         WI.consoleManager.initializeLogChannels(target);
     }
 
-    if (!WI.__didPerformCSSInitialization && target.CSSAgent) {
+    if (!WI.__didPerformCSSInitialization && target.hasDomain("CSS")) {
         WI.__didPerformCSSInitialization = true;
         WI.CSSCompletions.initializeCSSCompletions(target);
     }
@@ -614,23 +604,23 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 
 WI.initializeTarget = function(target)
 {
-    if (target.PageAgent) {
+    if (target.hasDomain("Page")) {
         // COMPATIBILITY (iOS 12.2): Page.overrideUserAgent did not exist.
-        if (target.PageAgent.overrideUserAgent && WI._overridenDeviceUserAgent)
+        if (target.hasCommand("Page.overrideUserAgent") && WI._overridenDeviceUserAgent)
             target.PageAgent.overrideUserAgent(WI._overridenDeviceUserAgent);
 
         // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-        if (target.PageAgent.overrideSetting) {
+        if (target.hasCommand("Page.overrideSetting")) {
             for (let [setting, value] of WI._overridenDeviceSettings)
                 target.PageAgent.overrideSetting(setting, value);
         }
 
         // COMPATIBILITY (iOS 11.3)
-        if (target.PageAgent.setShowRulers && WI.settings.showRulers.value)
+        if (target.hasCommand("Page.setShowRulers") && WI.settings.showRulers.value)
             target.PageAgent.setShowRulers(true);
 
         // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
-        if (target.PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
+        if (target.hasCommand("Page.setShowPaintRects") && WI.settings.showPaintRects.value)
             target.PageAgent.setShowPaintRects(true);
     }
 };
@@ -810,16 +800,16 @@ WI.activateExtraDomains = function(domains)
     WI.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {domains});
 
     if (WI.mainTarget) {
-        if (!WI.pageTarget && WI.mainTarget.DOMAgent)
+        if (!WI.pageTarget && WI.mainTarget.hasDomain("DOM"))
             WI.pageTarget = WI.mainTarget;
 
-        if (WI.mainTarget.CSSAgent)
+        if (WI.mainTarget.hasDomain("CSS"))
             WI.CSSCompletions.initializeCSSCompletions(WI.assumingMainTarget());
 
-        if (WI.mainTarget.DOMAgent)
+        if (WI.mainTarget.hasDomain("DOM"))
             WI.domManager.ensureDocument();
 
-        if (WI.mainTarget.PageAgent)
+        if (WI.mainTarget.hasDomain("Page"))
             WI.networkManager.initializeTarget(WI.mainTarget);
     }
 
@@ -2013,6 +2003,8 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         return;
     }
 
+    let target = WI.assumingMainTarget();
+
     function updateActivatedState() {
         WI._deviceSettingsToolbarButton.activated = WI._overridenDeviceUserAgent || WI._overridenDeviceSettings.size > 0;
     }
@@ -2022,7 +2014,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
             return;
 
         if (!force && (!value || value === "default")) {
-            PageAgent.overrideUserAgent((error) => {
+            target.PageAgent.overrideUserAgent((error) => {
                 if (error) {
                     console.error(error);
                     return;
@@ -2030,10 +2022,10 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
 
                 WI._overridenDeviceUserAgent = null;
                 updateActivatedState();
-                PageAgent.reload();
+                target.PageAgent.reload();
             });
         } else {
-            PageAgent.overrideUserAgent(value, (error) => {
+            target.PageAgent.overrideUserAgent(value, (error) => {
                 if (error) {
                     console.error(error);
                     return;
@@ -2041,7 +2033,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
 
                 WI._overridenDeviceUserAgent = value;
                 updateActivatedState();
-                PageAgent.reload();
+                target.PageAgent.reload();
             });
         }
     }
@@ -2049,7 +2041,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
     function applyOverriddenSetting(setting, value, callback) {
         if (WI._overridenDeviceSettings.has(setting)) {
             // We've just "disabled" the checkbox, so clear the override instead of applying it.
-            PageAgent.overrideSetting(setting, (error) => {
+            target.PageAgent.overrideSetting(setting, (error) => {
                 if (error) {
                     console.error(error);
                     return;
@@ -2060,7 +2052,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
                 updateActivatedState();
             });
         } else {
-            PageAgent.overrideSetting(setting, value, (error) => {
+            target.PageAgent.overrideSetting(setting, value, (error) => {
                 if (error) {
                     console.error(error);
                     return;
@@ -2206,13 +2198,13 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
             name: WI.UIString("Disable:"),
             columns: [
                 [
-                    {name: WI.UIString("Images"), setting: PageAgent.Setting.ImagesEnabled, value: false},
-                    {name: WI.UIString("Styles"), setting: PageAgent.Setting.AuthorAndUserStylesEnabled, value: false},
-                    {name: WI.UIString("JavaScript"), setting: PageAgent.Setting.ScriptEnabled, value: false},
+                    {name: WI.UIString("Images"), setting: InspectorBackend.Enum.Page.Setting.ImagesEnabled, value: false},
+                    {name: WI.UIString("Styles"), setting: InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, value: false},
+                    {name: WI.UIString("JavaScript"), setting: InspectorBackend.Enum.Page.Setting.ScriptEnabled, value: false},
                 ],
                 [
-                    {name: WI.UIString("Site-specific Hacks"), setting: PageAgent.Setting.NeedsSiteSpecificQuirks, value: false},
-                    {name: WI.UIString("Cross-Origin Restrictions"), setting: PageAgent.Setting.WebSecurityEnabled, value: false},
+                    {name: WI.UIString("Site-specific Hacks"), setting: InspectorBackend.Enum.Page.Setting.NeedsSiteSpecificQuirks, value: false},
+                    {name: WI.UIString("Cross-Origin Restrictions"), setting: InspectorBackend.Enum.Page.Setting.WebSecurityEnabled, value: false},
                 ]
             ],
         },
@@ -2220,10 +2212,10 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
             name: WI.UIString("%s:").format(WI.unlocalizedString("WebRTC")),
             columns: [
                 [
-                    {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: PageAgent.Setting.MediaCaptureRequiresSecureConnection, value: false},
-                    {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: PageAgent.Setting.ICECandidateFilteringEnabled, value: false},
-                    {name: WI.UIString("Use Mock Capture Devices"), setting: PageAgent.Setting.MockCaptureDevicesEnabled, value: true},
-                    {name: WI.UIString("Disable Encryption"), setting: PageAgent.Setting.WebRTCEncryptionEnabled, value: false},
+                    {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: InspectorBackend.Enum.Page.Setting.MediaCaptureRequiresSecureConnection, value: false},
+                    {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, value: false},
+                    {name: WI.UIString("Use Mock Capture Devices"), setting: InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, value: true},
+                    {name: WI.UIString("Disable Encryption"), setting: InspectorBackend.Enum.Page.Setting.WebRTCEncryptionEnabled, value: false},
                 ],
             ],
         },
@@ -2268,7 +2260,8 @@ WI._reloadInspectedInspector = function()
 
 WI._reloadPage = function(event)
 {
-    if (!window.PageAgent)
+    let target = WI.assumingMainTarget();
+    if (!target.hasDomain("Page"))
         return;
 
     event.preventDefault();
@@ -2278,12 +2271,13 @@ WI._reloadPage = function(event)
         return;
     }
 
-    PageAgent.reload();
+    target.PageAgent.reload();
 };
 
 WI._reloadPageFromOrigin = function(event)
 {
-    if (!window.PageAgent)
+    let target = WI.assumingMainTarget();
+    if (!target.hasDomain("Page"))
         return;
 
     event.preventDefault();
@@ -2293,7 +2287,7 @@ WI._reloadPageFromOrigin = function(event)
         return;
     }
 
-    PageAgent.reload.invoke({ignoreCache: true});
+    target.PageAgent.reload.invoke({ignoreCache: true});
 };
 
 WI._reloadToolbarButtonClicked = function(event)
@@ -2304,22 +2298,18 @@ WI._reloadToolbarButtonClicked = function(event)
     }
 
     // Reload page from origin if the button is clicked while the shift key is pressed down.
-    PageAgent.reload.invoke({ignoreCache: WI.modifierKeys.shiftKey});
+    let target = WI.assumingMainTarget();
+    target.PageAgent.reload.invoke({ignoreCache: WI.modifierKeys.shiftKey});
 };
 
 WI._updateReloadToolbarButton = function()
 {
-    if (!window.PageAgent) {
-        WI._reloadToolbarButton.hidden = true;
-        return;
-    }
-
-    WI._reloadToolbarButton.hidden = false;
+    WI._reloadToolbarButton.hidden = !InspectorBackend.hasDomain("Page");
 };
 
 WI._updateDownloadToolbarButton = function()
 {
-    if (!window.PageAgent || WI.sharedApp.debuggableType !== WI.DebuggableType.Web) {
+    if (!InspectorBackend.hasDomain("Page")) {
         WI._downloadToolbarButton.hidden = true;
         return;
     }
@@ -2334,12 +2324,7 @@ WI._updateDownloadToolbarButton = function()
 
 WI._updateInspectModeToolbarButton = function()
 {
-    if (!window.DOMAgent || !DOMAgent.setInspectModeEnabled) {
-        WI._inspectModeToolbarButton.hidden = true;
-        return;
-    }
-
-    WI._inspectModeToolbarButton.hidden = false;
+    WI._inspectModeToolbarButton.hidden = !InspectorBackend.hasDomain("DOM");
 };
 
 WI._toggleInspectMode = function(event)
@@ -2731,7 +2716,8 @@ WI._enableControlFlowProfilerSettingChanged = function(event)
 
 WI._resourceCachingDisabledSettingChanged = function(event)
 {
-    NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+    let target = WI.assumingMainTarget();
+    target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 };
 
 WI.measureElement = function(element)
@@ -3022,12 +3008,14 @@ WI._redoKeyboardShortcut = function(event)
 
 WI.undo = function()
 {
-    DOMAgent.undo();
+    let target = WI.assumingMainTarget();
+    target.DOMAgent.undo();
 };
 
 WI.redo = function()
 {
-    DOMAgent.redo();
+    let target = WI.assumingMainTarget();
+    target.DOMAgent.redo();
 };
 
 WI.highlightRangesWithStyleClass = function(element, resultRanges, styleClass, changes)
@@ -3129,7 +3117,8 @@ WI.archiveMainFrame = function()
     WI._downloadingPage = true;
     WI._updateDownloadToolbarButton();
 
-    PageAgent.archive((error, data) => {
+    let target = WI.assumingMainTarget();
+    target.PageAgent.archive((error, data) => {
         WI._downloadingPage = false;
         WI._updateDownloadToolbarButton();
 
@@ -3146,7 +3135,7 @@ WI.archiveMainFrame = function()
 
 WI.canArchiveMainFrame = function()
 {
-    if (WI.sharedApp.debuggableType !== WI.DebuggableType.Web)
+    if (!WI.sharedApp.isWebDebuggable())
         return false;
 
     if (!WI.networkManager.mainFrame || !WI.networkManager.mainFrame.mainResource)

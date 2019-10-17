@@ -70,7 +70,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     static isTabAllowed()
     {
-        return !!window.CanvasAgent;
+        return InspectorBackend.hasDomain("Canvas");
     }
 
     // Public

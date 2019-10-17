@@ -1,3 +1,44 @@
+2019-10-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rework frontend agent construction to allow commands/events to be controlled by the related target's type
+        https://bugs.webkit.org/show_bug.cgi?id=200384
+        <rdar://problem/53850352>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/requestShaderSource-webgl.html:
+        * inspector/canvas/updateShader-webgl:
+        * inspector/page/overrideSetting.html:
+        * inspector/page/overrideSetting-ICECandidateFilteringEnabled.html:
+        * inspector/page/overrideSetting-MockCaptureDevicesEnabled.html:
+        * inspector/runtime/parse.html:
+        Replace all instances of `DomainAgent.Enum` with `InspectorBackend.domains.Domain.Enum`.
+
+        * inspector/audit/run.html:
+        * inspector/audit/version.html:
+        * inspector/recording/version.html:
+        Use new `InspectorBackend` methods.
+
+        * inspector/unit-tests/target-manager.html:
+        * inspector/unit-tests/target-manager-expected.txt:
+        * inspector/worker/console-basic.html:
+        * inspector/worker/debugger-pause.html:
+        * inspector/worker/debugger-scripts.html:
+        * inspector/worker/debugger-shared-breakpoint.html:
+        * inspector/worker/resources-in-worker.html:
+        * inspector/worker/resources/dom-debugger-utilities.js:
+        * inspector/worker/runtime-basic.html:
+        * http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html:
+        Replace `WI.Target.Type` with `WI.TargetType`.
+
+        * inspector/dom/inspect.html:
+        * inspector/dom/inspect-expected.txt:
+        Rewrite test since faking events from the backend now requires a target.
+
+        * inspector/unit-tests/set-utilities.html:
+        * inspector/unit-tests/set-utilities-expected.txt:
+        Add tests for `Set.prototype.addAll`.
+
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
         Rename PageCache to BackForwardCache

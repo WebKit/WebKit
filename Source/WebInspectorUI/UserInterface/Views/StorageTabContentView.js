@@ -48,7 +48,10 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
 
     static isTabAllowed()
     {
-        return !!(window.ApplicationCacheAgent || window.DOMStorageAgent || window.DatabaseAgent || window.IndexedDBAgent);
+        return InspectorBackend.hasDomain("ApplicationCache")
+            || InspectorBackend.hasDomain("DOMStorage")
+            || InspectorBackend.hasDomain("Database")
+            || InspectorBackend.hasDomain("IndexedDB");
     }
 
     // Public

@@ -237,7 +237,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        if (InspectorBackend.domains.CSS) {
+        if (InspectorBackend.hasDomain("CSS")) {
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
@@ -327,12 +327,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.allExceptionsBreakpoint);
         WI.debuggerManager.addBreakpoint(WI.debuggerManager.uncaughtExceptionsBreakpoint);
 
-        // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
-        if (InspectorBackend.domains.Debugger.setPauseOnAssertions && WI.settings.showAssertionFailuresBreakpoint.value)
+        // COMPATIBILITY (iOS 10): Debugger.setPauseOnAssertions did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.setPauseOnAssertions") && WI.settings.showAssertionFailuresBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.assertionFailuresBreakpoint);
 
-        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
-        if (InspectorBackend.domains.Debugger.setPauseOnMicrotasks && WI.settings.showAllMicrotasksBreakpoint.value)
+        // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.setPauseOnMicrotasks") && WI.settings.showAllMicrotasksBreakpoint.value)
             WI.debuggerManager.addBreakpoint(WI.debuggerManager.allMicrotasksBreakpoint);
 
         for (let target of WI.targets)
@@ -393,7 +393,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     static shouldPlaceResourcesAtTopLevel()
     {
-        return (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript && !WI.sharedApp.hasExtraDomains)
+        return WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript
             || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker;
     }
 
@@ -957,7 +957,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addWorkerTargetWithMainResource(target)
     {
-        console.assert(target.type === WI.Target.Type.Worker || target.type === WI.Target.Type.ServiceWorker);
+        console.assert(target.type === WI.TargetType.Worker || target.type === WI.TargetType.ServiceWorker);
 
         let targetTreeElement = new WI.WorkerTreeElement(target);
         this._workerTargetTreeElementMap.set(target, targetTreeElement);
@@ -1800,8 +1800,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateBreakpointContextMenu(contextMenu)
     {
-        // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
-        if (InspectorBackend.domains.Debugger.setPauseOnAssertions) {
+        // COMPATIBILITY (iOS 10): Debugger.setPauseOnAssertions did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.setPauseOnAssertions")) {
             let assertionFailuresBreakpointShown = WI.settings.showAssertionFailuresBreakpoint.value;
 
             contextMenu.appendCheckboxItem(WI.repeatedUIString.assertionFailures(), () => {
@@ -1816,8 +1816,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         contextMenu.appendSeparator();
 
-        // COMPATIBILITY (iOS 13): DebuggerAgent.setPauseOnMicrotasks did not exist yet.
-        if (InspectorBackend.domains.Debugger.setPauseOnMicrotasks) {
+        // COMPATIBILITY (iOS 13): Debugger.setPauseOnMicrotasks did not exist yet.
+        if (InspectorBackend.hasCommand("Debugger.setPauseOnMicrotasks")) {
             let allMicrotasksBreakpointShown = WI.settings.showAllMicrotasksBreakpoint.value;
 
             contextMenu.appendCheckboxItem(WI.UIString("All Microtasks"), () => {
@@ -1887,7 +1887,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateResourceContextMenu(contextMenu)
     {
-        if (InspectorBackend.domains.CSS) {
+        if (InspectorBackend.hasDomain("CSS")) {
             let addInspectorStyleSheetItem = (menu, frame) => {
                 menu.appendItem(WI.UIString("Inspector Style Sheet"), () => {
                     if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path) {

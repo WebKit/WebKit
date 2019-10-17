@@ -48,7 +48,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
             if (this._supports > WI.AuditTestBase.Version) {
                 WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 is too new to run in this Web Inspector").format(this.name));
                 this._supported = false;
-            } else if (InspectorBackend.domains.Audit && this._supports > InspectorBackend.domains.Audit.VERSION) {
+            } else if (this._supports > InspectorBackend.getVersion("Audit")) {
                 WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 is too new to run on this inspected page").format(this.name));
                 this._supported = false;
             }
@@ -108,13 +108,15 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         if (!this._setup)
             return;
 
+        let target = WI.assumingMainTarget();
+
         let agentCommandFunction = null;
         let agentCommandArguments = {};
-        if (InspectorBackend.domains.Audit) {
-            agentCommandFunction = AuditAgent.run;
+        if (target.hasDomain("Audit")) {
+            agentCommandFunction = target.AuditAgent.run;
             agentCommandArguments.test = this._setup;
         } else {
-            agentCommandFunction = RuntimeAgent.evaluate;
+            agentCommandFunction = target.RuntimeAgent.evaluate;
             agentCommandArguments.expression = `(function() { "use strict"; return eval(\`(${this._setup.replace(/`/g, "\\`")})\`)(); })()`;
             agentCommandArguments.objectGroup = AuditTestBase.ObjectGroup;
             agentCommandArguments.doNotPauseOnExceptionsAndMuteConsole = true;
@@ -125,7 +127,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
             if (response.result.type === "object" && response.result.className === "Promise") {
                 if (WI.RuntimeManager.supportsAwaitPromise())
-                    response = await RuntimeAgent.awaitPromise(response.result.objectId);
+                    response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
                 else {
                     response = null;
                     WI.AuditManager.synthesizeError(WI.UIString("Async audits are not supported."));

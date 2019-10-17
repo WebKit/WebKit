@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TimelineObserver = class TimelineObserver
+WI.TimelineObserver = class TimelineObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Timeline" domain.
 

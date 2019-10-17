@@ -38,23 +38,22 @@ WI.Target = class Target extends WI.Object
         this._resourceCollection = new WI.ResourceCollection;
         this._extraScriptCollection = new WI.ScriptCollection;
 
+        this._supportedCommandParameters = new Map;
+        this._supportedEventParameters = new Map;
+
         // Restrict the agents to the list of supported agents for this target type.
         // This makes it so `target.FooAgent` only exists if the "Foo" domain is
         // supported by the target.
         this._agents = {};
-        const supportedDomains = this._supportedDomainsForTargetType(this._type);
-        for (let domain of supportedDomains) {
-            let agent = this._connection._agents[domain];
-            if (agent && agent.active)
-                this._agents[domain] = agent;
-        }
+        for (let domainName of InspectorBackend.supportedDomainsForTargetType(this._type))
+            this._agents[domainName] = InspectorBackend._makeAgent(domainName, this);
 
         this._connection.target = this;
 
         // Agents we always expect in every target.
-        console.assert(this.RuntimeAgent);
-        console.assert(this.DebuggerAgent);
-        console.assert(this.ConsoleAgent);
+        console.assert(this.hasDomain("Target") || this.hasDomain("Runtime"));
+        console.assert(this.hasDomain("Target") || this.hasDomain("Debugger"));
+        console.assert(this.hasDomain("Target") || this.hasDomain("Console"));
     }
 
     // Target
@@ -63,7 +62,7 @@ WI.Target = class Target extends WI.Object
     {
         // Intentionally initialize InspectorAgent first if it is available.
         // This may not be strictly necessary anymore, but is historical.
-        if (this.InspectorAgent)
+        if (this.hasDomain("Inspector"))
             this.InspectorAgent.enable();
 
         // Initialize agents.
@@ -92,16 +91,16 @@ WI.Target = class Target extends WI.Object
             // This allows an automatically paused backend to resume execution, but we want to ensure
             // our breakpoints were already sent to that backend.
             // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-            if (this.InspectorAgent && this.InspectorAgent.initialized)
+            if (this.hasCommand("Inspector.initialized"))
                 this.InspectorAgent.initialized();
         });
     }
 
-    activateExtraDomain(domain)
+    activateExtraDomain(domainName)
     {
-        let agent = this._connection._agents[domain];
-        if (agent && agent.active)
-            this._agents[domain] = agent;
+        // FIXME: <https://webkit.org/b/201150> Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
+
+        this._agents[domainName] = InspectorBackend._makeAgent(domainName, this);
     }
 
     // Agents
@@ -200,31 +199,34 @@ WI.Target = class Target extends WI.Object
         this.dispatchEventToListeners(WI.Target.Event.ScriptAdded, {script});
     }
 
-    // Private
-
-    _supportedDomainsForTargetType(type)
+    hasDomain(domainName)
     {
-        switch (type) {
-        case WI.Target.Type.JSContext:
-            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.JavaScript);
-        case WI.Target.Type.Worker:
-            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Worker);
-        case WI.Target.Type.ServiceWorker:
-            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.ServiceWorker);
-        case WI.Target.Type.Page:
-            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Web);
-        default:
-            console.assert(false, "Unexpected target type", type);
-            return InspectorBackend.supportedDomainsForDebuggableType(WI.DebuggableType.Web);
-        }
-    }
-};
+        console.assert(!domainName.includes(".") && !domainName.endsWith("Agent"));
 
-WI.Target.Type = {
-    Page: Symbol("page"),
-    JSContext: Symbol("jscontext"),
-    ServiceWorker: Symbol("service-worker"),
-    Worker: Symbol("worker"),
+        return domainName in this._agents;
+    }
+
+    hasCommand(qualifiedName, parameterName)
+    {
+        console.assert(qualifiedName.includes(".") && !qualifiedName.includes("Agent."));
+
+        let command = this._supportedCommandParameters.get(qualifiedName);
+        if (!command)
+            return false;
+
+        return parameterName === undefined || command._hasParameter(parameterName);
+    }
+
+    hasEvent(qualifiedName, parameterName)
+    {
+        console.assert(qualifiedName.includes(".") && !qualifiedName.includes("Agent."));
+
+        let event = this._supportedEventParameters.get(qualifiedName);
+        if (!event)
+            return false;
+
+        return parameterName === undefined || event._hasParameter(parameterName);
+    }
 };
 
 WI.Target.Event = {

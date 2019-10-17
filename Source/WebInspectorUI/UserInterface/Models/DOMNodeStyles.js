@@ -320,9 +320,10 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
         WI.cssManager.fetchStyleSheetsIfNeeded();
 
-        CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
-        CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
-        CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
+        let target = WI.assumingMainTarget();
+        target.CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
+        target.CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
+        target.CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedComputedStyle, fetchedComputedStylesPromise));
 
         this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedComputedStylesPromise.promise])
         .then(() => {
@@ -337,9 +338,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     {
         selector = selector || this._node.appropriateSelectorFor(true);
 
+        let target = WI.assumingMainTarget();
+
         function completed()
         {
-            DOMAgent.markUndoableState();
+            target.DOMAgent.markUndoableState();
             this.refresh();
         }
 
@@ -361,12 +364,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 return;
             }
 
-            CSSAgent.setStyleText(rulePayload.style.styleId, text, styleChanged.bind(this));
+            target.CSSAgent.setStyleText(rulePayload.style.styleId, text, styleChanged.bind(this));
         }
 
         // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
-        if (!CSSAgent.createStyleSheet) {
-            CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
+        if (!target.hasCommand("CSS.createStyleSheet")) {
+            target.CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
             return;
         }
 
@@ -375,7 +378,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             if (!styleSheet)
                 return;
 
-            CSSAgent.addRule(styleSheet.id, selector, addedRule.bind(this));
+            target.CSSAgent.addRule(styleSheet.id, selector, addedRule.bind(this));
         }
 
         if (styleSheetId)
@@ -417,6 +420,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         selector = selector || "";
         let result = new WI.WrappedPromise;
 
+        let target = WI.assumingMainTarget();
+
         function ruleSelectorChanged(error, rulePayload)
         {
             if (error) {
@@ -424,7 +429,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 return;
             }
 
-            DOMAgent.markUndoableState();
+            target.DOMAgent.markUndoableState();
 
             // Do a full refresh incase the rule no longer matches the node or the
             // matched selector indices changed.
@@ -436,7 +441,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._needsRefresh = true;
         this._ignoreNextContentDidChangeForStyleSheet = rule.ownerStyleSheet;
 
-        CSSAgent.setRuleSelector(rule.id, selector, ruleSelectorChanged.bind(this));
+        target.CSSAgent.setRuleSelector(rule.id, selector, ruleSelectorChanged.bind(this));
         return result.promise;
     }
 
@@ -464,7 +469,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             this.refresh();
         };
 
-        CSSAgent.setStyleText(style.id, text, didSetStyleText);
+        let target = WI.assumingMainTarget();
+        target.CSSAgent.setStyleText(style.id, text, didSetStyleText);
     }
 
     // Private

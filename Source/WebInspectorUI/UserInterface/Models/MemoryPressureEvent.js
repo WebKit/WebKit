@@ -37,10 +37,10 @@ WI.MemoryPressureEvent = class MemoryPressureEvent
     {
         let severity;
         switch (protocolSeverity) {
-        case MemoryAgent.MemoryPressureSeverity.Critical:
+        case InspectorBackend.Enum.Memory.MemoryPressureSeverity.Critical:
             severity = WI.MemoryPressureEvent.Severity.Critical;
             break;
-        case MemoryAgent.MemoryPressureSeverity.NonCritical:
+        case InspectorBackend.Enum.Memory.MemoryPressureSeverity.NonCritical:
             severity = WI.MemoryPressureEvent.Severity.NonCritical;
             break;
         default:

@@ -23,14 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NetworkObserver = class NetworkObserver
+WI.NetworkObserver = class NetworkObserver extends InspectorBackend.Dispatcher
 {
+    constructor(target)
+    {
+        super(target);
+
+        this._legacyRequestWillBeSent = !this._target.hasEvent("Network.requestWillBeSent", "walltime");
+    }
+
     // Events defined by the "Network" domain.
 
     requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, walltime, initiator, redirectResponse, type, targetId)
     {
         // COMPATIBILITY(iOS 11.0): `walltime` did not exist in 11.0 and earlier.
-        if (!InspectorBackend.domains.Network.hasEventParameter("requestWillBeSent", "walltime")) {
+        if (this._legacyRequestWillBeSent) {
             walltime = undefined;
             initiator = arguments[6];
             redirectResponse = arguments[7];
@@ -109,6 +116,6 @@ WI.NetworkObserver = class NetworkObserver
 
     responseIntercepted(requestId, response)
     {
-        WI.networkManager.responseIntercepted(this.target, requestId, response);
+        WI.networkManager.responseIntercepted(this._target, requestId, response);
     }
 };

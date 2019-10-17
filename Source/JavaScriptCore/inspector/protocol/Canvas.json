@@ -1,7 +1,8 @@
 {
     "domain": "Canvas",
-    "availability": ["web"],
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "CanvasId",

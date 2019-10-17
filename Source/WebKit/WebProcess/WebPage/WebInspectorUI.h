@@ -91,6 +91,8 @@ public:
 
     bool isRemote() const final { return false; }
     String localizedStringsURL() override;
+    String backendCommandsURL() const final { return String(); }
+    String debuggableType() const final { return "web-page"_s; }
 
     void bringToFront() override;
     void closeWindow() override;

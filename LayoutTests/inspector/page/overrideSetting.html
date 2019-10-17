@@ -21,12 +21,12 @@ function test()
             await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
 
             InspectorTest.log("Overriding AuthorAndUserStylesEnabled to false...");
-            await PageAgent.overrideSetting(PageAgent.Setting.AuthorAndUserStylesEnabled, false);
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, false);
 
             await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
 
             InspectorTest.log("Removing AuthorAndUserStylesEnabled override...");
-            await PageAgent.overrideSetting(PageAgent.Setting.AuthorAndUserStylesEnabled);
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled);
 
             await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
         },

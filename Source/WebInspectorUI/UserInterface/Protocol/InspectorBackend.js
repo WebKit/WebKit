@@ -34,16 +34,16 @@ InspectorBackendClass = class InspectorBackendClass
 {
     constructor()
     {
-        this._agents = {};
+        this._registeredDomains = {};
+        this._activeDomains = {};
 
         this._customTracer = null;
         this._defaultTracer = new WI.LoggingProtocolTracer;
         this._activeTracers = [this._defaultTracer];
 
-        this._supportedDomainsForDebuggableType = new Map;
-
-        for (let debuggableType of Object.values(WI.DebuggableType))
-            this._supportedDomainsForDebuggableType.set(debuggableType, []);
+        this._supportedDomainsForTargetType = new Multimap;
+        this._supportedCommandParameters = new Map;
+        this._supportedEventParameters = new Map;
 
         WI.settings.protocolAutoLogMessages.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
         WI.settings.protocolAutoLogTimeStats.addEventListener(WI.Setting.Event.Changed, this._startOrStopAutomaticTracing, this);
@@ -58,11 +58,11 @@ InspectorBackendClass = class InspectorBackendClass
 
     // Public
 
-    // This should be used for feature checking if something exists in the protocol
-    // regardless of whether or not the domain is active for a specific target.
-    get domains()
+    // This should only be used for getting enum values (`InspectorBackend.Enum.Domain.Type.Item`).
+    // Domain/Command/Event feature checking should use one of the `has*` functions below.
+    get Enum()
     {
-        return this._agents;
+        return this._activeDomains;
     }
 
     // It's still possible to set this flag on InspectorBackend to just
@@ -140,37 +140,78 @@ InspectorBackendClass = class InspectorBackendClass
         return this._activeTracers;
     }
 
-    registerVersion(domainName, version)
+    registerDomain(domainName, targetTypes)
     {
-        let agent = this._agentForDomain(domainName);
-        agent.VERSION = version;
+        targetTypes = targetTypes || Object.values(WI.TargetType);
+        for (let targetType of targetTypes)
+            this._supportedDomainsForTargetType.add(targetType, domainName);
+
+        this._registeredDomains[domainName] = new InspectorBackend.Domain(domainName);
     }
 
-    registerCommand(qualifiedName, callSignature, replySignature)
+    registerVersion(domainName, version)
     {
-        var [domainName, commandName] = qualifiedName.split(".");
-        var agent = this._agentForDomain(domainName);
-        agent.addCommand(InspectorBackend.Command.create(agent, qualifiedName, callSignature, replySignature));
+        let domain = this._registeredDomains[domainName];
+        domain.VERSION = version;
     }
 
     registerEnum(qualifiedName, enumValues)
     {
-        var [domainName, enumName] = qualifiedName.split(".");
-        var agent = this._agentForDomain(domainName);
-        agent.addEnum(enumName, enumValues);
+        let [domainName, enumName] = qualifiedName.split(".");
+        let domain = this._registeredDomains[domainName];
+        domain._addEnum(enumName, enumValues);
     }
 
-    registerEvent(qualifiedName, signature)
+    registerCommand(qualifiedName, targetTypes, callSignature, replySignature)
     {
-        var [domainName, eventName] = qualifiedName.split(".");
-        var agent = this._agentForDomain(domainName);
-        agent.addEvent(new InspectorBackend.Event(eventName, signature));
+        let [domainName, commandName] = qualifiedName.split(".");
+        let domain = this._registeredDomains[domainName];
+        domain._addCommand(targetTypes, new InspectorBackend.Command(qualifiedName, commandName, callSignature, replySignature));
     }
 
-    registerDomainDispatcher(domainName, dispatcher)
+    registerEvent(qualifiedName, targetTypes, signature)
     {
-        var agent = this._agentForDomain(domainName);
-        agent.dispatcher = dispatcher;
+        let [domainName, eventName] = qualifiedName.split(".");
+        let domain = this._registeredDomains[domainName];
+        domain._addEvent(targetTypes, new InspectorBackend.Event(qualifiedName, eventName, signature));
+    }
+
+    registerDispatcher(domainName, dispatcher)
+    {
+        let domain = this._registeredDomains[domainName];
+        domain._addDispatcher(dispatcher);
+    }
+
+    activateDomain(domainName, debuggableTypes)
+    {
+        // FIXME: <https://webkit.org/b/201150> Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
+
+        if (debuggableTypes && !debuggableTypes.includes(InspectorFrontendHost.debuggableType()))
+            return;
+
+        console.assert(domainName in this._registeredDomains);
+        console.assert(!(domainName in this._activeDomains));
+
+        let domain = this._registeredDomains[domainName];
+        this._activeDomains[domainName] = domain;
+
+        for (let command of domain._supportedCommandsForTargetType.values()) {
+            let parameters = this._supportedCommandParameters.get(command._qualifiedName);
+            if (!parameters) {
+                parameters = new Set;
+                this._supportedCommandParameters.set(command._qualifiedName, parameters);
+            }
+            parameters.addAll(command._callSignature.map((item) => item.name));
+        }
+
+        for (let event of domain._supportedEventsForTargetType.values()) {
+            let parameters = this._supportedEventParameters.get(event._qualifiedName);
+            if (!parameters) {
+                parameters = new Set;
+                this._supportedEventParameters.set(event._qualifiedName, parameters);
+            }
+            parameters.addAll(event._parameterNames);
+        }
     }
 
     dispatch(message)
@@ -189,33 +230,68 @@ InspectorBackendClass = class InspectorBackendClass
         WI.mainTarget.connection.runAfterPendingDispatches(callback);
     }
 
-    activateDomain(domainName, activationDebuggableTypes)
+    supportedDomainsForTargetType(type)
     {
-        let supportedDebuggableTypes = activationDebuggableTypes || Object.values(WI.DebuggableType);
-        for (let debuggableType of supportedDebuggableTypes)
-            this._supportedDomainsForDebuggableType.get(debuggableType).push(domainName);
+        console.assert(Object.values(WI.TargetType).includes(type), "Unknown target type", type);
 
-        // FIXME: For proper multi-target support we should eliminate all uses of
-        // `window.FooAgent` and `unprefixed FooAgent` in favor of either:
-        //   - Per-target: `target.FooAgent`
-        //   - Global feature check: `InspectorBackend.domains.Foo`
-        if (!activationDebuggableTypes || activationDebuggableTypes.includes(InspectorFrontendHost.debuggableType())) {
-            let agent = this._agents[domainName];
-            agent.activate();
-            return agent;
-        }
-
-        return null;
+        return this._supportedDomainsForTargetType.get(type) || new Set;
     }
 
-    supportedDomainsForDebuggableType(type)
+    hasDomain(domainName)
     {
-        console.assert(Object.values(WI.DebuggableType).includes(type), "Unknown debuggable type", type);
+        console.assert(!domainName.includes(".") && !domainName.endsWith("Agent"));
 
-        return this._supportedDomainsForDebuggableType.get(type);
+        return domainName in this._activeDomains;
+    }
+
+    hasCommand(qualifiedName, parameterName)
+    {
+        console.assert(qualifiedName.includes(".") && !qualifiedName.includes("Agent."));
+
+        let parameters = this._supportedCommandParameters.get(qualifiedName);
+        if (!parameters)
+            return false;
+
+        return parameterName === undefined || parameters.has(parameterName);
+    }
+
+    hasEvent(qualifiedName, parameterName)
+    {
+        console.assert(qualifiedName.includes(".") && !qualifiedName.includes("Agent."));
+
+        let parameters = this._supportedEventParameters.get(qualifiedName);
+        if (!parameters)
+            return false;
+
+        return parameterName === undefined || parameters.has(parameterName);
+    }
+
+    getVersion(domainName)
+    {
+        console.assert(!domainName.includes(".") && !domainName.endsWith("Agent"));
+
+        let domain = this._activeDomains[domainName];
+        if (domain && "VERSION" in domain)
+            return domain.VERSION;
+
+        return -Infinity;
+    }
+
+    invokeCommand(qualifiedName, targetType, connection, commandArguments, callback)
+    {
+        let [domainName, commandName] = qualifiedName.split(".");
+
+        let domain = this._activeDomains[domainName];
+        return domain._invokeCommand(commandName, targetType, connection, commandArguments, callback);
     }
 
     // Private
+
+    _makeAgent(domainName, target)
+    {
+        let domain = this._activeDomains[domainName];
+        return domain._makeAgent(target);
+    }
 
     _startOrStopAutomaticTracing()
     {
@@ -223,190 +299,176 @@ InspectorBackendClass = class InspectorBackendClass
         this._defaultTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
         this._defaultTracer.filterMultiplexingBackend = this.filterMultiplexingBackendInspectorProtocolMessages;
     }
-
-    _agentForDomain(domainName)
-    {
-        if (this._agents[domainName])
-            return this._agents[domainName];
-
-        var agent = new InspectorBackend.Agent(domainName);
-        this._agents[domainName] = agent;
-        return agent;
-    }
 };
 
 InspectorBackend = new InspectorBackendClass;
 
-InspectorBackend.Agent = class InspectorBackendAgent
+InspectorBackend.Domain = class InspectorBackendDomain
 {
     constructor(domainName)
     {
         this._domainName = domainName;
 
-        // Default connection is the main connection.
-        this._connection = InspectorBackend.backendConnection;
+        // Enums are stored directly on the Domain instance using their unqualified
+        // type name as the property. Thus, callers can write: Domain.EnumType.
+
         this._dispatcher = null;
 
-        // Agents are always created, but are only useable after they are activated.
-        this._active = false;
-
-        // Commands are stored directly on the Agent instance using their unqualified
-        // method name as the property. Thus, callers can write: FooAgent.methodName().
-        // Enums are stored similarly based on the unqualified type name.
-        this._events = {};
+        this._supportedCommandsForTargetType = new Multimap;
+        this._supportedEventsForTargetType = new Multimap;
     }
 
-    // Public
+    // Private
 
-    get domainName()
+    _addEnum(enumName, enumValues)
     {
-        return this._domainName;
-    }
-
-    get active()
-    {
-        return this._active;
-    }
-
-    get connection()
-    {
-        return this._connection;
-    }
-
-    set connection(connection)
-    {
-        this._connection = connection;
-    }
-
-    get dispatcher()
-    {
-        return this._dispatcher;
-    }
-
-    set dispatcher(value)
-    {
-        this._dispatcher = value;
-    }
-
-    addEnum(enumName, enumValues)
-    {
+        console.assert(!(enumName in this));
         this[enumName] = enumValues;
     }
 
-    addCommand(command)
+    _addCommand(targetTypes, command)
     {
-        this[command.commandName] = command;
+        targetTypes = targetTypes || Object.values(WI.TargetType);
+        for (let type of targetTypes)
+            this._supportedCommandsForTargetType.add(type, command);
     }
 
-    addEvent(event)
+    _addEvent(targetTypes, event)
     {
-        this._events[event.eventName] = event;
+        targetTypes = targetTypes || Object.values(WI.TargetType);
+        for (let type of targetTypes)
+            this._supportedEventsForTargetType.add(type, event);
     }
 
-    getEvent(eventName)
+    _addDispatcher(dispatcher)
     {
-        return this._events[eventName];
+        console.assert(!this._dispatcher);
+        this._dispatcher = dispatcher;
     }
 
-    hasEvent(eventName)
+    _makeAgent(target)
     {
-        return eventName in this._events;
+        let commands = this._supportedCommandsForTargetType.get(target.type) || new Set;
+        let events = this._supportedEventsForTargetType.get(target.type) || new Set;
+        return new InspectorBackend.Agent(target, commands, events, this._dispatcher);
     }
 
-    hasEventParameter(eventName, eventParameterName)
+    _invokeCommand(commandName, targetType, connection, commandArguments, callback)
     {
-        let event = this._events[eventName];
-        return event && event.parameterNames.includes(eventParameterName);
-    }
-
-    activate()
-    {
-        this._active = true;
-        window[this._domainName + "Agent"] = this;
-    }
-
-    dispatchEvent(eventName, eventArguments)
-    {
-        if (!this._dispatcher) {
-            console.error(`No domain dispatcher registered for domain '${this._domainName}', for event '${this._domainName}.${eventName}'`);
-            return false;
+        let commands = this._supportedCommandsForTargetType.get(targetType);
+        for (let command of commands) {
+            if (command._commandName === commandName)
+                return command._makeCallable(connection).invoke(commandArguments, callback);
         }
 
-        if (!(eventName in this._dispatcher)) {
-            console.error(`Protocol Error: Attempted to dispatch an unimplemented method '${this._domainName}.${eventName}'`);
-            return false;
-        }
-
-        this._dispatcher[eventName].apply(this._dispatcher, eventArguments);
-        return true;
+        console.assert();
     }
 };
 
-// InspectorBackend.Command can't use ES6 classes because of its trampoline nature.
+InspectorBackend.Agent = class InspectorBackendAgent
+{
+    constructor(target, commands, events, dispatcher)
+    {
+        // Commands are stored directly on the Agent instance using their unqualified
+        // method name as the property. Thus, callers can write: DomainAgent.commandName().
+        for (let command of commands) {
+            this[command._commandName] = command._makeCallable(target.connection);
+            target._supportedCommandParameters.set(command._qualifiedName, command);
+        }
+
+        this._events = {};
+        for (let event of events) {
+            this._events[event._eventName] = event;
+            target._supportedEventParameters.set(event._qualifiedName, event);
+        }
+
+        this._dispatcher = dispatcher ? new dispatcher(target) : null;
+    }
+};
+
+InspectorBackend.Dispatcher = class InspectorBackendDispatcher
+{
+    constructor(target)
+    {
+        console.assert(target instanceof WI.Target);
+
+        this._target = target;
+    }
+};
+
+InspectorBackend.Command = class InspectorBackendCommand
+{
+    constructor(qualifiedName, commandName, callSignature, replySignature)
+    {
+        this._qualifiedName = qualifiedName;
+        this._commandName = commandName;
+        this._callSignature = callSignature || [];
+        this._replySignature = replySignature || [];
+    }
+
+    // Private
+
+    _hasParameter(parameterName)
+    {
+        return this._callSignature.some((item) => item.name === parameterName);
+    }
+
+    _makeCallable(connection)
+    {
+        let instance = new InspectorBackend.Callable(this, connection);
+
+        function callable() {
+            console.assert(this instanceof InspectorBackend.Agent);
+            return instance._invokeWithArguments.call(instance, Array.from(arguments));
+        }
+        callable._instance = instance;
+        Object.setPrototypeOf(callable, InspectorBackend.Callable.prototype);
+        return callable;
+    }
+};
+
+InspectorBackend.Event = class InspectorBackendEvent
+{
+    constructor(qualifiedName, eventName, parameterNames)
+    {
+        this._qualifiedName = qualifiedName;
+        this._eventName = eventName;
+        this._parameterNames = parameterNames || [];
+    }
+
+    // Private
+
+    _hasParameter(parameterName)
+    {
+        return this._parameterNames.includes(parameterName);
+    }
+};
+
+// InspectorBackend.Callable can't use ES6 classes because of its trampoline nature.
 // But we can use strict mode to get stricter handling of the code inside its functions.
-InspectorBackend.Command = function(agent, qualifiedName, callSignature, replySignature)
+InspectorBackend.Callable = function(command, connection)
 {
     "use strict";
 
-    this._agent = agent;
+    this._command = command;
+    this._connection = connection;
+
     this._instance = this;
-
-    let [domainName, commandName] = qualifiedName.split(".");
-    this._qualifiedName = qualifiedName;
-    this._commandName = commandName;
-    this._callSignature = callSignature || [];
-    this._replySignature = replySignature || [];
 };
 
-InspectorBackend.Command.create = function(agent, commandName, callSignature, replySignature)
-{
-    "use strict";
-
-    let instance = new InspectorBackend.Command(agent, commandName, callSignature, replySignature);
-
-    function callable() {
-        console.assert(this instanceof InspectorBackend.Agent);
-        return instance._invokeWithArguments.call(instance, this, Array.from(arguments));
-    }
-
-    callable._instance = instance;
-    Object.setPrototypeOf(callable, InspectorBackend.Command.prototype);
-
-    return callable;
-};
-
-// As part of the workaround to make commands callable, these functions use |this._instance|.
-// |this| could refer to the callable trampoline, or the InspectorBackend.Command instance.
-InspectorBackend.Command.prototype = {
+// As part of the workaround to make commands callable, these functions use `this._instance`.
+// `this` could refer to the callable trampoline, or the InspectorBackend.Callable instance.
+InspectorBackend.Callable.prototype = {
     __proto__: Function.prototype,
 
     // Public
 
-    get qualifiedName()
-    {
-        return this._instance._qualifiedName;
-    },
-
-    get commandName()
-    {
-        return this._instance._commandName;
-    },
-
-    get callSignature()
-    {
-        return this._instance._callSignature;
-    },
-
-    get replySignature()
-    {
-        return this._instance._replySignature;
-    },
-
-    invoke(commandArguments, callback, agent)
+    invoke(commandArguments, callback)
     {
         "use strict";
 
-        let instance = this._instance;
+        let command = this._instance._command;
+        let connection = this._instance._connection;
 
         function deliverFailure(message) {
             console.error(`Protocol Error: ${message}`);
@@ -420,41 +482,34 @@ InspectorBackend.Command.prototype = {
             return deliverFailure(`invoke expects an object for command arguments but its type is '${typeof commandArguments}'.`);
 
         let parameters = {};
-        for (let {name, type, optional} of instance.callSignature) {
+        for (let {name, type, optional} of command._callSignature) {
             if (!(name in commandArguments) && !optional)
-                return deliverFailure(`Missing argument '${name}' for command '${instance.qualifiedName}'.`);
+                return deliverFailure(`Missing argument '${name}' for command '${command._qualifiedName}'.`);
 
             let value = commandArguments[name];
             if (optional && value === undefined)
                 continue;
 
             if (typeof value !== type)
-                return deliverFailure(`Invalid type of argument '${name}' for command '${instance.qualifiedName}' call. It must be '${type}' but it is '${typeof value}'.`);
+                return deliverFailure(`Invalid type of argument '${name}' for command '${command._qualifiedName}' call. It must be '${type}' but it is '${typeof value}'.`);
 
             parameters[name] = value;
         }
 
-        agent = agent || instance._agent;
         if (typeof callback === "function")
-            agent._connection._sendCommandToBackendWithCallback(instance, parameters, callback);
+            connection._sendCommandToBackendWithCallback(command, parameters, callback);
         else
-            return agent._connection._sendCommandToBackendExpectingPromise(instance, parameters);
-    },
-
-    supports(parameterName)
-    {
-        "use strict";
-
-        return this._instance.callSignature.some((parameter) => parameter["name"] === parameterName);
+            return connection._sendCommandToBackendExpectingPromise(command, parameters);
     },
 
     // Private
 
-    _invokeWithArguments(agent, commandArguments)
+    _invokeWithArguments(commandArguments)
     {
         "use strict";
 
-        let instance = this._instance;
+        let command = this._instance._command;
+        let connection = this._instance._connection;
         let callback = typeof commandArguments.lastValue === "function" ? commandArguments.pop() : null;
 
         function deliverFailure(message) {
@@ -466,35 +521,26 @@ InspectorBackend.Command.prototype = {
         }
 
         let parameters = {};
-        for (let {name, type, optional} of instance.callSignature) {
+        for (let {name, type, optional} of command._callSignature) {
             if (!commandArguments.length && !optional)
-                return deliverFailure(`Invalid number of arguments for command '${instance.qualifiedName}'.`);
+                return deliverFailure(`Invalid number of arguments for command '${command._qualifiedName}'.`);
 
             let value = commandArguments.shift();
             if (optional && value === undefined)
                 continue;
 
             if (typeof value !== type)
-                return deliverFailure(`Invalid type of argument '${name}' for command '${instance.qualifiedName}' call. It must be '${type}' but it is '${typeof value}'.`);
+                return deliverFailure(`Invalid type of argument '${name}' for command '${command._qualifiedName}' call. It must be '${type}' but it is '${typeof value}'.`);
 
             parameters[name] = value;
         }
 
         if (!callback && commandArguments.length === 1 && commandArguments[0] !== undefined)
-            return deliverFailure(`Protocol Error: Optional callback argument for command '${instance.qualifiedName}' call must be a function but its type is '${typeof commandArguments[0]}'.`);
+            return deliverFailure(`Protocol Error: Optional callback argument for command '${command._qualifiedName}' call must be a function but its type is '${typeof commandArguments[0]}'.`);
 
         if (callback)
-            agent._connection._sendCommandToBackendWithCallback(instance, parameters, callback);
+            connection._sendCommandToBackendWithCallback(command, parameters, callback);
         else
-            return agent._connection._sendCommandToBackendExpectingPromise(instance, parameters);
-    }
-};
-
-InspectorBackend.Event = class Event
-{
-    constructor(eventName, parameterNames)
-    {
-        this.eventName = eventName;
-        this.parameterNames = parameterNames;
+            return connection._sendCommandToBackendExpectingPromise(command, parameters);
     }
 };

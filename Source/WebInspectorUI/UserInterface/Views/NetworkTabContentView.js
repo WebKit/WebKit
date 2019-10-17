@@ -57,7 +57,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 
     static isTabAllowed()
     {
-        return !!window.NetworkAgent;
+        return InspectorBackend.hasDomain("Network");
     }
 
     // Protected

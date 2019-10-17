@@ -68,12 +68,10 @@ private:
 
 } // namespace Inspector
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(Inspector::RemoteInspectionTarget) \
-    static bool isType(const Inspector::RemoteControllableTarget& target) \
-    { \
-        return target.type() == Inspector::RemoteControllableTarget::Type::JavaScript \
-            || target.type() == Inspector::RemoteControllableTarget::Type::ServiceWorker \
-            || target.type() == Inspector::RemoteControllableTarget::Type::Web; \
+SPECIALIZE_TYPE_TRAITS_BEGIN(Inspector::RemoteInspectionTarget)
+    static bool isType(const Inspector::RemoteControllableTarget& target)
+    {
+        return target.type() != Inspector::RemoteControllableTarget::Type::Automation;
     }
 SPECIALIZE_TYPE_TRAITS_END()
 

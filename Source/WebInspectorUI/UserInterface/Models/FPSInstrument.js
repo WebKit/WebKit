@@ -36,8 +36,8 @@ WI.FPSInstrument = class FPSInstrument extends WI.Instrument
 
     static supported()
     {
-        // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist.
-        return window.TimelineAgent && TimelineAgent.EventType.RenderingFrame;
+        // COMPATIBILITY (iOS 8): Timeline.EventType.RenderingFrame did not exist.
+        return InspectorBackend.hasDomain("Timeline") && !!InspectorBackend.Enum.Timeline.EventType.RenderingFrame;
     }
 
     // Protected

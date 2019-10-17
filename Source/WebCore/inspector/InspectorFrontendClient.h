@@ -59,8 +59,8 @@ public:
     virtual bool isRemote() const = 0;
     virtual String localizedStringsURL() = 0;
     virtual unsigned inspectionLevel() const = 0;
-    virtual String backendCommandsURL() { return String(); };
-    virtual String debuggableType() { return "web"_s; }
+    virtual String backendCommandsURL() const = 0;
+    virtual String debuggableType() const = 0;
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;

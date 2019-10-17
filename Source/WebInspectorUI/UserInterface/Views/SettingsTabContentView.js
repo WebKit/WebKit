@@ -249,12 +249,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
     _createElementsSettingsView()
     {
-        if (!InspectorBackend.domains.DOM)
+        if (!InspectorBackend.hasDomain("DOM"))
             return;
 
         let elementsSettingsView = new WI.SettingsView("elements", WI.UIString("Elements"));
 
-        if (InspectorBackend.domains.DOM.setInspectModeEnabled && InspectorBackend.domains.DOM.setInspectModeEnabled.supports("showRulers")) {
+        if (InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers")) {
             elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
 
             elementsSettingsView.addSeparator();
@@ -287,7 +287,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let consoleSettingsView = new WI.SettingsView("console", WI.UIString("Console"));
 
         // COMPATIBILITY (iOS 12.2): Runtime.setSavedResultAlias did not exist.
-        if (InspectorBackend.domains.Runtime.setSavedResultAlias) {
+        if (InspectorBackend.hasCommand("Runtime.setSavedResultAlias")) {
             let consoleSavedResultAliasEditor = consoleSettingsView.addGroupWithCustomEditor(WI.UIString("Saved Result Alias:"));
 
             let consoleSavedResultAliasInput = consoleSavedResultAliasEditor.appendChild(document.createElement("input"));
@@ -346,7 +346,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let initialValues = new Map;
 
-        if (window.LayerTreeAgent) {
+        if (InspectorBackend.hasDomain("LayerTree")) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
         }
@@ -354,7 +354,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
         experimentalSettingsView.addSeparator();
 
-        if (InspectorBackend.domains.CSS) {
+        if (InspectorBackend.hasDomain("CSS")) {
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesIcons, WI.UIString("Show Icons"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show Jump to Effective Property Button"));
@@ -364,7 +364,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", (event) => {
-            if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)
+            if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && InspectorBackend.hasDomain("LayerTree") && WI.settings.experimentalEnableLayersTab.value)
                 WI._openTabsSetting.value.push(WI.LayersTabContentView.Type);
             WI._openTabsSetting.save();
 
@@ -384,7 +384,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 
-        if (InspectorBackend.domains.CSS) {
+        if (InspectorBackend.hasDomain("CSS")) {
             listenForChange(WI.settings.experimentalEnableStylesIcons);
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
         }

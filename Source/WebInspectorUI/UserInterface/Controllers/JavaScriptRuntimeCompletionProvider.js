@@ -293,7 +293,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 }
 
                 switch (target.type) {
-                case WI.Target.Type.Page:
+                case WI.TargetType.Page:
                     propertyNames.push("$");
                     propertyNames.push("$$");
                     propertyNames.push("$0");
@@ -301,8 +301,8 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         propertyNames.push(savedResultAlias + "0");
                     propertyNames.push("$x");
                     // fallthrough
-                case WI.Target.Type.ServiceWorker:
-                case WI.Target.Type.Worker:
+                case WI.TargetType.ServiceWorker:
+                case WI.TargetType.Worker:
                     propertyNames.push("copy");
                     propertyNames.push("getEventListeners");
                     propertyNames.push("monitorEvents");

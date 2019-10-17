@@ -64,8 +64,8 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         versionContainer.classList.add("audit-version");
 
         let version = WI.AuditTestBase.Version;
-        if (InspectorBackend.domains.Audit)
-            version = Math.min(version, InspectorBackend.domains.Audit.VERSION);
+        if (InspectorBackend.hasDomain("Audit"))
+            version = Math.min(version, InspectorBackend.getVersion("Audit"));
         versionContainer.textContent = WI.UIString("Audit version: %s").format(version);
 
         this.contentBrowser.showContentView(contentView);

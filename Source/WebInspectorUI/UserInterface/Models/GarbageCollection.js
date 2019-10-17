@@ -39,7 +39,7 @@ WI.GarbageCollection = class GarbageCollection
     static fromPayload(payload)
     {
         let type = WI.GarbageCollection.Type.Full;
-        if (payload.type === HeapAgent.GarbageCollectionType.Partial)
+        if (payload.type === InspectorBackend.Enum.Heap.GarbageCollectionType.Partial)
             type = WI.GarbageCollection.Type.Partial;
 
         return new WI.GarbageCollection(type, payload.startTime, payload.endTime);

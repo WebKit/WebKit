@@ -58,18 +58,18 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 
         for (let {type, size} of categories) {
             switch (type) {
-            case MemoryAgent.CategoryDataType.JavaScript:
-            case MemoryAgent.CategoryDataType.JIT:
+            case InspectorBackend.Enum.Memory.CategoryDataType.JavaScript:
+            case InspectorBackend.Enum.Memory.CategoryDataType.JIT:
                 javascriptSize += size;
                 break;
-            case MemoryAgent.CategoryDataType.Images:
+            case InspectorBackend.Enum.Memory.CategoryDataType.Images:
                 imagesSize += size;
                 break;
-            case MemoryAgent.CategoryDataType.Layers:
+            case InspectorBackend.Enum.Memory.CategoryDataType.Layers:
                 layersSize += size;
                 break;
-            case MemoryAgent.CategoryDataType.Page:
-            case MemoryAgent.CategoryDataType.Other:
+            case InspectorBackend.Enum.Memory.CategoryDataType.Page:
+            case InspectorBackend.Enum.Memory.CategoryDataType.Other:
                 pageSize += size;
                 break;
             default:

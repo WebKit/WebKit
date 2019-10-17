@@ -2,6 +2,7 @@
     "domain": "Audit",
     "description": "",
     "version": 3,
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
     "commands": [
         {
             "name": "setup",

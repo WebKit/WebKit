@@ -48,7 +48,7 @@ function test() {
 
     validSourceTest({
         name: "Canvas.updateShader.WebGL.Vertex.Valid",
-        shaderType: CanvasAgent.ShaderType.Vertex,
+        shaderType: WI.ShaderProgram.ShaderType.Vertex,
         source: `
     void main(void) {
         gl_Position = vec4(1, 2, 3, 4);
@@ -58,7 +58,7 @@ function test() {
 
     validSourceTest({
         name: "Canvas.updateShader.WebGL.Fragment.Valid",
-        shaderType: CanvasAgent.ShaderType.Fragment,
+        shaderType: WI.ShaderProgram.ShaderType.Fragment,
         source: `
     precision mediump float;
 
@@ -89,13 +89,13 @@ function test() {
 
     invalidSourceTest({
         name: "Canvas.updateShader.WebGL.Vertex.Invalid",
-        shaderType: CanvasAgent.ShaderType.Vertex,
+        shaderType: WI.ShaderProgram.ShaderType.Vertex,
         source: "INVALID",
     });
 
     invalidSourceTest({
         name: "Canvas.updateShader.WebGL.Fragment.Invalid",
-        shaderType: CanvasAgent.ShaderType.Fragment,
+        shaderType: WI.ShaderProgram.ShaderType.Fragment,
         source: "INVALID",
     });
 

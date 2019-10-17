@@ -31,7 +31,7 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.LayerTreeAgent)
+        if (target.hasDomain("LayerTree"))
             target.LayerTreeAgent.enable();
     }
 
@@ -39,7 +39,7 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 
     get supported()
     {
-        return !!window.LayerTreeAgent;
+        return InspectorBackend.hasDomain("LayerTree");
     }
 
     layerTreeMutations(previousLayers, newLayers)
@@ -76,7 +76,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         console.assert(this.supported);
 
-        LayerTreeAgent.layersForNode(node.id, (error, layers) => {
+        let target = WI.assumingMainTarget();
+        target.LayerTreeAgent.layersForNode(node.id, (error, layers) => {
             callback(error ? [] : layers.map(WI.Layer.fromPayload));
         });
     }
@@ -85,7 +86,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
     {
         console.assert(this.supported);
 
-        LayerTreeAgent.reasonsForCompositingLayer(layer.layerId, function(error, reasons) {
+        let target = WI.assumingMainTarget();
+        target.LayerTreeAgent.reasonsForCompositingLayer(layer.layerId, function(error, reasons) {
             callback(error ? 0 : reasons);
         });
     }

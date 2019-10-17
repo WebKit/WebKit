@@ -208,7 +208,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         function parseFinished(error, result, message, range)
         {
-            handler(result !== RuntimeAgent.SyntaxErrorType.Recoverable);
+            handler(result !== InspectorBackend.Enum.Runtime.SyntaxErrorType.Recoverable);
         }
 
         WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.parse(text, parseFinished.bind(this));

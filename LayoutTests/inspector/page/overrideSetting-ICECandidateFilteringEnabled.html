@@ -50,7 +50,7 @@ function test()
         description: "Test that changing whether ice candidate filtering is enabled has an effect.",
         async test() {
             InspectorTest.log("Overriding ICECandidateFilteringEnabled to false...");
-            await PageAgent.overrideSetting(PageAgent.Setting.ICECandidateFilteringEnabled, false);
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, false);
 
             let [overriddenResult] = await Promise.all([
                 InspectorTest.awaitEvent("DataChannel"),

@@ -34,33 +34,6 @@
         "ecmaVersion": 2018,
     },
     "globals": {
-        // Agents
-        "AuditAgent": true,
-        "ApplicationCacheAgent": true,
-        "CSSAgent": true,
-        "CPUProfilerAgent": true,
-        "CanvasAgent": true,
-        "ConsoleAgent": true,
-        "DOMAgent": true,
-        "DOMDebuggerAgent": true,
-        "DOMStorageAgent": true,
-        "DatabaseAgent": true,
-        "DebuggerAgent": true,
-        "HeapAgent": true,
-        "IndexedDBAgent": true,
-        "InspectorAgent": true,
-        "LayerTreeAgent": true,
-        "MemoryAgent": true,
-        "NetworkAgent": true,
-        "PageAgent": true,
-        "RecordingAgent": true,
-        "RuntimeAgent": true,
-        "ScriptProfilerAgent": true,
-        "ServiceWorkerAgent": true,
-        "TargetAgent": true,
-        "TimelineAgent": true,
-        "WorkerAgent": true,
-
         // Namespace
         "WI": true,
 

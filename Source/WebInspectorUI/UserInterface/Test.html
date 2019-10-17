@@ -43,6 +43,7 @@
     <script src="Base/ListMultimap.js"></script>
     <script src="Base/Multimap.js"></script>
     <script src="Base/Object.js"></script>
+    <script src="Base/TargetType.js"></script>
     <script src="Base/Throttler.js"></script>
 
     <script src="Test/TestHarness.js"></script>
@@ -79,7 +80,6 @@
 
     <script src="Protocol/DirectBackendTarget.js"></script>
     <script src="Protocol/MultiplexingBackendTarget.js"></script>
-    <script src="Protocol/JavaScriptContextTarget.js"></script>
     <script src="Protocol/PageTarget.js"></script>
     <script src="Protocol/WorkerTarget.js"></script>
 
@@ -284,6 +284,9 @@
 
         // Best used in combination with dumpActivityToSystemConsole.
         InspectorBackend.dumpInspectorProtocolMessages = false;
+
+        // Only needed when debugging issues related to the Target domain.
+        InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = true;
     </script>
 </head>
 <body>

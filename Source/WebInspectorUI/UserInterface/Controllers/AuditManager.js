@@ -147,12 +147,14 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestScheduled);
 
+        let target = WI.assumingMainTarget();
+
         await Promise.chain(this._runningTests.map((test) => async () => {
             if (this._runningState !== WI.AuditManager.RunningState.Active)
                 return;
 
-            if (InspectorBackend.domains.Audit)
-                await AuditAgent.setup();
+            if (target.hasDomain("Audit"))
+                await target.AuditAgent.setup();
 
             let topLevelTest = this._topLevelTestForTest(test);
             console.assert(topLevelTest || window.InspectorTest, "No matching top-level test found", test);
@@ -161,8 +163,8 @@ WI.AuditManager = class AuditManager extends WI.Object
 
             await test.start();
 
-            if (InspectorBackend.domains.Audit)
-                await AuditAgent.teardown();
+            if (target.hasDomain("Audit"))
+                await target.AuditAgent.teardown();
         }));
 
         let result = this._runningTests.map((test) => test.result).filter((result) => !!result);

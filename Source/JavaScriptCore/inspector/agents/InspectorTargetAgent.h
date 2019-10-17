@@ -47,7 +47,6 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // TargetBackendDispatcherHandler
-    void exists(ErrorString&) final;
     void sendMessageToTarget(ErrorString&, const String& targetId, const String& message) final;
 
     // Target lifecycle.

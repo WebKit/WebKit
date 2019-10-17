@@ -281,12 +281,14 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         this._showingHighlightForRecord = record;
 
+        let target = WI.assumingMainTarget();
+
         const contentColor = {r: 111, g: 168, b: 220, a: 0.66};
         const outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
 
         var quad = record.quad;
         if (quad) {
-            DOMAgent.highlightQuad(quad.toProtocol(), contentColor, outlineColor);
+            target.DOMAgent.highlightQuad(quad.toProtocol(), contentColor, outlineColor);
             this._showingHighlight = true;
             return;
         }
@@ -294,7 +296,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         // This record doesn't have a highlight, so hide any existing highlight.
         if (this._showingHighlight) {
             this._showingHighlight = false;
-            DOMAgent.hideHighlight();
+            target.DOMAgent.hideHighlight();
         }
     }
 
@@ -304,7 +306,9 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         if (this._showingHighlight) {
             this._showingHighlight = false;
-            DOMAgent.hideHighlight();
+
+            let target = WI.assumingMainTarget();
+            target.DOMAgent.hideHighlight();
         }
     }
 

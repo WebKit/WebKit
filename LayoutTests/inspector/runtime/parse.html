@@ -22,7 +22,7 @@ function test()
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
-                    InspectorTest.expectThat(result === RuntimeAgent.SyntaxErrorType.None, "Should be SyntaxErrorType None.");
+                    InspectorTest.expectThat(result === InspectorBackend.Enum.Runtime.SyntaxErrorType.None, "Should be SyntaxErrorType None.");
                     InspectorTest.log("Source: " + source);
                     InspectorTest.assert(!message);
                     InspectorTest.assert(!range);
@@ -50,7 +50,7 @@ function test()
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
-                    InspectorTest.expectThat(result === RuntimeAgent.SyntaxErrorType.UnterminatedLiteral, "Should be SyntaxErrorType UnterminatedLiteral.");
+                    InspectorTest.expectThat(result === InspectorBackend.Enum.Runtime.SyntaxErrorType.UnterminatedLiteral, "Should be SyntaxErrorType UnterminatedLiteral.");
                     InspectorTest.log("Source: " + source);
                     outputErrorSourceRange(range);
                     InspectorTest.log("Error Message: " + message);
@@ -79,7 +79,7 @@ function test()
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
-                    InspectorTest.expectThat(result === RuntimeAgent.SyntaxErrorType.Recoverable, "Should be SyntaxErrorType Recoverable.");
+                    InspectorTest.expectThat(result === InspectorBackend.Enum.Runtime.SyntaxErrorType.Recoverable, "Should be SyntaxErrorType Recoverable.");
                     InspectorTest.log("Source: " + source);
                     outputErrorSourceRange(range);
                     InspectorTest.log("Error Message: " + message);
@@ -159,7 +159,7 @@ function test()
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
-                    InspectorTest.expectThat(result === RuntimeAgent.SyntaxErrorType.Irrecoverable, "Should be SyntaxErrorType Irrecoverable.");
+                    InspectorTest.expectThat(result === InspectorBackend.Enum.Runtime.SyntaxErrorType.Irrecoverable, "Should be SyntaxErrorType Irrecoverable.");
                     InspectorTest.log("Source: " + source);
                     outputErrorSourceRange(range);
                     InspectorTest.log("Error Message: " + message);

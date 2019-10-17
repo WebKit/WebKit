@@ -53,12 +53,6 @@ void InspectorTargetAgent::willDestroyFrontendAndBackend(DisconnectReason)
     m_isConnected = false;
 }
 
-void InspectorTargetAgent::exists(ErrorString&)
-{
-    // Intentionally do nothing to return success.
-    // FIXME: Remove this when the local inspector has switched over to the modern path.
-}
-
 void InspectorTargetAgent::sendMessageToTarget(ErrorString& errorString, const String& targetId, const String& message)
 {
     InspectorTarget* target = m_targets.get(targetId);
@@ -80,8 +74,6 @@ void InspectorTargetAgent::sendMessageFromTargetToFrontend(const String& targetI
 static Protocol::Target::TargetInfo::Type targetTypeToProtocolType(InspectorTargetType type)
 {
     switch (type) {
-    case InspectorTargetType::JavaScriptContext:
-        return Protocol::Target::TargetInfo::Type::JavaScript;
     case InspectorTargetType::Page:
         return Protocol::Target::TargetInfo::Type::Page;
     case InspectorTargetType::DedicatedWorker:
@@ -91,7 +83,7 @@ static Protocol::Target::TargetInfo::Type targetTypeToProtocolType(InspectorTarg
     }
 
     ASSERT_NOT_REACHED();
-    return Protocol::Target::TargetInfo::Type::JavaScript;
+    return Protocol::Target::TargetInfo::Type::Page;
 }
 
 static Ref<Protocol::Target::TargetInfo> buildTargetInfoObject(const InspectorTarget& target)

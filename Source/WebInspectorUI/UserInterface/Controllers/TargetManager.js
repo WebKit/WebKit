@@ -84,8 +84,10 @@ WI.TargetManager = class TargetManager extends WI.Object
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetRemoved, {target});
     }
 
-    createMultiplexingBackendTarget(targetInfo)
+    createMultiplexingBackendTarget()
     {
+        console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.WebPage);
+
         let target = new WI.MultiplexingBackendTarget;
         target.initialize();
 
@@ -97,12 +99,14 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     createDirectBackendTarget()
     {
+        console.assert(WI.sharedApp.debuggableType !== WI.DebuggableType.WebPage);
+
         let target = new WI.DirectBackendTarget;
         target.initialize();
 
         WI.initializeBackendTarget(target);
 
-        if (WI.sharedApp.debuggableType === WI.DebuggableType.Web)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.Page)
             WI.initializePageTarget(target);
 
         this.addTarget(target);
@@ -110,20 +114,14 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     // TargetObserver
 
-    targetCreated(targetInfo)
+    targetCreated(target, targetInfo)
     {
-        // FIXME: Eliminate this once the local inspector is configured to use
-        // the Multiplexing code path. Then we can perform this immediately
-        // in `WI.loaded` if a TargetAgent exists.
-        if (this._targets.size === 0)
-            this.createMultiplexingBackendTarget(targetInfo);
+        let connection = new InspectorBackend.TargetConnection(target, targetInfo.targetId);
+        let subTarget = this._createTarget(targetInfo, connection);
+        this._checkAndHandlePageTargetTransition(subTarget);
+        subTarget.initialize();
 
-        let connection = new InspectorBackend.TargetConnection(targetInfo.targetId);
-        let target = this._createTarget(targetInfo, connection);
-        this._checkAndHandlePageTargetTransition(target);
-        target.initialize();
-
-        this.addTarget(target);
+        this.addTarget(subTarget);
     }
 
     targetDestroyed(targetId)
@@ -150,13 +148,12 @@ WI.TargetManager = class TargetManager extends WI.Object
         let {targetId, type} = targetInfo;
 
         switch (type) {
-        case TargetAgent.TargetInfoType.JavaScript:
-            return new WI.JavaScriptContextTarget(targetId, WI.UIString("JavaScript Context"), connection);
-        case TargetAgent.TargetInfoType.Page:
+        case InspectorBackend.Enum.Target.TargetInfoType.Page:
             return new WI.PageTarget(targetId, WI.UIString("Page"), connection);
-        case TargetAgent.TargetInfoType.Worker:
+        case InspectorBackend.Enum.Target.TargetInfoType.Worker:
             return new WI.WorkerTarget(targetId, WI.UIString("Worker"), connection);
-        case TargetAgent.TargetInfoType.ServiceWorker:
+        case "serviceworker": // COMPATIBILITY (iOS 13): "serviceworker" was renamed to "service-worker".
+        case InspectorBackend.Enum.Target.TargetInfoType.ServiceWorker:
             return new WI.WorkerTarget(targetId, WI.UIString("ServiceWorker"), connection);
         }
 
@@ -165,7 +162,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     _checkAndHandlePageTargetTransition(target)
     {
-        if (target.type !== WI.Target.Type.Page)
+        if (target.type !== WI.TargetType.Page)
             return;
 
         // First page target.
@@ -181,7 +178,7 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     _checkAndHandlePageTargetTermination(target)
     {
-        if (target.type !== WI.Target.Type.Page)
+        if (target.type !== WI.TargetType.Page)
             return;
 
         console.assert(target === WI.pageTarget);

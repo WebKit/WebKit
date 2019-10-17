@@ -1,6 +1,7 @@
 {
     "domain": "LayerTree",
-    "availability": ["web"],
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
     "types": [
         {
             "id": "LayerId",

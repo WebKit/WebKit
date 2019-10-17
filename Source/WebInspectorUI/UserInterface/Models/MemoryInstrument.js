@@ -36,8 +36,8 @@ WI.MemoryInstrument = class MemoryInstrument extends WI.Instrument
 
     static supported()
     {
-        // COMPATIBILITY (iOS 9): MemoryAgent did not exist.
-        return window.MemoryAgent;
+        // COMPATIBILITY (iOS 9): Memory domain did not exist.
+        return InspectorBackend.hasDomain("Memory");
     }
 
     // Protected
@@ -49,13 +49,17 @@ WI.MemoryInstrument = class MemoryInstrument extends WI.Instrument
 
     startInstrumentation(initiatedByBackend)
     {
-        if (!initiatedByBackend)
-            MemoryAgent.startTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.MemoryAgent.startTracking();
+        }
     }
 
     stopInstrumentation(initiatedByBackend)
     {
-        if (!initiatedByBackend)
-            MemoryAgent.stopTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.MemoryAgent.stopTracking();
+        }
     }
 };

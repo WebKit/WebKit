@@ -398,8 +398,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (typeof this._delegate.spreadsheetStylePropertyFocusMoved === "function")
             this._delegate.spreadsheetStylePropertyFocusMoved(this, {direction: null});
 
-        if (changed && window.DOMAgent)
-            DOMAgent.markUndoableState();
+        if (changed) {
+            let target = WI.assumingMainTarget();
+            if (target.hasDomain("DOM"))
+                target.DOMAgent.markUndoableState();
+        }
     }
 
     spreadsheetTextFieldDidBackspace(textField)

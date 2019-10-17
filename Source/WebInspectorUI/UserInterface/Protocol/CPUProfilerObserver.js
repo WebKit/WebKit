@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CPUProfilerObserver = class CPUProfilerObserver
+WI.CPUProfilerObserver = class CPUProfilerObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "CPUProfiler" domain.
 

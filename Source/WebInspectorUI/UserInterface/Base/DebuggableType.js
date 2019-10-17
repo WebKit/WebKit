@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This is a list of the different support target types, which theoretically
-// could all be top level debuggable types.
-
 WI.DebuggableType = {
     JavaScript: "javascript",
-    Web: "web",
-    Worker: "worker",
+    Page: "page",
     ServiceWorker: "service-worker",
+    WebPage: "web-page",
 };

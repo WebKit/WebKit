@@ -117,7 +117,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         console.assert(typeof handleShowAllClicked === "function", handleShowAllClicked);
 
         // COMPATIBILITY (iOS 13): Runtime.getProperties/Runtime.getDisplayableProperties didn't support `fetchStart`/`fetchCount` yet.
-        if (!InspectorBackend.domains.Runtime.getProperties.supports("fetchStart"))
+        if (!InspectorBackend.hasCommand("Runtime.getProperties", "fetchStart"))
             return;
 
         let remaining = resolvedValue.size - representation._fetchEnd;

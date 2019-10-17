@@ -109,7 +109,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     static isTabAllowed()
     {
-        return !!window.TimelineAgent || !!window.ScriptProfilerAgent;
+        return InspectorBackend.hasDomain("Timeline")
+            || InspectorBackend.hasDomain("ScriptProfiler");
     }
 
     static displayNameForTimelineType(timelineType)

@@ -173,19 +173,21 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         if (!this._id)
             return;
 
+        let target = WI.assumingMainTarget();
+
         function contentDidChange(error)
         {
             if (error)
                 return;
 
-            DOMAgent.markUndoableState();
+            target.DOMAgent.markUndoableState();
 
             this.dispatchEventToListeners(WI.CSSStyleSheet.Event.ContentDidChange);
         }
 
         this._ignoreNextContentDidChangeNotification = true;
 
-        CSSAgent.setStyleSheetText(this._id, this.currentRevision.content, contentDidChange.bind(this));
+        target.CSSAgent.setStyleSheetText(this._id, this.currentRevision.content, contentDidChange.bind(this));
     }
 
     requestContentFromBackend()
@@ -200,7 +202,8 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
             return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        return CSSAgent.getStyleSheetText(this._id);
+        let target = WI.assumingMainTarget();
+        return target.CSSAgent.getStyleSheetText(this._id);
     }
 
     noteContentDidChange()

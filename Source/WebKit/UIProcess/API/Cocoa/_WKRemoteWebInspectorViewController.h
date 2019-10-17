@@ -35,7 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKRemoteWebInspectorDebuggableType) {
     WKRemoteWebInspectorDebuggableTypeJavaScript,
     WKRemoteWebInspectorDebuggableTypeServiceWorker WK_API_AVAILABLE(macos(10.13.4), ios(11.3)),
-    WKRemoteWebInspectorDebuggableTypeWeb,
+    WKRemoteWebInspectorDebuggableTypeWeb WK_API_DEPRECATED("Split into Page and WebPage", macos(10.12.3, WK_MAC_TBA), ios(10.3, WK_IOS_TBA)),
+    WKRemoteWebInspectorDebuggableTypePage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKRemoteWebInspectorDebuggableTypeWebPage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
 
 WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))

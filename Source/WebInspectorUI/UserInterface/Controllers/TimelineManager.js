@@ -82,15 +82,15 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.TimelineAgent) {
+        if (target.hasDomain("Timeline")) {
             // COMPATIBILITY (iOS 13): Timeline.enable did not exist yet.
-            if (target.TimelineAgent.enable)
+            if (target.hasCommand("Timeline.enable"))
                 target.TimelineAgent.enable();
 
             this._updateAutoCaptureInstruments([target]);
 
             // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
-            if (target.TimelineAgent.setAutoCaptureEnabled)
+            if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
                 target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
         }
     }
@@ -214,7 +214,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._autoCaptureOnPageLoad = autoCapture;
 
         for (let target of WI.targets) {
-            if (target.TimelineAgent)
+            // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist yet.
+            if (target.hasCommand("Timeline.setAutoCaptureEnabled"))
                 target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
         }
     }
@@ -282,7 +283,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         for (let target of WI.targets) {
             // COMPATIBILITY (iOS 13): Timeline.disable did not exist yet.
-            if (target.TimelineAgent && target.TimelineAgent.disable)
+            if (target.hasCommand("Timeline.disable"))
                 target.TimelineAgent.disable();
         }
 
@@ -629,7 +630,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // and need to be merged. Non-Other events, generated purely by the JavaScript
         // engine or outside of the page via APIs, will not have wrapping Timeline
         // records, so these records can just be added right now.
-        if (type !== ScriptProfilerAgent.EventType.Other)
+        if (type !== InspectorBackend.Enum.ScriptProfiler.EventType.Other)
             this._addRecord(record);
     }
 
@@ -688,7 +689,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             // Associate the ScriptProfiler created records with Web Timeline records.
             // Filter out the already added ScriptProfiler events which should not have been wrapped.
             if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript) {
-                this._scriptProfilerRecords = this._scriptProfilerRecords.filter((x) => x.__scriptProfilerType === ScriptProfilerAgent.EventType.Other);
+                this._scriptProfilerRecords = this._scriptProfilerRecords.filter((x) => x.__scriptProfilerType === InspectorBackend.Enum.ScriptProfiler.EventType.Other);
                 this._mergeScriptProfileRecords();
             }
 
@@ -776,40 +777,40 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         var sourceCodeLocation = significantCallFrame && significantCallFrame.sourceCodeLocation;
 
         switch (recordPayload.type) {
-        case TimelineAgent.EventType.ScheduleStyleRecalculation:
+        case InspectorBackend.Enum.Timeline.EventType.ScheduleStyleRecalculation:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames, sourceCodeLocation);
 
-        case TimelineAgent.EventType.RecalculateStyles:
+        case InspectorBackend.Enum.Timeline.EventType.RecalculateStyles:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames, sourceCodeLocation);
 
-        case TimelineAgent.EventType.InvalidateLayout:
+        case InspectorBackend.Enum.Timeline.EventType.InvalidateLayout:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames, sourceCodeLocation);
 
-        case TimelineAgent.EventType.Layout:
+        case InspectorBackend.Enum.Timeline.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
             var quad = new WI.Quad(recordPayload.data.root);
             return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation, quad);
 
-        case TimelineAgent.EventType.Paint:
+        case InspectorBackend.Enum.Timeline.EventType.Paint:
             var quad = new WI.Quad(recordPayload.data.clip);
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, quad);
 
-        case TimelineAgent.EventType.Composite:
+        case InspectorBackend.Enum.Timeline.EventType.Composite:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, callFrames, sourceCodeLocation);
 
-        case TimelineAgent.EventType.RenderingFrame:
+        case InspectorBackend.Enum.Timeline.EventType.RenderingFrame:
             if (!recordPayload.children || !recordPayload.children.length)
                 return null;
 
             return new WI.RenderingFrameTimelineRecord(startTime, endTime);
 
-        case TimelineAgent.EventType.EvaluateScript:
+        case InspectorBackend.Enum.Timeline.EventType.EvaluateScript:
             if (!sourceCodeLocation) {
                 var mainFrame = WI.networkManager.mainFrame;
                 var scriptResource = mainFrame.url === recordPayload.data.url ? mainFrame.mainResource : mainFrame.resourceForURL(recordPayload.data.url, true);
@@ -825,13 +826,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             var record;
             switch (parentRecordPayload && parentRecordPayload.type) {
-            case TimelineAgent.EventType.TimerFire:
+            case InspectorBackend.Enum.Timeline.EventType.TimerFire:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
                 break;
-            case TimelineAgent.EventType.ObserverCallback:
+            case InspectorBackend.Enum.Timeline.EventType.ObserverCallback:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
                 break;
-            case TimelineAgent.EventType.FireAnimationFrame:
+            case InspectorBackend.Enum.Timeline.EventType.FireAnimationFrame:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
             default:
@@ -842,20 +843,20 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._webTimelineScriptRecordsExpectingScriptProfilerEvents.push(record);
             return record;
 
-        case TimelineAgent.EventType.ConsoleProfile:
+        case InspectorBackend.Enum.Timeline.EventType.ConsoleProfile:
             var profileData = recordPayload.data.profile;
             // COMPATIBILITY (iOS 9): With the Sampling Profiler, profiles no longer include legacy profile data.
-            console.assert(profileData || TimelineAgent.setInstruments);
+            console.assert(profileData || InspectorBackend.hasCommand("Timeline.setInstruments"));
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.title, profileData);
 
-        case TimelineAgent.EventType.TimerFire:
-        case TimelineAgent.EventType.EventDispatch:
-        case TimelineAgent.EventType.FireAnimationFrame:
-        case TimelineAgent.EventType.ObserverCallback:
+        case InspectorBackend.Enum.Timeline.EventType.TimerFire:
+        case InspectorBackend.Enum.Timeline.EventType.EventDispatch:
+        case InspectorBackend.Enum.Timeline.EventType.FireAnimationFrame:
+        case InspectorBackend.Enum.Timeline.EventType.ObserverCallback:
             // These are handled when we see the child FunctionCall or EvaluateScript.
             break;
 
-        case TimelineAgent.EventType.FunctionCall:
+        case InspectorBackend.Enum.Timeline.EventType.FunctionCall:
             // FunctionCall always happens as a child of another record, and since the FunctionCall record
             // has useful info we just make the timeline record here (combining the data from both records).
             if (!parentRecordPayload) {
@@ -878,22 +879,22 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             var record;
             switch (parentRecordPayload.type) {
-            case TimelineAgent.EventType.TimerFire:
+            case InspectorBackend.Enum.Timeline.EventType.TimerFire:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
                 break;
-            case TimelineAgent.EventType.EventDispatch:
+            case InspectorBackend.Enum.Timeline.EventType.EventDispatch:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData, parentRecordPayload.data);
                 break;
-            case TimelineAgent.EventType.ObserverCallback:
+            case InspectorBackend.Enum.Timeline.EventType.ObserverCallback:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
                 break;
-            case TimelineAgent.EventType.FireAnimationFrame:
+            case InspectorBackend.Enum.Timeline.EventType.FireAnimationFrame:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
-            case TimelineAgent.EventType.FunctionCall:
+            case InspectorBackend.Enum.Timeline.EventType.FunctionCall:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
-            case TimelineAgent.EventType.RenderingFrame:
+            case InspectorBackend.Enum.Timeline.EventType.RenderingFrame:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
                 break;
 
@@ -908,31 +909,31 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             }
             break;
 
-        case TimelineAgent.EventType.ProbeSample:
+        case InspectorBackend.Enum.Timeline.EventType.ProbeSample:
             // Pass the startTime as the endTime since this record type has no duration.
             sourceCodeLocation = WI.debuggerManager.probeForIdentifier(recordPayload.data.probeId).breakpoint.sourceCodeLocation;
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.probeId);
 
-        case TimelineAgent.EventType.TimerInstall:
+        case InspectorBackend.Enum.Timeline.EventType.TimerInstall:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
             var timerDetails = {timerId: recordPayload.data.timerId, timeout: recordPayload.data.timeout, repeating: !recordPayload.data.singleShot};
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerInstalled, startTime, startTime, callFrames, sourceCodeLocation, timerDetails);
 
-        case TimelineAgent.EventType.TimerRemove:
+        case InspectorBackend.Enum.Timeline.EventType.TimerRemove:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerRemoved, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId);
 
-        case TimelineAgent.EventType.RequestAnimationFrame:
+        case InspectorBackend.Enum.Timeline.EventType.RequestAnimationFrame:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
 
-        case TimelineAgent.EventType.CancelAnimationFrame:
+        case InspectorBackend.Enum.Timeline.EventType.CancelAnimationFrame:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
@@ -950,14 +951,14 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         console.assert(this.isCapturing());
 
         switch (recordPayload.type) {
-        case TimelineAgent.EventType.TimeStamp:
+        case InspectorBackend.Enum.Timeline.EventType.TimeStamp:
             var timestamp = this._activeRecording.computeElapsedTime(recordPayload.startTime);
             var eventMarker = new WI.TimelineMarker(timestamp, WI.TimelineMarker.Type.TimeStamp, recordPayload.data.message);
             this._activeRecording.addEventMarker(eventMarker);
             break;
 
-        case TimelineAgent.EventType.Time:
-        case TimelineAgent.EventType.TimeEnd:
+        case InspectorBackend.Enum.Timeline.EventType.Time:
+        case InspectorBackend.Enum.Timeline.EventType.TimeEnd:
             // FIXME: <https://webkit.org/b/150690> Web Inspector: Show console.time/timeEnd ranges in Timeline
             // FIXME: Make use of "message" payload properties.
             break;
@@ -1029,11 +1030,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!frame.isMainFrame())
             return false;
 
+        if (!InspectorBackend.hasDomain("Timeline"))
+            return false;
+
         // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
         // Perform auto capture in the frontend.
-        if (!InspectorBackend.domains.Timeline)
-            return false;
-        if (!InspectorBackend.domains.Timeline.setAutoCaptureEnabled)
+        if (!InspectorBackend.hasCommand("Timeline.setAutoCaptureEnabled"))
             return this._legacyAttemptStartAutoCapturingForFrame(frame);
 
         if (!this._shouldSetAutoCapturingMainResource)
@@ -1219,11 +1221,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     _scriptProfilerTypeToScriptTimelineRecordType(type)
     {
         switch (type) {
-        case ScriptProfilerAgent.EventType.API:
+        case InspectorBackend.Enum.ScriptProfiler.EventType.API:
             return WI.ScriptTimelineRecord.EventType.APIScriptEvaluated;
-        case ScriptProfilerAgent.EventType.Microtask:
+        case InspectorBackend.Enum.ScriptProfiler.EventType.Microtask:
             return WI.ScriptTimelineRecord.EventType.MicrotaskDispatched;
-        case ScriptProfilerAgent.EventType.Other:
+        case InspectorBackend.Enum.ScriptProfiler.EventType.Other:
             return WI.ScriptTimelineRecord.EventType.ScriptEvaluated;
         }
     }
@@ -1291,31 +1293,29 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         let enabledTimelineTypes = this.enabledTimelineTypes;
 
         for (let target of targets) {
-            if (!target.TimelineAgent)
-                continue;
-            if (!target.TimelineAgent.setInstruments)
+            if (!target.hasCommand("Timeline.setInstruments"))
                 continue;
 
             let instrumentSet = new Set;
             for (let timelineType of enabledTimelineTypes) {
                 switch (timelineType) {
                 case WI.TimelineRecord.Type.Script:
-                    instrumentSet.add(target.TimelineAgent.Instrument.ScriptProfiler);
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.ScriptProfiler);
                     break;
                 case WI.TimelineRecord.Type.HeapAllocations:
-                    instrumentSet.add(target.TimelineAgent.Instrument.Heap);
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Heap);
                     break;
                 case WI.TimelineRecord.Type.Network:
                 case WI.TimelineRecord.Type.RenderingFrame:
                 case WI.TimelineRecord.Type.Layout:
                 case WI.TimelineRecord.Type.Media:
-                    instrumentSet.add(target.TimelineAgent.Instrument.Timeline);
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Timeline);
                     break;
                 case WI.TimelineRecord.Type.CPU:
-                    instrumentSet.add(target.TimelineAgent.Instrument.CPU);
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.CPU);
                     break;
                 case WI.TimelineRecord.Type.Memory:
-                    instrumentSet.add(target.TimelineAgent.Instrument.Memory);
+                    instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Memory);
                     break;
                 }
             }

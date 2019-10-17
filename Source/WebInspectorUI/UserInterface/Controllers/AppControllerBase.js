@@ -43,6 +43,8 @@ WI.AppControllerBase = class AppControllerBase
         this._initialized = false;
     }
 
+    // Public
+
     get hasExtraDomains() { throw WI.NotImplementedError.subclassMustOverride(); }
     get debuggableType() { throw WI.NotImplementedError.subclassMustOverride(); }
 
@@ -57,5 +59,11 @@ WI.AppControllerBase = class AppControllerBase
 
         // FIXME: eventually all code within WI.loaded should be distributed elsewhere.
         WI.loaded();
+    }
+
+    isWebDebuggable()
+    {
+        return this.debuggableType === WI.DebuggableType.Page
+            || this.debuggableType === WI.DebuggableType.WebPage;
     }
 };

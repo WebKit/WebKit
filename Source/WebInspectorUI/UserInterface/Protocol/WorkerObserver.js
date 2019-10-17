@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.WorkerObserver = class WorkerObserver
+WI.WorkerObserver = class WorkerObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Worker" domain.
 
     workerCreated(workerId, url)
     {
-        WI.workerManager.workerCreated(workerId, url);
+        WI.workerManager.workerCreated(this._target, workerId, url);
     }
 
     workerTerminated(workerId)

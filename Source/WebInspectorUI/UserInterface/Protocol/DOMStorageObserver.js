@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DOMStorageObserver = class DOMStorageObserver
+WI.DOMStorageObserver = class DOMStorageObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "DOMStorage" domain.
 

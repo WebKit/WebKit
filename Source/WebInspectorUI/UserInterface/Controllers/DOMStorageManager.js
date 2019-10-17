@@ -55,7 +55,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (target.DOMStorageAgent)
+        if (target.hasDomain("DOMStorage"))
             target.DOMStorageAgent.enable();
     }
 
@@ -93,7 +93,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         this._enabled = false;
 
         for (let target of WI.targets) {
-            if (target.DOMStorageAgent)
+            if (target.hasDomain("DOMStorage"))
                 target.DOMStorageAgent.disable();
         }
 
@@ -185,7 +185,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (!window.DOMStorageAgent)
+        if (!InspectorBackend.hasDomain("DOMStorage"))
             return;
 
         // Don't show storage if we don't have a security origin (about:blank).
@@ -212,7 +212,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         if (!this._enabled)
             return;
 
-        if (!window.DOMStorageAgent)
+        if (!InspectorBackend.hasDomain("DOMStorage"))
             return;
 
         // Add the host of the frame that changed the main resource to the list of hosts there could be cookies for.

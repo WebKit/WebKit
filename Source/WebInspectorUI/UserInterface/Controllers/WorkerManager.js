@@ -36,15 +36,15 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.WorkerAgent)
+        if (target.hasDomain("Worker"))
             target.WorkerAgent.enable();
     }
 
     // WorkerObserver
 
-    workerCreated(workerId, url)
+    workerCreated(target, workerId, url)
     {
-        let connection = new InspectorBackend.WorkerConnection(workerId);
+        let connection = new InspectorBackend.WorkerConnection(target, workerId);
         let workerTarget = new WI.WorkerTarget(workerId, url, connection);
         workerTarget.initialize();
 
@@ -54,7 +54,7 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
         // Unpause the worker now that we have sent all initialization messages.
         // Ignore errors if a worker went away quickly.
-        WorkerAgent.initialized(workerId).catch(function(){});
+        target.WorkerAgent.initialized(workerId).catch(function(){});
     }
 
     workerTerminated(workerId)

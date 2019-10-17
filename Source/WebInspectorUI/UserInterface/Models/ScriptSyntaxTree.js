@@ -174,8 +174,9 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
         // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body.
         // After iOS 9, this is to move to the start of the function statement/expression. See below:
-        // Using DOM.pseudoElement because that was added after iOS 9.
-        if (!InspectorBackend.domains.DOM.hasEvent("pseudoElementAdded"))
+        // Since support can't be tested directly, check for Runtime.run (iOS 9.3) or Console.heapSnapshot (iOS 10.0+).
+        // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+        if (!InspectorBackend.hasCommand("Console.heapSnapshot") && !InspectorBackend.hasCommand("Runtime.run"))
             return node.body.range[0];
 
         // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals.
@@ -185,7 +186,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
     updateTypes(nodesToUpdate, callback)
     {
-        console.assert(this._script.target.RuntimeAgent.getRuntimeTypesForVariablesAtOffsets);
+        console.assert(this._script.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"));
         console.assert(Array.isArray(nodesToUpdate) && this._parsedSuccessfully);
 
         if (!this._parsedSuccessfully)

@@ -38,8 +38,8 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
     static supported()
     {
-        // COMPATIBILITY (iOS 9): HeapAgent did not exist.
-        return window.HeapAgent;
+        // COMPATIBILITY (iOS 9): Heap did not exist.
+        return InspectorBackend.hasDomain("Heap");
     }
 
     // Protected
@@ -54,8 +54,10 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         // FIXME: Include a "track allocations" option for this instrument.
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
-        if (!initiatedByBackend)
-            HeapAgent.startTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.HeapAgent.startTracking();
+        }
 
         // Periodic snapshots.
         const snapshotInterval = 10000;
@@ -64,8 +66,10 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
     stopInstrumentation(initiatedByBackend)
     {
-        if (!initiatedByBackend)
-            HeapAgent.stopTracking();
+        if (!initiatedByBackend) {
+            let target = WI.assumingMainTarget();
+            target.HeapAgent.stopTracking();
+        }
 
         window.clearInterval(this._snapshotIntervalIdentifier);
         this._snapshotIntervalIdentifier = undefined;

@@ -308,7 +308,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             // Add all pseudo styles before any inherited rules.
             let beforePseudoId = null;
             let afterPseudoId = null;
-            if (InspectorBackend.domains.CSS.PseudoId) {
+            if (InspectorBackend.Enum.CSS.PseudoId) {
                 beforePseudoId = WI.CSSManager.PseudoSelectorNames.Before;
                 afterPseudoId = WI.CSSManager.PseudoSelectorNames.After;
             } else {

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MemoryObserver = class MemoryObserver
+WI.MemoryObserver = class MemoryObserver extends InspectorBackend.Dispatcher
 {
     // Events defined by the "Memory" domain.
 

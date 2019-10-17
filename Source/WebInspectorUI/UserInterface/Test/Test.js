@@ -27,26 +27,26 @@ WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
-    InspectorBackend.registerTargetDispatcher(new WI.TargetObserver);
-    InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
-    InspectorBackend.registerPageDispatcher(new WI.PageObserver);
-    InspectorBackend.registerConsoleDispatcher(new WI.ConsoleObserver);
-    InspectorBackend.registerNetworkDispatcher(new WI.NetworkObserver);
-    InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
-    InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
-    InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
-    InspectorBackend.registerMemoryDispatcher(new WI.MemoryObserver);
-    InspectorBackend.registerDatabaseDispatcher(new WI.DatabaseObserver);
-    InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
-    InspectorBackend.registerApplicationCacheDispatcher(new WI.ApplicationCacheObserver);
-    InspectorBackend.registerCPUProfilerDispatcher(new WI.CPUProfilerObserver);
-    InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
-    InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
-    InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
-    InspectorBackend.registerLayerTreeDispatcher(new WI.LayerTreeObserver);
-    InspectorBackend.registerRuntimeDispatcher(new WI.RuntimeObserver);
-    InspectorBackend.registerWorkerDispatcher(new WI.WorkerObserver);
-    InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
+    InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
+    InspectorBackend.registerCPUProfilerDispatcher(WI.CPUProfilerObserver);
+    InspectorBackend.registerCSSDispatcher(WI.CSSObserver);
+    InspectorBackend.registerCanvasDispatcher(WI.CanvasObserver);
+    InspectorBackend.registerConsoleDispatcher(WI.ConsoleObserver);
+    InspectorBackend.registerDOMDispatcher(WI.DOMObserver);
+    InspectorBackend.registerDOMStorageDispatcher(WI.DOMStorageObserver);
+    InspectorBackend.registerDatabaseDispatcher(WI.DatabaseObserver);
+    InspectorBackend.registerDebuggerDispatcher(WI.DebuggerObserver);
+    InspectorBackend.registerHeapDispatcher(WI.HeapObserver);
+    InspectorBackend.registerInspectorDispatcher(WI.InspectorObserver);
+    InspectorBackend.registerLayerTreeDispatcher(WI.LayerTreeObserver);
+    InspectorBackend.registerMemoryDispatcher(WI.MemoryObserver);
+    InspectorBackend.registerNetworkDispatcher(WI.NetworkObserver);
+    InspectorBackend.registerPageDispatcher(WI.PageObserver);
+    InspectorBackend.registerRuntimeDispatcher(WI.RuntimeObserver);
+    InspectorBackend.registerScriptProfilerDispatcher(WI.ScriptProfilerObserver);
+    InspectorBackend.registerTargetDispatcher(WI.TargetObserver);
+    InspectorBackend.registerTimelineDispatcher(WI.TimelineObserver);
+    InspectorBackend.registerWorkerDispatcher(WI.WorkerObserver);
 
     // Instantiate controllers used by tests.
     WI.managers = [
@@ -79,11 +79,10 @@ WI.loaded = function()
     WI.pageTarget = null;
     WI._targetsAvailablePromise = new WI.WrappedPromise;
 
-    // FIXME: Eliminate `TargetAgent.exists`.
-    TargetAgent.exists((error) => {
-        if (error)
-            WI.targetManager.createDirectBackendTarget();
-    });
+    if (InspectorBackend.hasDomain("Target"))
+        WI.targetManager.createMultiplexingBackendTarget();
+    else
+        WI.targetManager.createDirectBackendTarget();
 };
 
 WI.initializeBackendTarget = function(target)
@@ -98,8 +97,6 @@ WI.initializeBackendTarget = function(target)
 WI.initializePageTarget = function(target)
 {
     WI.pageTarget = target;
-
-    WI.redirectGlobalAgentsToConnection(WI.pageTarget.connection);
 
     WI.resetMainExecutionContext();
 };
@@ -121,15 +118,6 @@ WI.resetMainExecutionContext = function()
 
     if (WI.mainTarget.executionContext)
         WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
-};
-
-WI.redirectGlobalAgentsToConnection = function(connection)
-{
-    // This makes global window.FooAgent dispatch to the active page target.
-    for (let [domain, agent] of Object.entries(InspectorBackend._agents)) {
-        if (domain !== "Target")
-            agent.connection = connection;
-    }
 };
 
 WI.contentLoaded = function()
@@ -156,13 +144,13 @@ WI.contentLoaded = function()
 
 WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 {
-    if (!WI.__didPerformConsoleInitialization && target.ConsoleAgent) {
+    if (!WI.__didPerformConsoleInitialization && target.hasDomain("Console")) {
         WI.__didPerformConsoleInitialization = true;
         WI.consoleManager.initializeLogChannels(target);
     }
 
     // FIXME: This slows down test debug logging considerably.
-    if (!WI.__didPerformCSSInitialization && target.CSSAgent) {
+    if (!WI.__didPerformCSSInitialization && target.hasDomain("CSS")) {
         WI.__didPerformCSSInitialization = true;
         WI.CSSCompletions.initializeCSSCompletions(target);
     }
@@ -213,6 +201,41 @@ WI.resolvedLayoutDirection = () => { return InspectorFrontendHost.userInterfaceL
 WI.updateDockedState = () => {};
 WI.updateDockingAvailability = () => {};
 WI.updateVisibilityState = () => {};
+
+// FIXME: <https://webkit.org/b/201149> Web Inspector: replace all uses of `window.*Agent` with a target-specific call
+(function() {
+    function makeAgentGetter(domainName) {
+        Object.defineProperty(window, domainName + "Agent",
+        {
+            get() { return WI.mainTarget._agents[domainName]; },
+        });
+    }
+    makeAgentGetter("Audit");
+    makeAgentGetter("ApplicationCache");
+    makeAgentGetter("CPUProfiler");
+    makeAgentGetter("CSS");
+    makeAgentGetter("Canvas");
+    makeAgentGetter("Console");
+    makeAgentGetter("DOM");
+    makeAgentGetter("DOMDebugger");
+    makeAgentGetter("DOMStorage");
+    makeAgentGetter("Database");
+    makeAgentGetter("Debugger");
+    makeAgentGetter("Heap");
+    makeAgentGetter("IndexedDB");
+    makeAgentGetter("Inspector");
+    makeAgentGetter("LayerTree");
+    makeAgentGetter("Memory");
+    makeAgentGetter("Network");
+    makeAgentGetter("Page");
+    makeAgentGetter("Recording");
+    makeAgentGetter("Runtime");
+    makeAgentGetter("ScriptProfiler");
+    makeAgentGetter("ServiceWorker");
+    makeAgentGetter("Target");
+    makeAgentGetter("Timeline");
+    makeAgentGetter("Worker");
+})();
 
 window.InspectorTest = new FrontendTestHarness();
 

@@ -68,16 +68,16 @@ WI.Recording = class Recording extends WI.Object
 
         let type = null;
         switch (payload.type) {
-        case RecordingAgent.Type.Canvas2D:
+        case InspectorBackend.Enum.Recording.Type.Canvas2D:
             type = WI.Recording.Type.Canvas2D;
             break;
-        case RecordingAgent.Type.CanvasBitmapRenderer:
+        case InspectorBackend.Enum.Recording.Type.CanvasBitmapRenderer:
             type = WI.Recording.Type.CanvasBitmapRenderer;
             break;
-        case RecordingAgent.Type.CanvasWebGL:
+        case InspectorBackend.Enum.Recording.Type.CanvasWebGL:
             type = WI.Recording.Type.CanvasWebGL;
             break;
-        case RecordingAgent.Type.CanvasWebGL2:
+        case InspectorBackend.Enum.Recording.Type.CanvasWebGL2:
             type = WI.Recording.Type.CanvasWebGL2;
             break;
         default:

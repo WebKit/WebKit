@@ -36,8 +36,8 @@ WI.MediaInstrument = class MediaInstrument extends WI.Instrument
 
     static supported()
     {
-        // COMPATIBILITY (iOS 12): DOM.didFireEvent.
-        return InspectorBackend.domains.DOM && InspectorBackend.domains.DOM.hasEvent("didFireEvent");
+        // COMPATIBILITY (iOS 12): DOM.didFireEvent did not exist yet.
+        return InspectorBackend.hasEvent("DOM.didFireEvent");
     }
 
     // Protected
