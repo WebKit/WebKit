@@ -1,5 +1,42 @@
 2019-10-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: allow WebKit engineers to edit UserAgent shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=203159
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.initializeTarget):
+        (WI.DOMManager.supportsEditingUserAgentShadowTrees): Added.
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.get editable):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.get editable):
+        (WI.DOMTreeElement.prototype._startEditingTarget):
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._showPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._handleNodeChanged): Added.
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WI.StyleDetailsPanel.prototype.get supportsNewRule): Added.
+        (WI.StyleDetailsPanel.prototype.markAsNeedsRefresh):
+        (WI.StyleDetailsPanel.prototype.refresh):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.get supportsNewRule): Added.
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.newRuleButtonContextMenu):
+        Don't show the "Add Rule" button if the selected node is inside a UserAgent shadow tree.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createEngineeringSettingsView):
+
+2019-10-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: $0 is shown for the wrong node when selecting elements in a user agent shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=203155
 

@@ -30,7 +30,10 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         super(identifier, displayName);
 
         this.element.classList.add("css-style");
+
+        console.assert(panelConstructor instanceof WI.StyleDetailsPanel);
         this._panel = new panelConstructor(this);
+        this._panel.addEventListener(WI.StyleDetailsPanel.Event.NodeChanged, this._handleNodeChanged, this);
 
         this._classListContainerToggledSetting = new WI.Setting("class-list-container-toggled", false);
         this._forcedPseudoClassCheckboxes = {};
@@ -223,8 +226,12 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         if (this._filterBar)
             this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
 
-        this.contentView.element.classList.toggle("supports-new-rule", typeof this._panel.newRuleButtonClicked === "function");
         this._panel.shown();
+    }
+
+    _handleNodeChanged(event)
+    {
+        this.contentView.element.classList.toggle("supports-new-rule", this._panel.supportsNewRule);
     }
 
     _handleForcedPseudoClassCheckboxKeydown(pseudoClass, event)

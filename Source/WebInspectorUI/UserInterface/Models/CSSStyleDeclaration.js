@@ -100,7 +100,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             return this._ownerRule && this._ownerRule.editable;
 
         if (this._type === WI.CSSStyleDeclaration.Type.Inline)
-            return !this._node.isInUserAgentShadowTree();
+            return !this._node.isInUserAgentShadowTree() || WI.DOMManager.supportsEditingUserAgentShadowTrees();
 
         return false;
     }

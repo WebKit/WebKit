@@ -148,6 +148,7 @@ public:
     void markUndoableState(ErrorString&) override;
     void focus(ErrorString&, int nodeId) override;
     void setInspectedNode(ErrorString&, int nodeId) override;
+    void setAllowEditingUserAgentShadowTrees(ErrorString&, bool allow) final;
 
     // InspectorInstrumentation
     int identifierForNode(Node&);
@@ -256,10 +257,6 @@ private:
     std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
-    bool m_searchingForNode { false };
-    bool m_suppressAttributeModifiedEvent { false };
-    bool m_suppressEventListenerChangedEvent { false };
-    bool m_documentRequested { false };
 
 #if ENABLE(VIDEO)
     Timer m_mediaMetricsTimer;
@@ -318,6 +315,12 @@ private:
     HashSet<const Event*> m_dispatchedEvents;
     HashMap<int, InspectorEventListener> m_eventListenerEntries;
     int m_lastEventListenerId { 1 };
+
+    bool m_searchingForNode { false };
+    bool m_suppressAttributeModifiedEvent { false };
+    bool m_suppressEventListenerChangedEvent { false };
+    bool m_documentRequested { false };
+    bool m_allowEditingUserAgentShadowTrees { false };
 };
 
 } // namespace WebCore

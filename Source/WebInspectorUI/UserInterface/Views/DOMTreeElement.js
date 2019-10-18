@@ -244,7 +244,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     {
         let node = this.representedObject;
 
-        if (node.isShadowRoot() || node.isInUserAgentShadowTree())
+        if (node.isShadowRoot())
+            return false;
+
+        if (node.isInUserAgentShadowTree() && !WI.DOMManager.supportsEditingUserAgentShadowTrees())
             return false;
 
         if (node.isPseudoElement())
@@ -723,7 +726,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return false;
 
-        if (this.representedObject.isShadowRoot() || this.representedObject.isInUserAgentShadowTree())
+        if (this.representedObject.isShadowRoot())
+            return false;
+
+        if (this.representedObject.isInUserAgentShadowTree() && !WI.DOMManager.supportsEditingUserAgentShadowTrees())
             return false;
 
         if (this.representedObject.isPseudoElement())
@@ -765,7 +771,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         contextMenu.appendSeparator();
 
         let isEditableNode = this.representedObject.nodeType() === Node.ELEMENT_NODE && this.editable;
-        let isNonShadowEditable = !this.representedObject.isInUserAgentShadowTree() && isEditableNode;
+        let isNonShadowEditable = isEditableNode && (!this.representedObject.isInUserAgentShadowTree() || WI.DOMManager.supportsEditingUserAgentShadowTrees());
         let alreadyEditingHTML = this._htmlEditElement && WI.isBeingEdited(this._htmlEditElement);
 
         if (isEditableNode) {

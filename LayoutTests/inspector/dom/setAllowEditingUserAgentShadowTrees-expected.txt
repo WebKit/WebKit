@@ -1,0 +1,13 @@
+Tests for DOM.setAllowEditingUserAgentShadowTrees.
+
+
+
+== Running test suite: DOM.setAllowEditingUserAgentShadowTrees
+-- Running test case: DOM.setAllowEditingUserAgentShadowTrees.Disabled
+PASS: Should produce an exception.
+Error: Node for given nodeId is in a shadow tree
+PASS: Node text content should not have changed.
+
+-- Running test case: DOM.setAllowEditingUserAgentShadowTrees.Enabled
+PASS: Node text content should have changed.
+

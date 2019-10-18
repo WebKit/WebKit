@@ -1,3 +1,18 @@
+2019-10-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: allow WebKit engineers to edit UserAgent shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=203159
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/dom/setAllowEditingUserAgentShadowTrees.html
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::assertEditableNode):
+        (WebCore::InspectorDOMAgent::setInspectedNode):
+        (WebCore::InspectorDOMAgent::setAllowEditingUserAgentShadowTrees): Added.
+
 2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Document::m_closeAfterStyleRecalc is unnecessary

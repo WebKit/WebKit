@@ -461,7 +461,7 @@ Node* InspectorDOMAgent::assertEditableNode(ErrorString& errorString, int nodeId
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return nullptr;
-    if (node->isInUserAgentShadowTree()) {
+    if (node->isInUserAgentShadowTree() && !m_allowEditingUserAgentShadowTrees) {
         errorString = "Node for given nodeId is in a shadow tree"_s;
         return nullptr;
     }
@@ -1395,7 +1395,7 @@ void InspectorDOMAgent::setInspectedNode(ErrorString& errorString, int nodeId)
     if (!node)
         return;
 
-    if (node->isInUserAgentShadowTree()) {
+    if (node->isInUserAgentShadowTree() && !m_allowEditingUserAgentShadowTrees) {
         errorString = "Node for given nodeId is in a shadow tree"_s;
         return;
     }
@@ -2612,6 +2612,11 @@ JSC::JSValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState& state, Node* n
 {
     JSC::JSLockHolder lock(&state);
     return toJS(&state, deprecatedGlobalObjectForPrototype(&state), BindingSecurity::checkSecurityForNode(state, node));
+}
+
+void InspectorDOMAgent::setAllowEditingUserAgentShadowTrees(ErrorString&, bool allow)
+{
+    m_allowEditingUserAgentShadowTrees = allow;
 }
 
 } // namespace WebCore

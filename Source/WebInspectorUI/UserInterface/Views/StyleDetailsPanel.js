@@ -51,6 +51,12 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         return this._nodeStyles;
     }
 
+    get supportsNewRule()
+    {
+        // Overridden by subclasses if needed.
+        return false;
+    }
+
     shown()
     {
         if (this._visible)
@@ -85,6 +91,8 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 
             this._nodeStyles = WI.cssManager.stylesForNode(domNode);
 
+            this.dispatchEventToListeners(WI.StyleDetailsPanel.Event.NodeChanged);
+
             console.assert(this._nodeStyles);
             if (!this._nodeStyles)
                 return;
@@ -102,7 +110,6 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
     refresh(significantChange)
     {
         // Implemented by subclasses.
-        this.dispatchEventToListeners(WI.StyleDetailsPanel.Event.Refreshed);
     }
 
     // Protected
@@ -162,5 +169,5 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 };
 
 WI.StyleDetailsPanel.Event = {
-    Refreshed: "style-details-panel-refreshed"
+    NodeChanged: "style-details-panel-node-changed",
 };

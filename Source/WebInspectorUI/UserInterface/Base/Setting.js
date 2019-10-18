@@ -202,6 +202,7 @@ WI.settings = {
     engineeringPauseForInternalScripts: new WI.Setting("engineering-pause-for-internal-scripts", false),
     engineeringShowInternalObjectsInHeapSnapshot: new WI.Setting("engineering-show-internal-objects-in-heap-snapshot", false),
     engineeringShowPrivateSymbolsInHeapSnapshot: new WI.Setting("engineering-show-private-symbols-in-heap-snapshot", false),
+    engineeringAllowEditingUserAgentShadowTrees: new WI.Setting("engineering-allow-editing-user-agent-shadow-trees", false),
 
     // Debug
     debugShowConsoleEvaluations: new WI.Setting("debug-show-console-evaluations", false),
