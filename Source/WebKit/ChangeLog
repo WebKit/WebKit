@@ -1,3 +1,14 @@
+2019-10-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid crashes on GCC-compiled binaries by avoiding a use-after-move
+        that's the result of differring call conventions.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch): Copy the SW identifier from
+        the ServiceWorkerFetchTask before it's moved into the lambda.
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr in more places and remove some unnecessary external linkage.

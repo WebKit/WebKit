@@ -186,7 +186,8 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
         if (!worker->contextConnection())
             server().createContextConnection(worker->registrableDomain());
 
-        server().runServiceWorkerIfNecessary(task->serviceWorkerIdentifier(), [weakThis = WTFMove(weakThis), this, task = WTFMove(task)](auto* contextConnection) mutable {
+        auto identifier = task->serviceWorkerIdentifier();
+        server().runServiceWorkerIfNecessary(identifier, [weakThis = WTFMove(weakThis), this, task = WTFMove(task)](auto* contextConnection) mutable {
             if (!task)
                 return;
             
