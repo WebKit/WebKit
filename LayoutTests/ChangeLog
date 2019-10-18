@@ -1,3 +1,14 @@
+2019-10-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r241747): [iOS] Adjust default SVG focus ring width to match width for HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=203011
+
+        Reviewed by Wenson Hsieh.
+
+        Remove the test imported/blink/svg/custom/focus-ring-2.svg now that it passes, again.
+
+        * platform/ios/TestExpectations:
+
 2019-10-18  Jer Noble  <jer.noble@apple.com>
 
         Add experimental HDR MediaCapabilities support.

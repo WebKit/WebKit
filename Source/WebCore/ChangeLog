@@ -1,3 +1,17 @@
+2019-10-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r241747): [iOS] Adjust default SVG focus ring width to match width for HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=203011
+
+        Reviewed by Wenson Hsieh.
+
+        Update default user agent stylesheet for SVG documents (i.e. .svg resources) to use the same 3px
+        outline width for focused elements as we do for HTML documents.
+
+        This makes the test imported/blink/svg/custom/focus-ring-2.svg pass on iOS.
+
+        * css/svg.css:
+
 2019-10-18  Jer Noble  <jer.noble@apple.com>
 
         Add experimental HDR MediaCapabilities support.
