@@ -2369,7 +2369,8 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
         int index;
         Style::ScopeOrdinal ordinal;
     };
-    Vector<IndexAndOrdinal> shadowTreeMatches;
+    Vector<IndexAndOrdinal> importantMatches;
+    bool hasMatchesFromOtherScopes = false;
 
     for (int i = startIndex; i <= endIndex; ++i) {
         const MatchedProperties& matchedProperties = matchResult.matchedProperties()[i];
@@ -2377,24 +2378,24 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
         if (!hasImportantProperties(*matchedProperties.properties))
             continue;
 
-        if (matchedProperties.styleScopeOrdinal != Style::ScopeOrdinal::Element) {
-            shadowTreeMatches.append({ i, matchedProperties.styleScopeOrdinal });
-            continue;
-        }
+        importantMatches.append({ i, matchedProperties.styleScopeOrdinal });
 
-        addMatch(matchResult, i, true, inheritedOnly);
+        if (matchedProperties.styleScopeOrdinal != Style::ScopeOrdinal::Element)
+            hasMatchesFromOtherScopes = true;
     }
 
-    if (shadowTreeMatches.isEmpty())
+    if (importantMatches.isEmpty())
         return;
 
-    // For !important properties a later shadow tree wins.
-    // Match results are sorted in reverse tree context order so this is not needed for normal properties.
-    std::stable_sort(shadowTreeMatches.begin(), shadowTreeMatches.end(), [] (const IndexAndOrdinal& a, const IndexAndOrdinal& b) {
-        return a.ordinal < b.ordinal;
-    });
+    if (hasMatchesFromOtherScopes) {
+        // For !important properties a later shadow tree wins.
+        // Match results are sorted in reverse tree context order so this is not needed for normal properties.
+        std::stable_sort(importantMatches.begin(), importantMatches.end(), [] (const IndexAndOrdinal& a, const IndexAndOrdinal& b) {
+            return a.ordinal < b.ordinal;
+        });
+    }
 
-    for (auto& match : shadowTreeMatches)
+    for (auto& match : importantMatches)
         addMatch(matchResult, match.index, true, inheritedOnly);
 }
 

@@ -112,9 +112,12 @@ const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
 inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, Style::ScopeOrdinal styleScopeOrdinal, StyleResolver::RuleRange& ruleRange)
 {
     // Update our first/last rule indices in the matched rules array.
-    ++ruleRange.lastRuleIndex;
-    if (ruleRange.firstRuleIndex == -1)
+    if (ruleRange.lastRuleIndex != -1)
+        ++ruleRange.lastRuleIndex;
+    else {
+        ruleRange.lastRuleIndex = m_result.matchedProperties().size();
         ruleRange.firstRuleIndex = ruleRange.lastRuleIndex;
+    }
 
     m_matchedRules.append({ &ruleData, specificity, styleScopeOrdinal });
 }
@@ -123,15 +126,21 @@ void ElementRuleCollector::clearMatchedRules()
 {
     m_matchedRules.clear();
     m_keepAliveSlottedPseudoElementRules.clear();
+    m_matchedRuleTransferIndex = 0;
 }
 
 inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
 {
     if (!propertySet)
         return;
-    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size();
-    if (m_result.ranges.firstAuthorRule == -1)
+
+    if (m_result.ranges.lastAuthorRule != -1)
+        ++m_result.ranges.lastAuthorRule;
+    else {
+        m_result.ranges.lastAuthorRule = m_result.matchedProperties().size();
         m_result.ranges.firstAuthorRule = m_result.ranges.lastAuthorRule;
+    }
+
     m_result.addMatchedProperties(*propertySet);
     if (!isCacheable)
         m_result.isCacheable = false;
@@ -171,13 +180,21 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
 
     sortMatchedRules();
 
-    if (m_mode == SelectorChecker::Mode::CollectingRules) {
-        for (const MatchedRule& matchedRule : m_matchedRules)
-            m_matchedRuleList.append(matchedRule.ruleData->rule());
-        return;
-    }
+    transferMatchedRules();
+}
 
-    for (const MatchedRule& matchedRule : m_matchedRules) {
+void ElementRuleCollector::transferMatchedRules(Optional<Style::ScopeOrdinal> fromScope)
+{
+    for (; m_matchedRuleTransferIndex < m_matchedRules.size(); ++m_matchedRuleTransferIndex) {
+        auto& matchedRule = m_matchedRules[m_matchedRuleTransferIndex];
+        if (fromScope && matchedRule.styleScopeOrdinal < *fromScope)
+            break;
+
+        if (m_mode == SelectorChecker::Mode::CollectingRules) {
+            m_matchedRuleList.append(matchedRule.ruleData->rule());
+            continue;
+        }
+
         m_result.addMatchedProperties(matchedRule.ruleData->rule()->properties(), matchedRule.ruleData->rule(), matchedRule.ruleData->linkMatchType(), matchedRule.ruleData->propertyWhitelistType(), matchedRule.styleScopeOrdinal);
     }
 }
@@ -186,7 +203,23 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 {
     clearMatchedRules();
 
-    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
+    collectMatchingAuthorRules(includeEmptyRules);
+
+    sortAndTransferMatchedRules();
+}
+
+bool ElementRuleCollector::matchesAnyAuthorRules()
+{
+    clearMatchedRules();
+
+    // FIXME: This should bail out on first match.
+    collectMatchingAuthorRules(false);
+
+    return !m_matchedRules.isEmpty();
+}
+
+void ElementRuleCollector::collectMatchingAuthorRules(bool includeEmptyRules)
+{
     StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
 
     {
@@ -205,8 +238,6 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
         matchAuthorShadowPseudoElementRules(includeEmptyRules, ruleRange);
         matchPartPseudoElementRules(includeEmptyRules, ruleRange);
     }
-
-    sortAndTransferMatchedRules();
 }
 
 void ElementRuleCollector::matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
@@ -340,7 +371,6 @@ void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
     
     clearMatchedRules();
 
-    m_result.ranges.lastUserRule = m_result.matchedProperties().size() - 1;
     MatchRequest matchRequest(m_userStyle, includeEmptyRules);
     StyleResolver::RuleRange ruleRange = m_result.ranges.userRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
@@ -369,7 +399,6 @@ void ElementRuleCollector::matchUARules(const RuleSet& rules)
 {
     clearMatchedRules();
     
-    m_result.ranges.lastUARule = m_result.matchedProperties().size() - 1;
     StyleResolver::RuleRange ruleRange = m_result.ranges.UARuleRange();
     collectMatchingRules(MatchRequest(&rules), ruleRange);
 
@@ -557,25 +586,35 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         }
     }
     
-    // Check the rules in author sheets next.
-    if (matchAuthorAndUserStyles)
-        matchAuthorRules(false);
+    if (matchAuthorAndUserStyles) {
+        clearMatchedRules();
 
-    if (matchAuthorAndUserStyles && is<StyledElement>(element())) {
-        auto& styledElement = downcast<StyledElement>(element());
-        // Now check our inline style attribute.
-        if (styledElement.inlineStyle()) {
-            // Inline style is immutable as long as there is no CSSOM wrapper.
-            // FIXME: Media control shadow trees seem to have problems with caching.
-            bool isInlineStyleCacheable = !styledElement.inlineStyle()->isMutable() && !styledElement.isInShadowTree();
-            // FIXME: Constify.
-            addElementStyleProperties(styledElement.inlineStyle(), isInlineStyleCacheable);
-        }
+        collectMatchingAuthorRules(false);
+        sortMatchedRules();
 
-        // Now check SMIL animation override style.
-        if (includeSMILProperties && is<SVGElement>(styledElement))
-            addElementStyleProperties(downcast<SVGElement>(styledElement).animatedSMILStyleProperties(), false /* isCacheable */);
+        transferMatchedRules(Style::ScopeOrdinal::Element);
+
+        // Inline style behaves as if it has higher specificity than any rule.
+        addElementInlineStyleProperties(includeSMILProperties);
+
+        // Rules from the host scope override inline style.
+        transferMatchedRules(Style::ScopeOrdinal::ContainingHost);
     }
+}
+
+void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILProperties)
+{
+    if (!is<StyledElement>(element()))
+        return;
+
+    if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
+        // FIXME: Media control shadow trees seem to have problems with caching.
+        bool isInlineStyleCacheable = !inlineStyle->isMutable() && !element().isInShadowTree();
+        addElementStyleProperties(inlineStyle, isInlineStyleCacheable);
+    }
+
+    if (includeSMILProperties && is<SVGElement>(element()))
+        addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), false /* isCacheable */);
 }
 
 bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet* ruleSet)

@@ -1,3 +1,66 @@
+2019-10-18  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] :part rules should be able to override style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202919
+
+        Reviewed by Zalan Bujtas.
+
+        Element inline style was simply appended to the matching declaration list and not sorted with the rest of the author style.
+        This used to work because before CSS Shadow Parts feature inline style would always win.
+
+        Fixing this involves refactoring the rule collection code to remove this assumption.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::addMatchedRule):
+
+        Both initialize and update ranges here.
+
+        (WebCore::ElementRuleCollector::clearMatchedRules):
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+
+        Both initialize and update ranges here.
+
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+
+        Split out transfering to a separate function.
+
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+
+        Add a parameter to limit transfer to rules from a scope.
+
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchesAnyAuthorRules):
+
+        Replace hasMatchedRules() with a more specific function. This can use collectMatchingAuthorRules and avoids unnecessary sorting step.
+
+        (WebCore::ElementRuleCollector::collectMatchingAuthorRules):
+
+        Split out collecting the rules from matchAuthorRules. Like other collect functions, this doesn't do any sorting.
+
+        (WebCore::ElementRuleCollector::matchAllRules):
+
+        Add element inline style before transfering rules from the containing host scope.
+
+        (WebCore::ElementRuleCollector::addElementInlineStyleProperties):
+
+        Factor adding inline style into a function.
+
+]        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::hasMatchedRules const): Deleted.
+        * css/StyleProperties.h:
+        (WebCore::StylePropertiesBase::deref const):
+        (WebCore::StylePropertiesBase::deref): Deleted.
+
+        Make const to allow RefPtr<const StyleProperties>
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+
+        Sort !important properties taking into account that the host scope has lower priority.
+
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateIfNeeded):
+
 2019-10-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Include horizontal spacing when checking for the extra horizontal space

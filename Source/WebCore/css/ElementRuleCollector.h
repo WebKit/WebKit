@@ -52,6 +52,8 @@ public:
     void matchAuthorRules(bool includeEmptyRules);
     void matchUserRules(bool includeEmptyRules);
 
+    bool matchesAnyAuthorRules();
+
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoStyleRequest(const PseudoStyleRequest& request) { m_pseudoStyleRequest = request; }
     void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
@@ -61,7 +63,6 @@ public:
     StyleResolver::MatchResult& matchedResult();
     const Vector<RefPtr<StyleRule>>& matchedRuleList() const;
 
-    bool hasMatchedRules() const { return !m_matchedRules.isEmpty(); }
     void clearMatchedRules();
 
     const PseudoIdSet& matchedPseudoElementIds() const { return m_matchedPseudoElementIds; }
@@ -72,6 +73,10 @@ private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(const RuleSet&);
+
+    void collectMatchingAuthorRules(bool includeEmptyRules);
+    void addElementInlineStyleProperties(bool includeSMILProperties);
+
     void matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange&);
     void matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
@@ -87,6 +92,7 @@ private:
 
     void sortMatchedRules();
     void sortAndTransferMatchedRules();
+    void transferMatchedRules(Optional<Style::ScopeOrdinal> forScope = { });
 
     void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal, StyleResolver::RuleRange&);
 
@@ -107,6 +113,7 @@ private:
     Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 
     Vector<MatchedRule, 64> m_matchedRules;
+    size_t m_matchedRuleTransferIndex { 0 };
 
     // Output.
     Vector<RefPtr<StyleRule>> m_matchedRuleList;

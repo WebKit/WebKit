@@ -50,7 +50,7 @@ class StylePropertiesBase : public RefCounted<StylePropertiesBase> {
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
-    void deref();
+    void deref() const;
     
     StylePropertiesType type() const { return static_cast<StylePropertiesType>(m_type); }
 
@@ -305,7 +305,7 @@ inline unsigned StyleProperties::propertyCount() const
     return downcast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
-inline void StylePropertiesBase::deref()
+inline void StylePropertiesBase::deref() const
 {
     if (!derefBase())
         return;

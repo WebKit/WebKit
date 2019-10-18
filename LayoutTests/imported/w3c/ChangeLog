@@ -1,3 +1,12 @@
+2019-10-18  Antti Koivisto  <antti@apple.com>
+
+        [CSS Shadow Parts] :part rules should be able to override style attribute
+        https://bugs.webkit.org/show_bug.cgi?id=202919
+
+        Reviewed by Zalan Bujtas.
+
+        * web-platform-tests/css/css-shadow-parts/simple-inline-expected.txt:
+
 2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support navigator.clipboard.read()
