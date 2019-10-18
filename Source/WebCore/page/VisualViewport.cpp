@@ -185,8 +185,7 @@ void VisualViewport::enqueueResizeEvent()
     auto* frame = this->frame();
     if (!frame)
         return;
-
-    frame->document()->eventQueue().enqueueResizeEvent(*this, Event::CanBubble::No, Event::IsCancelable::No);
+    frame->document()->setNeedsVisualViewportResize();
 }
 
 void VisualViewport::enqueueScrollEvent()

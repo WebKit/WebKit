@@ -1294,19 +1294,16 @@ void Page::updateRendering()
 
     SetForScope<bool> change(m_inUpdateRendering, true);
 
-    Vector<RefPtr<Document>> documents;
+    layoutIfNeeded();
 
-    // The requestAnimationFrame callbacks may change the frame hierarchy of the page
-    forEachDocument([&documents] (Document& document) {
-        documents.append(&document);
-    });
-
-    // FIXME: Run the resize steps
+    for (auto& document : collectDocuments())
+        document->runResizeSteps();
 
     // FIXME: Run the scroll steps
 
     // FIXME: Evaluate media queries and report changes.
 
+    Vector<Ref<Document>> documents = collectDocuments(); // The requestAnimationFrame callbacks may change the frame hierarchy of the page
     for (auto& document : documents) {
         DOMHighResTimeStamp timestamp = document->domWindow()->nowTimestamp();
         document->updateAnimationsAndSendEvents(timestamp);
@@ -2871,6 +2868,18 @@ void Page::forEachDocument(const Function<void(Document&)>& functor)
 
         functor(*frame->document());
     }
+}
+
+Vector<Ref<Document>> Page::collectDocuments()
+{
+    Vector<Ref<Document>> documents;
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+        documents.append(*document);
+    }
+    return documents;
 }
 
 void Page::applicationWillResignActive()

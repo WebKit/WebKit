@@ -1,3 +1,16 @@
+2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Integrate resize event with HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=202964
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test and fixed an existing test to work with the new behavior.
+
+        * fast/events/resize-subframe-in-rendering-update-expected.txt: Added.
+        * fast/events/resize-subframe-in-rendering-update.html: Added.
+        * fast/shadow-dom/trusted-event-scoped-flags.html:
+
 2019-10-17  Tim Horton  <timothy_horton@apple.com>
 
         Land a missing test baseline
