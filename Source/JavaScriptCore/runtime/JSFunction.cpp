@@ -591,12 +591,20 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
             RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
 
-        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
+        valueCheck = !descriptor.value();
+        if (!valueCheck) {
+            valueCheck = sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
+            RETURN_IF_EXCEPTION(scope, false);
+        }
     } else if (propertyName == vm.propertyNames->caller) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
             RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));
 
-        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveCallerFunction(exec, thisObject));
+        valueCheck = !descriptor.value();
+        if (!valueCheck) {
+            valueCheck = sameValue(exec, descriptor.value(), retrieveCallerFunction(exec, thisObject));
+            RETURN_IF_EXCEPTION(scope, false);
+        }
     } else {
         thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
         RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException));

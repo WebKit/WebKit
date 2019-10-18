@@ -177,7 +177,9 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     EXCEPTION_ASSERT(!scope.exception() || !result);
     if (result) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
-            if (!sameValue(exec, descriptor.value(), trapResult))
+            bool isSame = sameValue(exec, descriptor.value(), trapResult);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!isSame)
                 return throwTypeError(exec, scope, "Proxy handler's 'get' result of a non-configurable and non-writable property should be the same value as the target's property"_s);
         } else if (descriptor.isAccessorDescriptor() && !descriptor.configurable() && descriptor.getter().isUndefined()) {
             if (!trapResult.isUndefined())
@@ -465,7 +467,9 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
-            if (!sameValue(exec, descriptor.value(), putValue)) {
+            bool isSame = sameValue(exec, descriptor.value(), putValue);
+            RETURN_IF_EXCEPTION(scope, false);
+            if (!isSame) {
                 throwVMTypeError(exec, scope, "Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"_s);
                 return false;
             }
@@ -1147,7 +1151,9 @@ bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool s
 
     JSValue targetPrototype = target->getPrototype(vm, exec);
     RETURN_IF_EXCEPTION(scope, false);
-    if (!sameValue(exec, prototype, targetPrototype)) {
+    bool isSame = sameValue(exec, prototype, targetPrototype);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (!isSame) {
         throwVMTypeError(exec, scope, "Proxy 'setPrototypeOf' trap returned true when its target is non-extensible and the new prototype value is not the same as the current prototype value. It should have returned false"_s);
         return false;
     }
@@ -1205,7 +1211,9 @@ JSValue ProxyObject::performGetPrototype(ExecState* exec)
 
     JSValue targetPrototype = target->getPrototype(vm, exec);
     RETURN_IF_EXCEPTION(scope, { });
-    if (!sameValue(exec, targetPrototype, trapResult)) {
+    bool isSame = sameValue(exec, targetPrototype, trapResult);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!isSame) {
         throwVMTypeError(exec, scope, "Proxy's 'getPrototypeOf' trap for a non-extensible target should return the same value as the target's prototype"_s);
         return { };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -195,12 +195,19 @@ void PropertyDescriptor::setGetter(JSValue getter)
 
 bool PropertyDescriptor::equalTo(ExecState* exec, const PropertyDescriptor& other) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (other.m_value.isEmpty() != m_value.isEmpty()
         || other.m_getter.isEmpty() != m_getter.isEmpty()
         || other.m_setter.isEmpty() != m_setter.isEmpty())
         return false;
-    return (!m_value || sameValue(exec, other.m_value, m_value))
-        && (!m_getter || JSValue::strictEqual(exec, other.m_getter, m_getter))
+    if (m_value) {
+        bool isSame = sameValue(exec, other.m_value, m_value);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (!isSame)
+            return false;
+    }
+    return (!m_getter || JSValue::strictEqual(exec, other.m_getter, m_getter))
         && (!m_setter || JSValue::strictEqual(exec, other.m_setter, m_setter))
         && attributesEqual(other);
 }

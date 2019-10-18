@@ -2683,8 +2683,12 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
                     return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
                 // 10.a.ii. If the [[Writable]] field of current is false, then
                 // 10.a.ii.1. Reject, if the [[Value]] field of Desc is present and SameValue(Desc.[[Value]], current.[[Value]]) is false.
-                if (descriptor.value() && !sameValue(exec, descriptor.value(), current.value()))
-                    return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
+                if (descriptor.value()) {
+                    bool isSame = sameValue(exec, descriptor.value(), current.value());
+                    RETURN_IF_EXCEPTION(scope, false);
+                    if (!isSame)
+                        return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
+                }
             }
             // 10.b. else, the [[Configurable]] field of current is true, so any change is acceptable.
         } else {
@@ -3641,8 +3645,12 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
             if (!current.writable() && descriptor.writable())
                 return typeError(exec, scope, throwException, UnconfigurablePropertyChangeWritabilityError);
             if (!current.writable()) {
-                if (descriptor.value() && !sameValue(exec, current.value(), descriptor.value()))
-                    return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
+                if (descriptor.value()) {
+                    bool isSame = sameValue(exec, current.value(), descriptor.value());
+                    RETURN_IF_EXCEPTION(scope, false);
+                    if (!isSame)
+                        return typeError(exec, scope, throwException, ReadonlyPropertyChangeError);
+                }
             }
         }
         if (current.attributesEqual(descriptor) && !descriptor.value())
