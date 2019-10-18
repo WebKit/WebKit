@@ -1,5 +1,48 @@
 2019-10-18  Antti Koivisto  <antti@apple.com>
 
+        ElementRuleCollector function signature cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=203153
+
+        Reviewed by Zalan Bujtas.
+
+        Many functions in ElementRuleCollector take repetitive arguments that can be removed:
+
+        - Make includeEmptyRules argument a class member
+        - Remove RuleRange argument, update the ranges in rule transfer step.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchesAnyAuthorRules):
+        (WebCore::ElementRuleCollector::collectMatchingAuthorRules):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchPartPseudoElementRulesForScope):
+        (WebCore::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::collectSlottedPseudoElementRulesForSlot):
+        (WebCore::ElementRuleCollector::matchUserRules):
+        (WebCore::ElementRuleCollector::matchUARules):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::ElementRuleCollector::matchAllRules):
+        (WebCore::ElementRuleCollector::hasAnyMatchingRules):
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::setIncludeEmptyRules):
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+
+        Range update happens now here based on the supplied argument.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+x
+2019-10-18  Antti Koivisto  <antti@apple.com>
+
         [CSS Shadow Parts] :part rules should be able to override style attribute
         https://bugs.webkit.org/show_bug.cgi?id=202919
 

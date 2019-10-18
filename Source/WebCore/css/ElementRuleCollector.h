@@ -47,10 +47,12 @@ public:
     ElementRuleCollector(const Element&, const DocumentRuleSets&, const SelectorFilter*);
     ElementRuleCollector(const Element&, const RuleSet& authorStyle, const SelectorFilter*);
 
+    void setIncludeEmptyRules(bool value) { m_shouldIncludeEmptyRules = value; }
+
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
-    void matchAuthorRules(bool includeEmptyRules);
-    void matchUserRules(bool includeEmptyRules);
+    void matchAuthorRules();
+    void matchUserRules();
 
     bool matchesAnyAuthorRules();
 
@@ -74,27 +76,29 @@ private:
 
     void matchUARules(const RuleSet&);
 
-    void collectMatchingAuthorRules(bool includeEmptyRules);
+    void collectMatchingAuthorRules();
     void addElementInlineStyleProperties(bool includeSMILProperties);
 
-    void matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
-    void matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange&);
-    void matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
-    void matchPartPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
-    void matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot, bool includeEmptyRules, StyleResolver::RuleRange&);
+    void matchAuthorShadowPseudoElementRules();
+    void matchHostPseudoClassRules();
+    void matchSlottedPseudoElementRules();
+    void matchPartPseudoElementRules();
+    void matchPartPseudoElementRulesForScope(const ShadowRoot& scopeShadowRoot);
 
-    void collectMatchingShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
-    std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
+    void collectMatchingShadowPseudoElementRules(const MatchRequest&);
+    std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot();
 
-    void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
-    void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&, StyleResolver::RuleRange&);
+    void collectMatchingRules(const MatchRequest&);
+    void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned &specificity);
 
     void sortMatchedRules();
-    void sortAndTransferMatchedRules();
-    void transferMatchedRules(Optional<Style::ScopeOrdinal> forScope = { });
 
-    void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal, StyleResolver::RuleRange&);
+    enum class DeclarationOrigin { UserAgent, Author, User };
+    void sortAndTransferMatchedRules(DeclarationOrigin);
+    void transferMatchedRules(DeclarationOrigin, Optional<Style::ScopeOrdinal> forScope = { });
+
+    void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal);
 
     const Element& element() const { return m_element.get(); }
 
@@ -104,6 +108,7 @@ private:
     const RuleSet* m_userAgentMediaQueryStyle { nullptr };
     const SelectorFilter* m_selectorFilter { nullptr };
 
+    bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
     PseudoStyleRequest m_pseudoStyleRequest { PseudoId::None };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };

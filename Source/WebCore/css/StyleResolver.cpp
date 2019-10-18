@@ -584,8 +584,8 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
     collector.matchUARules();
 
     if (m_matchAuthorAndUserStyles) {
-        collector.matchUserRules(false);
-        collector.matchAuthorRules(false);
+        collector.matchUserRules();
+        collector.matchAuthorRules();
     }
 
     ASSERT(!collector.matchedPseudoElementIds());
@@ -1257,6 +1257,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Elemen
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(&m_mediaQueryEvaluator);
+    collector.setIncludeEmptyRules(rulesToInclude & EmptyCSSRules);
 
     if (rulesToInclude & UAAndUserCSSRules) {
         // First we match rules from the user agent sheet.
@@ -1264,11 +1265,11 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Elemen
 
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles)
-            collector.matchUserRules(rulesToInclude & EmptyCSSRules);
+            collector.matchUserRules();
     }
 
     if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules))
-        collector.matchAuthorRules(rulesToInclude & EmptyCSSRules);
+        collector.matchAuthorRules();
 
     return collector.matchedRuleList();
 }
