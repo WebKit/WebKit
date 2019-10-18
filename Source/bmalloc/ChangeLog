@@ -1,3 +1,15 @@
+2019-10-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [bmalloc] Bug fix for wait time when it's in mini mode.
+        https://bugs.webkit.org/show_bug.cgi?id=203121
+
+        Reviewed by Yusuke Suzuki.
+
+        Since r243144, m_waitTime is never changed on mini mode.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2019-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a missing #include in DeferredTriggerInlines.h
