@@ -1,3 +1,15 @@
+2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make ConcurrentJSLock Lock even if ENABLE_CONCURRENT_JS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=202892
+
+        Reviewed by Mark Lam.
+
+        BaselineJIT also has concurrent compiler. ENABLE(CONCURRENT_JS) should not rely on ENABLE(DFG_JIT).
+        It should rely on ENABLE(JIT) instead.
+
+        * wtf/Platform.h:
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr in more places and remove some unnecessary external linkage.

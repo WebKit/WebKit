@@ -32,13 +32,8 @@
 
 namespace JSC {
 
-#if ENABLE(CONCURRENT_JS)
-typedef Lock ConcurrentJSLock;
-typedef LockHolder ConcurrentJSLockerImpl;
-#else
-typedef NoLock ConcurrentJSLock;
-typedef NoLockLocker ConcurrentJSLockerImpl;
-#endif
+using ConcurrentJSLock = Lock;
+using ConcurrentJSLockerImpl = LockHolder;
 
 static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConurrentJSLock is always one byte.");
 
@@ -103,7 +98,7 @@ class ConcurrentJSLocker : public ConcurrentJSLockerBase {
 public:
     ConcurrentJSLocker(ConcurrentJSLock& lockable)
         : ConcurrentJSLockerBase(lockable)
-#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
+#if !defined(NDEBUG)
         , m_disallowGC(std::in_place)
 #endif
     {
@@ -111,7 +106,7 @@ public:
 
     ConcurrentJSLocker(ConcurrentJSLock* lockable)
         : ConcurrentJSLockerBase(lockable)
-#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
+#if !defined(NDEBUG)
         , m_disallowGC(std::in_place)
 #endif
     {
@@ -119,7 +114,7 @@ public:
 
     ConcurrentJSLocker(NoLockingNecessaryTag)
         : ConcurrentJSLockerBase(NoLockingNecessary)
-#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
+#if !defined(NDEBUG)
         , m_disallowGC(WTF::nullopt)
 #endif
     {
@@ -127,7 +122,7 @@ public:
     
     ConcurrentJSLocker(int) = delete;
 
-#if ENABLE(CONCURRENT_JS) && !defined(NDEBUG)
+#if !defined(NDEBUG)
 private:
     Optional<DisallowGC> m_disallowGC;
 #endif

@@ -1,3 +1,40 @@
+2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make ConcurrentJSLock Lock even if ENABLE_CONCURRENT_JS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=202892
+
+        Reviewed by Mark Lam.
+
+        We are using ConcurrentJSLock to guard data structure against concurrent compilers.
+        But these data structures should be guarded by GC concurrent collector, so we are using this ConcurrentJSLock
+        to guard them against concurrent collector too.
+        The problem is that ENABLE(CONCURRENT_JS) relies on ENABLE(DFG_JIT). If we configure JSC with the options like,
+
+            ENABLE_DFG_JIT 0
+            ENABLE_FTL_JIT 0
+
+        Then, the built JSC becomes
+
+            ENABLE_CONCURRENT_JS 0
+            But, Concurrent GC is enabled.
+
+        This is wrong due to several reasons.
+
+            1. Baseline JIT can produce JIT related data structures that are traced by concurrent collector. In the above options,
+               these data structures are not guarded by lock.
+            2. Baseline JIT also has concurrent JIT compiler. But ENABLE_CONCURRENT_JS does not reflect this.
+
+        In this patch, we fix two things.
+
+        1. We should make ConcurrentJSLock always Lock. In 64bit environment we are supporting actively (including watchOS ARM64_32),
+           we are enabling ENABLE(JIT) regardless of we are actually using JIT. So, anyway, this is already a Lock. Flipping these
+           bits does not matter in 32bit architectures since they do not have concurrent compilers anyway. This makes things simpler:
+           it is always a Lock. And concurrent collector can use it.
+        2. We should make `ENABLE(CONCURRENT_JS)` ON when `ENABLE(JIT)` is true, to reflect the fact that Baseline JIT has concurrent compiler.
+
+        * runtime/ConcurrentJSLock.h:
+        (JSC::ConcurrentJSLocker::ConcurrentJSLocker):
+
 2019-10-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: allow WebKit engineers to edit UserAgent shadow trees
