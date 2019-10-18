@@ -29,7 +29,7 @@
         function doTest()
         {
             if (window.internals)
-                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES | internals.LAYER_TREE_INCLUDES_DEEP_COLOR);
         }
         window.addEventListener('load', doTest, false);
     </script>

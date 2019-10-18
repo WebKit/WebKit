@@ -1,3 +1,29 @@
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Only include "deep color" in layer tree dumps if a tests requests it
+        https://bugs.webkit.org/show_bug.cgi?id=203125
+
+        Reviewed by Tim Horton.
+        
+        Layer tree dumping tests can fail when run on different devices because the "deep color"
+        property on layers is device-dependent. Stop dumping this by default, and have one test
+        that sets the bit. iphone-7 is the only device we test that has deep color support.
+
+        Tests: compositing/contents-format/deep-color-backing-store.html
+               compositing/contents-format/ipad/deep-color-backing-store.html
+               compositing/contents-format/iphone-7/deep-color-backing-store.html
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-10-17  Dean Jackson  <dino@apple.com>
 
         ctx.font = "" asserts in CSS parser

@@ -371,6 +371,7 @@ public:
         LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 128,
         LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256,
         LAYER_TREE_INCLUDES_EVENT_REGION = 512,
+        LAYER_TREE_INCLUDES_DEEP_COLOR = 1024,
     };
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     ExceptionOr<uint64_t> layerIDForElement(Element&);

@@ -1,5 +1,23 @@
 2019-10-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Only include "deep color" in layer tree dumps if a tests requests it
+        https://bugs.webkit.org/show_bug.cgi?id=203125
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+        * compositing/contents-format/deep-color-backing-store-expected.txt: Copied from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color-expected.txt.
+        * compositing/contents-format/deep-color-backing-store.html: Copied from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color.html.
+        * compositing/contents-format/ipad/deep-color-backing-store-expected.txt: Copied from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color-expected.txt.
+        * compositing/contents-format/ipad/deep-color-backing-store.html: Copied from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color.html.
+        * compositing/contents-format/iphone-7/deep-color-backing-store-expected.txt: Copied from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color-expected.txt.
+        * compositing/contents-format/iphone-7/deep-color-backing-store.html: Renamed from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color.html.
+        * platform/ipad/TestExpectations:
+        * platform/iphone-7/TestExpectations: Added.
+        * platform/mac-wk1/compositing/contents-format/deep-color-backing-store-expected.txt: Renamed from LayoutTests/platform/iphone-7/tiled-drawing/compositing-layers-deep-color-expected.txt.
+
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r243347) Layout tests fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on* are flakey
         https://bugs.webkit.org/show_bug.cgi?id=203122
         rdar://problem/50058173

@@ -2137,6 +2137,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludeRootLayerProperties;
     if (flags & LayerTreeFlagsIncludeEventRegion)
         layerTreeBehavior |= LayerTreeAsTextIncludeEventRegion;
+    if (flags & LayerTreeFlagsIncludeDeepColor)
+        layerTreeBehavior |= LayerTreeAsTextIncludeDeepColor;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.

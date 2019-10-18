@@ -74,6 +74,7 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextIncludeBackingStoreAttached  = 1 << 9,
     LayerTreeAsTextIncludeRootLayerProperties   = 1 << 10,
     LayerTreeAsTextIncludeEventRegion           = 1 << 11,
+    LayerTreeAsTextIncludeDeepColor             = 1 << 12,
     LayerTreeAsTextShowAll                      = 0xFFFF
 };
 typedef unsigned LayerTreeAsTextBehavior;

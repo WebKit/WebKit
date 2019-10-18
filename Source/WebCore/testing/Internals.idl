@@ -398,6 +398,7 @@ enum CompositingPolicy {
     const unsigned short LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 128;
     const unsigned short LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256;
     const unsigned short LAYER_TREE_INCLUDES_EVENT_REGION = 512;
+    const unsigned short LAYER_TREE_INCLUDES_DEEP_COLOR = 1024;
     [MayThrowException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
     [MayThrowException] unsigned long long layerIDForElement(Element element);

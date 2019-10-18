@@ -7,6 +7,8 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 compositing/ios [ Skip ]
+compositing/contents-format/ipad [ Skip ]
+compositing/contents-format/iphone-7 [ Skip ]
 css3/touch-action [ Skip ]
 accessibility/ios-simulator [ Skip ]
 accessibility/gtk [ Skip ]

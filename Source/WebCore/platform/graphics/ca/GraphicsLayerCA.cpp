@@ -3753,7 +3753,7 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
         textStream << indent << "(in window " << tiledBacking()->isInWindow() << ")\n";
     }
 
-    if (m_layer->wantsDeepColorBackingStore())
+    if ((behavior & LayerTreeAsTextIncludeDeepColor) && m_layer->wantsDeepColorBackingStore())
         textStream << indent << "(deep color 1)\n";
 
     if (behavior & LayerTreeAsTextIncludeContentLayers) {
