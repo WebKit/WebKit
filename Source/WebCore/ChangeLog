@@ -1,3 +1,22 @@
+2019-10-17  Dean Jackson  <dino@apple.com>
+
+        ctx.font = "" asserts in CSS parser
+        https://bugs.webkit.org/show_bug.cgi?id=203127
+        <rdar://problem/56391016>
+
+        Reviewed by Devin Rousso.
+
+        The HTML specification says:
+        "values that cannot be parsed as CSS font values are ignored", so
+        return early if we get an empty string, otherwise the CSS parser
+        will assert. This was the only case I could find where we sidestepped
+        most of the parsing infrastructure and injected a raw string.
+
+        Test: http/wpt/2dcontext/text-styles/2d.text.font.parse.invalid.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+
 2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate resize event with HTML5 event loop

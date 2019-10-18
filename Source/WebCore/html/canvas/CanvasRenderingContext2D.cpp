@@ -127,6 +127,9 @@ String CanvasRenderingContext2D::font() const
 
 void CanvasRenderingContext2D::setFont(const String& newFont)
 {
+    if (newFont.isEmpty())
+        return;
+
     if (newFont == state().unparsedFont && state().font.realized())
         return;
 

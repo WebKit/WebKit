@@ -1,3 +1,19 @@
+2019-10-17  Dean Jackson  <dino@apple.com>
+
+        ctx.font = "" asserts in CSS parser
+        https://bugs.webkit.org/show_bug.cgi?id=203127
+        <rdar://problem/56391016>
+
+        Reviewed by Devin Rousso.
+
+        Copy the updated test from my WPT pull request. Once this
+        is merged into WPT, we won't need this version.
+
+        * http/wpt/2dcontext/text-styles/2d.text.font.parse.invalid-expected.txt: Added.
+        * http/wpt/2dcontext/text-styles/2d.text.font.parse.invalid.html: Added.
+        * http/wpt/resources/canvas-tests.css: Added.
+        * http/wpt/resources/canvas-tests.js: Added.
+
 2019-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate resize event with HTML5 event loop
