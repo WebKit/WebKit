@@ -58,7 +58,6 @@ private:
     TableFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    LayoutUnit computedTableWidth();
     void layoutTableCellBox(const Box& cellLayoutBox, const TableGrid::Column&);
     void positionTableCells();
     void setComputedGeometryForRows();
@@ -66,7 +65,7 @@ private:
 
     void ensureTableGrid();
     void computePreferredWidthForColumns();
-    void distributeExtraHorizontalSpace(LayoutUnit availableContentWidth, LayoutUnit tableMinimumContentWidth);
+    void computeAndDistributeExtraHorizontalSpace();
     enum class WidthConstraintsType { Minimum, Maximum };
     void useAsContentLogicalWidth(WidthConstraintsType);
 

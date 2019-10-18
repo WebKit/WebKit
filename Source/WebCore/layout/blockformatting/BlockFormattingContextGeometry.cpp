@@ -282,7 +282,7 @@ ContentWidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(con
         if (layoutBox.establishesTableFormattingContext()) {
             // This is a special table "fit-content size" behavior handling. Not in the spec though.
             // Table returns its final width as min/max. Use this final width value to computed horizontal margins etc.
-            usedHorizontalValues.width = shrinkToFitWidth(layoutBox, usedHorizontalValues.constraints.width);
+            usedHorizontalValues.width = usedHorizontalValues.width ? usedHorizontalValues.width : shrinkToFitWidth(layoutBox, usedHorizontalValues.constraints.width);
         }
         return inFlowNonReplacedWidthAndMargin(layoutBox, usedHorizontalValues);
     }

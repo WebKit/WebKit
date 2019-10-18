@@ -1,5 +1,28 @@
 2019-10-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] TableFormattingContext::computedIntrinsicWidthConstraints should not expect a valid containing block's width
+        https://bugs.webkit.org/show_bug.cgi?id=203131
+        <rdar://problem/56394676>
+
+        Reviewed by Antti Koivisto.
+
+        When TableFormattingContext::computedIntrinsicWidthConstraints is called by the preferred width computation (<div style="float: left"><table>)
+        the containing block's width is not yet set (it gets computed based on the preferred width) so computedIntrinsicWidthConstraints should not be relying
+        on it. Let's move that logic out to TableFormattingContext::layoutInFlowContent() where it belongs. 
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        (WebCore::Layout::TableFormattingContext::computedTableWidth): Deleted.
+        (WebCore::Layout::TableFormattingContext::distributeExtraHorizontalSpace): Deleted.
+        * layout/tableformatting/TableFormattingContext.h:
+
+2019-10-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Fix block level formatting root inflow box height computation
         https://bugs.webkit.org/show_bug.cgi?id=203085
         <rdar://problem/56372306>

@@ -60,10 +60,22 @@ TableFormattingContext::TableFormattingContext(const Container& formattingContex
 void TableFormattingContext::layoutInFlowContent()
 {
     auto& grid = formattingState().tableGrid();
+    auto& columnsContext = grid.columnsContext();
+
+    computeAndDistributeExtraHorizontalSpace();
+    // 1. Position each column.
+    // FIXME: This should also deal with collapsing borders etc.
+    auto horizontalSpacing = grid.horizontalSpacing();
+    auto columnLogicalLeft = horizontalSpacing;
+    for (auto& column : columnsContext.columns()) {
+        column.setLogicalLeft(columnLogicalLeft);
+        columnLogicalLeft += (column.logicalWidth() + horizontalSpacing);
+    }
+
+    // 2. Layout each table cell (and compute row height as well).
+    auto& columnList = columnsContext.columns();
     auto& cellList = grid.cells();
-    auto& columnList = grid.columnsContext().columns();
     ASSERT(!cellList.isEmpty());
-    // Layout and position each table cell (and compute row height as well).
     for (auto& cell : cellList) {
         auto& cellLayoutBox = cell->tableCellBox;
         layoutTableCellBox(cellLayoutBox, columnList.at(cell->position.x()));
@@ -78,7 +90,7 @@ void TableFormattingContext::layoutInFlowContent()
         rowLogicalTop += (row.logicalHeight() + grid.verticalSpacing());
     }
 
-    // Finalize size and position.
+    // 3. Finalize size and position.
     positionTableCells();
     setComputedGeometryForSections();
     setComputedGeometryForRows();
@@ -152,23 +164,23 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
 
     // 1. Ensure each cell slot is occupied by at least one cell.
     ensureTableGrid();
-    // 2. Compute the minimum width of each column.
+    // 2. Compute the minimum/maximum width of each column.
     computePreferredWidthForColumns();
-    // 3. Compute the width of the table.
-    auto width = computedTableWidth();
-    // This is the actual computed table width that we want to present as min/max width.
-    formattingState().setIntrinsicWidthConstraints({ width, width });
-    return { width, width };
+    // 3. Compute the minimum/maximum width of the table box.
+    auto& grid = formattingState().tableGrid();
+    auto tableWidthConstraints = grid.widthConstraints();
+    tableWidthConstraints.expand(grid.totalHorizontalSpacing());
+    return tableWidthConstraints;
 }
 
 void TableFormattingContext::ensureTableGrid()
 {
-    auto& tableWrapperBox = root();
+    auto& tableBox = root();
     auto& tableGrid = formattingState().tableGrid();
-    tableGrid.setHorizontalSpacing(LayoutUnit { tableWrapperBox.style().horizontalBorderSpacing() });
-    tableGrid.setVerticalSpacing(LayoutUnit { tableWrapperBox.style().verticalBorderSpacing() });
+    tableGrid.setHorizontalSpacing(LayoutUnit { tableBox.style().horizontalBorderSpacing() });
+    tableGrid.setVerticalSpacing(LayoutUnit { tableBox.style().verticalBorderSpacing() });
 
-    auto* firstChild = tableWrapperBox.firstChild();
+    auto* firstChild = tableBox.firstChild();
     const Box* tableCaption = nullptr;
     const Box* colgroup = nullptr;
     // Table caption is an optional element; if used, it is always the first child of a <table>.
@@ -260,8 +272,12 @@ void TableFormattingContext::computePreferredWidthForColumns()
     }
 }
 
-LayoutUnit TableFormattingContext::computedTableWidth()
+void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
 {
+    auto& grid = formattingState().tableGrid();
+    auto tableWidthConstraints = grid.widthConstraints();
+    auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
+
     // Column and caption widths influence the final table width as follows:
     // If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the greater of
     // W, CAPMIN, and the minimum width required by all the columns plus cell spacing or borders (MIN).
@@ -269,79 +285,48 @@ LayoutUnit TableFormattingContext::computedTableWidth()
     // If the 'table' or 'inline-table' element has 'width: auto', the used width is the greater of the table's containing block width,
     // CAPMIN, and MIN. However, if either CAPMIN or the maximum width required by the columns plus cell spacing or borders (MAX) is
     // less than that of the containing block, use max(MAX, CAPMIN).
+    auto distributeExtraHorizontalSpace = [&](auto extraHorizontalSpace) {
+        auto& columns = grid.columnsContext().columns();
+        ASSERT(!columns.isEmpty());
 
-    // FIXME: This kind of code usually lives in *FormattingContextGeometry class.
-    auto& tableWrapperBox = root();
-    auto& style = tableWrapperBox.style();
-    auto& containingBlock = *tableWrapperBox.containingBlock();
-    auto containingBlockWidth = geometryForBox(containingBlock, EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
+        auto adjustabledHorizontalSpace = tableMinimumContentWidth;
+        auto numberOfColumns = columns.size();
+        // Fixed width columns don't participate in available space distribution.
+        for (auto& column : columns) {
+            if (!column.hasFixedWidth())
+                continue;
+            auto columnFixedWidth = *column.columnBox()->columnWidth();
+            column.setLogicalWidth(columnFixedWidth);
 
-    auto& grid = formattingState().tableGrid();
-    auto& columnsContext = grid.columnsContext();
-    auto tableWidthConstraints = grid.widthConstraints();
-    auto totalHorizontalSpacing = grid.totalHorizontalSpacing();
+            --numberOfColumns;
+            adjustabledHorizontalSpace -= columnFixedWidth;
+        }
+        if (!numberOfColumns || !adjustabledHorizontalSpace)
+            return;
+        // FIXME: Right now just distribute the extra space equaly among the columns using the minimum width.
+        ASSERT(adjustabledHorizontalSpace > 0);
+        for (auto& column : columns) {
+            if (column.hasFixedWidth())
+                continue;
+            auto columnExtraSpace = extraHorizontalSpace / adjustabledHorizontalSpace * column.widthConstraints().minimum;
+            column.setLogicalWidth(column.widthConstraints().minimum + columnExtraSpace);
+        }
+    };
 
-    auto width = geometry().computedValueIfNotAuto(style.width(), containingBlockWidth);
-    LayoutUnit usedWidth;
+    auto containingBlockWidth = geometryForBox(*root().containingBlock(), EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
+    auto width = geometry().computedValueIfNotAuto(root().style().width(), containingBlockWidth);
     if (width) {
-        if (*width > tableWidthConstraints.minimum) {
-            distributeExtraHorizontalSpace(*width - totalHorizontalSpacing, tableWidthConstraints.minimum - totalHorizontalSpacing);
-            usedWidth = *width;
-        } else {
-            usedWidth = tableWidthConstraints.minimum;
+        if (*width > tableMinimumContentWidth)
+            distributeExtraHorizontalSpace(*width - tableMinimumContentWidth);
+        else
             useAsContentLogicalWidth(WidthConstraintsType::Minimum);
-        }
     } else {
-        if (tableWidthConstraints.minimum > containingBlockWidth) {
-            usedWidth = tableWidthConstraints.minimum;
+        if (tableMinimumContentWidth > containingBlockWidth)
             useAsContentLogicalWidth(WidthConstraintsType::Minimum);
-        } else if (tableWidthConstraints.maximum < containingBlockWidth) {
-            usedWidth = tableWidthConstraints.maximum;
+        else if (tableWidthConstraints.maximum < containingBlockWidth)
             useAsContentLogicalWidth(WidthConstraintsType::Maximum);
-        } else {
-            usedWidth = containingBlockWidth;
-            distributeExtraHorizontalSpace(usedWidth - totalHorizontalSpacing, tableWidthConstraints.minimum - totalHorizontalSpacing);
-        }
-    }
-    // FIXME: This should also deal with collapsing borders etc.
-    auto horizontalSpacing = grid.horizontalSpacing();
-    auto columnLogicalLeft = horizontalSpacing;
-    for (auto& column : columnsContext.columns()) {
-        column.setLogicalLeft(columnLogicalLeft);
-        columnLogicalLeft += (column.logicalWidth() + horizontalSpacing);
-    }
-    return usedWidth;
-}
-
-void TableFormattingContext::distributeExtraHorizontalSpace(LayoutUnit availableContentWidth, LayoutUnit tableMinimumContentWidth)
-{
-    ASSERT(availableContentWidth >= tableMinimumContentWidth);
-    auto& grid = formattingState().tableGrid();
-    auto& columns = grid.columnsContext().columns();
-    ASSERT(!columns.isEmpty());
-
-    auto extraHorizontalSpace = availableContentWidth - tableMinimumContentWidth;
-    auto adjustabledHorizontalSpace = tableMinimumContentWidth;
-    auto numberOfColumns = columns.size();
-    // Fixed width columns don't participate in available space distribution.
-    for (auto& column : columns) {
-        if (!column.hasFixedWidth())
-            continue;
-        auto columnFixedWidth = *column.columnBox()->columnWidth();
-        column.setLogicalWidth(columnFixedWidth);
-
-        --numberOfColumns;
-        adjustabledHorizontalSpace -= columnFixedWidth;
-    }
-    if (!numberOfColumns || !adjustabledHorizontalSpace)
-        return;
-    // FIXME: Right now just distribute the extra space equaly among the columns using the minimum width.
-    ASSERT(adjustabledHorizontalSpace > 0);
-    for (auto& column : columns) {
-        if (column.hasFixedWidth())
-            continue;
-        auto columnExtraSpace = extraHorizontalSpace / adjustabledHorizontalSpace * column.widthConstraints().minimum;
-        column.setLogicalWidth(column.widthConstraints().minimum + columnExtraSpace);
+        else
+            distributeExtraHorizontalSpace(containingBlockWidth - tableMinimumContentWidth);
     }
 }
 
