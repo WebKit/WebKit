@@ -1,3 +1,16 @@
+2019-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Don't put pages that have not reached the non-visually empty layout milestone in the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203108
+        <rdar://problem/56375671>
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/navigation/page-cache-pending-load.html:
+        Tweak test to add the stylesheet to the body instead of the head since a document
+        with a pending stylesheet before the body qualifies as visually empty. The test
+        would be flaky otherwise.
+
 2019-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Only include "deep color" in layer tree dumps if a tests requests it

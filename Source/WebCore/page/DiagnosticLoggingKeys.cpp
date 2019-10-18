@@ -218,6 +218,11 @@ String DiagnosticLoggingKeys::backForwardCacheFailureKey()
     return "backForwardCacheFailure"_s;
 }
 
+String DiagnosticLoggingKeys::visuallyEmptyKey()
+{
+    return "visuallyEmpty"_s;
+}
+
 String DiagnosticLoggingKeys::noDocumentLoaderKey()
 {
     return "noDocumentLoader"_s;
