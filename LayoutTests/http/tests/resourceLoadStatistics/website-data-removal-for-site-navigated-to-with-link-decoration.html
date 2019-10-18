@@ -213,8 +213,8 @@
     }
 
     function processWebsiteDataAndContinue() {
+        testRunner.installStatisticsDidScanDataRecordsCallback(checkWebsiteDataAndContinue);
         testRunner.statisticsProcessStatisticsAndDataRecords();
-        checkWebsiteDataAndContinue();
     }
 
     function checkWebsiteDataAndContinue() {

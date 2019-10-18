@@ -1,3 +1,18 @@
+2019-10-18  Kate Cheney  <katherine_cheney@apple.com>
+
+        [iOS] Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html is frequently failing or timing out (198185)
+        https://bugs.webkit.org/show_bug.cgi?id=198185
+        <rdar://problem/51074251>
+
+        Reviewed by Youenn Fablet.
+
+        Fixes a flaky failure caused by test results being checked before data
+        records have finished processing. This patch uses a callback to
+        ensure data processing has finished before continuing.
+
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-18  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: Layout Test webgl/many-contexts.html is a flaky timeout on Mojave
