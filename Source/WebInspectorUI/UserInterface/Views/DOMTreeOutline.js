@@ -30,7 +30,7 @@
 
 WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 {
-    constructor({selectable, omitRootDOMNode, excludeRevealElementContextMenu, showLastSelected} = {})
+    constructor({selectable, omitRootDOMNode, excludeRevealElementContextMenu, showInspectedNode} = {})
     {
         super(selectable);
 
@@ -45,9 +45,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
         this.element.dir = "ltr";
-
-        if (showLastSelected)
-            this.element.classList.add("show-last-selected");
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._excludeRevealElementContextMenu = excludeRevealElementContextMenu;
@@ -64,6 +61,9 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this._hideElementsKeyboardShortcut.implicitlyPreventsDefault = false;
 
         WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+
+        if (showInspectedNode)
+            WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
     }
 
     // Public
@@ -658,6 +658,21 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         if (nodeToSelect)
             this.selectDOMNode(nodeToSelect);
+    }
+
+    _handleInspectedNodeChanged(event)
+    {
+        let {lastInspectedNode} = event.data;
+
+        if (lastInspectedNode) {
+            let lastInspectedNodeTreeElement = this.findTreeElement(lastInspectedNode);
+            if (lastInspectedNodeTreeElement)
+                lastInspectedNodeTreeElement.listItemElement.classList.remove("inspected-node");
+        }
+
+        let inspectedNodeTreeElement = this.findTreeElement(WI.domManager.inspectedNode);
+        if (inspectedNodeTreeElement)
+            inspectedNodeTreeElement.listItemElement.classList.add("inspected-node");
     }
 
     _hideElements(event, keyboardShortcut)

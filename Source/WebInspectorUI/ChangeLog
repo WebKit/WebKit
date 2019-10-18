@@ -1,5 +1,32 @@
 2019-10-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: $0 is shown for the wrong node when selecting elements in a user agent shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=203155
+
+        Reviewed by Matt Baker.
+
+        Rather than naively using the last selected node (from `WI.TreeOutline`), we should wait
+        to see if the inspected page's DOM agent allows the selected node to be used as the
+        inspected node, and if so then to show the `$0`.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.setInspectedNode):
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype._handleInspectedNodeChanged): Added.
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li.inspected-node > span::after): Added.
+        (.tree-outline.dom:focus li.inspected-node.selected > span::after): Added.
+        (.tree-outline.dom.show-last-selected li.last-selected > span::after): Deleted.
+        (.tree-outline.dom.show-last-selected:focus li.last-selected > span::after): Deleted.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+
+2019-10-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r251254): Elements: forced pseudo-class indicator isn't visible for selected nodes
         https://bugs.webkit.org/show_bug.cgi?id=203158
 

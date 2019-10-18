@@ -585,9 +585,10 @@ WI.DOMManager = class DOMManager extends WI.Object
             if (error)
                 return;
 
+            let lastInspectedNode = this._inspectedNode;
             this._inspectedNode = node;
 
-            this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged);
+            this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged, {lastInspectedNode});
         };
 
         let target = WI.assumingMainTarget();

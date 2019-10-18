@@ -55,7 +55,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._selectable = selectable;
 
         this._cachedNumberOfDescendents = 0;
-        this._previousSelectedTreeElement = null;
 
         let comparator = (a, b) => {
             function getLevel(treeElement) {
@@ -797,17 +796,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
             const omitFocus = true;
             treeElement.select(omitFocus);
-        }
-
-        let selectedTreeElement = this.selectedTreeElement;
-        if (selectedTreeElement !== this._previousSelectedTreeElement) {
-            if (this._previousSelectedTreeElement && this._previousSelectedTreeElement.listItemElement)
-                this._previousSelectedTreeElement.listItemElement.classList.remove("last-selected");
-
-            this._previousSelectedTreeElement = selectedTreeElement;
-
-            if (this._previousSelectedTreeElement && this._previousSelectedTreeElement.listItemElement)
-                this._previousSelectedTreeElement.listItemElement.classList.add("last-selected");
         }
 
         this._dispatchSelectionDidChangeEvent();

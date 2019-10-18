@@ -74,14 +74,14 @@
     z-index: 1;
 }
 
-.tree-outline.dom.show-last-selected li.last-selected > span::after {
+.tree-outline.dom li.inspected-node > span::after {
     content: " = " var(--console-saved-result-prefix) "0";
     color: var(--console-secondary-text-color);
     position: absolute;
     white-space: pre;
 }
 
-.tree-outline.dom.show-last-selected:focus li.last-selected > span::after {
+.tree-outline.dom:focus li.inspected-node.selected > span::after {
     color: var(--selected-secondary-text-color);
 }
 
