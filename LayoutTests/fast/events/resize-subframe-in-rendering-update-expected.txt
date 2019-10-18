@@ -7,6 +7,8 @@ iframeB.style.width = "200px"; updateLayout(iframeB)
 iframeA.style.width = "200px"; updateLayout(iframeA)
 iframeAA.style.width = "200px"; updateLayout(iframeAA)
 PASS logs.length is 0
+After 0s setTimeout
+PASS logs.length is 0
 After requestAnimationFrame
 PASS logs.length is 3
 PASS logs.join(", ") is "A, AA, B"

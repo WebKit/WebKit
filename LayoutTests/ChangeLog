@@ -1,3 +1,21 @@
+2019-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Flaky Test: fast/events/resize-subframe-in-rendering-update.html
+        https://bugs.webkit.org/show_bug.cgi?id=203140
+
+        Reviewed by Simon Fraser.
+
+        The flakiness was caused by the race condition between rAF and setTimeout. In many cases,
+        setTimeout was getting scheduled after the next rAF and prevented some assertions to run in time.
+
+        Fixed the flakiness by moving setTimeout to outside the setTimeout in which tests run so that
+        those assertions would always run.
+
+        Rebaselined the test since these assertions in setTimeout are now always included in the results.
+
+        * fast/events/resize-subframe-in-rendering-update-expected.txt:
+        * fast/events/resize-subframe-in-rendering-update.html:
+
 2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Load event must be fired only for the SVG structurally external elements and the outermost SVG element

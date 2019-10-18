@@ -37,10 +37,6 @@ requestAnimationFrame(() => {
         evalAndLog('iframeA.style.width = "200px"; updateLayout(iframeA)');
         evalAndLog('iframeAA.style.width = "200px"; updateLayout(iframeAA)');
         shouldBe('logs.length', '0');
-        setTimeout(() => {
-            debug('After 0s setTimeout');
-            shouldBe('logs.length', '0');
-        }, 0);
         requestAnimationFrame(() => {
             debug('After requestAnimationFrame');
             shouldBe('logs.length', '3');
@@ -49,6 +45,10 @@ requestAnimationFrame(() => {
             iframeB.remove();
             finishJSTest();
         });
+    }, 0);
+    setTimeout(() => {
+        debug('After 0s setTimeout');
+        shouldBe('logs.length', '0');
     }, 0);
 });
 
