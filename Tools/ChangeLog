@@ -1,3 +1,11 @@
+2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, remove an extraneous header import after r251279
+
+        Address a post-landing review comment.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+
 2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement AuthenticatorCancel

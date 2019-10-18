@@ -35,7 +35,6 @@
 
 #import "DumpRenderTreeMac.h"
 #import "NSPasteboardAdditions.h"
-#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WebTypesInternal.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
