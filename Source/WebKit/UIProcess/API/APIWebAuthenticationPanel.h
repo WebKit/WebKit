@@ -32,23 +32,29 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+class AuthenticatorManager;
+}
+
 namespace API {
 
 class WebAuthenticationPanelClient;
 
 class WebAuthenticationPanel final : public ObjectImpl<Object::Type::WebAuthenticationPanel>, public CanMakeWeakPtr<WebAuthenticationPanel> {
 public:
-    static Ref<WebAuthenticationPanel> create(const String& rpId);
+    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const String& rpId);
     ~WebAuthenticationPanel();
 
     WTF::String rpId() const { return m_rpId; }
+    void cancel() const;
 
     const WebAuthenticationPanelClient& client() const { return m_client.get(); }
     void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
 
 private:
-    WebAuthenticationPanel(const String& rpId);
+    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const String& rpId);
 
+    WeakPtr<WebKit::AuthenticatorManager> m_manager;
     WTF::String m_rpId;
     UniqueRef<WebAuthenticationPanelClient> m_client;
 };

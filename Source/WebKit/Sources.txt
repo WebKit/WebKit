@@ -412,6 +412,7 @@ UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp
 UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
 UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp
+UIProcess/WebAuthentication/fido/FidoAuthenticator.cpp
 UIProcess/WebAuthentication/fido/FidoService.cpp
 UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp
 

@@ -1061,7 +1061,6 @@
 		57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264A230603C100B72EB0 /* MockNfcService.h */; };
 		57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */; };
 		57C6244B234679A400383FE7 /* WebAuthenticationPanelFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */; };
-		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
 		57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */; };
 		57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */; };
@@ -3526,7 +3525,6 @@
 		57597EC021818BE20037F924 /* CtapHidDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CtapHidDriver.cpp; sourceTree = "<group>"; };
 		5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinator.h; sourceTree = "<group>"; };
 		5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinator.cpp; sourceTree = "<group>"; };
-		5760828D202987E600116678 /* WebAuthenticatorCoordinator.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinator.messages.in; sourceTree = "<group>"; };
 		57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticatorCoordinatorProxy.h; sourceTree = "<group>"; };
 		57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticatorCoordinatorProxy.cpp; sourceTree = "<group>"; };
 		57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAuthenticatorCoordinatorProxy.messages.in; sourceTree = "<group>"; };
@@ -3547,6 +3545,8 @@
 		57B8264723050C5100B72EB0 /* FidoService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoService.cpp; sourceTree = "<group>"; };
 		57B8264A230603C100B72EB0 /* MockNfcService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockNfcService.h; sourceTree = "<group>"; };
 		57B8264B230603C100B72EB0 /* MockNfcService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MockNfcService.mm; sourceTree = "<group>"; };
+		57B8E3D52355864A00D5C5D1 /* FidoAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoAuthenticator.h; sourceTree = "<group>"; };
+		57B8E3D62355864A00D5C5D1 /* FidoAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoAuthenticator.cpp; sourceTree = "<group>"; };
 		57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationLoadPolicy.h; sourceTree = "<group>"; };
 		57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelFlags.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7048,6 +7048,8 @@
 				57597EB721811D9A0037F924 /* CtapHidDriver.h */,
 				570DAAC9230385FD00E8FC04 /* CtapNfcDriver.cpp */,
 				570DAAC8230385FD00E8FC04 /* CtapNfcDriver.h */,
+				57B8E3D62355864A00D5C5D1 /* FidoAuthenticator.cpp */,
+				57B8E3D52355864A00D5C5D1 /* FidoAuthenticator.h */,
 				57B8264723050C5100B72EB0 /* FidoService.cpp */,
 				57B8264623050C5100B72EB0 /* FidoService.h */,
 				57EB2E3921E1983E00B89CDF /* U2fAuthenticator.cpp */,
@@ -7061,7 +7063,6 @@
 			children = (
 				5760828C2029854200116678 /* WebAuthenticatorCoordinator.cpp */,
 				5760828B2029854200116678 /* WebAuthenticatorCoordinator.h */,
-				5760828D202987E600116678 /* WebAuthenticatorCoordinator.messages.in */,
 			);
 			path = WebAuthentication;
 			sourceTree = "<group>";
@@ -11515,7 +11516,6 @@
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
 				1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
-				57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */,
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				1C0A19531C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp in Sources */,

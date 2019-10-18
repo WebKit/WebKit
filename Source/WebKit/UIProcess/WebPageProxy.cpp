@@ -54,6 +54,7 @@
 #include "APIWebsitePolicies.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "AuthenticatorManager.h"
 #include "DataReference.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaMessages.h"
@@ -4113,6 +4114,10 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
     else if (frame->isMainFrame())
         m_navigationClient->didStartProvisionalNavigation(*this, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
+
+#if ENABLE(WEB_AUTHN)
+    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, frameID);
+#endif
 }
 
 void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url)
@@ -7195,6 +7200,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     
 #if ENABLE(SPEECH_SYNTHESIS)
     resetSpeechSynthesizer();
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, WTF::nullopt);
 #endif
 }
 

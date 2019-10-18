@@ -28,9 +28,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "MessageReceiver.h"
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 struct ExceptionData;
@@ -45,7 +45,7 @@ class WebPageProxy;
 
 struct WebAuthenticationRequestData;
 
-class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebAuthenticatorCoordinatorProxy> {
+class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
 public:
@@ -53,18 +53,18 @@ public:
     ~WebAuthenticatorCoordinatorProxy();
 
 private:
+    using RequestCompletionHandler = CompletionHandler<void(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&)>;
+    using QueryCompletionHandler = CompletionHandler<void(bool)>;
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
-    void getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
-    void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
+    void makeCredential(WebCore::FrameIdentifier, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&);
+    void getAssertion(WebCore::FrameIdentifier, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&);
+    void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
 
-    // Senders.
-    void requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
-
-    void handleRequest(uint64_t messageId, WebAuthenticationRequestData&&);
+    void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
     WebPageProxy& m_webPageProxy;
 };

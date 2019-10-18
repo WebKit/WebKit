@@ -91,6 +91,7 @@
     boolean fastDataArrival = false;
     boolean continueAfterErrorData = false;
     boolean canDowngrade = false;
+    boolean expectCancel = false;
 };
 
 [

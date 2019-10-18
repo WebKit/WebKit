@@ -146,6 +146,7 @@ size_t FidoHidMessage::numPackets() const
 
 FidoHidMessage::FidoHidMessage(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
     : m_channelId(channelId)
+    , m_cmd(type)
 {
     uint8_t sequence = 0;
 

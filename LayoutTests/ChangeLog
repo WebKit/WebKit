@@ -1,3 +1,18 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement AuthenticatorCancel
+        https://bugs.webkit.org/show_bug.cgi?id=191523
+        <rdar://problem/55920204>
+
+        Reviewed by Brent Fulgham.
+
+        Modified one of the error message that is no longer emitted.
+
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+
 2019-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Flaky Test: fast/events/resize-subframe-in-rendering-update.html

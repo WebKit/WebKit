@@ -29,6 +29,7 @@
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
+#include "AuthenticatorManager.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "LoadParameters.h"
@@ -890,6 +891,12 @@ void WebProcessProxy::didDestroyFrame(FrameIdentifier frameID)
     // back to the UIProcess, then the frameDestroyed message will still be received because it
     // gets sent directly to the WebProcessProxy.
     ASSERT(WebFrameProxyMap::isValidKey(frameID));
+#if ENABLE(WEB_AUTHN)
+    if (auto* frame = webFrame(frameID)) {
+        if (auto* page = frame->page())
+            page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
+    }
+#endif
     m_frameMap.remove(frameID);
 }
 

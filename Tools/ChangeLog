@@ -1,3 +1,22 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement AuthenticatorCancel
+        https://bugs.webkit.org/show_bug.cgi?id=191523
+        <rdar://problem/55920204>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FidoHidMessageTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelUIDelegate webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-cancel.html: Copied from Tools/TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid.html.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion.html:
+
 2019-10-18  Brian Burg  <bburg@apple.com>
 
         Cleanup: Stop setting -ApplePersistenceIgnoreState when running debug Mac WebKit

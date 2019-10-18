@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
+#include "FidoAuthenticator.h"
 #include <wtf/RunLoop.h>
 
 namespace apdu {
@@ -38,7 +38,7 @@ namespace WebKit {
 
 class CtapDriver;
 
-class U2fAuthenticator final : public Authenticator {
+class U2fAuthenticator final : public FidoAuthenticator {
 public:
     static Ref<U2fAuthenticator> create(std::unique_ptr<CtapDriver>&& driver)
     {
@@ -69,7 +69,6 @@ private:
     void continueBogusCommandAfterResponseReceived(apdu::ApduResponse&&);
     void continueSignCommandAfterResponseReceived(apdu::ApduResponse&&);
 
-    std::unique_ptr<CtapDriver> m_driver;
     RunLoop::Timer<U2fAuthenticator> m_retryTimer;
     Vector<uint8_t> m_lastCommand;
     CommandType m_lastCommandType;

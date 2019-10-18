@@ -56,16 +56,15 @@ TEST(FidoHidMessageTest, TestPacketSize)
 }
 
 /*
- * U2f Init Packets are of the format:
- * Byte 0:    0
- * Byte 1-4:  Channel ID
- * Byte 5:    Command byte
- * Byte 6-7:  Big Endian size of data
- * Byte 8-n:  Data block
+ * CTAP HID Init Packets are of the format:
+ * Byte 0-3:  Channel ID
+ * Byte 4:    Command byte
+ * Byte 5-6:  Big Endian size of data
+ * Byte 7-n:  Data block
  *
  * Remaining buffer is padded with 0
  */
-TEST(FidoHidMessageTest, TestPacketData)
+TEST(FidoHidMessageTest, TestPacketData1)
 {
     uint32_t channelId = 0xF5060708;
     Vector<uint8_t> data {10, 11};
@@ -82,6 +81,34 @@ TEST(FidoHidMessageTest, TestPacketData)
 
     EXPECT_EQ(data.size() >> 8, serialized[index++]);
     EXPECT_EQ(data.size() & 0xff, serialized[index++]);
+    EXPECT_EQ(data[0], serialized[index++]);
+    EXPECT_EQ(data[1], serialized[index++]);
+    for (; index < serialized.size(); index++)
+        EXPECT_EQ(0, serialized[index]) << "mismatch at index " << index;
+}
+
+/*
+ * CTAP HID Continuation Packets are of the format:
+ * Byte 0-3:  Channel ID
+ * Byte 4:    SEQ
+ * Byte 5-n:  Data block
+ *
+ * Remaining buffer is padded with 0
+ */
+TEST(FidoHidMessageTest, TestPacketData2)
+{
+    uint32_t channelId = 0xF5060708;
+    Vector<uint8_t> data {10, 11};
+    auto initPacket = makeUnique<FidoHidContinuationPacket>(channelId, 0, Vector<uint8_t>(data));
+    size_t index = 0;
+
+    Vector<uint8_t> serialized = initPacket->getSerializedData();
+    EXPECT_EQ((channelId >> 24) & 0xff, serialized[index++]);
+    EXPECT_EQ((channelId >> 16) & 0xff, serialized[index++]);
+    EXPECT_EQ((channelId >> 8) & 0xff, serialized[index++]);
+    EXPECT_EQ(channelId & 0xff, serialized[index++]);
+    EXPECT_EQ(0, serialized[index++]);
+
     EXPECT_EQ(data[0], serialized[index++]);
     EXPECT_EQ(data[1], serialized[index++]);
     for (; index < serialized.size(); index++)
@@ -207,6 +234,16 @@ TEST(FidoHidMessageTest, TestDeserialize)
         EXPECT_EQ(buf, origList.first());
         origList.removeFirst();
     }
+}
+
+TEST(FidoHidMessageTest, TestProperties)
+{
+    uint32_t channelId = 0x05060708;
+    Vector<uint8_t> data;
+
+    auto message = FidoHidMessage::create(channelId, FidoHidDeviceCommand::kCancel, data);
+    EXPECT_EQ(channelId, message->channelId());
+    EXPECT_EQ(FidoHidDeviceCommand::kCancel, message->cmd());
 }
 
 } // namespace TestWebKitAPI

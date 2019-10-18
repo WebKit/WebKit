@@ -339,6 +339,7 @@
 		57599E2B1F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E231F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html */; };
 		57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */; };
 		57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */; };
+		57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */; };
 		5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */; };
 		5774AA6821FBBF7800AF2A1B /* TestSOAuthorization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */; };
 		5778D05622110A2600899E3B /* LoadWebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5778D05522110A2600899E3B /* LoadWebArchive.mm */; };
@@ -1443,6 +1444,7 @@
 				CDC8E4971BC6F10800594FEC /* video-without-audio.mp4 in Copy Resources */,
 				2EBD9D0A2134730D002DA758 /* video.html in Copy Resources */,
 				CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */,
+				57663DF32357E48900E85E09 /* web-authentication-get-assertion-hid-cancel.html in Copy Resources */,
 				57663DEC234F1F9300E85E09 /* web-authentication-get-assertion-hid.html in Copy Resources */,
 				57663DEA234EA66D00E85E09 /* web-authentication-get-assertion-nfc.html in Copy Resources */,
 				57C624502346C21E00383FE7 /* web-authentication-get-assertion.html in Copy Resources */,
@@ -1865,6 +1867,7 @@
 		57599E261F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm"; sourceTree = "<group>"; };
 		57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-nfc.html"; sourceTree = "<group>"; };
 		57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid.html"; sourceTree = "<group>"; };
+		57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-cancel.html"; sourceTree = "<group>"; };
 		5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedCryptoKeyWrap.mm; sourceTree = "<group>"; };
 		5774AA6721FBBF7800AF2A1B /* TestSOAuthorization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestSOAuthorization.mm; sourceTree = "<group>"; };
 		5778D05522110A2600899E3B /* LoadWebArchive.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadWebArchive.mm; sourceTree = "<group>"; };
@@ -3387,6 +3390,7 @@
 				F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */,
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
+				57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */,
 				57663DEB234F1F8000E85E09 /* web-authentication-get-assertion-hid.html */,
 				57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */,
 				57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */,

@@ -1,3 +1,40 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement AuthenticatorCancel
+        https://bugs.webkit.org/show_bug.cgi?id=191523
+        <rdar://problem/55920204>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by new tests in existing test files.
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        * Modules/webauthn/AuthenticatorCoordinator.h:
+        * Modules/webauthn/AuthenticatorCoordinatorClient.cpp: Removed.
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::tryCreate):
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredentialData.h:
+        * Modules/webauthn/fido/DeviceRequestConverter.h:
+        * Modules/webauthn/fido/FidoHidMessage.cpp:
+        (fido::FidoHidMessage::FidoHidMessage):
+        * Modules/webauthn/fido/FidoHidPacket.cpp:
+        (fido::FidoHidInitPacket::getSerializedData const):
+        (fido::FidoHidContinuationPacket::getSerializedData const):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockWebAuthenticationConfiguration.h:
+        (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+        * testing/MockWebAuthenticationConfiguration.idl:
+        Adds a new option to test AuthenticatorCancel.
+
 2019-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add TextStream dumping for BasicShape types

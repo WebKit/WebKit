@@ -1,3 +1,133 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement AuthenticatorCancel
+        https://bugs.webkit.org/show_bug.cgi?id=191523
+        <rdar://problem/55920204>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implement two ways to cancel a pending WebAuthn ceremony:
+        1) Via navigation activities. Activities include i) main frame navigation, ii) main frame reload,
+        iii) main frame destruction, iv) sub frame navigation, and v) sub frame destruction. All the above
+        activities will cancel any pending WebAuthn ceremony that is associated with the frame. To prove
+        the association, a GlobalFrameIdentifier is bridged into WebAuthenticationRequestData. Navigation
+        cancel is done in WebPageProxy::didStartProvisionalLoadForFrameShared, and destruction cancel is done
+        in WebProcessProxy::didDestroyFrame and WebPageProxy::resetState.
+        2) Via UI. This path is simply bridged -[_WKWebAuthenticationPanel cancel] into AuthenticatorManager.
+        Noted, this patch follows the spec to wait until time out to notify RPs.
+        References: i) Step 20 of https://www.w3.org/TR/webauthn/#createCredential, ii) Step 18 of
+        https://www.w3.org/TR/webauthn/#getAssertion
+
+        As for what the cancel actually does, it:
+        1) stops any HID/NFC scanning;
+        2) sends CTAPHID_CANCEL to any HID authenticators that have been added. Reference:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#usb-hid-cancel
+        Sending CTAPHID_CANCEL, however, is not trivial. An abstract class FidoAuthenticator is crafted to
+        do this labor for both CtapAuthenticator and U2fAuthenticator during the time of destructions.
+        Noted: The CtapHidDriver is the only CtapDriver implements the cancel method. Since the message
+        is sent during state reset, lifecycle of the HidConenction and HidService which manage the underlying
+        IOHIDDeviceRef is very hard to hold. This is required for the regular async sender. Therefore,
+        HidConnection::sendSync is crafted to send the message synchronously to get rid of the tediousness
+        of managing those lifecycles.
+
+        P.S. Vector::grow doesn't initialize POD types. Therefore, this patch also appends it with memset
+        for FidoHidPacket.
+
+        P.S.S. This patch also simplifies AuthenticatorCoordinatorClient by: i) moving code from AuthenticatorCoordinatorClient
+        to WebAuthenticatorCoordinatorClient, and ii) using sendWithAsyncReply. The latter allows us to
+        get rid of the complex mechanism of ensuring the right reply is returned.
+
+        * DerivedSources.make:
+        * Sources.txt:
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::create):
+        (API::WebAuthenticationPanel::WebAuthenticationPanel):
+        (API::WebAuthenticationPanel::cancel const):
+        * UIProcess/API/APIWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (-[_WKWebAuthenticationPanel cancel]):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::cancelRequest):
+        (WebKit::AuthenticatorManager::clearState):
+        (WebKit::AuthenticatorManager::runPanel):
+        (WebKit::AuthenticatorManager::resetState):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.h:
+        (WebKit::HidConnection::isInitialized const):
+        (WebKit::HidConnection::setIsInitialized):
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.mm:
+        (WebKit::HidConnection::~HidConnection):
+        (WebKit::HidConnection::initialize):
+        (WebKit::HidConnection::terminate):
+        (WebKit::HidConnection::sendSync):
+        (WebKit::HidConnection::send):
+        (WebKit::HidConnection::registerDataReceivedCallback):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::initialize):
+        (WebKit::MockHidConnection::terminate):
+        (WebKit::MockHidConnection::sendSync):
+        (WebKit::MockHidConnection::send):
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
+        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+        (WebKit::WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebAuthenticatorCoordinatorProxy::requestReply): Deleted.
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::CtapAuthenticator):
+        (WebKit::CtapAuthenticator::makeCredential):
+        (WebKit::CtapAuthenticator::getAssertion):
+        (WebKit::CtapAuthenticator::tryDowngrade):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+        * UIProcess/WebAuthentication/fido/CtapDriver.h:
+        (WebKit::CtapDriver::cancel):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::Worker::write):
+        (WebKit::CtapHidDriver::Worker::read):
+        (WebKit::CtapHidDriver::Worker::returnMessage):
+        (WebKit::CtapHidDriver::Worker::reset):
+        (WebKit::CtapHidDriver::Worker::cancel):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        (WebKit::CtapHidDriver::continueAfterResponseReceived):
+        (WebKit::CtapHidDriver::returnResponse):
+        (WebKit::CtapHidDriver::reset):
+        (WebKit::CtapHidDriver::cancel):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.h:
+        * UIProcess/WebAuthentication/fido/FidoAuthenticator.cpp: Copied from Source/WebKit/UIProcess/API/APIWebAuthenticationPanel.cpp.
+        (WebKit::FidoAuthenticator::FidoAuthenticator):
+        (WebKit::FidoAuthenticator::~FidoAuthenticator):
+        (WebKit::FidoAuthenticator::driver const):
+        (WebKit::FidoAuthenticator::releaseDriver):
+        * UIProcess/WebAuthentication/fido/FidoAuthenticator.h: Copied from Source/WebKit/UIProcess/API/APIWebAuthenticationPanel.cpp.
+        * UIProcess/WebAuthentication/fido/FidoService.cpp:
+        (WebKit::FidoService::continueAfterGetInfo):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::U2fAuthenticator):
+        (WebKit::U2fAuthenticator::issueCommand):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didDestroyFrame):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::WebAuthenticatorCoordinator):
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        (WebKit::WebAuthenticatorCoordinator::~WebAuthenticatorCoordinator): Deleted.
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.h:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in: Removed.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::fromCoreFrame):
+        * WebProcess/WebPage/WebFrame.h:
+
 2019-10-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Avoid crashes on GCC-compiled binaries by avoiding a use-after-move

@@ -164,6 +164,30 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     runPanel();
 }
 
+void AuthenticatorManager::cancelRequest(const WebCore::PageIdentifier& pageID, const Optional<FrameIdentifier>& frameID)
+{
+    if (!m_pendingCompletionHandler)
+        return;
+    ASSERT(m_pendingRequestData.frameID);
+    if (m_pendingRequestData.frameID->pageID != pageID)
+        return;
+    if (frameID && frameID != m_pendingRequestData.frameID->frameID)
+        return;
+    invokePendingCompletionHandler(ExceptionData { NotAllowedError, "Operation timed out."_s });
+    clearState();
+    m_requestTimeOutTimer.stop();
+}
+
+// The following implements part of Step 20. of https://www.w3.org/TR/webauthn/#createCredential
+// and part of Step 18. of https://www.w3.org/TR/webauthn/#getAssertion as of 4 March 2019:
+// "If the user exercises a user agent user-interface option to cancel the process,".
+void AuthenticatorManager::cancelRequest(const API::WebAuthenticationPanel& panel)
+{
+    if (!m_pendingCompletionHandler || m_pendingRequestData.panel.get() != &panel)
+        return;
+    resetState();
+}
+
 void AuthenticatorManager::clearStateAsync()
 {
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
@@ -177,9 +201,7 @@ void AuthenticatorManager::clearState()
 {
     if (m_pendingCompletionHandler)
         return;
-    m_pendingRequestData = { };
-    m_services.clear();
-    m_authenticators.clear();
+    resetState();
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
@@ -264,7 +286,7 @@ void AuthenticatorManager::runPanel()
     if (!page)
         return;
 
-    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(getRpId(m_pendingRequestData.options));
+    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(m_pendingRequestData.options));
     auto& panel = *m_pendingRequestData.panel;
     page->uiClient().runWebAuthenticationPanel(*page, panel, [weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
@@ -303,6 +325,14 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
         });
     }
     m_pendingCompletionHandler(WTFMove(respond));
+}
+
+
+void AuthenticatorManager::resetState()
+{
+    m_authenticators.clear();
+    m_services.clear();
+    m_pendingRequestData = { };
 }
 
 } // namespace WebKit

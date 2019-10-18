@@ -73,7 +73,7 @@ public:
 
     WebPage* page() const;
 
-    static WebFrame* fromCoreFrame(WebCore::Frame&);
+    static WebFrame* fromCoreFrame(const WebCore::Frame&);
     WebCore::Frame* coreFrame() const { return m_coreFrame; }
 
     FrameInfoData info() const;

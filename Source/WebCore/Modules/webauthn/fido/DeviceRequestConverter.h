@@ -53,8 +53,7 @@ WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<ui
 WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability);
 
 // Represents CTAP requests with empty parameters, including
-// AuthenticatorGetInfo, AuthenticatorCancel, AuthenticatorReset and
-// AuthenticatorGetNextAssertion commands.
+// AuthenticatorGetInfo, AuthenticatorReset and AuthenticatorGetNextAssertion commands.
 WEBCORE_EXPORT Vector<uint8_t> encodeEmptyAuthenticatorRequest(CtapRequestCommand);
 
 } // namespace fido

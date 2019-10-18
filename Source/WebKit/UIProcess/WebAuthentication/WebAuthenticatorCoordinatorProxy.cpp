@@ -31,7 +31,6 @@
 #include "AuthenticatorManager.h"
 #include "LocalService.h"
 #include "WebAuthenticationPanelFlags.h"
-#include "WebAuthenticatorCoordinatorMessages.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -54,40 +53,32 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options)
+void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options, RequestCompletionHandler&& handler)
 {
-    handleRequest(messageId, { hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr });
+    handleRequest({ hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId } }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options)
+void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options, RequestCompletionHandler&& handler)
 {
-    handleRequest(messageId, { hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr });
+    handleRequest({ hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId } }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::handleRequest(uint64_t messageId, WebAuthenticationRequestData&& data)
+void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
-    auto callback = [messageId, weakThis = makeWeakPtr(*this)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) {
+    auto callback = [handler = WTFMove(handler)] (Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-
         WTF::switchOn(result, [&](const WebCore::PublicKeyCredentialData& data) {
-            weakThis->requestReply(messageId, data, { });
+            handler(data, { });
         }, [&](const  WebCore::ExceptionData& exception) {
-            weakThis->requestReply(messageId, { }, exception);
+            handler({ }, exception);
         });
     };
     m_webPageProxy.websiteDataStore().authenticatorManager().handleRequest(WTFMove(data), WTFMove(callback));
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
-    m_webPageProxy.send(Messages::WebAuthenticatorCoordinator::IsUserVerifyingPlatformAuthenticatorAvailableReply(messageId, LocalService::isAvailable()));
-}
-
-void WebAuthenticatorCoordinatorProxy::requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
-{
-    m_webPageProxy.send(Messages::WebAuthenticatorCoordinator::RequestReply(messageId, data, exception));
+    handler(LocalService::isAvailable());
 }
 
 } // namespace WebKit

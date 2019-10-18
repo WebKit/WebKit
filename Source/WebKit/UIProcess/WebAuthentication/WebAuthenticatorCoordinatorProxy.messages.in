@@ -26,9 +26,9 @@
 
 messages -> WebAuthenticatorCoordinatorProxy {
 
-    MakeCredential(uint64_t messageId, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options);
-    GetAssertion(uint64_t messageId, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options);
-    IsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
+    MakeCredential(WebCore::FrameIdentifier frameID, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options) -> (struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception) Async
+    GetAssertion(WebCore::FrameIdentifier frameID, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options) -> (struct WebCore::PublicKeyCredentialData data, struct WebCore::ExceptionData exception) Async
+    IsUserVerifyingPlatformAuthenticatorAvailable() -> (bool result) Async
 }
 
 #endif

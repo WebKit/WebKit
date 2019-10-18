@@ -1,3 +1,4 @@
+<input type="text" id="input">
 <script>
     const testNfcCtapVersionBase64 = "RklET18yXzCQAA==";
     const testGetInfoResponseApduBase64 =
@@ -9,8 +10,10 @@
         "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
         "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
         "QoJ1L7Fe64G9uBeQAA==";
-    if (window.internals)
-        internals.setMockWebAuthenticationConfiguration({ nfc: { error: "success", payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testAssertionMessageApduBase64] } });
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ nfc: { payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testAssertionMessageApduBase64] } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
 
     const options = {
         publicKey: {
