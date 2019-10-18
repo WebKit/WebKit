@@ -150,7 +150,8 @@ public:
     };
     SlotInfo* slot(SlotPosition);
 
-    FormattingContext::IntrinsicWidthConstraints widthConstraints() const;
+    bool hasComputedWidthConstraints() const { return m_intrinsicWidthConstraints.hasValue(); }
+    FormattingContext::IntrinsicWidthConstraints widthConstraints();
 
 private:
     using SlotMap = WTF::HashMap<SlotPosition, std::unique_ptr<SlotInfo>>;
@@ -161,6 +162,7 @@ private:
     RowList m_rows;
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
+    Optional<FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
 };
 
 }

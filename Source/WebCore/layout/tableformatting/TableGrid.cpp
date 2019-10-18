@@ -173,14 +173,17 @@ void TableGrid::removeCell(const Box& tableCellBox)
     UNUSED_PARAM(tableCellBox);
 }
 
-FormattingContext::IntrinsicWidthConstraints TableGrid::widthConstraints() const
+FormattingContext::IntrinsicWidthConstraints TableGrid::widthConstraints()
 {
-    // FIXME: We should probably cache this value.
-    auto widthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+    // FIXME: Add constraint invalidation for incremental layouts.
+    if (m_intrinsicWidthConstraints)
+        return *m_intrinsicWidthConstraints;
+
+    m_intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
     for (auto& column : m_columnsContext.columns())
-        widthConstraints += column.widthConstraints();
-    widthConstraints.expand(totalHorizontalSpacing()); 
-    return widthConstraints;
+        *m_intrinsicWidthConstraints += column.widthConstraints();
+    m_intrinsicWidthConstraints->expand(totalHorizontalSpacing());
+    return *m_intrinsicWidthConstraints;
 }
 
 }

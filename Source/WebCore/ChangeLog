@@ -1,5 +1,26 @@
 2019-10-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Cache table's width constraint values.
+        https://bugs.webkit.org/show_bug.cgi?id=203135
+        <rdar://problem/56396352>
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that when computedIntrinsicWidthConstraints is called from both the preferred width and the actual layout codepaths during a layout frame, we don't
+        end up building up the grid twice.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::computePreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+        * layout/tableformatting/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::widthConstraints):
+        (WebCore::Layout::TableGrid::widthConstraints const): Deleted.
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::hasComputedWidthConstraints const):
+
+2019-10-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] TableFormattingContext::computedIntrinsicWidthConstraints should not expect a valid containing block's width
         https://bugs.webkit.org/show_bug.cgi?id=203131
         <rdar://problem/56394676>

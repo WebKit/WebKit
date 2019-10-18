@@ -161,16 +161,14 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedInt
     // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
     // a generic shrink-to fit block level box like a float box would be just sized to the computed value of "width", tables
     // can actually be streched way over.
-
-    // 1. Ensure each cell slot is occupied by at least one cell.
-    ensureTableGrid();
-    // 2. Compute the minimum/maximum width of each column.
-    computePreferredWidthForColumns();
-    // 3. Compute the minimum/maximum width of the table box.
     auto& grid = formattingState().tableGrid();
-    auto tableWidthConstraints = grid.widthConstraints();
-    tableWidthConstraints.expand(grid.totalHorizontalSpacing());
-    return tableWidthConstraints;
+    if (!grid.hasComputedWidthConstraints()) {
+        // 1. Ensure each cell slot is occupied by at least one cell.
+        ensureTableGrid();
+        // 2. Compute the minimum/maximum width of each column.
+        computePreferredWidthForColumns();
+    }
+    return grid.widthConstraints();
 }
 
 void TableFormattingContext::ensureTableGrid()
@@ -221,6 +219,7 @@ void TableFormattingContext::computePreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();
     auto& grid = formattingState.tableGrid();
+    ASSERT(!grid.hasComputedWidthConstraints());
 
     // 1. Calculate the minimum content width (MCW) of each cell: the formatted content may span any number of lines but may not overflow the cell box.
     //    If the specified 'width' (W) of the cell is greater than MCW, W is the minimum cell width. A value of 'auto' means that MCW is the minimum cell width.
@@ -275,6 +274,7 @@ void TableFormattingContext::computePreferredWidthForColumns()
 void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
 {
     auto& grid = formattingState().tableGrid();
+    ASSERT(grid.hasComputedWidthConstraints());
     auto tableWidthConstraints = grid.widthConstraints();
     auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
 
