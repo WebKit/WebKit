@@ -34,26 +34,26 @@ Test: ../../resources/webgl_test_files/conformance2/extensions/ext-color-buffer-
 [ 31: PASS ] getError was expected value: NO_ERROR : RGB16F texture allocation should succeed
 [ 32: FAIL ] RGB16F render target should not be supported with or without enabling EXT_color_buffer_float
 [ 33: PASS ] getError was expected value: INVALID_ENUM : RGB16F renderbuffer allocation should fail with or without enabling EXT_color_buffer_float
-[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
-[ 35: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 34: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 35: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 36: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
 [ 37: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
 [ 38: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 39: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
-[ 40: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
-[ 41: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 40: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 41: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 42: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
 [ 43: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
 [ 44: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 45: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
-[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
-[ 47: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 46: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 47: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 48: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
 [ 49: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
 [ 50: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 51: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
-[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Setup framebuffer with texture should succeed.
-[ 53: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+[ 52: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
+[ 53: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.
 [ 54: PASS ] getError was one of: INVALID_ENUM or INVALID_FRAMEBUFFER_OPERATION : CopyTexImage2D should fail.
 [ 55: PASS ] getError was expected value: NO_ERROR : Setup framebuffer with texture should succeed.
 [ 56: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36053.

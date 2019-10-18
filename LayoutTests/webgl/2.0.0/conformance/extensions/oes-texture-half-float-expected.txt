@@ -46,35 +46,35 @@ Test: ../../resources/webgl_test_files/conformance/extensions/oes-texture-half-f
 [ 43: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
 [ 44: PASS ] getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be disallowed when ArrayBufferView is not-null and not-Uint16
 [ 45: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 46: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
-[ 47: FAIL ] should be 85,85,85,85 at (0, 0) expected: 85,85,85,85 was 0,0,0,255
-[ 48: PASS ] should be black
+[ 46: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 47: PASS ] should be 85,85,85,85
+[ 48: FAIL ] should be black at (0, 0) expected: 0,0,0,255 was 85,85,85,85
 [ 49: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 50: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
-[ 51: FAIL ] should be 85,85,85,255 at (0, 0) expected: 85,85,85,255 was 0,0,0,255
-[ 52: PASS ] should be black
+[ 50: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 51: PASS ] should be 85,85,85,255
+[ 52: FAIL ] should be black at (0, 0) expected: 0,0,0,255 was 85,85,85,255
 [ 53: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 54: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
-[ 55: FAIL ] should be 85,85,85,255 at (0, 0) expected: 85,85,85,255 was 0,0,0,255
-[ 56: PASS ] should be black
+[ 54: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 55: PASS ] should be 85,85,85,255
+[ 56: FAIL ] should be black at (0, 0) expected: 0,0,0,255 was 85,85,85,255
 [ 57: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 58: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
-[ 59: FAIL ] should be 0,0,0,85 at (0, 0) expected: 0,0,0,85 was 0,0,0,255
-[ 60: PASS ] should be black
+[ 58: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 59: PASS ] should be 0,0,0,85
+[ 60: FAIL ] should be black at (0, 0) expected: 0,0,0,255 was 0,0,0,85
 [ 61: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 62: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
-[ 63: FAIL ] should be 85,85,85,85 at (0, 0) expected: 85,85,85,85 was 0,0,0,255
-[ 64: PASS ] should be black
+[ 62: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 63: PASS ] should be 85,85,85,85
+[ 64: FAIL ] should be black at (0, 0) expected: 0,0,0,255 was 85,85,85,85
 [ 65: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 66: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 66: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
 [ 67: PASS ] getError was expected value: NO_ERROR : rendering from half floating point texture should succeed
-[ 68: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 68: PASS ] should be green
 [ 69: PASS ] getError was expected value: NO_ERROR : texture parameter setup should succeed
-[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+[ 70: PASS ] getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
 [ 71: PASS ] getError was expected value: NO_ERROR : rendering from half floating point texture should succeed
-[ 72: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 72: PASS ] should be green
 [ 73: FAIL ] RGBA/HALF_FLOAT_OES is color renderable but EXT_color_buffer_half_float not exposed
 [ 74: PASS ] gl.getExtension("OES_texture_half_float").myProperty is 2
 [ 75: PASS ] successfullyParsed is true
-[ FAIL ] 19 failures reported
+[ FAIL ] 10 failures reported
 

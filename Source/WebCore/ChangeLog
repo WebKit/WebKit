@@ -1,3 +1,21 @@
+2019-10-17  Dean Jackson  <dino@apple.com>
+
+        texImage2D for a half-float texture only accepts null
+        https://bugs.webkit.org/show_bug.cgi?id=169999
+        <rdar://problem/31713571>
+
+        Reviewed by Simon Fraser.
+
+        After we initially implemented this, the extension was
+        modified such that texImage2D could upload to half-float
+        from a Uint16 array.
+
+        Test: fast/canvas/webgl/oes-texture-half-float-uint16.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateArrayBufferType): Accept
+        Uint16.
+
 2019-10-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r241747): [iOS] Adjust default SVG focus ring width to match width for HTML documents

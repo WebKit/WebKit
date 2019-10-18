@@ -1,3 +1,19 @@
+2019-10-17  Dean Jackson  <dino@apple.com>
+
+        texImage2D for a half-float texture only accepts null
+        https://bugs.webkit.org/show_bug.cgi?id=169999
+        <rdar://problem/31713571>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test, and update the expected results of existing tests.
+
+        * fast/canvas/webgl/oes-texture-half-float-uint16-expected.txt: Added.
+        * fast/canvas/webgl/oes-texture-half-float-uint16.html: Added.
+        * webgl/2.0.0/conformance/extensions/oes-texture-half-float-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/ext-color-buffer-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+
 2019-10-18  Daniel Bates  <dabates@apple.com>
 
         fast/events/ios/forward-delete-in-editable.html is a flaky failure

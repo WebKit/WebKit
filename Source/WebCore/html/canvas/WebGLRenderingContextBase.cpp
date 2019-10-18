@@ -4122,13 +4122,7 @@ bool WebGLRenderingContextBase::validateArrayBufferType(const char* functionName
     case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
     case GraphicsContext3D::HALF_FLOAT:
     case GraphicsContext3D::FLOAT_32_UNSIGNED_INT_24_8_REV:
-        // As per the specification, ArrayBufferView should be null when
-        // OES_texture_half_float is enabled.
-        if (arrayType) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type HALF_FLOAT_OES but ArrayBufferView is not NULL");
-            return false;
-        }
-        break;
+        TYPE_VALIDATION_CASE(TypeUint16);
     default:
         ASSERT_NOT_REACHED();
         return false;
