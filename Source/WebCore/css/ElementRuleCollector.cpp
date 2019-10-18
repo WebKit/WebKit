@@ -184,6 +184,8 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
         case DeclarationOrigin::Author: return m_result.ranges.authorRuleRange();
         case DeclarationOrigin::User: return m_result.ranges.userRuleRange();
         }
+        ASSERT_NOT_REACHED();
+        return m_result.ranges.authorRuleRange();
     }();
 
     // FIXME: Range updating should be done by MatchResults type

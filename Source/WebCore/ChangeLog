@@ -1,3 +1,16 @@
+2019-10-18  Antti Koivisto  <antti@apple.com>
+
+        ElementRuleCollector function signature cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=203153
+        <rdar://problem/56412684>
+
+        Unreviewed followup.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+
+        Try to appease MSVC.
+
 2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Load event must be fired only for the SVG structurally external elements and the outermost SVG element
