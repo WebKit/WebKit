@@ -1,3 +1,15 @@
+2019-10-18  Brian Burg  <bburg@apple.com>
+
+        Cleanup: Stop setting -ApplePersistenceIgnoreState when running debug Mac WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=203156
+
+        Reviewed by Jonathan Bedard.
+
+        This is no longer needed. The new value has been supported since 2014.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForRunAndDebugMacWebKitApp):
+
 2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support navigator.clipboard.read()

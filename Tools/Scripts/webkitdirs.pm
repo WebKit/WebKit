@@ -2475,8 +2475,6 @@ sub argumentsForRunAndDebugMacWebKitApp()
     my @args = ();
     if (checkForArgumentAndRemoveFromARGV("--no-saved-state")) {
         push @args, ("-ApplePersistenceIgnoreStateQuietly", "YES");
-        # FIXME: Don't set ApplePersistenceIgnoreState once all supported OS versions respect ApplePersistenceIgnoreStateQuietly (rdar://15032886).
-        push @args, ("-ApplePersistenceIgnoreState", "YES");
     }
 
     my $lang;
