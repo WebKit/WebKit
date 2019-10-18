@@ -24,17 +24,15 @@ async function runTest()
         inputElement.setSelectionRange(0, 0);
         return;
     }
-    // FIXME: We cannot listen for a keyup event because the forward delete key does not generate one
-    // due to <rdar://problem/45772078>. So, we listen for a blur event.
-    inputElement.addEventListener("blur", checkResultAndNotifyDone, {once: true});
+    inputElement.addEventListener("keyup", checkResultAndNotifyDone, {once: true});
     await UIHelper.activateFormControl(inputElement);
     inputElement.setSelectionRange(0, 0);
     await UIHelper.typeCharacter("forwardDelete");
-    inputElement.blur();
 }
 
-function checkResultAndNotifyDone()
+function checkResultAndNotifyDone(keyEvent)
 {
+    console.assert(keyEvent.key === "Delete");
     shouldBeEqualToString('document.getElementById("input").value', "ext");
     document.body.removeChild(document.getElementById("test-container"));
     finishJSTest();

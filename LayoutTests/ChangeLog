@@ -1,5 +1,21 @@
 2019-10-18  Daniel Bates  <dabates@apple.com>
 
+        fast/events/ios/forward-delete-in-editable.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203049
+        <rdar://problem/52969457>
+
+        Reviewed by Wenson Hsieh.
+
+        Now that <rdar://problem/45772078> is fixed we can write the test such that we check the test
+        result after we receive a DOM key up for the forward delete. Currently the test makes use of a
+        workaround that incorrectly assumes that the keyboard will call back into WebKit to perform the
+        forward deletion before the web process blur()s the field. This is not guaranteed to happen.
+        Instead wait until we receive a DOM key up for the delete key.
+
+        * fast/events/ios/forward-delete-in-editable.html:
+
+2019-10-18  Daniel Bates  <dabates@apple.com>
+
         Layout Test http/tests/security/contentSecurityPolicy/iframe-allowed-when-loaded-via-javascript-url.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=202481
         <rdar://problem/55916200>
