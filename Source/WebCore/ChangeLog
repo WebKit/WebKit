@@ -1,5 +1,22 @@
 2019-10-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Fix table's total horizontal spacing computation
+        https://bugs.webkit.org/show_bug.cgi?id=203151
+        <rdar://problem/56406930>
+
+        Reviewed by Antti Koivisto.
+
+        The horizontal spacing value sets the gaps between
+        1. first column and the left edge of the table's content box
+        2. between 2 columns
+        3. last column and the right edge of the table's content box
+        In case of 'n' columns, the number of gaps is 'n + 1'.
+
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::totalHorizontalSpacing const):
+
+2019-10-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Cache table's width constraint values.
         https://bugs.webkit.org/show_bug.cgi?id=203135
         <rdar://problem/56396352>

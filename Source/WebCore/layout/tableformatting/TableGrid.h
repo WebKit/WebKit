@@ -48,7 +48,7 @@ public:
 
     void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
     LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
-    LayoutUnit totalHorizontalSpacing() const { return columnsContext().columns().size() * horizontalSpacing(); }
+    LayoutUnit totalHorizontalSpacing() const { return (columnsContext().columns().size() + 1) * horizontalSpacing(); }
 
     void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
