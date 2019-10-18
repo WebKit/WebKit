@@ -1,3 +1,18 @@
+2019-10-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Fix block level formatting root inflow box height computation
+        https://bugs.webkit.org/show_bug.cgi?id=203085
+        <rdar://problem/56372306>
+
+        Reviewed by Antti Koivisto.
+
+        Section 10.6.7 (https://www.w3.org/TR/CSS22/visudet.html#root-height) defines the height computation for block level formatting context roots.
+        We already use it for floats, out-of-flow and block level boxes when overflow computes to not "visible".
+        This patch makes generic in-flow non-replaced BFC roots (e.g. principal block container box for <table>) compute their heights according to 10.6.7.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
 2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support navigator.clipboard.read()

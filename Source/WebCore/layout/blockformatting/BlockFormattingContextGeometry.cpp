@@ -100,6 +100,10 @@ ContentHeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeight
         return { 0, nonCollapsedMargin };
     };
 
+    // 10.6.7 'Auto' heights for block formatting context roots
+    auto isAutoHeight = !usedValues.height && !computedContentHeight(layoutBox);
+    if (isAutoHeight && layoutBox.establishesBlockFormattingContext())
+        usedValues.height = contentHeightForFormattingContextRoot(layoutBox);
     auto contentHeightAndMargin = compute();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> height(" << contentHeightAndMargin.contentHeight << "px) margin(" << contentHeightAndMargin.nonCollapsedMargin.before << "px, " << contentHeightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return contentHeightAndMargin;
