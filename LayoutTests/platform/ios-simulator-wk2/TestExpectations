@@ -88,3 +88,6 @@ http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
+
+webkit.org/b/203157 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
+
