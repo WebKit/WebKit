@@ -1538,6 +1538,10 @@ void WebProcess::processDidResume()
     m_webSQLiteDatabaseTracker.setIsSuspended(false);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
+    {
+        LockHolder holder(m_unexpectedlyResumedUIAssertionLock);
+        m_unexpectedlyResumedUIAssertion = nullptr;
+    }
 #endif
 
 #if ENABLE(VIDEO)

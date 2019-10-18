@@ -1,3 +1,26 @@
+2019-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] "Unexpectedly Resumed" process assertion may cause us to get terminated
+        https://bugs.webkit.org/show_bug.cgi?id=203046
+        <rdar://problem/56179592>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements the following to avoid getting terminated:
+        1. Schedule the task to release the assertion on a background thread instead of
+           the main thread so that we end up releasing the task even if the main thread
+           is somehow hung.
+        2. Add an invalidation handler to the process assertion which releases the assertion
+           upon expiration.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasUnexpectedlyUnsuspended):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processDidResume):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+
 2019-10-18  Jer Noble  <jer.noble@apple.com>
 
         Add experimental HDR MediaCapabilities support.
