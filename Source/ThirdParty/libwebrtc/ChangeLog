@@ -1,3 +1,15 @@
+2019-10-18  youenn fablet  <youenn@apple.com>
+
+        Update libwebrtc third-party abseilcpp to M78
+        https://bugs.webkit.org/show_bug.cgi?id=202726
+        <rdar://problem/56147823>
+
+        Unreviewed.
+
+        * Source/third_party/abseil-cpp/absl/strings/string_view.h:
+        (absl::string_view::CheckLengthInternal):
+        Build fix for debug bots.
+
 2019-10-17  Youenn Fablet  <youenn@apple.com>
 
         Add libwebrtc third-party pfft

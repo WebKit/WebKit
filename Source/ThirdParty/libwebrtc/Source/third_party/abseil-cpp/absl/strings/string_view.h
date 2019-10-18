@@ -493,7 +493,7 @@ class string_view {
       (std::numeric_limits<difference_type>::max)();
 
   static constexpr size_type CheckLengthInternal(size_type len) {
-    return ABSL_ASSERT(len <= kMaxSize), len;
+    return len;
   }
 
   static constexpr size_type StrlenInternal(const char* str) {
