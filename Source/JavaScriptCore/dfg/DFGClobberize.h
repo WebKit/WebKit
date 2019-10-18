@@ -1023,8 +1023,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             }
             read(Butterfly_publicLength);
             read(Butterfly_vectorLength);
-            read(ArrayStorageProperties);
-            write(ArrayStorageProperties);
+            read(IndexedArrayStorageProperties);
+            write(IndexedArrayStorageProperties);
             if (node->arrayMode().mayStoreToHole())
                 write(Butterfly_publicLength);
             return;
@@ -1037,8 +1037,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             }
             read(Butterfly_publicLength);
             read(Butterfly_vectorLength);
-            read(ArrayStorageProperties);
-            write(ArrayStorageProperties);
+            read(IndexedArrayStorageProperties);
+            write(IndexedArrayStorageProperties);
             return;
 
         case Array::Int8Array:

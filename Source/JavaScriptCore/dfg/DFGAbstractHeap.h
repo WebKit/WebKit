@@ -65,7 +65,6 @@ namespace JSC { namespace DFG {
     macro(IndexedDoubleProperties) \
     macro(IndexedContiguousProperties) \
     macro(IndexedArrayStorageProperties) \
-    macro(ArrayStorageProperties) \
     macro(DirectArgumentsProperties) \
     macro(ScopeProperties) \
     macro(TypedArrayProperties) \

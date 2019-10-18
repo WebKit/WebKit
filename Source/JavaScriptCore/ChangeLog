@@ -1,3 +1,15 @@
+2019-10-17  Saam Barati  <sbarati@apple.com>
+
+        GetByVal and PutByVal on ArrayStorage need to use the same AbstractHeap
+        https://bugs.webkit.org/show_bug.cgi?id=203124
+        <rdar://problem/55988183>
+
+        Reviewed by Yusuke Suzuki.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Harden capacity checks in DFG::LocalCSEPhase::SmallMap.
