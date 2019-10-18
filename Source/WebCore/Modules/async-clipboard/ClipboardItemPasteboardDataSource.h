@@ -34,7 +34,7 @@ struct PasteboardItemInfo;
 class ClipboardItemPasteboardDataSource : public ClipboardItemDataSource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ClipboardItemPasteboardDataSource(ClipboardItem&, const PasteboardItemInfo&, size_t itemIndex);
+    ClipboardItemPasteboardDataSource(ClipboardItem&, const PasteboardItemInfo&);
     ~ClipboardItemPasteboardDataSource();
 
 private:
@@ -42,8 +42,6 @@ private:
     void getType(const String&, Ref<DeferredPromise>&&) final;
 
     Vector<String> m_types;
-    size_t m_itemIndex { 0 };
-    int m_initialChangeCount { 0 };
 };
 
 } // namespace WebCore

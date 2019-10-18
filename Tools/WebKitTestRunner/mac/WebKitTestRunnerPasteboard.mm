@@ -25,11 +25,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebKitTestRunnerPasteboard.h"
+#import "config.h"
+#import "WebKitTestRunnerPasteboard.h"
 
-#include <objc/runtime.h>
-#include <wtf/RetainPtr.h>
+#import "NSPasteboardAdditions.h"
+#import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 
 @interface LocalPasteboard : NSPasteboard
 {
@@ -123,11 +124,22 @@ static NSMutableDictionary *localPasteboards;
 {
 }
 
-- (NSInteger)declareTypes:(NSArray *)newTypes owner:(id)newOwner
+- (void)_clearContentsWithoutUpdatingChangeCount
 {
     [typesArray removeAllObjects];
     [typesSet removeAllObjects];
     [dataByType removeAllObjects];
+}
+
+- (NSInteger)clearContents
+{
+    [self _clearContentsWithoutUpdatingChangeCount];
+    return ++changeCount;
+}
+
+- (NSInteger)declareTypes:(NSArray *)newTypes owner:(id)newOwner
+{
+    [self _clearContentsWithoutUpdatingChangeCount];
     return [self addTypes:newTypes owner:newOwner];
 }
 
@@ -202,7 +214,7 @@ static NSMutableDictionary *localPasteboards;
 {
     auto item = adoptNS([[NSPasteboardItem alloc] init]);
     for (NSString *type in dataByType)
-        [item setData:dataByType[type] forType:type];
+        [item setData:dataByType[type] forType:[NSPasteboard _modernPasteboardType:type]];
     return @[ item.get() ];
 }
 

@@ -35,12 +35,6 @@
 
 namespace WebCore {
 
-static Ref<Blob> blobFromString(const String& stringData, const String& type)
-{
-    auto utf8 = stringData.utf8();
-    return Blob::create(SharedBuffer::create(utf8.data(), utf8.length()), Blob::normalizedContentType(type));
-}
-
 ClipboardItemBindingsDataSource::ClipboardItemBindingsDataSource(ClipboardItem& item, Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& itemPromises)
     : ClipboardItemDataSource(item)
     , m_itemPromises(WTFMove(itemPromises))
@@ -83,7 +77,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
         String string;
         result.getString(itemPromise->globalObject()->globalExec(), string);
         if (!string.isNull()) {
-            promise->resolve<IDLInterface<Blob>>(blobFromString(string, type));
+            promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(string, type));
             return;
         }
 

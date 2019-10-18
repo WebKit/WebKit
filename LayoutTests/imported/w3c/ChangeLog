@@ -1,3 +1,14 @@
+2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support navigator.clipboard.read()
+        https://bugs.webkit.org/show_bug.cgi?id=203021
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline a web platform test, now that Clipboard.read() no longer immediately rejects.
+
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+
 2019-10-17  Rob Buis  <rbuis@igalia.com>
 
         Remove duplicate MathML tests

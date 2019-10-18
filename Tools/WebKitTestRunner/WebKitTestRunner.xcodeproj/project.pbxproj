@@ -155,6 +155,7 @@
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
 		F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */; };
 		F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */; };
+		F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -412,6 +413,8 @@
 		F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIScriptControllerCocoa.mm; sourceTree = "<group>"; };
 		F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestSpellChecker.mm; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.mm; sourceTree = "<group>"; };
 		F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTestSpellChecker.h; path = ../TestRunnerShared/cocoa/LayoutTestSpellChecker.h; sourceTree = "<group>"; };
+		F4FED3212358215E003C139C /* NSPasteboardAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardAdditions.h; path = ../TestRunnerShared/mac/NSPasteboardAdditions.h; sourceTree = "<group>"; };
+		F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSPasteboardAdditions.mm; path = ../TestRunnerShared/mac/NSPasteboardAdditions.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -522,6 +525,7 @@
 			children = (
 				0F18E71B1D6BC4E60027E547 /* Bindings */,
 				F4B6C31620E84369008AC225 /* cocoa */,
+				F4FED31D23582120003C139C /* mac */,
 				0F73B5471BA782FE004B3EF4 /* UIScriptContext */,
 				3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */,
@@ -890,6 +894,15 @@
 			name = cocoa;
 			sourceTree = "<group>";
 		};
+		F4FED31D23582120003C139C /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				F4FED3212358215E003C139C /* NSPasteboardAdditions.h */,
+				F4FED3222358215E003C139C /* NSPasteboardAdditions.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1140,6 +1153,7 @@
 			files = (
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
+				F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,

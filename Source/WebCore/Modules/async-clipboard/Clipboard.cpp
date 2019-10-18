@@ -26,10 +26,14 @@
 #include "config.h"
 #include "Clipboard.h"
 
+#include "Blob.h"
 #include "ClipboardItem.h"
+#include "Frame.h"
+#include "JSClipboardItem.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "Pasteboard.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -45,6 +49,8 @@ Clipboard::Clipboard(Navigator& navigator)
     : m_navigator(makeWeakPtr(navigator))
 {
 }
+
+Clipboard::~Clipboard() = default;
 
 Navigator* Clipboard::navigator()
 {
@@ -74,6 +80,54 @@ void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
 
 void Clipboard::read(Ref<DeferredPromise>&& promise)
 {
+    auto rejectPromiseAndClearActiveSession = [&] {
+        m_activeSession = WTF::nullopt;
+        promise->reject(NotAllowedError);
+    };
+
+    auto frame = makeRefPtr(this->frame());
+    if (!frame) {
+        rejectPromiseAndClearActiveSession();
+        return;
+    }
+
+    auto pasteboard = Pasteboard::createForCopyAndPaste();
+    int changeCountAtStart = pasteboard->changeCount();
+
+    if (!frame->requestDOMPasteAccess()) {
+        rejectPromiseAndClearActiveSession();
+        return;
+    }
+
+    if (!m_activeSession || m_activeSession->changeCount != changeCountAtStart) {
+        auto allInfo = pasteboard->allPasteboardItemInfo();
+        if (allInfo.isEmpty()) {
+            rejectPromiseAndClearActiveSession();
+            return;
+        }
+
+        Vector<Ref<ClipboardItem>> clipboardItems;
+        clipboardItems.reserveInitialCapacity(allInfo.size());
+        for (auto& itemInfo : allInfo) {
+            // FIXME: This should be refactored such that the initial changeCount is delivered to the client, where it is then checked
+            // against the current changeCount of the platform pasteboard. For instance, in WebKit2, this would relocate the changeCount
+            // check to the UI process instead of the web content process.
+            if (itemInfo.changeCount != changeCountAtStart) {
+                rejectPromiseAndClearActiveSession();
+                return;
+            }
+            clipboardItems.uncheckedAppend(ClipboardItem::create(*this, itemInfo));
+        }
+        m_activeSession = {{ WTFMove(pasteboard), WTFMove(clipboardItems), changeCountAtStart }};
+    }
+
+    promise->resolve<IDLSequence<IDLInterface<ClipboardItem>>>(m_activeSession->items);
+}
+
+void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPromise>&& promise)
+{
+    UNUSED_PARAM(item);
+    UNUSED_PARAM(type);
     promise->reject(NotSupportedError);
 }
 
@@ -81,6 +135,11 @@ void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPr
 {
     UNUSED_PARAM(items);
     promise->reject(NotSupportedError);
+}
+
+Frame* Clipboard::frame() const
+{
+    return m_navigator ? m_navigator->frame() : nullptr;
 }
 
 }

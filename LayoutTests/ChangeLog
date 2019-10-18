@@ -1,3 +1,39 @@
+2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support navigator.clipboard.read()
+        https://bugs.webkit.org/show_bug.cgi?id=203021
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/async-clipboard/clipboard-change-data-while-reading-expected.txt: Added.
+        * editing/async-clipboard/clipboard-change-data-while-reading.html: Added.
+
+        Add a new layout test to verify that if the platform pasteboard changes in the middle of a DOM paste access
+        request, the promise returned by Clipboard.read() should reject, and the page should not receive any clipboard
+        items.
+
+        * editing/async-clipboard/clipboard-read-basic-expected.txt: Added.
+        * editing/async-clipboard/clipboard-read-basic.html: Added.
+
+        Add a new layout test to exercise Clipboard.read(). Since we don't support reading data from clipboard items
+        yet, this only checks the types of each pasteboard item. This test additionally ensures that the ClipboardItems
+        returned from the API are the same between calls to Clipboard.read() if the data hasn't changed.
+
+        * editing/async-clipboard/resources/async-clipboard-helpers.js:
+        (writeToClipboardUsingDataTransfer):
+
+        Add a new helper to synchronously write data to the clipboard using execCommand and DataTransfer API.
+
+        (async.triggerProgrammaticPaste):
+
+        Add a new helper to trigger programmatic paste by activating the given element or location. Also receives an
+        array of options (which, for now, just supports a single option to change the pasteboard when granting DOM paste
+        access).
+
+        * platform/ios-wk1/TestExpectations: Skip clipboard-change-data-while-reading.html for now in WebKit1.
+        * platform/mac-wk1/TestExpectations: Skip clipboard-change-data-while-reading.html for now in WebKit1.
+        * platform/win/TestExpectations: Skip the new layout tests on Windows for now.
+
 2019-10-17  Chris Dumez  <cdumez@apple.com>
 
         Don't put pages that have not reached the non-visually empty layout milestone in the back/forward cache

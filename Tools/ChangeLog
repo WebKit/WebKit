@@ -1,3 +1,60 @@
+2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support navigator.clipboard.read()
+        https://bugs.webkit.org/show_bug.cgi?id=203021
+
+        Reviewed by Ryosuke Niwa.
+
+        Make adjustments to WebKitTestRunner and DumpRenderTree to support the new layout tests. See below for more
+        details.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard pasteboardItems]):
+
+        Fixes an existing issue with the mock NSPasteboard used for layout tests. Currently, our logic for converting
+        the contents of the platform pasteboard to NSPasteboardItem simply writes the pasteboard data as-is to
+        NSPasteboardItems. However, these pasteboard types may be legacy pasteboard types, in which case
+        NSPasteboardItem will simply handle the call to `-setData:forType:` as a no-op. AppKit has logic in this
+        scenario to canonicalize these legacy pasteboard types to their modern counterparts, but this is absent in
+        DumpRenderTreePasteboard and WebKitTestRunnerPasteboard.
+
+        Address this by teaching the mock pasteboards to convert legacy types to modern types when generating platform
+        pasteboard items.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::copyText):
+
+        Add a new UIScriptController method to write a string to the platform pasteboard. This patch adds support for
+        this new testing hook on macOS and iOS, in WebKit2 (WebKitTestRunner).
+
+        * TestRunnerShared/mac/NSPasteboardAdditions.h: Copied from Tools/WebKitTestRunner/mac/UIScriptControllerMac.h.
+        * TestRunnerShared/mac/NSPasteboardAdditions.mm: Added.
+        (+[NSPasteboard _modernPasteboardType:]):
+
+        Add a helper to convert legacy pasteboard types (and dynamic UTIs that map to legacy pasteboard types) to
+        modern pasteboard types, suitable for writing to NSPasteboardItems on macOS.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::copyText):
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::copyText):
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+
+        Apply the same fix for WebKitTestRunner's mock NSPasteboard.
+
+        (-[LocalPasteboard _clearContentsWithoutUpdatingChangeCount]):
+        (-[LocalPasteboard clearContents]):
+
+        Make -clearContents clear out all the contents on the mock pasteboard, instead of crashing in AppKit.
+
+        (-[LocalPasteboard declareTypes:owner:]):
+        (-[LocalPasteboard pasteboardItems]):
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use constexpr in more places and remove some unnecessary external linkage.

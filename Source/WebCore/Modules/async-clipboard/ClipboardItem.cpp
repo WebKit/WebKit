@@ -26,14 +26,22 @@
 #include "config.h"
 #include "ClipboardItem.h"
 
+#include "Blob.h"
 #include "ClipboardItemBindingsDataSource.h"
 #include "ClipboardItemPasteboardDataSource.h"
 #include "Navigator.h"
 #include "PasteboardItemInfo.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
 ClipboardItem::~ClipboardItem() = default;
+
+Ref<Blob> ClipboardItem::blobFromString(const String& stringData, const String& type)
+{
+    auto utf8 = stringData.utf8();
+    return Blob::create(SharedBuffer::create(utf8.data(), utf8.length()), Blob::normalizedContentType(type));
+}
 
 static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const PasteboardItemInfo& info)
 {
@@ -55,9 +63,10 @@ ClipboardItem::ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&& 
 {
 }
 
-ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& info, size_t index)
+ClipboardItem::ClipboardItem(Clipboard& clipboard, const PasteboardItemInfo& info)
     : m_clipboard(makeWeakPtr(clipboard))
-    , m_dataSource(makeUnique<ClipboardItemPasteboardDataSource>(*this, info, index))
+    , m_navigator(makeWeakPtr(clipboard.navigator()))
+    , m_dataSource(makeUnique<ClipboardItemPasteboardDataSource>(*this, info))
     , m_presentationStyle(clipboardItemPresentationStyle(info))
 {
 }
@@ -67,9 +76,9 @@ Ref<ClipboardItem> ClipboardItem::create(Vector<KeyValuePair<String, RefPtr<DOMP
     return adoptRef(*new ClipboardItem(WTFMove(data), options));
 }
 
-Ref<ClipboardItem> ClipboardItem::create(Clipboard& clipboard, const PasteboardItemInfo& info, size_t index)
+Ref<ClipboardItem> ClipboardItem::create(Clipboard& clipboard, const PasteboardItemInfo& info)
 {
-    return adoptRef(*new ClipboardItem(clipboard, info, index));
+    return adoptRef(*new ClipboardItem(clipboard, info));
 }
 
 Vector<String> ClipboardItem::types() const
@@ -84,7 +93,12 @@ void ClipboardItem::getType(const String& type, Ref<DeferredPromise>&& promise)
 
 Navigator* ClipboardItem::navigator()
 {
-    return m_clipboard ? m_clipboard->navigator() : nullptr;
+    return m_navigator.get();
+}
+
+Clipboard* ClipboardItem::clipboard()
+{
+    return m_clipboard.get();
 }
 
 } // namespace WebCore

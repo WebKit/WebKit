@@ -52,6 +52,7 @@ public:
     void toggleCapsLock(JSValueRef) override;
     NSView *platformContentView() const override;
     void clearAllCallbacks() override;
+    void copyText(JSStringRef) override;
 
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 

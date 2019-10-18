@@ -29,3 +29,52 @@ function loadImage(blob) {
         image.src = URL.createObjectURL(blob);
     });
 }
+
+function writeToClipboardUsingDataTransfer(data) {
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    input.value = "a";
+    input.setSelectionRange(0, 1);
+    input.addEventListener("copy", event => {
+        for (const type of Object.keys(data))
+            event.clipboardData.setData(type, data[type]);
+        event.preventDefault();
+    }, { once: true });
+    document.execCommand("copy");
+    input.remove();
+}
+
+
+async function triggerProgrammaticPaste(locationOrElement, options = []) {
+    let x, y;
+    if (locationOrElement instanceof Element)
+        [x, y] = [locationOrElement.offsetLeft + locationOrElement.offsetWidth / 2, locationOrElement.offsetTop + locationOrElement.offsetHeight / 2];
+    else
+        [x, y] = [locationOrElement.x, locationOrElement.y];
+
+    return new Promise(resolve => {
+        testRunner.runUIScript(`
+            (() => {
+                doneCount = 0;
+                function checkDone() {
+                    if (++doneCount === 3)
+                        uiController.uiScriptComplete();
+                }
+
+                uiController.didHideMenuCallback = checkDone;
+
+                function resolveDOMPasteRequest() {
+                    if (${options.includes("ChangePasteboardWhenGrantingAccess")})
+                        uiController.copyText("*** this text should never appear in a passing layout test ***");
+                    uiController.chooseMenuAction("Paste", checkDone);
+                }
+
+                if (uiController.isShowingMenu)
+                    resolveDOMPasteRequest();
+                else
+                    uiController.didShowMenuCallback = resolveDOMPasteRequest;
+
+                uiController.activateAtPoint(${x}, ${y}, checkDone);
+            })()`, resolve);
+    });
+}

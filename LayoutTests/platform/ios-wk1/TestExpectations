@@ -31,6 +31,9 @@ imported/w3c/web-platform-tests/pointerevents [ Skip ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+# DOM paste access requests are not implemented in WebKit1.
+editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
+
 # testRunner.queueLoad() does not support loading data URLs in iOS WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 

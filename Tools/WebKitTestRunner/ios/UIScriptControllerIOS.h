@@ -134,6 +134,7 @@ public:
     JSObjectRef calendarType() const override;
     void setHardwareKeyboardAttached(bool) override;
     void setAllowsViewportShrinkToFit(bool) override;
+    void copyText(JSStringRef) override;
 
     void setDidStartFormControlInteractionCallback(JSValueRef) override;
     void setDidEndFormControlInteractionCallback(JSValueRef) override;

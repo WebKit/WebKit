@@ -25,56 +25,14 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+#if PLATFORM(MAC)
 
-namespace WebCore {
+#import <AppKit/AppKit.h>
 
-class ClipboardItem;
-class DeferredPromise;
-class Frame;
-class Navigator;
-class Pasteboard;
+@interface NSPasteboard (TestRunnerAdditions)
 
-class Clipboard final : public RefCounted<Clipboard>, public EventTargetWithInlineData, public CanMakeWeakPtr<Clipboard> {
-    WTF_MAKE_ISO_ALLOCATED(Clipboard);
-public:
-    static Ref<Clipboard> create(Navigator&);
-    ~Clipboard();
++ (NSPasteboardType)_modernPasteboardType:(NSString *)type;
 
-    EventTargetInterface eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+@end
 
-    Frame* frame() const;
-    Navigator* navigator();
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-    void readText(Ref<DeferredPromise>&&);
-    void writeText(const String& data, Ref<DeferredPromise>&&);
-
-    void read(Ref<DeferredPromise>&&);
-    void write(const Vector<RefPtr<ClipboardItem>>& data, Ref<DeferredPromise>&&);
-
-    void getType(ClipboardItem&, const String& type, Ref<DeferredPromise>&&);
-
-private:
-    Clipboard(Navigator&);
-
-    struct Session {
-        std::unique_ptr<Pasteboard> pasteboard;
-        Vector<Ref<ClipboardItem>> items;
-        int changeCount;
-    };
-
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    Optional<Session> m_activeSession;
-    WeakPtr<Navigator> m_navigator;
-};
-
-} // namespace WebCore
+#endif // PLATFORM(MAC)

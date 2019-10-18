@@ -34,6 +34,8 @@
 #if PLATFORM(MAC)
 
 #import "DumpRenderTreeMac.h"
+#import "NSPasteboardAdditions.h"
+#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WebTypesInternal.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
@@ -243,7 +245,7 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
     for (const auto& typeAndData : _data) {
         NSData *data = (__bridge NSData *)typeAndData.value.get();
         NSString *type = (__bridge NSString *)typeAndData.key.get();
-        [item setData:data forType:type];
+        [item setData:data forType:[NSPasteboard _modernPasteboardType:type]];
     }
     return @[ item.get() ];
 }

@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100px;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        description("This test verifies that clipboard items can be read with their expected types, and that the wrapper for clipboard items is the same between calls to Clipboard.read. This test requires WebKitTestRunner or DumpRenderTree.");
+
+        async function runTest() {
+            const copyButton = document.getElementById("copy");
+            const pasteButton = document.getElementById("paste");
+            copyButton.addEventListener("click", event => {
+                writeToClipboardUsingDataTransfer({
+                    "text/html": "<a href='https://www.apple.com/'>apple.com</a>",
+                    "text/plain": "apple.com",
+                    "text/uri-list": "https://apple.com/",
+                });
+                event.preventDefault();
+            });
+
+            pasteButton.addEventListener("click", async event => {
+                for (const item of await navigator.clipboard.read()) {
+                    window.item = item;
+                    window.sortedTypes = item.types.slice(0);
+                    sortedTypes.sort();
+                    shouldBe("sortedTypes.length", "3");
+                    shouldBeEqualToString("sortedTypes[0]", "text/html");
+                    shouldBeEqualToString("sortedTypes[1]", "text/plain");
+                    shouldBeEqualToString("sortedTypes[2]", "text/uri-list");
+                    if (isFirstTimeReading)
+                        shouldBe("item.foo", "undefined");
+                    else
+                        shouldBeEqualToString("item.foo", "bar");
+                    item.foo = "bar";
+                    window.item = window.sortedTypes = null;
+                }
+                ++readCount;
+            });
+
+            readCount = 0;
+            isFirstTimeReading = true;
+            await UIHelper.activateElement(copyButton);
+            await UIHelper.activateElement(pasteButton);
+            await new Promise(resolve => shouldBecomeEqual("readCount", "1", resolve));
+
+            GCController.collect();
+
+            isFirstTimeReading = false;
+            await UIHelper.activateElement(pasteButton);
+            await new Promise(resolve => shouldBecomeEqual("readCount", "2", resolve));
+
+            [pasteButton, copyButton].map(button => button.remove());
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="copy">Copy</button>
+        <button id="paste">Paste</button>
+    </body>
+</html>

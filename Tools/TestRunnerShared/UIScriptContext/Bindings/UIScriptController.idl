@@ -262,6 +262,8 @@ interface UIScriptController {
     void resignFirstResponder();
     readonly attribute boolean isPresentingModally;
 
+    void copyText(DOMString text);
+
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;
 

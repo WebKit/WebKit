@@ -1208,6 +1208,11 @@ void UIScriptControllerIOS::doAfterDoubleTapDelay(JSValueRef callback)
     });
 }
 
+void UIScriptControllerIOS::copyText(JSStringRef text)
+{
+    UIPasteboard.generalPasteboard.string = text->string();
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

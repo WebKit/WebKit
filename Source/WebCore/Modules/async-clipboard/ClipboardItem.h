@@ -53,21 +53,22 @@ public:
     };
 
     static Ref<ClipboardItem> create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
-    static Ref<ClipboardItem> create(Clipboard&, const PasteboardItemInfo&, size_t index);
+    static Ref<ClipboardItem> create(Clipboard&, const PasteboardItemInfo&);
+    static Ref<Blob> blobFromString(const String& stringData, const String& type);
 
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);
 
     PresentationStyle presentationStyle() const { return m_presentationStyle; };
     Navigator* navigator();
-
-protected:
-    WeakPtr<Clipboard> m_clipboard;
+    Clipboard* clipboard();
 
 private:
     ClipboardItem(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
-    ClipboardItem(Clipboard&, const PasteboardItemInfo&, size_t index);
+    ClipboardItem(Clipboard&, const PasteboardItemInfo&);
 
+    WeakPtr<Clipboard> m_clipboard;
+    WeakPtr<Navigator> m_navigator;
     std::unique_ptr<ClipboardItemDataSource> m_dataSource;
     PresentationStyle m_presentationStyle { PresentationStyle::Unspecified };
 };

@@ -105,6 +105,8 @@ public:
     virtual void becomeFirstResponder() { notImplemented(); }
     virtual void resignFirstResponder() { notImplemented(); }
 
+    virtual void copyText(JSStringRef) { notImplemented(); }
+
     virtual void chooseMenuAction(JSStringRef, JSValueRef);
     virtual void dismissMenu();
 

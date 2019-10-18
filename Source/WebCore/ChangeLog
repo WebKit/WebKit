@@ -1,3 +1,69 @@
+2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Support navigator.clipboard.read()
+        https://bugs.webkit.org/show_bug.cgi?id=203021
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for navigator.clipboard.read(), which returns a promise that resolves to a list of ClipboardItems.
+        See below for more details.
+
+        Tests: editing/async-clipboard/clipboard-change-data-while-reading.html
+               editing/async-clipboard/clipboard-read-basic.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::read):
+
+        Implement read(). This makes two calls to the platform pasteboard: the first to get the current change count,
+        and if the change count is different from the changeCount used for the last read() call (or there are no
+        existing clipboard items being tracked), then we request pasteboard item information for all items on the
+        pasteboard, and use this information to create new clipboard items. Otherwise, if the changeCount is still valid
+        for the current list of clipboard items, simply return these clipboard items.
+
+        If the changeCount ends up being different in between the initial changeCount request and when the pasteboard
+        item information is received, we immediately bail with a NotAllowedError. The new layout test
+        clipboard-change-data-while-reading.html exercises this scenario.
+
+        (WebCore::Clipboard::getType):
+        (WebCore::Clipboard::frame const):
+        * Modules/async-clipboard/Clipboard.h:
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        (WebCore::ClipboardItem::blobFromString):
+        (WebCore::ClipboardItem::ClipboardItem):
+        (WebCore::ClipboardItem::create):
+        (WebCore::ClipboardItem::navigator):
+
+        Refactor this so that each clipboard item itself has a WeakPtr to its Navigator. This avoids having to follow
+        the weak pointer to the Clipboard to get to the Clipboard's navigator during garbage collection when computing
+        reachability from opaque roots, since this may happen on a background (GC) thread.
+
+        (WebCore::ClipboardItem::clipboard):
+        * Modules/async-clipboard/ClipboardItem.h:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::getType):
+        (WebCore::blobFromString): Deleted.
+
+        Move this to ClipboardItem, and make it a static method.
+
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp:
+        (WebCore::ClipboardItemPasteboardDataSource::ClipboardItemPasteboardDataSource):
+        (WebCore::ClipboardItemPasteboardDataSource::getType):
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.h:
+
+        Move a couple of member variables (index and changeCount) out of ClipboardItem. Instead of having each
+        ClipboardItem keep track of this information, have the Clipboard that owns the ClipboardItem keep this
+        information. This means that reading data from ClipboardItem will (in a future patch) work by having the item
+        ask its Clipboard object to read data on its behalf.
+
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::allPasteboardItemInfo const):
+        (WebCore::Pasteboard::pasteboardItemInfo const):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::readBuffer):
+        (WebCore::Pasteboard::readURL):
+
+        Add some null checks to handle the case where there is no pasteboard strategy.
+
 2019-10-17  Chris Dumez  <cdumez@apple.com>
 
         Don't put pages that have not reached the non-visually empty layout milestone in the back/forward cache

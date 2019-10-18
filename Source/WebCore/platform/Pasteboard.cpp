@@ -64,27 +64,37 @@ Vector<String> Pasteboard::readAllStrings(const String& type)
 
 Vector<PasteboardItemInfo> Pasteboard::allPasteboardItemInfo() const
 {
-    return platformStrategies()->pasteboardStrategy()->allPasteboardItemInfo(name());
+    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+        return strategy->allPasteboardItemInfo(name());
+    return { };
 }
 
 PasteboardItemInfo Pasteboard::pasteboardItemInfo(size_t index) const
 {
-    return platformStrategies()->pasteboardStrategy()->informationForItemAtIndex(index, name());
+    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+        return strategy->informationForItemAtIndex(index, name());
+    return { };
 }
 
 String Pasteboard::readString(size_t index, const String& type)
 {
-    return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(index, type, name());
+    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+        return strategy->readStringFromPasteboard(index, type, name());
+    return { };
 }
 
 RefPtr<WebCore::SharedBuffer> Pasteboard::readBuffer(size_t index, const String& type)
 {
-    return platformStrategies()->pasteboardStrategy()->readBufferFromPasteboard(index, type, name());
+    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+        return strategy->readBufferFromPasteboard(index, type, name());
+    return nullptr;
 }
 
 URL Pasteboard::readURL(size_t index, String& title)
 {
-    return platformStrategies()->pasteboardStrategy()->readURLFromPasteboard(index, name(), title);
+    if (auto* strategy = platformStrategies()->pasteboardStrategy())
+        return strategy->readURLFromPasteboard(index, name(), title);
+    return { };
 }
 
 };
