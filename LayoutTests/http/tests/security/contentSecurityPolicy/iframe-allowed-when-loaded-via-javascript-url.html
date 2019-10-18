@@ -12,7 +12,7 @@ if (window.testRunner) {
 </head>
 <body>
 <script>
-var test = "javascript:'<iframe src=http://localhost:8000/security/contentSecurityPolicy/resources/alert-pass.html></iframe><script>window.testRunner && window.setTimeout(() => testRunner.notifyDone(), 0);</" + "script>'";
+var test = "javascript:'<iframe src=http://localhost:8000/security/contentSecurityPolicy/resources/alert-pass.html?notifyDone=1></iframe>'";
 window.open(test, "_self");
 </script>
 </body>
