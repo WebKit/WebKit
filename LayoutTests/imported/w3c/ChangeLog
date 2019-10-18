@@ -1,3 +1,22 @@
+2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Load event must be fired only for the SVG structurally external elements and the outermost SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=203044
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/geometry/svg-image-intrinsic-size-with-cssstyle-auto-expected.txt:
+        The timeout issues are now fixed. webkit.org/b/202013 will fix the other
+        failures.
+
+        * web-platform-tests/svg/images/20x20.png: Added.
+        Add an image which is referenced by these tests:
+            web-platform-tests/svg/import/styling-pres-02-f-manual.svg
+            web-platform-tests/svg/import/struct-use-01-t-manual.svg
+            web-platform-tests/svg/import/interact-events-02-b-manual.svg
+
+        * web-platform-tests/svg/linking/scripted/href-script-element-expected.txt:
+
 2019-10-18  Antti Koivisto  <antti@apple.com>
 
         [CSS Shadow Parts] :part rules should be able to override style attribute

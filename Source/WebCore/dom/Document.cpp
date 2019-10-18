@@ -2971,11 +2971,8 @@ void Document::implicitClose()
         HTMLLinkElement::dispatchPendingLoadEvents();
         HTMLStyleElement::dispatchPendingLoadEvents();
 
-        // To align the HTML load event and the SVGLoad event for the outermost <svg> element, fire it from
-        // here, instead of doing it from SVGElement::finishedParsingChildren (if externalResourcesRequired="false",
-        // which is the default, for ='true' its fired at a later time, once all external resources finished loading).
         if (svgExtensions())
-            accessSVGExtensions().dispatchSVGLoadEventToOutermostSVGElements();
+            accessSVGExtensions().dispatchLoadEventToOutermostSVGElements();
     }
 
     dispatchWindowLoadEvent();

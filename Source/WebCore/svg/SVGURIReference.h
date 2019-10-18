@@ -66,7 +66,17 @@ protected:
 
     static bool isKnownAttribute(const QualifiedName& attributeName);
 
+    virtual bool haveFiredLoadEvent() const { return false; }
+    virtual void setHaveFiredLoadEvent(bool) { }
+    virtual bool errorOccurred() const { return false; }
+    virtual void setErrorOccurred(bool) { }
+
+    bool haveLoadedRequiredResources() const;
+    void dispatchLoadEvent();
+
 private:
+    SVGElement& contextElement() const;
+
     Ref<SVGAnimatedString> m_href;
 };
 

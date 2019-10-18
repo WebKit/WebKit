@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onerror="testGlobalErrorHandlerNotFired(evt)" onload="testLoadEventNotFired()">
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onerror="testGlobalErrorHandlerNotFired(evt)">
 <defs>
 <title>&lt;SCRIPT&gt; load and error events</title>
 <script type="text/javascript">
@@ -20,10 +20,6 @@ function testGlobalErrorHandlerNotFired(evt) {
     status_[evt.target.id] += "G";
 }
 
-function testLoadEventNotFired() {
-    shouldContinue = 0;
-}
-
 function loadEventHandler(evt) {
     status_[evt.target.id] += "L";
 }
@@ -38,7 +34,7 @@ function errorEventHandler(evt) {
 function endTest() {
     var failures = "";
 
-    if (status_[0] != "LE")
+    if (status_[0] != "E")
         failures += "0 (actual result: " + status_[0] + ") ";
     if (status_[1] != "E")
         failures += "1 (actual result: " + status_[1] + ") ";
@@ -48,7 +44,7 @@ function endTest() {
         failures += "3 (actual result: " + status_[3] + ") ";
     if (status_[4] != "L")
         failures += "4 (actual result: " + status_[4] + ") ";
-    if (status_[5] != "LE")
+    if (status_[5] != "E")
         failures += "5 (actual result: " + status_[5] + ") ";
     if (status_[6] != "E")
         failures += "6 (actual result: " + status_[6] + ")";

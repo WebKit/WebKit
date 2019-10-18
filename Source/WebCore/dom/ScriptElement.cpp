@@ -66,6 +66,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
     , m_haveFiredLoad(false)
+    , m_errorOccurred(false)
     , m_willBeParserExecuted(false)
     , m_readyToBeParserExecuted(false)
     , m_willExecuteWhenDocumentFinishedParsing(false)

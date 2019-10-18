@@ -40,10 +40,8 @@ void SVGImageLoader::dispatchLoadEvent()
 {
     if (image()->errorOccurred())
         element().dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    else {
-        if (downcast<SVGImageElement>(element()).externalResourcesRequired())
-            downcast<SVGImageElement>(ImageLoader::element()).sendSVGLoadEventIfPossible(true);
-    }
+    else
+        downcast<SVGImageElement>(ImageLoader::element()).sendLoadEventIfPossible();
 }
 
 String SVGImageLoader::sourceURI(const AtomString& attribute) const

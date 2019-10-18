@@ -2,32 +2,6 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-
-description("The test passes if it does not ASSERT in debug builds.");
-
-var innerMarquee;
-var outerMarquee;
-
-function runTest() {
-    innerMarquee = document.getElementById("innerMarquee");
-    outerMarquee = document.getElementById("outerMarquee");
-
-    document.execCommand("createLink", false, "#foo");
-    document.getElementById("htmlTableHeader").innerHTML = "TEST";
-}
-
-function blurHandler() {
-    document.getElementById("htmlTextArea").setSelectionRange(0, 0, "foo");
-}
-
-function focusHandler() {
-    document.getElementById("htmlTextArea").click();
-    innerMarquee.appendChild(outerMarquee);
-}
-</script>
 </head>
 <body>
     <div id="divElement">
@@ -46,8 +20,7 @@ function focusHandler() {
                 <th id="htmlTableHeader">
                     <marquee id="innerMarquee">
                         <svg>
-                            <mesh onload="runTest()">
-                            </mesh>
+                            <mesh/>
                         </svg>
                     </marquee>
                 </th>
@@ -56,6 +29,27 @@ function focusHandler() {
     </table>
     <keygen autofocus="autofocus">
     <iframe>Test Frame</iframe>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        description("The test passes if it does not ASSERT in debug builds.");
+
+        var innerMarquee = document.getElementById("innerMarquee");
+        var outerMarquee = document.getElementById("outerMarquee");
+
+        document.execCommand("createLink", false, "#foo");
+        document.getElementById("htmlTableHeader").innerHTML = "TEST";
+
+        function blurHandler() {
+            document.getElementById("htmlTextArea").setSelectionRange(0, 0, "foo");
+        }
+
+        function focusHandler() {
+            document.getElementById("htmlTextArea").click();
+            innerMarquee.appendChild(outerMarquee);
+        }
+    </script>
     <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

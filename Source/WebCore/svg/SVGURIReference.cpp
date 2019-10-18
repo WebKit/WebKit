@@ -45,12 +45,16 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
     return PropertyRegistry::isKnownAttribute(attributeName);
 }
 
+SVGElement& SVGURIReference::contextElement() const
+{
+    return *m_href->contextElement();
+}
+
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    auto* contextElement = m_href->contextElement();
     if (name.matches(SVGNames::hrefAttr))
-        m_href->setBaseValInternal(value.isNull() ? contextElement->getAttribute(XLinkNames::hrefAttr) : value);
-    else if (name.matches(XLinkNames::hrefAttr) && !contextElement->hasAttribute(SVGNames::hrefAttr))
+        m_href->setBaseValInternal(value.isNull() ? contextElement().getAttribute(XLinkNames::hrefAttr) : value);
+    else if (name.matches(XLinkNames::hrefAttr) && !contextElement().hasAttribute(SVGNames::hrefAttr))
         m_href->setBaseValInternal(value);
 }
 
@@ -98,6 +102,25 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
         return { nullptr, WTFMove(id) };
 
     return { treeScope.getElementById(id), WTFMove(id) };
+}
+
+bool SVGURIReference::haveLoadedRequiredResources() const
+{
+    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().document()))
+        return true;
+    return errorOccurred() || haveFiredLoadEvent();
+}
+
+void SVGURIReference::dispatchLoadEvent()
+{
+    if (haveFiredLoadEvent())
+        return;
+
+    // Dispatch the load event
+    setHaveFiredLoadEvent(true);
+    ASSERT(contextElement().haveLoadedRequiredResources());
+
+    contextElement().sendLoadEventIfPossible();
 }
 
 }

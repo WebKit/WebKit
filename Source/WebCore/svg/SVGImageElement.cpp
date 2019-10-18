@@ -136,7 +136,7 @@ RenderPtr<RenderElement> SVGImageElement::createElementRenderer(RenderStyle&& st
 
 bool SVGImageElement::haveLoadedRequiredResources()
 {
-    return !externalResourcesRequired() || !m_imageLoader.hasPendingActivity();
+    return !m_imageLoader.hasPendingActivity();
 }
 
 void SVGImageElement::didAttachRenderers()

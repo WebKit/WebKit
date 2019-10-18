@@ -1,3 +1,113 @@
+2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Load event must be fired only for the SVG structurally external elements and the outermost SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=203044
+
+        Reviewed by Simon Fraser.
+
+        The SVG1.1 spec for SVGLoad event is:
+            https://www.w3.org/TR/SVG11/interact.html
+
+        The SVG2 spec for the load event is:
+            https://www.w3.org/TR/SVG/changes.html#interact
+            https://www.w3.org/TR/SVG/interact.html
+
+        SVG2 removes the SVGExternalResourcesRequired interface. It also simplifies
+        the rules for firing the load event and made them consistent with the HTML
+        specs. The plan is to remove SVGExternalResourcesRequired in a following
+        patch. This patch makes SVGExternalResourcesRequired have no effect on the
+        load event firing rules. It moves all the functionalities to SVGURIReference
+        as a step towards removing the SVGExternalResourcesRequired interface.
+
+        Test: svg/custom/image-load-event.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        Do not use the SVGLoad term. It has been removed from the specs.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::errorOccurred const):
+        (WebCore::ScriptElement::setErrorOccurred):
+        Add a method to track the occurrence  of loading error. errorOccurred()
+        || haveFiredLoadEvent() means no pending loading activity.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::dispatchLoadEventToOutermostSVGElements):
+        (WebCore::SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements): Deleted.
+        * svg/SVGDocumentExtensions.h:
+        Do not use the SVGLoad term. 
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendLoadEventIfPossible):
+        (WebCore::SVGElement::loadEventTimerFired):
+        (WebCore::SVGElement::loadEventTimer):
+        (WebCore::SVGElement::finishParsingChildren):
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible): Deleted.
+        (WebCore::SVGElement::sendSVGLoadEventIfPossibleAsynchronously): Deleted.
+        (WebCore::SVGElement::svgLoadEventTimerFired): Deleted.
+        (WebCore::SVGElement::svgLoadEventTimer): Deleted.
+        * svg/SVGElement.h:
+        finishParsingChildren() won't fire 'load' event anymore. The 'load' event 
+        will be fired explicitly for the outermost SVG element from Document::implicitClose().
+
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::svgAttributeChanged):
+        (WebCore::SVGExternalResourcesRequired::dispatchLoadEvent): Deleted.
+        (WebCore::SVGExternalResourcesRequired::insertedIntoDocument): Deleted.
+        (WebCore::SVGExternalResourcesRequired::finishParsingChildren): Deleted.
+        (WebCore::SVGExternalResourcesRequired::haveLoadedRequiredResources const): Deleted.
+        * svg/SVGExternalResourcesRequired.h:
+        (WebCore::SVGExternalResourcesRequired::setHaveFiredLoadEvent): Deleted.
+        (WebCore::SVGExternalResourcesRequired::isParserInserted const): Deleted.
+        (WebCore::SVGExternalResourcesRequired::haveFiredLoadEvent const): Deleted.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::haveLoadedRequiredResources):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        The value of externalResourcesRequired() no longer controls firing the
+        'load' event.
+
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        (WebCore::SVGScriptElement::insertedIntoAncestor):
+        (WebCore::SVGScriptElement::dispatchErrorEvent):
+        (WebCore::SVGScriptElement::finishParsingChildren): Deleted.
+        * svg/SVGScriptElement.h:
+        dispatchErrorEvent() is now a virtual function. Let SVGScriptElement
+        overrides it so it can track when the loader finishes its activity.
+
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        * svg/SVGStyleElement.h:
+
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::contextElement const):
+        (WebCore::SVGURIReference::parseAttribute):
+        (WebCore::SVGURIReference::haveLoadedRequiredResources const):
+        (WebCore::SVGURIReference::dispatchLoadEvent):
+        * svg/SVGURIReference.h:
+        (WebCore::SVGURIReference::haveFiredLoadEvent const):
+        (WebCore::SVGURIReference::setHaveFiredLoadEvent):
+        (WebCore::SVGURIReference::errorOccurred const):
+        (WebCore::SVGURIReference::setErrorOccurred):
+        SVGURIReference will decide whether the 'load' event can be fired or not.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::insertedIntoAncestor):
+        (WebCore::SVGUseElement::notifyFinished):
+        (WebCore::SVGUseElement::finishParsingChildren): Deleted.
+        (WebCore::SVGUseElement::isValid const): Deleted.
+        (WebCore::SVGUseElement::haveLoadedRequiredResources): Deleted.
+        (WebCore::SVGUseElement::setHaveFiredLoadEvent): Deleted.
+        (WebCore::SVGUseElement::haveFiredLoadEvent const): Deleted.
+        (WebCore::SVGUseElement::svgLoadEventTimer): Deleted.
+        * svg/SVGUseElement.h:
+        SVGUseElement needs to track firing the load event or error occurrence 
+        the same way SVGImageElement and SVGScriptElement do.
+
 2019-10-18  Antti Koivisto  <antti@apple.com>
 
         ElementRuleCollector function signature cleanups

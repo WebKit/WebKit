@@ -57,7 +57,6 @@ public:
 private:
     SVGUseElement(const QualifiedName&, Document&);
 
-    bool isValid() const override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
@@ -71,12 +70,7 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Path toClipPath() override;
-    bool haveLoadedRequiredResources() override;
-    void finishParsingChildren() override;
     bool selfHasRelativeLengths() const override;
-    void setHaveFiredLoadEvent(bool) override;
-    bool haveFiredLoadEvent() const override;
-    Timer* svgLoadEventTimer() override;
     void notifyFinished(CachedResource&) final;
 
     Document* externalDocument() const;
@@ -95,6 +89,15 @@ private:
     void clearShadowTree();
     void invalidateDependentShadowTrees();
 
+    bool haveLoadedRequiredResources() override { return SVGURIReference::haveLoadedRequiredResources(); }
+    void setHaveFiredLoadEvent(bool haveFiredLoadEvent) override { m_haveFiredLoadEvent = haveFiredLoadEvent; }
+    bool haveFiredLoadEvent() const override { return m_haveFiredLoadEvent; }
+    void setErrorOccurred(bool errorOccurred) override { m_errorOccurred = errorOccurred; }
+    bool errorOccurred() const override { return m_errorOccurred; }
+    Timer* loadEventTimer() override { return &m_loadEventTimer; }
+
+    bool isValid() const override { return SVGTests::isValid(); }
+
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
@@ -102,9 +105,10 @@ private:
     Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
 
     bool m_haveFiredLoadEvent { false };
+    bool m_errorOccurred { false };
     bool m_shadowTreeNeedsUpdate { true };
     CachedResourceHandle<CachedSVGDocument> m_externalDocument;
-    Timer m_svgLoadEventTimer;
+    Timer m_loadEventTimer;
 };
 
 }

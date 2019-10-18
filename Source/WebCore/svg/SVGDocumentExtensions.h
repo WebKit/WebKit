@@ -53,7 +53,7 @@ public:
     void startAnimations();
     void pauseAnimations();
     void unpauseAnimations();
-    void dispatchSVGLoadEventToOutermostSVGElements();
+    void dispatchLoadEventToOutermostSVGElements();
     bool areAnimationsPaused() const { return m_areAnimationsPaused; }
 
     void reportWarning(const String&);

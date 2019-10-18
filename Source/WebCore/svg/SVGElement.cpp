@@ -440,47 +440,23 @@ static bool hasLoadListener(Element* element)
     return false;
 }
 
-void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
+void SVGElement::sendLoadEventIfPossible()
 {
     if (!isConnected() || !document().frame())
         return;
 
-    RefPtr<SVGElement> currentTarget = this;
-    while (currentTarget && currentTarget->haveLoadedRequiredResources()) {
-        RefPtr<Element> parent;
-        if (sendParentLoadEvents)
-            parent = currentTarget->parentOrShadowHostElement(); // save the next parent to dispatch too incase dispatching the event changes the tree
-        if (hasLoadListener(currentTarget.get()))
-            currentTarget->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
-        SVGElement* element = currentTarget.get();
-        if (!element || !element->isOutermostSVGSVGElement())
-            continue;
+    if (!haveLoadedRequiredResources() || !hasLoadListener(this))
+        return;
 
-        // Consider <svg onload="foo()"><image xlink:href="foo.png" externalResourcesRequired="true"/></svg>.
-        // If foo.png is not yet loaded, the first SVGLoad event will go to the <svg> element, sent through
-        // Document::implicitClose(). Then the SVGLoad event will fire for <image>, once its loaded.
-        ASSERT(sendParentLoadEvents);
-
-        // If the load event was not sent yet by Document::implicitClose(), but the <image> from the example
-        // above, just appeared, don't send the SVGLoad event to the outermost <svg>, but wait for the document
-        // to be "ready to render", first.
-        if (!document().loadEventFinished())
-            break;
-    }
+    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void SVGElement::sendSVGLoadEventIfPossibleAsynchronously()
+void SVGElement::loadEventTimerFired()
 {
-    svgLoadEventTimer()->startOneShot(0_s);
+    sendLoadEventIfPossible();
 }
 
-void SVGElement::svgLoadEventTimerFired()
-{
-    sendSVGLoadEventIfPossible();
-}
-
-Timer* SVGElement::svgLoadEventTimer()
+Timer* SVGElement::loadEventTimer()
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -490,13 +466,8 @@ void SVGElement::finishParsingChildren()
 {
     StyledElement::finishParsingChildren();
 
-    // The outermost SVGSVGElement SVGLoad event is fired through Document::dispatchWindowLoadEvent.
     if (isOutermostSVGSVGElement())
         return;
-
-    // finishParsingChildren() is called when the close tag is reached for an element (e.g. </svg>)
-    // we send SVGLoad events here if we can, otherwise they'll be sent when any required loads finish
-    sendSVGLoadEventIfPossible();
 
     // Notify all the elements which have references to this element to rebuild their shadow and render
     // trees, e.g. a <use> element references a target element before this target element is defined.

@@ -36,7 +36,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGStyleElement);
 inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : SVGElement(tagName, document)
     , m_styleSheetOwner(document, createdByParser)
-    , m_svgLoadEventTimer(*this, &SVGElement::svgLoadEventTimerFired)
+    , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
     ASSERT(hasTagName(SVGNames::styleTag));
 }

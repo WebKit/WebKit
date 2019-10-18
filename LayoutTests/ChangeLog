@@ -1,3 +1,48 @@
+2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Load event must be fired only for the SVG structurally external elements and the outermost SVG element
+        https://bugs.webkit.org/show_bug.cgi?id=203044
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/crash-moving-subtree-between-documents.html:
+        * fast/dom/focus-style-resolution.html:
+        * fast/html/marquee-reparent-check.html:
+        The SVGElement element should not fire "load" event. Set the HTML <body>
+        element's "onload" event handler to be the function which was set to the
+        SVGElement's "onload" event handler.
+
+        * svg/custom/image-load-event-expected.html: Added.
+        * svg/custom/image-load-event.html: Added.
+        Images with external resources or data URIs must fire load events once
+        the data is loaded or decoded.
+
+        * svg/custom/loadevents-async-expected.txt: Removed.
+        * svg/custom/loadevents-async.html: Removed.
+        * svg/custom/loadevents-capturing-expected.txt: Removed.
+        * svg/custom/loadevents-capturing.svg: Removed.
+        * svg/custom/loadevents-externalresourcesrequired-displaynone-expected.txt: Removed.
+        * svg/custom/loadevents-externalresourcesrequired-displaynone.svg: Removed.
+        * svg/custom/loadevents-externalresourcesrequired-expected.txt: Removed.
+        * svg/custom/loadevents-externalresourcesrequired.svg: Removed.
+        * svg/custom/loadevents-normal-displaynone-expected.txt: Removed.
+        * svg/custom/loadevents-normal-displaynone.svg: Removed.
+        * svg/custom/loadevents-normal-expected.txt: Removed.
+        * svg/custom/loadevents-normal.svg: Removed.
+        These tests were implementing the SVG1.1 SVGLoad event interactivity:
+        https://www.w3.org/TR/SVG11/interact.html where every SVG element had to
+        fire the SVGLoad event once it parsed its closing tag. SVG structurally
+        external elements were firing load events when the corresponding external
+        resources had finished loading but only if externalResourcesRequired = true.
+
+        * svg/dom/SVGScriptElement/script-load-and-error-events.svg:
+        This test had two wrong assumptions:
+        1) The SVG structurally external element fires a load event when parsing
+        the children finishes. Then they may fire another load or error event if
+        externalResourcesRequired = true.        
+        2) The outermost SVG element will not fire its load event unless all the
+        children fires their load events correctly.
+
 2019-10-18  Russell Epstein  <repstein@apple.com>
 
         REGRESSION (r251262): Layout Test scrollingcoordinator/ios/non-stable-viewport-scroll.html is a Flaky Failure

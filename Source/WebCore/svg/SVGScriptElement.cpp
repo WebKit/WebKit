@@ -35,7 +35,7 @@ inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document
     , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
-    , m_svgLoadEventTimer(*this, &SVGElement::svgLoadEventTimerFired)
+    , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
     ASSERT(hasTagName(SVGNames::scriptTag));
 }
@@ -68,8 +68,6 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
 Node::InsertedIntoAncestorResult SVGScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    if (insertionType.connectedToDocument)
-        SVGExternalResourcesRequired::insertedIntoDocument();
     return ScriptElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
@@ -84,12 +82,6 @@ void SVGScriptElement::childrenChanged(const ChildChange& change)
     ScriptElement::childrenChanged(change);
 }
 
-void SVGScriptElement::finishParsingChildren()
-{
-    SVGElement::finishParsingChildren();
-    SVGExternalResourcesRequired::finishParsingChildren();
-}
-
 void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     SVGElement::addSubresourceAttributeURLs(urls);
@@ -99,6 +91,12 @@ void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
     return adoptRef(*new SVGScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
+}
+
+void SVGScriptElement::dispatchErrorEvent()
+{
+    setErrorOccurred(true);
+    ScriptElement::dispatchErrorEvent();
 }
 
 }

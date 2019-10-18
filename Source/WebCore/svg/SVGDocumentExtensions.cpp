@@ -111,7 +111,7 @@ void SVGDocumentExtensions::unpauseAnimations()
     m_areAnimationsPaused = false;
 }
 
-void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
+void SVGDocumentExtensions::dispatchLoadEventToOutermostSVGElements()
 {
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
@@ -119,7 +119,7 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
     for (auto& container : timeContainers) {
         if (!container->isOutermostSVGSVGElement())
             continue;
-        container->sendSVGLoadEventIfPossible();
+        container->sendLoadEventIfPossible();
     }
 }
 
