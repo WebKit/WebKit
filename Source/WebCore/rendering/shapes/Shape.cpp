@@ -100,7 +100,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
 
     switch (basicShape.type()) {
 
-    case BasicShape::BasicShapeCircleType: {
+    case BasicShape::Type::Circle: {
         const auto& circle = downcast<BasicShapeCircle>(basicShape);
         float centerX = floatValueForCenterCoordinate(circle.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
@@ -111,7 +111,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
         break;
     }
 
-    case BasicShape::BasicShapeEllipseType: {
+    case BasicShape::Type::Ellipse: {
         const auto& ellipse = downcast<BasicShapeEllipse>(basicShape);
         float centerX = floatValueForCenterCoordinate(ellipse.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(ellipse.centerY(), boxHeight);
@@ -123,7 +123,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
         break;
     }
 
-    case BasicShape::BasicShapePolygonType: {
+    case BasicShape::Type::Polygon: {
         const auto& polygon = downcast<BasicShapePolygon>(basicShape);
         const Vector<Length>& values = polygon.values();
         size_t valuesSize = values.size();
@@ -140,7 +140,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
         break;
     }
 
-    case BasicShape::BasicShapeInsetType: {
+    case BasicShape::Type::Inset: {
         const auto& inset = downcast<BasicShapeInset>(basicShape);
         float left = floatValueForLength(inset.left(), boxWidth);
         float top = floatValueForLength(inset.top(), boxHeight);

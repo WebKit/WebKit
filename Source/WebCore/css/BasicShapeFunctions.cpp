@@ -71,7 +71,7 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
 
     RefPtr<CSSBasicShape> basicShapeValue;
     switch (basicShape.type()) {
-    case BasicShape::BasicShapeCircleType: {
+    case BasicShape::Type::Circle: {
         auto& circle = downcast<BasicShapeCircle>(basicShape);
         auto circleValue = CSSBasicShapeCircle::create();
 
@@ -82,7 +82,7 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
         basicShapeValue = WTFMove(circleValue);
         break;
     }
-    case BasicShape::BasicShapeEllipseType: {
+    case BasicShape::Type::Ellipse: {
         auto& ellipse = downcast<BasicShapeEllipse>(basicShape);
         auto ellipseValue = CSSBasicShapeEllipse::create();
 
@@ -94,7 +94,7 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
         basicShapeValue = WTFMove(ellipseValue);
         break;
     }
-    case BasicShape::BasicShapePolygonType: {
+    case BasicShape::Type::Polygon: {
         auto& polygon = downcast<BasicShapePolygon>(basicShape);
         auto polygonValue = CSSBasicShapePolygon::create();
 
@@ -106,7 +106,7 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
         basicShapeValue = WTFMove(polygonValue);
         break;
     }
-    case BasicShape::BasicShapePathType: {
+    case BasicShape::Type::Path: {
         auto& pathShape = downcast<BasicShapePath>(basicShape);
         auto pathShapeValue = CSSBasicShapePath::create(pathShape.pathData()->copy());
         pathShapeValue->setWindRule(pathShape.windRule());
@@ -114,7 +114,7 @@ Ref<CSSPrimitiveValue> valueForBasicShape(const RenderStyle& style, const BasicS
         basicShapeValue = WTFMove(pathShapeValue);
         break;
     }
-    case BasicShape::BasicShapeInsetType: {
+    case BasicShape::Type::Inset: {
         auto& inset = downcast<BasicShapeInset>(basicShape);
         auto insetValue = CSSBasicShapeInset::create();
 

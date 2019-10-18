@@ -43,6 +43,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TinyLRUCache.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -201,6 +202,13 @@ Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress
     return result;
 }
 
+void BasicShapeCircle::dump(TextStream& ts) const
+{
+    ts.dumpProperty("center-x", centerX());
+    ts.dumpProperty("center-y", centerY());
+    ts.dumpProperty("radius", radius());
+}
+
 bool BasicShapeEllipse::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -267,6 +275,14 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progres
     return result;
 }
 
+void BasicShapeEllipse::dump(TextStream& ts) const
+{
+    ts.dumpProperty("center-x", centerX());
+    ts.dumpProperty("center-y", centerY());
+    ts.dumpProperty("radius-x", radiusX());
+    ts.dumpProperty("radius-y", radiusY());
+}
+
 bool BasicShapePolygon::operator==(const BasicShape& other) const
 {
     if (type() != other.type())
@@ -324,6 +340,12 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
     return result;
 }
 
+void BasicShapePolygon::dump(TextStream& ts) const
+{
+    ts.dumpProperty("wind-rule", windRule());
+    ts.dumpProperty("path", values());
+}
+
 BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
     : m_byteStream(WTFMove(byteStream))
 {
@@ -364,6 +386,12 @@ Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) c
     auto result = BasicShapePath::create(WTFMove(resultingPathBytes));
     result->setWindRule(windRule());
     return result;
+}
+
+void BasicShapePath::dump(TextStream& ts) const
+{
+    ts.dumpProperty("wind-rule", windRule());
+    // FIXME: print the byte stream?
 }
 
 bool BasicShapeInset::operator==(const BasicShape& other) const
@@ -427,4 +455,49 @@ Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, double progress) 
 
     return result;
 }
+
+void BasicShapeInset::dump(TextStream& ts) const
+{
+    ts.dumpProperty("top", top());
+    ts.dumpProperty("right", right());
+    ts.dumpProperty("bottom", bottom());
+    ts.dumpProperty("left", left());
+
+    ts.dumpProperty("top-left-radius", topLeftRadius());
+    ts.dumpProperty("top-right-radius", topRightRadius());
+    ts.dumpProperty("bottom-right-radius", bottomRightRadius());
+    ts.dumpProperty("bottom-left-radius", bottomLeftRadius());
 }
+
+static TextStream& operator<<(TextStream& ts, BasicShapeRadius::Type radiusType)
+{
+    switch (radiusType) {
+    case BasicShapeRadius::Value: ts << "value"; break;
+    case BasicShapeRadius::ClosestSide: ts << "closest-side"; break;
+    case BasicShapeRadius::FarthestSide: ts << "farthest-side"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const BasicShapeRadius& radius)
+{
+    ts.dumpProperty("value", radius.value());
+    ts.dumpProperty("type", radius.type());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const BasicShapeCenterCoordinate& coordinate)
+{
+    ts.dumpProperty("direction", coordinate.direction() == BasicShapeCenterCoordinate::TopLeft ? "top left" : "bottom right");
+    ts.dumpProperty("length", coordinate.length());
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const BasicShape& shape)
+{
+    shape.dump(ts);
+    return ts;
+}
+
+} // namespace WebCore
+

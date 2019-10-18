@@ -1,3 +1,26 @@
+2019-10-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add TextStream dumping for BasicShape types
+        https://bugs.webkit.org/show_bug.cgi?id=203150
+
+        Reviewed by Zalan Bujtas.
+
+        Add dumping for the classes, and make the BasicShape enum an enum class.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeCircle::dump const):
+        (WebCore::BasicShapeEllipse::dump const):
+        (WebCore::BasicShapePolygon::dump const):
+        (WebCore::BasicShapePath::dump const):
+        (WebCore::BasicShapeInset::dump const):
+        (WebCore::operator<<):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::BasicShapeCenterCoordinate):
+
 2019-10-18  Antti Koivisto  <antti@apple.com>
 
         ElementRuleCollector function signature cleanups
