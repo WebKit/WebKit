@@ -39,7 +39,7 @@ class WatchList(object):
         matching_definitions = set()
         patch_files = DiffParser(diff.splitlines()).files
 
-        for path, diff_file in patch_files.iteritems():
+        for path, diff_file in patch_files.items():
             for definition in self.definitions:
                 # If a definition has already matched, there is no need to process it.
                 if definition in matching_definitions:

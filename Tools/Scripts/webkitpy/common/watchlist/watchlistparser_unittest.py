@@ -59,7 +59,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1|A": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '}')
@@ -81,8 +81,11 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='The regex "*" is invalid due to "nothing to repeat".\n')
+        if sys.version_info > (3, 0):
+            expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
+        else:
+            expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
+        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list], expected_logs=expected_log)
 
     def test_bad_more_regex(self):
         watch_list = (
@@ -98,16 +101,19 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='The regex "*" is invalid due to "nothing to repeat".\n')
+        if sys.version_info > (3, 0):
+            expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
+        else:
+            expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
+        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list], expected_logs=expected_log)
 
     def test_bad_match_type(self):
         watch_list = (
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "nothing_matches_this": r".*\\MyFileName\\.cpp",'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "nothing_matches_this": r".*MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "CC_RULES": {'
@@ -123,7 +129,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "iflename": r".*\\MyFileName\\.cpp",'
+            '            "iflename": r".*MyFileName\\.cpp",'
             '            "more": r"RefCounted",'
             '        },'
             '     },'
@@ -156,7 +162,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "CC_RULES": {'
@@ -173,7 +179,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "CC_RULES": {'
@@ -191,7 +197,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "CC_RULES": {'
@@ -207,7 +213,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "MESSAGE_RULES": {'
@@ -225,7 +231,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '}')
@@ -260,7 +266,7 @@ class WatchListParserTest(webkitunittest.TestCase):
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "filename": r".*\\MyFileName\\.cpp",'
+            '            "filename": r".*MyFileName\\.cpp",'
             '        },'
             '     },'
             '    "CC_RULES": {'

@@ -1,3 +1,35 @@
+2019-10-18  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=202473
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.watchlist.
+        * Scripts/webkitpy/common/watchlist/watchlist.py:
+        (WatchList.find_matching_definitions): Use items instead of iteritems.
+        * Scripts/webkitpy/common/watchlist/watchlist_unittest.py:
+        (WatchListTest.test_filename_definition_no_matches): Back-slash needs to be escaped.
+        (WatchListTest.test_filename_definition): Ditto.
+        (WatchListTest.test_cc_rules_simple): Ditto.
+        (WatchListTest.test_cc_rules_complex): Ditto.
+        (WatchListTest.test_cc_and_message_rules_complex): Ditto.
+        (WatchListTest.test_cc_and_message_rules_no_matches): Ditto.
+        (WatchListTest.test_more_and_less_match): Ditto.
+        (WatchListTest.test_complex_match): Ditto.
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+        (WatchListParserTest.test_bad_definition): Back-slash needs to be escaped.
+        (WatchListParserTest.test_bad_filename_regex): Ditto.
+        (WatchListParserTest.test_bad_more_regex): Ditto.
+        (WatchListParserTest.test_bad_match_type): Ditto.
+        (WatchListParserTest.test_match_type_typo): Ditto.
+        (WatchListParserTest.test_empty_cc_rule): Ditto.
+        (WatchListParserTest.test_cc_rule_with_invalid_email): Ditto.
+        (WatchListParserTest.test_cc_rule_with_secondary_email): Ditto.
+        (WatchListParserTest.test_empty_message_rule): Ditto.
+        (WatchListParserTest.test_unused_defintion): Ditto.
+        (WatchListParserTest.test_cc_rule_with_undefined_defintion_with_suggestion): Ditto.
+
 2019-10-18  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         Remove myself from the CMake watchlist
