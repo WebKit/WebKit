@@ -1,3 +1,18 @@
+2019-10-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Clang][Windows] Options.cpp(317,25): error: no matching function for call to 'optionTypeSpecificIndex'
+        https://bugs.webkit.org/show_bug.cgi?id=203142
+
+        Unreviewed build fix
+
+        clang-cl reported a compilation error for MSVC bug workaround code of optionTypeSpecificIndex.
+
+        runtime\Options.cpp(294,12): error: variables defined in a constexpr function must be initialized
+            size_t index;
+                   ^
+        * runtime/Options.cpp:
+        (JSC::optionTypeSpecificIndex): Initialize the variable 'index'.
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Add missing checks after calls to the sameValue() JSValue comparator.
