@@ -11116,6 +11116,7 @@
 		9B742608234BEA6E00DB52E9 /* IdleDeadline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleDeadline.h; sourceTree = "<group>"; };
 		9B742609234BEA6E00DB52E9 /* IdleDeadline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IdleDeadline.cpp; sourceTree = "<group>"; };
 		9B74260A234BEA6E00DB52E9 /* IdleDeadline.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IdleDeadline.idl; sourceTree = "<group>"; };
+		9B8205A5235929B100C3BF40 /* AbstractEventLoop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventLoop.cpp; sourceTree = "<group>"; };
 		9B85530520E733B5009EEF4F /* EventTargetFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventTargetFactory.cpp; path = DerivedSources/WebCore/EventTargetFactory.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B864F00234C028A006D10EB /* IdleRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdleRequestOptions.h; sourceTree = "<group>"; };
 		9B864F01234C028A006D10EB /* IdleRequestOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IdleRequestOptions.idl; sourceTree = "<group>"; };
@@ -27637,6 +27638,7 @@
 				7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */,
 				7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */,
 				7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */,
+				9B8205A5235929B100C3BF40 /* AbstractEventLoop.cpp */,
 				7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */,
 				7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */,
 				7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */,

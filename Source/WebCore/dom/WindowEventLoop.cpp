@@ -35,38 +35,43 @@ Ref<WindowEventLoop> WindowEventLoop::create()
     return adoptRef(*new WindowEventLoop);
 }
 
-WindowEventLoop::WindowEventLoop()
+void WindowEventLoop::queueTask(TaskSource source, ScriptExecutionContext& context, TaskFunction&& task)
 {
+    ASSERT(isMainThread());
+    ASSERT(is<Document>(context));
+    scheduleToRunIfNeeded();
+    m_tasks.append(Task { source, WTFMove(task), downcast<Document>(context).identifier() });
 }
 
-void WindowEventLoop::queueTask(TaskSource source, Document& document, TaskFunction&& task)
+void WindowEventLoop::suspend(ScriptExecutionContext&)
 {
-    if (!m_activeTaskCount) {
-        callOnMainThread([eventLoop = makeRef(*this)] () {
-            eventLoop->run();
-        });
-    }
-    ++m_activeTaskCount;
-    m_tasks.append(Task { source, WTFMove(task), document.identifier() });
+    ASSERT(isMainThread());
 }
 
-void WindowEventLoop::suspend(Document&)
+void WindowEventLoop::resume(ScriptExecutionContext& context)
 {
-}
-
-void WindowEventLoop::resume(Document& document)
-{
+    ASSERT(isMainThread());
+    ASSERT(is<Document>(context));
+    auto& document = downcast<Document>(context);
     if (!m_documentIdentifiersForSuspendedTasks.contains(document.identifier()))
         return;
+    scheduleToRunIfNeeded();
+}
 
+void WindowEventLoop::scheduleToRunIfNeeded()
+{
+    if (m_isScheduledToRun)
+        return;
+
+    m_isScheduledToRun = true;
     callOnMainThread([eventLoop = makeRef(*this)] () {
+        eventLoop->m_isScheduledToRun = false;
         eventLoop->run();
     });
 }
 
 void WindowEventLoop::run()
 {
-    m_activeTaskCount = 0;
     Vector<Task> tasks = WTFMove(m_tasks);
     m_documentIdentifiersForSuspendedTasks.clear();
     Vector<Task> remainingTasks;

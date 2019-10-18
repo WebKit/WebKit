@@ -25,39 +25,29 @@
 
 #pragma once
 
-#include "AbstractEventLoop.h"
-#include <wtf/HashSet.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class Document;
+class ScriptExecutionContext;
 
-// https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
-class WindowEventLoop final : public AbstractEventLoop {
+enum class TaskSource : uint8_t {
+    IdleTask,
+};
+
+// https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
+class AbstractEventLoop : public RefCounted<AbstractEventLoop> {
 public:
-    static Ref<WindowEventLoop> create();
+    virtual ~AbstractEventLoop() = default;
 
-    void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) override;
+    typedef WTF::Function<void ()> TaskFunction;
+    virtual void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) = 0;
 
-    void suspend(ScriptExecutionContext&) override;
-    void resume(ScriptExecutionContext&) override;
+    virtual void suspend(ScriptExecutionContext&) = 0;
+    virtual void resume(ScriptExecutionContext&) = 0;
 
-private:
-    WindowEventLoop() = default;
-
-    void scheduleToRunIfNeeded();
-    void run();
-
-    struct Task {
-        TaskSource source;
-        TaskFunction task;
-        DocumentIdentifier documentIdentifier;
-    };
-
-    // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
-    Vector<Task> m_tasks;
-    bool m_isScheduledToRun { false };
-    HashSet<DocumentIdentifier> m_documentIdentifiersForSuspendedTasks;
+protected:
+    AbstractEventLoop() = default;
 };
 
 } // namespace WebCore
