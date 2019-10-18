@@ -1,3 +1,45 @@
+2019-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Add experimental HDR MediaCapabilities support.
+        https://bugs.webkit.org/show_bug.cgi?id=203113
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/mediacapabilities/mock-decodingInfo-hdr.html
+               platform/mac/media/mediacapabilities/hevc-decodingInfo-hdr.html
+
+        Add support for MediaCapabilities.decodeInfo() HDR support detection.
+
+        Add new enum IDL types to MediaCapabilities and remove old unused ones. Add
+        mock implementation for HDR detection. Add Cocoa platform implementation.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediacapabilities/ColorGamut.idl: 
+        * Modules/mediacapabilities/HdrMetadataType.idl: 
+        * Modules/mediacapabilities/ScreenLuminance.h: 
+        * Modules/mediacapabilities/TransferFunction.idl: 
+        * Modules/mediacapabilities/VideoConfiguration.idl:
+        * Scripts/GenerateSettings.rb:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        (WK_ucfirst):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ToMethodName):
+        * page/Settings.yaml:
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/mediacapabilities/ColorGamut.h: 
+        * platform/mediacapabilities/HdrMetadataType.h: 
+        * platform/mediacapabilities/TransferFunction.h: 
+        * platform/mediacapabilities/VideoConfiguration.h:
+        * platform/mock/MediaEngineConfigurationFactoryMock.cpp:
+        (WebCore::canDecodeMedia):
+        (WebCore::canEncodeMedia):
+
 2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Implement AuthenticatorCancel

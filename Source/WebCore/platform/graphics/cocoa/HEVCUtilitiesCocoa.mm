@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel)
+bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel, bool hdrSupport)
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
@@ -50,6 +50,15 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
 
         codec = codecCode.value().value;
     }
+
+    if (hdrSupport) {
+        // Platform supports HDR playback of HEVC Main10 Profile, as defined by ITU-T H.265 v6 (06/2019).
+        bool isMain10 = parameters.generalProfileSpace == 0
+            && (parameters.generalProfileIDC == 2 || parameters.generalProfileCompatibilityFlags == 1);
+        if (!isMain10)
+            return false;
+    }
+
     OSStatus status = VTSelectAndCreateVideoDecoderInstance(codec, kCFAllocatorDefault, nullptr, nullptr);
     if (status != noErr)
         return false;

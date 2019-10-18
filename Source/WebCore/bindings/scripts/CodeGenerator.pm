@@ -846,6 +846,8 @@ sub WK_ucfirst
     $ret =~ s/Srgb/SRGB/ if $ret =~ /^Srgb/;
     $ret =~ s/Cenc/cenc/ if $ret =~ /^Cenc/;
     $ret =~ s/Cbcs/cbcs/ if $ret =~ /^Cbcs/;
+    $ret =~ s/Pq/PQ/ if $ret =~ /^Pq$/;
+    $ret =~ s/Hlg/HLG/ if $ret =~ /^Hlg/;
 
     return $ret;
 }

@@ -823,6 +823,10 @@ mediaCapabilitiesExtensionsEnabled:
   type: bool
   initial: false
 
+hdrMediaCapabilitiesEnabled:
+  type: bool
+  initial: false
+
 clientCoordinatesRelativeToLayoutViewport:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames

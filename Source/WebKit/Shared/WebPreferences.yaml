@@ -1413,6 +1413,13 @@ MediaCapabilitiesExtensionsEnabled:
   humanReadableDescription: "Media Capabilities Extensions"
   category: experimental
 
+HDRMediaCapabilitiesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "HDR Media Capabilities"
+  humanReadableDescription: "HDR Media Capabilities"
+  category: experimental
+
 ResizeObserverEnabled:
   type: bool
   defaultValue: false

@@ -76,16 +76,17 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
             return;
         }
 
+        bool hdrSupported = videoConfiguration.colorGamut || videoConfiguration.hdrMetadataType || videoConfiguration.transferFunction;
         bool alphaChannel = videoConfiguration.alphaChannel && videoConfiguration.alphaChannel.value();
 
         if (videoCodecType == kCMVideoCodecType_HEVC) {
             auto parameters = parseHEVCCodecParameters(codec);
-            if (!parameters || !validateHEVCParameters(parameters.value(), info, alphaChannel)) {
+            if (!parameters || !validateHEVCParameters(parameters.value(), info, alphaChannel, hdrSupported)) {
                 callback({{ }, WTFMove(configuration)});
                 return;
             }
         } else {
-            if (alphaChannel) {
+            if (alphaChannel || hdrSupported) {
                 callback({{ }, WTFMove(configuration)});
                 return;
             }

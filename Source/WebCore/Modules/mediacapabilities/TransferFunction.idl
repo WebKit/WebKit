@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class ScreenLuminance : public RefCounted<ScreenLuminance> {
-public:
-    double min() const { return m_min; }
-    void setMin(double min) { m_min = min; }
-
-    double max() const { return m_max; }
-    void setMax(double max) { m_max = max; }
-
-    double maxAverage() const { return m_maxAverage; }
-    void setMaxAverage(double maxAverage) { m_maxAverage = maxAverage; }
-
-private:
-    double m_min { 0 };
-    double m_max { 0 };
-    double m_maxAverage  { 0 };
+enum TransferFunction {
+    "srgb",
+    "pq",
+    "hlg"
 };
-
-}

@@ -129,6 +129,8 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionMode.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
 $(PROJECT_DIR)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/AudioConfiguration.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/ColorGamut.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/HdrMetadataType.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilities.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl
@@ -139,8 +141,7 @@ $(PROJECT_DIR)/Modules/mediacapabilities/MediaDecodingType.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaEncodingConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaEncodingType.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/NavigatorMediaCapabilities.idl
-$(PROJECT_DIR)/Modules/mediacapabilities/ScreenColorGamut.idl
-$(PROJECT_DIR)/Modules/mediacapabilities/ScreenLuminance.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/TransferFunction.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/VideoConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacontrols/MediaControlsHost.idl
 $(PROJECT_DIR)/Modules/mediarecorder/BlobEvent.idl

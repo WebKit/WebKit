@@ -298,6 +298,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSClipboardItem.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSClipboardItem.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCloseEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSColorGamut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandLineAPIHost.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCommandLineAPIHost.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComment.cpp
@@ -863,6 +865,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElementPictureInPicture.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElementPictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHashChangeEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHdrMetadataType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHistory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHkdfParams.cpp
@@ -1711,10 +1715,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenColorGamut.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenColorGamut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenLuminance.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenLuminance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewOptions.cpp
@@ -1829,6 +1829,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTouchList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTouchList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrackEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransferFunction.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransferFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTreeWalker.cpp

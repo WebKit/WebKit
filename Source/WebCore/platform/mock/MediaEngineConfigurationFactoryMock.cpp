@@ -49,7 +49,13 @@ static bool canDecodeMedia(const MediaDecodingConfiguration& configuration)
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).codecsParameter() != "mock-with-alpha")
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha")
+            return false;
+    }
+
+    // Only the "mock-with-hdr" codec supports HDR)
+    if (videoConfig && (videoConfig->colorGamut || videoConfig->hdrMetadataType || videoConfig->transferFunction)) {
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-hdr")
             return false;
     }
 
@@ -100,7 +106,7 @@ static bool canEncodeMedia(const MediaEncodingConfiguration& configuration)
 
     // Only the "mock-with-alpha" codec supports alphaChannel
     if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
-        if (ContentType(videoConfig->contentType).codecsParameter() != "mock-with-alpha")
+        if (ContentType(videoConfig->contentType).parameter(ContentType::codecsParameter()) != "mock-with-alpha")
             return false;
     }
 

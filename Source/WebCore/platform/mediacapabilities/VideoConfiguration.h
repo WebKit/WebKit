@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "ColorGamut.h"
+#include "HdrMetadataType.h"
+#include "TransferFunction.h"
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +40,9 @@ struct VideoConfiguration {
     uint64_t bitrate;
     double framerate;
     Optional<bool> alphaChannel;
+    Optional<ColorGamut> colorGamut;
+    Optional<HdrMetadataType> hdrMetadataType;
+    Optional<TransferFunction> transferFunction;
 };
 
 }

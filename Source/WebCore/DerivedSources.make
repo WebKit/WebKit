@@ -203,6 +203,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/ColorGamut.idl \
+    $(WebCore)/Modules/mediacapabilities/HdrMetadataType.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilities.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl \
@@ -213,8 +215,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediacapabilities/MediaEncodingConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/MediaEncodingType.idl \
     $(WebCore)/Modules/mediacapabilities/NavigatorMediaCapabilities.idl \
-    $(WebCore)/Modules/mediacapabilities/ScreenColorGamut.idl \
-    $(WebCore)/Modules/mediacapabilities/ScreenLuminance.idl \
+    $(WebCore)/Modules/mediacapabilities/TransferFunction.idl \
     $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
     $(WebCore)/Modules/mediarecorder/BlobEvent.idl \

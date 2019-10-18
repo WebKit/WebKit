@@ -2709,6 +2709,7 @@ JSClipboard.cpp
 JSClipboardEvent.cpp
 JSClipboardItem.cpp
 JSCloseEvent.cpp
+JSColorGamut.cpp
 JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositionEvent.cpp
@@ -2969,6 +2970,7 @@ JSHTMLUnknownElement.cpp
 JSHTMLVideoElement.cpp
 JSHTMLVideoElementPictureInPicture.cpp
 JSHashChangeEvent.cpp
+JSHdrMetadataType.cpp
 JSHistory.cpp
 JSHkdfParams.cpp
 JSHmacKeyParams.cpp
@@ -3353,7 +3355,6 @@ JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
 JSSVGZoomEvent.cpp
 JSScreen.cpp
-JSScreenLuminance.cpp
 JSScriptProcessorNode.cpp
 JSScrollIntoViewOptions.cpp
 JSScrollLogicalPosition.cpp
@@ -3394,6 +3395,7 @@ JSTextEncoder.cpp
 JSTextEvent.cpp
 JSTextMetrics.cpp
 JSTimeRanges.cpp
+JSTransferFunction.cpp
 JSTransitionEvent.cpp
 JSTreeWalker.cpp
 JSUndoItem.cpp

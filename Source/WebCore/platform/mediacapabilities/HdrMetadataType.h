@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledBySetting=MediaCapabilities,
-    ImplementationLacksVTable
-]
-interface ScreenLuminance {
-  readonly attribute double min;
-  readonly attribute double max;
-  readonly attribute double maxAverage;
+#pragma once
+
+namespace WebCore {
+
+enum class HdrMetadataType {
+    SmpteSt2086,
+    SmpteSt209410,
+    SmpteSt209440
 };
+
+} // namespace WebCore

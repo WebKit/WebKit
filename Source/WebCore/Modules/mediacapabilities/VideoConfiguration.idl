@@ -34,4 +34,7 @@ dictionary VideoConfiguration {
   required unsigned long long bitrate;
   required double framerate;
   [EnabledBySetting=MediaCapabilitiesExtensions] boolean alphaChannel;
+  [EnabledBySetting=HDRMediaCapabilities] HdrMetadataType hdrMetadataType;
+  [EnabledBySetting=HDRMediaCapabilities] ColorGamut colorGamut;
+  [EnabledBySetting=HDRMediaCapabilities] TransferFunction transferFunction;
 };
