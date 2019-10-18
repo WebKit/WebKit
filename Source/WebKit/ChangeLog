@@ -1,3 +1,19 @@
+2019-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] REGRESSION(r251269): fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html and fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=203162
+        <rdar://problem/56418459>
+
+        Reviewed by Simon Fraser.
+
+        Synchronously update the rendering before the orientation change and other viewport size updates.
+
+        Otherwise, resize event will be dispatched in the middle of orientation animation,
+        and would result in non-determistic results.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
 2019-10-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] "Unexpectedly Resumed" process assertion may cause us to get terminated

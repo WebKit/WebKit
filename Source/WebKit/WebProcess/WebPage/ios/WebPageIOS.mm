@@ -3309,6 +3309,8 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     setDeviceOrientation(deviceOrientation);
     frameView.setScrollOffset(roundedUnobscuredContentRectPosition);
 
+    m_page->updateRendering();
+
 #if ENABLE(VIEWPORT_RESIZING)
     if (immediatelyShrinkToFitContent())
         viewportConfigurationChanged();
