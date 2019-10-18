@@ -1,3 +1,12 @@
+2019-10-18  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: Layout Test webgl/many-contexts.html is a flaky timeout on Mojave
+        https://bugs.webkit.org/show_bug.cgi?id=198867
+
+        Unreviewed test gardening
+
+        * platform/mac/TestExpectations:
+
 2019-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Support navigator.clipboard.read()
