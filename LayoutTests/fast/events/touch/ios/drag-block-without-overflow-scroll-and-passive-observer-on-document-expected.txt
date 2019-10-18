@@ -13,7 +13,6 @@ PASS document.getElementById('eventTarget').scrollLeft is 0
 Received event touchstart at 50, 150
 Received event touchmove at 50, 50
 Received event touchend
-Dispatched Drag
 PASS window.scrollX is 0
 PASS window.scrollY is 0
 PASS document.documentElement.scrollTop is 0

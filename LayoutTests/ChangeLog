@@ -1,3 +1,27 @@
+2019-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r243347) Layout tests fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on* are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=203122
+        rdar://problem/50058173
+
+        Reviewed by Wenson Hsieh.
+        
+        Rewrite these tests to wait for scrolling to finish, since the overflow is now accelerated and we need
+        to wait for momentum to end.
+
+        Also have them use UIHelper, factoring a function to work with overflow as well as document scroll.
+
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block-expected.txt:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block.html:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document-expected.txt:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.callFunctionAndWaitForEvent):
+        (window.UIHelper.callFunctionAndWaitForScrollToFinish):
+        (window.UIHelper.callFunctionAndWaitForTargetScrollToFinish.return.new.Promise):
+        (window.UIHelper.callFunctionAndWaitForTargetScrollToFinish):
+        (window.UIHelper.callFunctionAndWaitForScrollToFinish.return.new.Promise): Deleted.
+
 2019-10-17  Dean Jackson  <dino@apple.com>
 
         ctx.font = "" asserts in CSS parser
