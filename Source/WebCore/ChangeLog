@@ -1,5 +1,16 @@
 2019-10-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Include horizontal spacing when checking for the extra horizontal space
+        https://bugs.webkit.org/show_bug.cgi?id=203154
+        <rdar://problem/56408032>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraHorizontalSpace):
+
+2019-10-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Fix table's total horizontal spacing computation
         https://bugs.webkit.org/show_bug.cgi?id=203151
         <rdar://problem/56406930>

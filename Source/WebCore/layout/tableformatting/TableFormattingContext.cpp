@@ -276,7 +276,6 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
     auto& grid = formattingState().tableGrid();
     ASSERT(grid.hasComputedWidthConstraints());
     auto tableWidthConstraints = grid.widthConstraints();
-    auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
 
     // Column and caption widths influence the final table width as follows:
     // If the 'table' or 'inline-table' element's 'width' property has a computed value (W) other than 'auto', the used width is the greater of
@@ -289,6 +288,7 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
         auto& columns = grid.columnsContext().columns();
         ASSERT(!columns.isEmpty());
 
+        auto tableMinimumContentWidth = tableWidthConstraints.minimum - grid.totalHorizontalSpacing();
         auto adjustabledHorizontalSpace = tableMinimumContentWidth;
         auto numberOfColumns = columns.size();
         // Fixed width columns don't participate in available space distribution.
@@ -313,20 +313,21 @@ void TableFormattingContext::computeAndDistributeExtraHorizontalSpace()
         }
     };
 
-    auto containingBlockWidth = geometryForBox(*root().containingBlock(), EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
-    auto width = geometry().computedValueIfNotAuto(root().style().width(), containingBlockWidth);
-    if (width) {
-        if (*width > tableMinimumContentWidth)
-            distributeExtraHorizontalSpace(*width - tableMinimumContentWidth);
+    auto& tableBox = root();
+    auto containingBlockWidth = geometryForBox(*tableBox.containingBlock(), EscapeType::TableFormattingContextAccessParentTableWrapperBlockFormattingContext).contentBoxWidth();
+    auto contentWidth = geometry().computedContentWidth(tableBox, containingBlockWidth);
+    if (contentWidth) {
+        if (*contentWidth > tableWidthConstraints.minimum)
+            distributeExtraHorizontalSpace(*contentWidth - tableWidthConstraints.minimum);
         else
             useAsContentLogicalWidth(WidthConstraintsType::Minimum);
     } else {
-        if (tableMinimumContentWidth > containingBlockWidth)
+        if (tableWidthConstraints.minimum > containingBlockWidth)
             useAsContentLogicalWidth(WidthConstraintsType::Minimum);
         else if (tableWidthConstraints.maximum < containingBlockWidth)
             useAsContentLogicalWidth(WidthConstraintsType::Maximum);
         else
-            distributeExtraHorizontalSpace(containingBlockWidth - tableMinimumContentWidth);
+            distributeExtraHorizontalSpace(containingBlockWidth - tableWidthConstraints.minimum);
     }
 }
 
