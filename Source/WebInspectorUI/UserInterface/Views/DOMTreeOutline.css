@@ -69,7 +69,7 @@
     opacity: 0.3;
 }
 
-.tree-outline.dom li > span {
+.tree-outline.dom li > :not(.selection-area) {
     position: relative;
     z-index: 1;
 }

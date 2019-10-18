@@ -1,3 +1,14 @@
+2019-10-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r251254): Elements: forced pseudo-class indicator isn't visible for selected nodes
+        https://bugs.webkit.org/show_bug.cgi?id=203158
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li > :not(.selection-area)): Added.
+        (.tree-outline.dom li > span): Deleted.
+
 2019-10-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: selection shouldn't be dimmed by shadow trees
