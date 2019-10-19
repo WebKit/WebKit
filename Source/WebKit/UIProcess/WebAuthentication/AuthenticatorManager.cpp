@@ -243,6 +243,12 @@ void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& dow
     authenticatorAdded(WTFMove(downgradedAuthenticator));
 }
 
+void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus status)
+{
+    if (auto* panel = m_pendingRequestData.panel.get())
+        panel->client().updatePanel(status);
+}
+
 UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);

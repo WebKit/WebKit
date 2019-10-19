@@ -1060,7 +1060,7 @@
 		57B8264823050C5100B72EB0 /* FidoService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264623050C5100B72EB0 /* FidoService.h */; };
 		57B8264C230603C100B72EB0 /* MockNfcService.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B8264A230603C100B72EB0 /* MockNfcService.h */; };
 		57BBEA6D22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */; };
-		57C6244B234679A400383FE7 /* WebAuthenticationPanelFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */; };
+		57C6244B234679A400383FE7 /* WebAuthenticationFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */; };
 		57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */; };
 		57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */; };
 		57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DCED6D2142EAFA0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h */; };
@@ -3548,7 +3548,7 @@
 		57B8E3D52355864A00D5C5D1 /* FidoAuthenticator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FidoAuthenticator.h; sourceTree = "<group>"; };
 		57B8E3D62355864A00D5C5D1 /* FidoAuthenticator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FidoAuthenticator.cpp; sourceTree = "<group>"; };
 		57BBEA6C22BC0BFE00273995 /* SOAuthorizationLoadPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOAuthorizationLoadPolicy.h; sourceTree = "<group>"; };
-		57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanelFlags.h; sourceTree = "<group>"; };
+		57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationFlags.h; sourceTree = "<group>"; };
 		57DCED6A2142EAE20016B847 /* WebAuthenticatorCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAuthenticatorCoordinatorMessages.h; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		57DCED6C2142EAF90016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/WebAuthenticatorCoordinatorProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7079,7 +7079,7 @@
 				57DCED842147363A0016B847 /* AuthenticatorManager.h */,
 				57DCED9921489F4D0016B847 /* AuthenticatorTransportService.cpp */,
 				57DCED8A214853130016B847 /* AuthenticatorTransportService.h */,
-				57C6244A234679A400383FE7 /* WebAuthenticationPanelFlags.h */,
+				57C6244A234679A400383FE7 /* WebAuthenticationFlags.h */,
 				57DCEDA62149F9DA0016B847 /* WebAuthenticationRequestData.h */,
 				57608296202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.cpp */,
 				57608295202BD8BA00116678 /* WebAuthenticatorCoordinatorProxy.h */,
@@ -9850,8 +9850,8 @@
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
+				57C6244B234679A400383FE7 /* WebAuthenticationFlags.h in Headers */,
 				577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */,
-				57C6244B234679A400383FE7 /* WebAuthenticationPanelFlags.h in Headers */,
 				57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */,
 				57DCED6F2142EE630016B847 /* WebAuthenticatorCoordinatorMessages.h in Headers */,
 				57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */,

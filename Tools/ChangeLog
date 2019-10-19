@@ -1,3 +1,23 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when no credentials are found
+        https://bugs.webkit.org/show_bug.cgi?id=203147
+        <rdar://problem/55931123>
+
+        Reviewed by Brent Fulgham.
+
+        Adds new tests for _WKWebAuthenticationPanelUpdateNoCredentialsFound.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-cancel.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid-no-credentials.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-hid.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-u2f-no-credentials.html: Added.
+
 2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor Pasteboard::read() to take an optional item index

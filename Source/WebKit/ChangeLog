@@ -1,3 +1,43 @@
+2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when no credentials are found
+        https://bugs.webkit.org/show_bug.cgi?id=203147
+        <rdar://problem/55931123>
+
+        Reviewed by Brent Fulgham.
+
+        This patch returns _WKWebAuthenticationPanelUpdateNoCredentialsFound to client via
+        -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:] when either
+        CtapAuthenticator receives kCtap2ErrNoCredentials or U2fAuthenticator exhausts the
+        allow list.
+
+        This patch also enhances CtapAuthenticator::tryDowngrade to check if the CTAP command
+        can be converted to U2F commands to ensure kCtap2ErrNoCredentials is returned if it
+        is the case. Otherwise, after downgrading, U2fAuthenticator will return NotSupportedError
+        given it can't convert the commands.
+
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/APIWebAuthenticationPanelClient.h:
+        (API::WebAuthenticationPanelClient::updatePanel const):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::authenticatorStatusUpdated):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::WebAuthenticationPanelClient):
+        (WebKit::wkWebAuthenticationPanelUpdate):
+        (WebKit::WebAuthenticationPanelClient::updatePanel const):
+        * UIProcess/WebAuthentication/WebAuthenticationFlags.h: Renamed from Source/WebKit/UIProcess/WebAuthentication/WebAuthenticationPanelFlags.h.
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::tryDowngrade):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::issueSignCommand):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Refactor Pasteboard::read() to take an optional item index

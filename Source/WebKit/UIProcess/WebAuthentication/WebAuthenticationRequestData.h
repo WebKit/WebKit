@@ -28,7 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "APIWebAuthenticationPanel.h"
-#include "WebAuthenticationPanelFlags.h"
+#include "WebAuthenticationFlags.h"
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>

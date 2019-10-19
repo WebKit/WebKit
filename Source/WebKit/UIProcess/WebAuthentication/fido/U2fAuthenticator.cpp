@@ -99,6 +99,8 @@ void U2fAuthenticator::issueSignCommand(size_t index)
 {
     auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
     if (index >= requestOptions.allowCredentials.size()) {
+        if (auto* observer = this->observer())
+            observer->authenticatorStatusUpdated(WebAuthenticationStatus::NoCredentialsFound);
         receiveRespond(ExceptionData { NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
         return;
     }
