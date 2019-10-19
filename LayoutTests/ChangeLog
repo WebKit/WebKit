@@ -1,5 +1,14 @@
 2019-10-18  Russell Epstein  <repstein@apple.com>
 
+        [ Mac Debug WK1 ] REGRESSION (r251262?): fast/scrolling/latching/scroll-select-bottom-test.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=203176
+
+        Unreviewed Test Gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2019-10-18  Russell Epstein  <repstein@apple.com>
+
         [ Mac WK1 ] REGRESSION (r251261): Layout Test inspector/console/webcore-logging.html is consistently Failing
         https://bugs.webkit.org/show_bug.cgi?id=203173
 
