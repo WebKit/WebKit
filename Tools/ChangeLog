@@ -1,3 +1,17 @@
+2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor Pasteboard::read() to take an optional item index
+        https://bugs.webkit.org/show_bug.cgi?id=203161
+
+        Reviewed by Tim Horton.
+
+        Add a couple of new API tests to verify that the web archive type identifier ("com.apple.webarchive") is (1)
+        written to the pasteboard when copying a rich text selection, and (2) is read when attempting to paste web
+        content.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyHTML.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+
 2019-10-18  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.watchlist

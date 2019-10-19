@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -94,12 +95,12 @@ void Pasteboard::clear(const String&)
 {
 }
 
-void Pasteboard::read(PasteboardPlainText& text)
+void Pasteboard::read(PasteboardPlainText& text, Optional<size_t>)
 {
     text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name());
 }
 
-void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy)
+void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>)
 {
     notImplemented();
 }

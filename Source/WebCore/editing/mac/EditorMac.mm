@@ -185,7 +185,7 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     if (!canCopy())
         return nullptr;
 
-    if (pasteboardType == WebArchivePboardType)
+    if (pasteboardType == WebArchivePboardType || pasteboardType == String(kUTTypeWebArchive))
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))

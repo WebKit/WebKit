@@ -28,6 +28,7 @@
 #include "PlatformStrategies.h"
 #include "SelectionData.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -231,13 +232,13 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 }
 #endif
 
-void Pasteboard::read(PasteboardPlainText& text)
+void Pasteboard::read(PasteboardPlainText& text, Optional<size_t>)
 {
     readFromClipboard();
     text.text = m_selectionData->text();
 }
 
-void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy)
+void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>)
 {
 }
 

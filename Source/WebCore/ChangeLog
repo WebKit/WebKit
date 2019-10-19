@@ -1,3 +1,70 @@
+2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor Pasteboard::read() to take an optional item index
+        https://bugs.webkit.org/show_bug.cgi?id=203161
+
+        Reviewed by Tim Horton.
+
+        Adds an optional `itemIndex` argument to Pasteboard::read(PasteboardPlainText&) and
+        Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy). See below for more details.
+
+        Tests:  CopyHTML.ItemTypesWhenCopyingWebContent
+                PasteWebArchive.WebArchiveTypeIdentifier
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::dataSelectionForPasteboard):
+
+        Recognize "com.apple.webarchive" alongside "Apple Web Archive pasteboard type" when writing and reading from the
+        platform pasteboard on macOS. We add support for this here because the existing private type cannot be written
+        to an NSPasteboardItem, since it does not conform to a valid UTI format. Luckily, there already exists a UTI
+        that represents a web archive, so we can use it instead.
+
+        We need to write and read web archive data from NSPasteboardItem in order to support the case where there are
+        multiple items in the pasteboard that contain different web archive data.
+
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+
+        Read the string from `itemIndex` if specified; otherwise, fall back to index 0. This could actually be fixed in
+        the future to scan all pasteboard items for a suitable string instead of falling back on the first item, but for
+        now, we maintain the existing behavior.
+
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
+        If an `itemIndex` is specified, ignore all other item indices when looking for suitable content.
+
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsCompatibleContent const):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+        (WebCore::readStringAtPreferredItemIndex):
+        (WebCore::readBufferAtPreferredItemIndex):
+
+        Add helper methods to read strings and buffers from the pasteboard, at an optional `itemIndex` if specified.
+
+        (WebCore::Pasteboard::read):
+
+        Adopt the helper functions when reading plain text and web content, and respect the given `itemIndex`. To do
+        this, we need to read both legacy and modern types from the pasteboard, instead of just legacy types. This is
+        because NSPasteboardItem on macOS only accepts and provides data in the form of modern pasteboard types.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+        (WebCore::PlatformPasteboard::readBuffer const):
+        (WebCore::PlatformPasteboard::readString const):
+
+        Fix these methods to accept platform pasteboard types instead of MIME types, to match the behavior of existing
+        readBuffer and readString methods in PlatformPasteboardIOS.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+
 2019-10-18  Devin Rousso  <drousso@apple.com>
 
         [ASAN] Fix WebGPU tests after r250258

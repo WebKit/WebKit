@@ -186,7 +186,7 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (platformType == String(legacyURLPasteboardType()))
         return "text/uri-list"_s;
 
-    if (platformType == String(legacyHTMLPasteboardType()) || platformType == String(WebArchivePboardType)
+    if (platformType == String(legacyHTMLPasteboardType()) || platformType == String(WebArchivePboardType) || platformType == String(kUTTypeWebArchive)
         || platformType == String(legacyRTFDPasteboardType()) || platformType == String(legacyRTFPasteboardType()))
         return "text/html"_s;
 
@@ -420,11 +420,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(size_t index, const String& 
     if (!item)
         return { };
 
-    auto platformType = modernPasteboardTypeForWebSafeMIMEType(type);
-    if (!platformType)
-        return nullptr;
-
-    if (NSData *data = [item dataForType:platformType]) {
+    if (NSData *data = [item dataForType:type]) {
         auto nsData = adoptNS(data.copy);
         return SharedBuffer::create(nsData.get());
     }
@@ -438,11 +434,7 @@ String PlatformPasteboard::readString(size_t index, const String& type) const
     if (!item)
         return { };
 
-    auto platformType = modernPasteboardTypeForWebSafeMIMEType(type);
-    if (!platformType)
-        return { };
-
-    return [item stringForType:platformType];
+    return [item stringForType:type];
 }
 
 URL PlatformPasteboard::readURL(size_t index, String& title) const

@@ -240,6 +240,28 @@ TEST(PasteWebArchive, StripsMSOListWhenMissingMSOHTMLElement)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
+TEST(PasteWebArchive, WebArchiveTypeIdentifier)
+{
+    NSURL *url = [NSURL URLWithString:@"file:///some-file.html"];
+    NSString *markup = @"<strong style='color: rgb(255, 0, 0);'>This is some text to copy.</strong>";
+
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:[markup dataUsingEncoding:NSUTF8StringEncoding] URL:url MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
+
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:[NSArray arrayWithObject:(__bridge NSString *)kUTTypeWebArchive] owner:nil];
+    [pasteboard setData:[archive data] forType:(__bridge NSString *)kUTTypeWebArchive];
+
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    [webView evaluateJavaScript:@"docment.body.innerHTML = clipboardData.values[0]" completionHandler:nil];
+    EXPECT_WK_STREQ("This is some text to copy.", [webView stringByEvaluatingJavaScript:@"document.querySelector('strong').textContent"]);
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('strong')).color"]);
+}
+
 #endif // PLATFORM(MAC)
 
 

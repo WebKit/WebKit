@@ -198,8 +198,8 @@ public:
     virtual WEBCORE_EXPORT void clear();
     virtual WEBCORE_EXPORT void clear(const String& type);
 
-    virtual WEBCORE_EXPORT void read(PasteboardPlainText&);
-    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType);
+    virtual WEBCORE_EXPORT void read(PasteboardPlainText&, Optional<size_t> itemIndex = WTF::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, Optional<size_t> itemIndex = WTF::nullopt);
     virtual WEBCORE_EXPORT void read(PasteboardFileReader&);
 
     virtual WEBCORE_EXPORT void write(const Color&);
@@ -282,7 +282,7 @@ public:
 private:
 #if PLATFORM(IOS_FAMILY)
     bool respectsUTIFidelities() const;
-    void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy);
+    void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>);
 
     enum class ReaderResult {
         ReadType,

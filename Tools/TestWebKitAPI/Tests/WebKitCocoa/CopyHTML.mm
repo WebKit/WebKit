@@ -87,4 +87,26 @@ TEST(CopyHTML, Sanitizes)
     EXPECT_FALSE(htmlInNativePasteboard.contains("dangerousCode"));
 }
 
+#if PLATFORM(MAC)
+
+TEST(CopyHTML, ItemTypesWhenCopyingWebContent)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<strong style='color: rgb(255, 0, 0);'>This is some text to copy.</strong>"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    NSArray<NSPasteboardItem *> *items = NSPasteboard.generalPasteboard.pasteboardItems;
+    EXPECT_EQ(1U, items.count);
+
+    NSArray<NSPasteboardType> *types = items.firstObject.types;
+    EXPECT_TRUE([types containsObject:(__bridge NSString *)kUTTypeWebArchive]);
+    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeRTF]);
+    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeString]);
+    EXPECT_TRUE([types containsObject:(__bridge NSString *)NSPasteboardTypeHTML]);
+}
+
 #endif // PLATFORM(MAC)
+
+#endif // PLATFORM(COCOA)

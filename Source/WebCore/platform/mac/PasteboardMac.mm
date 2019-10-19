@@ -129,8 +129,10 @@ void Pasteboard::write(const PasteboardWebContent& content)
 
     if (content.canSmartCopyOrDelete)
         types.append(WebSmartPastePboardType);
-    if (content.dataInWebArchiveFormat)
+    if (content.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
+        types.append(kUTTypeWebArchive);
+    }
     if (content.dataInRTFDFormat)
         types.append(String(legacyRTFDPasteboardType()));
     if (content.dataInRTFFormat)
@@ -144,13 +146,18 @@ void Pasteboard::write(const PasteboardWebContent& content)
 
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
 
+    // FIXME: The following code should be refactored, such that it only requires a single call out to the client layer.
+    // In WebKit2, this currently results in many unnecessary synchronous round-trip IPC messages.
+
     ASSERT(content.clientTypes.size() == content.clientData.size());
     for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.clientData[i].get(), content.clientTypes[i], m_pasteboardName);
     if (content.canSmartCopyOrDelete)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(nullptr, WebSmartPastePboardType, m_pasteboardName);
-    if (content.dataInWebArchiveFormat)
+    if (content.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName);
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), kUTTypeWebArchive, m_pasteboardName);
+    }
     if (content.dataInRTFDFormat)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat.get(), legacyRTFDPasteboardType(), m_pasteboardName);
     if (content.dataInRTFFormat)
@@ -258,13 +265,17 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     ASSERT(MIMETypeRegistry::isSupportedImageMIMEType(pasteboardImage.resourceMIMEType));
 
     auto types = writableTypesForImage();
-    if (pasteboardImage.dataInWebArchiveFormat)
+    if (pasteboardImage.dataInWebArchiveFormat) {
         types.append(WebArchivePboardType);
+        types.append(kUTTypeWebArchive);
+    }
 
     m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url);
     m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName);
-    if (pasteboardImage.dataInWebArchiveFormat)
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(pasteboardImage.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName);
+    if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName);
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), kUTTypeWebArchive, m_pasteboardName);
+    }
     writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount);
 }
 
@@ -293,28 +304,55 @@ static String joinPathnames(const Vector<String>& pathnames)
     return builder.toString();
 }
 
-void Pasteboard::read(PasteboardPlainText& text)
+static String readStringAtPreferredItemIndex(const String& type, Optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName)
 {
-    PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
+    if (itemIndex)
+        return strategy.readStringFromPasteboard(*itemIndex, type, pasteboardName);
+    return strategy.stringForType(type, pasteboardName);
+}
+
+static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, Optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName)
+{
+    if (itemIndex)
+        return strategy.readBufferFromPasteboard(*itemIndex, type, pasteboardName);
+    return strategy.bufferForType(type, pasteboardName);
+}
+
+void Pasteboard::read(PasteboardPlainText& text, Optional<size_t> itemIndex)
+{
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
-    strategy.getTypes(types, m_pasteboardName);
+    if (itemIndex)
+        types = strategy.informationForItemAtIndex(*itemIndex , m_pasteboardName).platformTypesByFidelity;
+    else
+        strategy.getTypes(types, m_pasteboardName);
 
     if (types.contains(String(NSPasteboardTypeString))) {
-        text.text = strategy.stringForType(NSPasteboardTypeString, m_pasteboardName);
+        text.text = readStringAtPreferredItemIndex(NSPasteboardTypeString, itemIndex, strategy, m_pasteboardName);
         text.isURL = false;
         return;
     }
 
     if (types.contains(String(legacyStringPasteboardType()))) {
-        text.text = strategy.stringForType(legacyStringPasteboardType(), m_pasteboardName);
+        text.text = readStringAtPreferredItemIndex(legacyStringPasteboardType(), itemIndex, strategy, m_pasteboardName);
         text.isURL = false;
         return;
     }
     
     if (types.contains(String(legacyRTFDPasteboardType()))) {
-        if (RefPtr<SharedBuffer> data = strategy.bufferForType(legacyRTFDPasteboardType(), m_pasteboardName)) {
-            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:data->createNSData().get() documentAttributes:NULL])) {
+        if (auto data = readBufferAtPreferredItemIndex(legacyRTFDPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:data->createNSData().get() documentAttributes:nil])) {
+                text.text = [attributedString string];
+                text.isURL = false;
+                return;
+            }
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypeRTFD))) {
+        if (auto data = readBufferAtPreferredItemIndex(NSPasteboardTypeRTFD, itemIndex, strategy, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:data->createNSData().get() documentAttributes:nil])) {
                 text.text = [attributedString string];
                 text.isURL = false;
                 return;
@@ -323,8 +361,18 @@ void Pasteboard::read(PasteboardPlainText& text)
     }
 
     if (types.contains(String(legacyRTFPasteboardType()))) {
-        if (RefPtr<SharedBuffer> data = strategy.bufferForType(legacyRTFPasteboardType(), m_pasteboardName)) {
-            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:NULL])) {
+        if (auto data = readBufferAtPreferredItemIndex(legacyRTFPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:nil])) {
+                text.text = [attributedString string];
+                text.isURL = false;
+                return;
+            }
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypeRTF))) {
+        if (auto data = readBufferAtPreferredItemIndex(NSPasteboardTypeRTF, itemIndex, strategy, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:nil])) {
                 text.text = [attributedString string];
                 text.isURL = false;
                 return;
@@ -347,21 +395,31 @@ void Pasteboard::read(PasteboardPlainText& text)
     }
 
     // FIXME: The code above looks at the types vector first, but this just gets the string without checking. Why the difference?
-    text.text = strategy.stringForType(legacyURLPasteboardType(), m_pasteboardName);
+    text.text = readStringAtPreferredItemIndex(legacyURLPasteboardType(), itemIndex, strategy, m_pasteboardName);
     text.isURL = !text.text.isNull();
 }
 
-void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)
 {
-    PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
-    strategy.getTypes(types, m_pasteboardName);
+    if (itemIndex)
+        types = strategy.informationForItemAtIndex(*itemIndex , m_pasteboardName).platformTypesByFidelity;
+    else
+        strategy.getTypes(types, m_pasteboardName);
 
     reader.contentOrigin = readOrigin();
 
     if (types.contains(WebArchivePboardType)) {
-        if (auto buffer = strategy.bufferForType(WebArchivePboardType, m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(WebArchivePboardType, itemIndex, strategy, m_pasteboardName)) {
+            if (m_changeCount != changeCount() || reader.readWebArchive(*buffer))
+                return;
+        }
+    }
+
+    if (types.contains(String(kUTTypeWebArchive))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeWebArchive, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readWebArchive(*buffer))
                 return;
         }
@@ -380,20 +438,40 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     }
 
     if (types.contains(String(legacyHTMLPasteboardType()))) {
-        String string = strategy.stringForType(legacyHTMLPasteboardType(), m_pasteboardName);
+        String string = readStringAtPreferredItemIndex(legacyHTMLPasteboardType(), itemIndex, strategy, m_pasteboardName);
+        if (m_changeCount != changeCount() || (!string.isNull() && reader.readHTML(string)))
+            return;
+    }
+
+    if (types.contains(String(NSPasteboardTypeHTML))) {
+        String string = readStringAtPreferredItemIndex(NSPasteboardTypeHTML, itemIndex, strategy, m_pasteboardName);
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readHTML(string)))
             return;
     }
 
     if (types.contains(String(legacyRTFDPasteboardType()))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyRTFDPasteboardType(), m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFDPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (m_changeCount != changeCount() || reader.readRTFD(*buffer))
+                return;
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypeRTFD))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTFD, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readRTFD(*buffer))
                 return;
         }
     }
 
     if (types.contains(String(legacyRTFPasteboardType()))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyRTFPasteboardType(), m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyRTFPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (m_changeCount != changeCount() || reader.readRTF(*buffer))
+                return;
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypeRTF))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeRTF, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readRTF(*buffer))
                 return;
         }
@@ -403,28 +481,42 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return;
 
     if (types.contains(String(legacyTIFFPasteboardType()))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyTIFFPasteboardType(), m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyTIFFPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/tiff"_s))
+                return;
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypeTIFF))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeTIFF, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/tiff"_s))
                 return;
         }
     }
 
     if (types.contains(String(legacyPDFPasteboardType()))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyPDFPasteboardType(), m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyPDFPasteboardType(), itemIndex, strategy, m_pasteboardName)) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "application/pdf"_s))
+                return;
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypePDF))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypePDF, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "application/pdf"_s))
                 return;
         }
     }
 
     if (types.contains(String(kUTTypePNG))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(kUTTypePNG, m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypePNG, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/png"_s))
                 return;
         }
     }
 
     if (types.contains(String(kUTTypeJPEG))) {
-        if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(kUTTypeJPEG, m_pasteboardName)) {
+        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeJPEG, itemIndex, strategy, m_pasteboardName)) {
             if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/jpeg"_s))
                 return;
         }
@@ -432,13 +524,13 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
     if (types.contains(String(legacyURLPasteboardType()))) {
         URL url = strategy.url(m_pasteboardName);
-        String title = strategy.stringForType(WebURLNamePboardType, m_pasteboardName);
+        String title = readStringAtPreferredItemIndex(WebURLNamePboardType, itemIndex, strategy, m_pasteboardName);
         if (m_changeCount != changeCount() || (!url.isNull() && reader.readURL(url, title)))
             return;
     }
 
     if (types.contains(String(legacyStringPasteboardType()))) {
-        String string = strategy.stringForType(legacyStringPasteboardType(), m_pasteboardName);
+        String string = readStringAtPreferredItemIndex(legacyStringPasteboardType(), itemIndex, strategy, m_pasteboardName);
         if (m_changeCount != changeCount() || (!string.isNull() && reader.readPlainText(string)))
             return;
     }

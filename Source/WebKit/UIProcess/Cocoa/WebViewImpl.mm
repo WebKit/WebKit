@@ -4218,8 +4218,11 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
     [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
     setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
 
-    if (archiveBuffer)
-        [pasteboard setData:archiveBuffer->createNSData().get() forType:PasteboardTypes::WebArchivePboardType];
+    if (archiveBuffer) {
+        auto nsData = archiveBuffer->createNSData();
+        [pasteboard setData:nsData.get() forType:(__bridge NSString *)kUTTypeWebArchive];
+        [pasteboard setData:nsData.get() forType:PasteboardTypes::WebArchivePboardType];
+    }
 
     m_promisedImage = image;
 }

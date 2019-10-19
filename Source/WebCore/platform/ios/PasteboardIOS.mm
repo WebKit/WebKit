@@ -150,18 +150,20 @@ bool Pasteboard::canSmartReplace()
     return true;
 }
 
-void Pasteboard::read(PasteboardPlainText& text)
+void Pasteboard::read(PasteboardPlainText& text, Optional<size_t> itemIndex)
 {
+    auto itemIndexToQuery = itemIndex.valueOr(0);
+
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
-    text.text = strategy.readStringFromPasteboard(0, kUTTypeURL, m_pasteboardName);
+    text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypeURL, m_pasteboardName);
     if (!text.text.isEmpty()) {
         text.isURL = true;
         return;
     }
 
-    text.text = strategy.readStringFromPasteboard(0, kUTTypePlainText, m_pasteboardName);
+    text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypePlainText, m_pasteboardName);
     if (text.text.isEmpty())
-        text.text = strategy.readStringFromPasteboard(0, kUTTypeText, m_pasteboardName);
+        text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypeText, m_pasteboardName);
 
     text.isURL = false;
 }
@@ -276,17 +278,17 @@ static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
     return info.canBeTreatedAsAttachmentOrFile() || UTTypeConformsTo(contentTypeForHighestFidelityItem.createCFString().get(), kUTTypeVCard);
 }
 
-void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)
 {
     reader.contentOrigin = readOrigin();
     if (respectsUTIFidelities()) {
-        readRespectingUTIFidelities(reader, policy);
+        readRespectingUTIFidelities(reader, policy, itemIndex);
         return;
     }
 
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
-    int numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName);
+    size_t numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName);
 
     if (!numberOfItems)
         return;
@@ -300,7 +302,10 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     bool canReadAttachment = false;
 #endif
 
-    for (int i = 0; i < numberOfItems; i++) {
+    for (size_t i = 0; i < numberOfItems; i++) {
+        if (itemIndex && i != *itemIndex)
+            continue;
+
         auto info = strategy.informationForItemAtIndex(i, m_pasteboardName);
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (canReadAttachment && prefersAttachmentRepresentation(info)) {
@@ -336,11 +341,14 @@ bool Pasteboard::respectsUTIFidelities() const
     return m_pasteboardName == "data interaction pasteboard";
 }
 
-void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader, WebContentReadingPolicy policy)
+void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)
 {
     ASSERT(respectsUTIFidelities());
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
+        if (itemIndex && index != *itemIndex)
+            continue;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
         auto info = strategy.informationForItemAtIndex(index, m_pasteboardName);
         auto attachmentFilePath = info.pathForHighestFidelityItem();

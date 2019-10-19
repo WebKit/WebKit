@@ -1,3 +1,19 @@
+2019-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Refactor Pasteboard::read() to take an optional item index
+        https://bugs.webkit.org/show_bug.cgi?id=203161
+
+        Reviewed by Tim Horton.
+
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing):
+        (WebKit::PasteboardTypes::forSelection):
+
+        Support "com.apple.webarchive" alongside the private "Apple Web Archive pasteboard type".
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPromisedDataForImage):
+
 2019-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] REGRESSION(r251269): fast/events/ios/rotation/do-not-shrink-to-fit-content-after-rotation.html and fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html fail

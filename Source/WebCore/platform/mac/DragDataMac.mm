@@ -237,6 +237,7 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     return types.contains(String(WebArchivePboardType))
         || types.contains(htmlPasteboardType())
+        || types.contains(String(kUTTypeWebArchive))
 #if PLATFORM(MAC)
         || types.contains(String(legacyFilenamesPasteboardType()))
         || types.contains(String(legacyFilesPromisePasteboardType()))
