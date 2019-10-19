@@ -109,7 +109,7 @@ void MediaQueryMatcher::removeListener(MediaQueryListListener& listener, MediaQu
     });
 }
 
-void MediaQueryMatcher::styleResolverChanged()
+void MediaQueryMatcher::evaluateAll()
 {
     ASSERT(m_document);
 

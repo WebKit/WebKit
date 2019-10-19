@@ -3899,13 +3899,19 @@ StyleSheetList& Document::styleSheets()
     return *m_styleSheetList;
 }
 
-void Document::evaluateMediaQueryList()
+void Document::updateElementsAffectedByMediaQueries()
 {
-    if (m_mediaQueryMatcher)
-        m_mediaQueryMatcher->styleResolverChanged();
-    
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     checkViewportDependentPictures();
     checkAppearanceDependentPictures();
+}
+
+void Document::evaluateMediaQueriesAndReportChanges()
+{
+    if (!m_mediaQueryMatcher)
+        return;
+
+    m_mediaQueryMatcher->evaluateAll();
 }
 
 void Document::checkViewportDependentPictures()

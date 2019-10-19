@@ -1301,7 +1301,8 @@ void Page::updateRendering()
 
     // FIXME: Run the scroll steps
 
-    // FIXME: Evaluate media queries and report changes.
+    for (auto& document : collectDocuments())
+        document->evaluateMediaQueriesAndReportChanges();
 
     Vector<Ref<Document>> documents = collectDocuments(); // The requestAnimationFrame callbacks may change the frame hierarchy of the page
     for (auto& document : documents) {
@@ -2663,7 +2664,7 @@ void Page::accessibilitySettingsDidChange()
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document()) {
             document->styleScope().evaluateMediaQueriesForAccessibilitySettingsChange();
-            document->evaluateMediaQueryList();
+            document->updateElementsAffectedByMediaQueries();
         }
     }
 }
@@ -2677,7 +2678,7 @@ void Page::appearanceDidChange()
 
         document->styleScope().didChangeStyleSheetEnvironment();
         document->styleScope().evaluateMediaQueriesForAppearanceChange();
-        document->evaluateMediaQueryList();
+        document->updateElementsAffectedByMediaQueries();
     }
 }
 
