@@ -61,7 +61,12 @@ void DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers
         auto* uid = identifiers.at(property.identifierNumber());
         auto& watchpointSet = property.globalObject()->ensureReferencedPropertyWatchpointSet(uid);
         ASSERT(watchpointSet.isStillValid());
-        watchpointSet.add(common.watchpoints.add(codeBlock));
+        CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            watchpoint = common.watchpoints.add(codeBlock);
+        }
+        watchpointSet.add(WTFMove(watchpoint));
     }
 }
 

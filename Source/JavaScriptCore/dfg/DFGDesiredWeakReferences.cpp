@@ -69,6 +69,7 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
     for (JSCell* target : m_references) {
         if (Structure* structure = jsDynamicCast<Structure*>(vm, target)) {
+            ConcurrentJSLocker locker(m_codeBlock->m_lock);
             common->weakStructureReferences.append(
                 WriteBarrier<Structure>(vm, m_codeBlock, structure));
         } else {
@@ -78,6 +79,7 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
             // having a weak pointer to itself will cause it to get collected.
             RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(vm, target));
 
+            ConcurrentJSLocker locker(m_codeBlock->m_lock);
             common->weakReferences.append(
                 WriteBarrier<JSCell>(vm, m_codeBlock, target));
         }

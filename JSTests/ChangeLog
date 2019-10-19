@@ -1,3 +1,12 @@
+2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG::CommonData modification by DFG reallyAdd should be guarded by CodeBlock's lock
+        https://bugs.webkit.org/show_bug.cgi?id=203177
+
+        Reviewed by Mark Lam.
+
+        * stress/dfg-really-add-locking.js: Added.
+
 2019-10-17  Mark Lam  <mark.lam@apple.com>
 
         Add missing checks after calls to the sameValue() JSValue comparator.

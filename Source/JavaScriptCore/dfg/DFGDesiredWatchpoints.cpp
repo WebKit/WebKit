@@ -39,10 +39,14 @@ void ArrayBufferViewWatchpointAdaptor::add(
     CodeBlock* codeBlock, JSArrayBufferView* view, CommonData& common)
 {
     VM& vm = codeBlock->vm();
-    Watchpoint* watchpoint = common.watchpoints.add(codeBlock);
+    CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
+    {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        watchpoint = common.watchpoints.add(codeBlock);
+    }
     ArrayBufferNeuteringWatchpointSet* neuteringWatchpoint =
         ArrayBufferNeuteringWatchpointSet::create(vm);
-    neuteringWatchpoint->set().add(watchpoint);
+    neuteringWatchpoint->set().add(WTFMove(watchpoint));
     codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), neuteringWatchpoint);
     // FIXME: We don't need to set this watchpoint at all for shared buffers.
     // https://bugs.webkit.org/show_bug.cgi?id=164108
@@ -53,14 +57,24 @@ void SymbolTableAdaptor::add(
     CodeBlock* codeBlock, SymbolTable* symbolTable, CommonData& common)
 {
     codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), symbolTable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
-    symbolTable->singleton().add(common.watchpoints.add(codeBlock));
+    CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
+    {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        watchpoint = common.watchpoints.add(codeBlock);
+    }
+    symbolTable->singleton().add(WTFMove(watchpoint));
 }
 
 void FunctionExecutableAdaptor::add(
     CodeBlock* codeBlock, FunctionExecutable* executable, CommonData& common)
 {
     codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), executable); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
-    executable->singleton().add(common.watchpoints.add(codeBlock));
+    CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
+    {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        watchpoint = common.watchpoints.add(codeBlock);
+    }
+    executable->singleton().add(WTFMove(watchpoint));
 }
 
 void AdaptiveStructureWatchpointAdaptor::add(
@@ -68,12 +82,24 @@ void AdaptiveStructureWatchpointAdaptor::add(
 {
     VM& vm = codeBlock->vm();
     switch (key.kind()) {
-    case PropertyCondition::Equivalence:
-        common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock)->install(vm);
+    case PropertyCondition::Equivalence: {
+        AdaptiveInferredPropertyValueWatchpoint* watchpoint = nullptr;
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            watchpoint = common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock);
+        }
+        watchpoint->install(vm);
         break;
-    default:
-        common.adaptiveStructureWatchpoints.add(key, codeBlock)->install(vm);
+    }
+    default: {
+        AdaptiveStructureWatchpoint* watchpoint = nullptr;
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            watchpoint = common.adaptiveStructureWatchpoints.add(key, codeBlock);
+        }
+        watchpoint->install(vm);
         break;
+    }
     }
 }
 

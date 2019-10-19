@@ -89,7 +89,11 @@ void DesiredIdentifiers::reallyAdd(VM& vm, CommonData* commonData)
 {
     for (auto rep : m_addedIdentifiers) {
         ASSERT(rep->hasAtLeastOneRef());
-        commonData->dfgIdentifiers.append(Identifier::fromUid(vm, rep));
+        Identifier uid = Identifier::fromUid(vm, rep);
+        {
+            ConcurrentJSLocker locker(m_codeBlock->m_lock);
+            commonData->dfgIdentifiers.append(WTFMove(uid));
+        }
     }
 }
 

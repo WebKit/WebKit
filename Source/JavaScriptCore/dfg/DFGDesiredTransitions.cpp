@@ -44,6 +44,7 @@ DesiredTransition::DesiredTransition(CodeBlock* codeBlock, CodeBlock* codeOrigin
 
 void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
 {
+    ConcurrentJSLocker locker(m_codeBlock->m_lock);
     common->transitions.append(
         WeakReferenceTransition(
             vm, m_codeBlock,

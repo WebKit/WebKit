@@ -1,5 +1,34 @@
 2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG::CommonData modification by DFG reallyAdd should be guarded by CodeBlock's lock
+        https://bugs.webkit.org/show_bug.cgi?id=203177
+
+        Reviewed by Mark Lam.
+
+        When doing DFG reallyAdd, DFG::JITCode is already set in CodeBlock and DFG::CommonData can be
+        reachable from CodeBlock. So concurrent collector can trace entries of DFG::CommonData while DFG reallyAdd
+        is modifying it. It would be possible that we install DFG::JITCode after performing DFG reallyAdd, but for now,
+        we just protect DFG reallyAdd's DFG::CommonData modification by CodeBlock's lock so that concurrent collector
+        does not trace them in a racy manner.
+
+        * dfg/DFGDesiredGlobalProperties.cpp:
+        (JSC::DFG::DesiredGlobalProperties::reallyAdd):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::reallyAdd):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        (JSC::DFG::SymbolTableAdaptor::add):
+        (JSC::DFG::FunctionExecutableAdaptor::add):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SetPointerAdaptor::add):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+
+2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make ConcurrentJSLock Lock even if ENABLE_CONCURRENT_JS=OFF
         https://bugs.webkit.org/show_bug.cgi?id=202892
 
