@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

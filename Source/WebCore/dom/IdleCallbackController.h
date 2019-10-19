@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class Document;
+
 class IdleCallbackController {
     WTF_MAKE_FAST_ALLOCATED;
 

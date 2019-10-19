@@ -1,3 +1,26 @@
+2019-10-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix non-unified builds after r250857
+        https://bugs.webkit.org/show_bug.cgi?id=203145
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * Modules/async-clipboard/ClipboardItem.cpp: Add missing inclusion of the Clipboard.h header.
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp: Add missing inclusion of the
+        ClipboardItem.h header.
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp: Add missing inclusions of
+        the Clipboard.h, ClipboardItem.h, and JSDOMPromiseDeferred.h headers.
+        * dom/AbstractEventLoop.h: Add missing inclusion of the wtf/RefCounted.h header.
+        * dom/WindowEventLoop.h: Add missing inclusion of the DocumentIdentifier.h header.
+        * dom/IdleCallbackController.h: Add missing forward-declaration for the Document class.
+        * dom/RadioButtonGroups.h: Add needed inclusion of of the wtf/text/AtomStringHash.h header,
+        needed because AtomString is used as key for a HashMap; remove the (now unneeded) of the
+        wtf/Forward.h header.
+        * page/WheelEventTestMonitor.cpp: Add missing inclusion of the wtf/OptionSet.h header.
+        * rendering/style/ShadowData.cpp: Add missing inclusion of the wtf/text/TextStream.h header.
+
 2019-10-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate media query evaluation into HTML5 event loop

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AbstractEventLoop.h"
+#include "DocumentIdentifier.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

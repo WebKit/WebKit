@@ -23,6 +23,7 @@
 #include "ShadowData.h"
 
 #include <wtf/PointerComparison.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

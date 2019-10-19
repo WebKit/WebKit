@@ -30,6 +30,7 @@
 #include "WheelEventTestMonitor.h"
 
 #include "Logging.h"
+#include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
 #if !LOG_DISABLED

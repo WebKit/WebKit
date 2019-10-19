@@ -21,9 +21,9 @@
 #pragma once
 
 #include <memory>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 

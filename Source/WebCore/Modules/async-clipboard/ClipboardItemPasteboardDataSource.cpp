@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ClipboardItemPasteboardDataSource.h"
 
+#include "Clipboard.h"
+#include "ClipboardItem.h"
+#include "JSDOMPromiseDeferred.h"
 #include "PasteboardItemInfo.h"
 
 namespace WebCore {

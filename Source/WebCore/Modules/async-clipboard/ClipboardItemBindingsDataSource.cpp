@@ -27,6 +27,7 @@
 #include "ClipboardItemBindingsDataSource.h"
 
 #include "Blob.h"
+#include "ClipboardItem.h"
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"

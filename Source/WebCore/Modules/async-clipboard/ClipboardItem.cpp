@@ -27,6 +27,7 @@
 #include "ClipboardItem.h"
 
 #include "Blob.h"
+#include "Clipboard.h"
 #include "ClipboardItemBindingsDataSource.h"
 #include "ClipboardItemPasteboardDataSource.h"
 #include "Navigator.h"
