@@ -101,16 +101,14 @@ enum class CascadeLevel: uint8_t {
 
 class PseudoStyleRequest {
 public:
-    PseudoStyleRequest(PseudoId pseudoId, RenderScrollbar* scrollbar = nullptr, ScrollbarPart scrollbarPart = NoPart)
+    PseudoStyleRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = WTF::nullopt)
         : pseudoId(pseudoId)
-        , scrollbarPart(scrollbarPart)
-        , scrollbar(scrollbar)
+        , scrollbarState(scrollbarState)
     {
     }
 
     PseudoId pseudoId;
-    ScrollbarPart scrollbarPart;
-    RenderScrollbar* scrollbar;
+    Optional<StyleScrollbarState> scrollbarState;
 };
 
 struct ElementStyle {

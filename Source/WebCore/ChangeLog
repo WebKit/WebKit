@@ -1,3 +1,37 @@
+2019-10-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to query scrollbar pseudo-style without having a scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=203174
+
+        Reviewed by Tim Horton.
+
+        A future patch needs the ability to query scrollbar pseudo-style without having
+        a scrollbar, and it was ugly to pass a live RenderScrollbar into CSS style resolution
+        functions. Instead, pass in a pure-data object that has information about the scrollbar.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/SelectorChecker.h:
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::scrollbarMatchesEnabledPseudoClass):
+        (WebCore::scrollbarMatchesDisabledPseudoClass):
+        (WebCore::scrollbarMatchesHoverPseudoClass):
+        (WebCore::scrollbarMatchesActivePseudoClass):
+        (WebCore::scrollbarMatchesHorizontalPseudoClass):
+        (WebCore::scrollbarMatchesVerticalPseudoClass):
+        (WebCore::scrollbarMatchesDecrementPseudoClass):
+        (WebCore::scrollbarMatchesIncrementPseudoClass):
+        (WebCore::scrollbarMatchesStartPseudoClass):
+        (WebCore::scrollbarMatchesEndPseudoClass):
+        (WebCore::scrollbarMatchesDoubleButtonPseudoClass):
+        (WebCore::scrollbarMatchesSingleButtonPseudoClass):
+        (WebCore::scrollbarMatchesNoButtonPseudoClass):
+        (WebCore::scrollbarMatchesCornerPresentPseudoClass):
+        * css/StyleResolver.h:
+        (WebCore::PseudoStyleRequest::PseudoStyleRequest):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle):
+
 2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2]: Remove the SVGExternalResourcesRequired interface

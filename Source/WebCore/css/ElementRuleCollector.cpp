@@ -481,8 +481,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
     SelectorChecker::CheckingContext context(m_mode);
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
-    context.scrollbar = m_pseudoStyleRequest.scrollbar;
-    context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
+    context.scrollbarState = m_pseudoStyleRequest.scrollbarState;
     context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
     context.shadowHostInPartRuleScope = m_shadowHostInPartRuleScope.get();
 

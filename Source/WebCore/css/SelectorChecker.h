@@ -38,6 +38,16 @@ class Element;
 class RenderScrollbar;
 class RenderStyle;
 
+struct StyleScrollbarState {
+    ScrollbarPart scrollbarPart { NoPart };
+    ScrollbarPart hoveredPart { NoPart };
+    ScrollbarPart pressedPart { NoPart };
+    ScrollbarOrientation orientation { VerticalScrollbar };
+    ScrollbarButtonsPlacement buttonsPlacement { ScrollbarButtonsNone };
+    bool enabled { false };
+    bool scrollCornerIsVisible { false };
+};
+
 class SelectorChecker {
     WTF_MAKE_NONCOPYABLE(SelectorChecker);
     enum class Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
@@ -80,8 +90,7 @@ public:
 
         const SelectorChecker::Mode resolvingMode;
         PseudoId pseudoId { PseudoId::None };
-        RenderScrollbar* scrollbar { nullptr };
-        ScrollbarPart scrollbarPart { NoPart };
+        Optional<StyleScrollbarState> scrollbarState;
         const ContainerNode* scope { nullptr };
         bool isMatchingHostPseudoClass { false };
         const Element* shadowHostInPartRuleScope { nullptr };

@@ -139,9 +139,18 @@ void RenderScrollbar::setPressedPart(ScrollbarPart part)
 std::unique_ptr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId)
 {
     if (!owningRenderer())
-        return 0;
+        return nullptr;
 
-    std::unique_ptr<RenderStyle> result = owningRenderer()->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId, this, partType), &owningRenderer()->style());
+    StyleScrollbarState scrollbarState;
+    scrollbarState.scrollbarPart = partType;
+    scrollbarState.hoveredPart = hoveredPart();
+    scrollbarState.pressedPart = pressedPart();
+    scrollbarState.orientation = orientation();
+    scrollbarState.buttonsPlacement = theme().buttonsPlacement();
+    scrollbarState.enabled = enabled();
+    scrollbarState.scrollCornerIsVisible = scrollableArea().isScrollCornerVisible();
+    
+    std::unique_ptr<RenderStyle> result = owningRenderer()->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId, scrollbarState), &owningRenderer()->style());
     // Scrollbars for root frames should always have background color 
     // unless explicitly specified as transparent. So we force it.
     // This is because WebKit assumes scrollbar to be always painted and missing background
