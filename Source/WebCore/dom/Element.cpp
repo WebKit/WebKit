@@ -303,7 +303,7 @@ static bool isForceEvent(const PlatformMouseEvent& platformEvent)
     return platformEvent.type() == PlatformEvent::MouseForceChanged || platformEvent.type() == PlatformEvent::MouseForceDown || platformEvent.type() == PlatformEvent::MouseForceUp;
 }
 
-#if ENABLE(POINTER_EVENTS) && !ENABLE(TOUCH_EVENTS)
+#if ENABLE(POINTER_EVENTS)
 static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 {
     // https://www.w3.org/TR/pointerevents/#compatibility-mapping-with-mouse-events
@@ -311,6 +311,35 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
     return type != eventNames().clickEvent && type != eventNames().mouseoverEvent && type != eventNames().mouseoutEvent && type != eventNames().mouseenterEvent && type != eventNames().mouseleaveEvent;
 }
 #endif
+
+static bool shouldIgnoreMouseEvent(Element& element, const MouseEvent& mouseEvent, const PlatformMouseEvent& platformEvent, bool& didNotSwallowEvent)
+{
+#if ENABLE(POINTER_EVENTS)
+    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
+        if (auto* page = element.document().page()) {
+            auto& pointerCaptureController = page->pointerCaptureController();
+#if ENABLE(TOUCH_EVENTS)
+            if (platformEvent.pointerId() != mousePointerID && mouseEvent.type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
+                return true;
+#else
+            UNUSED_PARAM(platformEvent);
+#endif
+            if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent)) {
+                pointerCaptureController.dispatchEvent(*pointerEvent, &element);
+                if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
+                    return true;
+                if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
+                    didNotSwallowEvent = false;
+                    if (pointerEvent->type() == eventNames().pointerdownEvent)
+                        return true;
+                }
+            }
+        }
+    }
+#endif
+
+    return false;
+}
 
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget)
 {
@@ -327,28 +356,8 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     bool didNotSwallowEvent = true;
 
-#if ENABLE(POINTER_EVENTS)
-    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
-        if (auto* page = document().page()) {
-            auto& pointerCaptureController = page->pointerCaptureController();
-#if ENABLE(TOUCH_EVENTS)
-            if (mouseEvent->type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
-                return false;
-#else
-            if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent)) {
-                pointerCaptureController.dispatchEvent(*pointerEvent, this);
-                if (isCompatibilityMouseEvent(mouseEvent) && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(pointerEvent->pointerId()))
-                    return false;
-                if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
-                    didNotSwallowEvent = false;
-                    if (pointerEvent->type() == eventNames().pointerdownEvent)
-                        return false;
-                }
-            }
-#endif
-        }
-    }
-#endif
+    if (shouldIgnoreMouseEvent(*this, mouseEvent.get(), platformEvent, didNotSwallowEvent))
+        return false;
 
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
     dispatchEvent(mouseEvent);

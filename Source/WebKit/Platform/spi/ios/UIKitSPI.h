@@ -1116,6 +1116,20 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)_updateSafeAreaInsets;
 @end
 
+@interface UIGestureRecognizer (IPI)
+- (BOOL)_paused;
+@property (nonatomic) UIView *view;
+@property (nonatomic, assign, getter=_acceptsFailureRequirements, setter=_setAcceptsFailureRequiments:) BOOL _acceptsFailureRequirements;
+@end
+
+@interface UIHoverEvent : UIEvent
+- (void)setNeedsHitTestReset;
+@end
+
+@interface UIApplication (IPI)
+- (UIHoverEvent *)_hoverEventForWindow:(UIWindow *)window;
+@end
+
 @interface UIScrollView (IPI)
 - (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary *)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;

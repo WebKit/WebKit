@@ -1,3 +1,69 @@
+2019-10-18  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Cursor should send mouse events, not touch events
+        https://bugs.webkit.org/show_bug.cgi?id=203175
+        <rdar://problem/56321134>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/ios/NativeWebMouseEventIOS.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        Add a NativeWebMouseEvent constructor that doesn't actually wrap a native event,
+        for creating totally-synthetic events.
+
+        * UIProcess/ios/WKMouseGestureRecognizer.h: Added.
+        * UIProcess/ios/WKMouseGestureRecognizer.mm: Added.
+        (webEventModifiersForUIKeyModifierFlags):
+        (-[WKMouseGestureRecognizer initWithTarget:action:]):
+        (-[WKMouseGestureRecognizer setView:]):
+        (-[WKMouseGestureRecognizer lastMouseEvent]):
+        (-[WKMouseGestureRecognizer lastMouseLocation]):
+        (-[WKMouseGestureRecognizer mouseTouch]):
+        (-[WKMouseGestureRecognizer _wantsHoverEvents]):
+        (-[WKMouseGestureRecognizer reset]):
+        (-[WKMouseGestureRecognizer _shouldReceiveTouch:forEvent:recognizerView:]):
+        (-[WKMouseGestureRecognizer _shouldReceivePress:]):
+        (-[WKMouseGestureRecognizer createMouseEventWithType:]):
+        (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesCancelled:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverCancelled:withEvent:]):
+        (-[WKMouseGestureRecognizer locationInView:]):
+        (-[WKMouseGestureRecognizer canPreventGestureRecognizer:]):
+        (-[WKMouseGestureRecognizer canBePreventedByGestureRecognizer:]):
+        Instead of just using UIHoverGestureRecognizer, introduce a new gesture
+        recognizer that does what it did, but also supports cases where the button
+        is pressed (so, mousedown and mouseup instead of just mousemove),
+        and synthesizes mouse events for all state transitions. These events
+        should look roughly identical to what a non-macCatalyst app would get
+        in AppKit's mouseUp/mouseDown/mouseMoved NSResponder methods.
+
+        * SourcesCocoa.txt:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _showShareSheet:inRect:completionHandler:]):
+        (-[WKContentView _mouseGestureRecognizerChanged:]):
+        (webEventFlagsForUIKeyModifierFlags): Deleted.
+        (-[WKContentView _hoverGestureRecognizerChanged:]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        Make use of WKMouseGestureRecognizer to plumb the synthesized events directly
+        to the macOS-style "handleMouseEvent" codepath, instead of going through
+        the touch events path (and then subsequently generating synthetic clicks).
+        Also, ensure that other gesture recognizers ignore the mouse "touch" entirely
+        by returning NO in shouldReceiveTouch.
+
 2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when no credentials are found

@@ -99,7 +99,6 @@ struct WebAutocorrectionContext;
 
 @class _UILookupGestureRecognizer;
 @class _UIHighlightView;
-@class UIHoverGestureRecognizer;
 @class UITargetedPreview;
 @class WebEvent;
 @class WKActionSheetAssistant;
@@ -109,6 +108,7 @@ struct WebAutocorrectionContext;
 @class WKFormInputControl;
 @class WKFormInputSession;
 @class WKHighlightLongPressGestureRecognizer;
+@class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -236,8 +236,7 @@ struct WKAutoCorrectionData {
 #endif
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
-    CGPoint _lastHoverLocation;
+    RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;

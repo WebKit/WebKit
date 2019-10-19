@@ -55,6 +55,7 @@
 #import "WKHighlightLongPressGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
+#import "WKMouseGestureRecognizer.h"
 #import "WKNSURLExtras.h"
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
@@ -131,11 +132,6 @@
 
 #if PLATFORM(MACCATALYST)
 #import <UIKit/_UILookupGestureRecognizer.h>
-#endif
-
-#if HAVE(HOVER_GESTURE_RECOGNIZER)
-#import "NativeWebMouseEvent.h"
-#import <UIKit/UIHoverGestureRecognizer.h>
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -745,9 +741,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    _hoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognizerChanged:)]);
-    [_hoverGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+    _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(_mouseGestureRecognizerChanged:)]);
+    [_mouseGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
 #if PLATFORM(MACCATALYST)    
@@ -897,8 +893,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    [_hoverGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+    [_mouseGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 
 #if PLATFORM(MACCATALYST)    
@@ -1014,7 +1010,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+    [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 #if PLATFORM(MACCATALYST)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1040,7 +1036,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
 #endif
 #if PLATFORM(MACCATALYST)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1449,17 +1445,24 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    if (gestureRecognizer != _touchActionLeftSwipeGestureRecognizer && gestureRecognizer != _touchActionRightSwipeGestureRecognizer && gestureRecognizer != _touchActionUpSwipeGestureRecognizer && gestureRecognizer != _touchActionDownSwipeGestureRecognizer)
-        return true;
+#if HAVE(HOVER_GESTURE_RECOGNIZER)
+    if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
+        return NO;
+#endif
 
-    // We update the enabled state of the various swipe gesture recognizers such that if we have a unidirectional touch-action
-    // specified (only pan-x or only pan-y) we enable the two recognizers in the opposite axis to prevent scrolling from starting
-    // if the initial gesture is such a swipe. Since the recognizers are specified to use a single finger for recognition, we don't
-    // need to worry about the case where there may be more than a single touch for a given UIScrollView.
-    auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint([touch locationInView:self]));
-    if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer)
-        return touchActions == WebCore::TouchAction::PanY;
-    return touchActions == WebCore::TouchAction::PanX;
+    if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer || gestureRecognizer == _touchActionUpSwipeGestureRecognizer || gestureRecognizer == _touchActionDownSwipeGestureRecognizer) {
+
+        // We update the enabled state of the various swipe gesture recognizers such that if we have a unidirectional touch-action
+        // specified (only pan-x or only pan-y) we enable the two recognizers in the opposite axis to prevent scrolling from starting
+        // if the initial gesture is such a swipe. Since the recognizers are specified to use a single finger for recognition, we don't
+        // need to worry about the case where there may be more than a single touch for a given UIScrollView.
+        auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint([touch locationInView:self]));
+        if (gestureRecognizer == _touchActionLeftSwipeGestureRecognizer || gestureRecognizer == _touchActionRightSwipeGestureRecognizer)
+            return touchActions == WebCore::TouchAction::PanY;
+        return touchActions == WebCore::TouchAction::PanX;
+    }
+
+    return YES;
 }
 
 #pragma mark - WKTouchActionGestureRecognizerDelegate implementation
@@ -1956,7 +1959,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-    if ([gestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]])
+    if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
         return YES;
 #endif
 
@@ -6352,8 +6355,10 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
     if (!rect) {
-        auto hoverLocationInWebView = [self convertPoint:_lastHoverLocation toView:_webView];
-        rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
+        if (auto lastMouseLocation = [_mouseGestureRecognizer lastMouseLocation]) {
+            auto hoverLocationInWebView = [self convertPoint:*lastMouseLocation toView:_webView];
+            rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
+        }
     }
 #endif
     
@@ -7750,46 +7755,13 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
-static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags)
-{
-    WebEventFlags eventFlags = 0;
-    if (flags & UIKeyModifierShift)
-        eventFlags |= WebEventFlagMaskLeftShiftKey;
-    if (flags & UIKeyModifierControl)
-        eventFlags |= WebEventFlagMaskLeftControlKey;
-    if (flags & UIKeyModifierAlternate)
-        eventFlags |= WebEventFlagMaskLeftOptionKey;
-    if (flags & UIKeyModifierCommand)
-        eventFlags |= WebEventFlagMaskLeftCommandKey;
-    if (flags & UIKeyModifierAlphaShift)
-        eventFlags |= WebEventFlagMaskLeftCapsLockKey;
-    return eventFlags;
-}
-
-- (void)_hoverGestureRecognizerChanged:(UIGestureRecognizer *)gestureRecognizer
+- (void)_mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
 {
     if (!_page->hasRunningProcess())
         return;
 
-    // Make a timestamp that matches UITouch and UIEvent.
-    CFTimeInterval timestamp = GSCurrentEventTimestamp() / 1000000000.0;
-
-    CGPoint point;
-    switch (gestureRecognizer.state) {
-    case UIGestureRecognizerStateBegan:
-    case UIGestureRecognizerStateChanged:
-        point = [gestureRecognizer locationInView:self];
-        _lastHoverLocation = point;
-        break;
-    case UIGestureRecognizerStateEnded:
-    case UIGestureRecognizerStateCancelled:
-    default:
-        point = CGPointMake(-1, -1);
-        break;
-    }
-
-    auto event = adoptNS([[::WebEvent alloc] initWithMouseEventType:WebEventMouseMoved timeStamp:timestamp location:point modifiers:webEventFlagsForUIKeyModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer))]);
-    _page->handleMouseEvent(WebKit::NativeWebMouseEvent(event.get()));
+    if (auto event = gestureRecognizer.lastMouseEvent)
+        _page->handleMouseEvent(*event);
 }
 #endif
 

@@ -705,6 +705,7 @@
 		2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */; };
 		2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */; };
 		2DB7667121B5E48A0045DDB1 /* AccessibilitySupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB7667021B5E48A0045DDB1 /* AccessibilitySupportSPI.h */; };
+		2DB94299234E7A7F00E776AD /* WKMouseGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */; };
 		2DC18FAD218910490025A88D /* WKDrawingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FAB218910480025A88D /* WKDrawingView.h */; };
 		2DC18FB0218912640025A88D /* PencilKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FAF218912640025A88D /* PencilKitSPI.h */; };
 		2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC18FB1218A6E9E0025A88D /* RemoteLayerTreeViews.h */; };
@@ -2855,6 +2856,8 @@
 		2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = SmartMagnificationController.messages.in; path = ios/SmartMagnificationController.messages.in; sourceTree = "<group>"; };
 		2DAF4FFA1B636181006013D6 /* ViewGestureController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureController.cpp; sourceTree = "<group>"; };
 		2DB7667021B5E48A0045DDB1 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
+		2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKMouseGestureRecognizer.h; path = ios/WKMouseGestureRecognizer.h; sourceTree = "<group>"; };
+		2DB94298234E7A7F00E776AD /* WKMouseGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseGestureRecognizer.mm; path = ios/WKMouseGestureRecognizer.mm; sourceTree = "<group>"; };
 		2DC18FAB218910480025A88D /* WKDrawingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKDrawingView.h; path = ios/WKDrawingView.h; sourceTree = "<group>"; };
 		2DC18FAC218910480025A88D /* WKDrawingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDrawingView.mm; path = ios/WKDrawingView.mm; sourceTree = "<group>"; };
 		2DC18FAF218912640025A88D /* PencilKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PencilKitSPI.h; sourceTree = "<group>"; };
@@ -6137,6 +6140,8 @@
 				A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */,
 				2DD5E127210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.h */,
 				2DD5E126210ADC7A00DB6012 /* WKKeyboardScrollingAnimator.mm */,
+				2DB94297234E7A7F00E776AD /* WKMouseGestureRecognizer.h */,
+				2DB94298234E7A7F00E776AD /* WKMouseGestureRecognizer.mm */,
 				A15EEDE41E301CEE000069B0 /* WKPasswordView.h */,
 				A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */,
 				2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */,
@@ -10258,6 +10263,7 @@
 				5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */,
 				C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */,
 				411A8DDB20DDD1AC0060D34F /* WKMockMediaDevice.h in Headers */,
+				2DB94299234E7A7F00E776AD /* WKMouseGestureRecognizer.h in Headers */,
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
 				BC407600124FF0270068F20A /* WKMutableDictionary.h in Headers */,
 				C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */,
