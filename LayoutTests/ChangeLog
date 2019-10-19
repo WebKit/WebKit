@@ -1,3 +1,16 @@
+2019-10-19  Chris Dumez  <cdumez@apple.com>
+
+        FileReader should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203106
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/files/file-reader-back-forward-cache-expected.txt: Added.
+        * fast/files/file-reader-back-forward-cache.html: Added.
+
 2019-10-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate media query evaluation into HTML5 event loop

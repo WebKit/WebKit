@@ -266,6 +266,7 @@ webkit.org/b/188246 imported/w3c/web-platform-tests/service-workers/service-work
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
+fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-createImageBitmap.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/202495 imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html [ ImageOnlyFailure ]

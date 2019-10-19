@@ -301,12 +301,13 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
 
     if (m_reasonForSuspendingActiveDOMObjects != why)
         return;
-    m_activeDOMObjectsAreSuspended = false;
 
     forEachActiveDOMObject([](auto& activeDOMObject) {
         activeDOMObject.resume();
         return ShouldContinue::Yes;
     });
+
+    m_activeDOMObjectsAreSuspended = false;
 
     // In case there were pending messages at the time the script execution context entered the BackForwardCache,
     // make sure those get dispatched shortly after restoring from the BackForwardCache.

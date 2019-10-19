@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
+#include "SuspendableTaskQueue.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -56,6 +57,7 @@ Ref<FileReader> FileReader::create(ScriptExecutionContext& context)
 
 FileReader::FileReader(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
+    , m_taskQueue(SuspendableTaskQueue::create(&context))
 {
 }
 
@@ -63,12 +65,6 @@ FileReader::~FileReader()
 {
     if (m_loader)
         m_loader->cancel();
-}
-
-// FIXME: This should never prevent entering the back/forward cache.
-bool FileReader::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    return hasPendingActivity();
 }
 
 const char* FileReader::activeDOMObjectName() const
@@ -83,7 +79,11 @@ void FileReader::stop()
         m_loader = nullptr;
     }
     m_state = DONE;
-    m_loadingActivity = nullptr;
+}
+
+bool FileReader::hasPendingActivity() const
+{
+    return m_taskQueue->hasPendingTasks() || m_state == LOADING || ActiveDOMObject::hasPendingActivity();
 }
 
 ExceptionOr<void> FileReader::readAsArrayBuffer(Blob* blob)
@@ -133,8 +133,6 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
     if (m_state == LOADING)
         return Exception { InvalidStateError };
 
-    m_loadingActivity = makePendingActivity(*this);
-
     m_blob = &blob;
     m_readType = type;
     m_state = LOADING;
@@ -157,10 +155,8 @@ void FileReader::abort()
     m_aborting = true;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)] (ScriptExecutionContext&) {
-        if (isContextStopped())
-            return;
-
+    m_taskQueue->cancelAllTasks();
+    m_taskQueue->enqueueTask([this] {
         ASSERT(m_state != DONE);
 
         stop();
@@ -176,20 +172,24 @@ void FileReader::abort()
 
 void FileReader::didStartLoading()
 {
-    fireEvent(eventNames().loadstartEvent);
+    m_taskQueue->enqueueTask([this] {
+        fireEvent(eventNames().loadstartEvent);
+    });
 }
 
 void FileReader::didReceiveData()
 {
-    auto now = MonotonicTime::now();
-    if (std::isnan(m_lastProgressNotificationTime)) {
-        m_lastProgressNotificationTime = now;
-        return;
-    }
-    if (now - m_lastProgressNotificationTime > progressNotificationInterval) {
-        fireEvent(eventNames().progressEvent);
-        m_lastProgressNotificationTime = now;
-    }
+    m_taskQueue->enqueueTask([this] {
+        auto now = MonotonicTime::now();
+        if (std::isnan(m_lastProgressNotificationTime)) {
+            m_lastProgressNotificationTime = now;
+            return;
+        }
+        if (now - m_lastProgressNotificationTime > progressNotificationInterval) {
+            fireEvent(eventNames().progressEvent);
+            m_lastProgressNotificationTime = now;
+        }
+    });
 }
 
 void FileReader::didFinishLoading()
@@ -197,14 +197,14 @@ void FileReader::didFinishLoading()
     if (m_aborting)
         return;
 
-    ASSERT(m_state != DONE);
-    m_state = DONE;
+    m_taskQueue->enqueueTask([this] {
+        ASSERT(m_state != DONE);
+        m_state = DONE;
 
-    fireEvent(eventNames().progressEvent);
-    fireEvent(eventNames().loadEvent);
-    fireEvent(eventNames().loadendEvent);
-    
-    m_loadingActivity = nullptr;
+        fireEvent(eventNames().progressEvent);
+        fireEvent(eventNames().loadEvent);
+        fireEvent(eventNames().loadendEvent);
+    });
 }
 
 void FileReader::didFail(int errorCode)
@@ -213,18 +213,19 @@ void FileReader::didFail(int errorCode)
     if (m_aborting)
         return;
 
-    ASSERT(m_state != DONE);
-    m_state = DONE;
+    m_taskQueue->enqueueTask([this, errorCode] {
+        ASSERT(m_state != DONE);
+        m_state = DONE;
 
-    m_error = FileError::create(static_cast<FileError::ErrorCode>(errorCode));
-    fireEvent(eventNames().errorEvent);
-    fireEvent(eventNames().loadendEvent);
-    
-    m_loadingActivity = nullptr;
+        m_error = FileError::create(static_cast<FileError::ErrorCode>(errorCode));
+        fireEvent(eventNames().errorEvent);
+        fireEvent(eventNames().loadendEvent);
+    });
 }
 
 void FileReader::fireEvent(const AtomString& type)
 {
+    RELEASE_ASSERT(isAllowedToRunScript());
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
 }
 

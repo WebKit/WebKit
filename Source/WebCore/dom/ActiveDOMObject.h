@@ -109,6 +109,7 @@ public:
     }
 
     bool isContextStopped() const;
+    bool isAllowedToRunScript() const;
 
 protected:
     explicit ActiveDOMObject(ScriptExecutionContext*);
