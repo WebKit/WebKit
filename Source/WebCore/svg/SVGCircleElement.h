@@ -21,13 +21,12 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
 
-class SVGCircleElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
+class SVGCircleElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGCircleElement);
 public:
     static Ref<SVGCircleElement> create(const QualifiedName&, Document&);
@@ -43,7 +42,7 @@ public:
 private:
     SVGCircleElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCircleElement, SVGGeometryElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCircleElement, SVGGeometryElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

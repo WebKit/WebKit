@@ -35,7 +35,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGCursorElement);
 
 inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGTests(this)
     , SVGURIReference(this)
 {
@@ -72,7 +71,6 @@ void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomStrin
 
     SVGElement::parseAttribute(name, value);
     SVGTests::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
 }
 

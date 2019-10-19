@@ -37,7 +37,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGForeignObjectElement);
 
 inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::foreignObjectTag));
     static std::once_flag onceFlag;
@@ -70,7 +69,6 @@ void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const At
     reportAttributeParsingError(parseError, name, value);
 
     SVGGraphicsElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -88,7 +86,6 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

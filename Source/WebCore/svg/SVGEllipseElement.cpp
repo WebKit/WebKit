@@ -32,7 +32,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGEllipseElement);
 
 inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::ellipseTag));
 
@@ -66,7 +65,6 @@ void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomStri
     reportAttributeParsingError(parseError, name, value);
 
     SVGGeometryElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -78,7 +76,6 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

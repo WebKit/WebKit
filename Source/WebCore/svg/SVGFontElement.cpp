@@ -42,7 +42,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFontElement);
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::fontTag));
 }

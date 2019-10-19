@@ -27,5 +27,3 @@ interface SVGPolylineElement : SVGGeometryElement {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };
-
-SVGPolylineElement implements SVGExternalResourcesRequired;

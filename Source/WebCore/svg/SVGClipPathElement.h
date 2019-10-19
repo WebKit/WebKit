@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGUnitTypes.h"
 
@@ -29,7 +28,7 @@ namespace WebCore {
 
 class RenderObject;
 
-class SVGClipPathElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGClipPathElement final : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGClipPathElement);
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
@@ -40,7 +39,7 @@ public:
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

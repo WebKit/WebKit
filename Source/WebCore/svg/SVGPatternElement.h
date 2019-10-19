@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGTests.h"
@@ -33,7 +32,7 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGTests, public SVGURIReference {
+class SVGPatternElement final : public SVGElement, public SVGFitToViewBox, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGPatternElement);
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
@@ -61,7 +60,7 @@ public:
 private:
     SVGPatternElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPatternElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGTests, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPatternElement, SVGElement, SVGFitToViewBox, SVGTests, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

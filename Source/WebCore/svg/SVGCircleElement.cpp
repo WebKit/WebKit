@@ -32,7 +32,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGCircleElement);
 
 inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::circleTag));
 
@@ -63,7 +62,6 @@ void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomStrin
     reportAttributeParsingError(parseError, name, value);
 
     SVGGeometryElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -75,7 +73,6 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

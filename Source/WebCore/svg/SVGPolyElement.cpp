@@ -35,7 +35,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolyElement);
 
 SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -52,7 +51,6 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomString&
     }
 
     SVGGeometryElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -67,7 +65,6 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 size_t SVGPolyElement::approximateMemoryCost() const

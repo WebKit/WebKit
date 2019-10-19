@@ -21,12 +21,11 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
-class SVGGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGGElement final : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGGElement);
 public:
     static Ref<SVGGElement> create(const QualifiedName&, Document&);
@@ -37,11 +36,8 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGElement, SVGGraphicsElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
-    void svgAttributeChanged(const QualifiedName&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool rendererIsNeeded(const RenderStyle&) final;

@@ -22,14 +22,13 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
 #include "ScriptElement.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
 
-class SVGScriptElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGURIReference, public ScriptElement {
+class SVGScriptElement final : public SVGElement, public SVGURIReference, public ScriptElement {
     WTF_MAKE_ISO_ALLOCATED(SVGScriptElement);
 public:
     static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
@@ -40,7 +39,7 @@ public:
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGScriptElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGScriptElement, SVGElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

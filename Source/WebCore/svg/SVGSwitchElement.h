@@ -21,12 +21,11 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
-class SVGSwitchElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGSwitchElement final : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGSwitchElement);
 public:
     static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);
@@ -34,7 +33,7 @@ public:
 private:
     SVGSwitchElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     bool isValid() const final { return SVGTests::isValid(); }

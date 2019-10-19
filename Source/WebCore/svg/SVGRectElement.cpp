@@ -33,7 +33,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGRectElement);
 
 inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::rectTag));
 
@@ -73,7 +72,6 @@ void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomString&
     reportAttributeParsingError(parseError, name, value);
 
     SVGGeometryElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -85,7 +83,6 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

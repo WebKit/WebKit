@@ -60,8 +60,6 @@ function endTest() {
 }
 
 function lastTestBeforeRootElementLoaded() {
-    // Ensure the SVGSVGElement onload handler doesn't fire, because one script element points to a nonexistent
-    // resource, and specifies externalResourcesRequired=true. This prevents SVGLoad from being dispatched.
     window.setTimeout('startDynamicTests()', 0);
 }
 
@@ -108,7 +106,6 @@ function continueDynamicTest2() {
     scriptElement.id = 6;
     scriptElement.type.baseVal = "text/javascript";
     scriptElement.href.baseVal = "resources/nonexistent.js";
-    scriptElement.externalResourcesRequired.baseVal = true;
     scriptElement.onerror = errorEventHandler;
 
     lastTest = 1;
@@ -117,9 +114,9 @@ function continueDynamicTest2() {
 //]]>
 </script>
 <script id="0" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexist.js"></script>
-<script id="1" type="text/javascript" onerror="errorEventHandler(evt)" externalResourcesRequired="true" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexisttoo.js"/>
+<script id="1" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/certainlydoesnotexisttoo.js"/>
 <script id="2" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt)" xlink:href="resources/script-load.js"></script>
-<script id="3" type="text/javascript" onerror="errorEventHandler(evt)" externalResourcesRequired="true" onload="loadEventHandler(evt); lastTestBeforeRootElementLoaded();" xlink:href="resources/script-load.js"/>
+<script id="3" type="text/javascript" onerror="errorEventHandler(evt)" onload="loadEventHandler(evt); lastTestBeforeRootElementLoaded();" xlink:href="resources/script-load.js"/>
 </defs>
 <foreignObject>
 Test load and error event handling with SVGScriptElement

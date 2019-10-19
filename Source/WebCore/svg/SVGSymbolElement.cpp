@@ -33,7 +33,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSymbolElement);
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));
@@ -47,14 +46,7 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
 void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     SVGElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
-}
-
-void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
-{
-    SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 bool SVGSymbolElement::selfHasRelativeLengths() const

@@ -2327,8 +2327,6 @@ webkit.org/b/153371 imported/w3c/web-platform-tests/xhr/getresponseheader-chunke
 
 webkit.org/b/169210 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
 
-webkit.org/b/153498 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
-
 # displaylist tests are flaky on ios-simulator wk2
 webkit.org/b/153656 displaylists/canvas-display-list.html [ Pass Failure ]
 webkit.org/b/153656 displaylists/extent-includes-transforms.html [ Pass Failure ]

@@ -34,7 +34,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGViewElement);
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
@@ -58,7 +57,6 @@ void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomString&
     }
 
     SVGElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
     SVGZoomAndPan::parseAttribute(name, value);
 }
@@ -80,7 +78,6 @@ void SVGViewElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 }

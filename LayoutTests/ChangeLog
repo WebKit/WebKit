@@ -1,3 +1,46 @@
+2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Remove the SVGExternalResourcesRequired interface
+        https://bugs.webkit.org/show_bug.cgi?id=191293
+
+        Reviewed by Simon Fraser.
+
+        * platform/gtk/TestExpectations:
+        The script-change-externalResourcesRequired-while-loading.svg has to be
+        removed and it was flaky on all platforms.
+
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/types-dom-04-b-manual-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/types-dom-04-b-manual-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/types-dom-04-b-manual-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/types-dom-04-b-manual-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * svg/W3C-SVG-1.1-SE/types-dom-04-b.svg:
+        Use the preserveAlpha property of <feConvolveMatrix> element to test
+        SVGAnimatedBoolean.
+
+        * svg/animations/animate-externalResourcesRequired-no-load-event-expected.txt: Removed.
+        * svg/animations/animate-externalResourcesRequired-no-load-event.html: Removed.
+        * svg/custom/path-domsubtreemodified-crash.html:
+
+        * svg/dom/SVGAnimatedBoolean-expected.txt:
+        * svg/dom/SVGAnimatedBoolean.html:
+        Use the preserveAlpha property of <feConvolveMatrix> element to test
+        SVGAnimatedBoolean.
+
+        * svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading-expected.txt: Removed.
+        * svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg: Removed.
+        * svg/dom/SVGScriptElement/script-load-and-error-events.svg:
+        * svg/dom/SVGScriptElement/script-onerror-bubbling.svg:
+        * svg/dom/SVGScriptElement/script-reexecution.svg:
+        * svg/dynamic-updates/SVGUseElement-dom-href1-attr.html:
+
 2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when no credentials are found

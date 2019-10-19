@@ -101,5 +101,3 @@ interface SVGPathElement : SVGGeometryElement {
     readonly attribute SVGPathSegList animatedPathSegList;
     readonly attribute SVGPathSegList animatedNormalizedPathSegList;
 };
-
-SVGPathElement implements SVGExternalResourcesRequired;

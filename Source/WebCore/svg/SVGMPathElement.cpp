@@ -34,7 +34,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMPathElement);
 
 inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::mpathTag));
@@ -105,7 +104,6 @@ void SVGMPathElement::parseAttribute(const QualifiedName& name, const AtomString
 {
     SVGElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -117,7 +115,6 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RefPtr<SVGPathElement> SVGMPathElement::pathElement()

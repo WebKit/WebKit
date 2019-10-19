@@ -32,7 +32,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGScriptElement);
 
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
@@ -49,7 +48,6 @@ void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomStrin
 {
     SVGElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -62,7 +60,6 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 Node::InsertedIntoAncestorResult SVGScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

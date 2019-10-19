@@ -32,7 +32,6 @@ function startTest() {
     message = "PASS";
 
     e3 = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
-    e3.externalResourcesRequired.baseVal = true; // Otherwhise SVGLoad event will be fired immediately.
     e3.href.baseVal = "resources/script-reexecution.js";
     e3.onload = function() { finish(); }
     document.getElementsByTagName("defs")[0].appendChild(e3);

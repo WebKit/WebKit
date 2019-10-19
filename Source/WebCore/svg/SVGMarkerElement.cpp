@@ -33,7 +33,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMarkerElement);
 
 inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
@@ -90,7 +89,6 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomStrin
     reportAttributeParsingError(parseError, name, value);
 
     SVGElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
 }
 
@@ -112,7 +110,6 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGMarkerElement::childrenChanged(const ChildChange& change)

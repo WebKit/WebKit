@@ -21,13 +21,12 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
 
-class SVGEllipseElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
+class SVGEllipseElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGEllipseElement);
 public:
     static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);
@@ -45,7 +44,7 @@ public:
 private:
     SVGEllipseElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGEllipseElement, SVGGeometryElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGEllipseElement, SVGGeometryElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 
@@ -30,7 +29,7 @@ namespace WebCore {
 
 class CSSCursorImageValue;
 
-class SVGCursorElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGTests, public SVGURIReference {
+class SVGCursorElement final : public SVGElement, public SVGTests, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGCursorElement);
 public:
     static Ref<SVGCursorElement> create(const QualifiedName&, Document&);
@@ -49,7 +48,7 @@ public:
 private:
     SVGCursorElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCursorElement, SVGElement, SVGExternalResourcesRequired, SVGTests, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCursorElement, SVGElement, SVGTests, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
     
     void parseAttribute(const QualifiedName&, const AtomString&) final;

@@ -48,7 +48,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGUseElement);
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
@@ -90,7 +89,6 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomString& 
 
     reportAttributeParsingError(parseError, name, value);
 
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGGraphicsElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
 }
@@ -176,11 +174,10 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (SVGLangSpace::isKnownAttribute(attrName))
         invalidateShadowTree();
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 static HashSet<AtomString> createAllowedElementSet()

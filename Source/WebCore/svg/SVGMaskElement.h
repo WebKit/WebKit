@@ -21,14 +21,13 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-class SVGMaskElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGTests {
+class SVGMaskElement final : public SVGElement, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
@@ -50,7 +49,7 @@ public:
 private:
     SVGMaskElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

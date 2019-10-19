@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FloatPoint.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGGraphicsElement.h"
 #include "SVGZoomAndPan.h"
@@ -39,7 +38,7 @@ class SVGTransform;
 class SVGViewElement;
 class SVGViewSpec;
 
-class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
+class SVGSVGElement final : public SVGGraphicsElement, public SVGFitToViewBox, public SVGZoomAndPan {
     WTF_MAKE_ISO_ALLOCATED(SVGSVGElement);
 public: // DOM
     const AtomString& contentScriptType() const;
@@ -134,7 +133,7 @@ private:
     SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
     
     void parseAttribute(const QualifiedName&, const AtomString&) override;

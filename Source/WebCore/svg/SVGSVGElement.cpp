@@ -53,7 +53,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSVGElement);
 
 inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
     , m_timeContainer(SMILTimeContainer::create(*this))
 {
@@ -255,7 +254,6 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
     reportAttributeParsingError(parseError, name, value);
 
     SVGGraphicsElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
     SVGZoomAndPan::parseAttribute(name, value);
 }
@@ -280,7 +278,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 unsigned SVGSVGElement::suspendRedraw(unsigned)

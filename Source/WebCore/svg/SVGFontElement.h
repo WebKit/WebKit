@@ -25,7 +25,6 @@
 #if ENABLE(SVG_FONTS)
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
@@ -42,7 +41,7 @@ struct SVGKerningPair {
     float kerning { 0 };
 };
 
-class SVGFontElement final : public SVGElement, public SVGExternalResourcesRequired {
+class SVGFontElement final : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFontElement);
 public:
     static Ref<SVGFontElement> create(const QualifiedName&, Document&);
@@ -52,7 +51,7 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFontElement, SVGElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFontElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     PropertyRegistry m_propertyRegistry { *this };

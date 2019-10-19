@@ -29,5 +29,3 @@ interface SVGForeignObjectElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength width;
     readonly attribute SVGAnimatedLength height;
 };
-
-SVGForeignObjectElement implements SVGExternalResourcesRequired;

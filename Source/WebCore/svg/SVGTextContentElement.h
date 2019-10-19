@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 
 namespace WebCore {
@@ -62,7 +61,7 @@ template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
     }
 };
 
-class SVGTextContentElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGTextContentElement : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGTextContentElement);
 public:
     enum {
@@ -83,7 +82,7 @@ public:
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement>;
 
     const SVGLengthValue& specifiedTextLength() const { return m_specifiedTextLength; }
     const SVGLengthValue& textLength() const { return m_textLength->currentValue(); }

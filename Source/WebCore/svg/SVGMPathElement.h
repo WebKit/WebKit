@@ -21,7 +21,6 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 
@@ -29,7 +28,7 @@ namespace WebCore {
     
 class SVGPathElement;
 
-class SVGMPathElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGURIReference {
+class SVGMPathElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGMPathElement);
 public:
     static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
@@ -43,7 +42,7 @@ public:
 private:
     SVGMPathElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

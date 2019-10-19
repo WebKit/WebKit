@@ -88,9 +88,12 @@
       <text id='text' rotate='0 20 40' x='10 20' lengthAdjust='spacing'>abc</text>
       <circle id='circle' r='50' transform='scale(1) scale(2)' class='one'/>
       <marker id='marker' orient='30'/>
-      <svg id='svg' viewBox='10 20 30 40' preserveAspectRatio='none' externalResourcesRequired='false'/>
+      <svg id='svg' viewBox='10 20 30 40' preserveAspectRatio='none'/>
       <filter>
         <feTurbulence id='feTurbulence' baseFrequency='2 3' numOctaves='2'/>
+      </filter>
+      <filter>
+        <feConvolveMatrix id='feConvolveMatrix' order="1" kernelMatrix="1"/>
       </filter>
     </g>
 
@@ -102,6 +105,7 @@
           marker = $('marker'),
           svg = $('svg'),
           feTurbulence = $('feTurbulence');
+          feConvolveMatrix = $('feConvolveMatrix');
 
       function expect_exception(id, fn, code) {
         try {
@@ -189,12 +193,12 @@
          },
          true);
 
-      // SVGAnimatedBoolean: externalResourcesRequired on svg
+      // SVGAnimatedBoolean: preserveAlpha on feConvolveMatrix
       expect_value
         ('r8',
          function() {
-           return !svg.externalResourcesRequired.baseVal
-               && (svg.setAttribute('externalResourcesRequired', 'true'), svg.externalResourcesRequired.baseVal);
+           return !feConvolveMatrix.preserveAlpha.baseVal
+               && (feConvolveMatrix.setAttribute('preserveAlpha', 'true'), feConvolveMatrix.preserveAlpha.baseVal);
          },
          true);
 

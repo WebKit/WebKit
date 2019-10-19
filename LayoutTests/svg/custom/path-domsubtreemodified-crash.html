@@ -27,9 +27,6 @@
     }, false);
 
     function doCrash() {
-        var farthestViewportElement = defs["farthestViewportElement"];
-        var externalResourcesRequired = farthestViewportElement["externalResourcesRequired"];
-        externalResourcesRequired["baseVal"] = undefined;
         body.offsetWidth;
         body.innerHTML = "FAIL";
     }

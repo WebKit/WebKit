@@ -52,7 +52,7 @@ function endTest() {
 }
 </script>
 <script id="0" type="text/javascript" onerror="scriptOnErrorHandler(0)" xlink:href="resources/certainlydoesnotexist.js"></script>
-<script id="1" type="text/javascript" onerror="scriptOnErrorHandler(1)" xlink:href="resources/certainlydoesnotexisttoo.js" externalResourcesRequired="true" />
+<script id="1" type="text/javascript" onerror="scriptOnErrorHandler(1)" xlink:href="resources/certainlydoesnotexisttoo.js"/>
 <script id="2" type="text/javascript" onload="testOnErrorInDynamicScript()" xlink:href="resources/script-load.js"></script>
 </defs>
 <foreignObject>

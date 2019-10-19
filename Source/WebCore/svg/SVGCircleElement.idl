@@ -29,5 +29,3 @@ interface SVGCircleElement : SVGGeometryElement {
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;
 };
-
-SVGCircleElement implements SVGExternalResourcesRequired;

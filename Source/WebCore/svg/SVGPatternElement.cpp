@@ -47,7 +47,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPatternElement);
 
 inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
     , SVGTests(this)
     , SVGURIReference(this)
@@ -106,7 +105,6 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomStri
     SVGElement::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
     SVGTests::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
 }
 
@@ -125,7 +123,6 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGPatternElement::childrenChanged(const ChildChange& change)

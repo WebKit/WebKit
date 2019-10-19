@@ -41,7 +41,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMaskElement);
 
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGTests(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
@@ -94,7 +93,6 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomString&
 
     SVGElement::parseAttribute(name, value);
     SVGTests::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -112,7 +110,6 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGMaskElement::childrenChanged(const ChildChange& change)

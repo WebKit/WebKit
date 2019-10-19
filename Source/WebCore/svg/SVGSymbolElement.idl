@@ -26,5 +26,4 @@
 interface SVGSymbolElement : SVGElement {
 };
 
-SVGSymbolElement implements SVGExternalResourcesRequired;
 SVGSymbolElement implements SVGFitToViewBox;

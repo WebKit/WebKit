@@ -37,7 +37,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPathElement);
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::pathTag));
 
@@ -61,7 +60,6 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomString&
     }
 
     SVGGeometryElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -79,7 +77,6 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGeometryElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 void SVGPathElement::invalidateMPathDependencies()

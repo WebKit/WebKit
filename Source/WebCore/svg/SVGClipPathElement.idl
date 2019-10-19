@@ -27,5 +27,3 @@
 interface SVGClipPathElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
 };
-
-SVGClipPathElement implements SVGExternalResourcesRequired;

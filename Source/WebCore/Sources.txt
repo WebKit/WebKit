@@ -2369,7 +2369,6 @@ svg/SVGDocument.cpp
 svg/SVGDocumentExtensions.cpp
 svg/SVGElement.cpp
 svg/SVGEllipseElement.cpp
-svg/SVGExternalResourcesRequired.cpp
 svg/SVGFEBlendElement.cpp
 svg/SVGFEColorMatrixElement.cpp
 svg/SVGFEComponentTransferElement.cpp
@@ -3240,7 +3239,6 @@ JSSVGDescElement.cpp
 JSSVGDocument.cpp
 JSSVGElement.cpp
 JSSVGEllipseElement.cpp
-JSSVGExternalResourcesRequired.cpp
 JSSVGFEBlendElement.cpp
 JSSVGFEColorMatrixElement.cpp
 JSSVGFEComponentTransferElement.cpp

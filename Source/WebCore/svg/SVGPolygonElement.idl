@@ -27,5 +27,3 @@ interface SVGPolygonElement : SVGGeometryElement {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };
-
-SVGPolygonElement implements SVGExternalResourcesRequired;

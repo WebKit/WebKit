@@ -33,7 +33,6 @@ interface SVGPatternElement : SVGElement {
     readonly attribute SVGAnimatedLength        height;
 };
 
-SVGPatternElement implements SVGExternalResourcesRequired;
 SVGPatternElement implements SVGFitToViewBox;
 SVGPatternElement implements SVGTests;
 SVGPatternElement implements SVGURIReference;

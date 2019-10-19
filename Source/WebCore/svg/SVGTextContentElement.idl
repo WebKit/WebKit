@@ -42,6 +42,3 @@ interface SVGTextContentElement : SVGGraphicsElement {
     long getCharNumAtPosition(DOMPointInit point);
     [MayThrowException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };
-
-// FIXME: SVGTextContentElement is not supposed to implement SVGExternalResourcesRequired.
-SVGTextContentElement implements SVGExternalResourcesRequired;

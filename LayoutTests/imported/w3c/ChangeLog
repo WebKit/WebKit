@@ -1,5 +1,16 @@
 2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        [SVG2]: Remove the SVGExternalResourcesRequired interface
+        https://bugs.webkit.org/show_bug.cgi?id=191293
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/import/types-dom-04-b-manual.svg:
+        Use the preserveAlpha property of <feConvolveMatrix> element to test
+        SVGAnimatedBoolean.
+
+2019-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Load event must be fired only for the SVG structurally external elements and the outermost SVG element
         https://bugs.webkit.org/show_bug.cgi?id=203044
 

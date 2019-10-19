@@ -40,7 +40,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEImageElement);
 
 inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::feImageTag));
@@ -126,7 +125,6 @@ void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomStri
 
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
     SVGURIReference::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)

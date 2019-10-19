@@ -24,13 +24,12 @@
 #pragma once
 
 #include "SVGElement.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-class SVGFilterElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGURIReference {
+class SVGFilterElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_ISO_ALLOCATED(SVGFilterElement);
 public:
     static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
@@ -52,7 +51,7 @@ public:
 private:
     SVGFilterElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterElement, SVGElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;

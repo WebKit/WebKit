@@ -966,7 +966,6 @@ $(PROJECT_DIR)/svg/SVGDescElement.idl
 $(PROJECT_DIR)/svg/SVGDocument.idl
 $(PROJECT_DIR)/svg/SVGElement.idl
 $(PROJECT_DIR)/svg/SVGEllipseElement.idl
-$(PROJECT_DIR)/svg/SVGExternalResourcesRequired.idl
 $(PROJECT_DIR)/svg/SVGFEBlendElement.idl
 $(PROJECT_DIR)/svg/SVGFEColorMatrixElement.idl
 $(PROJECT_DIR)/svg/SVGFEComponentTransferElement.idl

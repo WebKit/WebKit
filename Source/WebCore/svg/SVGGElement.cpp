@@ -35,7 +35,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGElement);
 
 SVGGElement::SVGGElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::gTag));
 }
@@ -48,18 +47,6 @@ Ref<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document& doc
 Ref<SVGGElement> SVGGElement::create(Document& document)
 {
     return create(SVGNames::gTag, document);
-}
-
-void SVGGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
-}
-
-void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
-{
-    SVGGraphicsElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

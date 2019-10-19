@@ -33,5 +33,4 @@ interface SVGFilterElement : SVGElement {
     readonly attribute SVGAnimatedLength      height;
 };
 
-SVGFilterElement implements SVGExternalResourcesRequired;
 SVGFilterElement implements SVGURIReference;

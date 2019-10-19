@@ -3414,7 +3414,6 @@
 		B22279B40D00BF220071B782 /* SVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = B222781E0D00BF1F0071B782 /* SVGDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B22279B70D00BF220071B782 /* SVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278210D00BF1F0071B782 /* SVGElement.h */; };
 		B22279C00D00BF220071B782 /* SVGEllipseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */; };
-		B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */ = {isa = PBXBuildFile; fileRef = B222782F0D00BF1F0071B782 /* SVGExternalResourcesRequired.h */; };
 		B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278320D00BF1F0071B782 /* SVGFEBlendElement.h */; };
 		B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278350D00BF1F0071B782 /* SVGFEColorMatrixElement.h */; };
 		B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278380D00BF1F0071B782 /* SVGFEComponentTransferElement.h */; };
@@ -12229,9 +12228,6 @@
 		B22278290D00BF1F0071B782 /* SVGEllipseElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGEllipseElement.cpp; sourceTree = "<group>"; };
 		B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGEllipseElement.h; sourceTree = "<group>"; };
 		B222782B0D00BF1F0071B782 /* SVGEllipseElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGEllipseElement.idl; sourceTree = "<group>"; };
-		B222782E0D00BF1F0071B782 /* SVGExternalResourcesRequired.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGExternalResourcesRequired.cpp; sourceTree = "<group>"; };
-		B222782F0D00BF1F0071B782 /* SVGExternalResourcesRequired.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGExternalResourcesRequired.h; sourceTree = "<group>"; };
-		B22278300D00BF1F0071B782 /* SVGExternalResourcesRequired.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGExternalResourcesRequired.idl; sourceTree = "<group>"; };
 		B22278310D00BF1F0071B782 /* SVGFEBlendElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEBlendElement.cpp; sourceTree = "<group>"; };
 		B22278320D00BF1F0071B782 /* SVGFEBlendElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEBlendElement.h; sourceTree = "<group>"; };
 		B22278330D00BF1F0071B782 /* SVGFEBlendElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGFEBlendElement.idl; sourceTree = "<group>"; };
@@ -24237,9 +24233,6 @@
 				B22278290D00BF1F0071B782 /* SVGEllipseElement.cpp */,
 				B222782A0D00BF1F0071B782 /* SVGEllipseElement.h */,
 				B222782B0D00BF1F0071B782 /* SVGEllipseElement.idl */,
-				B222782E0D00BF1F0071B782 /* SVGExternalResourcesRequired.cpp */,
-				B222782F0D00BF1F0071B782 /* SVGExternalResourcesRequired.h */,
-				B22278300D00BF1F0071B782 /* SVGExternalResourcesRequired.idl */,
 				B22278310D00BF1F0071B782 /* SVGFEBlendElement.cpp */,
 				B22278320D00BF1F0071B782 /* SVGFEBlendElement.h */,
 				B22278330D00BF1F0071B782 /* SVGFEBlendElement.idl */,
@@ -32129,7 +32122,6 @@
 				081AA8DA1111237E002AB06E /* SVGElementRareData.h in Headers */,
 				B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */,
 				B22279C00D00BF220071B782 /* SVGEllipseElement.h in Headers */,
-				B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */,
 				B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */,
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,

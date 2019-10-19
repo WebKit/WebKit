@@ -92,6 +92,9 @@
       <filter>
         <feTurbulence id='feTurbulence' baseFrequency='2 3' numOctaves='2'/>
       </filter>
+      <filter>
+        <feConvolveMatrix id='feConvolveMatrix' order="1" kernelMatrix="1"/>
+      </filter>
     </g>
 
     <script><![CDATA[
@@ -102,6 +105,7 @@
           marker = $('marker'),
           svg = $('svg'),
           feTurbulence = $('feTurbulence');
+          feConvolveMatrix = $('feConvolveMatrix');
 
       function expect_exception(id, fn, code) {
         try {
@@ -189,12 +193,12 @@
          },
          true);
 
-      // SVGAnimatedBoolean: externalResourcesRequired on svg
+      // SVGAnimatedBoolean: preserveAlpha on svg
       expect_value
         ('r8',
          function() {
-           return !svg.externalResourcesRequired.baseVal
-               && (svg.setAttribute('externalResourcesRequired', 'true'), svg.externalResourcesRequired.baseVal);
+           return !feConvolveMatrix.preserveAlpha.baseVal
+               && (feConvolveMatrix.setAttribute('preserveAlpha', 'true'), feConvolveMatrix.preserveAlpha.baseVal);
          },
          true);
 

@@ -30,5 +30,4 @@ interface SVGUseElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength height;
 };
 
-SVGUseElement implements SVGExternalResourcesRequired;
 SVGUseElement implements SVGURIReference;

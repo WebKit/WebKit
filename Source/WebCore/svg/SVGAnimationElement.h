@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "SVGExternalResourcesRequired.h"
 #include "SVGSMILElement.h"
 #include "SVGTests.h"
 #include "UnitBezier.h"
@@ -38,7 +37,7 @@ class TimeContainer;
 // the value during the animation since the value can be animated itself.
 enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, InheritValue };
 
-class SVGAnimationElement : public SVGSMILElement, public SVGExternalResourcesRequired, public SVGTests {
+class SVGAnimationElement : public SVGSMILElement, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
 public:
     float getStartTime() const;
@@ -86,7 +85,7 @@ public:
 protected:
     SVGAnimationElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGTests>;
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
     virtual void resetAnimation();

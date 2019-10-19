@@ -22,7 +22,6 @@
 #pragma once
 
 #include "Path.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
 #include "SVGPathByteStream.h"
@@ -33,7 +32,7 @@ namespace WebCore {
 class SVGPathSegList;
 class SVGPoint;
 
-class SVGPathElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
+class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
@@ -108,7 +107,7 @@ public:
 private:
     SVGPathElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement, SVGExternalResourcesRequired>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
     
     void parseAttribute(const QualifiedName&, const AtomString&) final;

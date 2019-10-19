@@ -44,7 +44,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextContentElement);
  
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , SVGExternalResourcesRequired(this)
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -175,7 +174,6 @@ void SVGTextContentElement::parseAttribute(const QualifiedName& name, const Atom
     reportAttributeParsingError(parseError, name, value);
 
     SVGGraphicsElement::parseAttribute(name, value);
-    SVGExternalResourcesRequired::parseAttribute(name, value);
 }
 
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -192,7 +190,6 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
-    SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
 SVGAnimatedLength& SVGTextContentElement::textLengthAnimated()

@@ -77,6 +77,5 @@
     Element getElementById([RequiresExistingAtomString] DOMString elementId);
 };
 
-SVGSVGElement implements SVGExternalResourcesRequired;
 SVGSVGElement implements SVGFitToViewBox;
 SVGSVGElement implements SVGZoomAndPan;

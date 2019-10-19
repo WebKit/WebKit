@@ -23,7 +23,6 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
-#include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
 
@@ -32,7 +31,7 @@ namespace WebCore {
 class CachedSVGDocument;
 class SVGGElement;
 
-class SVGUseElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGURIReference, private CachedSVGDocumentClient {
+class SVGUseElement final : public SVGGraphicsElement, public SVGURIReference, private CachedSVGDocumentClient {
     WTF_MAKE_ISO_ALLOCATED(SVGUseElement);
 public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&);
@@ -62,7 +61,7 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
