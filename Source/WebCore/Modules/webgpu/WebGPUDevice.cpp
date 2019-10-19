@@ -233,17 +233,17 @@ Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderP
 
     auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPURenderPipeline::create(*this, nullptr, m_errorScopes, WTF::nullopt, WTF::nullopt);
+        return WebGPURenderPipeline::create(*this, nullptr, m_errorScopes, { }, { });
 
     auto gpuPipeline = m_device->tryCreateRenderPipeline(*gpuDescriptor, m_errorScopes);
 
     WebGPUPipeline::ShaderData vertexShader = { descriptor.vertexStage.module, descriptor.vertexStage.entryPoint };
 
-    Optional<WebGPUPipeline::ShaderData> fragmentShader;
+    WebGPUPipeline::ShaderData fragmentShader;
     if (descriptor.fragmentStage)
-        fragmentShader = { { descriptor.fragmentStage.value().module, descriptor.fragmentStage.value().entryPoint } };
+        fragmentShader = { descriptor.fragmentStage.value().module, descriptor.fragmentStage.value().entryPoint };
 
-    auto webGPUPipeline = WebGPURenderPipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, vertexShader, fragmentShader);
+    auto webGPUPipeline = WebGPURenderPipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, WTFMove(vertexShader), WTFMove(fragmentShader));
     if (webGPUPipeline->isValid())
         InspectorInstrumentation::didCreateWebGPUPipeline(*this, webGPUPipeline.get());
     return webGPUPipeline;
@@ -255,13 +255,13 @@ Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUCompu
 
     auto gpuDescriptor = descriptor.tryCreateGPUComputePipelineDescriptor(m_errorScopes);
     if (!gpuDescriptor)
-        return WebGPUComputePipeline::create(*this, nullptr, m_errorScopes, WTF::nullopt);
+        return WebGPUComputePipeline::create(*this, nullptr, m_errorScopes, { });
 
     auto gpuPipeline = m_device->tryCreateComputePipeline(*gpuDescriptor, m_errorScopes);
 
     WebGPUPipeline::ShaderData computeShader = { descriptor.computeStage.module, descriptor.computeStage.entryPoint };
 
-    auto webGPUPipeline = WebGPUComputePipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, computeShader);
+    auto webGPUPipeline = WebGPUComputePipeline::create(*this, WTFMove(gpuPipeline), m_errorScopes, WTFMove(computeShader));
     if (webGPUPipeline->isValid())
         InspectorInstrumentation::didCreateWebGPUPipeline(*this, webGPUPipeline.get());
     return webGPUPipeline;

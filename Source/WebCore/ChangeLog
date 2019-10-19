@@ -1,3 +1,52 @@
+2019-10-18  Devin Rousso  <drousso@apple.com>
+
+        [ASAN] Fix WebGPU tests after r250258
+        https://bugs.webkit.org/show_bug.cgi?id=203133
+        <rdar://problem/56379008>
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/graphics/gpu/GPUObjectBase.h:
+        (WebCore::GPUObjectBase::~GPUObjectBase): Added.
+        Add a default virtual destructor since this class class is the one that is `RefCounted` and
+        the `WebGPUPipeline` subclass is virtual.
+
+        * Modules/webgpu/WebGPUPipeline.h:
+        (WebCore::WebGPUPipeline::scriptExecutionContext const): Deleted.
+        * Modules/webgpu/WebGPUPipeline.cpp:
+        (WebCore::WebGPUPipeline::WebGPUPipeline):
+        (WebCore::WebGPUPipeline::contextDestroyed): Added.
+        Make `WebGPUPipeline` a subclass of `ContextDestructionObserver` so that the raw pointer to
+        the associated `ScriptExecutionContext` is properly cleared and isn't UAFd.
+
+        * Modules/webgpu/WebGPUComputePipeline.h:
+        * Modules/webgpu/WebGPUComputePipeline.cpp:
+        (WebCore::WebGPUComputePipeline::create):
+        (WebCore::WebGPUComputePipeline::WebGPUComputePipeline):
+        (WebCore::WebGPUComputePipeline::cloneShaderModules):
+        (WebCore::WebGPUComputePipeline::recompile):
+        * Modules/webgpu/WebGPURenderPipeline.h:
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::create):
+        (WebCore::WebGPURenderPipeline::WebGPURenderPipeline):
+        (WebCore::WebGPURenderPipeline::cloneShaderModules):
+        (WebCore::WebGPURenderPipeline::recompile):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline):
+        (WebCore::WebGPUDevice::createComputePipeline):
+        Rework how Web Inspector preserves related shader modules so that there isn't as much wasted
+        space in the class layout, as we can use the `RefPtr` itself instead of an `Optional`.
+
+        * Modules/webgpu/WebGPUBuffer.idl:
+        Now that `GPUObjectBase` has a virtual destructor, it has a vtable, which means that this
+        object also does and therefore cannot be marked with `ImplementationLacksVTable`.
+
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::shaderForType):
+        (WebCore::InspectorShaderProgram::requestShaderSource):
+        (WebCore::InspectorShaderProgram::updateShader):
+        (WebCore::InspectorShaderProgram::buildObjectForShaderProgram):
+
 2019-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Refactor AbstractEventLoop out of WindowEventLoop

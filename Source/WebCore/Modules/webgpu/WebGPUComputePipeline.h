@@ -36,29 +36,30 @@ class GPUComputePipeline;
 class GPUPipeline;
 class GPUErrorScopes;
 class WebGPUDevice;
+class WebGPUShaderModule;
 
 class WebGPUComputePipeline final : public WebGPUPipeline {
 public:
     virtual ~WebGPUComputePipeline();
 
-    static Ref<WebGPUComputePipeline> create(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> computeShader);
+    static Ref<WebGPUComputePipeline> create(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, WebGPUPipeline::ShaderData&& computeShader);
 
     bool isComputePipeline() const { return true; }
 
     bool isValid() const { return computePipeline(); }
     const GPUComputePipeline* computePipeline() const { return m_computePipeline.get(); }
-    Optional<WebGPUPipeline::ShaderData> computeShader() const { return m_computeShader; }
+    RefPtr<WebGPUShaderModule> computeShader() const { return m_computeShader.module; }
 
     bool cloneShaderModules(const WebGPUDevice&);
     bool recompile(const WebGPUDevice&);
 
 private:
-    WebGPUComputePipeline(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> computeShader);
+    WebGPUComputePipeline(WebGPUDevice&, RefPtr<GPUComputePipeline>&&, GPUErrorScopes&, WebGPUPipeline::ShaderData&& computeShader);
 
     RefPtr<GPUComputePipeline> m_computePipeline;
 
     // Preserved for Web Inspector recompilation.
-    Optional<WebGPUPipeline::ShaderData> m_computeShader;
+    WebGPUPipeline::ShaderData m_computeShader;
 };
 
 } // namespace WebCore

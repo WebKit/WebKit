@@ -57,9 +57,9 @@ Lock& WebGPUPipeline::instancesMutex()
 
 WebGPUPipeline::WebGPUPipeline(WebGPUDevice& device, GPUErrorScopes& errorScopes)
     : GPUObjectBase(makeRef(errorScopes))
-    , m_scriptExecutionContext(device.scriptExecutionContext())
+    , ContextDestructionObserver(device.scriptExecutionContext())
 {
-    ASSERT(m_scriptExecutionContext);
+    ASSERT(scriptExecutionContext());
 
     {
         LockHolder lock(instancesMutex());
@@ -76,6 +76,13 @@ WebGPUPipeline::~WebGPUPipeline()
         ASSERT(instances(lock).contains(this));
         instances(lock).remove(this);
     }
+}
+
+void WebGPUPipeline::contextDestroyed()
+{
+    InspectorInstrumentation::willDestroyWebGPUPipeline(*this);
+
+    ContextDestructionObserver::contextDestroyed();
 }
 
 } // namespace WebCore

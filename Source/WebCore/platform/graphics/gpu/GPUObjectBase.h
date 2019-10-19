@@ -33,6 +33,9 @@
 namespace WebCore {
 
 class GPUObjectBase : public RefCounted<GPUObjectBase> {
+public:
+    virtual ~GPUObjectBase() = default;
+
 protected:
     GPUObjectBase(Ref<GPUErrorScopes>&& reporter)
         : m_errorScopes(WTFMove(reporter)) { }

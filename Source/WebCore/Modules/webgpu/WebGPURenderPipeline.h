@@ -36,31 +36,32 @@ class GPUPipeline;
 class GPURenderPipeline;
 class GPUErrorScopes;
 class WebGPUDevice;
+class WebGPUShaderModule;
 
 class WebGPURenderPipeline final : public WebGPUPipeline {
 public:
     virtual ~WebGPURenderPipeline();
 
-    static Ref<WebGPURenderPipeline> create(WebGPUDevice&, RefPtr<GPURenderPipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> vertexShader, Optional<WebGPUPipeline::ShaderData> fragmentShader);
+    static Ref<WebGPURenderPipeline> create(WebGPUDevice&, RefPtr<GPURenderPipeline>&&, GPUErrorScopes&, WebGPUPipeline::ShaderData&& vertexShader, WebGPUPipeline::ShaderData&& fragmentShader);
 
     bool isRenderPipeline() const { return true; }
 
     bool isValid() const { return renderPipeline(); }
     const GPURenderPipeline* renderPipeline() const { return m_renderPipeline.get(); }
-    Optional<WebGPUPipeline::ShaderData> vertexShader() const { return m_vertexShader; }
-    Optional<WebGPUPipeline::ShaderData> fragmentShader() const { return m_fragmentShader; }
+    RefPtr<WebGPUShaderModule> vertexShader() const { return m_vertexShader.module; }
+    RefPtr<WebGPUShaderModule> fragmentShader() const { return m_fragmentShader.module; }
 
     bool cloneShaderModules(const WebGPUDevice&);
     bool recompile(const WebGPUDevice&);
 
 private:
-    WebGPURenderPipeline(WebGPUDevice&, RefPtr<GPURenderPipeline>&&, GPUErrorScopes&, Optional<WebGPUPipeline::ShaderData> vertexShader, Optional<WebGPUPipeline::ShaderData> fragmentShader);
+    WebGPURenderPipeline(WebGPUDevice&, RefPtr<GPURenderPipeline>&&, GPUErrorScopes&, WebGPUPipeline::ShaderData&& vertexShader, WebGPUPipeline::ShaderData&& fragmentShader);
 
     RefPtr<GPURenderPipeline> m_renderPipeline;
 
     // Preserved for Web Inspector recompilation.
-    Optional<WebGPUPipeline::ShaderData> m_vertexShader;
-    Optional<WebGPUPipeline::ShaderData> m_fragmentShader;
+    WebGPUPipeline::ShaderData m_vertexShader;
+    WebGPUPipeline::ShaderData m_fragmentShader;
 };
 
 } // namespace WebCore

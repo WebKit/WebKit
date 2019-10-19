@@ -29,7 +29,6 @@ typedef unsigned long long u64;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
     InterfaceName=GPUBuffer
 ] interface WebGPUBuffer {
     Promise<ArrayBuffer> mapReadAsync();

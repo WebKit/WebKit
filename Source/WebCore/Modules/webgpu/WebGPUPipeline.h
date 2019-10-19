@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "ContextDestructionObserver.h"
 #include "GPUObjectBase.h"
 #include "WebGPUShaderModule.h"
 #include <wtf/Forward.h>
@@ -38,7 +39,7 @@ class ScriptExecutionContext;
 class GPUErrorScopes;
 class WebGPUDevice;
 
-class WebGPUPipeline : public GPUObjectBase {
+class WebGPUPipeline : public GPUObjectBase, public ContextDestructionObserver {
 public:
     virtual ~WebGPUPipeline();
 
@@ -48,7 +49,6 @@ public:
     virtual bool isRenderPipeline() const { return false; }
     virtual bool isComputePipeline() const { return false; }
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
     virtual bool isValid() const = 0;
 
     struct ShaderData {
@@ -59,10 +59,10 @@ public:
     virtual bool cloneShaderModules(const WebGPUDevice&) = 0;
     virtual bool recompile(const WebGPUDevice&) = 0;
 
+    void contextDestroyed() final;
+
 protected:
     WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore
