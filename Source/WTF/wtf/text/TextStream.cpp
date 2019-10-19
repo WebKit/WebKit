@@ -46,6 +46,12 @@ TextStream& TextStream::operator<<(bool b)
     return *this << (b ? "1" : "0");
 }
 
+TextStream& TextStream::operator<<(char c)
+{
+    m_text.append(c);
+    return *this;
+}
+
 TextStream& TextStream::operator<<(int i)
 {
     m_text.appendNumber(i);

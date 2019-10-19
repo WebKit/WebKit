@@ -1,3 +1,19 @@
+2019-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support to TextStream for dumping HashMap<> and HashSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=202969
+
+        Reviewed by Dean Jackson.
+        
+        Make it possible to output HashMap<> and HashSet<> to TextStream,
+        so long as key and value types are streamable. Also implement operator<<(char)
+        so that chars show as ASCII, rather than numbers.
+
+        * wtf/text/TextStream.cpp:
+        (WTF::TextStream::operator<<):
+        * wtf/text/TextStream.h:
+        (WTF::operator<<):
+
 2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make ConcurrentJSLock Lock even if ENABLE_CONCURRENT_JS=OFF
