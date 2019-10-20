@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +24,32 @@
  */
 
 #include "config.h"
-#include "MockAuthenticatorManager.h"
+#include "APIWebAuthenticationPanel.h"
 
 #if ENABLE(WEB_AUTHN)
 
-namespace WebKit {
+#include "APIWebAuthenticationPanelClient.h"
 
-MockAuthenticatorManager::MockAuthenticatorManager(MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
+namespace API {
+
+Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const String& rpId)
+{
+    return adoptRef(*new WebAuthenticationPanel(rpId));
+}
+
+WebAuthenticationPanel::WebAuthenticationPanel(const String& rpId)
+    : m_rpId(rpId)
+    , m_client(WTF::makeUniqueRef<WebAuthenticationPanelClient>())
 {
 }
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
+WebAuthenticationPanel::~WebAuthenticationPanel() = default;
+
+void WebAuthenticationPanel::setClient(UniqueRef<WebAuthenticationPanelClient>&& client)
 {
-    return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
+    m_client = WTFMove(client);
 }
 
-void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
-{
-    if (m_testConfiguration.silentFailure)
-        return;
-
-    invokePendingCompletionHandler(WTFMove(respond));
-    clearStateAsync();
-    requestTimeOutTimer().stop();
-}
-
-} // namespace WebKit
+} // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

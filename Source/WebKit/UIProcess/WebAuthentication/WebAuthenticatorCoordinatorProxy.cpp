@@ -30,6 +30,7 @@
 
 #include "AuthenticatorManager.h"
 #include "LocalService.h"
+#include "WebAuthenticationPanelFlags.h"
 #include "WebAuthenticatorCoordinatorMessages.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebPageProxy.h"
@@ -55,12 +56,12 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options)
 {
-    handleRequest(messageId, { hash, options, m_webPageProxy.preferences().copy() });
+    handleRequest(messageId, { hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr });
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options)
 {
-    handleRequest(messageId, { hash, options, m_webPageProxy.preferences().copy() });
+    handleRequest(messageId, { hash, options, makeWeakPtr(m_webPageProxy), WebAuthenticationPanelResult::Unavailable, nullptr });
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(uint64_t messageId, WebAuthenticationRequestData&& data)

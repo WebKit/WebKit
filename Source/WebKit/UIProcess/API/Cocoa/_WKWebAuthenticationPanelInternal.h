@@ -27,8 +27,19 @@
 
 #import "_WKWebAuthenticationPanel.h"
 
-@interface _WKWebAuthenticationPanel ()
+#import "APIWebAuthenticationPanel.h"
+#import "WKObject.h"
 
-- (instancetype)_initWithRelayingPartyID:(NSString *)relayingPartyID;
+namespace WebKit {
 
+template<> struct WrapperTraits<API::WebAuthenticationPanel> {
+    using WrapperClass = _WKWebAuthenticationPanel;
+};
+
+}
+
+@interface _WKWebAuthenticationPanel () <WKObject> {
+@package
+    API::ObjectStorage<API::WebAuthenticationPanel> _panel;
+}
 @end

@@ -28,6 +28,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "APIUIClient.h"
+#include "APIWebAuthenticationPanel.h"
+#include "APIWebAuthenticationPanelClient.h"
+#include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
@@ -36,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-namespace AuthenticatorManagerInternal {
+namespace {
 
 const size_t maxTransportNumber = 3;
 
@@ -123,7 +127,21 @@ static void processGoogleLegacyAppIdSupportExtension(const Optional<Authenticati
     transports.remove(AuthenticatorTransport::Internal);
 }
 
-} // namespace AuthenticatorManagerInternal
+static bool isFeatureEnabled(WebPageProxy* page, const String& featureKey)
+{
+    if (!page)
+        return false;
+    return page->preferences().store().getBoolValueForKey(featureKey);
+}
+
+static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+{
+    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+        return WTF::get<PublicKeyCredentialCreationOptions>(options).rp.id;
+    return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
+}
+
+} // namespace
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
@@ -132,10 +150,8 @@ AuthenticatorManager::AuthenticatorManager()
 
 void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Callback&& callback)
 {
-    using namespace AuthenticatorManagerInternal;
-
     if (m_pendingCompletionHandler) {
-        m_pendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
+        invokePendingCompletionHandler(ExceptionData { NotAllowedError, "This request has been cancelled by a new request."_s });
         m_requestTimeOutTimer.stop();
     }
     clearState();
@@ -144,17 +160,8 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     m_pendingRequestData = WTFMove(data);
     m_pendingCompletionHandler = WTFMove(callback);
 
-    // 2. Get available transports and start discovering authenticators on them.
-    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        initTimeOutTimer(options.timeout);
-
-        auto transports = collectTransports(options.authenticatorSelection);
-        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
-        startDiscovery(WTFMove(transports));
-    }, [&](const  PublicKeyCredentialRequestOptions& options) {
-        initTimeOutTimer(options.timeout);
-        startDiscovery(collectTransports(options.allowCredentials));
-    });
+    // 2. Ask clients to show appropriate UI if any and then start the request.
+    runPanel();
 }
 
 void AuthenticatorManager::clearStateAsync()
@@ -195,7 +202,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     if (!shouldComplete)
         shouldComplete = WTF::get<ExceptionData>(respond).code == InvalidStateError;
     if (shouldComplete) {
-        m_pendingCompletionHandler(WTFMove(respond));
+        invokePendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
         m_requestTimeOutTimer.stop();
         return;
@@ -225,11 +232,12 @@ void AuthenticatorManager::respondReceivedInternal(Respond&&)
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
-    using namespace AuthenticatorManagerInternal;
-
-    ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber && m_pendingRequestData.preferences);
+    ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
     for (auto& transport : transports) {
-        if (transport == AuthenticatorTransport::Internal && !m_pendingRequestData.preferences->store().getBoolValueForKey(WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
+        if (transport == AuthenticatorTransport::Internal && !isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
+            continue;
+        // Only allow USB authenticators when clients don't have dedicated UI.
+        if (transport != AuthenticatorTransport::Usb && (m_pendingRequestData.panelResult == WebAuthenticationPanelResult::Unavailable))
             continue;
         auto service = createService(transport, *this);
         service->startDiscovery();
@@ -239,8 +247,6 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 
 void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInMs)
 {
-    using namespace AuthenticatorManagerInternal;
-
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
@@ -248,8 +254,55 @@ void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInM
 void AuthenticatorManager::timeOutTimerFired()
 {
     ASSERT(m_requestTimeOutTimer.isActive());
-    m_pendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
+    invokePendingCompletionHandler((ExceptionData { NotAllowedError, "Operation timed out."_s }));
     clearState();
+}
+
+void AuthenticatorManager::runPanel()
+{
+    auto* page = m_pendingRequestData.page.get();
+    if (!page)
+        return;
+
+    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(getRpId(m_pendingRequestData.options));
+    auto& panel = *m_pendingRequestData.panel;
+    page->uiClient().runWebAuthenticationPanel(*page, panel, [weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
+        // The panel address is used to determine if the current pending request is still the same.
+        if (!weakThis || !weakPanel
+            || (result == WebAuthenticationPanelResult::DidNotPresent)
+            || (weakPanel.get() != m_pendingRequestData.panel.get()))
+            return;
+        m_pendingRequestData.panelResult = result;
+        startRequest();
+    });
+}
+
+void AuthenticatorManager::startRequest()
+{
+    ASSERT(RunLoop::isMain());
+    // Get available transports and start discovering authenticators on them.
+    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
+        initTimeOutTimer(options.timeout);
+
+        auto transports = collectTransports(options.authenticatorSelection);
+        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
+        startDiscovery(collectTransports(options.authenticatorSelection));
+    }, [&](const  PublicKeyCredentialRequestOptions& options) {
+        initTimeOutTimer(options.timeout);
+        startDiscovery(collectTransports(options.allowCredentials));
+    });
+}
+
+void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
+{
+    if (auto *panel = m_pendingRequestData.panel.get()) {
+        WTF::switchOn(respond, [&](const WebCore::PublicKeyCredentialData&) {
+            panel->client().dismissPanel(WebAuthenticationResult::Succeeded);
+        }, [&](const  WebCore::ExceptionData&) {
+            panel->client().dismissPanel(WebAuthenticationResult::Failed);
+        });
+    }
+    m_pendingCompletionHandler(WTFMove(respond));
 }
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockAuthenticatorManager.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
+#import "WKFoundation.h"
+
+#import "APIWebAuthenticationPanelClient.h"
+#import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
+
+@class _WKWebAuthenticationPanel;
+@protocol _WKWebAuthenticationPanelDelegate;
+
 namespace WebKit {
 
-MockAuthenticatorManager::MockAuthenticatorManager(MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
-{
-}
+class WebAuthenticationPanelClient : public API::WebAuthenticationPanelClient, public CanMakeWeakPtr<WebAuthenticationPanelClient> {
+public:
+    WebAuthenticationPanelClient(_WKWebAuthenticationPanel *, id <_WKWebAuthenticationPanelDelegate>);
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
-{
-    return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
-}
+    RetainPtr<id <_WKWebAuthenticationPanelDelegate> > delegate();
 
-void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
-{
-    if (m_testConfiguration.silentFailure)
-        return;
+private:
+    // API::WebAuthenticationPanelClient
+    void dismissPanel(WebAuthenticationResult) const final;
 
-    invokePendingCompletionHandler(WTFMove(respond));
-    clearStateAsync();
-    requestTimeOutTimer().stop();
-}
+    _WKWebAuthenticationPanel *m_panel;
+    WeakObjCPtr<id <_WKWebAuthenticationPanelDelegate> > m_delegate;
+
+    struct {
+        bool panelDismissWebAuthenticationPanelWithResult : 1;
+    } m_delegateMethods;
+};
 
 } // namespace WebKit
 

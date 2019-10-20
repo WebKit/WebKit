@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockAuthenticatorManager.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
-namespace WebKit {
+#include "APIObject.h"
+#include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
-MockAuthenticatorManager::MockAuthenticatorManager(MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
-{
-}
+namespace API {
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
-{
-    return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
-}
+class WebAuthenticationPanelClient;
 
-void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
-{
-    if (m_testConfiguration.silentFailure)
-        return;
+class WebAuthenticationPanel final : public ObjectImpl<Object::Type::WebAuthenticationPanel>, public CanMakeWeakPtr<WebAuthenticationPanel> {
+public:
+    static Ref<WebAuthenticationPanel> create(const String& rpId);
+    ~WebAuthenticationPanel();
 
-    invokePendingCompletionHandler(WTFMove(respond));
-    clearStateAsync();
-    requestTimeOutTimer().stop();
-}
+    WTF::String rpId() const { return m_rpId; }
 
-} // namespace WebKit
+    const WebAuthenticationPanelClient& client() const { return m_client.get(); }
+    void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
+
+private:
+    WebAuthenticationPanel(const String& rpId);
+
+    WTF::String m_rpId;
+    UniqueRef<WebAuthenticationPanelClient> m_client;
+};
+
+} // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

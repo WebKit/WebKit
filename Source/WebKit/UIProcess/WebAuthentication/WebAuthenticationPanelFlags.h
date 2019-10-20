@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockAuthenticatorManager.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
 namespace WebKit {
 
-MockAuthenticatorManager::MockAuthenticatorManager(MockWebAuthenticationConfiguration&& configuration)
-    : m_testConfiguration(WTFMove(configuration))
-{
-}
+enum class WebAuthenticationPanelResult : uint8_t {
+    Unavailable,
+    Presented,
+    DidNotPresent
+};
 
-UniqueRef<AuthenticatorTransportService> MockAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
-{
-    return AuthenticatorTransportService::createMock(transport, observer, m_testConfiguration);
-}
-
-void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
-{
-    if (m_testConfiguration.silentFailure)
-        return;
-
-    invokePendingCompletionHandler(WTFMove(respond));
-    clearStateAsync();
-    requestTimeOutTimer().stop();
-}
+enum class WebAuthenticationResult : bool {
+    Succeeded,
+    Failed
+};
 
 } // namespace WebKit
 
