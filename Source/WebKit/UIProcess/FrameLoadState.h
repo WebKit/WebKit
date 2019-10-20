@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/URL.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 
@@ -38,6 +39,16 @@ public:
         Committed,
         Finished
     };
+
+    class Observer : public CanMakeWeakPtr<Observer> {
+    public:
+        virtual ~Observer() = default;
+
+        virtual void didFinishLoad() = 0;
+    };
+
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
 
     void didStartProvisionalLoad(const URL&);
     void didExplicitOpen(const URL&);
@@ -64,6 +75,7 @@ private:
     URL m_provisionalURL;
     URL m_unreachableURL;
     URL m_lastUnreachableURL;
+    WeakHashSet<Observer> m_observers;
 };
 
 } // namespace WebKit
