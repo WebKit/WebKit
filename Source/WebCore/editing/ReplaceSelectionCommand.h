@@ -102,6 +102,7 @@ private:
     void removeUnrenderedTextNodesAtEnds(InsertedNodes&);
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
+    void inverseTransformColor(InsertedNodes&);
     void makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes&);
     void moveNodeOutOfAncestor(Node&, Node& ancestor, InsertedNodes&);
     void handleStyleSpans(InsertedNodes&);

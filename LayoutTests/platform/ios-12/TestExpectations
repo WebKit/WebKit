@@ -1,5 +1,6 @@
 css-dark-mode [ Skip ]
 css-dark-mode/older-systems [ Pass ]
+editing/pasteboard/paste-dark-mode-color-filtered.html [ Skip ]
 
 # <rdar://problem/48781098> HEIF and HEICS images are supported only on iOS 13
 fast/images/animated-heics-draw.html [ Skip ]

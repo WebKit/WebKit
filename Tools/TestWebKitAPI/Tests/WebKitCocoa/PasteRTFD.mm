@@ -39,6 +39,12 @@
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+#if USE(APPKIT)
+using PlatformColor = NSColor;
+#else
+using PlatformColor = UIColor;
+#endif
+
 @interface WKWebView ()
 - (void)paste:(id)sender;
 @end
@@ -76,9 +82,12 @@ void writeRTFDToPasteboard(NSData *data)
 }
 #endif
 
-static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled()
+static RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled = false)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration _setColorFilterEnabled:colorFilterEnabled];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:webViewConfiguration.get()]);
     auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetDataTransferItemsEnabled(preferences, true);
     WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
@@ -176,7 +185,68 @@ TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"new URL(imageElement.src).protocol"]);
 }
 
-#endif // PLATFORM(MAC)
+#if ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT)
 
+TEST(PasteRTFD, TransformColorsOfDarkContent)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled(true);
+    [webView forceDarkMode];
 
+    [webView synchronouslyLoadTestPageNamed:@"rich-color-filtered"];
 
+    PlatformColor *textColor = [PlatformColor lightGrayColor];
+    PlatformColor *backgroundColor = [PlatformColor darkGrayColor];
+
+    auto hello = adoptNS([[NSAttributedString alloc] initWithString:@"Hello" attributes:@{ NSBackgroundColorAttributeName : backgroundColor, NSForegroundColorAttributeName : textColor }]);
+    auto world = adoptNS([[NSAttributedString alloc] initWithString:@" World" attributes:@{ NSForegroundColorAttributeName : textColor }]);
+    auto string = adoptNS([[NSMutableAttributedString alloc] init]);
+    [string appendAttributedString:hello.get()];
+    [string appendAttributedString:world.get()];
+
+    writeRTFToPasteboard([string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }]);
+
+    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
+    [webView paste:nil];
+
+#if USE(APPKIT)
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p').style.color"], @"rgb(126, 126, 126)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p > span').style.backgroundColor"], @"rgb(235, 235, 235)");
+#else
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p').style.color"], @"rgb(106, 106, 106)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p > span').style.backgroundColor"], @"rgb(213, 213, 213)");
+#endif
+}
+
+TEST(PasteRTFD, DoesNotTransformColorsOfLightContent)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled(true);
+    [webView forceDarkMode];
+
+    [webView synchronouslyLoadTestPageNamed:@"rich-color-filtered"];
+
+    PlatformColor *textColor = [PlatformColor darkGrayColor];
+    PlatformColor *backgroundColor = [PlatformColor lightGrayColor];
+
+    auto hello = adoptNS([[NSAttributedString alloc] initWithString:@"Hello" attributes:@{ NSBackgroundColorAttributeName : backgroundColor, NSForegroundColorAttributeName : textColor }]);
+    auto world = adoptNS([[NSAttributedString alloc] initWithString:@" World" attributes:@{ NSForegroundColorAttributeName : textColor }]);
+    auto string = adoptNS([[NSMutableAttributedString alloc] init]);
+    [string appendAttributedString:hello.get()];
+    [string appendAttributedString:world.get()];
+
+    writeRTFToPasteboard([string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }]);
+
+    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
+    [webView paste:nil];
+
+#if USE(APPKIT)
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p').style.color"], @"rgb(67, 67, 67)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p > span').style.backgroundColor"], @"rgb(154, 154, 154)");
+#else
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p').style.color"], @"rgb(85, 85, 85)");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelector('p > span').style.backgroundColor"], @"rgb(170, 170, 170)");
+#endif
+}
+
+#endif // ENABLE(DARK_MODE_CSS) && HAVE(OS_DARK_MODE_SUPPORT)
+
+#endif // PLATFORM(COCOA)

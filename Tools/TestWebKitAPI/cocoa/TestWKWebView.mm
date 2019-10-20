@@ -428,6 +428,17 @@ static UICalloutBar *suppressUICalloutBar()
     TestWebKitAPI::Util::run(&done);
 }
 
+- (void)forceDarkMode
+{
+#if HAVE(OS_DARK_MODE_SUPPORT)
+#if USE(APPKIT)
+    [self setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameDarkAqua]];
+#else
+    [self setOverrideUserInterfaceStyle:UIUserInterfaceStyleDark];
+#endif
+#endif
+}
+
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName
 {
     NSString *script = [NSString stringWithFormat:@"getComputedStyle(getSelection().getRangeAt(0).startContainer.parentElement)['%@']", propertyName];
