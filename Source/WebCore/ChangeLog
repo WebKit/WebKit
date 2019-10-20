@@ -1,5 +1,39 @@
 2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r250716. rdar://problem/56280993
+
+    AppleTV named as XSS-payloads trigger when AirPlay is used
+    https://bugs.webkit.org/show_bug.cgi?id=202534
+    <rdar://55931262>
+    
+    Reviewed by Eric Carlson.
+    
+    Ensure we escape an AirPlay's device name before inserting its name into the DOM.
+    
+    * Modules/modern-media-controls/media/placard-support.js:
+    (PlacardSupport.prototype._updateAirPlayPlacard):
+    (PlacardSupport):
+    (escapeHTML):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250716 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-03  Antoine Quint  <graouts@apple.com>
+
+            AppleTV named as XSS-payloads trigger when AirPlay is used
+            https://bugs.webkit.org/show_bug.cgi?id=202534
+            <rdar://55931262>
+
+            Reviewed by Eric Carlson.
+
+            Ensure we escape an AirPlay's device name before inserting its name into the DOM.
+
+            * Modules/modern-media-controls/media/placard-support.js:
+            (PlacardSupport.prototype._updateAirPlayPlacard):
+            (PlacardSupport):
+            (escapeHTML):
+
+2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r250694. rdar://problem/56061131
 
     [iOS] WebContent process can be interrupted during suspension; loses "Now Playing" status
