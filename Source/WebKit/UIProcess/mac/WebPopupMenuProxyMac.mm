@@ -28,6 +28,7 @@
 
 #if USE(APPKIT)
 
+#import "CoreTextHelpers.h"
 #import "NativeWebMouseEvent.h"
 #import "PageClientImplMac.h"
 #import "PlatformPopupMenuData.h"
@@ -101,7 +102,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSFont *font;
     if (data.fontInfo.fontAttributeDictionary) {
-        NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(__bridge NSDictionary *)data.fontInfo.fontAttributeDictionary.get()];
+        PlatformFontDescriptor *fontDescriptor = fontDescriptorWithFontAttributes(static_cast<NSDictionary *>(data.fontInfo.fontAttributeDictionary.get()));
         font = [NSFont fontWithDescriptor:fontDescriptor size:((pageScaleFactor != 1) ? [fontDescriptor pointSize] * pageScaleFactor : 0)];
     } else
         font = [NSFont menuFontOfSize:0];

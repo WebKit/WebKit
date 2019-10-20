@@ -29,9 +29,11 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
+#import "CoreTextHelpers.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
 
 #if USE(APPKIT)
@@ -328,8 +330,14 @@ static Optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
     if (!decode(decoder, fontAttributes))
         return WTF::nullopt;
 
-    PlatformFontDescriptor *fontDescriptor = [PlatformFontDescriptor fontDescriptorWithFontAttributes:fontAttributes.get()];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    PlatformFontDescriptor *fontDescriptor = WebKit::fontDescriptorWithFontAttributes(fontAttributes.get());
     return { [PlatformFont fontWithDescriptor:fontDescriptor size:0] };
+
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    return { };
 }
 
 #pragma mark - NSNumber

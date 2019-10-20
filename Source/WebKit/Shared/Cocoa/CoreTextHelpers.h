@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebAutocorrectionData.h"
+#pragma once
 
-#if PLATFORM(IOS_FAMILY)
-
-#import "ArgumentCodersCocoa.h"
-#import "Decoder.h"
-#import "Encoder.h"
-#import "WebCoreArgumentCoders.h"
+#if USE(APPKIT)
+#import <AppKit/AppKit.h>
+#else
 #import <UIKit/UIKit.h>
-#import <WebCore/FloatRect.h>
+#endif
+
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
-{
-    encoder << textRects;
-    IPC::encode(encoder, font.get());
+#if USE(APPKIT)
+using PlatformFontDescriptor = NSFontDescriptor;
+#else
+using PlatformFontDescriptor = UIFontDescriptor;
+#endif
+
+PlatformFontDescriptor *fontDescriptorWithFontAttributes(NSDictionary *attributes);
+
 }
-
-Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
-{
-    Optional<Vector<FloatRect>> textRects;
-    decoder >> textRects;
-    if (!textRects)
-        return WTF::nullopt;
-
-    RetainPtr<UIFont> font;
-    if (!IPC::decode(decoder, font, @[ UIFont.class ]))
-        return WTF::nullopt;
-
-    return {{ *textRects, font }};
-}
-
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY)
