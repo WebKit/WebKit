@@ -1,3 +1,37 @@
+2019-10-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move the collapsed bit from InlineItems to runs
+        https://bugs.webkit.org/show_bug.cgi?id=203183
+
+        Reviewed by Antti Koivisto.
+        <rdar://problem/56437181>
+
+        Let's not store the collapsed bit on the InlineTextItem. All we need to know is whether the InlineTextItem content is collapsible or not.
+        Also when only the white-space property changes (going from preserve whitespace to not and vice versa) we don't actually need to rebuild the
+        InlinItem list since they don't carry any layout dependent information.
+        This patch also fixes leading/trailing content preservation. 
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::canBeExtended const):
+        (WebCore::Layout::shouldPreserveTrailingContent):
+        (WebCore::Layout::shouldPreserveLeadingContent):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::isCollapsed const):
+        (WebCore::Layout::Line::Run::setIsCollapsed):
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        (WebCore::Layout::InlineTextItem::split const):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::isCollapsible const):
+        (WebCore::Layout::InlineTextItem::isCollapsed const): Deleted.
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::isTrimmableContent): Deleted.
+        * layout/inlineformatting/text/TextUtil.h:
+
 2019-10-19  Chris Dumez  <cdumez@apple.com>
 
         FileReader should not prevent entering the back/forward cache

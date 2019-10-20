@@ -37,14 +37,14 @@ class InlineTextItem : public InlineItem {
 public:
     static void createAndAppendTextItems(InlineItems&, const Box&);
 
-    InlineTextItem(const Box&, unsigned start, unsigned length, bool isWhitespace, bool isCollapsed);
+    InlineTextItem(const Box&, unsigned start, unsigned length, bool isWhitespace);
 
     unsigned start() const { return m_start; }
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
 
     bool isWhitespace() const { return m_isWhitespace; }
-    bool isCollapsed() const { return m_isCollapsed; }
+    bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
 
     std::unique_ptr<InlineTextItem> split(unsigned splitPosition, unsigned length) const;
 
@@ -52,7 +52,6 @@ private:
     unsigned m_start { 0 };
     unsigned m_length { 0 };
     bool m_isWhitespace { false };
-    bool m_isCollapsed { false };
 };
 
 }

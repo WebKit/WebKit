@@ -89,14 +89,6 @@ LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, unsi
     return width;
 }
 
-bool TextUtil::isTrimmableContent(const InlineItem& inlineItem)
-{
-    if (!is<InlineTextItem>(inlineItem))
-        return false;
-    auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-    return inlineTextItem.isWhitespace() && inlineTextItem.style().collapseWhiteSpace();
-}
-
 TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition, unsigned length, LayoutUnit textWidth, LayoutUnit availableWidth, LayoutUnit contentLogicalLeft)
 {
     // FIXME This should take hypens into account.

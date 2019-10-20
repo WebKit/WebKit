@@ -36,7 +36,6 @@ class TextUtil {
 public:
     static LayoutUnit width(const Box&, unsigned from, unsigned to, LayoutUnit contentLogicalLeft);
     static Optional<unsigned> hyphenPositionBefore(const InlineItem&, unsigned from, unsigned length);
-    static bool isTrimmableContent(const InlineItem&);
     struct SplitData {
         unsigned start { 0 };
         unsigned length { 0 };

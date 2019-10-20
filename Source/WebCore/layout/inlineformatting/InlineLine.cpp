@@ -54,7 +54,10 @@ bool Line::Run::canBeExtended() const
 {
     if (!isText())
         return false;
-    return !downcast<InlineTextItem>(m_inlineItem).isCollapsed() && !isVisuallyEmpty();
+    // Non-collapsed text runs can be merged into one continuous run.
+    if (isVisuallyEmpty())
+        return false;
+    return !isCollapsed();
 }
 
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
@@ -77,6 +80,22 @@ static bool isInlineContainerConsideredEmpty(const FormattingContext& formatting
     // Note that this does not check whether the inline container has content. It simply checks if the container itself is considered empty.
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     return !(boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value()));
+}
+
+static bool shouldPreserveTrailingContent(const InlineTextItem& inlineTextItem)
+{
+    if (!inlineTextItem.isWhitespace())
+        return true;
+    auto whitespace = inlineTextItem.style().whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap;
+}
+
+static bool shouldPreserveLeadingContent(const InlineTextItem& inlineTextItem)
+{
+    if (!inlineTextItem.isWhitespace())
+        return true;
+    auto whitespace = inlineTextItem.style().whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
 bool Line::isVisuallyEmpty() const
@@ -324,7 +343,7 @@ void Line::appendInlineContainerEnd(const InlineItem& inlineItem, LayoutUnit log
 
 void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logicalWidth)
 {
-    auto isTrimmable = TextUtil::isTrimmableContent(inlineItem);
+    auto isTrimmable = !shouldPreserveTrailingContent(inlineItem);
     if (!isTrimmable)
         m_trimmableContent.clear();
 
@@ -334,18 +353,22 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
             ASSERT(!logicalWidth);
             return true;
         }
-        if (!isTrimmable)
-            return false;
         // Leading whitespace.
         if (m_runList.isEmpty())
-            return true;
-        // Check if the last item is trimmable as well.
-        for (int index = m_runList.size() - 1; index >= 0; --index) {
-            auto& run = m_runList[index];
+            return !shouldPreserveLeadingContent(inlineItem);
+
+        if (!inlineItem.isCollapsible())
+            return false;
+        // Check if the last item is collapsed as well.
+        for (auto i = m_runList.size(); i--;) {
+            auto& run = m_runList[i];
             if (run->isBox())
                 return false;
+            // When the previous text run is collapsed, this collapsible run collapses completely.
             if (run->isText())
-                return run->isWhitespace() && run->layoutBox().style().collapseWhiteSpace();
+                return run->isCollapsed();
+            // Collapsing works across inline containers: "<span>  </span> " <- the trailing whitespace collapses completely.
+            // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around. 
             ASSERT(run->isContainerStart() || run->isContainerEnd());
         }
         return true;
@@ -359,11 +382,15 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
+    auto collapseRun = inlineItem.isCollapsible();
     auto contentStart = inlineItem.start();
-    auto contentLength = inlineItem.isCollapsed() ? 1 : inlineItem.length();
+    auto contentLength =  collapseRun ? 1 : inlineItem.length();
     auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
     auto lineItem = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
+
     auto isVisuallyEmpty = willCollapseCompletely();
+    if (collapseRun)
+        lineItem->setIsCollapsed();
     if (isVisuallyEmpty)
         lineItem->setVisuallyIsEmpty();
     else if (isTrimmable)
