@@ -1815,9 +1815,11 @@ private:
                     availabilityCalculator.m_availability, identifier, phiDef->value());
 
                 for (PromotedHeapLocation location : hintsForPhi[variable->index()]) {
-                    m_insertionSet.insert(0,
-                        location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
-                    m_localMapping.set(location, phiDef->value());
+                    if (m_heap.onlyLocalAllocation(location.base())) {
+                        m_insertionSet.insert(0,
+                            location.createHint(m_graph, block->at(0)->origin.withInvalidExit(), phiDef->value()));
+                        m_localMapping.set(location, phiDef->value());
+                    }
                 }
             }
 
