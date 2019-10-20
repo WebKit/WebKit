@@ -1,5 +1,23 @@
 2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r250751. rdar://problem/56280731
+
+    Unreviewed, build fix after r250729
+    
+    * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+    * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250751 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+            Unreviewed, build fix after r250729
+
+            * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+            * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+
+2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r250729. rdar://problem/56280731
 
     [WebAuthn] Implement _WKWebAuthenticationPanel SPI
