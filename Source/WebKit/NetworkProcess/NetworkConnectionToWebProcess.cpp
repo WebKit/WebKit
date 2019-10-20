@@ -711,8 +711,13 @@ void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, c
             resourceLoadStatistics->hasStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
             return;
         } else {
-            storageSession()->hasCookies(subFrameDomain, WTFMove(completionHandler));
-            return;
+            auto* session = networkProcess().storageSession(sessionID);
+            if (!session) {
+                LOG_ERROR("Non-default storage session was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
+            } else {
+                session->hasCookies(subFrameDomain, WTFMove(completionHandler));
+                return;
+            }
         }
     }
 
