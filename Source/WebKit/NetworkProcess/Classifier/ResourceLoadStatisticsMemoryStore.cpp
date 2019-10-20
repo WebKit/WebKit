@@ -204,13 +204,9 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
+    // Return false if this domain cannot ask for storage access.
+    if (shouldBlockAndPurgeCookies(subFrameStatistic) || !shouldBlockAndKeepCookies(subFrameStatistic)) {
         completionHandler(false);
-        return;
-    }
-
-    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
-        completionHandler(true);
         return;
     }
 
