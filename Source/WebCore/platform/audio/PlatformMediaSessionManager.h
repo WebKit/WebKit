@@ -149,6 +149,11 @@ protected:
 
     AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
 
+    bool isApplicationInBackground() const { return m_isApplicationInBackground; }
+#if USE(AUDIO_SESSION)
+    void maybeDeactivateAudioSession();
+#endif
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const void* logIdentifier() const final { return nullptr; }
