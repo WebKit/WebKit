@@ -68,6 +68,11 @@ enum class WebsiteDataToRemove : uint8_t {
     AllButHttpOnlyCookies,
     AllButCookies
 };
+struct RegistrableDomainsToBlockCookiesFor {
+    Vector<WebCore::RegistrableDomain> domainsToBlockCookiesFor;
+    Vector<WebCore::RegistrableDomain> domainsWithUserInteractionAsFirstParty;
+    RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockCookiesFor.isolatedCopy(), domainsWithUserInteractionAsFirstParty.isolatedCopy() }; }
+};
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
 public:
@@ -168,7 +173,7 @@ public:
     void logTestingEvent(const String&);
     void callGrantStorageAccessHandler(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessWasGranted)>&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
-    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
+    void callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
     void callRemoveDomainsHandler(const Vector<RegistrableDomain>&);
     void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
 

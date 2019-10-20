@@ -66,9 +66,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
     bool enableResourceLoadStatisticsDebugMode = false;
+    bool enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = true;
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
+    if ([defaults boolForKey:@"InternalDisableThirdPartyCookieBlockingOnSitesWithoutUserInteraction"])
+        enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = false;
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
         URL url { URL(), manualPrevalentResource };
@@ -131,6 +134,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         false,
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
+        enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),

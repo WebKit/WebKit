@@ -842,44 +842,6 @@ void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate(CompletionHand
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains(const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(RunLoop::isMain());
-    postTask([this, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (!m_statisticsStore) {
-            postTaskReply(WTFMove(completionHandler));
-            return;
-        }
-
-        auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
-            postTaskReply(WTFMove(completionHandler));
-        });
-
-        if (m_statisticsStore)
-            m_statisticsStore->updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()]() { });
-    });
-}
-
-void WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains(const Vector<RegistrableDomain>& domains, CompletionHandler<void()>&& completionHandler)
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(RunLoop::isMain());
-    postTask([this, domains = crossThreadCopy(domains), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (!m_statisticsStore) {
-            postTaskReply(WTFMove(completionHandler));
-            return;
-        }
-
-        auto callbackAggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler)] () mutable {
-            postTaskReply(WTFMove(completionHandler));
-        });
-
-        if (m_statisticsStore)
-            m_statisticsStore->clearBlockingStateForDomains(domains, [callbackAggregator = callbackAggregator.copyRef()]() { });
-    });
-}
-
 void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics shouldGrandfather, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -966,13 +928,15 @@ void WebResourceLoadStatisticsStore::setCacheMaxAgeCap(Seconds seconds, Completi
     completionHandler();
 }
 
-void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesForHandler(const RegistrableDomainsToBlockCookiesFor& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     if (m_networkSession) {
-        if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock);
+        if (auto* storageSession = m_networkSession->networkStorageSession()) {
+            storageSession->setPrevalentDomainsToBlockCookiesFor(domainsToBlock.domainsToBlockCookiesFor);
+            storageSession->setDomainsWithUserInteractionAsFirstParty(domainsToBlock.domainsWithUserInteractionAsFirstParty);
+        }
     }
 
     completionHandler();

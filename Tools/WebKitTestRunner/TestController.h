@@ -245,6 +245,7 @@ public:
     bool isStatisticsHasLocalStorage(WKStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void setStatisticsShouldDowngradeReferrer(bool value);
+    void setStatisticsShouldBlockThirdPartyCookies(bool value);
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();

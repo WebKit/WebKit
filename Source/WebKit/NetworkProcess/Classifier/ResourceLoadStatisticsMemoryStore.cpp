@@ -415,8 +415,11 @@ void ResourceLoadStatisticsMemoryStore::logUserInteraction(const TopFrameDomain&
     ASSERT(!RunLoop::isMain());
 
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(domain);
+    bool cookieBlockingNeedsUpdate = !statistics.hadUserInteraction;
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteractionTime = WallTime::now();
+    if (cookieBlockingNeedsUpdate)
+        updateCookieBlocking([] { });
 }
 
 void ResourceLoadStatisticsMemoryStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain)
@@ -704,7 +707,8 @@ void ResourceLoadStatisticsMemoryStore::clear(CompletionHandler<void()>&& comple
     removeAllStorageAccess([callbackAggregator = callbackAggregator.copyRef()] { });
 
     auto primaryDomainsToBlock = ensurePrevalentResourcesForDebugMode();
-    updateCookieBlockingForDomains(primaryDomainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
+    RegistrableDomainsToBlockCookiesFor domainsToBlock { primaryDomainsToBlock, { } };
+    updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
 bool ResourceLoadStatisticsMemoryStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const
@@ -753,21 +757,26 @@ void ResourceLoadStatisticsMemoryStore::updateCookieBlocking(CompletionHandler<v
     ASSERT(!RunLoop::isMain());
 
     Vector<RegistrableDomain> domainsToBlock;
+    Vector<RegistrableDomain> domainsWithUserInteraction;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         if (resourceStatistic.isPrevalentResource)
             domainsToBlock.append(resourceStatistic.registrableDomain);
+        if (hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long))
+            domainsWithUserInteraction.append(resourceStatistic.registrableDomain);
     }
 
-    if (domainsToBlock.isEmpty() && !debugModeEnabled()) {
+    if (domainsToBlock.isEmpty() && domainsWithUserInteraction.isEmpty() && !debugModeEnabled()) {
         completionHandler();
         return;
     }
 
-    if (debugLoggingEnabled() && !domainsToBlock.isEmpty())
+    if (debugLoggingEnabled() && (!domainsToBlock.isEmpty() || !domainsWithUserInteraction.isEmpty()))
         debugLogDomainsInBatches("block", domainsToBlock);
 
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(store()), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
-        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
+    RegistrableDomainsToBlockCookiesFor toBlock { domainsToBlock, domainsWithUserInteraction };
+
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(store()), toBlock = crossThreadCopy(toBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+        store->callUpdatePrevalentDomainsToBlockCookiesForHandler(toBlock, [weakThis = WTFMove(weakThis), store = store.copyRef(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
                 if (!weakThis)

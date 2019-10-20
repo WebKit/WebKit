@@ -1723,6 +1723,13 @@ IsNSURLSessionWebSocketEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: HAVE(NSURLSESSION_WEBSOCKET)
 
+IsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Block 3rd-Party Cookies On Sites Without Interaction (ITP)"
+  humanReadableDescription: "Block all third-party cookies on websites without user interaction"
+  category: internal
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

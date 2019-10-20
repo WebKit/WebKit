@@ -337,6 +337,7 @@ interface TestRunner {
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState(object completionHandler);
     void setStatisticsShouldDowngradeReferrer(boolean value, object callback);
+    void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

@@ -413,7 +413,7 @@ void ResourceLoadStatisticsStore::setDataRecordsBeingRemoved(bool value)
         m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
 }
 
-void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Vector<RegistrableDomain>& domainsToBlock, CompletionHandler<void()>&& completionHandler)
+void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const RegistrableDomainsToBlockCookiesFor& domainsToBlock, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     

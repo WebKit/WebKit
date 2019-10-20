@@ -86,6 +86,7 @@ struct NetworkSessionCreationParameters {
     bool enableResourceLoadStatistics { false };
     bool shouldIncludeLocalhostInResourceLoadStatistics { true };
     bool enableResourceLoadStatisticsDebugMode { false };
+    bool enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction { true };
     bool deviceManagementRestrictionsEnabled { false };
     bool allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };

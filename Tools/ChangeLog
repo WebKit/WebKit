@@ -1,3 +1,35 @@
+2019-10-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/56427498
+
+    2019-10-20  John Wilander  <wilander@apple.com>
+
+                Cherry-pick r251213. rdar://problem/56262708
+
+            Resource Load Statistics: Block all third-party cookies on websites without prior user interaction
+            https://bugs.webkit.org/show_bug.cgi?id=203017
+            <rdar://problem/56262708>
+
+            Reviewed by Alex Christensen.
+
+            These changes are test infrastructure to be able to toggle the function
+            through testRunner.setStatisticsShouldBlockThirdPartyCookies().
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+            (WTR::InjectedBundle::didReceiveMessageToPage):
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::setStatisticsShouldBlockThirdPartyCookies):
+            (WTR::TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::setStatisticsShouldBlockThirdPartyCookies):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+            (WTR::TestInvocation::didSetShouldBlockThirdPartyCookies):
+            * WebKitTestRunner/TestInvocation.h:
+
 2019-10-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250589. rdar://problem/55927251

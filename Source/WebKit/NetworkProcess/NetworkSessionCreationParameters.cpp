@@ -50,7 +50,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if USE(CURL)
         , { }, { }
 #endif
-        , { }, { }, false, { }, { }, { }, { }, { }, { }, { }
+        , { }, { }, false, { }, { }, { }, { }, { }, { }, { }, { }
     };
 }
 
@@ -82,6 +82,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << enableResourceLoadStatistics;
     encoder << shouldIncludeLocalhostInResourceLoadStatistics;
     encoder << enableResourceLoadStatisticsDebugMode;
+    encoder << enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
     encoder << resourceLoadStatisticsManualPrevalentResource;
 
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
@@ -196,6 +197,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!enableResourceLoadStatisticsDebugMode)
         return WTF::nullopt;
 
+    Optional<bool> enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
+    decoder >> enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
+    if (!enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction)
+        return WTF::nullopt;
+
     Optional<WebCore::RegistrableDomain> resourceLoadStatisticsManualPrevalentResource;
     decoder >> resourceLoadStatisticsManualPrevalentResource;
     if (!resourceLoadStatisticsManualPrevalentResource)
@@ -248,6 +254,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*enableResourceLoadStatistics)
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)
+        , WTFMove(*enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction)
         , WTFMove(*deviceManagementRestrictionsEnabled)
         , WTFMove(*allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)

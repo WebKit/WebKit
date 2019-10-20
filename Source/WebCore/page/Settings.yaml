@@ -859,6 +859,9 @@ shouldDispatchSyntheticMouseOutAfterSyntheticClick:
 allowViewportShrinkToFitContent:
   initial: true
 
+isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

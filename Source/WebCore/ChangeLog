@@ -1,3 +1,31 @@
+2019-10-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/56427498
+
+    2019-10-20  John Wilander  <wilander@apple.com>
+
+                Cherry-pick r251213. rdar://problem/56262708
+
+            Resource Load Statistics: Block all third-party cookies on websites without prior user interaction
+            https://bugs.webkit.org/show_bug.cgi?id=203017
+            <rdar://problem/56262708>
+
+            Reviewed by Alex Christensen.
+
+            NetworkStorageSession::shouldBlockCookies() now checks if the first-party website has
+            received user interaction and if not, blocks all third-party cookies, regardless of the
+            status of those third-party domains (prevalent or not).
+
+            Test: http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html
+
+            * page/Settings.yaml:
+            * platform/network/NetworkStorageSession.cpp:
+            (WebCore::NetworkStorageSession::hasHadUserInteractionAsFirstParty const):
+            (WebCore::NetworkStorageSession::shouldBlockCookies const):
+            (WebCore::NetworkStorageSession::setDomainsWithUserInteractionAsFirstParty):
+            * platform/network/NetworkStorageSession.h:
+            (WebCore::NetworkStorageSession::setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled):
+
 2019-10-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250589. rdar://problem/55927251
