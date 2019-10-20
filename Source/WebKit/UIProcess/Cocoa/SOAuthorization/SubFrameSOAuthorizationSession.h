@@ -29,6 +29,7 @@
 
 #include "FrameLoadState.h"
 #include "NavigationSOAuthorizationSession.h"
+#include <wtf/Deque.h>
 
 namespace IPC {
 class DataReference;
@@ -41,15 +42,16 @@ public:
     using Callback = CompletionHandler<void(bool)>;
     using SOAuthorizationSession::weakPtrFactory;
     using WeakValueType = SOAuthorizationSession::WeakValueType;
+    using FrameIdentifier = uint64_t;
 
-    static Ref<SOAuthorizationSession> create(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
+    static Ref<SOAuthorizationSession> create(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, FrameIdentifier);
 
     ~SubFrameSOAuthorizationSession();
 
 private:
     using Supplement = Variant<Vector<uint8_t>, String>;
 
-    SubFrameSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, WebCore::FrameIdentifier);
+    SubFrameSOAuthorizationSession(SOAuthorization *, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, FrameIdentifier);
 
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;
@@ -65,7 +67,7 @@ private:
     void appendRequestToLoad(URL&&, Supplement&&);
     void loadRequestToFrame();
 
-    WebCore::FrameIdentifier m_frameID;
+    FrameIdentifier m_frameID;
     Deque<std::pair<URL, Supplement>> m_requestsToLoad;
 };
 
