@@ -1,5 +1,35 @@
 2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r250629. rdar://problem/56280996
+
+    FTL OSR exit shouldn't bother updating get_by_id array profiles that have changed modes
+    https://bugs.webkit.org/show_bug.cgi?id=202493
+    
+    Reviewed by Saam Barati.
+    
+    I added this optimization for DFG but forgot to do it for the FTL
+    at the same time. This patch rectifies that.
+    
+    * ftl/FTLOSRExitCompiler.cpp:
+    (JSC::FTL::compileStub):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250629 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-02  Keith Miller  <keith_miller@apple.com>
+
+            FTL OSR exit shouldn't bother updating get_by_id array profiles that have changed modes
+            https://bugs.webkit.org/show_bug.cgi?id=202493
+
+            Reviewed by Saam Barati.
+
+            I added this optimization for DFG but forgot to do it for the FTL
+            at the same time. This patch rectifies that.
+
+            * ftl/FTLOSRExitCompiler.cpp:
+            (JSC::FTL::compileStub):
+
+2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r250585. rdar://problem/56280995
 
     ObjectAllocationSinkingPhase shouldn't insert hints for allocations which are no longer valid
