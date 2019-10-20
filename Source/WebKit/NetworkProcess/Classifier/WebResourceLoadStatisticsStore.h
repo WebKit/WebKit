@@ -172,6 +172,8 @@ public:
     void callRemoveDomainsHandler(const Vector<RegistrableDomain>&);
     void callHasStorageAccessForFrameHandler(const SubFrameDomain&, const TopFrameDomain&, FrameID, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
 
+    void hasCookies(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+
     void didCreateNetworkProcess();
 
     void notifyResourceLoadStatisticsProcessed();
