@@ -37,22 +37,35 @@ class InlineTextItem : public InlineItem {
 public:
     static void createAndAppendTextItems(InlineItems&, const Box&);
 
-    InlineTextItem(const Box&, unsigned start, unsigned length, bool isWhitespace);
+    static std::unique_ptr<InlineTextItem> createWhitespaceItem(const Box&, unsigned start, unsigned length);
+    static std::unique_ptr<InlineTextItem> createNonWhitespaceItem(const Box&, unsigned start, unsigned length);
+    static std::unique_ptr<InlineTextItem> createSegmentBreakItem(const Box&, unsigned position);
+    static std::unique_ptr<InlineTextItem> createEmptyItem(const Box&);
 
     unsigned start() const { return m_start; }
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
 
-    bool isWhitespace() const { return m_isWhitespace; }
+    bool isWhitespace() const;
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
+    bool isSegmentBreak() const;
 
     std::unique_ptr<InlineTextItem> split(unsigned splitPosition, unsigned length) const;
+
+    enum class TextItemType { Undefined, Whitespace, NonWhitespace, SegmentBreak };
+    InlineTextItem(const Box&, unsigned start, unsigned length, TextItemType);
+    InlineTextItem(const Box&);
 
 private:
     unsigned m_start { 0 };
     unsigned m_length { 0 };
-    bool m_isWhitespace { false };
+    TextItemType m_textItemType { TextItemType::Undefined };
 };
+
+inline bool InlineTextItem::isSegmentBreak() const
+{
+    return m_textItemType == TextItemType::SegmentBreak;
+}
 
 }
 }

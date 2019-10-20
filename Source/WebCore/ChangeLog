@@ -1,5 +1,32 @@
 2019-10-20  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Make InlineTextItem reusable when 'segment break' behavior changes
+        https://bugs.webkit.org/show_bug.cgi?id=203184
+        <rdar://problem/56438945>
+
+        Reviewed by Antti Koivisto.
+
+        InlineTextItem::isWhitespace should dynamically check for 'preserve new line' behavior. This way we don't have to rebuild the inline item list
+        when the related style property value changes.
+
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::isWhitespaceCharacter):
+        (WebCore::Layout::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::createWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createNonWhitespaceItem):
+        (WebCore::Layout::InlineTextItem::createSegmentBreakItem):
+        (WebCore::Layout::InlineTextItem::createEmptyItem):
+        (WebCore::Layout::InlineTextItem::InlineTextItem):
+        (WebCore::Layout::InlineTextItem::split const):
+        (WebCore::Layout::InlineTextItem::isWhitespace const):
+        (WebCore::Layout::isSoftLineBreak): Deleted.
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::isSegmentBreak const):
+        (WebCore::Layout::InlineTextItem::isWhitespace const): Deleted.
+
+2019-10-20  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Move the collapsed bit from InlineItems to runs
         https://bugs.webkit.org/show_bug.cgi?id=203183
 
