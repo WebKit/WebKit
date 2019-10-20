@@ -1,3 +1,43 @@
+2019-10-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r249959. rdar://problem/56280989
+
+    CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage
+    https://bugs.webkit.org/show_bug.cgi?id=201853
+    <rdar://problem/53805461>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/direct-arguments-check-array-filter-type.js: Added.
+    (foo):
+    
+    Source/JavaScriptCore:
+    
+    We were claiming CheckArray for ScopedArguments/DirectArguments was filtering
+    out SlowPutArrayStorage. It does no such thing. We just check that the object
+    is either ScopedArguments/DirectArguments.
+    
+    * dfg/DFGArrayMode.h:
+    (JSC::DFG::ArrayMode::arrayModesThatPassFiltering const):
+    (JSC::DFG::ArrayMode::arrayModesWithIndexingShapes const):
+    (JSC::DFG::ArrayMode::arrayModesWithIndexingShape const): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@249959 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-09-17  Saam Barati  <sbarati@apple.com>
+
+            CheckArray on DirectArguments/ScopedArguments does not filter out slow put array storage
+            https://bugs.webkit.org/show_bug.cgi?id=201853
+            <rdar://problem/53805461>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/direct-arguments-check-array-filter-type.js: Added.
+            (foo):
+
 2019-09-30  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r250058. rdar://problem/55826329
