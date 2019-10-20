@@ -536,7 +536,6 @@ private:
     
 #if ENABLE(SERVICE_WORKER)
     HashMap<WebCore::RegistrableDomain, RefPtr<WebSWServerToContextConnection>> m_serverToContextConnections;
-    bool m_waitingForServerToContextProcessConnection { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
