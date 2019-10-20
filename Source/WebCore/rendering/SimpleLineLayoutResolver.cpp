@@ -299,6 +299,8 @@ WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRendererWithOffse
 {
     ASSERT(startOffset <= endOffset);
     auto range = rangeForRenderer(renderer);
+    if (range.begin() == range.end())
+        return { end(), end() };
     auto it = range.begin();
     auto localEnd = (*it).start() + endOffset;
     // Advance to the first run with the start offset inside. Only the first node in a range can have a startOffset.
