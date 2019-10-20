@@ -98,9 +98,9 @@ worker.onmessage = function(evt) {
 
 crypto.subtle.importKey("jwk", publicKeyJSON, algorithmKeyGen, true, ['encrypt']).then(function(localPublicKey) {
     worker.postMessage({ publicKey: localPublicKey });
-});
-crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, true, ['decrypt']).then(function(localPrivateKey) {
-    worker.postMessage({ privateKey: localPrivateKey });
+    crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, true, ['decrypt']).then(function(localPrivateKey) {
+        worker.postMessage({ privateKey: localPrivateKey });
+    });
 });
 </script>
 <script src="../../../resources/js-test-post.js"></script>
