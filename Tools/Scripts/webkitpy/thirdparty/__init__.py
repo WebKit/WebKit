@@ -128,17 +128,23 @@ class AutoinstallImportHook(object):
             self._install_requests()
         elif '.bs4' in fullname:
             self._install_beautifulsoup()
+        elif '.html5lib' in fullname:
+            self._install_html5lib()
 
     def _install_six(self):
         self._install("https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
                               "six-1.11.0/six.py")
 
-    def _install_mechanize(self):
+    def _install_html5lib(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
         self._install("https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-0.5.1.tar.gz",
-                             "webencodings-0.5.1/webencodings")
+                      "webencodings-0.5.1/webencodings")
         self._install("https://files.pythonhosted.org/packages/85/3e/cf449cf1b5004e87510b9368e7a5f1acd8831c2d6691edd3c62a0823f98f/html5lib-1.0.1.tar.gz",
-                             "html5lib-1.0.1/html5lib")
+                      "html5lib-1.0.1/html5lib")
+
+    def _install_mechanize(self):
+        self._ensure_autoinstalled_dir_is_in_sys_path()
+        self._install_html5lib()
         self._install("https://files.pythonhosted.org/packages/64/f1/1aa4c96dea14e17a955019b0fc4ac1b8dfbc50e3c90970c1fb8882e74a7b/mechanize-0.4.3.tar.gz",
                              "mechanize-0.4.3/mechanize")
         self._install_six()
@@ -205,6 +211,7 @@ class AutoinstallImportHook(object):
             return
 
         self._install_requests()
+        self._install_html5lib()
         self._ensure_autoinstalled_dir_is_in_sys_path()
         self._install("https://files.pythonhosted.org/packages/7f/4e/95a13527e18b6f1a15c93f1c634b86d5fa634c5619dce695f4e0cd68182f/soupsieve-1.9.4.tar.gz",
                       "soupsieve-1.9.4/soupsieve")

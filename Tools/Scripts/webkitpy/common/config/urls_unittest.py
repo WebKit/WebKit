@@ -28,7 +28,7 @@
 
 import unittest
 
-from .urls import parse_bug_id, parse_attachment_id
+from webkitpy.common.config.urls import parse_bug_id, parse_attachment_id
 
 
 class URLsTest(unittest.TestCase):

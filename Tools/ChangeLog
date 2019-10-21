@@ -1,3 +1,32 @@
+2019-10-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.config
+        https://bugs.webkit.org/show_bug.cgi?id=202463
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.config to the test list.
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__init__): Convert lists to maps.
+        (Contributor.__str__): __str__ will always return the native string type.
+        (Contributor.__unicode__): Use .format() string.
+        (CommitterList._exclusive_contributors): Convert filter to list.
+        (CommitterList._exclusive_committers): Ditto.
+        (CommitterList.contributors_by_search_string): Ditto.
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py: Use full import paths.
+        * Scripts/webkitpy/common/config/contributionareas_unittest.py: Use full import paths.
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.makeArgs): Use 'in' instead of has_key.
+        * Scripts/webkitpy/common/config/urls_unittest.py:
+        * Scripts/webkitpy/common/unicode_compatibility.py:
+        (encode_for): Encode string for type.
+        * Scripts/webkitpy/thirdparty/BeautifulSoup.py: Make html5lib import auto-install compatible.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Add html5lib.
+        (AutoinstallImportHook._install_html5lib): Make html5lib a stand-alone installed package.
+        (AutoinstallImportHook._install_mechanize): Install html5lib.
+        (AutoinstallImportHook._install_beautifulsoup): Ditto.
+
 2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Implement ClipboardItem.getType() for platform clipboard items

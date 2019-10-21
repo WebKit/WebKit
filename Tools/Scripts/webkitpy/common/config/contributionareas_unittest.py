@@ -28,9 +28,9 @@
 
 import unittest
 
-from .contributionareas import _Intersection
-from .contributionareas import _Area
-from .contributionareas import ContributionAreas
+from webkitpy.common.config.contributionareas import _Intersection
+from webkitpy.common.config.contributionareas import _Area
+from webkitpy.common.config.contributionareas import ContributionAreas
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 

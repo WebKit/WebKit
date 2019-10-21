@@ -41,6 +41,15 @@ def encode_if_necessary(value, encoding='utf-8', errors='strict'):
     return value
 
 
+def encode_for(value, target_type, **kwargs):
+    if target_type == bytes:
+        return encode_if_necessary(value, **kwargs)
+
+    if sys.version_info < (3, 0) and target_type == str:
+        return encode_if_necessary(value, **kwargs)
+    return value
+
+
 def decode_if_necessary(value, encoding='utf-8', errors='strict'):
     # In Python 2, string types might need to be decoded
     if type(value) == bytes:

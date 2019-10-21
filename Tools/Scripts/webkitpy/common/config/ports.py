@@ -86,7 +86,7 @@ class DeprecatedPort(object):
     def makeArgs(self):
         # FIXME: This shouldn't use a static Executive().
         args = '--makeargs="-j%s"' % Executive().cpu_count()
-        if os.environ.has_key('MAKEFLAGS'):
+        if 'MAKEFLAGS' in os.environ:
             args = '--makeargs="%s"' % os.environ['MAKEFLAGS']
         return args
 

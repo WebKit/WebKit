@@ -36,6 +36,7 @@ import sys
 from webkitpy.common.editdistance import edit_distance
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.unicode_compatibility import encode_for, unicode
 
 
 class Contributor(object):
@@ -48,7 +49,7 @@ class Contributor(object):
         else:
             self.emails = email_or_emails
         self._case_preserved_emails = self.emails
-        self.emails = map(lambda email: email.lower(), self.emails)  # Emails are case-insensitive.
+        self.emails = list(map(lambda email: email.lower(), self.emails))  # Emails are case-insensitive.
 
         if isinstance(irc_nickname_or_nicknames, str):
             self.irc_nicknames = [irc_nickname_or_nicknames]
@@ -71,10 +72,10 @@ class Contributor(object):
         return self.emails[0]
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return encode_for(u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0])), str)
 
     def __unicode__(self):
-        return '"%s" <%s>' % (self.full_name, self.emails[0])
+        return u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0]))
 
     def __eq__(self, other):
         return (other is not None
@@ -241,11 +242,11 @@ class CommitterList(object):
 
     # Contributors who are not in any other category.
     def _exclusive_contributors(self):
-        return filter(lambda contributor: not (contributor.can_commit or contributor.can_review), self._contributors)
+        return list(filter(lambda contributor: not (contributor.can_commit or contributor.can_review), self._contributors))
 
     # Committers who are not reviewers.
     def _exclusive_committers(self):
-        return filter(lambda contributor: contributor.can_commit and not contributor.can_review, self._committers)
+        return list(filter(lambda contributor: contributor.can_commit and not contributor.can_review, self._committers))
 
     # This is the superset of contributors + committers + reviewers
     def contributors(self):
@@ -306,8 +307,8 @@ class CommitterList(object):
         return None
 
     def contributors_by_search_string(self, string):
-        glob_matches = filter(lambda contributor: contributor.matches_glob(string), self.contributors())
-        return glob_matches or filter(lambda contributor: contributor.contains_string(string), self.contributors())
+        glob_matches = list(filter(lambda contributor: contributor.matches_glob(string), self.contributors()))
+        return glob_matches or list(filter(lambda contributor: contributor.contains_string(string), self.contributors()))
 
     def contributors_by_email_username(self, string):
         string = string + '@'

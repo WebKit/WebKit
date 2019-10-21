@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
-from .committervalidator import CommitterValidator
+from webkitpy.common.config.committervalidator import CommitterValidator
 
 
 class CommitterValidatorTest(unittest.TestCase):
