@@ -828,7 +828,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // 50ms, and treat it as a real resume if we haven't paused in that time frame.
         // This delay ensures the user interface does not flash between brief steps
         // or successive breakpoints.
-        if (!target.DebuggerAgent.setPauseOnAssertions) {
+        if (!target.hasCommand("Debugger.setPauseOnAssertions")) {
             this._delayedResumeTimeout = setTimeout(this._didResumeInternal.bind(this, target), 50);
             return;
         }
