@@ -929,3 +929,7 @@ webkit.org/b/199651 [ Mojave Debug ] webgpu/whlsl/builtin-vectors-2.html [ Slow 
 webkit.org/b/199089 [ Mojave+ Debug ] plugins/window-open.html [ Skip ]
 
 webkit.org/b/202500 [ Mojave ] crypto/workers/subtle/aes-indexeddb.html [ Timeout ]
+
+#<rdar://problem/56480245> REGRESSION (~r251067): http/tests/workers/service/registration-clear-redundant-worker.html is a flaky timeout (203218)
+webkit.org/b/203218 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
+

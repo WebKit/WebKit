@@ -1,3 +1,13 @@
+2019-10-21  Russell Epstein  <repstein@apple.com>
+
+        REGRESSION (~r251067): http/tests/workers/service/registration-clear-redundant-worker.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=203218
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-21  Jer Noble  <jer.noble@apple.com>
 
         Add MediaCapabilities support for DolbyVision codecs.
