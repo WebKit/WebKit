@@ -83,6 +83,7 @@
     void unbufferedLog(DOMString message);
 
     boolean isUnderTest();
+    boolean isExperimentalBuild();
 
     void beep();
     void inspectInspector();

@@ -346,6 +346,14 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let initialValues = new Map;
 
+        // WebKit may by default enable certain features in a Technology Preview that are not enabled in trunk.
+        // Provide a switch that will make non-preview builds behave like an experimental build, for those preview features.
+        let hasPreviewFeatures = WI.previewFeatures.length > 0;
+        if (hasPreviewFeatures && (WI.isTechnologyPreviewBuild() || WI.isEngineeringBuild)) {
+            experimentalSettingsView.addSetting(WI.UIString("Staging:"), WI.settings.experimentalEnablePreviewFeatures, WI.UIString("Enable Preview Features"));
+            experimentalSettingsView.addSeparator();
+        }
+
         if (InspectorBackend.hasDomain("LayerTree")) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
@@ -381,6 +389,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
+        listenForChange(WI.settings.experimentalEnablePreviewFeatures);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 

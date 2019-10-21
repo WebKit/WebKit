@@ -3235,6 +3235,7 @@ WI.reset = async function()
 };
 
 WI.isEngineeringBuild = false;
+WI.isExperimentalBuild = InspectorFrontendHost.isExperimentalBuild();
 
 // OpenResourceDialog delegate
 

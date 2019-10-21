@@ -111,6 +111,7 @@ public:
     void dispatchEventAsContextMenuEvent(Event&);
 
     bool isUnderTest();
+    bool isExperimentalBuild();
     void unbufferedLog(const String& message);
 
     void beep();

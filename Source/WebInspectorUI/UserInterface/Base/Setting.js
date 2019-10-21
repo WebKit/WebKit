@@ -186,6 +186,7 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
+    experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableStylesIcons: new WI.Setting("experimental-styles-icons", false),
@@ -210,4 +211,22 @@ WI.settings = {
     debugEnableStyleEditingDebugMode: new WI.Setting("debug-enable-style-editing-debug-mode", false),
     debugEnableUncaughtExceptionReporter: new WI.Setting("debug-enable-uncaught-exception-reporter", true),
     debugLayoutDirection: new WI.Setting("debug-layout-direction-override", "system"),
+};
+
+WI.previewFeatures = [];
+
+WI.isTechnologyPreviewBuild = function()
+{
+    return WI.isExperimentalBuild && !WI.isEngineeringBuild;
+};
+
+WI.arePreviewFeaturesEnabled = function()
+{
+    if (WI.isExperimentalBuild)
+        return true;
+
+    if (WI.settings.experimentalEnablePreviewFeatures.value)
+        return true;
+
+    return false;
 };
