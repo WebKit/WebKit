@@ -1,3 +1,22 @@
+2019-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] IconDatabase is not thread safe yet
+        https://bugs.webkit.org/show_bug.cgi?id=202980
+
+        Reviewed by Adrian Perez de Castro.
+
+        Current implementation is safer, but we still need to protect members used by both threads.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+        (WebKit::IconDatabase::clearLoadedIconsTimerFired):
+        (WebKit::IconDatabase::checkIconURLAndSetPageURLIfNeeded):
+        (WebKit::IconDatabase::loadIconForPageURL):
+        (WebKit::IconDatabase::iconURLForPageURL):
+        (WebKit::IconDatabase::setIconForPageURL):
+        (WebKit::IconDatabase::clear):
+        * UIProcess/API/glib/IconDatabase.h:
+
 2019-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some includes to improve WebKit2 build speed

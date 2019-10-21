@@ -24,6 +24,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 
@@ -69,7 +70,9 @@ private:
     AllowDatabaseWrite m_allowDatabaseWrite { AllowDatabaseWrite::Yes };
     WebCore::SQLiteDatabase m_db;
     HashMap<String, String> m_pageURLToIconURLMap;
+    Lock m_pageURLToIconURLMapLock;
     HashMap<String, std::pair<WebCore::NativeImagePtr, MonotonicTime>> m_loadedIcons;
+    Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_setIconIDForPageURLStatement;
