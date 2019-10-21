@@ -1,3 +1,23 @@
+2019-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Remove all uses of untagCodePtr in debugging code.
+        https://bugs.webkit.org/show_bug.cgi?id=203188
+        <rdar://problem/56453043> 
+
+        Reviewed by Yusuke Suzuki.
+
+        We want the ability to always assert on failure to authenticate in untagCodePtr
+        (though we don't currently do that yet).
+
+        * wtf/PtrTag.cpp:
+        (WTF::tagForPtr):
+        * wtf/PtrTag.h:
+        (WTF::retagCodePtrImpl):
+        (WTF::tagCFunctionPtrImpl):
+        (WTF::untagCFunctionPtrImpl):
+        (WTF::assertIsCFunctionPtr):
+        (WTF::isTaggedWith):
+
 2019-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Add support to TextStream for dumping HashMap<> and HashSet<>

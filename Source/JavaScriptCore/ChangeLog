@@ -1,3 +1,14 @@
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove all uses of untagCodePtr in debugging code.
+        https://bugs.webkit.org/show_bug.cgi?id=203188
+        <rdar://problem/56453043> 
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSCPtrTag.cpp:
+        (JSC::tagForPtr):
+
 2019-10-21  Robin Morisset  <rmorisset@apple.com>
 
         Post increment/decrement should only call ToNumber once

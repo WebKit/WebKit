@@ -46,7 +46,7 @@ static const char* tagForPtr(const void* ptr)
         return "NoPtrTag";
 
 #define RETURN_NAME_IF_TAG_MATCHES(tag) \
-    if (untagCodePtrImpl<PtrTagAction::NoAssert>(ptr, tag) == removeCodePtrTag(ptr)) \
+    if (ptr == tagCodePtrImpl<PtrTagAction::NoAssert>(removeCodePtrTag(ptr), tag)) \
         return #tag;
     FOR_EACH_WTF_PTRTAG(RETURN_NAME_IF_TAG_MATCHES)
 #undef RETURN_NAME_IF_TAG_MATCHES
