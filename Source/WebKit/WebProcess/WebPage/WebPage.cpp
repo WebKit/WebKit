@@ -6621,19 +6621,15 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
 #if USE(SYSTEM_PREVIEW)
 void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInfo, const String& message)
 {
-    WebFrame* frame = WebProcess::singleton().webFrame(previewInfo.globalFrameID.frameID);
-    if (!frame)
-        return;
-
-    auto* document = frame->coreFrame()->document();
+    auto* document = Document::allDocumentsMap().get(previewInfo.element.documentIdentifier);
     if (!document)
         return;
 
     auto pageID = document->pageID();
-    if (!pageID || previewInfo.globalFrameID.pageID != pageID.value())
+    if (!pageID || previewInfo.element.webPageIdentifier != pageID.value())
         return;
 
-    document->dispatchSystemPreviewActionEvent(message);
+    document->dispatchSystemPreviewActionEvent(previewInfo, message);
 }
 #endif
 

@@ -1,5 +1,24 @@
 2019-10-21  Dean Jackson  <dino@apple.com>
 
+        Dispatch AR event on the originating anchor element
+        https://bugs.webkit.org/show_bug.cgi?id=203198
+        <rdar://55743929>
+
+        Reviewed by Simon Fraser.
+
+        Use the ElementContext on SystemPreviewInfo.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _triggerSystemPreviewActionOnElement:frame:page:]):
+        (-[WKWebView _triggerSystemPreviewActionOnFrame:page:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/SystemPreviewController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::systemPreviewActionTriggered):
+
+2019-10-21  Dean Jackson  <dino@apple.com>
+
         Move ElementContext from WebKit to WebCore
         https://bugs.webkit.org/show_bug.cgi?id=203210
         <rdar://problem/56475682>

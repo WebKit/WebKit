@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "GlobalFrameIdentifier.h"
+#include "ElementContext.h"
 #include "IntRect.h"
 #include "ProcessIdentifier.h"
 
@@ -186,7 +186,8 @@ enum class AllowNavigationToInvalidURL : bool { No, Yes };
 enum class HasInsecureContent : bool { No, Yes };
 
 struct SystemPreviewInfo {
-    GlobalFrameIdentifier globalFrameID;
+    ElementContext element;
+
     IntRect previewRect;
     bool isPreview { false };
 
@@ -197,15 +198,15 @@ struct SystemPreviewInfo {
 template<class Encoder>
 void SystemPreviewInfo::encode(Encoder& encoder) const
 {
-    encoder << globalFrameID << previewRect << isPreview;
+    encoder << element << previewRect << isPreview;
 }
 
 template<class Decoder>
 Optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
 {
-    Optional<GlobalFrameIdentifier> globalFrameID;
-    decoder >> globalFrameID;
-    if (!globalFrameID)
+    Optional<ElementContext> element;
+    decoder >> element;
+    if (!element)
         return WTF::nullopt;
 
     Optional<IntRect> previewRect;
@@ -218,7 +219,7 @@ Optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
     if (!isPreview)
         return WTF::nullopt;
 
-    return { { WTFMove(*globalFrameID), WTFMove(*previewRect), WTFMove(*isPreview) } };
+    return { { WTFMove(*element), WTFMove(*previewRect), WTFMove(*isPreview) } };
 }
 
 enum class LoadCompletionType : uint8_t {

@@ -8314,11 +8314,18 @@ MessagePortChannelProvider& Document::messagePortChannelProvider()
 }
 
 #if USE(SYSTEM_PREVIEW)
-void Document::dispatchSystemPreviewActionEvent(const String& message)
+void Document::dispatchSystemPreviewActionEvent(const SystemPreviewInfo& systemPreviewInfo, const String& message)
 {
+    auto* element = searchForElementByIdentifier(systemPreviewInfo.element.elementIdentifier);
+    if (!element)
+        return;
+
+    if (!is<HTMLAnchorElement>(element))
+        return;
+
     auto event = MessageEvent::create(message, origin());
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, this);
-    dispatchWindowEvent(event, domWindow());
+    element->dispatchEvent(event);
 }
 #endif
 

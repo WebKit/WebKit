@@ -34,9 +34,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
-static bool isLoaded;
-static bool isTriggered;
-static uint64_t frameID;
+static bool hasTriggerInfo;
+static bool wasTriggered;
+static uint64_t elementID;
+static uint64_t documentID;
 static uint64_t pageID;
 
 @interface TestSystemPreviewTriggeredHandler : NSObject <WKScriptMessageHandler>
@@ -47,12 +48,13 @@ static uint64_t pageID;
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     if ([message.body[@"message"] isEqualToString:@"loaded"]) {
-        frameID = [message.body[@"frameID"] unsignedIntValue];
+        elementID = [message.body[@"elementID"] unsignedIntValue];
+        documentID = [message.body[@"documentID"] unsignedIntValue];
         pageID = [message.body[@"pageID"] unsignedIntValue];
-        isLoaded = true;
+        hasTriggerInfo = true;
     } else if ([message.body[@"message"] isEqualToString:@"triggered"]) {
         EXPECT_TRUE([message.body[@"action"] isEqualToString:@"_apple_ar_quicklook_button_tapped"]);
-        isTriggered = true;
+        wasTriggered = true;
     }
 }
 
@@ -60,19 +62,19 @@ static uint64_t pageID;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit, DISABLED_SystemPreviewTriggered)
+TEST(WebKit, SystemPreviewTriggered)
 {
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto messageHandler = adoptNS([[TestSystemPreviewTriggeredHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"];
-    [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
+    [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];
+    Util::run(&hasTriggerInfo);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"system-preview-trigger" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&isLoaded);
+    [webView _triggerSystemPreviewActionOnElement:elementID document:documentID page:pageID];
+    Util::run(&wasTriggered);
 
-    [webView _triggerSystemPreviewActionOnFrame:frameID page:pageID];
-    Util::run(&isTriggered);
 }
 
 }

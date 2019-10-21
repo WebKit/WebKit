@@ -2516,6 +2516,11 @@ bool Internals::isDocumentAlive(uint64_t documentIdentifier) const
     return Document::allDocumentsMap().contains(makeObjectIdentifier<DocumentIdentifierType>(documentIdentifier));
 }
 
+uint64_t Internals::elementIdentifier(Element& element) const
+{
+    return element.document().identifierForElement(element).toUInt64();
+}
+
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())

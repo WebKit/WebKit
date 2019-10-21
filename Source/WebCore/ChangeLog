@@ -1,5 +1,31 @@
 2019-10-21  Dean Jackson  <dino@apple.com>
 
+        Dispatch AR event on the originating anchor element
+        https://bugs.webkit.org/show_bug.cgi?id=203198
+        <rdar://55743929>
+
+        Reviewed by Simon Fraser.
+
+        Expose an ElementContext on the SystemPreviewInfo, so that
+        when something happens in the AR QuickLook an event can be
+        fired on the originating <a> element.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchSystemPreviewActionEvent): Make sure
+        we dispatch only to the HTMLAnchorElement.
+        * dom/Document.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * loader/FrameLoaderTypes.h:
+        (WebCore::SystemPreviewInfo::encode const):
+        (WebCore::SystemPreviewInfo::decode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementIdentifier const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2019-10-21  Dean Jackson  <dino@apple.com>
+
         Move ElementContext from WebKit to WebCore
         https://bugs.webkit.org/show_bug.cgi?id=203210
         <rdar://problem/56475682>

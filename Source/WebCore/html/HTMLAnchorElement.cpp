@@ -486,8 +486,9 @@ void HTMLAnchorElement::handleClick(Event& event)
     systemPreviewInfo.isPreview = isSystemPreviewLink() && RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled();
 
     if (systemPreviewInfo.isPreview) {
-        systemPreviewInfo.globalFrameID.frameID = document().frame()->loader().client().frameID().valueOr(FrameIdentifier { });
-        systemPreviewInfo.globalFrameID.pageID = document().frame()->loader().client().pageID().valueOr(PageIdentifier { });
+        systemPreviewInfo.element.elementIdentifier = document().identifierForElement(*this);
+        systemPreviewInfo.element.documentIdentifier = document().identifier();
+        systemPreviewInfo.element.webPageIdentifier = document().frame()->loader().client().pageID().valueOr(PageIdentifier { });
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
     }

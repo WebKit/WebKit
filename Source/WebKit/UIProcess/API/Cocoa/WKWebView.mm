@@ -7541,12 +7541,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 #if PLATFORM(IOS_FAMILY)
-- (void)_triggerSystemPreviewActionOnFrame:(uint64_t)frameID page:(uint64_t)pageID
+- (void)_triggerSystemPreviewActionOnElement:(uint64_t)elementID document:(uint64_t)documentID page:(uint64_t)pageID
 {
 #if USE(SYSTEM_PREVIEW)
     if (_page) {
         if (auto* previewController = _page->systemPreviewController())
-            previewController->triggerSystemPreviewActionWithTargetForTesting(frameID, pageID);
+            previewController->triggerSystemPreviewActionWithTargetForTesting(elementID, documentID, pageID);
     }
 #endif
 }
