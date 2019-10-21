@@ -480,7 +480,7 @@ static void webkitEmojiChooserSetupEmojiSections(WebKitEmojiChooser* chooser, Gt
         { "grapes", N_("Food & Drink"), "emoji-food-symbolic", false },
         { "globe showing Europe-Africa", N_("Travel & Places"), "emoji-travel-symbolic", false },
         { "jack-o-lantern", N_("Activities"), "emoji-activities-symbolic", false },
-        { "uted speaker", _("Objects"), "emoji-objects-symbolic", false },
+        { "muted speaker", _("Objects"), "emoji-objects-symbolic", false },
         { "ATM sign", N_("Symbols"), "emoji-symbols-symbolic", false },
         { "chequered flag", _("Flags"), "emoji-flags-symbolic", false }
     };

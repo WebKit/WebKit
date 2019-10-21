@@ -1,5 +1,17 @@
 2019-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Objects category in emoji picker is empty
+        https://bugs.webkit.org/show_bug.cgi?id=203189
+
+        Reviewed by Adrian Perez de Castro.
+
+        There's a typo in the first emopi name of objects section.
+
+        * UIProcess/API/gtk/WebKitEmojiChooser.cpp:
+        (webkitEmojiChooserSetupEmojiSections): uted speaker -> muted speaker
+
+2019-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] IconDatabase is not thread safe yet
         https://bugs.webkit.org/show_bug.cgi?id=202980
 
