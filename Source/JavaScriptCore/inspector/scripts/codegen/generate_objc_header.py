@@ -215,7 +215,7 @@ class ObjCHeaderGenerator(ObjCGenerator):
         if self.commands_for_domain(domain):
             objc_name = '%s%sDomainHandler' % (self.objc_prefix(), domain.domain_name)
             lines.append('@protocol %s <NSObject>' % objc_name)
-            lines.append('@required')
+            lines.append('@optional')
             for command in self.commands_for_domain(domain):
                 lines.append(self._generate_single_command_protocol(domain, command))
             lines.append('@end')

@@ -640,6 +640,12 @@ namespace Inspector {
 
 void ObjCInspectorNetworkBackendDispatcher::loadResource(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResourceWithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network.loadResource' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -920,7 +926,7 @@ __attribute__((visibility ("default")))
 @end
 
 @protocol TestProtocolNetworkDomainHandler <NSObject>
-@required
+@optional
 - (void)loadResourceWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 

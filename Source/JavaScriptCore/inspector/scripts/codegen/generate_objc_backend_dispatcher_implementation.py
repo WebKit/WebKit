@@ -98,12 +98,16 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             'domainName': domain.domain_name,
             'commandName': command.command_name,
             'parameters': ', '.join(parameters),
+            'respondsToSelector': self._generate_responds_to_selector_for_command(domain, command),
             'successCallback': self._generate_success_block_for_command(domain, command),
             'conversions': self._generate_conversions_for_command(domain, command),
             'invocation': self._generate_invocation_for_command(domain, command),
         }
 
         return self.wrap_with_guard_for_domain(domain, Template(ObjCTemplates.BackendDispatcherHeaderDomainHandlerImplementation).substitute(None, **command_args))
+
+    def _generate_responds_to_selector_for_command(self, domain, command):
+        return '[m_delegate respondsToSelector:@selector(%sWithErrorCallback:successCallback:%s)]' % (command.command_name, ''.join(map(lambda parameter: '%s:' % parameter.parameter_name, command.call_parameters)))
 
     def _generate_success_block_for_command(self, domain, command):
         lines = []

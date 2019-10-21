@@ -811,6 +811,12 @@ namespace Inspector {
 
 void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource1WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network1.loadResource1' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -826,6 +832,12 @@ void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource1(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource1WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource1' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -840,6 +852,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource1(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource2(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource2WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource2' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -854,6 +872,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource2(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource3(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource3WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource3' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -868,6 +892,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource3(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource4(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource4WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource4' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -882,6 +912,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource4(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource5(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource5WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource5' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -896,6 +932,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource5(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource6(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource6WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource6' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -910,6 +952,12 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource6(long requestId)
 
 void ObjCInspectorNetwork3BackendDispatcher::loadResource7(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(loadResource7WithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Network3.loadResource7' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -1167,12 +1215,12 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 
 
 @protocol TestProtocolNetwork1DomainHandler <NSObject>
-@required
+@optional
 - (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 @end
 
 @protocol TestProtocolNetwork3DomainHandler <NSObject>
-@required
+@optional
 - (void)loadResource1WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 - (void)loadResource2WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;
 - (void)loadResource3WithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(void))successCallback;

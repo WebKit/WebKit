@@ -919,6 +919,12 @@ namespace Inspector {
 
 void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query)
 {
+    if (![m_delegate respondsToSelector:@selector(executeSQLSyncOptionalReturnValuesWithErrorCallback:successCallback:databaseId:query:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSyncOptionalReturnValues' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -963,6 +969,12 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
 
 void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, int in_databaseId, const String& in_query)
 {
+    if (![m_delegate respondsToSelector:@selector(executeSQLAsyncOptionalReturnValuesWithErrorCallback:successCallback:databaseId:query:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsyncOptionalReturnValues' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -1007,6 +1019,12 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
 
 void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int in_databaseId, const String& in_query)
 {
+    if (![m_delegate respondsToSelector:@selector(executeSQLSyncWithErrorCallback:successCallback:databaseId:query:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLSync' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -1041,6 +1059,12 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int 
 
 void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long requestId, int in_databaseId, const String& in_query)
 {
+    if (![m_delegate respondsToSelector:@selector(executeSQLAsyncWithErrorCallback:successCallback:databaseId:query:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeSQLAsync' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -1338,7 +1362,7 @@ __attribute__((visibility ("default")))
 @end
 
 @protocol TestProtocolDatabaseDomainHandler <NSObject>
-@required
+@optional
 - (void)executeSQLSyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
 - (void)executeSQLAsyncOptionalReturnValuesWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;
 - (void)executeSQLSyncWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabasePrimaryColors screenColor, TestProtocolDatabaseExecuteSQLSyncPrintColor printColor))successCallback databaseId:(int)databaseId query:(NSString *)query;

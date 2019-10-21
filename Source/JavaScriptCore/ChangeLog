@@ -1,3 +1,36 @@
+2019-10-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: make ObjC protocol dispatcher commands optional and add `respondsToSelector` checks to allow other inspector clients to choose what they implement
+        https://bugs.webkit.org/show_bug.cgi?id=203197
+
+        Reviewed by Joseph Pecoraro.
+
+        This will help eliminate internal build failures, and will also allow other clients to
+        remove all of their commands that previously just responded with an "unsupported" error.
+
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_command):
+        (ObjCBackendDispatcherImplementationGenerator._generate_responds_to_selector_for_command): Added.
+        Add a `respondsToSelector` check before attempting to call the delegate function.
+
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator._generate_command_protocols):
+        Mark all commands as `@optional`.
+
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/command-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domain-debuggableTypes.json-result:
+        * inspector/scripts/tests/generic/expected/domain-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/domain-targetTypes.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/event-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+
 2019-10-21  Saam Barati  <sbarati@apple.com>
 
         JSON.parse has bad is array assert

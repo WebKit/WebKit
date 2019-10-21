@@ -684,6 +684,12 @@ namespace Inspector {
 
 void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId)
 {
+    if (![m_delegate respondsToSelector:@selector(commandWithEnumReturnValueWithErrorCallback:successCallback:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'CommandDomain.commandWithEnumReturnValue' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -967,7 +973,7 @@ typedef NS_ENUM(NSInteger, TestProtocolTypeDomainEnum) {
 
 
 @protocol TestProtocolCommandDomainDomainHandler <NSObject>
-@required
+@optional
 - (void)commandWithEnumReturnValueWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(TestProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue))successCallback;
 @end
 

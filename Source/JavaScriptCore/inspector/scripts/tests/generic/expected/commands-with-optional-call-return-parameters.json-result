@@ -832,6 +832,12 @@ namespace Inspector {
 
 void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, const JSON::Array* in_columnNames, const String* in_notes, const double* in_timestamp, const JSON::Object* in_values, const JSON::Value* in_payload, const int* in_databaseId, const JSON::Object* in_sqlError, const String* in_screenColor, const JSON::Array* in_alternateColors, const String* in_printColor)
 {
+    if (![m_delegate respondsToSelector:@selector(executeAllOptionalParametersWithErrorCallback:successCallback:columnNames:notes:timestamp:values:payload:databaseId:sqlError:screenColor:alternateColors:printColor:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeAllOptionalParameters' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -904,6 +910,12 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long r
 
 void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long requestId, const JSON::Array& in_columnNames, const String& in_notes, double in_timestamp, const JSON::Object& in_values, JSON::Value in_payload, int in_databaseId, const JSON::Object& in_sqlError, const String& in_screenColor, const JSON::Array& in_alternateColors, const String& in_printColor)
 {
+    if (![m_delegate respondsToSelector:@selector(executeNoOptionalParametersWithErrorCallback:successCallback:columnNames:notes:timestamp:values:payload:databaseId:sqlError:screenColor:alternateColors:printColor:)]) {
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::MethodNotFound, "'Database.executeNoOptionalParameters' was not found"_s);
+        backendDispatcher()->sendPendingErrors();
+        return;
+    }
+
     id errorCallback = ^(NSString *error) {
         backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
         backendDispatcher()->sendPendingErrors();
@@ -1217,7 +1229,7 @@ __attribute__((visibility ("default")))
 @end
 
 @protocol TestProtocolDatabaseDomainHandler <NSObject>
-@required
+@optional
 - (void)executeAllOptionalParametersWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteAllOptionalParametersPrintColor *printColor))successCallback columnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload databaseId:(int *)databaseId sqlError:(TestProtocolDatabaseError **)sqlError screenColor:(TestProtocolDatabasePrimaryColors *)screenColor alternateColors:(NSArray/*<NSString>*/ **)alternateColors printColor:(TestProtocolDatabaseExecuteAllOptionalParametersPrintColor *)printColor;
 - (void)executeNoOptionalParametersWithErrorCallback:(void(^)(NSString *error))errorCallback successCallback:(void(^)(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, TestProtocolDatabasePrimaryColors screenColor, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabaseExecuteNoOptionalParametersPrintColor printColor))successCallback columnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload databaseId:(int)databaseId sqlError:(TestProtocolDatabaseError *)sqlError screenColor:(TestProtocolDatabasePrimaryColors)screenColor alternateColors:(NSArray/*<NSString>*/ *)alternateColors printColor:(TestProtocolDatabaseExecuteNoOptionalParametersPrintColor)printColor;
 @end
