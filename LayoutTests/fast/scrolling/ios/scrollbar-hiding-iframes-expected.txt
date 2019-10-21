@@ -1,0 +1,89 @@
+Both Visible
+
+ 
+Horizontal visible
+
+
+Vertical visible
+
+ 
+None visible
+
+
+
+(scrolling tree
+  (frame scrolling node
+    (scrollable area size width=800 height=600)
+    (total content size width=800 height=600)
+    (last committed scroll position (0,0))
+    (scrollable area parameters 
+      (horizontal scroll elasticity 1)
+      (vertical scroll elasticity 1)
+      (horizontal scrollbar mode 0)
+      (vertical scrollbar mode 0)
+      (horizontal scrollbar hidden by style 1)
+      (vertical scrollbar hidden by style 1))
+    (layout viewport (0,0) width=800 height=600)
+    (min layoutViewport origin (0,0))
+    (max layoutViewport origin (0,0))
+    (behavior for fixed 0)
+    (frame hosting node
+      (frame scrolling node
+        (scrollable area size width=300 height=150)
+        (total content size width=1008 height=1016)
+        (last committed scroll position (0,0))
+        (scrollable area parameters 
+          (horizontal scroll elasticity 1)
+          (vertical scroll elasticity 1)
+          (horizontal scrollbar mode 0)
+          (vertical scrollbar mode 0))
+        (layout viewport (0,0) width=300 height=150)
+        (min layoutViewport origin (0,0))
+        (max layoutViewport origin (708,866))
+        (behavior for fixed 0)))
+    (frame hosting node
+      (frame scrolling node
+        (scrollable area size width=300 height=150)
+        (total content size width=1008 height=1016)
+        (last committed scroll position (0,0))
+        (scrollable area parameters 
+          (horizontal scroll elasticity 1)
+          (vertical scroll elasticity 1)
+          (horizontal scrollbar mode 0)
+          (vertical scrollbar mode 0)
+          (vertical scrollbar hidden by style 1))
+        (layout viewport (0,0) width=300 height=150)
+        (min layoutViewport origin (0,0))
+        (max layoutViewport origin (708,866))
+        (behavior for fixed 0)))
+    (frame hosting node
+      (frame scrolling node
+        (scrollable area size width=300 height=150)
+        (total content size width=1008 height=1016)
+        (last committed scroll position (0,0))
+        (scrollable area parameters 
+          (horizontal scroll elasticity 1)
+          (vertical scroll elasticity 1)
+          (horizontal scrollbar mode 0)
+          (vertical scrollbar mode 0)
+          (horizontal scrollbar hidden by style 1))
+        (layout viewport (0,0) width=300 height=150)
+        (min layoutViewport origin (0,0))
+        (max layoutViewport origin (708,866))
+        (behavior for fixed 0)))
+    (frame hosting node
+      (frame scrolling node
+        (scrollable area size width=300 height=150)
+        (total content size width=1008 height=1016)
+        (last committed scroll position (0,0))
+        (scrollable area parameters 
+          (horizontal scroll elasticity 1)
+          (vertical scroll elasticity 1)
+          (horizontal scrollbar mode 0)
+          (vertical scrollbar mode 0)
+          (horizontal scrollbar hidden by style 1)
+          (vertical scrollbar hidden by style 1))
+        (layout viewport (0,0) width=300 height=150)
+        (min layoutViewport origin (0,0))
+        (max layoutViewport origin (708,866))
+        (behavior for fixed 0)))))

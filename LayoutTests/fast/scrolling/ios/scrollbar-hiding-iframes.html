@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncFrameScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -55,11 +55,18 @@
             testRunner.dumpAsText();
         }
 
+        function getScrollingTreeUIScript(x, y)
+        {
+            return `(function() {
+                return uiController.scrollingTreeAsText;
+            })();`;
+        }
+
         async function doTest()
         {
             if (!testRunner.runUIScript)
                 return
-
+            
             document.getElementById('scrolling-tree').textContent = await UIHelper.getScrollingTree();
             testRunner.notifyDone();
         }
@@ -68,34 +75,65 @@
     </script>
 </head>
 <body>
-  <div class="container">
-    <h2>Both</h2>
-    <div class="overflowing accelerated horizontal vertical">
-      <div class="contents">
-      </div>
+    <div class="container">
+        <h2>Both Visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
     </div>
-  </div>
-  <div class="container">
-    <h2>Just horizontal</h2>
-    <div class="overflowing accelerated horizontal">
-      <div class="contents">
-      </div>
+    <div class="container">
+        <h2>Horizontal visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+
+        ::-webkit-scrollbar:vertical {
+        display: none;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
     </div>
-  </div>
-  <div class="container">
-    <h2>Just vertical</h2>
-    <div class="overflowing accelerated vertical">
-      <div class="contents">
-      </div>
+    <div class="container">
+        <h2>Vertical visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+        display: none;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
     </div>
-  </div>
-  <div class="container">
-    <h2>None visible</h2>
-    <div class="overflowing accelerated">
-      <div class="contents">
-      </div>
+    <div class="container">
+        <h2>None visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: none
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
     </div>
-  </div>
 <pre id="scrolling-tree"></pre>
 </body>
 </html>

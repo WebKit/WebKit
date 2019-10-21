@@ -1,3 +1,45 @@
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Support hiding iframe scrollbars via ::-webkit-scrollbar style
+        https://bugs.webkit.org/show_bug.cgi?id=203178
+
+        Reviewed by Dean Jackson.
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        is supported for overflow:scroll, but not for iframes. To make the latter work,
+        two fixes were necessary.
+        
+        First, FrameView had to implement horizontalScrollbarHiddenByStyle()/verticalScrollbarHiddenByStyle().
+        This is a little tricky on iOS because we never create RenderScrollbars, so we have to consult
+        pseudo-styles directly; a bit of refactoring makes that cleaner.
+        
+        Second, ScrollableAreaParameters was failing to check horizontalScrollbarHiddenByStyle/verticalScrollbarHiddenByStyle
+        in operator==, meaning that these data often didn't make it to the UI process.
+
+        Test: fast/scrolling/ios/scrollbar-hiding-iframes.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::rootElementForCustomScrollbarPartStyle const):
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::styleHidesScrollbarWithOrientation const):
+        (WebCore::FrameView::horizontalScrollbarHiddenByStyle const):
+        (WebCore::FrameView::verticalScrollbarHiddenByStyle const):
+        (WebCore::FrameView::updateScrollCorner):
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinatorTypes.h:
+        (WebCore::ScrollableAreaParameters::operator== const):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::isHiddenByStyle const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::scrollbarHiddenByStyle):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle const):
+        (WebCore::RenderScrollbar::isHiddenByStyle const):
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle): Deleted.
+        * rendering/RenderScrollbar.h:
+
 2019-10-21  youenn fablet  <youenn@apple.com>
 
         Share code between AudioDestinationIOS and AudioDestinationMac

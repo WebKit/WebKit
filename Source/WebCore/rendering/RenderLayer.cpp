@@ -3364,12 +3364,7 @@ void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
 
 static bool scrollbarHiddenByStyle(Scrollbar* scrollbar)
 {
-    if (!scrollbar || !scrollbar->isCustomScrollbar())
-        return false;
-
-    std::unique_ptr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, PseudoId::Scrollbar);
-
-    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
+    return scrollbar && scrollbar->isHiddenByStyle();
 }
 
 bool RenderLayer::horizontalScrollbarHiddenByStyle() const

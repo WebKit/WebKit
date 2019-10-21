@@ -90,6 +90,7 @@ public:
 
     virtual bool isOverlayScrollbar() const;
     bool shouldParticipateInHitTesting();
+    virtual bool isHiddenByStyle() const { return false; }
 
     bool isWindowActive() const;
 

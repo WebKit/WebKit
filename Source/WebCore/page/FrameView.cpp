@@ -529,26 +529,37 @@ void FrameView::updateCanHaveScrollbars()
         setCanHaveScrollbars(true);
 }
 
-Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
+RefPtr<Element> FrameView::rootElementForCustomScrollbarPartStyle(PseudoId partPseudoId) const
 {
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
-    Document* doc = frame().document();
+    auto* document = frame().document();
+    if (!document)
+        return nullptr;
 
     // Try the <body> element first as a scrollbar source.
-    HTMLElement* body = doc ? doc->bodyOrFrameset() : nullptr;
-    if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(PseudoId::Scrollbar))
-        return RenderScrollbar::createCustomScrollbar(*this, orientation, body);
+    auto* body = document->bodyOrFrameset();
+    if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(partPseudoId))
+        return body;
     
     // If the <body> didn't have a custom style, then the root element might.
-    Element* docElement = doc ? doc->documentElement() : nullptr;
-    if (docElement && docElement->renderer() && docElement->renderer()->style().hasPseudoStyle(PseudoId::Scrollbar))
-        return RenderScrollbar::createCustomScrollbar(*this, orientation, docElement);
+    auto* docElement = document->documentElement();
+    if (docElement && docElement->renderer() && docElement->renderer()->style().hasPseudoStyle(partPseudoId))
+        return docElement;
 
+    return nullptr;
+}
+
+Ref<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
+{
+    if (auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar))
+        return RenderScrollbar::createCustomScrollbar(*this, orientation, element.get());
+    
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
+    // FIXME: Seems bad to do this for cross-origin frames.
     RenderWidget* frameRenderer = frame().ownerRenderer();
     if (frameRenderer && frameRenderer->style().hasPseudoStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, &frame());
-    
+
     // Nobody set a custom style, so we just use a native scrollbar.
     return ScrollView::createScrollbar(orientation);
 }
@@ -1407,6 +1418,41 @@ void FrameView::logMockScrollAnimatorMessage(const String& message) const
     builder.appendLiteral("FrameView: ");
     builder.append(message);
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, builder.toString());
+}
+
+bool FrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const
+{
+    auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar);
+    if (!element)
+        return false;
+    auto* renderer = element->renderer();
+    ASSERT(renderer); // rootElementForCustomScrollbarPart assures that it's not null.
+
+    StyleScrollbarState scrollbarState;
+    scrollbarState.scrollbarPart = ScrollbarBGPart;
+    scrollbarState.orientation = orientation;
+    auto scrollbarStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::Scrollbar, scrollbarState), &renderer->style());
+    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
+}
+
+bool FrameView::horizontalScrollbarHiddenByStyle() const
+{
+    if (managesScrollbars()) {
+        auto* scrollbar = horizontalScrollbar();
+        return scrollbar && scrollbar->isHiddenByStyle();
+    }
+
+    return styleHidesScrollbarWithOrientation(HorizontalScrollbar);
+}
+
+bool FrameView::verticalScrollbarHiddenByStyle() const
+{
+    if (managesScrollbars()) {
+        auto* scrollbar = verticalScrollbar();
+        return scrollbar && scrollbar->isHiddenByStyle();
+    }
+    
+    return styleHidesScrollbarWithOrientation(VerticalScrollbar);
 }
 
 void FrameView::setCannotBlitToWindow()
@@ -3830,6 +3876,7 @@ void FrameView::updateScrollCorner()
         
         if (!cornerStyle) {
             // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
+            // FIXME: Seems wrong to do this for cross-origin frames.
             if (RenderWidget* renderer = frame().ownerRenderer())
                 cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(PseudoId::ScrollbarCorner), &renderer->style());
         }

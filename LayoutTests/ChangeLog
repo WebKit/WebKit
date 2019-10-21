@@ -1,3 +1,15 @@
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Support hiding iframe scrollbars via ::-webkit-scrollbar style
+        https://bugs.webkit.org/show_bug.cgi?id=203178
+
+        Reviewed by Dean Jackson.
+
+        Tests that dumps the scrolling tree.
+
+        * fast/scrolling/ios/scrollbar-hiding-iframes-expected.txt: Added.
+        * fast/scrolling/ios/scrollbar-hiding-iframes.html: Added.
+
 2019-10-21  youenn fablet  <youenn@apple.com>
 
         Share code between AudioDestinationIOS and AudioDestinationMac

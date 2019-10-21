@@ -79,6 +79,8 @@ struct ScrollableAreaParameters {
             && horizontalScrollbarMode == other.horizontalScrollbarMode
             && verticalScrollbarMode == other.verticalScrollbarMode
             && hasEnabledHorizontalScrollbar == other.hasEnabledHorizontalScrollbar
+            && horizontalScrollbarHiddenByStyle == other.horizontalScrollbarHiddenByStyle
+            && verticalScrollbarHiddenByStyle == other.verticalScrollbarHiddenByStyle
             && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar
             && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
     }

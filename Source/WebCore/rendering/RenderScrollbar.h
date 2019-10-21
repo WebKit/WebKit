@@ -55,8 +55,10 @@ public:
     int minimumThumbLength();
 
     float opacity();
+    
+    bool isHiddenByStyle() const final;
 
-    std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
+    std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId) const;
 
 private:
     RenderScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame*);

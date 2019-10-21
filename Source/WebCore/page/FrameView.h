@@ -749,12 +749,18 @@ private:
     bool usesMockScrollAnimator() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
 
+    bool styleHidesScrollbarWithOrientation(ScrollbarOrientation) const;
+    bool horizontalScrollbarHiddenByStyle() const final;
+    bool verticalScrollbarHiddenByStyle() const final;
+
     // Override scrollbar notifications to update the AXObject cache.
     void didAddScrollbar(Scrollbar*, ScrollbarOrientation) final;
     void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) final;
 
     IntSize sizeForResizeEvent() const;
     void sendResizeEventIfNeeded();
+    
+    RefPtr<Element> rootElementForCustomScrollbarPartStyle(PseudoId) const;
 
     void adjustScrollbarsForLayout(bool firstLayout);
 

@@ -136,7 +136,7 @@ void RenderScrollbar::setPressedPart(ScrollbarPart part)
     updateScrollbarPart(TrackBGPart);
 }
 
-std::unique_ptr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId)
+std::unique_ptr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId) const
 {
     if (!owningRenderer())
         return nullptr;
@@ -358,6 +358,12 @@ float RenderScrollbar::opacity()
         return 1;
 
     return partRenderer->style().opacity();
+}
+
+bool RenderScrollbar::isHiddenByStyle() const
+{
+    std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(ScrollbarBGPart, pseudoForScrollbarPart(ScrollbarBGPart));
+    return partStyle && partStyle->display() != DisplayType::None;
 }
 
 }
