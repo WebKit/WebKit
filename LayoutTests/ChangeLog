@@ -1,3 +1,18 @@
+2019-10-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Add 'auto' behavior to the 'width' and 'height' properties of the SVG <image> element
+        https://bugs.webkit.org/show_bug.cgi?id=202013
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/image-width-height-auto-dynamic-expected.svg: Added.
+        * svg/custom/image-width-height-auto-dynamic.svg: Added.
+        * svg/custom/image-width-height-auto-initial-expected.svg: Added.
+        * svg/custom/image-width-height-auto-initial.svg: Added.
+        * svg/custom/image-width-height-length-initial-expected.svg: Added.
+        * svg/custom/image-width-height-length-initial.svg: Added.
+        * svg/custom/resources/100x200-green.png: Added.
+
 2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Clipboard API] Implement ClipboardItem.getType() for platform clipboard items

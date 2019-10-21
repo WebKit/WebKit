@@ -1,3 +1,13 @@
+2019-10-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2]: Add 'auto' behavior to the 'width' and 'height' properties of the SVG <image> element
+        https://bugs.webkit.org/show_bug.cgi?id=202013
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/geometry/svg-image-intrinsic-size-with-cssstyle-auto-dynamic-image-change-expected.txt:
+        * web-platform-tests/svg/geometry/svg-image-intrinsic-size-with-cssstyle-auto-expected.txt:
+
 2019-10-21  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequest should not prevent entering the back/forward cache

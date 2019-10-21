@@ -68,14 +68,42 @@ SVGImageElement& RenderSVGImage::imageElement() const
     return downcast<SVGImageElement>(RenderSVGModelObject::element());
 }
 
+FloatRect RenderSVGImage::calculateObjectBoundingBox() const
+{
+    LayoutSize intrinsicSize;
+    if (CachedImage* cachedImage = imageResource().cachedImage())
+        intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().effectiveZoom());
+
+    SVGLengthContext lengthContext(&imageElement());
+
+    Length width = style().width();
+    Length height = style().height();
+
+    float concreteWidth;
+    if (!width.isAuto())
+        concreteWidth = lengthContext.valueForLength(width, SVGLengthMode::Width);
+    else if (!height.isAuto() && !intrinsicSize.isEmpty())
+        concreteWidth = lengthContext.valueForLength(height, SVGLengthMode::Height) * intrinsicSize.width() / intrinsicSize.height();
+    else
+        concreteWidth = intrinsicSize.width();
+
+    float concreteHeight;
+    if (!height.isAuto())
+        concreteHeight = lengthContext.valueForLength(height, SVGLengthMode::Height);
+    else if (!width.isAuto() && !intrinsicSize.isEmpty())
+        concreteHeight = lengthContext.valueForLength(width, SVGLengthMode::Width) * intrinsicSize.height() / intrinsicSize.width();
+    else
+        concreteHeight = intrinsicSize.height();
+
+    return { imageElement().x().value(lengthContext), imageElement().y().value(lengthContext), concreteWidth, concreteHeight };
+}
+
 bool RenderSVGImage::updateImageViewport()
 {
     FloatRect oldBoundaries = m_objectBoundingBox;
+    m_objectBoundingBox = calculateObjectBoundingBox();
+
     bool updatedViewport = false;
-
-    SVGLengthContext lengthContext(&imageElement());
-    m_objectBoundingBox = FloatRect(imageElement().x().value(lengthContext), imageElement().y().value(lengthContext), imageElement().width().value(lengthContext), imageElement().height().value(lengthContext));
-
     URL imageSourceURL = document().completeURL(imageElement().imageSourceURL());
 
     // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
@@ -223,7 +251,8 @@ void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     // Update the SVGImageCache sizeAndScales entry in case image loading finished after layout.
     // (https://bugs.webkit.org/show_bug.cgi?id=99489)
     m_objectBoundingBox = FloatRect();
-    updateImageViewport();
+    if (updateImageViewport())
+        setNeedsLayout();
 
     invalidateBufferedForeground();
 
