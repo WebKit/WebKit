@@ -57,7 +57,7 @@
 
 namespace WebCore {
 
-#define PCLOG(...) WTFLogAlways("PageCache: %*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
+#define PCLOG(...) LOG(BackForwardCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
 
 static inline void logBackForwardCacheFailureDiagnosticMessage(DiagnosticLoggingClient& client, const String& reason)
 {

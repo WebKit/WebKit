@@ -1,3 +1,9 @@
+2019-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop debug logging that was inadvertently committed with r251327.
+
+        * history/BackForwardCache.cpp:
+
 2019-10-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make InlineTextItem reusable when 'segment break' behavior changes
