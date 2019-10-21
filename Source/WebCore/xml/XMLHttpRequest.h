@@ -137,7 +137,6 @@ private:
 
     // ActiveDOMObject
     void contextDestroyed() override;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;
@@ -189,7 +188,6 @@ private:
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
 
-    void resumeTimerFired();
     Ref<TextResourceDecoder> createDecoder() const;
 
     void networkErrorTimerFired();
@@ -203,7 +201,6 @@ private:
     unsigned m_uploadComplete : 1;
     unsigned m_wasAbortedByClient : 1;
     unsigned m_responseCacheIsValid : 1;
-    unsigned m_dispatchErrorOnResuming : 1;
     unsigned m_readyState : 3; // State
     unsigned m_responseType : 3; // ResponseType
 
@@ -238,7 +235,6 @@ private:
 
     mutable String m_allResponseHeaders;
 
-    Timer m_resumeTimer;
     Timer m_networkErrorTimer;
     Timer m_timeoutTimer;
 

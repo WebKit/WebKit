@@ -117,11 +117,9 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_uploadComplete(false)
     , m_wasAbortedByClient(false)
     , m_responseCacheIsValid(false)
-    , m_dispatchErrorOnResuming(false)
     , m_readyState(static_cast<unsigned>(UNSENT))
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
-    , m_progressEventThrottle(this)
-    , m_resumeTimer(*this, &XMLHttpRequest::resumeTimerFired)
+    , m_progressEventThrottle(*this)
     , m_networkErrorTimer(*this, &XMLHttpRequest::networkErrorTimerFired)
     , m_timeoutTimer(*this, &XMLHttpRequest::didReachTimeout)
     , m_maximumIntervalForUserGestureForwarding(maximumIntervalForUserGestureForwarding)
@@ -337,6 +335,11 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, bool async)
 {
+    auto* context = scriptExecutionContext();
+    bool contextIsDocument = is<Document>(*context);
+    if (contextIsDocument && !downcast<Document>(*context).isFullyActive())
+        return Exception { InvalidStateError, "Document is not fully active"_s };
+
     if (!isValidHTTPToken(method))
         return Exception { SyntaxError };
 
@@ -346,19 +349,19 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     if (!url.isValid())
         return Exception { SyntaxError };
 
-    if (!async && scriptExecutionContext()->isDocument()) {
+    if (!async && contextIsDocument) {
         // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
         // such as file: and data: still make sense to allow.
         if (url.protocolIsInHTTPFamily() && responseType() != ResponseType::EmptyString) {
-            logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
+            logConsoleError(context, "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
             return Exception { InvalidAccessError };
         }
 
         // Similarly, timeouts are disabled for synchronous requests as well.
         if (m_timeoutMilliseconds > 0) {
-            logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests must not have a timeout value set.");
+            logConsoleError(context, "Synchronous XMLHttpRequests must not have a timeout value set.");
             return Exception { InvalidAccessError };
         }
     }
@@ -378,7 +381,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     clearRequest();
 
     m_url = url;
-    scriptExecutionContext()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
+    context->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     m_async = async;
 
@@ -1091,6 +1094,8 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
 void XMLHttpRequest::dispatchEvent(Event& event)
 {
+    RELEASE_ASSERT(!scriptExecutionContext()->activeDOMObjectsAreSuspended());
+
     if (m_userGestureToken && m_userGestureToken->hasExpired(m_maximumIntervalForUserGestureForwarding))
         m_userGestureToken = nullptr;
 
@@ -1141,55 +1146,19 @@ void XMLHttpRequest::didReachTimeout()
     dispatchErrorEvents(eventNames().timeoutEvent);
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool XMLHttpRequest::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    // If the load event has not fired yet, cancelling the load in suspend() may cause
-    // the load event to be fired and arbitrary JS execution, which would be unsafe.
-    // Therefore, we prevent suspending in this case.
-    return m_loader && !document()->loadEventFinished();
-}
-
 const char* XMLHttpRequest::activeDOMObjectName() const
 {
     return "XMLHttpRequest";
 }
 
-void XMLHttpRequest::suspend(ReasonForSuspension reason)
+void XMLHttpRequest::suspend(ReasonForSuspension)
 {
     m_progressEventThrottle.suspend();
-
-    if (m_resumeTimer.isActive()) {
-        m_resumeTimer.stop();
-        m_dispatchErrorOnResuming = true;
-    }
-
-    if (reason == ReasonForSuspension::BackForwardCache && m_loader) {
-        // Going into the BackForwardCache, abort the request and dispatch a network error on resuming.
-        genericError();
-        m_dispatchErrorOnResuming = true;
-        bool aborted = internalAbort();
-        // It should not be possible to restart the load when aborting in suspend() because
-        // we are not allowed to execute in JS in suspend().
-        ASSERT_UNUSED(aborted, aborted);
-    }
 }
 
 void XMLHttpRequest::resume()
 {
     m_progressEventThrottle.resume();
-
-    // We are not allowed to execute arbitrary JS in resume() so dispatch
-    // the error event in a timer.
-    if (m_dispatchErrorOnResuming && !m_resumeTimer.isActive())
-        m_resumeTimer.startOneShot(0_s);
-}
-
-void XMLHttpRequest::resumeTimerFired()
-{
-    ASSERT(m_dispatchErrorOnResuming);
-    m_dispatchErrorOnResuming = false;
-    dispatchErrorEvents(eventNames().errorEvent);
 }
 
 void XMLHttpRequest::stop()

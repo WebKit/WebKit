@@ -8,7 +8,9 @@ if (window.testRunner) {
 function onFrameLoad(frame) {
   var client = frame.contentWindow.client();
   frame.parentNode.removeChild(frame);
-  client.open("GET", "DoesNotExist.txt");
+  try {
+      client.open("GET", "DoesNotExist.txt");
+  } catch(e) { }
   if (window.testRunner)
     testRunner.notifyDone();
 }

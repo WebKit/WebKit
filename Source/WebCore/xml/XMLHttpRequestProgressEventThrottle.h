@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "Timer.h"
+#include "SuspendableTimer.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -42,9 +42,9 @@ enum ProgressEventAction {
 
 // This implements the XHR2 progress event dispatching: "dispatch a progress event called progress
 // about every 50ms or for every byte received, whichever is least frequent".
-class XMLHttpRequestProgressEventThrottle : public TimerBase {
+class XMLHttpRequestProgressEventThrottle {
 public:
-    explicit XMLHttpRequestProgressEventThrottle(EventTarget*);
+    explicit XMLHttpRequestProgressEventThrottle(EventTarget&);
     virtual ~XMLHttpRequestProgressEventThrottle();
 
     void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
@@ -57,26 +57,25 @@ public:
 private:
     static const Seconds minimumProgressEventDispatchingInterval;
 
-    void fired() override;
-    void dispatchDeferredEvents();
+    void dispatchThrottledProgressEventTimerFired();
+    void dispatchDeferredEventsAfterResuming();
     void flushProgressEvent();
-    void dispatchEvent(Event&);
-
-    bool hasEventToDispatch() const;
+    void dispatchEventWhenPossible(Event&);
 
     // Weak pointer to our XMLHttpRequest object as it is the one holding us.
-    EventTarget* m_target;
+    EventTarget& m_target;
 
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };
 
     RefPtr<Event> m_deferredProgressEvent;
-    Vector<Ref<Event>> m_deferredEvents;
-    Timer m_dispatchDeferredEventsTimer;
+    Vector<Ref<Event>> m_eventsDeferredDueToSuspension;
+    SuspendableTimer m_dispatchThrottledProgressEventTimer;
+    SuspendableTimer m_dispatchDeferredEventsAfterResumingTimer;
 
-    bool m_hasThrottledProgressEvent { false };
+    bool m_hasPendingThrottledProgressEvent { false };
     bool m_lengthComputable { false };
-    bool m_deferEvents { false };
+    bool m_shouldDeferEventsDueToSuspension { false };
 };
 
 } // namespace WebCore

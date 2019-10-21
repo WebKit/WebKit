@@ -1,3 +1,20 @@
+2019-10-21  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequest should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203107
+        <rdar://problem/56438647>
+
+        Reviewed by Youenn Fablet.
+
+        Add more test coverage.
+
+        * TestExpectations:
+        * fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-open-after-iframe-onload-remove-self.html:
+        * http/tests/navigation/page-cache-xhr-in-loading-iframe-expected.txt: Added.
+        * http/tests/navigation/page-cache-xhr-in-loading-iframe.html: Added.
+        * http/tests/navigation/resources/page-cache-xhr-in-loading-iframe.html: Added.
+
 2019-10-21  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Revert WebKitMediaSrc rework temporarily
