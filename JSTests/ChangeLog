@@ -1,3 +1,14 @@
+2019-10-21  Robin Morisset  <rmorisset@apple.com>
+
+        Post increment/decrement should only call ToNumber once
+        https://bugs.webkit.org/show_bug.cgi?id=202711
+
+        Reviewed by Saam Barati.
+
+        * stress/postinc-custom-valueOf.js: Added.
+        (postInc):
+        (postDec):
+
 2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG::CommonData modification by DFG reallyAdd should be guarded by CodeBlock's lock

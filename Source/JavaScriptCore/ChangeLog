@@ -1,3 +1,17 @@
+2019-10-21  Robin Morisset  <rmorisset@apple.com>
+
+        Post increment/decrement should only call ToNumber once
+        https://bugs.webkit.org/show_bug.cgi?id=202711
+
+        Reviewed by Saam Barati.
+
+        The problem is that we first called ToNumber on the object being incremented (to have the result that we'll eventually return), but we then do emitIncOrDec on the original object, which can call ToNumber again.
+        Instead we must do the ToNumber once, then copy its result, emitIncOrDec on the copy, put the copy back in the original location, and finally return the old value.
+        Since the result of ToNumber is guaranteed not to be an object, emitIncOrDec won't call ToNumber a second time.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitPostIncOrDec):
+
 2019-10-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG::CommonData modification by DFG reallyAdd should be guarded by CodeBlock's lock
