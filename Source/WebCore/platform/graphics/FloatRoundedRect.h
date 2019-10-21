@@ -103,6 +103,7 @@ public:
     bool isEmpty() const { return m_rect.isEmpty(); }
 
     void setRect(const FloatRect& rect) { m_rect = rect; }
+    void setLocation(FloatPoint location) { m_rect.setLocation(location); }
     void setRadii(const Radii& radii) { m_radii = radii; }
 
     void move(const FloatSize& size) { m_rect.move(size); }

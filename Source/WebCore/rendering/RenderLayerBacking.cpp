@@ -1931,7 +1931,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
             auto* clipLayer = clippingLayer();
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
-            contentsClippingRect.move(LayoutSize(clipLayer->offsetFromRenderer()));
+            contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
             // Note that we have to set this rounded rect again during the geometry update (clipLayer->offsetFromRenderer() may be stale here).
             if (clipLayer->setMasksToBoundsRect(contentsClippingRect)) {
                 clipLayer->setMaskLayer(nullptr);

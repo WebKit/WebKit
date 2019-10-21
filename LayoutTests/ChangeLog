@@ -68,6 +68,17 @@
 
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Setting border-radius on <video> element clips top and left sections of video
+        https://bugs.webkit.org/show_bug.cgi?id=202049
+        <rdar://problem/55570024>
+
+        Reviewed by Dean Jackson.
+
+        * compositing/video/video-border-radius-clipping-expected.html: Added.
+        * compositing/video/video-border-radius-clipping.html: Added.
+
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
         scrollingcoordinator/ios/ui-scrolling-tree.html is a Flaky Failure on iPad
         https://bugs.webkit.org/show_bug.cgi?id=203119
         rdar://problem/52970947

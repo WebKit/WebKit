@@ -2589,9 +2589,10 @@ void GraphicsLayerCA::updateContentsColorLayer()
 }
 
 // The clipping strategy depends on whether the rounded rect has equal corner radii.
+// roundedRect is in the coordinate space of clippingLayer.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {
-    if (roundedRect.radii().isUniformCornerRadius()) {
+    if (roundedRect.radii().isUniformCornerRadius() && clippingLayer.bounds() == roundedRect.rect()) {
         clippingLayer.setMask(nullptr);
         if (shapeMaskLayer) {
             shapeMaskLayer->setOwner(nullptr);
@@ -2609,11 +2610,8 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
         shapeMaskLayer->setName("shape mask");
     }
     
-    shapeMaskLayer->setPosition(roundedRect.rect().location());
-    FloatRect shapeBounds({ }, roundedRect.rect().size());
-    shapeMaskLayer->setBounds(shapeBounds);
-    FloatRoundedRect offsetRoundedRect(shapeBounds, roundedRect.radii());
-    shapeMaskLayer->setShapeRoundedRect(offsetRoundedRect);
+    shapeMaskLayer->setBounds(clippingLayer.bounds());
+    shapeMaskLayer->setShapeRoundedRect(roundedRect);
 
     clippingLayer.setCornerRadius(0);
     clippingLayer.setMask(shapeMaskLayer.get());
@@ -2628,13 +2626,13 @@ void GraphicsLayerCA::updateContentsRects()
     const FloatRect contentBounds(0, 0, m_contentsRect.width(), m_contentsRect.height());
 
     FloatPoint clippingOrigin(m_contentsClippingRect.rect().location());
-    FloatRect clippingBounds(FloatPoint(), m_contentsClippingRect.rect().size());
+    FloatRect clippingBounds({ }, m_contentsClippingRect.rect().size());
     
     bool gainedOrLostClippingLayer = false;
     if (m_contentsClippingRect.isRounded() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
         if (!m_contentsClippingLayer) {
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
-            m_contentsClippingLayer->setAnchorPoint(FloatPoint());
+            m_contentsClippingLayer->setAnchorPoint({ });
 #if ENABLE(TREE_DEBUGGING)
             m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID()));
 #else
@@ -2645,8 +2643,11 @@ void GraphicsLayerCA::updateContentsRects()
 
         m_contentsClippingLayer->setPosition(clippingOrigin);
         m_contentsClippingLayer->setBounds(clippingBounds);
+        
+        auto clippingRectRelativeToClippingLayer = m_contentsClippingRect;
+        clippingRectRelativeToClippingLayer.setLocation({ });
 
-        updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect);
+        updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, clippingRectRelativeToClippingLayer);
 
         if (gainedOrLostClippingLayer) {
             m_contentsLayer->removeFromSuperlayer();

@@ -102,6 +102,35 @@
 
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
+        Setting border-radius on <video> element clips top and left sections of video
+        https://bugs.webkit.org/show_bug.cgi?id=202049
+        <rdar://problem/55570024>
+
+        Reviewed by Dean Jackson.
+
+        updateClippingStrategy() is called both when we're setting a mask layer on m_layer,
+        and on m_contentsClippingLayer, and they disagreed on the coordinate space that
+        the rounded rect was in. r246845 fixed rounded-rect scrollers, but broke video.
+
+        Fix by declaring that the rounded rect is relative to the bounds of the layer
+        argument. We don't try to size the shape layer to the rounded rect, because in some
+        configurations (e.g. scroller with left scrollbar) the rounded rect hangs outside
+        the clipping layer.
+
+        Test: compositing/video/video-border-radius-clipping.html
+
+        * platform/graphics/FloatRoundedRect.h:
+        (WebCore::FloatRoundedRect::setLocation):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateClippingStrategy):
+        (WebCore::GraphicsLayerCA::updateContentsRects): The rounded rect is relative to the contentsClippingLayer,
+        so set its location to zero.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy): negate the offset, as we do in updateGeometry which
+        has similar code.
+
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Support hiding iframe scrollbars via ::-webkit-scrollbar style
         https://bugs.webkit.org/show_bug.cgi?id=203178
 
