@@ -25,11 +25,14 @@
 
 #pragma once
 
-#include "WebPageProxy.h"
 #include <WebCore/TextChecking.h>
 #include <wtf/Forward.h>
 
 namespace WebKit {
+
+using SpellDocumentTag = int64_t;
+
+class WebPageProxy;
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:

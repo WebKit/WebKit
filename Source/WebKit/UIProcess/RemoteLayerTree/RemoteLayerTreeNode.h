@@ -30,6 +30,7 @@
 #include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
+OBJC_CLASS NSString;
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIView;
 #endif

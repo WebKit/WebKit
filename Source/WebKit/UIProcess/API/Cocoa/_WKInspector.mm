@@ -27,6 +27,7 @@
 #import "_WKInspector.h"
 
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"

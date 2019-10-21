@@ -26,16 +26,15 @@
 #pragma once
 
 #include <WebCore/FindOptions.h>
-#include <WebCore/GraphicsLayer.h>
+#include <WebCore/PlatformLayer.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/SecurityOrigin.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-#include "LayerHostingContext.h"
 typedef struct objc_object* id;
 
 OBJC_CLASS NSDictionary;
@@ -59,7 +58,6 @@ class GraphicsContext;
 class IntPoint;
 class IntRect;
 class IntSize;
-class FloatPoint;
 class Scrollbar;
 class SharedBuffer;
 }
@@ -78,6 +76,8 @@ enum PluginType {
     NetscapePluginType,
     PDFPluginType,
 };
+
+enum class LayerHostingMode : uint8_t;
 
 class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:

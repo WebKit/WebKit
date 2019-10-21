@@ -27,6 +27,7 @@
 #include "WebsiteDataStore.h"
 
 #include "NetworkProcessMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStoreParameters.h"
 

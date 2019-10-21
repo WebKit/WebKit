@@ -30,6 +30,10 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/SetForScope.h>
 
+#if PLATFORM(COCOA)
+#include "LayerHostingContext.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 

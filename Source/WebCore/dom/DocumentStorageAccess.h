@@ -51,10 +51,8 @@ const unsigned maxNumberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 2;
 class DocumentStorageAccess final : public Supplement<Document>, public CanMakeWeakPtr<DocumentStorageAccess> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DocumentStorageAccess(Document& document)
-        : m_document(document)
-    {
-    }
+    explicit DocumentStorageAccess(Document&);
+    ~DocumentStorageAccess();
 
     static void hasStorageAccess(Document&, Ref<DeferredPromise>&&);
     static void requestStorageAccess(Document&, Ref<DeferredPromise>&&);

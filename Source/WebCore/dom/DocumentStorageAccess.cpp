@@ -44,6 +44,13 @@
 
 namespace WebCore {
 
+DocumentStorageAccess::DocumentStorageAccess(Document& document)
+    : m_document(document)
+{
+}
+
+DocumentStorageAccess::~DocumentStorageAccess() = default;
+
 DocumentStorageAccess* DocumentStorageAccess::from(Document& document)
 {
     auto* supplement = static_cast<DocumentStorageAccess*>(Supplement<Document>::from(&document, supplementName()));

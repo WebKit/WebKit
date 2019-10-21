@@ -84,6 +84,18 @@ WebUserContentControllerProxy::~WebUserContentControllerProxy()
 #endif
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebUserContentControllerProxy::addNetworkProcess(NetworkProcessProxy& proxy)
+{
+    m_networkProcesses.add(proxy);
+}
+
+void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& proxy)
+{
+    m_networkProcesses.remove(proxy);
+}
+#endif
+
 void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy, WebPageCreationParameters& parameters)
 {
     ASSERT(!m_processes.hasNullReferences());

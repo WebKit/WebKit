@@ -1,3 +1,44 @@
+2019-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to improve WebKit2 build speed
+        https://bugs.webkit.org/show_bug.cgi?id=203071
+
+        Reviewed by Wenson Hsieh.
+
+        This is worth about 6% on WebKit2, and unlocks another 8% improvement
+        down the line (but which is less mechanical).
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/WebStorage/StorageArea.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        * Platform/IPC/Connection.h:
+        * Shared/API/APIURL.h:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        * UIProcess/TextCheckerCompletion.cpp:
+        * UIProcess/TextCheckerCompletion.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addNetworkProcess):
+        (WebKit::WebUserContentControllerProxy::removeNetworkProcess):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::addNetworkProcess): Deleted.
+        (WebKit::WebUserContentControllerProxy::removeNetworkProcess): Deleted.
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/Plugin.cpp:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/WebProcess.cpp:
+
 2019-10-20  Brent Fulgham  <bfulgham@apple.com>
 
         Improve serialization logic

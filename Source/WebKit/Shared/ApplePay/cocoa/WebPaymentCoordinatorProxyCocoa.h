@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import <WebCore/ApplePaySessionPaymentRequest.h>
 #import <pal/spi/cocoa/PassKitSPI.h>
 
 namespace WebKit {

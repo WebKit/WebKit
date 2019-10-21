@@ -46,6 +46,10 @@
 #include "NetscapePluginUnix.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "LayerHostingContext.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

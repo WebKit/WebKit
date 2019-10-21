@@ -1,3 +1,34 @@
+2019-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Clean up some includes to improve WebKit2 build speed
+        https://bugs.webkit.org/show_bug.cgi?id=203071
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests, just shuffling code around.
+
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::WindowProxy):
+        (WebCore::WindowProxy::~WindowProxy):
+        (WebCore::WindowProxy::detachFromFrame):
+        (WebCore::WindowProxy::destroyJSWindowProxy):
+        (WebCore::WindowProxy::createJSWindowProxy):
+        (WebCore::WindowProxy::jsWindowProxiesAsVector const):
+        (WebCore::WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow):
+        (WebCore::WindowProxy::setDOMWindow):
+        (WebCore::WindowProxy::attachDebugger):
+        (WebCore::WindowProxy::jsWindowProxies const):
+        (WebCore::WindowProxy::releaseJSWindowProxies):
+        (WebCore::WindowProxy::setJSWindowProxies):
+        * bindings/js/WindowProxy.h:
+        (WebCore::WindowProxy::existingJSWindowProxy const):
+        (WebCore::WindowProxy::jsWindowProxies const): Deleted.
+        (WebCore::WindowProxy::releaseJSWindowProxies): Deleted.
+        (WebCore::WindowProxy::setJSWindowProxies): Deleted.
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::~IOSurface):
+
 2019-10-21  Joonghun Park  <jh718.park@samsung.com>
 
         [GTK] Unreviewed. Fix build warning: unused parameter ‘Foo’ [-Wunused-parameter] since r251320.

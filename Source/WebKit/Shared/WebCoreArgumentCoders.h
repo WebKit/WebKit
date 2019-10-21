@@ -27,7 +27,6 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/AutoplayEvent.h>
-#include <WebCore/CacheStorageConnection.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -41,6 +40,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/WorkerType.h>
+#include <wtf/EnumTraits.h>
 
 #if ENABLE(APPLE_PAY)
 #include <WebCore/PaymentHeaders.h>
@@ -184,6 +184,11 @@ struct SerializedAttachmentData;
 #if ENABLE(INDEXED_DATABASE)
 using IDBKeyPath = Variant<String, Vector<String>>;
 #endif
+
+namespace DOMCacheEngine {
+struct CacheInfo;
+struct Record;
+}
 }
 
 namespace IPC {

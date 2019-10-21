@@ -30,6 +30,7 @@
 #import "WebFrameInternal.h"
 #import "WebPDFViewIOS.h"
 #import <JavaScriptCore/JSContextRef.h>
+#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/DataTransfer.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>

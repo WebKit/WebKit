@@ -32,7 +32,6 @@
 #include "Encoder.h"
 #include "HandleMessage.h"
 #include "MessageReceiver.h"
-#include <WebCore/ScriptDisallowedScope.h>
 #include <atomic>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>

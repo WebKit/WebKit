@@ -232,6 +232,8 @@ IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
     m_totalBytes = IOSurfaceGetAllocSize(surface);
 }
 
+IOSurface::~IOSurface() = default;
+
 IntSize IOSurface::maximumSize()
 {
     IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));

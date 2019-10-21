@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebKit {
 
 enum class StorageAccessStatus : uint8_t {

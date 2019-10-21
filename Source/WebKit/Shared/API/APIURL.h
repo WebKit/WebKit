@@ -26,7 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
-#include "WebCoreArgumentCoders.h"
+#include "ArgumentCoders.h"
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>

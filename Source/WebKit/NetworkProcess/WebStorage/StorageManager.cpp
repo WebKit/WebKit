@@ -39,6 +39,7 @@
 #include <WebCore/StorageMap.h>
 #include <WebCore/TextEncoding.h>
 #include <memory>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {

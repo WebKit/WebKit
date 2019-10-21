@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TextCheckerCompletion.h"
 
+#include "WebPageProxy.h"
+
 namespace WebKit {
 using namespace WebCore;
 

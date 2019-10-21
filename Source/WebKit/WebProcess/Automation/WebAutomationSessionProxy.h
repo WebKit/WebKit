@@ -29,6 +29,7 @@
 #include "CoordinateSystem.h"
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/text/WTFString.h>
 

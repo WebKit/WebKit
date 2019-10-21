@@ -27,8 +27,8 @@
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
-#include "NetworkProcessProxy.h"
 #include "UserContentControllerIdentifier.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
@@ -97,8 +97,8 @@ public:
     void removeAllUserMessageHandlers(API::UserContentWorld&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.add(proxy); }
-    void removeNetworkProcess(NetworkProcessProxy& proxy) { m_networkProcesses.remove(proxy); }
+    void addNetworkProcess(NetworkProcessProxy&);
+    void removeNetworkProcess(NetworkProcessProxy&);
 
     void addContentRuleList(API::ContentRuleList&);
     void removeContentRuleList(const String&);

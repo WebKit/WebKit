@@ -26,6 +26,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
 

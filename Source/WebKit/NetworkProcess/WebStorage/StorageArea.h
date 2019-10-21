@@ -30,6 +30,7 @@
 #include "StorageAreaImplIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class StorageMap;
