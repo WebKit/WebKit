@@ -613,6 +613,8 @@ enum CompositingPolicy {
     [Conditional=MEDIA_STREAM] void setMockMediaCaptureDevicesEnabled(boolean enabled);
     [Conditional=MEDIA_STREAM] void setCustomPrivateRecorderCreator();
 
+    [Conditional=WEB_AUDIO] void useMockAudioDestinationCocoa();
+
     [Conditional=WEB_RTC] void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection connection, DOMString action);
     [Conditional=WEB_RTC] void useMockRTCPeerConnectionFactory(DOMString testCase);
     [Conditional=WEB_RTC] void setICECandidateFiltering(boolean enabled);

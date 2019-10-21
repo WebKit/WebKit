@@ -65,6 +65,26 @@ promise_test(async (test) => {
     source.disconnect(script);
     script.disconnect(audioContext.destination);
 }, "Web Audio should work even if number of channels of a track increases from 1 to 2");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Internals API required");
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    internals.useMockAudioDestinationCocoa();
+
+    var audioContext = new webkitAudioContext();
+    var analyzer = audioContext.createAnalyser();
+    analyzer.fftSize = 256;
+    let source = audioContext.createMediaStreamSource(stream);
+    source.connect(analyzer);
+    analyzer.connect(audioContext.destination);
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    source.disconnect(analyzer);
+    analyzer.disconnect(audioContext.destination);
+}, "Web Audio should work with mock audio destination");
+
         </script>
     </body>
 </html>

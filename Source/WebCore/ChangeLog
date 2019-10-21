@@ -1,3 +1,57 @@
+2019-10-21  youenn fablet  <youenn@apple.com>
+
+        Share code between AudioDestinationIOS and AudioDestinationMac
+        https://bugs.webkit.org/show_bug.cgi?id=203047
+        <rdar://problem/56340866>
+
+        Reviewed by Eric Carlson.
+
+        Introduce AudioDestinationCocoa to share code between iOS and Mac.
+        Most code is now shared, except for the configuration of the audio unit which is slightly different between Mac and iOS.
+
+        Introduce MockAudioDestinationCocoa to allow more code coverage of the shared code.
+        This could also allow us to validate dynamic changes in frame rate, number of frames to process...
+        Add Internals API to enable the mock destination.
+ 
+        Covered by added test.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp: Added.
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestination::maxChannelCount):
+        (WebCore::AudioDestinationCocoa::AudioDestinationCocoa):
+        (WebCore::AudioDestinationCocoa::~AudioDestinationCocoa):
+        (WebCore::AudioDestinationCocoa::start):
+        (WebCore::AudioDestinationCocoa::stop):
+        (WebCore::AudioDestinationCocoa::setIsPlaying):
+        (WebCore::AudioDestinationCocoa::setAudioStreamBasicDescription):
+        (WebCore::assignAudioBuffersToBus):
+        (WebCore::AudioDestinationCocoa::render):
+        (WebCore::AudioDestinationCocoa::inputProc):
+        * platform/audio/cocoa/AudioDestinationCocoa.h: Added.
+        (WebCore::AudioDestinationCocoa::outputUnit):
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationCocoa::configure):
+        (WebCore::AudioDestinationCocoa::processBusAfterRender):
+        * platform/audio/ios/AudioDestinationIOS.h: Removed.
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationCocoa::configure):
+        (WebCore::AudioDestinationCocoa::processBusAfterRender):
+        * platform/audio/mac/AudioDestinationMac.h: Removed.
+        * platform/mock/MockAudioDestinationCocoa.cpp: Added.
+        (WebCore::MockAudioDestinationCocoa::MockAudioDestinationCocoa):
+        (WebCore::MockAudioDestinationCocoa::start):
+        (WebCore::MockAudioDestinationCocoa::stop):
+        (WebCore::MockAudioDestinationCocoa::tick):
+        * platform/mock/MockAudioDestinationCocoa.h: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::useMockAudioDestinationCocoa):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-10-21  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequest should not prevent entering the back/forward cache

@@ -163,6 +163,7 @@ page/scrolling/mac/ScrollingTreeMac.cpp
 
 platform/audio/AudioSession.cpp
 
+platform/audio/cocoa/AudioDestinationCocoa.cpp
 platform/audio/cocoa/MediaSessionManagerCocoa.mm
 platform/audio/cocoa/WebAudioBufferList.cpp
 
@@ -493,6 +494,7 @@ platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 
 platform/mock/MediaPlaybackTargetPickerMock.cpp
 platform/mock/MediaPlaybackTargetMock.cpp
+platform/mock/MockAudioDestinationCocoa.cpp
 
 platform/network/cf/CertificateInfoCFNet.cpp
 platform/network/cf/DNSResolveQueueCFNet.cpp

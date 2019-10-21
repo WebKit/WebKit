@@ -122,6 +122,7 @@
 #include "MediaStreamTrack.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
+#include "MockAudioDestinationCocoa.h"
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
@@ -580,6 +581,10 @@ Internals::Internals(Document& document)
 #endif
 
     m_unsuspendableActiveDOMObject = nullptr;
+
+#if PLATFORM(COCOA) &&  ENABLE(WEB_AUDIO)
+    AudioDestinationCocoa::createOverride = nullptr;
+#endif
 }
 
 Document* Internals::contextDocument() const
@@ -4076,7 +4081,6 @@ void Internals::sendMediaControlEvent(MediaControlEvent event)
 #endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)
-
 void Internals::setAudioContextRestrictions(AudioContext& context, StringView restrictionsString)
 {
     AudioContext::BehaviorRestrictions restrictions = context.behaviorRestrictions();
@@ -4095,6 +4099,12 @@ void Internals::setAudioContextRestrictions(AudioContext& context, StringView re
     context.addBehaviorRestriction(restrictions);
 }
 
+void Internals::useMockAudioDestinationCocoa()
+{
+#if PLATFORM(COCOA)
+    AudioDestinationCocoa::createOverride = MockAudioDestinationCocoa::create;
+#endif
+}
 #endif
 
 void Internals::simulateSystemSleep() const

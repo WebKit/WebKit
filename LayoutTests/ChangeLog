@@ -1,3 +1,14 @@
+2019-10-21  youenn fablet  <youenn@apple.com>
+
+        Share code between AudioDestinationIOS and AudioDestinationMac
+        https://bugs.webkit.org/show_bug.cgi?id=203047
+        <rdar://problem/56340866>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-webaudio-expected.txt:
+        * fast/mediastream/getUserMedia-webaudio.html:
+
 2019-10-21  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequest should not prevent entering the back/forward cache

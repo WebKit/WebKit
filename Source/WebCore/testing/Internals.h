@@ -634,6 +634,7 @@ public:
 
 #if ENABLE(WEB_AUDIO)
     void setAudioContextRestrictions(AudioContext&, StringView restrictionsString);
+    void useMockAudioDestinationCocoa();
 #endif
 
     void simulateSystemSleep() const;
