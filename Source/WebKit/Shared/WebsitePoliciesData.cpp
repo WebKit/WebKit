@@ -69,7 +69,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         return WTF::nullopt;
 
 #if ENABLE(DEVICE_ORIENTATION)
-    Optional<DeviceOrientationOrMotionPermissionState> deviceOrientationAndMotionAccessState;
+    Optional<WebCore::DeviceOrientationOrMotionPermissionState> deviceOrientationAndMotionAccessState;
     decoder >> deviceOrientationAndMotionAccessState;
     if (!deviceOrientationAndMotionAccessState)
         return WTF::nullopt;

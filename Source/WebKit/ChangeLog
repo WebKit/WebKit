@@ -1,3 +1,44 @@
+2019-10-21  Dean Jackson  <dino@apple.com>
+
+        Move ElementContext from WebKit to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=203210
+        <rdar://problem/56475682>
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkit/messages.py:
+        * Shared/DocumentEditingContext.h:
+        * Shared/DocumentEditingContext.mm:
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContextRequest>::decode):
+        * Shared/ElementContext.cpp: Removed.
+        * Shared/ElementContext.h: Removed.
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::decode):
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKTextInputContext.mm:
+        (-[_WKTextInputContext _initWithTextInputContext:]):
+        (-[_WKTextInputContext _textInputContext]):
+        * UIProcess/API/Cocoa/_WKTextInputContextInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::textInputContextsInRect):
+        (WebKit::WebPageProxy::focusTextInputContext):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::textInputContextsInRect):
+        (WebKit::WebPage::focusTextInputContext):
+        (WebKit::WebPage::elementForContext const):
+        (WebKit::WebPage::contextForElement const):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::startInteractionWithElementContextOrPosition):
+
 2019-10-21  Alex Christensen  <achristensen@webkit.org>
 
         ServiceWorker tests should use TCPServer instead of WKURLSchemeHandler

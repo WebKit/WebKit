@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include "ElementContext.h"
 #include "UIKitSPI.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/ElementContext.h>
 
 namespace WebKit {
 
@@ -198,7 +198,7 @@ Optional<WebKit::DocumentEditingContextRequest> ArgumentCoder<WebKit::DocumentEd
     if (!decoder.decode(request.rect))
         return WTF::nullopt;
 
-    Optional<Optional<WebKit::ElementContext>> optionalTextInputContext;
+    Optional<Optional<WebCore::ElementContext>> optionalTextInputContext;
     decoder >> optionalTextInputContext;
     if (!optionalTextInputContext)
         return WTF::nullopt;

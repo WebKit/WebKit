@@ -25,22 +25,24 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include <WebCore/DocumentIdentifier.h>
-#include <WebCore/ElementIdentifier.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/PageIdentifier.h>
+#include "DocumentIdentifier.h"
+#include "ElementIdentifier.h"
+#include "FloatRect.h"
+#include "PageIdentifier.h"
 
-namespace WebKit {
+namespace WebCore {
 
 struct ElementContext {
-    WebCore::FloatRect boundingRect;
+    FloatRect boundingRect;
 
-    WebCore::PageIdentifier webPageIdentifier;
-    WebCore::DocumentIdentifier documentIdentifier;
-    WebCore::ElementIdentifier elementIdentifier;
+    PageIdentifier webPageIdentifier;
+    DocumentIdentifier documentIdentifier;
+    ElementIdentifier elementIdentifier;
 
-    ~ElementContext();
+    ~ElementContext() = default;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ElementContext> decode(Decoder&);
 };
 
 inline bool operator==(const ElementContext& a, const ElementContext& b)
@@ -51,11 +53,39 @@ inline bool operator==(const ElementContext& a, const ElementContext& b)
         && a.elementIdentifier == b.elementIdentifier;
 }
 
+template<class Encoder>
+void ElementContext::encode(Encoder& encoder) const
+{
+    encoder << boundingRect;
+    encoder << webPageIdentifier;
+    encoder << documentIdentifier;
+    encoder << elementIdentifier;
 }
 
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::ElementContext> {
-    static void encode(Encoder&, const WebKit::ElementContext&);
-    static Optional<WebKit::ElementContext> decode(Decoder&);
-};
+template<class Decoder>
+Optional<ElementContext> ElementContext::decode(Decoder& decoder)
+{
+    ElementContext context;
+
+    if (!decoder.decode(context.boundingRect))
+        return WTF::nullopt;
+
+    auto pageIdentifier = PageIdentifier::decode(decoder);
+    if (!pageIdentifier)
+        return WTF::nullopt;
+    context.webPageIdentifier = *pageIdentifier;
+
+    auto documentIdentifier = DocumentIdentifier::decode(decoder);
+    if (!documentIdentifier)
+        return WTF::nullopt;
+    context.documentIdentifier = *documentIdentifier;
+
+    auto elementIdentifier = ElementIdentifier::decode(decoder);
+    if (!elementIdentifier)
+        return WTF::nullopt;
+    context.elementIdentifier = *elementIdentifier;
+
+    return context;
+}
+
 }

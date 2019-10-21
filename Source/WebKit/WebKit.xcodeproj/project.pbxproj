@@ -723,7 +723,6 @@
 		2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */; };
 		2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */; };
 		2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */; };
-		2DE9B1352231B5B2005287B7 /* ElementContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B1332231B5B2005287B7 /* ElementContext.h */; };
 		2DE9B13A2231F61C005287B7 /* _WKTextInputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DE9B13C2231F77C005287B7 /* _WKTextInputContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */; };
 		2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2885,8 +2884,6 @@
 		2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStoreCollection.mm; sourceTree = "<group>"; };
 		2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SmartMagnificationControllerMessageReceiver.cpp; path = DerivedSources/WebKit2/SmartMagnificationControllerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartMagnificationControllerMessages.h; path = DerivedSources/WebKit2/SmartMagnificationControllerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DE9B1332231B5B2005287B7 /* ElementContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementContext.h; sourceTree = "<group>"; };
-		2DE9B1342231B5B2005287B7 /* ElementContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementContext.cpp; sourceTree = "<group>"; };
 		2DE9B1372231F61C005287B7 /* _WKTextInputContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextInputContext.mm; sourceTree = "<group>"; };
 		2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContext.h; sourceTree = "<group>"; };
 		2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContextInternal.h; sourceTree = "<group>"; };
@@ -5283,8 +5280,6 @@
 				E105FE5318D7B9DE008F57A8 /* EditingRange.h */,
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,
-				2DE9B1342231B5B2005287B7 /* ElementContext.cpp */,
-				2DE9B1332231B5B2005287B7 /* ElementContext.h */,
 				C59C4A5618B81174007BDCB6 /* FocusedElementInformation.cpp */,
 				C59C4A5718B81174007BDCB6 /* FocusedElementInformation.h */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
@@ -6271,9 +6266,9 @@
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
+				37B47E2C1D64DB76005F4EFF /* objcSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				7AA746D42359308400095050 /* SecItemSPI.h */,
-				37B47E2C1D64DB76005F4EFF /* objcSPI.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -9409,7 +9404,6 @@
 				1AFDE6621954E9B100C48FFA /* APISessionState.h in Headers */,
 				1A4D664818A2D91A00D82E21 /* APIUIClient.h in Headers */,
 				BCDB86C11200FB97007254BE /* APIURL.h in Headers */,
-				7AA746D523593D8100095050 /* SecItemSPI.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* APIURLResponse.h in Headers */,
 				F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */,
@@ -9502,7 +9496,6 @@
 				2D5875BF219B53150070B9AA /* EditableImageController.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
-				2DE9B1352231B5B2005287B7 /* ElementContext.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
@@ -9779,6 +9772,7 @@
 				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,
+				7AA746D523593D8100095050 /* SecItemSPI.h in Headers */,
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,

@@ -242,6 +242,10 @@ typedef struct OpaqueJSContext* JSGlobalContextRef;
 typedef HWND PlatformViewWidget;
 #endif
 
+namespace WebCore {
+struct ElementContext;
+}
+
 namespace WebKit {
 class DrawingAreaProxy;
 class EditableImageController;
@@ -290,7 +294,6 @@ struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditingRange;
 struct EditorState;
-struct ElementContext;
 struct FontInfo;
 struct FrameInfoData;
 struct InsertTextOptions;
@@ -648,8 +651,8 @@ public:
     void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
     void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
 
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<ElementContext>&)>&&);
-    void focusTextInputContext(const ElementContext&, CompletionHandler<void(bool)>&&);
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
+    void focusTextInputContext(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }

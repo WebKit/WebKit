@@ -902,6 +902,7 @@
 		313591091E7DDC7300F30630 /* RTCIceTransportState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591031E7DDC6000F30630 /* RTCIceTransportState.h */; };
 		3135910A1E7DDC7300F30630 /* RTCSdpType.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591041E7DDC6000F30630 /* RTCSdpType.h */; };
 		3135910B1E7DDC7300F30630 /* RTCSignalingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591051E7DDC6000F30630 /* RTCSignalingState.h */; };
+		313BCE1C235E3BE500FC39E5 /* ElementContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 313BCE1B235E3BDB00FC39E5 /* ElementContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */; };
 		3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */; };
 		3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */; };
@@ -6933,6 +6934,7 @@
 		313591041E7DDC6000F30630 /* RTCSdpType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSdpType.h; sourceTree = "<group>"; };
 		313591051E7DDC6000F30630 /* RTCSignalingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCSignalingState.h; sourceTree = "<group>"; };
 		3135910C1E7DDCB600F30630 /* RTCBundlePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCBundlePolicy.h; sourceTree = "<group>"; };
+		313BCE1B235E3BDB00FC39E5 /* ElementContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementContext.h; sourceTree = "<group>"; };
 		31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreMotionManager.h; sourceTree = "<group>"; };
 		31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreMotionManager.mm; sourceTree = "<group>"; };
 		31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationClientIOS.h; sourceTree = "<group>"; };
@@ -27816,6 +27818,7 @@
 				E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */,
 				E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */,
 				E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */,
+				313BCE1B235E3BDB00FC39E5 /* ElementContext.h */,
 				B5B7A16F17C1080600E4AA0A /* ElementData.cpp */,
 				B5B7A16E17C1048000E4AA0A /* ElementData.h */,
 				ADE11F4A18D8311B0078983B /* ElementDescendantIterator.h */,
@@ -29464,6 +29467,7 @@
 				E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */,
 				E440AA961C68420800A265CC /* ElementAndTextDescendantIterator.h in Headers */,
 				E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */,
+				313BCE1C235E3BE500FC39E5 /* ElementContext.h in Headers */,
 				B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */,
 				93D437A11D57B3F400AB85EA /* ElementDescendantIterator.h in Headers */,
 				2D2BEB312234A335005544CA /* ElementIdentifier.h in Headers */,

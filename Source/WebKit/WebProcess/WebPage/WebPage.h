@@ -191,6 +191,7 @@ enum class WritingDirection : uint8_t;
 struct BackForwardItemIdentifier;
 struct CompositionUnderline;
 struct DictationAlternative;
+struct ElementContext;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
 struct Highlight;
@@ -262,7 +263,6 @@ struct AttributedString;
 struct BackForwardListItemState;
 struct DataDetectionResult;
 struct EditorState;
-struct ElementContext;
 struct FontInfo;
 struct InsertTextOptions;
 struct InteractionInformationAtPosition;
@@ -614,8 +614,8 @@ public:
     void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
     void selectAll();
 
-    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebKit::ElementContext>&)>&&);
-    void focusTextInputContext(const ElementContext&, CompletionHandler<void(bool)>&&);
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&&);
+    void focusTextInputContext(const WebCore::ElementContext&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize() const;
@@ -671,7 +671,7 @@ public:
     void requestAutocorrectionContext();
     void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     void requestPositionInformation(const InteractionInformationRequest&);
-    void startInteractionWithElementContextOrPosition(Optional<ElementContext>&&, WebCore::IntPoint&&);
+    void startInteractionWithElementContextOrPosition(Optional<WebCore::ElementContext>&&, WebCore::IntPoint&&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);
     void focusNextFocusedElement(bool isForward, CallbackID);
@@ -1191,8 +1191,8 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    WebCore::Element* elementForContext(const ElementContext&) const;
-    Optional<ElementContext> contextForElement(WebCore::Element&) const;
+    WebCore::Element* elementForContext(const WebCore::ElementContext&) const;
+    Optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
 
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();

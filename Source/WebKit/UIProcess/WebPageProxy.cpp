@@ -59,7 +59,6 @@
 #include "DownloadProxy.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
-#include "ElementContext.h"
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
@@ -143,6 +142,7 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/ElementContext.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
@@ -9377,7 +9377,7 @@ void WebPageProxy::webViewDidMoveToWindow()
     }
 }
 
-void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHandler<void(const Vector<WebKit::ElementContext>&)>&& completionHandler)
+void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHandler<void(const Vector<WebCore::ElementContext>&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -9387,7 +9387,7 @@ void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHa
     m_process->connection()->sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTFMove(completionHandler), m_webPageID);
 }
 
-void WebPageProxy::focusTextInputContext(const ElementContext& context, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::focusTextInputContext(const WebCore::ElementContext& context, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler(false);

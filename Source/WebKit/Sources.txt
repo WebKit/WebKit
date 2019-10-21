@@ -121,7 +121,6 @@ Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
-Shared/ElementContext.cpp
 Shared/FontInfo.cpp
 Shared/FrameInfoData.cpp
 Shared/LayerTreeContext.cpp

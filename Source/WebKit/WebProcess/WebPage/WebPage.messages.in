@@ -86,7 +86,7 @@ messages -> WebPage LegacyReceiver {
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects) Async
     GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Synchronous
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
-    StartInteractionWithElementContextOrPosition(Optional<WebKit::ElementContext> elementContext, WebCore::IntPoint point)
+    StartInteractionWithElementContextOrPosition(Optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action)
     FocusNextFocusedElement(bool isForward, WebKit::CallbackID callbackID)
@@ -567,8 +567,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     VoicesDidChange()
 #endif
 
-    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebKit::ElementContext> contexts) Async
-    FocusTextInputContext(struct WebKit::ElementContext context) -> (bool success) Async
+    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebCore::ElementContext> contexts) Async
+    FocusTextInputContext(struct WebCore::ElementContext context) -> (bool success) Async
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WasLoadedWithDataTransferFromPrevalentResource()
