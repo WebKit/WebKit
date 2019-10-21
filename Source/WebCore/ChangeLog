@@ -1,3 +1,10 @@
+2019-10-21  Joonghun Park  <jh718.park@samsung.com>
+
+        [GTK] Unreviewed. Fix build warning: unused parameter ‘Foo’ [-Wunused-parameter] since r251320.
+
+        * dom/Element.cpp:
+        (WebCore::shouldIgnoreMouseEvent):
+
 2019-10-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop debug logging that was inadvertently committed with r251327.

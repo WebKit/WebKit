@@ -336,6 +336,11 @@ static bool shouldIgnoreMouseEvent(Element& element, const MouseEvent& mouseEven
             }
         }
     }
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(mouseEvent);
+    UNUSED_PARAM(platformEvent);
+    UNUSED_PARAM(didNotSwallowEvent);
 #endif
 
     return false;
