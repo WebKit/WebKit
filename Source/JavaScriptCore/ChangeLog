@@ -1,3 +1,19 @@
+2019-10-21  Saam Barati  <sbarati@apple.com>
+
+        JSON.parse has bad is array assert
+        https://bugs.webkit.org/show_bug.cgi?id=203207
+        <rdar://problem/56366913>
+
+        Reviewed by Yusuke Suzuki.
+
+        In r250860, we updated JSON.parse to be more spec compliant with how it
+        handles arrays. However, we also updated an assertion in an improper way,
+        where our assert was not accounting for the check we performed to take
+        that control flow path.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+
 2019-10-21  Robin Morisset  <rmorisset@apple.com>
 
         Throw the right exception upon memory exhaustion in Array::slice

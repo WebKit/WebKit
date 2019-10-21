@@ -664,7 +664,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(inValue) || inValue.inherits<ProxyObject>(vm));
+                ASSERT(isArray(m_exec, inValue));
+                EXCEPTION_ASSERT(!scope.exception());
+
                 if (markedStack.size() > maximumFilterRecursion)
                     return throwStackOverflowError(m_exec, scope);
 
