@@ -1,3 +1,20 @@
+2019-10-21  Robin Morisset  <rmorisset@apple.com>
+
+        Throw the right exception upon memory exhaustion in Array::slice
+        https://bugs.webkit.org/show_bug.cgi?id=202650
+
+        Reviewed by Saam Barati.
+
+        Trivial change: just use tryCreate instead of create, and throw an exception if it fails.
+        No security implication: we were just crashing instead of throwing a catchable exception.
+
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::slice const):
+        (JSC::ArrayBuffer::sliceImpl const):
+        * runtime/ArrayBuffer.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+
 2019-10-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo][PlayStation] Add automation support for RemoteInspector SocketServer implementation.

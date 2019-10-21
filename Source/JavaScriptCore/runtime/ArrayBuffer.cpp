@@ -295,21 +295,22 @@ unsigned ArrayBuffer::clampIndex(double index) const
     return clampValue(index, 0, currentLength);
 }
 
-Ref<ArrayBuffer> ArrayBuffer::slice(double begin, double end) const
+RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin, double end) const
 {
     return sliceImpl(clampIndex(begin), clampIndex(end));
 }
 
-Ref<ArrayBuffer> ArrayBuffer::slice(double begin) const
+RefPtr<ArrayBuffer> ArrayBuffer::slice(double begin) const
 {
     return sliceImpl(clampIndex(begin), byteLength());
 }
 
-Ref<ArrayBuffer> ArrayBuffer::sliceImpl(unsigned begin, unsigned end) const
+RefPtr<ArrayBuffer> ArrayBuffer::sliceImpl(unsigned begin, unsigned end) const
 {
     unsigned size = begin <= end ? end - begin : 0;
-    auto result = ArrayBuffer::create(static_cast<const char*>(data()) + begin, size);
-    result->setSharingMode(sharingMode());
+    auto result = ArrayBuffer::tryCreate(static_cast<const char*>(data()) + begin, size);
+    if (result)
+        result->setSharingMode(sharingMode());
     return result;
 }
 
