@@ -48,6 +48,7 @@ body {
     font-size: 9px;
 }
 form {
+    float: left;
     display: block;
 }
 </style>
@@ -97,6 +98,13 @@ window.addEventListener("message", function(e) {
     <input type="hidden" name="patch_id" value="{{ patch_id }}">
     <input type="hidden" name="next_action" value="return_to_bubbles">
     <input class="status" type="submit" value="Submit to new EWS">
+  </form>
+{% endif %}
+
+{% if show_retry_button %}
+  <form name="retry" method="POST" action="/retry/">{% csrf_token %}
+    <input type="hidden" name="patch_id" value="{{ patch_id }}">
+    <input class="status" type="submit" value="&#8635; Retry failed builds">
   </form>
 {% endif %}
 

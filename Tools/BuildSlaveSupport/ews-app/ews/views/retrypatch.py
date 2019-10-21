@@ -25,11 +25,12 @@ from __future__ import unicode_literals
 import logging
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 from ews.common.buildbot import Buildbot
+from ews.models.build import Build
 from ews.models.patch import Patch
 from ews.views.statusbubble import StatusBubble
 
@@ -55,12 +56,17 @@ class RetryPatch(View):
 
         failed_to_retry_builds = []
         for build in builds_to_retry:
+            if build.retried:
+                _log.warn('Build {} for patch {} is already retried.'.format(build.uid, patch_id))
+                continue
+            Build.set_retried(build.uid, True)
             if not Buildbot.retry_build(build.builder_id, build.number):
                 failed_to_retry_builds.append(build)
+                Build.set_retried(build.uid, False)
 
         if len(failed_to_retry_builds) > 0:
             message = 'Failed to retry {} build(s) for patch {}.'.format(len(failed_to_retry_builds), patch_id)
             message += ' Please contact admin@webkit.org if the problem persist.'
             _log.warn(message)
             return HttpResponse(message)
-        return HttpResponse('Submitted {} build(s) to EWS for retry for patch {}.'.format(len(builds_to_retry), patch_id))
+        return redirect('/status-bubble/{}'.format(patch_id))

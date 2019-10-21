@@ -44,6 +44,7 @@ class Build(models.Model):
     state_string = models.TextField()
     started_at = models.IntegerField(null=True, blank=True)
     complete_at = models.IntegerField(null=True, blank=True)
+    retried = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -90,6 +91,15 @@ class Build(models.Model):
         build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
         _log.info('Updated build {} in database for patch_id: {}'.format(uid, patch_id))
         return SUCCESS
+
+    @classmethod
+    def set_retried(cls, uid, retried=True):
+        build = Build.get_existing_build(uid)
+        if not build:
+            return
+        build.retried = retried
+        build.save(update_fields=['retried', 'modified'])
+        _log.info('Updated build {} in database with retried={}'.format(uid, retried))
 
     @classmethod
     def get_existing_build(cls, uid):

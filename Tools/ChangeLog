@@ -1,3 +1,21 @@
+2019-10-18  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should have a way to retry a patch
+        https://bugs.webkit.org/show_bug.cgi?id=196599
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        (Build): Add the retried field to keep track of whether a build is requested to be retried or not.
+        (Build.set_retried): Method to set the retried field.
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html: Added the 'Retry failed builds' button.
+        * BuildSlaveSupport/ews-app/ews/views/retrypatch.py:
+        (RetryPatch.post): Added a check if the build is already retried. Also, set the retried flag appropriately.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Updated the status-bubble to in-progress while waiting for build to be retried.
+        (StatusBubble._build_bubbles_for_patch): Display the retry button only if there are failed builds.
+        * BuildSlaveSupport/ews-app/ews/migrations/0002_build_retried.py: Added database migration.
+
 2019-10-21  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Revert WebKitMediaSrc rework temporarily
