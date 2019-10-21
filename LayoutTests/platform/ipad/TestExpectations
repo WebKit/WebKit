@@ -23,8 +23,6 @@ webkit.org/b/194228 fast/media/invalid-media-query-list.html [ ImageOnlyFailure 
 
 webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
 
-webkit.org/b/193971 editing/selection/ios/selection-handles-in-readonly-input.html [ Skip ]
-
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
 
 webkit.org/b/194223 media/controls-strict.html [ Failure ]
