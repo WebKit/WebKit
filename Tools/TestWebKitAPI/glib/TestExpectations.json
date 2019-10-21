@@ -131,7 +131,19 @@
     },
     "TestWTF": {
         "subtests": {
+            "ThreadMessage.MultipleSenders": {
+                "expected": {"all": {"slow": true}}
+            },
             "WTF_Condition.TenProducersTenConsumersOneSlot": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_Condition.TenProducersOneConsumerOneSlot": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_Condition.OneProducerOneConsumerOneSlot": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_Condition.OneProducerOneConsumerOneSlotTimeout": {
                 "expected": {"all": {"slow": true}}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
@@ -148,6 +160,9 @@
             },
             "WTF_Lock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_ParkingLot.UnparkAllHundred": {
+                "expected": {"all": {"slow": true}}
             },
             "WTF_WordLock.ContendedShortSection": {
                 "expected": {"all": {"slow": true}}
