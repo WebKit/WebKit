@@ -149,7 +149,7 @@ public:
     void sendMessageToTarget(TargetID, const char* message);
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
-    void requestAutomationSession(String&& sessionID, const Client::SessionCapabilities&);
+    void requestAutomationSession(const String& sessionID, const Client::SessionCapabilities&);
 
     bool isConnected() const { return !!m_clientConnection; }
     void connect(ConnectionID);
@@ -221,6 +221,9 @@ private:
     void setupTarget(const Event&);
     void frontendDidClose(const Event&);
     void sendMessageToBackend(const Event&);
+    void startAutomationSession(const Event&);
+
+    void receivedAutomationSessionRequestMessage(const Event&);
 
     String backendCommands() const;
 #endif

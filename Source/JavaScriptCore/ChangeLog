@@ -1,3 +1,20 @@
+2019-10-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo][PlayStation] Add automation support for RemoteInspector SocketServer implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=199070
+
+        Reviewed by Ross Kirsling.
+
+        Added handler for StartAutomationSession event from WebDriver and preparing for automation session.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::listingForAutomationTarget const):
+        (Inspector::RemoteInspector::sendAutomaticInspectionCandidateMessage):
+        (Inspector::RemoteInspector::requestAutomationSession):
+        (Inspector::RemoteInspector::dispatchMap):
+        (Inspector::RemoteInspector::startAutomationSession):
+
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
         Remove all uses of untagCodePtr in debugging code.
