@@ -1,3 +1,22 @@
+2019-10-21  Daniel Bates  <dabates@apple.com>
+
+        Update expected result for fast/repaint/placeholder-after-caps-lock-hidden.html
+        https://bugs.webkit.org/show_bug.cgi?id=203005
+        <rdar://problem/51826131>
+
+        Reviewed by Simon Fraser.
+
+        Rebase iOS result. The test fast/repaint/placeholder-after-caps-lock-hidden.html is only supported
+        in Modern WebKit and only on Mac and iOS, which implement uiController.toggleCapsLock(), at the time
+        of writing.
+
+        * platform/ios-wk2/TestExpectations: Mark test as PASS.
+        * platform/ios-wk2/fast/repaint/placeholder-after-caps-lock-hidden-expected.txt:
+        * platform/ios/TestExpectations: Remove entry so that we fallback to platform-independent TestExpectations
+        and skip the test because the test is only supported on Modern WebKit.
+        * platform/ios/fast/events/ios/placeholder-after-caps-lock-hidden-expected.txt: Removed; erroneously added
+        file for non-existent test.
+
 2019-10-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2]: Add 'auto' behavior to the 'width' and 'height' properties of the SVG <image> element
