@@ -66,7 +66,6 @@ struct WebsiteDataStoreParameters {
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
-    HashSet<String> serviceWorkerRegisteredSchemes;
 #endif
 
     String localStorageDirectory;

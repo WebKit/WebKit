@@ -51,7 +51,6 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled;
-    encoder << serviceWorkerRegisteredSchemes;
 #endif
 
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
@@ -128,12 +127,6 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     if (!serviceWorkerProcessTerminationDelayEnabled)
         return WTF::nullopt;
     parameters.serviceWorkerProcessTerminationDelayEnabled = WTFMove(*serviceWorkerProcessTerminationDelayEnabled);
-    
-    Optional<HashSet<String>> serviceWorkerRegisteredSchemes;
-    decoder >> serviceWorkerRegisteredSchemes;
-    if (!serviceWorkerRegisteredSchemes)
-        return WTF::nullopt;
-    parameters.serviceWorkerRegisteredSchemes = WTFMove(*serviceWorkerRegisteredSchemes);
 #endif
 
     Optional<String> localStorageDirectory;

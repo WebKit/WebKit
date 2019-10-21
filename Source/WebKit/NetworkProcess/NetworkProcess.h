@@ -463,7 +463,7 @@ private:
     
     WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
 
-    void addServiceWorkerSession(PAL::SessionID, bool processTerminationDelayEnabled, HashSet<String>&& registeredSchemes, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
+    void addServiceWorkerSession(PAL::SessionID, bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
     void postStorageTask(CrossThreadTask&&);
@@ -531,7 +531,6 @@ private:
     struct ServiceWorkerInfo {
         String databasePath;
         bool processTerminationDelayEnabled { true };
-        HashSet<String> registeredSchemes;
     };
     HashMap<PAL::SessionID, ServiceWorkerInfo> m_serviceWorkerInfo;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;

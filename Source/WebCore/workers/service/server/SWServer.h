@@ -125,7 +125,7 @@ public:
     };
 
     using CreateContextConnectionCallback = Function<void(const WebCore::RegistrableDomain&)>;
-    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, HashSet<String>&& registeredSchemes, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, CreateContextConnectionCallback&&);
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, CreateContextConnectionCallback&&);
 
     WEBCORE_EXPORT ~SWServer();
 
@@ -256,7 +256,6 @@ private:
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
     bool m_isProcessTerminationDelayEnabled { true };
-    HashSet<String> m_registeredSchemes;
     Vector<CompletionHandler<void()>> m_clearCompletionCallbacks;
     Vector<Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
     HashMap<RegistrableDomain, SWServerToContextConnection*> m_contextConnections;

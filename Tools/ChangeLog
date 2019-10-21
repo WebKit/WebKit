@@ -1,3 +1,27 @@
+2019-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        ServiceWorker tests should use TCPServer instead of WKURLSchemeHandler
+        https://bugs.webkit.org/show_bug.cgi?id=203141
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandlerForRestoreFromDiskTest userContentController:didReceiveScriptMessage:]):
+        (-[SWSchemes handledRequests]): Deleted.
+        (-[SWSchemes webView:startURLSchemeTask:]): Deleted.
+        (-[SWSchemes webView:stopURLSchemeTask:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerTCPServer.h: Added.
+        (ServiceWorkerTCPServer::ServiceWorkerTCPServer):
+        (ServiceWorkerTCPServer::request):
+        (ServiceWorkerTCPServer::requestWithLocalhost):
+        (ServiceWorkerTCPServer::requestWithFragment):
+        (ServiceWorkerTCPServer::userAgentsChecked):
+        (ServiceWorkerTCPServer::requestWithFormat):
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        (-[StorageSchemes webView:startURLSchemeTask:]): Deleted.
+        (-[StorageSchemes webView:stopURLSchemeTask:]): Deleted.
+
 2019-10-21  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.config

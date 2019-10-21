@@ -54,7 +54,6 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent);
 
     copy->m_serviceWorkerProcessTerminationDelayEnabled = this->m_serviceWorkerProcessTerminationDelayEnabled;
-    copy->m_serviceWorkerRegisteredSchemes = this->m_serviceWorkerRegisteredSchemes;
     copy->m_fastServerTrustEvaluationEnabled = this->m_fastServerTrustEvaluationEnabled;
     copy->m_networkCacheSpeculativeValidationEnabled = this->m_networkCacheSpeculativeValidationEnabled;
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;

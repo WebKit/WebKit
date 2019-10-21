@@ -299,11 +299,10 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, HashSet<String>&& registeredSchemes, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, CreateContextConnectionCallback&& callback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
-    , m_registeredSchemes(WTFMove(registeredSchemes))
     , m_createContextConnectionCallback(WTFMove(callback))
 {
     ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());
@@ -978,15 +977,11 @@ bool SWServer::canHandleScheme(StringView scheme) const
 {
     if (scheme.isNull())
         return false;
-
-    if (equalLettersIgnoringASCIICase(scheme.substring(0, 4), "http")) {
-        if (scheme.length() == 4)
-            return true;
-        if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
-            return true;
-    }
-
-    return m_registeredSchemes.contains(scheme.toStringWithoutCopying());
+    if (!equalLettersIgnoringASCIICase(scheme.substring(0, 4), "http"))
+        return false;
+    if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
+        return true;
+    return scheme.length() == 4;
 }
 
 } // namespace WebCore
