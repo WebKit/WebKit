@@ -121,8 +121,13 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 
 - (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition WithTarget:(id)target action:(SEL)action
 {
+#if HAVE(UI_PARALLAX_TRANSITION_GESTURE_RECOGNIZER)
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    _UIParallaxTransitionPanGestureRecognizer *recognizer = [[_UIParallaxTransitionPanGestureRecognizer alloc] initWithTarget:target action:action];
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+#else
     UIScreenEdgePanGestureRecognizer *recognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:target action:action];
-
+#endif
     bool isLTR = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[_gestureRecognizerView.get() semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight;
 
     switch ([self directionForTransition:transition]) {

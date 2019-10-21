@@ -1,3 +1,14 @@
+2019-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Swipe navigation gestures do not work
+        https://bugs.webkit.org/show_bug.cgi?id=203205
+        <rdar://problem/54617473>
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/Platform.h:
+        Add a new HAVE.
+
 2019-10-20  Mark Lam  <mark.lam@apple.com>
 
         Remove all uses of untagCodePtr in debugging code.

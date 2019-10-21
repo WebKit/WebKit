@@ -1,3 +1,17 @@
+2019-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Swipe navigation gestures do not work
+        https://bugs.webkit.org/show_bug.cgi?id=203205
+        <rdar://problem/54617473>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        Use a different gesture recognizer for swipe in macCatalyst that behaves
+        more like the macOS implementation, based on scrolling instead of the
+        gesture coming from a screen edge.
+
 2019-10-21  Daniel Bates  <dabates@apple.com>
 
         Add some PencilKit extension points
