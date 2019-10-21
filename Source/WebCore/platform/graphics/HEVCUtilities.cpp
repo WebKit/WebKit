@@ -26,6 +26,9 @@
 #include "config.h"
 #include "HEVCUtilities.h"
 
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
@@ -106,6 +109,135 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
         if (!isValidFlag)
             return WTF::nullopt;
     }
+
+    return parameters;
+}
+
+static String codecStringForDoViCodecType(const String& codec)
+{
+    using MapType = HashMap<String, String>;
+    static NeverDestroyed<MapType> types = std::initializer_list<MapType::KeyValuePairType>({
+        { "dvhe", "hev1" },
+        { "dvh1", "hvc1" },
+        { "dvav", "avc3" },
+        { "dva1", "avc1" }
+    });
+
+    auto findResults = types.get().find(codec);
+    if (findResults == types.get().end())
+        return nullString();
+    return findResults->value;
+}
+
+static Optional<unsigned short> profileIDForAlphabeticDoViProfile(const String& profile)
+{
+    // See Table 7 of "Dolby Vision Profiles and Levels Version 1.3.2"
+    using MapType = HashMap<String, unsigned short>;
+    static NeverDestroyed<MapType> map = std::initializer_list<MapType::KeyValuePairType>({
+        { "dvhe.dtr", 4 },
+        { "dvhe.stn", 5 },
+        { "dvhe.dtb", 7 },
+        { "dvhe.st", 8 },
+        { "dvav.se", 9 }
+    });
+
+    auto findResults = map.get().find(profile);
+    if (findResults == map.get().end())
+        return WTF::nullopt;
+    return findResults->value;
+}
+
+static bool isValidDoViProfileID(unsigned short profileID)
+{
+    switch (profileID) {
+    case 4:
+    case 5:
+    case 7:
+    case 8:
+    case 9:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static Optional<unsigned short> maximumLevelIDForDoViProfileID(unsigned short profileID)
+{
+    // See Section 4.1 of "Dolby Vision Profiles and Levels Version 1.3.2"
+    switch (profileID) {
+    case 4: return 9;
+    case 5: return 13;
+    case 7: return 9;
+    case 8: return 13;
+    case 9: return 5;
+    default: return WTF::nullopt;
+    }
+}
+
+static bool isValidProfileIDForCodecName(unsigned short profileID, const String& codecName)
+{
+    if (profileID == 9)
+        return codecName == "avc1" || codecName == "avc3";
+    return codecName == "hvc1" || codecName == "hev1";
+}
+
+Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString)
+{
+    // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
+    StringView codecView(codecString);
+    auto codecSplit = codecView.split('.');
+    auto nextElement = codecSplit.begin();
+    if (nextElement == codecSplit.end())
+        return WTF::nullopt;
+
+    DoViParameterSet parameters;
+
+    parameters.codecName = codecStringForDoViCodecType((*nextElement).toString());
+    if (!parameters.codecName)
+        return WTF::nullopt;
+
+    if (++nextElement == codecSplit.end())
+        return WTF::nullopt;
+
+    auto profileID = *nextElement;
+    if (!profileID.length())
+        return WTF::nullopt;
+
+    bool isIntegral = false;
+    auto firstCharacter = profileID[0];
+    // Profile definition can either be numeric or alpha:
+    if (firstCharacter == '0') {
+        parameters.bitstreamProfileID = toIntegralType<uint8_t>(profileID, &isIntegral, 10);
+        if (!isIntegral)
+            return WTF::nullopt;
+    } else {
+        auto alphanumericProfileString = codecView.left(5 + profileID.length()).toString();
+        auto profileID = profileIDForAlphabeticDoViProfile(alphanumericProfileString);
+        if (!profileID)
+            return WTF::nullopt;
+        parameters.bitstreamProfileID = profileID.value();
+    }
+
+    if (!isValidDoViProfileID(parameters.bitstreamProfileID))
+        return WTF::nullopt;
+
+    if (!isValidProfileIDForCodecName(parameters.bitstreamProfileID, parameters.codecName))
+        return WTF::nullopt;
+
+    if (++nextElement == codecSplit.end())
+        return WTF::nullopt;
+
+    auto levelID = *nextElement;
+    if (!levelID.length())
+        return WTF::nullopt;
+
+    parameters.bitstreamLevelID = toIntegralType<uint8_t>(levelID, &isIntegral, 10);
+    if (!isIntegral)
+        return WTF::nullopt;
+
+    auto maximumLevelID = maximumLevelIDForDoViProfileID(parameters.bitstreamProfileID);
+    if (!maximumLevelID || parameters.bitstreamLevelID > maximumLevelID.value())
+        return WTF::nullopt;
 
     return parameters;
 }

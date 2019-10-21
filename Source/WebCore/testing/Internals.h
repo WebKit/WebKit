@@ -818,6 +818,9 @@ public:
     using HEVCParameterSet = WebCore::HEVCParameterSet;
     Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
 
+    using DoViParameterSet = WebCore::DoViParameterSet;
+    Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+
     struct CookieData {
         String name;
         String value;

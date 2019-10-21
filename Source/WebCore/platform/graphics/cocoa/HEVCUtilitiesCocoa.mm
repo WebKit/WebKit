@@ -32,8 +32,10 @@
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
 
-#import "VideoToolboxSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <wtf/text/StringToIntegerConversion.h>
+
+#import "VideoToolboxSoftLink.h"
 
 namespace WebCore {
 
@@ -118,6 +120,116 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
 
         info.smooth = parameters.generalLevelIDC <= maxPlaybackLevel;
     }
+
+    return true;
+}
+
+static Optional<CMVideoCodecType> codecTypeForDoViCodecString(const String& codecString)
+{
+    static auto map = makeNeverDestroyed<HashMap<String, CMVideoCodecType>>({
+        { "avc1", kCMVideoCodecType_H264 },
+        { "avc3", kCMVideoCodecType_H264 },
+        { "hvc1", kCMVideoCodecType_HEVC },
+        { "hev1", kCMVideoCodecType_HEVC },
+    });
+
+    auto findResult = map.get().find(codecString);
+    if (findResult == map.get().end())
+        return WTF::nullopt;
+    return findResult->value;
+}
+
+static Optional<Vector<unsigned short>> CFStringArrayToNumberVector(CFArrayRef arrayCF)
+{
+    if (!arrayCF || CFGetTypeID(arrayCF) != CFArrayGetTypeID())
+        return WTF::nullopt;
+
+    auto arrayNS = (__bridge NSArray<NSString*>*)arrayCF;
+    Vector<unsigned short> values;
+    values.reserveInitialCapacity(arrayNS.count);
+
+    bool areAllValidNumbers = true;
+    [arrayNS enumerateObjectsUsingBlock:[&] (NSString* value, NSUInteger, BOOL *stop) {
+        if (![value isKindOfClass:NSString.class]) {
+            areAllValidNumbers = false;
+            if (stop)
+                *stop = true;
+            return;
+        }
+
+        bool isValidNumber = false;
+        auto numericValue = toIntegralType<unsigned short>(String(value), &isValidNumber);
+        if (!isValidNumber) {
+            areAllValidNumbers = false;
+            if (stop)
+                *stop = true;
+            return;
+        }
+
+        values.uncheckedAppend(numericValue);
+    }];
+
+    if (!areAllValidNumbers)
+        return WTF::nullopt;
+    return values;
+}
+
+bool validateDoViParameters(DoViParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel, bool hdrSupport)
+{
+    if (hasAlphaChannel)
+        return false;
+
+    if (hdrSupport) {
+        // Platform supports HDR playback of HEVC Main10 Profile, which is signalled by DoVi profiles 4, 5, 7, & 8.
+        switch (parameters.bitstreamProfileID) {
+        case 4:
+        case 5:
+        case 7:
+        case 8:
+            break;
+        default:
+            return false;
+        }
+    }
+
+    auto codecType = codecTypeForDoViCodecString(parameters.codecName);
+    if (!codecType)
+        return false;
+
+    OSStatus status = VTSelectAndCreateVideoDecoderInstance(codecType.value(), kCFAllocatorDefault, nullptr, nullptr);
+    if (status != noErr)
+        return false;
+
+    if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
+        || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedProfiles()
+        || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedLevels()
+        || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_IsHardwareAccelerated())
+        return false;
+
+    RetainPtr<CFDictionaryRef> capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
+    if (!capabilities)
+        return false;
+
+    auto supportedProfilesCF = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedProfiles);
+    auto supportedProfiles = CFStringArrayToNumberVector(supportedProfilesCF);
+    if (!supportedProfiles)
+        return false;
+
+    auto supportedLevelsCF = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedLevels);
+    auto supportedLevels = CFStringArrayToNumberVector(supportedLevelsCF);
+    if (!supportedLevels)
+        return false;
+
+    auto isHardwareAcceleratedCF = (CFBooleanRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_IsHardwareAccelerated);
+    if (!isHardwareAcceleratedCF || CFGetTypeID(isHardwareAcceleratedCF) != CFBooleanGetTypeID())
+        return false;
+
+    if (!supportedProfiles.value().contains(parameters.bitstreamProfileID) || !supportedLevels.value().contains(parameters.bitstreamLevelID))
+        return false;
+
+    info.supported = true;
+    info.smooth = true;
+    info.powerEfficient = CFBooleanGetValue(isHardwareAcceleratedCF);
 
     return true;
 }

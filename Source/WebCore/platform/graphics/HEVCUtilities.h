@@ -42,4 +42,12 @@ struct HEVCParameterSet {
 
 WEBCORE_EXPORT Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
 
+struct DoViParameterSet {
+    String codecName;
+    unsigned short bitstreamProfileID { 0 };
+    unsigned short bitstreamLevelID { 0 };
+};
+
+WEBCORE_EXPORT Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+
 }

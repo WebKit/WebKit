@@ -74,6 +74,9 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTHEVCDecoderCapa
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTHEVCDecoderProfileCapability_IsHardwareAccelerated, CFStringRef)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTHEVCDecoderProfileCapability_MaxDecodeLevel, CFStringRef)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel, CFStringRef)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTDolbyVisionDecoderCapability_SupportedProfiles, CFStringRef)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTDolbyVisionDecoderCapability_SupportedLevels, CFStringRef)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTDolbyVisionDecoderCapability_IsHardwareAccelerated, CFStringRef)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerCreateWithAttributes, OSStatus, (CFAllocatorRef allocator, CFDictionaryRef attributes, VTPixelBufferConformerRef* conformerOut), (allocator, attributes, conformerOut));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerIsConformantPixelBuffer, Boolean, (VTPixelBufferConformerRef conformer, CVPixelBufferRef pixBuf), (conformer, pixBuf))

@@ -71,7 +71,7 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
         info.supported = true;
         auto& codec = codecs[0];
         auto videoCodecType = videoCodecTypeFromRFC4281Type(codec);
-        if (!videoCodecType) {
+        if (!videoCodecType && !(codec.startsWith("dvh1") || codec.startsWith("dvhe"))) {
             callback({{ }, WTFMove(configuration)});
             return;
         }
@@ -82,6 +82,12 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
         if (videoCodecType == kCMVideoCodecType_HEVC) {
             auto parameters = parseHEVCCodecParameters(codec);
             if (!parameters || !validateHEVCParameters(parameters.value(), info, alphaChannel, hdrSupported)) {
+                callback({{ }, WTFMove(configuration)});
+                return;
+            }
+        } else if (codec.startsWith("dvh1") || codec.startsWith("dvhe")) {
+            auto parameters = parseDoViCodecParameters(codec);
+            if (!parameters || !validateDoViParameters(parameters.value(), info, alphaChannel, hdrSupported)) {
                 callback({{ }, WTFMove(configuration)});
                 return;
             }

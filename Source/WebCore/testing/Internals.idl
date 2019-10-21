@@ -139,6 +139,15 @@ enum CompositingPolicy {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+] dictionary DoViParameterSet {
+    DOMString codecName;
+    unsigned short bitstreamProfileID;
+    unsigned short bitstreamLevelID;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary AcceleratedAnimation {
     DOMString property;
     double speed;
@@ -784,6 +793,7 @@ enum CompositingPolicy {
     boolean supportsVCPEncoder();
 
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
+    DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
 
     sequence<CookieData> getCookies();
 

@@ -5157,6 +5157,11 @@ Optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& cod
     return WebCore::parseHEVCCodecParameters(codecString);
 }
 
+Optional<DoViParameterSet> Internals::parseDoViCodecParameters(const String& codecString)
+{
+    return WebCore::parseDoViCodecParameters(codecString);
+}
+
 auto Internals::getCookies() const -> Vector<CookieData>
 {
     auto* document = contextDocument();

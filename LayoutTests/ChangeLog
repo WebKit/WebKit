@@ -1,3 +1,13 @@
+2019-10-21  Jer Noble  <jer.noble@apple.com>
+
+        Add MediaCapabilities support for DolbyVision codecs.
+        https://bugs.webkit.org/show_bug.cgi?id=203170
+
+        Reviewed by Eric Carlson.
+
+        * media/dovi-codec-parameters-expected.txt: Added.
+        * media/dovi-codec-parameters.html: Added.
+
 2019-10-21  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Update cookie blocking in NetworkStorageSession after first user interaction
