@@ -1541,7 +1541,10 @@ void WebProcess::processDidResume()
     accessibilityProcessSuspendedNotification(false);
     {
         LockHolder holder(m_unexpectedlyResumedUIAssertionLock);
-        m_unexpectedlyResumedUIAssertion = nullptr;
+        if (m_unexpectedlyResumedUIAssertion) {
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume() Releasing 'Unexpectedly resumed' assertion", this);
+            m_unexpectedlyResumedUIAssertion = nullptr;
+        }
     }
 #endif
 
