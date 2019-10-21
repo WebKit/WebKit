@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #include "ArgumentCoders.h"
 #include "ArgumentCodersCF.h"
+#include "SecItemSPI.h"
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace WebKit {
 
@@ -62,6 +64,86 @@ void SecItemRequestData::encode(IPC::Encoder& encoder) const
         IPC::encode(encoder, m_attributesToMatch.get());
 }
 
+static bool isValidType(CFTypeRef);
+
+static bool arrayContainsInvalidType(CFArrayRef array)
+{
+    CFIndex entryCount = CFArrayGetCount(array);
+
+    for (CFIndex entry = 0; entry < entryCount; ++entry) {
+        CFTypeRef value = reinterpret_cast<CFTypeRef>(CFArrayGetValueAtIndex(array, entry));
+        if (!isValidType(value))
+            return true;
+    }
+
+    return false;
+}
+
+static bool dictionaryContainsInvalidType(CFDictionaryRef dict)
+{
+    CFIndex entryCount = CFDictionaryGetCount(dict);
+
+    Vector<const void*> keys(entryCount);
+    Vector<const void*> values(entryCount);
+    CFDictionaryGetKeysAndValues(dict, keys.data(), values.data());
+
+    for (CFIndex entry = 0; entry < entryCount; ++entry) {
+        CFTypeRef key = reinterpret_cast<CFTypeRef>(keys[entry]);
+        if (!isValidType(key))
+            return true;
+
+        CFTypeRef value = reinterpret_cast<CFTypeRef>(values[entry]);
+        if (!isValidType(value))
+            return true;
+    }
+
+    return false;
+}
+
+#if PLATFORM(MAC)
+typedef std::array<CFTypeID, 16> ValidTypes;
+#else
+typedef std::array<CFTypeID, 13> ValidTypes;
+#endif
+
+static const ValidTypes& validTypeIDs()
+{
+    static ValidTypes types = {{
+        CFBooleanGetTypeID(), CFDataGetTypeID(), CFStringGetTypeID(), CFNullGetTypeID(), CFNumberGetTypeID(),
+        SecAccessControlGetTypeID(), SecCertificateGetTypeID(), SecCodeGetTypeID(), SecIdentityGetTypeID(),
+        SecPolicyGetTypeID(), SecRequirementGetTypeID(), SecStaticCodeGetTypeID(), SecTrustGetTypeID()
+#if PLATFORM(MAC)
+        , SecACLGetTypeID(), SecAccessGetTypeID(), SecTrustedApplicationGetTypeID()
+#endif
+    }};
+
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        std::sort(types.begin(), types.end());
+    });
+
+    return types;
+}
+
+static bool isValidType(CFTypeRef type)
+{
+    auto typeID = CFGetTypeID(type);
+    if (typeID == CFDictionaryGetTypeID())
+        return !dictionaryContainsInvalidType(reinterpret_cast<CFDictionaryRef>(type));
+
+    if (typeID == CFArrayGetTypeID())
+        return !arrayContainsInvalidType(reinterpret_cast<CFArrayRef>(type));
+
+    const auto& validTypes = validTypeIDs();
+    
+    bool validType = std::binary_search(validTypes.begin(), validTypes.end(), typeID);
+    if (!validType) {
+        String typeName { adoptCF(CFCopyTypeIDDescription(typeID)).get() };
+        WTFLogAlways("SecItemRequestData::decode: Attempted to serialized invalid type %s", typeName.utf8().data());
+    }
+    return validType;
+}
+
 bool SecItemRequestData::decode(IPC::Decoder& decoder, SecItemRequestData& secItemRequestData)
 {
     if (!decoder.decodeEnum(secItemRequestData.m_type))
@@ -71,16 +153,26 @@ bool SecItemRequestData::decode(IPC::Decoder& decoder, SecItemRequestData& secIt
     if (!decoder.decode(expectQuery))
         return false;
 
-    if (expectQuery && !IPC::decode(decoder, secItemRequestData.m_queryDictionary))
-        return false;
+    if (expectQuery) {
+        if (!IPC::decode(decoder, secItemRequestData.m_queryDictionary))
+            return false;
+
+        if (dictionaryContainsInvalidType(secItemRequestData.m_queryDictionary.get()))
+            return false;
+    }
     
     bool expectAttributes;
     if (!decoder.decode(expectAttributes))
         return false;
     
-    if (expectAttributes && !IPC::decode(decoder, secItemRequestData.m_attributesToMatch))
-        return false;
-    
+    if (expectAttributes) {
+        if (!IPC::decode(decoder, secItemRequestData.m_attributesToMatch))
+            return false;
+
+        if (dictionaryContainsInvalidType(secItemRequestData.m_attributesToMatch.get()))
+            return false;
+    }
+
     return true;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,41 @@
 
 #pragma once
 
-#include <wtf/RetainPtr.h>
+#include <Security/SecAccessControl.h>
+#include <Security/SecBase.h>
+#include <Security/SecCertificate.h>
+#include <Security/SecIdentity.h>
+#include <Security/SecPolicy.h>
+#include <Security/SecTrust.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
+#if PLATFORM(MAC)
+#include <Security/SecACL.h>
+#include <Security/SecAccess.h>
+#include <Security/SecTrustedApplication.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#include <Security/SecCode.h>
+#include <Security/SecRequirement.h>
+#include <Security/SecStaticCode.h>
+
+#else
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+CF_ASSUME_NONNULL_BEGIN
+
+CFTypeID SecCodeGetTypeID();
+CFTypeID SecRequirementGetTypeID();
+CFTypeID SecStaticCodeGetTypeID();
+
+CF_ASSUME_NONNULL_END
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-    
-class SecItemRequestData {
-public:
-    enum Type {
-        Invalid,
-        CopyMatching,
-        Add,
-        Update,
-        Delete,
-    };
-
-    SecItemRequestData();
-    SecItemRequestData(Type, CFDictionaryRef query);
-    SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
-
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, SecItemRequestData&);
-
-    Type type() const { return m_type; }
-
-    CFDictionaryRef query() const { return m_queryDictionary.get(); }
-    CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
-
-private:
-    Type m_type;
-    RetainPtr<CFDictionaryRef> m_queryDictionary;
-    RetainPtr<CFDictionaryRef> m_attributesToMatch;
-};
-    
-} // namespace WebKit
+#endif // USE(APPLE_INTERNAL_SDK)
