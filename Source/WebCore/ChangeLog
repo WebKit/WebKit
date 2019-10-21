@@ -1,3 +1,54 @@
+2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Implement ClipboardItem.getType() for platform clipboard items
+        https://bugs.webkit.org/show_bug.cgi?id=203168
+
+        Reviewed by Tim Horton.
+
+        This patch completes support for ClipboardItem.getType().
+
+        Tests:  editing/async-clipboard/clipboard-change-data-while-getting-type.html
+                editing/async-clipboard/clipboard-get-type-with-old-items.html
+                editing/async-clipboard/clipboard-item-get-type-basic.html
+                ClipboardTests.ReadMultipleItems
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::getType):
+
+        Implement getType(). If the given clipboard item is being tracked as one of the active clipboard items, then
+        allow it to read data from the platform pasteboard. We use existing pasteboard reading methods and classes
+        (PasteboardPlainText and WebContentMarkupReader) to ask the platform pasteboard for text and markup data,
+        respectively, and go through readURL() for "text/uri-list".
+
+        Before exposing any data to the page, we additionally check that the change count of the pasteboard is still
+        what we started with when setting up the current session. If this is not the case, we reject the promise and
+        immediately clear out the session.
+
+        (WebCore::Clipboard::activePasteboard):
+        * Modules/async-clipboard/Clipboard.h:
+        * dom/DataTransfer.h:
+
+        Drive-by tweak: make the WebContentReadingPolicy enum class narrower.
+
+        * platform/Pasteboard.h:
+
+        Add an enum flag for allowing or ignoring the platform URL type when reading plain text from the platform
+        pasteboard. We use this in Clipboard::getType() to ignore URLs on the platform pasteboard when plain text, since
+        the plain text reader would otherwise prefer URLs over plain text by default, and read the URL type instead of
+        the plain text type.
+
+        * platform/StaticPasteboard.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Support hiding iframe scrollbars via ::-webkit-scrollbar style

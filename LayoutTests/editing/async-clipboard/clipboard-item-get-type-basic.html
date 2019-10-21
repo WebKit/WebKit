@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100%;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            description("This test verifies that ClipboardItem.getType() can be used to get clipboard data written using DataTransfer APIs. To test manually, click the top button to write to the pasteboard, and then click the bottom button to paste.");
+
+            const copyButton = document.getElementById("copy");
+            const pasteButton = document.getElementById("paste");
+
+            copyButton.addEventListener("click", () => {
+                writeToClipboardUsingDataTransfer({
+                    "text/html" : "<a href='https://www.apple.com/'>Apple</a>",
+                    "text/uri-list" : "https://www.apple.com/",
+                    "text/plain" : "Apple, Inc."
+                });
+            }, { once: true });
+
+            pasteButton.addEventListener("click", async () => {
+                try {
+                    items = await navigator.clipboard.read();
+                    shouldBe("items.length", "1");
+                    item = items[0];
+                    shouldBe("item.types.length", "3");
+                    text = await loadText(await item.getType("text/plain"));
+                    url = await loadText(await item.getType("text/uri-list"));
+                    doc = await loadDocument(await item.getType("text/html"));
+                    shouldBeEqualToString("text", "Apple, Inc.");
+                    shouldBeEqualToString("url", "https://www.apple.com/");
+                    shouldBeEqualToString("doc.querySelector('a').href", "https://www.apple.com/");
+                } catch (exception) {
+                    testFailed(`Caught unexpected exception: ${exception.name}`);
+                } finally {
+                    [copyButton, pasteButton].map(button => button.remove());
+                    finishJSTest();
+                }
+            }, { once: true });
+
+            await UIHelper.activateElement(copyButton);
+            await UIHelper.activateElement(pasteButton);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="copy">Click here to copy</button>
+        <button id="paste">Click here to paste</button>
+        <div id="description"></div>
+        <div id="console"></div>
+    </body>
+</html>

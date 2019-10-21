@@ -95,7 +95,7 @@ void Pasteboard::clear(const String&)
 {
 }
 
-void Pasteboard::read(PasteboardPlainText& text, Optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
 {
     text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name());
 }

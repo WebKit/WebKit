@@ -789,7 +789,7 @@ bool Pasteboard::canSmartReplace()
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
 }
 
-void Pasteboard::read(PasteboardPlainText& text, Optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
 {
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT)) {

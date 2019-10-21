@@ -1,3 +1,45 @@
+2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Implement ClipboardItem.getType() for platform clipboard items
+        https://bugs.webkit.org/show_bug.cgi?id=203168
+
+        Reviewed by Tim Horton.
+
+        Add support for the new layout tests, as well as a new API test.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.h:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::copyText):
+
+        Implement UIScriptController.copyText in WebKit1. This is used in one of the new layout tests, which passes in
+        WebKit1 on macOS and iOS.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard declareTypes:owner:]):
+        (-[LocalPasteboard addTypes:owner:]):
+        (-[LocalPasteboard _addTypesWithoutUpdatingChangeCount:owner:]):
+
+        Adjust logic when declaring types on the platform pasteboard, such that it behaves more like the platform; when
+        declaring types, even if the owner doesn't change, the change count should still get bumped up by 1.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::copyText):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm: Added.
+        (-[TestWKWebView readClipboard]):
+        (createWebViewForClipboardTests):
+        (writeMultipleObjectsToPlatformPasteboard):
+
+        Add a new API test to verify that clipboard items contain the right data when writing multiple items (each with
+        different sets of types) to the platform pasteboard using native APIs.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/clipboard.html: Added.
+        * WebKitTestRunner/mac/WebKitTestRunnerPasteboard.mm:
+        (-[LocalPasteboard declareTypes:owner:]):
+        (-[LocalPasteboard addTypes:owner:]):
+        (-[LocalPasteboard _addTypesWithoutUpdatingChangeCount:owner:]):
+
 2019-10-21  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.net

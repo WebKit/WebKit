@@ -140,10 +140,19 @@ static NSMutableDictionary *localPasteboards;
 - (NSInteger)declareTypes:(NSArray *)newTypes owner:(id)newOwner
 {
     [self _clearContentsWithoutUpdatingChangeCount];
-    return [self addTypes:newTypes owner:newOwner];
+    [self _addTypesWithoutUpdatingChangeCount:newTypes owner:newOwner];
+    return ++changeCount;
 }
 
-- (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
+- (NSInteger)addTypes:(NSArray<NSPasteboardType> *)newTypes owner:(id)newOwner
+{
+    [self _addTypesWithoutUpdatingChangeCount:newTypes owner:newOwner];
+    // FIXME: Ideally, we would keep track of the current owner and only bump the change
+    // count if the new owner is different.
+    return ++changeCount;
+}
+
+- (void)_addTypesWithoutUpdatingChangeCount:(NSArray *)newTypes owner:(id)newOwner
 {
     unsigned count = [newTypes count];
     unsigned i;
@@ -159,7 +168,6 @@ static NSMutableDictionary *localPasteboards;
         if (newOwner && [newOwner respondsToSelector:@selector(pasteboard:provideDataForType:)])
             [newOwner pasteboard:self provideDataForType:setType];
     }
-    return ++changeCount;
 }
 
 - (NSInteger)changeCount

@@ -56,7 +56,7 @@ public:
     void clear() final;
     void clear(const String& type) final;
 
-    void read(PasteboardPlainText&, Optional<size_t> = WTF::nullopt) final { }
+    void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, Optional<size_t> = WTF::nullopt) final { }
     void read(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t> = WTF::nullopt) final { }
 
     void write(const PasteboardURL&) final { }

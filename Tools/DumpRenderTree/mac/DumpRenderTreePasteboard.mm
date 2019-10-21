@@ -123,7 +123,8 @@ static NSMutableDictionary *localPasteboards;
     _types.clear();
     _data.clear();
 
-    return [self addTypes:newTypes owner:newOwner];
+    [self _addTypesWithoutUpdatingChangeCount:newTypes owner:newOwner];
+    return ++_changeCount;
 }
 
 static bool isUTI(NSString *type)
@@ -141,17 +142,21 @@ static RetainPtr<CFStringRef> toUTI(NSString *type)
     return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)type, nullptr));
 }
 
-- (NSInteger)addTypes:(NSArray *)newTypes owner:(id)newOwner
+- (NSInteger)addTypes:(NSArray<NSPasteboardType> *)newTypes owner:(id)newOwner
 {
-    if (_owner != newOwner) {
-        _owner = newOwner;
+    auto previousOwner = _owner;
+    [self _addTypesWithoutUpdatingChangeCount:newTypes owner:newOwner];
+    if (previousOwner != newOwner)
         ++_changeCount;
-    }
+    return _changeCount;
+}
+
+- (void)_addTypesWithoutUpdatingChangeCount:(NSArray *)newTypes owner:(id)newOwner
+{
+    _owner = newOwner;
 
     for (NSString *type in newTypes)
         _types.add(toUTI(type));
-
-    return _changeCount;
 }
 
 - (NSInteger)changeCount

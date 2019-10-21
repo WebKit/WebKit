@@ -1036,4 +1036,9 @@ window.UIHelper = class UIHelper {
                 break;
         }
     }
+
+    static async copyText(text) {
+        const copyTextScript = `uiController.copyText(\`${text.replace(/`/g, "\\`")}\`)()`;
+        return new Promise(resolve => testRunner.runUIScript(copyTextScript, resolve));
+    }
 }

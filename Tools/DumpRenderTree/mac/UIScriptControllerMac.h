@@ -49,6 +49,7 @@ public:
     void toggleCapsLock(JSValueRef) override;
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     NSUndoManager *platformUndoManager() const override;
+    void copyText(JSStringRef) override;
 };
 
 }

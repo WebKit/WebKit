@@ -318,7 +318,7 @@ static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, O
     return strategy.bufferForType(type, pasteboardName);
 }
 
-void Pasteboard::read(PasteboardPlainText& text, Optional<size_t> itemIndex)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, Optional<size_t> itemIndex)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 
@@ -395,8 +395,10 @@ void Pasteboard::read(PasteboardPlainText& text, Optional<size_t> itemIndex)
     }
 
     // FIXME: The code above looks at the types vector first, but this just gets the string without checking. Why the difference?
-    text.text = readStringAtPreferredItemIndex(legacyURLPasteboardType(), itemIndex, strategy, m_pasteboardName);
-    text.isURL = !text.text.isNull();
+    if (allowURL == PlainTextURLReadingPolicy::AllowURL) {
+        text.text = readStringAtPreferredItemIndex(legacyURLPasteboardType(), itemIndex, strategy, m_pasteboardName);
+        text.isURL = !text.text.isNull();
+    }
 }
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)

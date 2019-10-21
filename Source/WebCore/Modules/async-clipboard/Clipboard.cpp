@@ -34,6 +34,8 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
 #include "Pasteboard.h"
+#include "SharedBuffer.h"
+#include "WebContentReader.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -126,9 +128,64 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
 
 void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPromise>&& promise)
 {
-    UNUSED_PARAM(item);
-    UNUSED_PARAM(type);
-    promise->reject(NotSupportedError);
+    if (!m_activeSession) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    auto frame = makeRefPtr(this->frame());
+    if (!frame) {
+        m_activeSession = WTF::nullopt;
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    auto itemIndex = m_activeSession->items.findMatching([&] (auto& activeItem) {
+        return activeItem.ptr() == &item;
+    });
+
+    if (itemIndex == notFound) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    if (!item.types().contains(type)) {
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    String resultAsString;
+
+    if (type == "text/uri-list"_s) {
+        String title;
+        resultAsString = activePasteboard().readURL(itemIndex, title).string();
+    }
+
+    if (type == "text/plain"_s) {
+        PasteboardPlainText plainTextReader;
+        activePasteboard().read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, itemIndex);
+        resultAsString = WTFMove(plainTextReader.text);
+    }
+
+    if (type == "text/html"_s) {
+        WebContentMarkupReader markupReader { *frame };
+        activePasteboard().read(markupReader, WebContentReadingPolicy::OnlyRichTextTypes, itemIndex);
+        resultAsString = WTFMove(markupReader.markup);
+    }
+
+    // FIXME: Support reading "image/png" as well as custom data.
+    // FIXME: Instead of checking changeCount here, we should send the changeCount over to the UI process to be vetted
+    // when attempting to read the data in the first place.
+    if (m_activeSession->changeCount != activePasteboard().changeCount()) {
+        m_activeSession = WTF::nullopt;
+        promise->reject(NotAllowedError);
+        return;
+    }
+
+    if (!resultAsString.isNull())
+        promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(resultAsString, type));
+    else
+        promise->reject(NotAllowedError);
 }
 
 void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPromise>&& promise)
@@ -140,6 +197,13 @@ void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPr
 Frame* Clipboard::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
+}
+
+Pasteboard& Clipboard::activePasteboard()
+{
+    ASSERT(m_activeSession);
+    ASSERT(m_activeSession->pasteboard);
+    return *m_activeSession->pasteboard;
 }
 
 }

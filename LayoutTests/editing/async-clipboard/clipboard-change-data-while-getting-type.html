@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            description("This test verifies that if platform pasteboard contents are changed before reading from a ClipboardItem, the new contents of the pasteboard should not be exposed to the page and the result of getType() should be rejected. This test requires WebKitTestRunner.");
+
+            await UIHelper.copyText("Foo");
+            items = await navigator.clipboard.read();
+            shouldBe("items.length", "1");
+            await UIHelper.copyText("Bar");
+            try {
+                const textBlob = await items[0].getType("text/plain");
+                testFailed(`Did not handle exception (instead, got text: "${await loadText(textBlob)}")`);
+            } catch (exception) {
+                testPassed(`Handled exception: ${exception.name}`);
+            }
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body></body>
+</html>

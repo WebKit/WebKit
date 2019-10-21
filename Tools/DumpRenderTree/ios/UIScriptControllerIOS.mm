@@ -30,6 +30,7 @@
 
 #import "DumpRenderTreeBrowserView.h"
 #import "UIScriptContext.h"
+#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/FloatRect.h>
 #import <wtf/MainThread.h>
 
@@ -129,6 +130,11 @@ JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
     CGRect contentVisibleRect = [gWebBrowserView documentVisibleRect];
     WebCore::FloatRect rect(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
     return m_context->objectFromRect(rect);
+}
+
+void UIScriptControllerIOS::copyText(JSStringRef text)
+{
+    UIPasteboard.generalPasteboard.string = text->string();
 }
 
 }

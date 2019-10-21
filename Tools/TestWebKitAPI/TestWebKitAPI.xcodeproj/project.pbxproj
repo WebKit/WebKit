@@ -974,6 +974,8 @@
 		F41AB9A81EF4696B0083FA08 /* prevent-operation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9941EF4692C0083FA08 /* prevent-operation.html */; };
 		F41AB9A91EF4696B0083FA08 /* prevent-start.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB99A1EF4692C0083FA08 /* prevent-start.html */; };
 		F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9951EF4692C0083FA08 /* textarea-to-input.html */; };
+		F422A3E9235ACA9B00CF00CA /* ClipboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F422A3E8235ACA9B00CF00CA /* ClipboardTests.mm */; };
+		F422A3EB235BB16200CF00CA /* clipboard.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F422A3EA235BB14500CF00CA /* clipboard.html */; };
 		F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */; };
 		F42DA5161D8CEFE400336F40 /* large-input-field-focus-onload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */; };
 		F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */; };
@@ -1177,6 +1179,7 @@
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
 				839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */,
+				F422A3EB235BB16200CF00CA /* clipboard.html in Copy Resources */,
 				1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */,
 				9B270FEE1DDC2C0B002D53F3 /* closed-shadow-tree-test.html in Copy Resources */,
 				9B9332CE2320C745002D50E8 /* cocoa-writer-markup-with-lists.html in Copy Resources */,
@@ -2474,6 +2477,8 @@
 		F41AB99C1EF4692C0083FA08 /* contenteditable-and-textarea.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-and-textarea.html"; sourceTree = "<group>"; };
 		F41AB99D1EF4692C0083FA08 /* link-and-target-div.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-and-target-div.html"; sourceTree = "<group>"; };
 		F41AB99E1EF4692C0083FA08 /* div-and-large-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "div-and-large-image.html"; sourceTree = "<group>"; };
+		F422A3E8235ACA9B00CF00CA /* ClipboardTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClipboardTests.mm; sourceTree = "<group>"; };
+		F422A3EA235BB14500CF00CA /* clipboard.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = clipboard.html; sourceTree = "<group>"; };
 		F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutocorrectionTestsIOS.mm; sourceTree = "<group>"; };
 		F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "large-input-field-focus-onload.html"; path = "Tests/WebKitCocoa/large-input-field-focus-onload.html"; sourceTree = SOURCE_ROOT; };
 		F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollToRevealSelection.mm; sourceTree = "<group>"; };
@@ -2787,6 +2792,7 @@
 				1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */,
 				5C23DF0A2245C9D700F454B6 /* Challenge.mm */,
 				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
+				F422A3E8235ACA9B00CF00CA /* ClipboardTests.mm */,
 				CDF92236216D186400647AA7 /* CloseWebViewAfterEnterFullscreen.mm */,
 				CDF0B789216D484300421ECC /* CloseWebViewDuringEnterFullscreen.mm */,
 				1AAD19F51C7CE20300831E47 /* Coding.mm */,
@@ -3233,6 +3239,7 @@
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,
 				839AA35E21A26ACD00980DD6 /* client-side-redirect.html */,
+				F422A3EA235BB14500CF00CA /* clipboard.html */,
 				9B9332CD2320C73E002D50E8 /* cocoa-writer-markup-with-lists.html */,
 				9BAE177A22E2BB6B00DF3098 /* cocoa-writer-markup-with-system-fonts.html */,
 				E5036F77211BC22800BFDBE2 /* color-drop.html */,
@@ -4469,6 +4476,7 @@
 				57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */,
 				57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */,
 				5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */,
+				F422A3E9235ACA9B00CF00CA /* ClipboardTests.mm in Sources */,
 				7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */,
 				7CCE7EB71A411A7E00447C4C /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,

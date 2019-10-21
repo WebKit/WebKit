@@ -73,6 +73,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    Pasteboard& activePasteboard();
+
     Optional<Session> m_activeSession;
     WeakPtr<Navigator> m_navigator;
 };

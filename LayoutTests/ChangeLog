@@ -1,3 +1,37 @@
+2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Implement ClipboardItem.getType() for platform clipboard items
+        https://bugs.webkit.org/show_bug.cgi?id=203168
+
+        Reviewed by Tim Horton.
+
+        Add 3 new layout tests.
+
+        * editing/async-clipboard/clipboard-change-data-while-getting-type-expected.txt: Added.
+        * editing/async-clipboard/clipboard-change-data-while-getting-type.html: Added.
+
+        Add a layout test to verify that if the pasteboard changes right after the page has obtained clipboard items,
+        the page should not be able to fetch the new contents of the pasteboard using these clipboard items.
+
+        * editing/async-clipboard/clipboard-get-type-with-old-items.html: Added.
+        * editing/async-clipboard/clipboard-get-type-with-old-items-expected.txt: Added.
+
+        Add a layout test to verify that after attempting to get data from invalid (stale) items, the page is still
+        capable of reading data from valid clipboard items.
+
+        * editing/async-clipboard/clipboard-item-get-type-basic-expected.txt: Added.
+        * editing/async-clipboard/clipboard-item-get-type-basic.html: Added.
+
+        Add a layout test to verify that after writing multiple types to the clipboard using the DataTransfer API, we
+        should be able to read them back using the async clipboard API, as a single ClipboardItem, and also get data out
+        of the clipboard item using ClipboardItem.getType.
+
+        * editing/async-clipboard/resources/async-clipboard-helpers.js:
+        * platform/win/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.async.copyText):
+        (window.UIHelper):
+
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         scrollingcoordinator/ios/ui-scrolling-tree.html is a Flaky Failure on iPad

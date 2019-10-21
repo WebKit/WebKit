@@ -31,6 +31,7 @@
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSValue.h>
+#import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -144,6 +145,13 @@ void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 NSUndoManager *UIScriptControllerMac::platformUndoManager() const
 {
     return nil;
+}
+
+void UIScriptControllerMac::copyText(JSStringRef text)
+{
+    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
+    [pasteboard setString:text->string() forType:NSPasteboardTypeString];
 }
 
 }

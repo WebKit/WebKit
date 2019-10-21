@@ -49,6 +49,7 @@ public:
     double minimumZoomScale() const override;
     double maximumZoomScale() const override;
     JSObjectRef contentVisibleRect() const override;
+    void copyText(JSStringRef) override;
 };
 
 }

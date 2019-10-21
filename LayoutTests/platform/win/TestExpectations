@@ -1191,6 +1191,9 @@ http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html
 
 webkit.org/b/203100 editing/async-clipboard/clipboard-read-basic.html [ Skip ]
 webkit.org/b/203100 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-item-get-type-basic.html [ Skip ]
+webkit.org/b/203100 editing/async-clipboard/clipboard-get-type-with-old-items.html [ Skip ]
 
 webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ImageOnlyFailure ]
 webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion

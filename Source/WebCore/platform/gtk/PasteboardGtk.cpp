@@ -232,7 +232,7 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 }
 #endif
 
-void Pasteboard::read(PasteboardPlainText& text, Optional<size_t>)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Optional<size_t>)
 {
     readFromClipboard();
     text.text = m_selectionData->text();

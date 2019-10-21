@@ -39,7 +39,7 @@ class Element;
 class FileList;
 class File;
 class Pasteboard;
-enum class WebContentReadingPolicy;
+enum class WebContentReadingPolicy : bool;
 
 class DataTransfer : public RefCounted<DataTransfer> {
 public:

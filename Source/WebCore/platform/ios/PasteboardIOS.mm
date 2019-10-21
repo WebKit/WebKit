@@ -150,17 +150,24 @@ bool Pasteboard::canSmartReplace()
     return true;
 }
 
-void Pasteboard::read(PasteboardPlainText& text, Optional<size_t> itemIndex)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, Optional<size_t> itemIndex)
 {
     auto itemIndexToQuery = itemIndex.valueOr(0);
 
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
-    text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypeURL, m_pasteboardName);
-    if (!text.text.isEmpty()) {
-        text.isURL = true;
-        return;
+
+    if (allowURL == PlainTextURLReadingPolicy::AllowURL) {
+        text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypeURL, m_pasteboardName);
+        if (!text.text.isEmpty()) {
+            text.isURL = true;
+            return;
+        }
     }
 
+    // We ask for the "public.text" representation only as a legacy fallback, in case apps still directly write
+    // plain text for this abstract UTI. In almost all cases, the more correct choice would be to write to
+    // one of the concrete "public.plain-text" representations (e.g. kUTTypeUTF8PlainText). In the future, we
+    // should consider removing support for reading plain text from "public.text".
     text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypePlainText, m_pasteboardName);
     if (text.text.isEmpty())
         text.text = strategy.readStringFromPasteboard(itemIndexToQuery, kUTTypeText, m_pasteboardName);

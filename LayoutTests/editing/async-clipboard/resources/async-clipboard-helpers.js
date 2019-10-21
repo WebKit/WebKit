@@ -30,6 +30,12 @@ function loadImage(blob) {
     });
 }
 
+function loadDocument(blob) {
+    return new Promise(async resolve => {
+        resolve(new DOMParser().parseFromString(await loadText(blob), "text/html"));
+    });
+}
+
 function writeToClipboardUsingDataTransfer(data) {
     const input = document.createElement("input");
     document.body.appendChild(input);

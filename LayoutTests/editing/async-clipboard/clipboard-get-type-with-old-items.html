@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            description("This test verifies that it's still possible to read from the clipboard, after attempting to read data from stale items. Requires DumpRenderTree or WebKitTestRunner.");
+
+            await UIHelper.copyText("Hello");
+            itemsBeforeChange = await navigator.clipboard.read();
+            shouldBe("itemsBeforeChange.length", "1");
+
+            try {
+                const textBlob = await itemsBeforeChange[0].getType("text/plain");
+                text = await loadText(textBlob);
+                shouldBeEqualToString("text", "Hello");
+            } catch (exception) {
+                testFailed(`Caught unexpected exception: ${exception.name}`);
+            }
+
+            await UIHelper.copyText("World");
+            itemsAfterChange = await navigator.clipboard.read();
+            shouldBe("itemsAfterChange.length", "1");
+
+            try {
+                const textBlob = await itemsBeforeChange[0].getType("text/plain");
+                testFailed(`Expected exception when calling getType(). Instead, got Blob(${textBlob.size} bytes)`);
+            } catch (exception) {
+                testPassed(`Caught expected exception: ${exception.name}`);
+            }
+
+            try {
+                const textBlob = await itemsAfterChange[0].getType("text/plain");
+                text = await loadText(textBlob);
+                shouldBeEqualToString("text", "World");
+            } catch (exception) {
+                testFailed(`Caught unexpected exception: ${exception.name}`);
+            }
+
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body></body>
+</html>

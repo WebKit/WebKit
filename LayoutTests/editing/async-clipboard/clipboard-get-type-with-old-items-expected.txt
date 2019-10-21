@@ -1,0 +1,14 @@
+This test verifies that it's still possible to read from the clipboard, after attempting to read data from stale items. Requires DumpRenderTree or WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS itemsBeforeChange.length is 1
+PASS text is "Hello"
+PASS itemsAfterChange.length is 1
+PASS Caught expected exception: NotAllowedError
+PASS text is "World"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
