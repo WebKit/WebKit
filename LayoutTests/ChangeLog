@@ -1,3 +1,20 @@
+2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/selection/ios/selection-handles-in-readonly-input.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=203203
+        <rdar://problem/47710799>
+
+        Reviewed by Tim Horton.
+
+        This test began to fail in iOS 13, since we (intentionally) no longer show a keyboard when focusing `readonly`
+        inputs. The test is intended to verify that moving selection handles inside a readonly input field will not
+        cause the selection to disappear, but it currently waits forever for the keyboard to appear after initially
+        tapping a readonly input field.
+
+        We can fix this test by instead using a tap-and-half gesture to select the text ('aa').
+
+        * editing/selection/ios/selection-handles-in-readonly-input.html:
+
 2019-10-21  Daniel Bates  <dabates@apple.com>
 
         Update expected result for fast/repaint/placeholder-after-caps-lock-hidden.html

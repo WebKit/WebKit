@@ -39,8 +39,14 @@ function appendOutput(s) {
 }
 
 async function runTest() {
-    await UIHelper.activateAndWaitForInputSessionAt(100, 50);
-    input.setSelectionRange(0, 2);
+    // First, focus the readonly input.
+    await UIHelper.activateAt(100, 50);
+    await UIHelper.waitForDoubleTapDelay();
+
+    // Then, select 'aa' with a tap-and-half gesture.
+    await UIHelper.activateAt(100, 50);
+    await longPressAtPoint(100, 50);
+
     let grabberEndRect = null;
     while (!grabberEndRect || !grabberEndRect.width || !grabberEndRect.height)
         grabberEndRect = await UIHelper.getSelectionEndGrabberViewRect();
