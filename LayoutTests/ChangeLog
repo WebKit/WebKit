@@ -1,3 +1,12 @@
+2019-10-21  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac ] Layout Test legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203225
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-21  Russell Epstein  <repstein@apple.com>
 
         REGRESSION (~r251067): http/tests/workers/service/registration-clear-redundant-worker.html is a flaky timeout
