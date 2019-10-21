@@ -234,7 +234,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
@@ -1291,6 +1290,16 @@ webkit.org/b/198830 media/track/track-active-cues.html [ Pass Crash ]
 webkit.org/b/198830 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html [ Pass Crash ]
 
 webkit.org/b/201275 fast/events/focus-anchor-with-tabindex-hang.html [ Crash ]
+
+# Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Pass Crash ]
+webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Pass Crash ]
+webkit.org/b/203078 media/media-source/media-source-seek-detach-crash.html [ Pass Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3297,7 +3306,6 @@ webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ F
 
 webkit.org/b/176020 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Crash Pass ]
 
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
@@ -3866,6 +3874,9 @@ webkit.org/b/202746 http/tests/blink/sendbeacon/beacon-cross-origin.html [ Failu
 webkit.org/b/202747 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
+
+# Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

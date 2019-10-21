@@ -22,46 +22,57 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
-#include "GStreamerCommon.h"
-#include "MediaSourcePrivate.h"
-#include "MediaSourcePrivateClient.h"
+// PlaybackPipeline is (sort of) a friend class of WebKitMediaSourceGStreamer.
+
 #include "WebKitMediaSourceGStreamer.h"
-#include <wtf/MediaTime.h>
+#include "WebKitMediaSourceGStreamerPrivate.h"
+
+#include <gst/gst.h>
+#include <wtf/Condition.h>
+#include <wtf/glib/GRefPtr.h>
+
+namespace WTF {
+template<> GRefPtr<WebKitMediaSrc> adoptGRef(WebKitMediaSrc*);
+template<> WebKitMediaSrc* refGPtr<WebKitMediaSrc>(WebKitMediaSrc*);
+template<> void derefGPtr<WebKitMediaSrc>(WebKitMediaSrc*);
+};
 
 namespace WebCore {
 
 class ContentType;
-class MediaPlayerPrivateGStreamerMSE;
-class MediaSample;
 class SourceBufferPrivateGStreamer;
+class MediaSourceGStreamer;
 
-class MediaSourceClientGStreamerMSE : public RefCounted<MediaSourceClientGStreamerMSE> {
+class PlaybackPipeline: public RefCounted<PlaybackPipeline> {
 public:
-    static Ref<MediaSourceClientGStreamerMSE> create(MediaPlayerPrivateGStreamerMSE&);
-    virtual ~MediaSourceClientGStreamerMSE();
+    static Ref<PlaybackPipeline> create()
+    {
+        return adoptRef(*new PlaybackPipeline());
+    }
+
+    virtual ~PlaybackPipeline() = default;
+
+    void setWebKitMediaSrc(WebKitMediaSrc*);
+    WebKitMediaSrc* webKitMediaSrc();
+
+    MediaSourcePrivate::AddStatus addSourceBuffer(RefPtr<SourceBufferPrivateGStreamer>);
+    void removeSourceBuffer(RefPtr<SourceBufferPrivateGStreamer>);
+    void attachTrack(RefPtr<SourceBufferPrivateGStreamer>, RefPtr<TrackPrivateBase>, GstCaps*);
+    void reattachTrack(RefPtr<SourceBufferPrivateGStreamer>, RefPtr<TrackPrivateBase>, GstCaps*);
+    void notifyDurationChanged();
 
     // From MediaSourceGStreamer.
-    MediaSourcePrivate::AddStatus addSourceBuffer(RefPtr<SourceBufferPrivateGStreamer>, const ContentType&);
-    void durationChanged(const MediaTime&);
     void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);
 
     // From SourceBufferPrivateGStreamer.
-    void abort(RefPtr<SourceBufferPrivateGStreamer>);
-    void resetParserState(RefPtr<SourceBufferPrivateGStreamer>);
-    void append(RefPtr<SourceBufferPrivateGStreamer>, Vector<unsigned char>&&);
-    void removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer>);
     void flush(AtomString);
     void enqueueSample(Ref<MediaSample>&&);
     void allSamplesInTrackEnqueued(const AtomString&);
 
-    const MediaTime& duration();
-    GRefPtr<WebKitMediaSrc> webKitMediaSrc();
-
+    GstElement* pipeline();
 private:
-    MediaSourceClientGStreamerMSE(MediaPlayerPrivateGStreamerMSE&);
-
-    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
-    MediaTime m_duration;
+    PlaybackPipeline() = default;
+    GRefPtr<WebKitMediaSrc> m_webKitMediaSrc;
 };
 
 } // namespace WebCore.

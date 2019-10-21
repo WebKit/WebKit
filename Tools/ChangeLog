@@ -1,3 +1,12 @@
+2019-10-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Revert WebKitMediaSrc rework temporarily
+        https://bugs.webkit.org/show_bug.cgi?id=203078
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2019-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Mark some more WTF unit tests as slow for GTK and WPE

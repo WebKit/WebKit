@@ -1,3 +1,12 @@
+2019-10-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Revert WebKitMediaSrc rework temporarily
+        https://bugs.webkit.org/show_bug.cgi?id=203078
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/GStreamerChecks.cmake:
+
 2019-10-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Use HINTS instead of PATHS when searching in paths from pkg-config

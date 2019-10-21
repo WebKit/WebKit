@@ -92,18 +92,14 @@ void MediaSourceGStreamer::durationChanged()
     m_client->durationChanged(m_mediaSource->duration());
 }
 
-void MediaSourceGStreamer::markEndOfStream(EndOfStreamStatus)
+void MediaSourceGStreamer::markEndOfStream(EndOfStreamStatus status)
 {
-    // We don't need to do anything in the AppendPipeline nor the playback pipeline. Instead, SourceBuffer knows better
-    // when .endOfStream() has been called and there are no more samples to enqueue, which it will signal with a call
-    // to SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(), where we enqueue an EOS event into WebKitMediaSrc.
-
-    // At this point it would be dangerously early to do that! There may be samples waiting to reach WebKitMediaSrc
-    // (e.g. because high water level is hit) that will not be shown if we enqueue an EOS now.
+    m_client->markEndOfStream(status);
 }
 
 void MediaSourceGStreamer::unmarkEndOfStream()
 {
+    notImplemented();
 }
 
 MediaPlayer::ReadyState MediaSourceGStreamer::readyState() const
@@ -118,11 +114,12 @@ void MediaSourceGStreamer::setReadyState(MediaPlayer::ReadyState state)
 
 void MediaSourceGStreamer::waitForSeekCompleted()
 {
+    m_playerPrivate.waitForSeekCompleted();
 }
 
 void MediaSourceGStreamer::seekCompleted()
 {
-    m_playerPrivate.reportSeekCompleted();
+    m_playerPrivate.seekCompleted();
 }
 
 void MediaSourceGStreamer::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer* sourceBufferPrivate, bool isActive)

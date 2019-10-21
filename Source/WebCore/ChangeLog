@@ -1,3 +1,188 @@
+2019-10-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Revert WebKitMediaSrc rework temporarily
+        https://bugs.webkit.org/show_bug.cgi?id=203078
+
+        Reviewed by Carlos Garcia Campos.
+
+        While the WebKitMediaSrc rework fixed a number of tests and introduced
+        design improvements in MSE, it also exposed a number of bugs related
+        to the playbin3 switch.
+
+        Fixing these has been turned tricky, so in order to not keep known
+        user-facing bugs, I'm reverting it for now until a workable solution
+        is available.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::refGPtr<GstMiniObject>): Deleted.
+        (WTF::derefGPtr<GstMiniObject>): Deleted.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::paused const):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::configurePlaySink):
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPosition): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::sizeChanged):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSizeFromCaps const): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::doSamplesHaveDifferentNaturalSizes const): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::appsinkCaps):
+        (WebCore::AppendPipeline::track):
+        (WebCore::AppendPipeline::streamType):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::pause):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::configurePlaySink):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::notifySeekNeedsDataForTime):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maybeFinishSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seeking const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::waitForSeekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::mediaSourceClient):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::unblockDurationChanges):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::markEndOfStream):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::play): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::reportSeekCompleted): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::didEnd): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::markEndOfStream):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        (WebCore::MediaSourceClientGStreamerMSE::flush):
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        (WebCore::MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued):
+        (WebCore::MediaSourceClientGStreamerMSE::isReadyForMoreSamples): Deleted.
+        (WebCore::MediaSourceClientGStreamerMSE::notifyClientWhenReadyForMoreSamples): Deleted.
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::markEndOfStream):
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourceGStreamer::waitForSeekCompleted):
+        (WebCore::MediaSourceGStreamer::seekCompleted):
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp: Added.
+        (getStreamByTrackId):
+        (getStreamBySourceBufferPrivate):
+        (pushSample):
+        (WebCore::PlaybackPipeline::setWebKitMediaSrc):
+        (WebCore::PlaybackPipeline::webKitMediaSrc):
+        (WebCore::PlaybackPipeline::addSourceBuffer):
+        (WebCore::PlaybackPipeline::removeSourceBuffer):
+        (WebCore::PlaybackPipeline::attachTrack):
+        (WebCore::PlaybackPipeline::reattachTrack):
+        (WebCore::PlaybackPipeline::notifyDurationChanged):
+        (WebCore::PlaybackPipeline::markEndOfStream):
+        (WebCore::PlaybackPipeline::flush):
+        (WebCore::PlaybackPipeline::enqueueSample):
+        (WebCore::PlaybackPipeline::allSamplesInTrackEnqueued):
+        (WebCore::PlaybackPipeline::pipeline):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h: Copied from Source/WebCore/platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample):
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::setReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (disabledAppsrcNeedData):
+        (disabledAppsrcEnoughData):
+        (disabledAppsrcSeekData):
+        (enabledAppsrcEnoughData):
+        (enabledAppsrcSeekData):
+        (getStreamByAppsrc):
+        (webkitMediaSrcChain):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcSetProperty):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaSrcDoAsyncStart):
+        (webKitMediaSrcDoAsyncDone):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcGetSize):
+        (webKitMediaSrcQueryWithParent):
+        (webKitMediaSrcUpdatePresentationSize):
+        (webKitMediaSrcLinkStreamToSrcPad):
+        (webKitMediaSrcLinkSourcePad):
+        (webKitMediaSrcFreeStream):
+        (webKitMediaSrcCheckAllTracksConfigured):
+        (webKitMediaSrcUriGetType):
+        (webKitMediaSrcGetProtocols):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (webKitMediaSrcUriHandlerInit):
+        (seekNeedsDataMainThread):
+        (notifyReadyForMoreSamplesMainThread):
+        (webKitMediaSrcSetMediaPlayerPrivate):
+        (webKitMediaSrcSetReadyForSamples):
+        (webKitMediaSrcPrepareSeek):
+        (WebKitMediaSrcPrivate::streamByName): Deleted.
+        (): Deleted.
+        (WTF::refGPtr<WebKitMediaSrcPad>): Deleted.
+        (WTF::derefGPtr<WebKitMediaSrcPad>): Deleted.
+        (webkit_media_src_pad_class_init): Deleted.
+        (Stream::Stream): Deleted.
+        (Stream::StreamingMembers::StreamingMembers): Deleted.
+        (Stream::StreamingMembers::durationEnqueued const): Deleted.
+        (findPipeline): Deleted.
+        (webkit_media_src_class_init): Deleted.
+        (debugProbe): Deleted.
+        (copyCollectionAndAddStream): Deleted.
+        (copyCollectionWithoutStream): Deleted.
+        (gstStreamType): Deleted.
+        (webKitMediaSrcAddStream): Deleted.
+        (webKitMediaSrcRemoveStream): Deleted.
+        (webKitMediaSrcActivateMode): Deleted.
+        (webKitMediaSrcPadLinked): Deleted.
+        (webKitMediaSrcStreamNotifyLowWaterLevel): Deleted.
+        (webKitMediaSrcLoop): Deleted.
+        (webKitMediaSrcEnqueueObject): Deleted.
+        (webKitMediaSrcEnqueueSample): Deleted.
+        (webKitMediaSrcEnqueueEvent): Deleted.
+        (webKitMediaSrcEndOfStream): Deleted.
+        (webKitMediaSrcIsReadyForMoreSamples): Deleted.
+        (webKitMediaSrcNotifyWhenReadyForMoreSamples): Deleted.
+        (webKitMediaSrcStreamFlushStart): Deleted.
+        (webKitMediaSrcStreamFlushStop): Deleted.
+        (webKitMediaSrcFlush): Deleted.
+        (webKitMediaSrcSeek): Deleted.
+        (countStreamsOfType): Deleted.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h: Added.
+
 2019-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Clean up some includes to improve WebKit2 build speed
