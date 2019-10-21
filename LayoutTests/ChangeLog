@@ -1,5 +1,24 @@
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
+        scrollingcoordinator/ios/ui-scrolling-tree.html is a Flaky Failure on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=203119
+        rdar://problem/52970947
+
+        Reviewed by Wenson Hsieh.
+
+        iPad viewport heuristics (WebPage::immediatelyShrinkToFitContent()) run on a zero-delay
+        timer after page load, which races with this test getting the UI-side scrolling tree
+        and makes the test flakey.
+
+        Fix by turning off the heuristics with "contentMode=mobile". Also fix the test
+        to use UIHelper to get the scrolling tree.
+
+        * platform/ipad/TestExpectations:
+        * platform/ipad/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt:
+        * scrollingcoordinator/ios/ui-scrolling-tree.html:
+
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Support hiding iframe scrollbars via ::-webkit-scrollbar style
         https://bugs.webkit.org/show_bug.cgi?id=203178
 
