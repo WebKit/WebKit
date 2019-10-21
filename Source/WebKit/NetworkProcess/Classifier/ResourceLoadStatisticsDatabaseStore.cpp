@@ -1350,12 +1350,18 @@ void ResourceLoadStatisticsDatabaseStore::setUserInteraction(const RegistrableDo
     ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
 }
 
-void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomain& domain)
+void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
+    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
     ensureResourceStatisticsForRegistrableDomain(domain);
     setUserInteraction(domain, true, WallTime::now());
+    if (didHavePreviousUserInteraction) {
+        completionHandler();
+        return;
+    }
+    updateCookieBlocking(WTFMove(completionHandler));
 }
 
 void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const RegistrableDomain& domain)

@@ -403,13 +403,19 @@ void ResourceLoadStatisticsMemoryStore::logFrameNavigation(const RegistrableDoma
         scheduleStatisticsProcessingRequestIfNecessary();
 }
 
-void ResourceLoadStatisticsMemoryStore::logUserInteraction(const TopFrameDomain& domain)
+void ResourceLoadStatisticsMemoryStore::logUserInteraction(const TopFrameDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(domain);
+    bool didHavePreviousUserInteraction = statistics.hadUserInteraction;
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteractionTime = WallTime::now();
+    if (didHavePreviousUserInteraction) {
+        completionHandler();
+        return;
+    }
+    updateCookieBlocking(WTFMove(completionHandler));
 }
 
 void ResourceLoadStatisticsMemoryStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain)

@@ -547,9 +547,14 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const RegistrableDomain&
     ASSERT(RunLoop::isMain());
 
     postTask([this, domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_statisticsStore)
-            m_statisticsStore->logUserInteraction(domain);
-        postTaskReply(WTFMove(completionHandler));
+        auto innerCompletionHandler = [completionHandler = WTFMove(completionHandler)]() mutable {
+            postTaskReply(WTFMove(completionHandler));
+        };
+        if (m_statisticsStore) {
+            m_statisticsStore->logUserInteraction(domain, WTFMove(innerCompletionHandler));
+            return;
+        }
+        innerCompletionHandler();
     });
 }
 

@@ -1,3 +1,17 @@
+2019-10-21  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Update cookie blocking in NetworkStorageSession after first user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=203195
+        <rdar://problem/56464567>
+
+        Reviewed by Alex Christensen and Chris Dumez.
+
+        This patch removes the explicit calls to testRunner.statisticsUpdateCookieBlocking() since
+        they are no longer needed. This makes sure the changed code is tested.
+
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html:
+
 2019-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, re-enable a couple of passing layout tests

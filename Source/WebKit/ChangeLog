@@ -1,3 +1,27 @@
+2019-10-21  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Update cookie blocking in NetworkStorageSession after first user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=203195
+        <rdar://problem/56464567>
+
+        Reviewed by Alex Christensen and Chris Dumez.
+
+        This change makes sure that the state of cookie blocking in
+        WebCore:: NetworkStorageSession is immediately updated if the logged
+        user interaction was new for this domain. It adds a completion
+        handler to WebResourceLoadStatisticsStore::logUserInteraction() so
+        that the call properly waits for everything to be updated.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::CompletionHandler<void):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logUserInteraction):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+
 2019-10-21  Dean Jackson  <dino@apple.com>
 
         Dispatch AR event on the originating anchor element
