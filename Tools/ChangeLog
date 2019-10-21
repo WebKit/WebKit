@@ -1,3 +1,21 @@
+2019-10-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.net
+        https://bugs.webkit.org/show_bug.cgi?id=202464
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.net.
+        * Scripts/webkitpy/common/net/credentials_unittest.py: Replace raw_input with input for Python3.
+        * Scripts/webkitpy/common/net/ewsserver.py:
+        * Scripts/webkitpy/common/net/resultsjsonparser.py:
+        (ParsedJSONResults.__init__): Sort results by test name.
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (test_basic): Sort results by test name.
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer._fetch_url):
+        * Scripts/webkitpy/common/net/unittestresults_unittest.py:
+
 2019-10-18  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should have a way to retry a patch

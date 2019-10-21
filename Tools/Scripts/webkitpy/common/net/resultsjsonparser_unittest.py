@@ -1,4 +1,5 @@
 # Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -143,11 +144,13 @@ class ParsedJSONResultsTest(unittest.TestCase):
 });"""
 
     def test_basic(self):
+        self.maxDiff = None
         expected_results = [
             test_results.TestResult("svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html", [test_failures.FailureImageHashMismatch()], 0),
             test_results.TestResult("fast/dom/prototype-inheritance.html", [test_failures.FailureTextMismatch(), test_failures.FailureImageHashMismatch(), test_failures.FailureAudioMismatch()], 0),
             test_results.TestResult("fast/dom/prototype-strawberry.html", [test_failures.FailureDocumentLeak(['file:///Volumes/Data/slave/webkit/build/LayoutTests/fast/dom/prototype-strawberry.html'])], 0),
         ]
+        expected_results.sort(key=lambda result: result.test_name)
         parsed_results = ParsedJSONResults(self._example_full_results_json)
         self.assertEqual(expected_results, parsed_results.test_results())
         self.assertTrue(parsed_results.did_exceed_test_failure_limit())

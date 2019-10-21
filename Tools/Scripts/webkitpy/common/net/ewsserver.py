@@ -22,6 +22,7 @@
 
 from webkitpy.common.config.urls import ewsserver_default_host
 from webkitpy.common.net.networktransaction import NetworkTransaction
+from webkitpy.common.unicode_compatibility import unicode
 
 import logging
 

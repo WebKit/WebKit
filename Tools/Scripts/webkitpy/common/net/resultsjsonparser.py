@@ -1,4 +1,5 @@
 # Copyright (c) 2010, Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -162,6 +163,7 @@ class ParsedJSONResults(object):
                 unexpected_failures.append(test_result)
 
         self._test_results = unexpected_failures
+        self._test_results.sort(key=lambda result: result.test_name)
         self._did_exceed_test_failure_limit = json_dict["interrupted"]
 
     def did_exceed_test_failure_limit(self):

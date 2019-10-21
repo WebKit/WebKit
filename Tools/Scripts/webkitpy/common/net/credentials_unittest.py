@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 import tempfile
 import unittest
 
@@ -36,6 +38,11 @@ from webkitpy.common.system.user_mock import MockUser
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
+
+if sys.version_info > (3, 0):
+    input_func = input
+else:
+    input_func = raw_input
 
 
 # FIXME: Other unit tests probably want this class.
@@ -193,11 +200,11 @@ password: "SECRETSAUCE"
 
         class FakeUser(MockUser):
             @classmethod
-            def prompt(cls, message, repeat=1, raw_input=raw_input):
+            def prompt(cls, message, repeat=1, raw_input=input_func):
                 return "test@webkit.org"
 
             @classmethod
-            def prompt_password(cls, message, repeat=1, raw_input=raw_input):
+            def prompt_password(cls, message, repeat=1, raw_input=input_func):
                 raise AssertionError("should not prompt for password")
 
         with _TemporaryDirectory(suffix="not_a_git_repo") as temp_dir_path:
@@ -223,11 +230,11 @@ password: "SECRETSAUCE"
 
         class FakeUser(MockUser):
             @classmethod
-            def prompt(cls, message, repeat=1, raw_input=raw_input):
+            def prompt(cls, message, repeat=1, raw_input=input_func):
                 return "test@webkit.org"
 
             @classmethod
-            def prompt_password(cls, message, repeat=1, raw_input=raw_input):
+            def prompt_password(cls, message, repeat=1, raw_input=input_func):
                 return "NOMNOMNOM"
 
         with _TemporaryDirectory(suffix="not_a_git_repo") as temp_dir_path:
