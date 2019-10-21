@@ -135,6 +135,7 @@ public:
             "process-swap-on-cross-site-navigation-enabled", TRUE,
 #endif
             nullptr)));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
         g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
     }
 
@@ -148,7 +149,7 @@ public:
         g_print("Leaked objects:");
         HashSet<GObject*>::const_iterator end = m_watchedObjects.end();
         for (HashSet<GObject*>::const_iterator it = m_watchedObjects.begin(); it != end; ++it)
-            g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(*it)), *it);
+            g_print(" %s(%p - %u left)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(*it)), *it, (*it)->ref_count);
         g_print("\n");
 
         g_assert_true(m_watchedObjects.isEmpty());

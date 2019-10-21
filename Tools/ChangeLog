@@ -1,3 +1,16 @@
+2019-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Check we don't leak the WebKitWebContext in all tests
+        https://bugs.webkit.org/show_bug.cgi?id=202981
+
+        Reviewed by Žan Doberšek.
+
+        Also include the number of references left in leaks report.
+
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+        (Test::~Test):
+
 2019-10-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when no credentials are found
