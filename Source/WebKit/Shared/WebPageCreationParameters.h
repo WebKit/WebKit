@@ -182,10 +182,6 @@ struct WebPageCreationParameters {
     Optional<WebCore::ApplicationManifest> applicationManifest;
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-    bool hasRegisteredServiceWorkers { true };
-#endif
-
     bool needsFontAttributes { false };
 
     // WebRTC members.

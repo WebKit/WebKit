@@ -5237,7 +5237,7 @@ void Document::resume(ReasonForSuspension reason)
 
 #if ENABLE(SERVICE_WORKER)
     if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ReasonForSuspension::BackForwardCache)
-        setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnection());
+        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 #endif
 }
 

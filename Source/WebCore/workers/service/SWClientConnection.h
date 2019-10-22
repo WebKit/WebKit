@@ -85,9 +85,6 @@ public:
 
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
 
-    virtual bool isThrottleable() const = 0;
-    virtual void updateThrottleState() = 0;
-
     virtual void storeRegistrationsOnDiskForTesting(CompletionHandler<void()>&& callback) { callback(); }
 
 protected:

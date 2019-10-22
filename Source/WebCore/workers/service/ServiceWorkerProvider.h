@@ -40,8 +40,6 @@ public:
     static ServiceWorkerProvider& singleton();
     static void setSharedProvider(ServiceWorkerProvider&);
 
-    bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&);
-    virtual SWClientConnection* existingServiceWorkerConnection() = 0;
     virtual SWClientConnection& serviceWorkerConnection() = 0;
 
     void registerServiceWorkerClients();

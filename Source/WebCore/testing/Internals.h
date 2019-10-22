@@ -765,7 +765,6 @@ public:
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
     void terminateServiceWorker(ServiceWorker&);
-    bool hasServiceWorkerConnection();
 #endif
 
 #if ENABLE(APPLE_PAY)

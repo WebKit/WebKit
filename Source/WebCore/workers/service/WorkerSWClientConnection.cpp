@@ -184,15 +184,6 @@ void WorkerSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerF
     });
 }
 
-bool WorkerSWClientConnection::isThrottleable() const
-{
-    return true;
-}
-
-void WorkerSWClientConnection::updateThrottleState()
-{
-}
-
 void WorkerSWClientConnection::scheduleJob(DocumentOrWorkerIdentifier identifier, const ServiceWorkerJobData& data)
 {
     callOnMainThread([identifier, data = crossThreadCopy(data)]() mutable {

@@ -41,12 +41,12 @@ public:
     static WebServiceWorkerProvider& singleton();
 
     void didReceiveServiceWorkerClientRegistrationMatch(IPC::Connection&, IPC::Decoder&);
+    void updateThrottleState(bool isThrottleable);
 
 private:
     friend NeverDestroyed<WebServiceWorkerProvider>;
     WebServiceWorkerProvider();
 
-    WebCore::SWClientConnection* existingServiceWorkerConnection() final;
     WebCore::SWClientConnection& serviceWorkerConnection() final;
 }; // class WebServiceWorkerProvider
 

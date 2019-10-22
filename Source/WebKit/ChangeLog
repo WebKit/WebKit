@@ -1,3 +1,35 @@
+2019-10-22  youenn fablet  <youenn@apple.com>
+
+        Remove mayHaveServiceWorkerRegisteredForOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=203055
+
+        Reviewed by Alex Christensen.
+
+        This optimization was used for ensuring we would not create a storage process when no service worker registration is stored on disk.
+        Now that we do not have a storage process and we are doing registration matching direclty in network process, we can safely remove that optimization.
+        We also move the throttle state handling in WK2 layer. This allows us to not create a network process connection to update throttle state until
+        there is a network process connection. This allows continuing passing an API test checking network process connections after crashes.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnection):
+        (WebKit::WebServiceWorkerProvider::updateThrottleState):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_textAutoSizingAdjustmentTimer):
+        (WebKit::WebPage::updateThrottleState):
+
 2019-10-22  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK] Web Inspector: add an option for disabling minification and concatenation of inspector UI in release build

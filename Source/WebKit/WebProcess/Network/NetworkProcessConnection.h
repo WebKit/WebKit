@@ -72,7 +72,6 @@ public:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    WebSWClientConnection* existingServiceWorkerConnection() { return m_swConnection.get(); }
     WebSWClientConnection& serviceWorkerConnection();
 #endif
 

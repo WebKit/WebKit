@@ -117,9 +117,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(APPLICATION_MANIFEST)
     encoder << applicationManifest;
 #endif
-#if ENABLE(SERVICE_WORKER)
-    encoder << hasRegisteredServiceWorkers;
-#endif
     encoder << needsFontAttributes;
     encoder << iceCandidateFilteringEnabled;
     encoder << enumeratingAllNetworkInterfacesEnabled;
@@ -343,11 +340,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.applicationManifest = WTFMove(*applicationManifest);
 #endif
-#if ENABLE(SERVICE_WORKER)
-    if (!decoder.decode(parameters.hasRegisteredServiceWorkers))
-        return WTF::nullopt;
-#endif
-
     if (!decoder.decode(parameters.needsFontAttributes))
         return WTF::nullopt;
 

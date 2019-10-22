@@ -691,8 +691,6 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 {
     ASSERT_UNUSED(proxy, &proxy == m_networkProcess.get());
 
-    m_mayHaveRegisteredServiceWorkers.clear();
-
     auto* websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(sessionID);
 
     if (!websiteDataStore) {
@@ -1263,21 +1261,6 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
     m_serviceWorkerUserAgent = userAgent;
     for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
         serviceWorkerProcess->setServiceWorkerUserAgent(m_serviceWorkerUserAgent);
-}
-
-bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& store)
-{
-    if (!m_serviceWorkerProcesses.isEmpty())
-        return true;
-
-    String serviceWorkerRegistrationDirectory = store.resolvedServiceWorkerRegistrationDirectory();
-    if (serviceWorkerRegistrationDirectory.isEmpty())
-        serviceWorkerRegistrationDirectory = WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
-
-    return m_mayHaveRegisteredServiceWorkers.ensure(serviceWorkerRegistrationDirectory, [&] {
-        // FIXME: Make this computation on a background thread.
-        return FileSystem::fileExists(WebCore::serviceWorkerRegistrationDatabaseFilename(serviceWorkerRegistrationDirectory));
-    }).iterator->value;
 }
 #endif
 

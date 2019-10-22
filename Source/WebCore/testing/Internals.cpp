@@ -5026,14 +5026,6 @@ void Internals::terminateServiceWorker(ServiceWorker& worker)
 
     ServiceWorkerProvider::singleton().serviceWorkerConnection().syncTerminateWorker(worker.identifier());
 }
-
-bool Internals::hasServiceWorkerConnection()
-{
-    if (!contextDocument())
-        return false;
-
-    return ServiceWorkerProvider::singleton().existingServiceWorkerConnection();
-}
 #endif
 
 #if ENABLE(APPLE_PAY)

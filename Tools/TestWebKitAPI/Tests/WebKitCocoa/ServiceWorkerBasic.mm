@@ -866,8 +866,7 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
 
 static const char* regularPageWithConnectionBytes = R"SWRESOURCE(
 <script>
-var result = window.internals.hasServiceWorkerConnection() ? "PASS" : "FAIL";
-window.webkit.messageHandlers.regularPage.postMessage(result);
+window.webkit.messageHandlers.regularPage.postMessage("PASS");
 </script>
 )SWRESOURCE";
 
@@ -1044,84 +1043,6 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     // Make sure that loading this page did start the service worker process.
     EXPECT_EQ(1u, webView.get().configuration.processPool._serviceWorkerProcessCount);
-
-    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-}
-
-TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    setConfigurationInjectedBundlePath(configuration.get());
-
-    done = false;
-
-    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [[configuration websiteDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
-
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-    RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
-
-    ServiceWorkerTCPServer server({
-        { "text/html", mainBytesWithScope },
-        { "application/javascript", scriptBytes },
-    }, {
-        { "text/html", regularPageWithConnectionBytes },
-    }, {
-        { "text/html", regularPageWithConnectionBytes }
-    });
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    // Load a page that registers a service worker.
-    [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-    webView = nullptr;
-
-    // Now that a sw is registered, let's create a new configuration and try loading a regular page
-    RetainPtr<WKWebViewConfiguration> newConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    setConfigurationInjectedBundlePath(newConfiguration.get());
-
-    [[newConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-    [[newConfiguration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
-
-    newConfiguration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
-    [newConfiguration.get().websiteDataStore _setServiceWorkerRegistrationDirectory: @"~/nonexistingfolder"];
-
-    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
-    [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    // Let's use the web site data store that has service worker and load a page.
-    newConfiguration.get().websiteDataStore = [configuration websiteDataStore];
-
-    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
-    EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    // Make sure that loading the simple page did not start the service worker process.
-    EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;

@@ -55,8 +55,6 @@ private:
     void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const Optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) final;
     void unregisterServiceWorkerClient(DocumentIdentifier) final;
     void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) final;
-    bool isThrottleable() const final;
-    void updateThrottleState() final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&) final;
 

@@ -54,15 +54,6 @@ void ServiceWorkerProvider::setSharedProvider(ServiceWorkerProvider& newProvider
     sharedProvider = &newProvider;
 }
 
-bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData& origin)
-{
-    auto* connection = existingServiceWorkerConnection();
-    if (!connection)
-        return m_mayHaveRegisteredServiceWorkers;
-
-    return connection->mayHaveServiceWorkerRegisteredForOrigin(origin);
-}
-
 void ServiceWorkerProvider::registerServiceWorkerClients()
 {
     setMayHaveRegisteredServiceWorkers();
