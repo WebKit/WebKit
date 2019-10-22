@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-if (window.internals)
-    window.internals.settings.setShouldAllowDesignSystemUIFonts(true);
-</script>
 <style>
 @font-face {
     font-family: "AppleSystemUISerif";
-    src: local("-apple-system-ui-serif");
+    src: local("ui-serif");
 }
 @font-face {
     font-family: "AppleSystemUIMonospaced";
-    src: local("-apple-system-ui-monospaced");
+    src: local("ui-monospaced");
 }
 @font-face {
     font-family: "AppleSystemUIRounded";
-    src: local("-apple-system-ui-rounded");
+    src: local("ui-rounded");
 }
 @font-face {
     font-family: "DotAppleSystemUIFontSerif";
@@ -37,7 +33,7 @@ if (window.internals)
 </style>
 </head>
 <body>
-This test makes sure that the design system UI fonts don't work unless the shouldAllowDesignSystemUIFonts preference is set. The test passes if all the text below is bold.
+This test makes sure that the bold versions of the design system UI fonts work in @font-face. The test passes if all the text below is bold.
 <div>
 <div style="display: inline-block; font: bold 72px 'AppleSystemUISerif'; font-synthesis: none;">HeJllo</div>
 <div style="display: inline-block; font: bold 72px 'AppleSystemUIMonospaced'; font-synthesis: none;">HeJllo</div>

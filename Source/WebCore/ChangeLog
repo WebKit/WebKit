@@ -1,3 +1,49 @@
+2019-10-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Move ui-serif, ui-monospaced, and ui-rounded out from behind SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203129
+
+        Reviewed by Tim Horton.
+
+        https://github.com/w3c/csswg-drafts/issues/4107 resolved to name these new fonts
+        ui-serif, ui-monospaced, and ui-rounded. This patch renames them, and removes the SPI
+        to access these fonts.
+
+        Tests: fast/text/design-system-ui*.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::shouldAllowDesignSystemUIFonts const): Deleted.
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::initializeFontStyle):
+        * page/Settings.yaml:
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::m_shouldAllowUserInstalledFonts):
+        (WebCore::m_shouldAllowDesignSystemUIFonts): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::shouldAllowUserInstalledFonts const):
+        (WebCore::FontDescription::setShouldAllowUserInstalledFonts):
+        (WebCore::FontDescription::operator== const):
+        (WebCore::FontDescription::shouldAllowDesignSystemUIFonts const): Deleted.
+        (WebCore::FontDescription::setShouldAllowDesignSystemUIFonts): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamilySpecialCase):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::matchSystemFontUse):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount const):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt const):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2019-10-21  youenn fablet  <youenn@apple.com>
 
         Move service worker registration matching for navigation loads to network process

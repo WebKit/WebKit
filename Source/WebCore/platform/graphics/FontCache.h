@@ -128,8 +128,7 @@ struct FontDescriptionKey {
 private:
     static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
     {
-        unsigned first = static_cast<unsigned>(description.script()) << 15
-            | static_cast<unsigned>(description.shouldAllowDesignSystemUIFonts()) << 14
+        unsigned first = static_cast<unsigned>(description.script()) << 14
             | static_cast<unsigned>(description.shouldAllowUserInstalledFonts()) << 13
             | static_cast<unsigned>(description.fontStyleAxis() == FontStyleAxis::slnt) << 12
             | static_cast<unsigned>(description.opticalSizing()) << 11

@@ -47,7 +47,7 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
 }
 #endif
 
-static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse(const AtomString& string, bool shouldAllowDesignSystemUIFonts)
+static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse(const AtomString& string)
 {
     if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
         || equalLettersIgnoringASCIICase(string, "-apple-system")
@@ -56,16 +56,12 @@ static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse
         return SystemFontDatabaseCoreText::ClientUse::ForSystemUI;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-    if (shouldAllowDesignSystemUIFonts) {
-        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-serif"))
-            return SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
-        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-monospaced"))
-            return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
-        if (equalLettersIgnoringASCIICase(string, "-apple-system-ui-rounded"))
-            return SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
-    }
-#else
-    UNUSED_PARAM(shouldAllowDesignSystemUIFonts);
+    if (equalLettersIgnoringASCIICase(string, "ui-serif"))
+        return SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
+    if (equalLettersIgnoringASCIICase(string, "ui-monospaced"))
+        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
+    if (equalLettersIgnoringASCIICase(string, "ui-rounded"))
+        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -110,7 +106,7 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
     unsigned result = 0;
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (auto use = matchSystemFontUse(cssFamily, shouldAllowDesignSystemUIFonts()))
+        if (auto use = matchSystemFontUse(cssFamily))
             result += systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts()).size();
         else
             ++result;
@@ -129,7 +125,7 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
     // These two behaviors should be unified, which would hopefully allow us to delete this duplicate code.
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
-        if (auto use = matchSystemFontUse(cssFamily, shouldAllowDesignSystemUIFonts())) {
+        if (auto use = matchSystemFontUse(cssFamily)) {
             auto cascadeList = systemFontCascadeList(*this, cssFamily, *use, shouldAllowUserInstalledFonts());
             if (index < cascadeList.size())
                 return FontFamilySpecification(cascadeList[index].get());

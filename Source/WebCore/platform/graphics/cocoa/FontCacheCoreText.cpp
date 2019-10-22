@@ -1206,8 +1206,7 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
         || equalLettersIgnoringASCIICase(family, ".sf ns mono")
         || equalLettersIgnoringASCIICase(family, ".sf ui mono")
         || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded")) {
-        // If you want to use these fonts, set the shouldAllowDesignSystemUIFonts Setting and use
-        // -apple-system-ui-serif, -apple-system-ui-monospaced, and -apple-system-ui-rounded.
+        // If you want to use these fonts, use ui-serif, ui-monospaced, and ui-rounded.
         return { nullptr };
     }
 
@@ -1271,15 +1270,12 @@ static void invalidateFontCache()
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-    if (!fontDescription.shouldAllowDesignSystemUIFonts())
-        return nullptr;
-
     Optional<SystemFontDatabaseCoreText::ClientUse> designSystemUI;
-    if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-serif"))
+    if (equalLettersIgnoringASCIICase(family, "ui-serif"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
-    else if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-monospaced"))
+    else if (equalLettersIgnoringASCIICase(family, "ui-monospaced"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
-    else if (equalLettersIgnoringASCIICase(family, "-apple-system-ui-rounded"))
+    else if (equalLettersIgnoringASCIICase(family, "ui-rounded"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
 
     if (designSystemUI) {

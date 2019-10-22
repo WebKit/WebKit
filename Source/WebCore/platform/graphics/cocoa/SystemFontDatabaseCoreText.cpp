@@ -217,17 +217,17 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
         break;
     }
     case ClientUse::ForSystemUISerif: {
-        static NeverDestroyed<AtomString> systemUISerif = AtomString("system-ui-serif", AtomString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> systemUISerif = AtomString("ui-serif", AtomString::ConstructFromLiteral);
         result.fontName = systemUISerif.get();
         break;
     }
     case ClientUse::ForSystemUIMonospaced: {
-        static NeverDestroyed<AtomString> systemUIMonospaced = AtomString("system-ui-monospaced", AtomString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> systemUIMonospaced = AtomString("ui-monospaced", AtomString::ConstructFromLiteral);
         result.fontName = systemUIMonospaced.get();
         break;
     }
     case ClientUse::ForSystemUIRounded: {
-        static NeverDestroyed<AtomString> systemUIRounded = AtomString("system-ui-rounded", AtomString::ConstructFromLiteral);
+        static NeverDestroyed<AtomString> systemUIRounded = AtomString("ui-rounded", AtomString::ConstructFromLiteral);
         result.fontName = systemUIRounded.get();
         break;
     }
