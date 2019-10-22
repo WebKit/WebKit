@@ -30,6 +30,9 @@
 #include "SlowPathReturnType.h"
 
 namespace JSC {
+
+class JSWebAssemblyInstance;
+
 namespace Probe {
 class Context;
 } // namespace JSC::Probe

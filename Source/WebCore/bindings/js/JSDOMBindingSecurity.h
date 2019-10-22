@@ -28,6 +28,7 @@
 
 namespace JSC {
 class CallFrame;
+class JSGlobalObject;
 }
 
 namespace WebCore {

@@ -31,6 +31,7 @@ namespace JSC {
 
 class CallFrame;
 class CodeBlock;
+class VM;
 
 namespace FTL {
 

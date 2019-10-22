@@ -30,6 +30,7 @@
 namespace JSC {
 
 class CallFrame;
+class JSGlobalObject;
 class ThrowScope;
 
 // Call this only if you know that exception fuzzing is enabled.

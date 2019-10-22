@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include <wtf/Variant.h>
 
 namespace WebKit {
 

@@ -34,6 +34,7 @@
 namespace JSC {
 
 class CallFrame;
+class JSGlobalObject;
 class VM;
 
 class Watchdog : public WTF::ThreadSafeRefCounted<Watchdog> {

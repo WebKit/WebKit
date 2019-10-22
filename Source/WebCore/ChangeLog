@@ -1,3 +1,22 @@
+2019-10-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix non-unified builds after r251326
+        https://bugs.webkit.org/show_bug.cgi?id=203244
+
+        Reviewed by Youenn Fablet.
+
+        No new tests needed.
+
+        * Modules/async-clipboard/Clipboard.cpp: Switch inclusion of Blob.h to JSBlob.h, in order to
+        have a toJS() conversion for Blob defined. Remove the unneeded JSPromise.h header inclusion.
+        * Modules/indexeddb/IDBFactory.h: Add missing forward declaration of JSC::JSGlobalObject.
+        * bindings/js/JSDOMBindingSecurity.h: Ditto.
+        * bindings/js/ScriptState.h: Ditto.
+        * dom/Node.cpp: Add missing inclusion of JavaScriptCore/HeapInlines.h
+        * page/RemoteDOMWindow.h: Add missing forward declaration of JSC::JSGlobalObject.
+        * platform/graphics/HEVCUtilities.cpp: Add missing inclusion of the wtf/text/StringHash.h
+        header, needed to use String as key for a HashMap.
+
 2019-10-22  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r244372): [GTK][WPE] fast/images/icon-decoding.html and others are failing

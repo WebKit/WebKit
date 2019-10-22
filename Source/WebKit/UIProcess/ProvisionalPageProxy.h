@@ -30,6 +30,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
 
 namespace API {

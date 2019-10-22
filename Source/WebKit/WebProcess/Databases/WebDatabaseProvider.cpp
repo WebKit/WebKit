@@ -27,6 +27,7 @@
 #include "WebDatabaseProvider.h"
 
 #include "NetworkProcessConnection.h"
+#include "WebIDBConnectionToServer.h"
 #include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

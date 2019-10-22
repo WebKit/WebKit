@@ -26,11 +26,10 @@
 #include "config.h"
 #include "Clipboard.h"
 
-#include "Blob.h"
 #include "ClipboardItem.h"
 #include "Frame.h"
+#include "JSBlob.h"
 #include "JSClipboardItem.h"
-#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
 #include "Pasteboard.h"

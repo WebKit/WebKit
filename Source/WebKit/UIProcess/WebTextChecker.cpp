@@ -28,6 +28,7 @@
 
 #include "TextChecker.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <wtf/RefPtr.h>
 

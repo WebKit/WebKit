@@ -45,6 +45,7 @@
 #include "Encoder.h"
 #include "ShareableBitmap.h"
 #include "WebCertificateInfo.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebImage.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"

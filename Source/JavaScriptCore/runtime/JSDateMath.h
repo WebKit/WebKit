@@ -48,6 +48,7 @@
 namespace JSC {
 
 class CallFrame;
+class JSGlobalObject;
 class VM;
 
 JS_EXPORT_PRIVATE void msToGregorianDateTime(VM&, double, WTF::TimeType outputTimeType, GregorianDateTime&);

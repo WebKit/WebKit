@@ -1,3 +1,19 @@
+2019-10-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix non-unified builds after r251326
+        https://bugs.webkit.org/show_bug.cgi?id=203244
+
+        Reviewed by Youenn Fablet.
+
+        * ftl/FTLOSREntry.h: Add missing forward declaration of JSC::VM.
+        * inspector/ScriptCallStackFactory.h: Add missing forward declaration of JSC::JSGlobalObject.
+        * llint/LLIntExceptions.h: Add missing forward declaration of JSC::VM.
+        * runtime/ExceptionFuzz.h: Add missing forward declaration of JSC::JSGlobalObject.
+        * runtime/JSDateMath.h: Ditto.
+        * runtime/JSStringJoiner.h: Add missing inclusion of the JSGlobalObject.h header.
+        * runtime/Watchdog.h: Add missing forward declaration of JSC::JSGlobalObject.
+        * wasm/WasmOperations.h: Add missing forward declaration of JSC::JSWebAssemblyInstance.
+
 2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Thread JSGlobalObject* instead of ExecState*

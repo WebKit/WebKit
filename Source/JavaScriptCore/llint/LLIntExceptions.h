@@ -30,6 +30,7 @@
 namespace JSC {
 
 class CallFrame;
+class VM;
 struct Instruction;
 
 namespace LLInt {

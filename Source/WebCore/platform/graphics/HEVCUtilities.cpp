@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
