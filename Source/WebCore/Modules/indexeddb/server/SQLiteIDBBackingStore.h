@@ -50,7 +50,7 @@ class SQLiteIDBCursor;
 class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&);
+    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory);
     
     ~SQLiteIDBBackingStore() final;
 
@@ -87,8 +87,6 @@ public:
     bool isEphemeral() final { return false; }
 
     void unregisterCursor(SQLiteIDBCursor&);
-
-    IDBBackingStoreTemporaryFileHandler& temporaryFileHandler() const { return m_temporaryFileHandler; }
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
@@ -211,8 +209,6 @@ private:
 
     String m_databaseRootDirectory;
     String m_databaseDirectory;
-
-    IDBBackingStoreTemporaryFileHandler& m_temporaryFileHandler;
 
     Ref<IDBSerializationContext> m_serializationContext;
 };

@@ -78,7 +78,7 @@ static inline IDBServer::IDBServer::QuotaManagerGetter storageQuotaManagerGetter
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID)
-    : m_server(IDBServer::IDBServer::create(sessionID, *this, storageQuotaManagerGetter(*this)))
+    : m_server(IDBServer::IDBServer::create(sessionID, storageQuotaManagerGetter(*this)))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
@@ -86,7 +86,7 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID)
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
-    : m_server(IDBServer::IDBServer::create(sessionID, databaseDirectoryPath, *this, storageQuotaManagerGetter(*this)))
+    : m_server(IDBServer::IDBServer::create(sessionID, databaseDirectoryPath, storageQuotaManagerGetter(*this)))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
@@ -458,11 +458,6 @@ void InProcessIDBServer::didGetAllDatabaseNames(uint64_t callbackID, const Vecto
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), callbackID, databaseNames] {
         m_connectionToServer->didGetAllDatabaseNames(callbackID, databaseNames);
     });
-}
-
-void InProcessIDBServer::accessToTemporaryFileComplete(const String& path)
-{
-    FileSystem::deleteFile(path);
 }
 
 } // namespace WebCore

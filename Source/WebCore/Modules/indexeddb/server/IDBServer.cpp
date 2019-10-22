@@ -46,29 +46,27 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
+Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, QuotaManagerGetter&& quotaManagerGetter)
 {
-    return adoptRef(*new IDBServer(sessionID, fileHandler, WTFMove(quotaManagerGetter)));
+    return adoptRef(*new IDBServer(sessionID, WTFMove(quotaManagerGetter)));
 }
 
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
+Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, QuotaManagerGetter&& quotaManagerGetter)
 {
-    return adoptRef(*new IDBServer(sessionID, databaseDirectoryPath, fileHandler, WTFMove(quotaManagerGetter)));
+    return adoptRef(*new IDBServer(sessionID, databaseDirectoryPath, WTFMove(quotaManagerGetter)));
 }
 
-IDBServer::IDBServer(PAL::SessionID sessionID, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
+IDBServer::IDBServer(PAL::SessionID sessionID, QuotaManagerGetter&& quotaManagerGetter)
     : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
-    , m_backingStoreTemporaryFileHandler(fileHandler)
     , m_quotaManagerGetter(WTFMove(quotaManagerGetter))
 {
 }
 
-IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler, QuotaManagerGetter&& quotaManagerGetter)
+IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, QuotaManagerGetter&& quotaManagerGetter)
     : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
     , m_sessionID(sessionID)
     , m_databaseDirectoryPath(databaseDirectoryPath)
-    , m_backingStoreTemporaryFileHandler(fileHandler)
     , m_quotaManagerGetter(WTFMove(quotaManagerGetter))
 {
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
@@ -136,7 +134,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     if (databaseDirectoryPath.isEmpty())
         return MemoryIDBBackingStore::create(m_sessionID, identifier);
 
-    return makeUnique<SQLiteIDBBackingStore>(m_sessionID, identifier, databaseDirectoryPath, m_backingStoreTemporaryFileHandler);
+    return makeUnique<SQLiteIDBBackingStore>(m_sessionID, identifier, databaseDirectoryPath);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)

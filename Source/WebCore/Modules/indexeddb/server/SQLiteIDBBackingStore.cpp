@@ -229,11 +229,10 @@ static const String& blobFilesTableSchemaAlternate()
     return blobFilesTableSchemaString;
 }
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler& fileHandler)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
     : m_sessionID(sessionID)
     , m_identifier(identifier)
     , m_databaseRootDirectory(databaseRootDirectory)
-    , m_temporaryFileHandler(fileHandler)
     , m_serializationContext(IDBSerializationContext::getOrCreateIDBSerializationContext(sessionID))
 {
     m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();

@@ -51,7 +51,7 @@ namespace IDBServer {
 class IDBServer;
 }
 
-class InProcessIDBServer final : public IDBClient::IDBConnectionToServerDelegate, public IDBServer::IDBConnectionToClientDelegate, public RefCounted<InProcessIDBServer>, public IDBServer::IDBBackingStoreTemporaryFileHandler {
+class InProcessIDBServer final : public IDBClient::IDBConnectionToServerDelegate, public IDBServer::IDBConnectionToClientDelegate, public RefCounted<InProcessIDBServer> {
 public:
     using IDBClient::IDBConnectionToServerDelegate::weakPtrFactory;
     using WeakValueType = IDBClient::IDBConnectionToServerDelegate::WeakValueType;
@@ -124,8 +124,6 @@ public:
 
     void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     void deref() override { RefCounted<InProcessIDBServer>::deref(); }
-
-    void accessToTemporaryFileComplete(const String& path) override;
 
     StorageQuotaManager* quotaManager(const ClientOrigin&);
 

@@ -121,11 +121,7 @@ namespace CacheStorage {
 class Engine;
 }
 
-class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
-#if ENABLE(INDEXED_DATABASE)
-    , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
-#endif
-    , public CanMakeWeakPtr<NetworkProcess>
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>, public CanMakeWeakPtr<NetworkProcess>
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
@@ -284,8 +280,6 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
-    // WebCore::IDBServer::IDBBackingStoreFileHandler.
-    void accessToTemporaryFileComplete(const String& path) final;
 #endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
