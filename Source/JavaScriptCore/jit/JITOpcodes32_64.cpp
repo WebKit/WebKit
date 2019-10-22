@@ -817,7 +817,7 @@ void JIT::emit_op_throw(const Instruction* currentInstruction)
     ASSERT(regT0 == returnValueGPR);
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
     emitLoad(bytecode.m_value.offset(), regT1, regT0);
-    callOperationNoExceptionCheck(operationThrow, JSValueRegs(regT1, regT0));
+    callOperationNoExceptionCheck(operationThrow, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0));
     jumpToExceptionHandler(vm());
 }
 

@@ -1,5 +1,21 @@
 2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, make 32bit JIT built
+        https://bugs.webkit.org/show_bug.cgi?id=202392
+
+        This patch makes 32bit JIT built at least.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+
+2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove non-LargeAllocation restriction for JSCallee
         https://bugs.webkit.org/show_bug.cgi?id=203260
 
