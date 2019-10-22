@@ -1417,8 +1417,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if (WebCore::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
-        
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableLegacyTLS"])
+
+        if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitEnableLegacyTLS"])
+            WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled([value boolValue]);
+        else
             WebCore::SocketStreamHandleImpl::setLegacyTLSEnabled(true);
 
         didOneTimeInitialization = true;

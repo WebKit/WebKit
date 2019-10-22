@@ -1,3 +1,13 @@
+2019-10-22  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable legacy TLS by default, keep runtime switch
+        https://bugs.webkit.org/show_bug.cgi?id=203253
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Thread JSGlobalObject* instead of ExecState*
