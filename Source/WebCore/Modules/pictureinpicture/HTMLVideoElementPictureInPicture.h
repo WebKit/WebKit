@@ -31,6 +31,7 @@
 #include "PictureInPictureObserver.h"
 #include "Supplementable.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 
@@ -40,7 +41,11 @@ class PictureInPictureWindow;
 
 class HTMLVideoElementPictureInPicture
     : public Supplement<HTMLVideoElement>
-    , public PictureInPictureObserver {
+    , public PictureInPictureObserver
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
     WTF_MAKE_ISO_ALLOCATED(HTMLVideoElementPictureInPicture);
 public:
     HTMLVideoElementPictureInPicture(HTMLVideoElement&);
@@ -58,6 +63,13 @@ public:
     void didEnterPictureInPicture();
     void didExitPictureInPicture();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "HTMLVideoElementPictureInPicture"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 private:
     static const char* supplementName() { return "HTMLVideoElementPictureInPicture"; }
 
@@ -67,6 +79,11 @@ private:
     HTMLVideoElement& m_videoElement;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebCore

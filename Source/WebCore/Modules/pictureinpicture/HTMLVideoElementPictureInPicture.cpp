@@ -31,6 +31,7 @@
 
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Logging.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
@@ -41,12 +42,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
 
 HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElement& videoElement)
     : m_videoElement(videoElement)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(videoElement.document().logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_videoElement.setPictureInPictureObserver(this);
 }
 
 HTMLVideoElementPictureInPicture::~HTMLVideoElementPictureInPicture()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_videoElement.setPictureInPictureObserver(nullptr);
 }
 
@@ -64,36 +71,36 @@ HTMLVideoElementPictureInPicture* HTMLVideoElementPictureInPicture::from(HTMLVid
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
     if (!videoElement.player() || !videoElement.player()->supportsPictureInPicture()) {
-        promise->reject(NotSupportedError);
+        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode.");
         return;
     }
 
     if (videoElement.readyState() == HTMLMediaElementEnums::HAVE_NOTHING) {
-        promise->reject(InvalidStateError);
+        promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode.");
         return;
     }
 
 #if ENABLE(VIDEO_TRACK)
     if (!videoElement.videoTracks() || !videoElement.videoTracks()->length()) {
-        promise->reject(InvalidStateError);
+        promise->reject(InvalidStateError, "The video element does not have a video track or it has not detected a video track yet.");
         return;
     }
 #endif
 
     bool userActivationRequired = !videoElement.document().pictureInPictureElement();
     if (userActivationRequired && !UserGestureIndicator::processingUserGesture()) {
-        promise->reject(NotAllowedError);
+        promise->reject(NotAllowedError, "The request is not triggered by a user activation.");
         return;
     }
 
     if (videoElement.document().pictureInPictureElement() == &videoElement) {
-        promise->reject(NotAllowedError);
+        promise->reject(NotAllowedError, "The video element is already in the Picture-in-Picture mode.");
         return;
     }
 
     auto videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (videoElementPictureInPicture->m_enterPictureInPicturePromise || videoElementPictureInPicture->m_exitPictureInPicturePromise) {
-        promise->reject(NotAllowedError);
+        promise->reject(NotAllowedError, "The video element is processing a Picture-in-Picture request.");
         return;
     }
 
@@ -101,7 +108,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         videoElementPictureInPicture->m_enterPictureInPicturePromise = WTFMove(promise);
         videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
     } else
-        promise->reject(NotSupportedError);
+        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode.");
 }
 
 bool HTMLVideoElementPictureInPicture::autoPictureInPicture(HTMLVideoElement& videoElement)
@@ -126,6 +133,7 @@ void HTMLVideoElementPictureInPicture::setDisablePictureInPicture(HTMLVideoEleme
 
 void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>&& promise)
 {
+    INFO_LOG(LOGIDENTIFIER);
     if (m_enterPictureInPicturePromise || m_exitPictureInPicturePromise) {
         promise->reject(NotAllowedError);
         return;
@@ -137,6 +145,7 @@ void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>
 
 void HTMLVideoElementPictureInPicture::didEnterPictureInPicture()
 {
+    INFO_LOG(LOGIDENTIFIER);
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     if (m_enterPictureInPicturePromise) {
         m_enterPictureInPicturePromise->resolve();
@@ -146,12 +155,20 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture()
 
 void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 {
+    INFO_LOG(LOGIDENTIFIER);
     m_videoElement.document().setPictureInPictureElement(nullptr);
     if (m_exitPictureInPicturePromise) {
         m_exitPictureInPicturePromise->resolve();
         m_exitPictureInPicturePromise = nullptr;
     }
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& HTMLVideoElementPictureInPicture::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 } // namespace WebCore
 
