@@ -84,6 +84,12 @@ void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorker
     startFetch();
 }
 
+void ServiceWorkerFetchTask::contextClosed()
+{
+    m_serviceWorkerConnection = nullptr;
+    didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+}
+
 void ServiceWorkerFetchTask::startFetch()
 {
     auto& options = m_loader.parameters().options;

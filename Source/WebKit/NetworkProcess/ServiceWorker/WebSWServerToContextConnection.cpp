@@ -55,7 +55,7 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
 {
     auto fetches = WTFMove(m_ongoingFetches);
     for (auto& fetch : fetches.values())
-        fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+        fetch->contextClosed();
 
     if (m_server && m_server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
         m_server->removeContextConnection(*this);

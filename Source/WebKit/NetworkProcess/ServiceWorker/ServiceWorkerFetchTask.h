@@ -75,6 +75,8 @@ public:
     WebCore::ResourceRequest takeRequest() { return WTFMove(m_currentRequest); }
     bool wasHandled() const { return m_wasHandled; }
 
+    void contextClosed();
+
 private:
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);

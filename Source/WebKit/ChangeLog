@@ -1,5 +1,23 @@
 2019-10-22  youenn fablet  <youenn@apple.com>
 
+        WebSWServerToContextConnection should not assert when failing loads at destruction time
+        https://bugs.webkit.org/show_bug.cgi?id=203243
+
+        Reviewed by Alex Christensen.
+
+        On WebSWServerToContextConnection destruction, we move the fetch task map and fail the tasks.
+        At destruction of the tasks, which happens synchronously, they will try to unregister themselves
+        and the assertion that the task is in the map will fail.
+        To fix that, add a specific contextClosed method that will clear the task connection weak pointer.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::contextClosed):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::~WebSWServerToContextConnection):
+
+2019-10-22  youenn fablet  <youenn@apple.com>
+
         ServiceWorkerFetchTask can use the NetworkConnectionToWebProcess sessionID
         https://bugs.webkit.org/show_bug.cgi?id=202208
 
