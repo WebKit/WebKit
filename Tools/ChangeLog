@@ -1,3 +1,11 @@
+2019-10-22  Dirk Schulze  <krit@webkit.org>
+
+        Restore my committer status.
+
+        Uneviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-10-21  Zhifei Fang  <zhifei_fang@apple.com>
 
         [results.webkit.org] Change dot and lengend dot use same mechanism to center text and image
