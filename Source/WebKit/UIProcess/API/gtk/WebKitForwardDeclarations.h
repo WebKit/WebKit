@@ -36,4 +36,4 @@ typedef struct _WebKitWebView         WebKitWebView;
 typedef struct _WebKitContextMenu     WebKitContextMenu;
 typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
 
-#endif // WebKitForward_h
+#endif /* WebKitForward_h */

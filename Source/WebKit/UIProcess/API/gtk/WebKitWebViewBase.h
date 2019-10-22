@@ -68,4 +68,4 @@ webkit_web_view_base_get_type (void);
 
 G_END_DECLS
 
-#endif // WebKitWebViewBase_h
+#endif /* WebKitWebViewBase_h */
