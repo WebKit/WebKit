@@ -229,7 +229,7 @@ DOM.inject(
     ${InvestigateDrawer}
     ${Drawer([
         Legend(() => {
-            view.children.forEach((child) => {
+            view.ref.state.children.forEach((child) => {
                 child.timeline.update();
             });
         }, false),

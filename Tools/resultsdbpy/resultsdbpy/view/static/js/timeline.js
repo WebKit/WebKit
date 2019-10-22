@@ -34,6 +34,7 @@ import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
 const DEFAULT_LIMIT = 100;
 
 let willFilterExpected = false;
+let showTestTimes = false;
 
 function minimumUuidForResults(results, limit) {
     const now = Math.floor(Date.now() / 10);
@@ -250,6 +251,15 @@ function inPlaceCombine(out, obj)
                     obj[worstKey] ? obj[worstKey] : obj[key],
                 );
                 out[key] += obj[key];
+                return;
+            }
+
+            // Some special combination logic
+            if (key === 'time') {
+                out[key] = Math.max(
+                    out[key] ? out[key] : 0,
+                    obj[key] ? obj[key] : 0,
+                );
                 return;
             }
 
@@ -534,6 +544,9 @@ class TimelineFromEndpoint {
                         }
                     });
                 }
+                const time = data.time ? Math.round(data.time / 1000) : 0;
+                if (time && showTestTimes)
+                    tag = time;
 
                 return drawDot(context, x, y, false, tag ? tag : null, symbol, false, color);
             },
@@ -858,7 +871,7 @@ function Legend(callback=null, plural=false) {
         </div>`;
 
     if (callback) {
-        const swtch = REF.createRef({
+        const filterSwitch = REF.createRef({
             onElementMount: (element) => {
                 element.onchange = () => {
                     if (element.checked)
@@ -872,14 +885,33 @@ function Legend(callback=null, plural=false) {
                 };
             },
         });
+        const showTimesSwitch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked)
+                        showTestTimes = true;
+                    else
+                        showTestTimes = false;
+                    callback();
+                };
+            },
+        });
 
         result += `<div class="input">
             <label>Filter expected results</label>
             <label class="switch">
-                <input type="checkbox"${willFilterExpected ? ' checked': ''} ref="${swtch}">
+                <input type="checkbox"${willFilterExpected ? ' checked': ''} ref="${filterSwitch}">
                 <span class="slider"></span>
             </label>
-        </div>`;
+        </div>`
+        if (!plural)
+            result += `<div class="input">
+                <label>Show test times</label>
+                <label class="switch">
+                    <input type="checkbox"${showTestTimes ? ' checked': ''} ref="${showTimesSwitch}">
+                    <span class="slider"></span>
+                </label>
+            </div>`;
     }
 
     return `${result}`;

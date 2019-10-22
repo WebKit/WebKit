@@ -1,3 +1,14 @@
+2019-10-21  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Add ability to display time on bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=203202
+        <rdar://problem/56436621>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js: Add switch to show times under each bubble.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Correctly update timeline on callback.
+
 2019-10-21  Dean Jackson  <dino@apple.com>
 
         Dispatch AR event on the originating anchor element
