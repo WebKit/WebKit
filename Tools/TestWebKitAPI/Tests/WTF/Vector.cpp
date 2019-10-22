@@ -156,6 +156,9 @@ TEST(WTF_Vector, InitializeFromOtherInitialCapacity)
     EXPECT_EQ(3, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(4, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, CopyFromOtherInitialCapacity)
@@ -175,6 +178,9 @@ TEST(WTF_Vector, CopyFromOtherInitialCapacity)
     EXPECT_EQ(3, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(4, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, InitializeFromOtherOverflowBehavior)
@@ -188,6 +194,9 @@ TEST(WTF_Vector, InitializeFromOtherOverflowBehavior)
     EXPECT_EQ(3, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(1, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, CopyFromOtherOverflowBehavior)
@@ -207,6 +216,9 @@ TEST(WTF_Vector, CopyFromOtherOverflowBehavior)
     EXPECT_EQ(3, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(1, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, InitializeFromOtherMinCapacity)
@@ -220,6 +232,9 @@ TEST(WTF_Vector, InitializeFromOtherMinCapacity)
     EXPECT_EQ(4, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(1, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, CopyFromOtherMinCapacity)
@@ -239,6 +254,9 @@ TEST(WTF_Vector, CopyFromOtherMinCapacity)
     EXPECT_EQ(4, vectorCopy[1]);
     EXPECT_EQ(2, vectorCopy[2]);
     EXPECT_EQ(1, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
 }
 
 TEST(WTF_Vector, Reverse)

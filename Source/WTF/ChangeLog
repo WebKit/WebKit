@@ -1,3 +1,16 @@
+2019-10-22  Antti Koivisto  <antti@apple.com>
+
+        operator==(Vector, Vector) should work with different inline capacities
+        https://bugs.webkit.org/show_bug.cgi?id=203245
+
+        Reviewed by Alex Christensen.
+
+        Also allow different overflow behavior and minimum capacity.
+
+        * wtf/Vector.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2019-10-22  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=169667
