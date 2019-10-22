@@ -1963,13 +1963,6 @@ webkit.org/b/202738 storage/indexeddb/cursor-leak.html [ Failure ]
 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
 
-webkit.org/b/197251 fast/images/icon-decoding.html [ Failure ]
-webkit.org/b/197251 fast/images/reset-image-animation.html [ Failure ]
-webkit.org/b/197251 fast/images/slower-animation-than-decoding-image.html [ Failure ]
-webkit.org/b/197251 fast/images/slower-decoding-than-animation-image.html [ Failure ]
-webkit.org/b/197251 fast/images/animated-image-loop-count.html [ ImageOnlyFailure ]
-webkit.org/b/197251 fast/images/animated-webp.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

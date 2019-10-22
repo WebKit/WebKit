@@ -190,18 +190,15 @@ Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
     if (index >= m_frameBufferCache.size())
         return 0_s;
 
-    // Returning 0_s in case of an incomplete frame can break display of animated image formats.
-    // We pick up the decoded duration if it's available, otherwise the default 0_s value is
-    // adjusted below.
-    Seconds duration = 0_s;
     auto& frame = m_frameBufferCache[index];
-    if (frame.isComplete())
-        duration = frame.duration();
+    if (!frame.isComplete())
+        return 0_s;
 
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
     // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
     // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
     // for more information.
+    Seconds duration = frame.duration();
     if (duration < 11_ms)
         return 100_ms;
     return duration;

@@ -1,3 +1,17 @@
+2019-10-22  Miguel Gomez  <magomez@igalia.com>
+
+        REGRESSION(r244372): [GTK][WPE] fast/images/icon-decoding.html and others are failing
+        https://bugs.webkit.org/show_bug.cgi?id=197251
+
+        Reviewed by Adrian Perez de Castro.
+
+        Return 0_s as the duration of incomplete frames in an animation.
+
+        Covered by existing tests.
+
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+
 2019-10-22  Dirk Schulze  <krit@webkit.org>
 
         SVG2: Use DOMMatrix2DInit for setMatrix and createSVGTransformFromMatrix
