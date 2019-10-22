@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,10 @@ public:
     ALWAYS_INLINE ObjectInitializationScope(VM& vm)
         : m_vm(vm)
     { }
+    ALWAYS_INLINE ~ObjectInitializationScope()
+    {
+        m_vm.heap.mutatorFence();
+    }
 
     ALWAYS_INLINE VM& vm() const { return m_vm; }
     ALWAYS_INLINE void notifyAllocated(JSObject*, bool) { }

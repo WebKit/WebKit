@@ -1581,7 +1581,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(JSGlobalObject* g
         copyElements(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     }
 
-    result->butterfly()->setPublicLength(resultSize);
+    ASSERT(result->butterfly()->publicLength() == resultSize);
     return JSValue::encode(result);
 }
 

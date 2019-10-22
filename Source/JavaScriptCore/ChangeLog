@@ -1,5 +1,60 @@
 2019-10-22  Mark Lam  <mark.lam@apple.com>
 
+        Clients of JSArray::tryCreateUninitializedRestricted() should invoke the mutatorFence().
+        https://bugs.webkit.org/show_bug.cgi?id=203231
+        <rdar://problem/56486552>
+
+        Reviewed by Saam Barati.
+
+        Clients of JSArray::tryCreateUninitializedRestricted() creates a partially
+        initialized JSArray butterfly, with the contract that it (the client) will take
+        care of filling in all the missing indexed properties before setting the newly
+        created array loose in the world.  We intentionally do not unconditionally write
+        barrier the newly created array but, instead, rely on an owner object (or GC root)
+        that it gets put into to scan it.
+
+        That said, we do need to ensure that all the stores are completed before this
+        array is put in an owner object (or GC root) which makes it scannable by the GC.
+        This ensures that the GC will not be scanning a partially initialized array
+        butterfly.  To achieve this, we should invoke the mutatorFence after the clients
+        of JSArray::tryCreateUninitializedRestricted() finish initializing the array.
+
+        By design, all clients of tryCreateUninitializedRestricted() must instantiate an
+        ObjectInitializationScope RAII object.  This patch makes use of the
+        ObjectInitializationScope destructor to invoke the mutatorFence.
+
+        Note: we technically only need to invoke the fence if we succeeded in allocating
+        the array.  However, we just invoke the fence unconditionally because we expect
+        that in the common path, we will succeed in allocating the array.  The release
+        build version of ObjectInitializationScope does not keep record of whether we
+        succeed in allocating the array anyway.  To keep the behavior consistent, the
+        debug build version of ObjectInitializationScope will also unconditionally
+        invoke the fence even if we failed to allocate the array.
+
+        This patch also does the following:
+
+        1. Replaced the setting of the public length in arrayProtoPrivateFuncConcatMemcpy()
+           with an assertion.  The public length was already set by
+           tryCreateUninitializedRestricted() earlier.
+
+           Ditto for JSArray::fastSlice().
+
+        2. Removed a redundant instance of ObjectInitializationScope in
+           createEmptyRegExpMatchesArray().
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        * runtime/ObjectInitializationScope.h:
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createEmptyRegExpMatchesArray):
+
+2019-10-22  Mark Lam  <mark.lam@apple.com>
+
         Fix incorrect assertion in operationRegExpExecNonGlobalOrSticky().
         https://bugs.webkit.org/show_bug.cgi?id=203230
         <rdar://problem/56460749>

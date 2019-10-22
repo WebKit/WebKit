@@ -54,7 +54,6 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
                 array->initializeIndexWithoutBarrier(scope, i, jsUndefined());
         }
     } else {
-        ObjectInitializationScope scope(vm);
         array = tryCreateUninitializedRegExpMatchesArray(scope, &deferralContext, globalObject->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
         RELEASE_ASSERT(array);
         

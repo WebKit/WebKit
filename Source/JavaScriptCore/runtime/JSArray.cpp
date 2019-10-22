@@ -792,8 +792,8 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, unsigned startIndex, u
             memcpy(resultButterfly.contiguousDouble().data(), butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
         else
             memcpy(resultButterfly.contiguous().data(), butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * count);
-        resultButterfly.setPublicLength(count);
 
+        ASSERT(resultButterfly.publicLength() == count);
         return resultArray;
     }
     default:
