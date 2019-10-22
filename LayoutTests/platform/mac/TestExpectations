@@ -1940,9 +1940,6 @@ webkit.org/b/195635 scrollingcoordinator/mac/multiple-fixed.html [ Pass Timeout 
 # <rdar://problem/51055223>
 [ Catalina+ ] js/intl-numberformat.html [ Failure ]
 
-# <rdar://problem/51525184>
-[ Catalina+ ] imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html [ ImageOnlyFailure ]
-
 # <rdar://problem/51762717>
 [ Catalina+ ] http/wpt/resource-timing/rt-cors.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-cors.worker.html [ Pass Failure ]
