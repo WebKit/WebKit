@@ -1254,7 +1254,6 @@ webkit.org/b/178487 compositing/geometry/video-fixed-scrolling.html [ Pass Failu
 webkit.org/b/178487 compositing/iframes/composited-iframe-scroll.html [ Failure ]
 webkit.org/b/178487 compositing/iframes/iframe-content-flipping.html [ Failure ]
 webkit.org/b/178487 compositing/iframes/layout-on-compositing-change.html [ Failure ]
-webkit.org/b/178487 compositing/iframes/nested-iframe-scrolling.html [ Failure ]
 webkit.org/b/178487 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/178487 compositing/layer-creation/fixed-overlap-extent.html [ Failure ]
 webkit.org/b/178487 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]

@@ -1,3 +1,11 @@
+2019-10-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove expectations for compositing/iframes/nested-iframe-scrolling.html.
+
+        It passes now.
+
+        * platform/ios/TestExpectations:
+
 2019-10-22  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r244372): [GTK][WPE] fast/images/icon-decoding.html and others are failing
