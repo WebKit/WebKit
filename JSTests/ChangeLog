@@ -1,3 +1,13 @@
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix incorrect assertion in operationRegExpExecNonGlobalOrSticky().
+        https://bugs.webkit.org/show_bug.cgi?id=203230
+        <rdar://problem/56460749>
+
+        Reviewed by Robin Morisset.
+
+        * stress/incorrect-exception-assertion-in-operationRegExpExecNonGlobalOrSticky.js: Added.
+
 2019-10-21  Saam Barati  <sbarati@apple.com>
 
         ValuePow's constant folding rule differs from what the runtime does
