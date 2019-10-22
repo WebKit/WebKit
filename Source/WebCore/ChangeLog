@@ -1,3 +1,17 @@
+2019-10-22  Dean Jackson  <dino@apple.com>
+
+        WebCoreDecompressionSession needs padding on all platforms to avoid link warnings
+        https://bugs.webkit.org/show_bug.cgi?id=203267
+        <rdar://problem/56514219>
+
+        Reviewed by Simon Fraser.
+
+        It's annoying that we have to do this, but it is less annoying than getting
+        4 linker warnings every time you compile for iOS.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::enqueueSample): Use padding everywhere.
+
 2019-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to not include IPC Messages headers in other headers

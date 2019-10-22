@@ -124,12 +124,8 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
         m_decompressionQueue = adoptOSObject(dispatch_queue_create("SourceBufferPrivateAVFObjC Decompression Queue", DISPATCH_QUEUE_SERIAL));
 
     // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
-    // warning about this, we prepend 4 bytes of padding when building for macOS.
-#if PLATFORM(MAC)
+    // warning about this, we prepend 4 bytes of padding when building.
     const size_t padSize = 4;
-#else
-    const size_t padSize = 0;
-#endif
 
     if (!m_producerQueue) {
         CMBufferQueueRef outQueue { nullptr };
