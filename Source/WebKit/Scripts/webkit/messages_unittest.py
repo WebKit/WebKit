@@ -365,11 +365,11 @@ class GeneratedFileContentsTest(unittest.TestCase):
             raise
 
     def assertHeaderEqual(self, input_messages_file_contents, expected_file_name):
-        actual_file_contents = messages.generate_messages_header(StringIO(input_messages_file_contents))
+        actual_file_contents = messages.generate_messages_header(parser.parse(StringIO(input_messages_file_contents)))
         self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
 
     def assertImplementationEqual(self, input_messages_file_contents, expected_file_name):
-        actual_file_contents = messages.generate_message_handler(StringIO(input_messages_file_contents))
+        actual_file_contents = messages.generate_message_handler(parser.parse(StringIO(input_messages_file_contents)))
         self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
 
 
@@ -396,11 +396,11 @@ class ReceiverImplementationTest(GeneratedFileContentsTest):
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
     def test_error_at_else(self):
         with self.assertRaisesRegexp(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
-            messages.generate_message_handler(StringIO("asd\n#else bla\nfoo"))
+            messages.generate_message_handler(parser.parse(StringIO("asd\n#else bla\nfoo")))
 
     def test_error_at_elif(self):
         with self.assertRaisesRegexp(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
-            messages.generate_message_handler(StringIO("asd\n#elif bla\nfoo"))
+            messages.generate_message_handler(parser.parse(StringIO("asd\n#elif bla\nfoo")))
 
 
 def add_reset_results_to_unittest_help():

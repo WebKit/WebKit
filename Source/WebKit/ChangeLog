@@ -1,3 +1,15 @@
+2019-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to not include IPC Messages headers in other headers
+        https://bugs.webkit.org/show_bug.cgi?id=203074
+
+        * Scripts/webkit/messages_unittest.py:
+        (GeneratedFileContentsTest.assertHeaderEqual):
+        (GeneratedFileContentsTest.assertImplementationEqual):
+        (UnsupportedPrecompilerDirectiveTest.test_error_at_else):
+        (UnsupportedPrecompilerDirectiveTest.test_error_at_elif):
+        Fix the message generator unit tests.
+
 2019-10-22  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable legacy TLS by default, keep runtime switch
