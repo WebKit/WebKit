@@ -42,7 +42,7 @@ class JSWebAssemblyTable final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyTable* create(ExecState*, VM&, Structure*, Ref<Wasm::Table>&&);
+    static JSWebAssemblyTable* create(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Table>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

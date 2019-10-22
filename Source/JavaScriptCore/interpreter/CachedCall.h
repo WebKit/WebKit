@@ -39,9 +39,9 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(CachedCall);
         WTF_FORBID_HEAP_ALLOCATION;
     public:
-        CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
+        CachedCall(JSGlobalObject* globalObject, CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
-            , m_vm(callFrame->vm())
+            , m_vm(globalObject->vm())
             , m_interpreter(m_vm.interpreter)
             , m_entryScope(m_vm, function->scope()->globalObject(m_vm))
         {
@@ -54,9 +54,9 @@ namespace JSC {
                 if (LIKELY(!m_arguments.hasOverflowed()))
                     m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
                 else
-                    throwOutOfMemoryError(callFrame, scope);
+                    throwOutOfMemoryError(globalObject, scope);
             } else
-                throwStackOverflowError(callFrame, scope);
+                throwStackOverflowError(globalObject, scope);
             m_valid = !scope.exception();
         }
         

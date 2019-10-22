@@ -37,28 +37,30 @@ enum class ExceptionStatus {
     DidNotThrow
 };
 
-inline ExceptionStatus handleExceptionIfNeeded(JSC::CatchScope& scope, JSC::ExecState* exec, JSValueRef* returnedExceptionRef)
+inline ExceptionStatus handleExceptionIfNeeded(JSC::CatchScope& scope, JSContextRef ctx, JSValueRef* returnedExceptionRef)
 {
+    JSC::JSGlobalObject* globalObject = toJS(ctx);
     if (UNLIKELY(scope.exception())) {
         JSC::Exception* exception = scope.exception();
         if (returnedExceptionRef)
-            *returnedExceptionRef = toRef(exec, exception->value());
+            *returnedExceptionRef = toRef(globalObject, exception->value());
         scope.clearException();
 #if ENABLE(REMOTE_INSPECTOR)
-        scope.vm().vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, exception);
+        globalObject->inspectorController().reportAPIException(globalObject, exception);
 #endif
         return ExceptionStatus::DidThrow;
     }
     return ExceptionStatus::DidNotThrow;
 }
 
-inline void setException(JSC::ExecState* exec, JSValueRef* returnedExceptionRef, JSC::JSValue exception)
+inline void setException(JSContextRef ctx, JSValueRef* returnedExceptionRef, JSC::JSValue exception)
 {
+    JSC::JSGlobalObject* globalObject = toJS(ctx);
     if (returnedExceptionRef)
-        *returnedExceptionRef = toRef(exec, exception);
+        *returnedExceptionRef = toRef(globalObject, exception);
 #if ENABLE(REMOTE_INSPECTOR)
-    JSC::VM& vm = exec->vm();
-    vm.vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, JSC::Exception::create(vm, exception));
+    JSC::VM& vm = getVM(globalObject);
+    globalObject->inspectorController().reportAPIException(globalObject, JSC::Exception::create(vm, exception));
 #endif
 }
 

@@ -72,10 +72,10 @@ private:
 
 // JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
 // It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, WindowProxy&);
-inline JSC::JSValue toJS(JSC::ExecState* state, WindowProxy* windowProxy) { return windowProxy ? toJS(state, *windowProxy) : JSC::jsNull(); }
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(state, windowProxy); }
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(state, globalObject, *windowProxy) : JSC::jsNull(); }
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, WindowProxy&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(lexicalGlobalObject, *windowProxy) : JSC::jsNull(); }
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WindowProxy& windowProxy) { return toJS(lexicalGlobalObject, windowProxy); }
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, WindowProxy* windowProxy) { return windowProxy ? toJS(lexicalGlobalObject, globalObject, *windowProxy) : JSC::jsNull(); }
 
 JSWindowProxy* toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
 inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? toJSWindowProxy(*windowProxy, world) : nullptr; }

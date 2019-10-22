@@ -35,7 +35,6 @@ namespace JSC {
 
 class CallFrame;
 class VM;
-using ExecState = CallFrame;
 
 class Watchdog : public WTF::ThreadSafeRefCounted<Watchdog> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -45,10 +44,10 @@ public:
     Watchdog(VM*);
     void willDestroyVM(VM*);
 
-    typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
+    typedef bool (*ShouldTerminateCallback)(JSGlobalObject*, void* data1, void* data2);
     void setTimeLimit(Seconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
 
-    bool shouldTerminate(ExecState*);
+    bool shouldTerminate(JSGlobalObject*);
 
     bool hasTimeLimit();
     void enteredVM();

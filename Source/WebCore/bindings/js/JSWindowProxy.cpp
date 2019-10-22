@@ -145,9 +145,9 @@ AbstractDOMWindow& JSWindowProxy::wrapped() const
     return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
 
-JSValue toJS(ExecState* state, WindowProxy& windowProxy)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, WindowProxy& windowProxy)
 {
-    auto* jsWindowProxy = windowProxy.jsWindowProxy(currentWorld(*state));
+    auto* jsWindowProxy = windowProxy.jsWindowProxy(currentWorld(*lexicalGlobalObject));
     return jsWindowProxy ? JSValue(jsWindowProxy) : jsNull();
 }
 

@@ -39,18 +39,15 @@ enum class GetByIDKind {
     Direct
 };
 
-void repatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByIDKind);
-void buildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
-void buildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
-void repatchPutByID(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
-void buildPutByIdList(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
-void repatchInByID(ExecState*, JSObject*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
-void repatchInstanceOf(ExecState*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
-void linkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
-void linkDirectFor(ExecState*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
-void linkSlowFor(ExecState*, CallLinkInfo&);
+void repatchGetByID(JSGlobalObject*, CodeBlock*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&, GetByIDKind);
+void repatchPutByID(JSGlobalObject*, CodeBlock*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
+void repatchInByID(JSGlobalObject*, CodeBlock*, JSObject*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
+void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue value, JSValue prototype, StructureStubInfo&, bool wasFound);
+void linkFor(CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
+void linkDirectFor(CallFrame*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
+void linkSlowFor(CallFrame*, CallLinkInfo&);
 void unlinkFor(VM&, CallLinkInfo&);
-void linkPolymorphicCall(ExecState*, CallLinkInfo&, CallVariant);
+void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);
 void resetGetByID(CodeBlock*, StructureStubInfo&, GetByIDKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetInByID(CodeBlock*, StructureStubInfo&);

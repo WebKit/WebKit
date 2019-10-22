@@ -44,6 +44,7 @@
 #import <JavaScriptCore/CatchScope.h>
 #import <JavaScriptCore/Completion.h>
 #import <JavaScriptCore/Error.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/PropertyNameArray.h>
 #import <JavaScriptCore/SourceCode.h>
@@ -885,13 +886,12 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     Strong<JSGlobalObject> globalObject(vm, frame->script().globalObject(pluginWorld()));
-    ExecState* exec = globalObject->globalExec();
 
     UserGestureIndicator gestureIndicator(allowPopups ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
     
-    JSValue result = JSC::evaluate(exec, JSC::makeSource(script, { }));
+    JSValue result = JSC::evaluate(globalObject.get(), JSC::makeSource(script, { }));
     
-    marshalValue(exec, result, resultData, resultLength);
+    marshalValue(globalObject.get(), result, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -918,20 +918,20 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    JSValue function = object->get(exec, methodName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    JSValue function = object->get(lexicalGlobalObject, methodName);
     CallData callData;
     CallType callType = getCallData(vm, function, callData);
     if (callType == CallType::None)
         return false;
 
     MarkedArgumentBuffer argList;
-    demarshalValues(exec, argumentsData, argumentsLength, argList);
+    demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = call(exec, function, callType, callData, object, argList);
+    JSValue value = call(lexicalGlobalObject, function, callType, callData, object, argList);
         
-    marshalValue(exec, value, resultData, resultLength);
+    marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -955,19 +955,19 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
     CallData callData;
     CallType callType = object->methodTable(vm)->getCallData(object, callData);
     if (callType == CallType::None)
         return false;
 
     MarkedArgumentBuffer argList;
-    demarshalValues(exec, argumentsData, argumentsLength, argList);
+    demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = call(exec, object, callType, callData, object, argList);
+    JSValue value = call(lexicalGlobalObject, object, callType, callData, object, argList);
     
-    marshalValue(exec, value, resultData, resultLength);
+    marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -991,7 +991,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
 
     ConstructData constructData;
     ConstructType constructType = object->methodTable(vm)->getConstructData(object, constructData);
@@ -999,12 +999,12 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
         return false;
 
     MarkedArgumentBuffer argList;
-    demarshalValues(exec, argumentsData, argumentsLength, argList);
+    demarshalValues(lexicalGlobalObject, argumentsData, argumentsLength, argList);
     RELEASE_ASSERT(!argList.hasOverflowed());
 
-    JSValue value = JSC::construct(exec, object, constructType, constructData, argList);
+    JSValue value = JSC::construct(lexicalGlobalObject, object, constructType, constructData, argList);
     
-    marshalValue(exec, value, resultData, resultLength);
+    marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -1028,10 +1028,10 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    JSValue value = object->get(exec, propertyName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    JSValue value = object->get(lexicalGlobalObject, propertyName);
     
-    marshalValue(exec, value, resultData, resultLength);
+    marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -1052,10 +1052,10 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned proper
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    JSValue value = object->get(exec, propertyName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    JSValue value = object->get(lexicalGlobalObject, propertyName);
     
-    marshalValue(exec, value, resultData, resultLength);
+    marshalValue(lexicalGlobalObject, value, resultData, resultLength);
     scope.clearException();
     return true;
 }
@@ -1079,11 +1079,11 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
 
-    JSValue value = demarshalValue(exec, valueData, valueLength);
+    JSValue value = demarshalValue(lexicalGlobalObject, valueData, valueLength);
     PutPropertySlot slot(object);
-    object->methodTable(vm)->put(object, exec, propertyName, value, slot);
+    object->methodTable(vm)->put(object, lexicalGlobalObject, propertyName, value, slot);
     
     scope.clearException();
     return true;
@@ -1108,10 +1108,10 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
     
-    JSValue value = demarshalValue(exec, valueData, valueLength);
-    object->methodTable(vm)->putByIndex(object, exec, propertyName, value, false);
+    JSValue value = demarshalValue(lexicalGlobalObject, valueData, valueLength);
+    object->methodTable(vm)->putByIndex(object, lexicalGlobalObject, propertyName, value, false);
     
     scope.clearException();
     return true;
@@ -1136,13 +1136,13 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    if (!object->hasProperty(exec, propertyName)) {
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    if (!object->hasProperty(lexicalGlobalObject, propertyName)) {
         scope.clearException();
         return false;
     }
     
-    object->methodTable(vm)->deleteProperty(object, exec, propertyName);
+    object->methodTable(vm)->deleteProperty(object, lexicalGlobalObject, propertyName);
     scope.clearException();
     return true;
 }
@@ -1166,13 +1166,13 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    if (!object->hasProperty(exec, propertyName)) {
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    if (!object->hasProperty(lexicalGlobalObject, propertyName)) {
         scope.clearException();
         return false;
     }
     
-    object->methodTable(vm)->deletePropertyByIndex(object, exec, propertyName);
+    object->methodTable(vm)->deletePropertyByIndex(object, lexicalGlobalObject, propertyName);
     scope.clearException();
     return true;
 }
@@ -1196,8 +1196,8 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const Identifie
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    bool result = object->hasProperty(exec, propertyName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    bool result = object->hasProperty(lexicalGlobalObject, propertyName);
     scope.clearException();
 
     return result;
@@ -1222,8 +1222,8 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned proper
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    bool result = object->hasProperty(exec, propertyName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    bool result = object->hasProperty(lexicalGlobalObject, propertyName);
     scope.clearException();
 
     return result;
@@ -1248,8 +1248,8 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
-    JSValue func = object->get(exec, methodName);
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
+    JSValue func = object->get(lexicalGlobalObject, methodName);
     scope.clearException();
     return !func.isUndefined();
 }
@@ -1273,10 +1273,10 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
+    JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
  
     PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getPropertyNames(object, exec, propertyNames, EnumerationMode());
+    object->methodTable(vm)->getPropertyNames(object, lexicalGlobalObject, propertyNames, EnumerationMode());
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {
@@ -1316,20 +1316,20 @@ static bool getObjectID(NetscapePluginInstanceProxy* pluginInstanceProxy, JSObje
     return true;
 }
     
-void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValue value)
+void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, JSGlobalObject* lexicalGlobalObject, JSValue value)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     JSLockHolder lock(vm);
 
     if (value.isString()) {
         [array addObject:[NSNumber numberWithInt:StringValueType]];
-        [array addObject:asString(value)->value(exec)];
+        [array addObject:asString(value)->value(lexicalGlobalObject)];
     } else if (value.isNumber()) {
         [array addObject:[NSNumber numberWithInt:DoubleValueType]];
-        [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
+        [array addObject:[NSNumber numberWithDouble:value.toNumber(lexicalGlobalObject)]];
     } else if (value.isBoolean()) {
         [array addObject:[NSNumber numberWithInt:BoolValueType]];
-        [array addObject:[NSNumber numberWithBool:value.toBoolean(exec)]];
+        [array addObject:[NSNumber numberWithBool:value.toBoolean(lexicalGlobalObject)]];
     } else if (value.isNull())
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {
@@ -1346,11 +1346,11 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithInt:VoidValueType]];
 }
 
-void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength)
+void NetscapePluginInstanceProxy::marshalValue(JSGlobalObject* lexicalGlobalObject, JSValue value, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     
-    addValueToArray(array.get(), exec, value);
+    addValueToArray(array.get(), lexicalGlobalObject, value);
 
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
@@ -1361,12 +1361,12 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, d
     memcpy(resultData, data.bytes, resultLength);
 }
 
-RetainPtr<NSData> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, const ArgList& args)
+RetainPtr<NSData> NetscapePluginInstanceProxy::marshalValues(JSGlobalObject* lexicalGlobalObject, const ArgList& args)
 {
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
 
     for (unsigned i = 0; i < args.size(); i++)
-        addValueToArray(array.get(), exec, args.at(i));
+        addValueToArray(array.get(), lexicalGlobalObject, args.at(i));
 
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
@@ -1374,7 +1374,7 @@ RetainPtr<NSData> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, co
     return data;
 }    
 
-bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArray *array, NSUInteger& index, JSValue& result)
+bool NetscapePluginInstanceProxy::demarshalValueFromArray(JSGlobalObject* lexicalGlobalObject, NSArray *array, NSUInteger& index, JSValue& result)
 {
     if (index == [array count])
         return false;
@@ -1396,7 +1396,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
         case StringValueType: {
             NSString *string = [array objectAtIndex:index++];
             
-            result = jsString(exec->vm(), String(string));
+            result = jsString(lexicalGlobalObject->vm(), String(string));
             return true;
         }
         case JSObjectValueType: {
@@ -1417,7 +1417,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
                 return false;
 
             auto rootObject = frame->script().createRootObject((__bridge void*)m_pluginView);
-            result = ProxyInstance::create(WTFMove(rootObject), this, objectID)->createRuntimeObject(exec);
+            result = ProxyInstance::create(WTFMove(rootObject), this, objectID)->createRuntimeObject(lexicalGlobalObject);
             return true;
         }
         default:
@@ -1426,7 +1426,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
     }
 }
 
-JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char* valueData, mach_msg_type_number_t valueLength)
+JSValue NetscapePluginInstanceProxy::demarshalValue(JSGlobalObject* lexicalGlobalObject, const char* valueData, mach_msg_type_number_t valueLength)
 {
     RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)valueData length:valueLength freeWhenDone:NO]);
 
@@ -1434,13 +1434,13 @@ JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char*
 
     NSUInteger position = 0;
     JSValue value;
-    bool result = demarshalValueFromArray(exec, array, position, value);
+    bool result = demarshalValueFromArray(lexicalGlobalObject, array, position, value);
     ASSERT_UNUSED(result, result);
 
     return value;
 }
 
-void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBuffer& result)
+void NetscapePluginInstanceProxy::demarshalValues(JSGlobalObject* lexicalGlobalObject, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBuffer& result)
 {
     RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
 
@@ -1448,7 +1448,7 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 
     NSUInteger position = 0;
     JSValue value;
-    while (demarshalValueFromArray(exec, array, position, value))
+    while (demarshalValueFromArray(lexicalGlobalObject, array, position, value))
         result.append(value);
 }
 
@@ -1679,9 +1679,9 @@ void NetscapePluginInstanceProxy::setGlobalException(const String& exception)
     globalExceptionString() = exception;
 }
 
-void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec)
+void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(JSGlobalObject* lexicalGlobalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (globalExceptionString().isNull())
@@ -1689,7 +1689,7 @@ void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec
 
     {
         JSLockHolder lock(vm);
-        throwException(exec, scope, createError(exec, globalExceptionString()));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, globalExceptionString()));
     }
 
     globalExceptionString() = String();

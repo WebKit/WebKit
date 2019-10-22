@@ -151,7 +151,7 @@ bool DataCue::doesExtendCue(const TextTrackCue& cue) const
     return TextTrackCue::doesExtendCue(cue);
 }
 
-JSC::JSValue DataCue::value(JSC::ExecState& state) const
+JSC::JSValue DataCue::value(JSC::JSGlobalObject& state) const
 {
     if (m_platformValue)
         return m_platformValue->deserialize(&state);
@@ -162,7 +162,7 @@ JSC::JSValue DataCue::value(JSC::ExecState& state) const
     return JSC::jsNull();
 }
 
-void DataCue::setValue(JSC::ExecState& state, JSC::JSValue value)
+void DataCue::setValue(JSC::JSGlobalObject& state, JSC::JSValue value)
 {
     // FIXME: this should use a SerializedScriptValue.
     m_value.set(state.vm(), value);

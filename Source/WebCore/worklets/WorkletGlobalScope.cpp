@@ -149,7 +149,7 @@ void WorkletGlobalScope::addConsoleMessage(MessageSource source, MessageLevel le
     m_document->addConsoleMessage(source, level, message, requestIdentifier);
 }
 
-void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState*, unsigned long requestIdentifier)
+void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject*, unsigned long requestIdentifier)
 {
     if (!m_document || isJSExecutionForbidden())
         return;

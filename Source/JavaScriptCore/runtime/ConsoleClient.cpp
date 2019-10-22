@@ -147,11 +147,11 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
     WTFLogAlways("%s", builder.toString().utf8().data());
 }
 
-void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
     bool isTraceMessage = type == MessageType::Trace;
     size_t stackSize = isTraceMessage ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(exec, stackSize);
+    Ref<ScriptCallStack> callStack = createScriptCallStackForConsole(globalObject, stackSize);
     const ScriptCallFrame& lastCaller = callStack->at(0);
 
     StringBuilder builder;
@@ -164,9 +164,9 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     appendMessagePrefix(builder, source, type, level);
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         builder.append(' ');
-        auto* state = arguments->globalState();
-        auto scope = DECLARE_CATCH_SCOPE(state->vm());
-        builder.append(arguments->argumentAt(i).toWTFString(state));
+        auto* globalObject = arguments->globalObject();
+        auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+        builder.append(arguments->argumentAt(i).toWTFString(globalObject));
         scope.clearException();
     }
 
@@ -192,62 +192,62 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     }
 }
 
-void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<ScriptArguments>&& arguments, ArgumentRequirement argumentRequirement)
+void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments, ArgumentRequirement argumentRequirement)
 {
     if (argumentRequirement == ArgumentRequired && !arguments->argumentCount())
         return;
 
-    messageWithTypeAndLevel(type, level, exec, WTFMove(arguments));
+    messageWithTypeAndLevel(type, level, globalObject, WTFMove(arguments));
 }
 
-void ConsoleClient::logWithLevel(ExecState* exec, Ref<ScriptArguments>&& arguments, MessageLevel level)
+void ConsoleClient::logWithLevel(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments, MessageLevel level)
 {
-    internalMessageWithTypeAndLevel(MessageType::Log, level, exec, WTFMove(arguments), ArgumentRequired);
+    internalMessageWithTypeAndLevel(MessageType::Log, level, globalObject, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::clear(ExecState* exec)
+void ConsoleClient::clear(JSGlobalObject* globalObject)
 {
-    internalMessageWithTypeAndLevel(MessageType::Clear, MessageLevel::Log, exec, ScriptArguments::create(*exec, { }), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::Clear, MessageLevel::Log, globalObject, ScriptArguments::create(globalObject, { }), ArgumentNotRequired);
 }
 
-void ConsoleClient::dir(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::dir(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Dir, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
+    internalMessageWithTypeAndLevel(MessageType::Dir, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::dirXML(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::dirXML(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::DirXML, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
+    internalMessageWithTypeAndLevel(MessageType::DirXML, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::table(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::table(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Table, MessageLevel::Log, exec, WTFMove(arguments), ArgumentRequired);
+    internalMessageWithTypeAndLevel(MessageType::Table, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequired);
 }
 
-void ConsoleClient::trace(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::trace(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::assertion(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::assertion(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::group(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::group(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::StartGroup, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::StartGroup, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::groupCollapsed(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::groupCollapsed(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::StartGroupCollapsed, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::StartGroupCollapsed, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
-void ConsoleClient::groupEnd(ExecState* exec, Ref<ScriptArguments>&& arguments)
+void ConsoleClient::groupEnd(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::EndGroup, MessageLevel::Log, exec, WTFMove(arguments), ArgumentNotRequired);
+    internalMessageWithTypeAndLevel(MessageType::EndGroup, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
 } // namespace JSC

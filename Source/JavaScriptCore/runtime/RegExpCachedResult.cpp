@@ -44,9 +44,9 @@ void RegExpCachedResult::visitAggregate(SlotVisitor& visitor)
     }
 }
 
-JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
+JSArray* RegExpCachedResult::lastResult(JSGlobalObject* globalObject, JSObject* owner)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!m_reified) {
@@ -56,9 +56,9 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 
         JSArray* result = nullptr;
         if (m_result)
-            result = createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start);
+            result = createRegExpMatchesArray(globalObject, m_lastInput.get(), m_lastRegExp.get(), m_result.start);
         else
-            result = createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get());
+            result = createEmptyRegExpMatchesArray(globalObject, m_lastInput.get(), m_lastRegExp.get());
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         m_reifiedResult.setWithoutWriteBarrier(result);
@@ -70,52 +70,52 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
     return m_reifiedResult.get();
 }
 
-JSString* RegExpCachedResult::leftContext(ExecState* exec, JSObject* owner)
+JSString* RegExpCachedResult::leftContext(JSGlobalObject* globalObject, JSObject* owner)
 {
     // Make sure we're reified.
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    lastResult(exec, owner);
+    lastResult(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!m_reifiedLeftContext) {
-        JSString* leftContext = jsSubstring(exec, m_reifiedInput.get(), 0, m_result.start);
+        JSString* leftContext = jsSubstring(globalObject, m_reifiedInput.get(), 0, m_result.start);
         RETURN_IF_EXCEPTION(scope, nullptr);
         m_reifiedLeftContext.set(vm, owner, leftContext);
     }
     return m_reifiedLeftContext.get();
 }
 
-JSString* RegExpCachedResult::rightContext(ExecState* exec, JSObject* owner)
+JSString* RegExpCachedResult::rightContext(JSGlobalObject* globalObject, JSObject* owner)
 {
     // Make sure we're reified.
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    lastResult(exec, owner);
+    lastResult(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!m_reifiedRightContext) {
         unsigned length = m_reifiedInput->length();
-        JSString* rightContext = jsSubstring(exec, m_reifiedInput.get(), m_result.end, length - m_result.end);
+        JSString* rightContext = jsSubstring(globalObject, m_reifiedInput.get(), m_result.end, length - m_result.end);
         RETURN_IF_EXCEPTION(scope, nullptr);
         m_reifiedRightContext.set(vm, owner, rightContext);
     }
     return m_reifiedRightContext.get();
 }
 
-void RegExpCachedResult::setInput(ExecState* exec, JSObject* owner, JSString* input)
+void RegExpCachedResult::setInput(JSGlobalObject* globalObject, JSObject* owner, JSString* input)
 {
     // Make sure we're reified, otherwise m_reifiedInput will be ignored.
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    lastResult(exec, owner);
+    lastResult(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, void());
-    leftContext(exec, owner);
+    leftContext(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, void());
-    rightContext(exec, owner);
+    rightContext(globalObject, owner);
     RETURN_IF_EXCEPTION(scope, void());
     ASSERT(m_reified);
     m_reifiedInput.set(vm, owner, input);

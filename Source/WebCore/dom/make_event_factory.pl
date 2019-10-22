@@ -97,11 +97,11 @@ sub generateImplementation()
     print F "\n";
     # FIXME: Why does Event need toNewlyCreated but EventTarget need toJS?
     if ($factoryFunction eq "toNewlyCreated") {
-        print F "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<${namespace}>&& impl)\n";
+        print F "JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<${namespace}>&& impl)\n";
         print F "{\n";
         print F "    switch (impl->${interfaceMethodName}()) {\n";
     } else {
-        print F "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ${namespace}& impl)\n";
+        print F "JSC::JSValue toJS(JSC::JSGlobalObject* state, JSDOMGlobalObject* globalObject, ${namespace}& impl)\n";
         print F "{\n";
         print F "    switch (impl.${interfaceMethodName}()) {\n";
     }

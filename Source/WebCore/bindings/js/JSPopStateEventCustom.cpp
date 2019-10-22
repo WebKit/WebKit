@@ -39,29 +39,29 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue JSPopStateEvent::state(ExecState& state) const
+JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
 {
     if (m_state) {
         // We cannot use a cached object if we are in a different world than the one it was created in.
-        if (isWorldCompatible(state, m_state.get()))
+        if (isWorldCompatible(lexicalGlobalObject, m_state.get()))
             return m_state.get();
         ASSERT_NOT_REACHED();
     }
 
-    // Save the state value to the m_state member of a JSPopStateEvent, and return it, for convenience.
-    auto cacheState = [&state, this] (JSC::JSValue eventState) {
-        m_state.set(state.vm(), this, eventState);
+    // Save the lexicalGlobalObject value to the m_state member of a JSPopStateEvent, and return it, for convenience.
+    auto cacheState = [&lexicalGlobalObject, this] (JSC::JSValue eventState) {
+        m_state.set(lexicalGlobalObject.vm(), this, eventState);
         return eventState;
     };
 
     PopStateEvent& event = wrapped();
 
     if (JSC::JSValue eventState = event.state()) {
-        // We need to make sure a PopStateEvent does not leak objects in its state property across isolated DOM worlds.
+        // We need to make sure a PopStateEvent does not leak objects in its lexicalGlobalObject property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
-        if (!isWorldCompatible(state, eventState)) {
-            if (auto serializedValue = event.trySerializeState(state))
-                eventState = serializedValue->deserialize(state, globalObject());
+        if (!isWorldCompatible(lexicalGlobalObject, eventState)) {
+            if (auto serializedValue = event.trySerializeState(lexicalGlobalObject))
+                eventState = serializedValue->deserialize(lexicalGlobalObject, globalObject());
             else
                 eventState = jsNull();
         }
@@ -72,20 +72,20 @@ JSValue JSPopStateEvent::state(ExecState& state) const
     if (!history || !event.serializedState())
         return cacheState(jsNull());
 
-    // There's no cached value from a previous invocation, nor a state value was provided by the
-    // event, but there is a history object, so first we need to see if the state object has been
+    // There's no cached value from a previous invocation, nor a lexicalGlobalObject value was provided by the
+    // event, but there is a history object, so first we need to see if the lexicalGlobalObject object has been
     // deserialized through the history object already.
-    // The current history state object might've changed in the meantime, so we need to take care
-    // of using the correct one, and always share the same deserialization with history.state.
+    // The current history lexicalGlobalObject object might've changed in the meantime, so we need to take care
+    // of using the correct one, and always share the same deserialization with history.lexicalGlobalObject.
 
     bool isSameState = history->isSameAsCurrentState(event.serializedState());
     JSValue result;
 
     if (isSameState) {
-        JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&state, globalObject(), *history).asCell());
-        result = jsHistory->state(state);
+        JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&lexicalGlobalObject, globalObject(), *history).asCell());
+        result = jsHistory->state(lexicalGlobalObject);
     } else
-        result = event.serializedState()->deserialize(state, globalObject());
+        result = event.serializedState()->deserialize(lexicalGlobalObject, globalObject());
 
     return cacheState(result);
 }

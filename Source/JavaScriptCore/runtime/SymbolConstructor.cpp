@@ -86,7 +86,7 @@ static EncodedJSValue JSC_HOST_CALL callSymbol(JSGlobalObject* globalObject, Cal
     if (description.isUndefined())
         return JSValue::encode(Symbol::create(vm));
 
-    String string = description.toWTFString(callFrame);
+    String string = description.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(Symbol::createWithDescription(vm, string));
 }
@@ -96,9 +96,9 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorFor(JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSString* stringKey = callFrame->argument(0).toString(callFrame);
+    JSString* stringKey = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String string = stringKey->value(callFrame);
+    String string = stringKey->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(Symbol::create(vm, vm.symbolRegistry().symbolForKey(string)));
@@ -113,7 +113,7 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(JSGlobalObject* globalObjec
 
     JSValue symbolValue = callFrame->argument(0);
     if (!symbolValue.isSymbol())
-        return JSValue::encode(throwTypeError(callFrame, scope, SymbolKeyForTypeError));
+        return JSValue::encode(throwTypeError(globalObject, scope, SymbolKeyForTypeError));
 
     PrivateName privateName = asSymbol(symbolValue)->privateName();
     SymbolImpl& uid = privateName.uid();

@@ -37,7 +37,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace Inspector {
@@ -75,12 +74,12 @@ public:
 
     void addMessageToConsole(std::unique_ptr<ConsoleMessage>);
 
-    void startTiming(JSC::ExecState*, const String& label);
-    void logTiming(JSC::ExecState*, const String& label, Ref<ScriptArguments>&&);
-    void stopTiming(JSC::ExecState*, const String& label);
+    void startTiming(JSC::JSGlobalObject*, const String& label);
+    void logTiming(JSC::JSGlobalObject*, const String& label, Ref<ScriptArguments>&&);
+    void stopTiming(JSC::JSGlobalObject*, const String& label);
     void takeHeapSnapshot(const String& title);
-    void count(JSC::ExecState*, const String& label);
-    void countReset(JSC::ExecState*, const String& label);
+    void count(JSC::JSGlobalObject*, const String& label);
+    void countReset(JSC::JSGlobalObject*, const String& label);
 
 protected:
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);

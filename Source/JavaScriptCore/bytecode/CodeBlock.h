@@ -361,11 +361,11 @@ public:
     void unlinkIncomingCalls();
 
 #if ENABLE(JIT)
-    void linkIncomingCall(ExecState* callerFrame, CallLinkInfo*);
-    void linkIncomingPolymorphicCall(ExecState* callerFrame, PolymorphicCallNode*);
+    void linkIncomingCall(CallFrame* callerFrame, CallLinkInfo*);
+    void linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode*);
 #endif // ENABLE(JIT)
 
-    void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
+    void linkIncomingCall(CallFrame* callerFrame, LLIntCallLinkInfo*);
 
     const Instruction* outOfLineJumpTarget(const Instruction* pc);
     int outOfLineJumpOffset(const Instruction* pc);
@@ -914,7 +914,7 @@ private:
     
     CodeBlock* specialOSREntryBlockOrNull();
     
-    void noticeIncomingCall(ExecState* callerFrame);
+    void noticeIncomingCall(CallFrame* callerFrame);
     
     double optimizationThresholdScalingFactor();
 
@@ -1027,7 +1027,7 @@ private:
     std::unique_ptr<RareData> m_rareData;
 };
 
-inline Register& ExecState::r(int index)
+inline Register& CallFrame::r(int index)
 {
     CodeBlock* codeBlock = this->codeBlock();
     if (codeBlock->isConstantRegisterIndex(index))
@@ -1035,18 +1035,18 @@ inline Register& ExecState::r(int index)
     return this[index];
 }
 
-inline Register& ExecState::r(VirtualRegister reg)
+inline Register& CallFrame::r(VirtualRegister reg)
 {
     return r(reg.offset());
 }
 
-inline Register& ExecState::uncheckedR(int index)
+inline Register& CallFrame::uncheckedR(int index)
 {
     RELEASE_ASSERT(index < FirstConstantRegisterIndex);
     return this[index];
 }
 
-inline Register& ExecState::uncheckedR(VirtualRegister reg)
+inline Register& CallFrame::uncheckedR(VirtualRegister reg)
 {
     return uncheckedR(reg.offset());
 }

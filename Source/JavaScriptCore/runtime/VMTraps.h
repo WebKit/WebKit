@@ -37,8 +37,8 @@
 namespace JSC {
 
 class CallFrame;
+class JSGlobalObject;
 class VM;
-using ExecState = CallFrame;
 
 class VMTraps {
     typedef uint8_t BitField;
@@ -106,7 +106,7 @@ public:
 
     JS_EXPORT_PRIVATE void fireTrap(EventType);
 
-    void handleTraps(ExecState*, VMTraps::Mask);
+    void handleTraps(JSGlobalObject*, CallFrame*, VMTraps::Mask);
 
     void tryInstallTrapBreakpoints(struct SignalContext&, StackBounds);
 
@@ -136,14 +136,14 @@ private:
     friend class SignalSender;
 
     void invalidateCodeBlocksOnStack();
-    void invalidateCodeBlocksOnStack(ExecState* topCallFrame);
-    void invalidateCodeBlocksOnStack(Locker<Lock>& codeBlockSetLocker, ExecState* topCallFrame);
+    void invalidateCodeBlocksOnStack(CallFrame* topCallFrame);
+    void invalidateCodeBlocksOnStack(Locker<Lock>& codeBlockSetLocker, CallFrame* topCallFrame);
 
     void addSignalSender(SignalSender*);
     void removeSignalSender(SignalSender*);
 #else
     void invalidateCodeBlocksOnStack() { }
-    void invalidateCodeBlocksOnStack(ExecState*) { }
+    void invalidateCodeBlocksOnStack(CallFrame*) { }
 #endif
 
     Box<Lock> m_lock;

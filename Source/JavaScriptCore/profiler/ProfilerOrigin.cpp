@@ -45,10 +45,10 @@ void Origin::dump(PrintStream& out) const
     out.print(*m_bytecodes, ":bc#", m_bytecodeIndex);
 }
 
-JSValue Origin::toJS(ExecState* exec) const
+JSValue Origin::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
-    JSObject* result = constructEmptyObject(exec);
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     result->putDirect(vm, vm.propertyNames->bytecodeIndex, jsNumber(m_bytecodeIndex));
     return result;

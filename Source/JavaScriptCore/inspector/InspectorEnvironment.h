@@ -40,14 +40,14 @@ class VM;
 namespace Inspector {
 
 class ScriptDebugServer;
-typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
-typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
+typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
+typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 class InspectorEnvironment {
 public:
     virtual ~InspectorEnvironment() { }
     virtual bool developerExtrasEnabled() const = 0;
-    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const = 0;
+    virtual bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const = 0;
     virtual InspectorFunctionCallHandler functionCallHandler() const = 0;
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
     virtual void frontendInitialized() = 0;

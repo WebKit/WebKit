@@ -129,7 +129,7 @@ void MessagePort::entangle()
     MessagePortChannelProvider::fromContext(*m_scriptExecutionContext).entangleLocalPortInThisProcessToRemote(m_identifier, m_remoteIdentifier);
 }
 
-ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     LOG(MessagePorts, "Attempting to post message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 

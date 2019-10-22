@@ -37,10 +37,10 @@
     void clearConsoleMessages();
     void copyText(DOMString text);
 
-    [CallWith=ExecState] void inspect(any objectToInspect, any hints);
-    [CallWith=ExecState] any inspectedObject();
+    [CallWith=GlobalObject] void inspect(any objectToInspect, any hints);
+    [CallWith=GlobalObject] any inspectedObject();
 
-    [CallWith=ExecState] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
+    [CallWith=GlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
 
     DOMString databaseId(Database database);
     DOMString storageId(Storage storage);

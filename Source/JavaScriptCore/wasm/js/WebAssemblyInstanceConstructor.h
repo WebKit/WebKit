@@ -46,7 +46,7 @@ public:
 
     DECLARE_INFO;
 
-    static JSWebAssemblyInstance* createInstance(ExecState*, JSWebAssemblyModule*, JSObject* importObject, Structure*);
+    static JSWebAssemblyInstance* createInstance(JSGlobalObject*, JSWebAssemblyModule*, JSObject* importObject, Structure*);
 
 protected:
     void finishCreation(VM&, WebAssemblyInstancePrototype*);

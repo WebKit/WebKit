@@ -38,7 +38,7 @@ protected:
     }
 
     static String className(const JSObject*, JSC::VM&);
-    static String toStringName(const JSObject*, JSC::ExecState*);
+    static String toStringName(const JSObject*, JSC::JSGlobalObject*);
     static JSC::CallType getCallData(JSCell*, JSC::CallData&);
 };
 

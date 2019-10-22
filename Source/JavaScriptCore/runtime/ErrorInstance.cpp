@@ -39,16 +39,16 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure)
 {
 }
 
-ErrorInstance* ErrorInstance::create(ExecState* state, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String messageString = message.isUndefined() ? String() : message.toWTFString(state);
+    String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return create(state, vm, structure, messageString, appender, type, useCurrentFrame);
+    return create(globalObject, vm, structure, messageString, appender, type, useCurrentFrame);
 }
 
-static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
+static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
 {
     ErrorInstance::SourceAppender appender = exception->sourceAppender();
     exception->clearSourceAppender();
@@ -80,12 +80,12 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
         return;
     
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     JSValue jsMessage = exception->getDirect(vm, vm.propertyNames->message);
     if (!jsMessage || !jsMessage.isString())
         return;
     
-    String message = asString(jsMessage)->value(callFrame);
+    String message = asString(jsMessage)->value(globalObject);
     if (expressionStart < expressionStop)
         message = appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
     else {
@@ -109,14 +109,14 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
 
 }
 
-void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& message, bool useCurrentFrame)
+void ErrorInstance::finishCreation(JSGlobalObject* globalObject, VM& vm, const String& message, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(globalObject, vm, this, useCurrentFrame);
     {
         auto locker = holdLock(cellLock());
         m_stackTrace = WTFMove(stackTrace);
@@ -126,10 +126,10 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         unsigned bytecodeOffset;
         CallFrame* callFrame;
-        getBytecodeOffset(exec, vm, m_stackTrace.get(), callFrame, bytecodeOffset);
+        getBytecodeOffset(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeOffset);
         if (callFrame && callFrame->codeBlock()) {
             ASSERT(!callFrame->callee().isWasm());
-            appendSourceToError(callFrame, this, bytecodeOffset);
+            appendSourceToError(globalObject, callFrame, this, bytecodeOffset);
         }
     }
 }
@@ -142,9 +142,9 @@ void ErrorInstance::destroy(JSCell* cell)
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
 // have no observable side effects to the user (i.e. does not call proxies,
 // and getters).
-String ErrorInstance::sanitizedToString(ExecState* exec)
+String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue nameValue;
@@ -159,8 +159,8 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     // a name property for the type of error e.g. "SyntaxError".
     while (currentObj.isCell() && prototypeDepth++ < 2) {
         JSObject* obj = jsCast<JSObject*>(currentObj);
-        if (JSObject::getOwnPropertySlot(obj, exec, namePropertName, nameSlot) && nameSlot.isValue()) {
-            nameValue = nameSlot.getValue(exec, namePropertName);
+        if (JSObject::getOwnPropertySlot(obj, globalObject, namePropertName, nameSlot) && nameSlot.isValue()) {
+            nameValue = nameSlot.getValue(globalObject, namePropertName);
             break;
         }
         currentObj = obj->getPrototypeDirect(vm);
@@ -171,22 +171,22 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     if (!nameValue)
         nameString = "Error"_s;
     else {
-        nameString = nameValue.toWTFString(exec);
+        nameString = nameValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, String());
     }
 
     JSValue messageValue;
     auto messagePropertName = vm.propertyNames->message;
     PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry);
-    if (JSObject::getOwnPropertySlot(this, exec, messagePropertName, messageSlot) && messageSlot.isValue())
-        messageValue = messageSlot.getValue(exec, messagePropertName);
+    if (JSObject::getOwnPropertySlot(this, globalObject, messagePropertName, messageSlot) && messageSlot.isValue())
+        messageValue = messageSlot.getValue(globalObject, messagePropertName);
     scope.assertNoException();
 
     String messageString;
     if (!messageValue)
         messageString = String();
     else {
-        messageString = messageValue.toWTFString(exec);
+        messageString = messageValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, String());
     }
 
@@ -262,54 +262,54 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm, PropertyName propertyNa
     return false;
 }
 
-bool ErrorInstance::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool ErrorInstance::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
     thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
-    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
 
-void ErrorInstance::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+void ErrorInstance::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
     thisObject->materializeErrorInfoIfNeeded(vm);
-    Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNameArray, enumerationMode);
+    Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNameArray, enumerationMode);
 }
 
-void ErrorInstance::getStructurePropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+void ErrorInstance::getStructurePropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
     thisObject->materializeErrorInfoIfNeeded(vm);
-    Base::getStructurePropertyNames(thisObject, exec, propertyNameArray, enumerationMode);
+    Base::getStructurePropertyNames(thisObject, globalObject, propertyNameArray, enumerationMode);
 }
 
-bool ErrorInstance::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
+bool ErrorInstance::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
     thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
-    return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
+    return Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 }
 
-bool ErrorInstance::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool ErrorInstance::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(cell);
     bool materializedProperties = thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
     if (materializedProperties)
         slot.disableCaching();
-    return Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, globalObject, propertyName, value, slot);
 }
 
-bool ErrorInstance::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool ErrorInstance::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(cell);
     thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
-    return Base::deleteProperty(thisObject, exec, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName);
 }
 
 } // namespace JSC

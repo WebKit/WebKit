@@ -39,7 +39,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-JS_EXPORT_PRIVATE RefPtr<JSON::Value> toInspectorValue(JSC::ExecState&, JSC::JSValue);
+JS_EXPORT_PRIVATE RefPtr<JSON::Value> toInspectorValue(JSC::JSGlobalObject*, JSC::JSValue);
 }
 
 namespace Deprecated {

@@ -84,7 +84,7 @@ class PolymorphicCallStubRoutine : public GCAwareJITStubRoutine {
 public:
     PolymorphicCallStubRoutine(
         const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner,
-        ExecState* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
+        CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
         UniqueArray<uint32_t>&& fastCounts);
     
     virtual ~PolymorphicCallStubRoutine();

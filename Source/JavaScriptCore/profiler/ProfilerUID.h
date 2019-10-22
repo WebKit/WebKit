@@ -82,7 +82,7 @@ public:
     }
     
     void dump(PrintStream&) const;
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     uint64_t m_uid;

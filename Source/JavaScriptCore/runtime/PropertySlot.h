@@ -127,10 +127,10 @@ public:
 
     // FIXME: Remove this slotBase / receiver behavior difference in custom values and custom accessors.
     // https://bugs.webkit.org/show_bug.cgi?id=158014
-    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
+    typedef EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 
-    JSValue getValue(ExecState*, PropertyName) const;
-    JSValue getValue(ExecState*, unsigned propertyName) const;
+    JSValue getValue(JSGlobalObject*, PropertyName) const;
+    JSValue getValue(JSGlobalObject*, unsigned propertyName) const;
     JSValue getPureResult() const;
 
     bool isCacheable() const { return m_cacheability == CachingAllowed && m_offset != invalidOffset; }
@@ -370,9 +370,9 @@ public:
     }
 
 private:
-    JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
-    JS_EXPORT_PRIVATE JSValue customGetter(ExecState*, PropertyName) const;
-    JS_EXPORT_PRIVATE JSValue customAccessorGetter(ExecState*, PropertyName) const;
+    JS_EXPORT_PRIVATE JSValue functionGetter(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSValue customGetter(JSGlobalObject*, PropertyName) const;
+    JS_EXPORT_PRIVATE JSValue customAccessorGetter(JSGlobalObject*, PropertyName) const;
 
     union {
         EncodedJSValue value;
@@ -403,27 +403,27 @@ private:
     } m_additionalData;
 };
 
-ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName propertyName) const
+ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
-        return functionGetter(exec);
+        return functionGetter(globalObject);
     if (m_propertyType == TypeCustomAccessor)
-        return customAccessorGetter(exec, propertyName);
-    return customGetter(exec, propertyName);
+        return customAccessorGetter(globalObject, propertyName);
+    return customGetter(globalObject, propertyName);
 }
 
-ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyName) const
+ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, unsigned propertyName) const
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     if (m_propertyType == TypeValue)
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
-        return functionGetter(exec);
+        return functionGetter(globalObject);
     if (m_propertyType == TypeCustomAccessor)
-        return customAccessorGetter(exec, Identifier::from(vm, propertyName));
-    return customGetter(exec, Identifier::from(vm, propertyName));
+        return customAccessorGetter(globalObject, Identifier::from(vm, propertyName));
+    return customGetter(globalObject, Identifier::from(vm, propertyName));
 }
 
 } // namespace JSC

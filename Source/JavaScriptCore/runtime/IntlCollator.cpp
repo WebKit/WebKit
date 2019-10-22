@@ -173,26 +173,26 @@ static Vector<String> searchLocaleData(const String&, size_t keyIndex)
     return keyLocaleData;
 }
 
-void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue optionsValue)
+void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue locales, JSValue optionsValue)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 10.1.1 InitializeCollator (collator, locales, options) (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-initializecollator
 
-    auto requestedLocales = canonicalizeLocaleList(state, locales);
+    auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options;
     if (optionsValue.isUndefined())
-        options = constructEmptyObject(&state, state.lexicalGlobalObject()->nullPrototypeObjectStructure());
+        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     else {
-        options = optionsValue.toObject(&state);
+        options = optionsValue.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
-    String usageString = intlStringOption(state, options, vm.propertyNames->usage, { "sort", "search" }, "usage must be either \"sort\" or \"search\"", "sort");
+    String usageString = intlStringOption(globalObject, options, vm.propertyNames->usage, { "sort", "search" }, "usage must be either \"sort\" or \"search\"", "sort");
     RETURN_IF_EXCEPTION(scope, void());
     if (usageString == "sort")
         m_usage = Usage::Sort;
@@ -205,14 +205,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
 
     HashMap<String, String> opt;
 
-    String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    String matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
     opt.add("localeMatcher"_s, matcher);
 
     {
         String numericString;
         bool usesFallback;
-        bool numeric = intlBooleanOption(state, options, vm.propertyNames->numeric, usesFallback);
+        bool numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric, usesFallback);
         RETURN_IF_EXCEPTION(scope, void());
         if (!usesFallback)
             numericString = numeric ? "true"_s : "false"_s;
@@ -220,18 +220,18 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
             opt.add("kn"_s, numericString);
     }
     {
-        String caseFirst = intlStringOption(state, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
+        String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
         RETURN_IF_EXCEPTION(scope, void());
         if (!caseFirst.isNull())
             opt.add("kf"_s, caseFirst);
     }
 
-    auto& availableLocales = state.jsCallee()->globalObject(vm)->intlCollatorAvailableLocales();
-    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
+    auto& availableLocales = globalObject->intlCollatorAvailableLocales();
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
-        throwTypeError(&state, scope, "failed to initialize Collator due to invalid locale"_s);
+        throwTypeError(globalObject, scope, "failed to initialize Collator due to invalid locale"_s);
         return;
     }
 
@@ -247,7 +247,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     else
         m_caseFirst = CaseFirst::False;
 
-    String sensitivityString = intlStringOption(state, options, vm.propertyNames->sensitivity, { "base", "accent", "case", "variant" }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", nullptr);
+    String sensitivityString = intlStringOption(globalObject, options, vm.propertyNames->sensitivity, { "base", "accent", "case", "variant" }, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (sensitivityString == "base")
         m_sensitivity = Sensitivity::Base;
@@ -259,7 +259,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
         m_sensitivity = Sensitivity::Variant;
 
     bool usesFallback;
-    bool ignorePunctuation = intlBooleanOption(state, options, vm.propertyNames->ignorePunctuation, usesFallback);
+    bool ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation, usesFallback);
     if (usesFallback)
         ignorePunctuation = false;
     RETURN_IF_EXCEPTION(scope, void());
@@ -268,14 +268,14 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     m_initializedCollator = true;
 }
 
-void IntlCollator::createCollator(ExecState& state)
+void IntlCollator::createCollator(JSGlobalObject* globalObject)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ASSERT(!m_collator);
 
     if (!m_initializedCollator) {
-        initializeCollator(state, jsUndefined(), jsUndefined());
+        initializeCollator(globalObject, jsUndefined(), jsUndefined());
         scope.assertNoException();
     }
 
@@ -329,16 +329,16 @@ void IntlCollator::createCollator(ExecState& state)
     m_collator = WTFMove(collator);
 }
 
-JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView y)
+JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x, StringView y)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 10.3.4 CompareStrings abstract operation (ECMA-402 2.0)
     if (!m_collator) {
-        createCollator(state);
+        createCollator(globalObject);
         if (!m_collator)
-            return throwException(&state, scope, createError(&state, "Failed to compare strings."_s));
+            return throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -346,7 +346,7 @@ JSValue IntlCollator::compareStrings(ExecState& state, StringView x, StringView 
     UCharIterator iteratorY = createIterator(y);
     auto result = ucol_strcollIter(m_collator.get(), &iteratorX, &iteratorY, &status);
     if (U_FAILURE(status))
-        return throwException(&state, scope, createError(&state, "Failed to compare strings."_s));
+        return throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
     return jsNumber(result);
 }
 
@@ -392,9 +392,9 @@ ASCIILiteral IntlCollator::caseFirstString(CaseFirst caseFirst)
     return ASCIILiteral::null();
 }
 
-JSObject* IntlCollator::resolvedOptions(ExecState& state)
+JSObject* IntlCollator::resolvedOptions(JSGlobalObject* globalObject)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 10.3.5 Intl.Collator.prototype.resolvedOptions() (ECMA-402 2.0)
@@ -407,11 +407,11 @@ JSObject* IntlCollator::resolvedOptions(ExecState& state)
     // Intl.Collator.
 
     if (!m_initializedCollator) {
-        initializeCollator(state, jsUndefined(), jsUndefined());
+        initializeCollator(globalObject, jsUndefined(), jsUndefined());
         scope.assertNoException();
     }
 
-    JSObject* options = constructEmptyObject(&state);
+    JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->usage, jsNontrivialString(vm, usageString(m_usage)));
     options->putDirect(vm, vm.propertyNames->sensitivity, jsNontrivialString(vm, sensitivityString(m_sensitivity)));

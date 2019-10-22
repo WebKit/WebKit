@@ -96,9 +96,9 @@ void SparseArrayValueMap::remove(unsigned i)
     m_map.remove(i);
 }
 
-bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
+bool SparseArrayValueMap::putEntry(JSGlobalObject* globalObject, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(value);
     
@@ -110,15 +110,15 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     // extensible, this is not the right thing to have done - so remove again.
     if (result.isNewEntry && !array->isStructureExtensible(vm)) {
         remove(result.iterator);
-        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
     
-    RELEASE_AND_RETURN(scope, entry.put(exec, array, this, value, shouldThrow));
+    RELEASE_AND_RETURN(scope, entry.put(globalObject, array, this, value, shouldThrow));
 }
 
-bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
+bool SparseArrayValueMap::putDirect(JSGlobalObject* globalObject, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(value);
     
@@ -132,11 +132,11 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     // extensible, this is not the right thing to have done - so remove again.
     if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible(vm)) {
         remove(result.iterator);
-        return typeError(exec, scope, shouldThrow, NonExtensibleObjectPropertyDefineError);
+        return typeError(globalObject, scope, shouldThrow, NonExtensibleObjectPropertyDefineError);
     }
 
     if (entry.attributes() & PropertyAttribute::ReadOnly)
-        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
     entry.forceSet(vm, this, value, attributes);
     return true;
@@ -190,20 +190,20 @@ JSValue SparseArrayEntry::getConcurrently() const
     return attributesDependency.consume(this)->Base::get();
 }
 
-bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
+bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!(m_attributes & PropertyAttribute::Accessor)) {
         if (m_attributes & PropertyAttribute::ReadOnly)
-            return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
+            return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
         set(vm, map, value);
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, callSetter(exec, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode));
+    RELEASE_AND_RETURN(scope, callSetter(globalObject, thisValue, Base::get(), value, shouldThrow ? StrictMode : NotStrictMode));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const

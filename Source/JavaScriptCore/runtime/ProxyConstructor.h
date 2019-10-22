@@ -48,7 +48,7 @@ public:
 private:
     ProxyConstructor(VM&, Structure*);
 
-    static EncodedJSValue getGetter(ExecState*, EncodedJSValue thisValue, PropertyName);
+    static EncodedJSValue getGetter(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 };
 
 } // namespace JSC

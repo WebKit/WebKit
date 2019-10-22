@@ -118,10 +118,9 @@ void removeDOMWrapper(DOMObjectInternal* impl)
 
     // The global object which should own this node - FIXME: does this need to be isolated-world aware?
     WebCore::JSDOMGlobalObject* globalObject = frame->script().globalObject(WebCore::mainThreadNormalWorld());
-    JSC::ExecState *exec = globalObject->globalExec();
 
     // Get (or create) a cached JS object for the DOM node.
-    JSC::JSObject *scriptImp = asObject(WebCore::toJS(exec, globalObject, nodeImpl));
+    JSC::JSObject *scriptImp = asObject(WebCore::toJS(globalObject, globalObject, nodeImpl));
 
     JSC::Bindings::RootObject* rootObject = frame->script().bindingRootObject();
 

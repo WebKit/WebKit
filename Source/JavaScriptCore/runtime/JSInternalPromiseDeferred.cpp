@@ -37,12 +37,12 @@ namespace JSC {
 
 const ClassInfo JSInternalPromiseDeferred::s_info = { "JSInternalPromiseDeferred", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromiseDeferred) };
 
-JSInternalPromiseDeferred* JSInternalPromiseDeferred::tryCreate(ExecState* exec, JSGlobalObject* globalObject)
+JSInternalPromiseDeferred* JSInternalPromiseDeferred::tryCreate(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DeferredData data = createDeferredData(exec, globalObject, globalObject->internalPromiseConstructor());
+    DeferredData data = createDeferredData(globalObject, globalObject->internalPromiseConstructor());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSInternalPromiseDeferred* result = new (NotNull, allocateCell<JSInternalPromiseDeferred>(vm.heap)) JSInternalPromiseDeferred(vm);
@@ -60,21 +60,21 @@ JSInternalPromise* JSInternalPromiseDeferred::promise() const
     return jsCast<JSInternalPromise*>(Base::promise());
 }
 
-JSInternalPromise* JSInternalPromiseDeferred::resolve(ExecState* exec, JSValue value)
+JSInternalPromise* JSInternalPromiseDeferred::resolve(JSGlobalObject* globalObject, JSValue value)
 {
-    Base::resolve(exec, value);
+    Base::resolve(globalObject, value);
     return promise();
 }
 
-JSInternalPromise* JSInternalPromiseDeferred::reject(ExecState* exec, JSValue reason)
+JSInternalPromise* JSInternalPromiseDeferred::reject(JSGlobalObject* globalObject, JSValue reason)
 {
-    Base::reject(exec, reason);
+    Base::reject(globalObject, reason);
     return promise();
 }
 
-JSInternalPromise* JSInternalPromiseDeferred::reject(ExecState* exec, Exception* reason)
+JSInternalPromise* JSInternalPromiseDeferred::reject(JSGlobalObject* globalObject, Exception* reason)
 {
-    return reject(exec, reason->value());
+    return reject(globalObject, reason->value());
 }
 
 } // namespace JSC

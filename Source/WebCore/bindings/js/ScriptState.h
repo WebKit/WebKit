@@ -33,7 +33,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -49,17 +48,17 @@ class WorkerGlobalScope;
 class WorkletGlobalScope;
 #endif
 
-DOMWindow* domWindowFromExecState(JSC::ExecState*);
-Frame* frameFromExecState(JSC::ExecState*);
-ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState*);
+DOMWindow* domWindowFromExecState(JSC::JSGlobalObject*);
+Frame* frameFromExecState(JSC::JSGlobalObject*);
+ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::JSGlobalObject*);
 
-JSC::ExecState* mainWorldExecState(Frame*);
+JSC::JSGlobalObject* mainWorldExecState(Frame*);
 
-JSC::ExecState* execStateFromNode(DOMWrapperWorld&, Node*);
-WEBCORE_EXPORT JSC::ExecState* execStateFromPage(DOMWrapperWorld&, Page*);
-JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope&);
+JSC::JSGlobalObject* execStateFromNode(DOMWrapperWorld&, Node*);
+WEBCORE_EXPORT JSC::JSGlobalObject* execStateFromPage(DOMWrapperWorld&, Page*);
+JSC::JSGlobalObject* execStateFromWorkerGlobalScope(WorkerGlobalScope&);
 #if ENABLE(CSS_PAINTING_API)
-JSC::ExecState* execStateFromWorkletGlobalScope(WorkletGlobalScope&);
+JSC::JSGlobalObject* execStateFromWorkletGlobalScope(WorkletGlobalScope&);
 #endif
 
 } // namespace WebCore

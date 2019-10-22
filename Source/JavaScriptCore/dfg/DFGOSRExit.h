@@ -145,7 +145,7 @@ struct OSRExitState : RefCounted<OSRExitState> {
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
-    static void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
+    static void JIT_OPERATION compileOSRExit(CallFrame*) WTF_INTERNAL;
     static void executeOSRExit(Probe::Context&);
 
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
@@ -169,7 +169,7 @@ struct OSRExit : public OSRExitBase {
 private:
     static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
     static void emitRestoreArguments(CCallHelpers&, const Operands<ValueRecovery>&);
-    static void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
+    static void JIT_OPERATION debugOperationPrintSpeculationFailure(CallFrame*, void*, void*) WTF_INTERNAL;
 };
 
 struct SpeculationFailureDebugInfo {

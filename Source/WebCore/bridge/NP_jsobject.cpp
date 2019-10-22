@@ -110,10 +110,10 @@ void ObjectMap::RootObjectInvalidationCallback::operator()(RootObject* rootObjec
     objectMap().remove(rootObject);
 }
 
-static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, MarkedArgumentBuffer& aList)
+static void getListFromVariantArgs(JSGlobalObject* lexicalGlobalObject, const NPVariant* args, unsigned argCount, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
     for (unsigned i = 0; i < argCount; ++i)
-        aList.append(convertNPVariantToValue(exec, &args[i], rootObject));
+        aList.append(convertNPVariantToValue(lexicalGlobalObject, &args[i], rootObject));
 }
 
 static NPObject* jsAllocate(NPP, NPClass*)
@@ -184,7 +184,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         
         // Call the function object.
         JSValue function = obj->imp;
@@ -194,12 +194,12 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
             return false;
         
         MarkedArgumentBuffer argList;
-        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::call(exec, function, callType, callData, function, argList);
+        JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, function, argList);
 
         // Convert and return the result of the function call.
-        convertValueToNPVariant(exec, resultV, result);
+        convertValueToNPVariant(lexicalGlobalObject, resultV, result);
         scope.clearException();
         return true;        
     }
@@ -238,8 +238,8 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
-        JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
+        JSGlobalObject* lexicalGlobalObject = globalObject;
+        JSValue function = obj->imp->get(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         CallData callData;
         CallType callType = getCallData(vm, function, callData);
         if (callType == CallType::None)
@@ -247,12 +247,12 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
 
         // Call the function object.
         MarkedArgumentBuffer argList;
-        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
+        JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
-        convertValueToNPVariant(exec, resultV, result);
+        convertValueToNPVariant(lexicalGlobalObject, resultV, result);
         scope.clearException();
         return true;
     }
@@ -278,12 +278,12 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         String scriptString = convertNPStringToUTF16(s);
         
-        JSValue returnValue = JSC::evaluate(exec, JSC::makeSource(scriptString, { }), JSC::JSValue());
+        JSValue returnValue = JSC::evaluate(lexicalGlobalObject, JSC::makeSource(scriptString, { }), JSC::JSValue());
 
-        convertValueToNPVariant(exec, returnValue, variant);
+        convertValueToNPVariant(lexicalGlobalObject, returnValue, variant);
         scope.clearException();
         return true;
     }
@@ -306,16 +306,16 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         
         JSValue result;
         if (i->isString())
-            result = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
+            result = obj->imp->get(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         else
-            result = obj->imp->get(exec, i->number());
+            result = obj->imp->get(lexicalGlobalObject, i->number());
 
-        convertValueToNPVariant(exec, result, variant);
+        convertValueToNPVariant(lexicalGlobalObject, result, variant);
         scope.clearException();
         return true;
     }
@@ -344,14 +344,14 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
 
         if (i->isString()) {
             PutPropertySlot slot(obj->imp);
-            obj->imp->methodTable(vm)->put(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
+            obj->imp->methodTable(vm)->put(obj->imp, lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()), convertNPVariantToValue(lexicalGlobalObject, variant, rootObject), slot);
         } else
-            obj->imp->methodTable(vm)->putByIndex(obj->imp, exec, i->number(), convertNPVariantToValue(exec, variant, rootObject), false);
+            obj->imp->methodTable(vm)->putByIndex(obj->imp, lexicalGlobalObject, i->number(), convertNPVariantToValue(lexicalGlobalObject, variant, rootObject), false);
         scope.clearException();
         return true;
     }
@@ -376,25 +376,25 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
 
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         if (i->isString()) {
-            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(exec, i->string()))) {
+            if (!obj->imp->hasProperty(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()))) {
                 scope.clearException();
                 return false;
             }
         } else {
-            if (!obj->imp->hasProperty(exec, i->number())) {
+            if (!obj->imp->hasProperty(lexicalGlobalObject, i->number())) {
                 scope.clearException();
                 return false;
             }
         }
 
         if (i->isString())
-            obj->imp->methodTable(vm)->deleteProperty(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()));
+            obj->imp->methodTable(vm)->deleteProperty(obj->imp, lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         else
-            obj->imp->methodTable(vm)->deletePropertyByIndex(obj->imp, exec, i->number());
+            obj->imp->methodTable(vm)->deletePropertyByIndex(obj->imp, lexicalGlobalObject, i->number());
 
         scope.clearException();
         return true;
@@ -416,15 +416,15 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         if (i->isString()) {
-            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(exec, i->string()));
+            bool result = obj->imp->hasProperty(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
             scope.clearException();
             return result;
         }
 
-        bool result = obj->imp->hasProperty(exec, i->number());
+        bool result = obj->imp->hasProperty(lexicalGlobalObject, i->number());
         scope.clearException();
         return result;
     }
@@ -453,8 +453,8 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
-        JSValue func = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
+        JSGlobalObject* lexicalGlobalObject = globalObject;
+        JSValue func = obj->imp->get(lexicalGlobalObject, identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         scope.clearException();
         return !func.isUndefined();
     }
@@ -486,10 +486,10 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
 
-        obj->imp->methodTable(vm)->getPropertyNames(obj->imp, exec, propertyNames, EnumerationMode());
+        obj->imp->methodTable(vm)->getPropertyNames(obj->imp, lexicalGlobalObject, propertyNames, EnumerationMode());
         unsigned size = static_cast<unsigned>(propertyNames.size());
         // FIXME: This should really call NPN_MemAlloc but that's in WebKit
         NPIdentifier* identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));
@@ -527,7 +527,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
         JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        ExecState* exec = globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = globalObject;
         
         // Call the constructor object.
         JSValue constructor = obj->imp;
@@ -537,12 +537,12 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
             return false;
         
         MarkedArgumentBuffer argList;
-        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
         RELEASE_ASSERT(!argList.hasOverflowed());
-        JSValue resultV = JSC::construct(exec, constructor, constructType, constructData, argList);
+        JSValue resultV = JSC::construct(lexicalGlobalObject, constructor, constructType, constructData, argList);
         
         // Convert and return the result.
-        convertValueToNPVariant(exec, resultV, result);
+        convertValueToNPVariant(lexicalGlobalObject, resultV, result);
         scope.clearException();
         return true;
     }

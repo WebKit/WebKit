@@ -32,16 +32,16 @@ typedef (object or DOMString) AlgorithmIdentifier;
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface SubtleCrypto {
-    [CallWith=ExecState] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [CallWith=ExecState] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [CallWith=ExecState] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [CallWith=ExecState] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
-    [CallWith=ExecState] Promise<any> digest(AlgorithmIdentifier algorithm, BufferSource data);
-    [CallWith=ExecState] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
-    [CallWith=ExecState] Promise<any> deriveKey(AlgorithmIdentifier algorithm, CryptoKey baseKey, AlgorithmIdentifier derivedKeyType, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
-    [CallWith=ExecState] Promise<ArrayBuffer> deriveBits(AlgorithmIdentifier algorithm, CryptoKey baseKey, unsigned long length);
-    [CallWith=ExecState] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=GlobalObject] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=GlobalObject] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=GlobalObject] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=GlobalObject] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
+    [CallWith=GlobalObject] Promise<any> digest(AlgorithmIdentifier algorithm, BufferSource data);
+    [CallWith=GlobalObject] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=GlobalObject] Promise<any> deriveKey(AlgorithmIdentifier algorithm, CryptoKey baseKey, AlgorithmIdentifier derivedKeyType, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=GlobalObject] Promise<ArrayBuffer> deriveBits(AlgorithmIdentifier algorithm, CryptoKey baseKey, unsigned long length);
+    [CallWith=GlobalObject] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
     Promise<any> exportKey(KeyFormat format, CryptoKey key);
-    [CallWith=ExecState] Promise<any> wrapKey(KeyFormat format, CryptoKey key, CryptoKey wrappingKey, AlgorithmIdentifier wrapAlgorithm);
-    [CallWith=ExecState] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, CryptoKey unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier unwrappedKeyAlgorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=GlobalObject] Promise<any> wrapKey(KeyFormat format, CryptoKey key, CryptoKey wrappingKey, AlgorithmIdentifier wrapAlgorithm);
+    [CallWith=GlobalObject] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, CryptoKey unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier unwrappedKeyAlgorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
 };

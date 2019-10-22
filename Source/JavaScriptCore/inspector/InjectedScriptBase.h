@@ -56,7 +56,7 @@ public:
 
     const String& name() const { return m_name; }
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
-    JSC::ExecState* scriptState() const { return m_injectedScriptObject.scriptState(); }
+    JSC::JSGlobalObject* globalObject() const { return m_injectedScriptObject.globalObject(); }
 
 protected:
     InjectedScriptBase(const String& name);

@@ -128,7 +128,7 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
         if (UNLIKELY(m_page.settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())) {
             if (consoleMessage->type() == MessageType::Image) {
                 ASSERT(consoleMessage->arguments());
-                ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->arguments()->globalState(), *consoleMessage->arguments());
+                ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->arguments()->globalObject(), *consoleMessage->arguments());
             } else
                 ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
         }
@@ -153,7 +153,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     addMessage(source, level, message, String(), 0, 0, WTFMove(callStack), 0);
 }
 
-void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::JSGlobalObject* lexicalGlobalObject, unsigned long requestIdentifier)
 {
     if (muteCount && source != MessageSource::ConsoleAPI)
         return;
@@ -163,18 +163,18 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     if (callStack)
         message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, callStack.releaseNonNull(), requestIdentifier);
     else
-        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
+        message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, lexicalGlobalObject, requestIdentifier);
 
     addMessage(WTFMove(message));
 }
 
 
-void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<Inspector::ScriptArguments>&& arguments)
+void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* lexicalGlobalObject, Ref<Inspector::ScriptArguments>&& arguments)
 {
     String messageText;
     bool gotMessage = arguments->getFirstArgumentAsString(messageText);
 
-    auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
+    auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), lexicalGlobalObject);
 
     String url = message->url();
     unsigned lineNumber = message->line();
@@ -189,52 +189,52 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
         m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, level, messageText, lineNumber, columnNumber, url);
 
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTFMove(arguments));
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, lexicalGlobalObject, WTFMove(arguments));
 }
 
-void PageConsoleClient::count(JSC::ExecState* exec, const String& label)
+void PageConsoleClient::count(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::consoleCount(m_page, exec, label);
+    InspectorInstrumentation::consoleCount(m_page, lexicalGlobalObject, label);
 }
 
-void PageConsoleClient::countReset(JSC::ExecState* exec, const String& label)
+void PageConsoleClient::countReset(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::consoleCountReset(m_page, exec, label);
+    InspectorInstrumentation::consoleCountReset(m_page, lexicalGlobalObject, label);
 }
 
-void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
-{
-    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
-    InspectorInstrumentation::startProfiling(m_page, exec, title);
-}
-
-void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
+void PageConsoleClient::profile(JSC::JSGlobalObject* lexicalGlobalObject, const String& title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
-    InspectorInstrumentation::stopProfiling(m_page, exec, title);
+    InspectorInstrumentation::startProfiling(m_page, lexicalGlobalObject, title);
 }
 
-void PageConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)
+void PageConsoleClient::profileEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& title)
+{
+    // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
+    InspectorInstrumentation::stopProfiling(m_page, lexicalGlobalObject, title);
+}
+
+void PageConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
 {
     InspectorInstrumentation::takeHeapSnapshot(m_page.mainFrame(), title);
 }
 
-void PageConsoleClient::time(JSC::ExecState* exec, const String& label)
+void PageConsoleClient::time(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), exec, label);
+    InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label);
 }
 
-void PageConsoleClient::timeLog(JSC::ExecState* exec, const String& label, Ref<ScriptArguments>&& arguments)
+void PageConsoleClient::timeLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::logConsoleTiming(m_page.mainFrame(), exec, label, WTFMove(arguments));
+    InspectorInstrumentation::logConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label, WTFMove(arguments));
 }
 
-void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& label)
+void PageConsoleClient::timeEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), exec, label);
+    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label);
 }
 
-void PageConsoleClient::timeStamp(JSC::ExecState*, Ref<ScriptArguments>&& arguments)
+void PageConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&& arguments)
 {
     InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), WTFMove(arguments));
 }
@@ -265,18 +265,18 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue 
     return nullptr;
 }
 
-void PageConsoleClient::record(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+void PageConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (auto* context = canvasRenderingContext(state->vm(), target))
-            InspectorInstrumentation::consoleStartRecordingCanvas(*context, *state, objectArgumentAt(arguments, 1));
+        if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+            InspectorInstrumentation::consoleStartRecordingCanvas(*context, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
     }
 }
 
-void PageConsoleClient::recordEnd(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+void PageConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (auto* context = canvasRenderingContext(state->vm(), target))
+        if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
             InspectorInstrumentation::didFinishRecordingCanvasFrame(*context, true);
     }
 }
@@ -301,9 +301,9 @@ static Optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasR
     return WTF::nullopt;
 }
 
-void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
+void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
 {
-    JSC::VM& vm = state->vm();
+    JSC::VM& vm = lexicalGlobalObject->vm();
     String dataURL;
     JSC::JSValue target;
 
@@ -388,7 +388,7 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
             // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
         } else {
             String base64;
-            if (possibleTarget.getString(state, base64) && base64.startsWithIgnoringASCIICase("data:"_s) && base64.length() > 5) {
+            if (possibleTarget.getString(lexicalGlobalObject, base64) && base64.startsWithIgnoringASCIICase("data:"_s) && base64.length() > 5) {
                 target = possibleTarget;
                 dataURL = base64;
             }
@@ -413,7 +413,7 @@ void PageConsoleClient::screenshot(JSC::ExecState* state, Ref<ScriptArguments>&&
     adjustedArguments.append({ vm, target ? target : JSC::jsNontrivialString(vm, "Viewport"_s) });
     for (size_t i = (!target ? 0 : 1); i < arguments->argumentCount(); ++i)
         adjustedArguments.append({ vm, arguments->argumentAt(i) });
-    arguments = ScriptArguments::create(*state, WTFMove(adjustedArguments));
+    arguments = ScriptArguments::create(lexicalGlobalObject, WTFMove(adjustedArguments));
     addMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Image, MessageLevel::Log, dataURL, WTFMove(arguments)));
 }
 

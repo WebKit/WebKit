@@ -83,13 +83,13 @@ JSBigInt* JSBigInt::createZero(VM& vm)
     return zeroBigInt;
 }
 
-JSBigInt* JSBigInt::tryCreateWithLength(ExecState* exec, unsigned length)
+JSBigInt* JSBigInt::tryCreateWithLength(JSGlobalObject* globalObject, unsigned length)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(length > maxLength)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -176,7 +176,7 @@ JSBigInt* JSBigInt::createFrom(VM& vm, bool value)
     return bigInt;
 }
 
-JSValue JSBigInt::toPrimitive(ExecState*, PreferredPrimitiveType) const
+JSValue JSBigInt::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 {
     return const_cast<JSBigInt*>(this);
 }
@@ -194,34 +194,34 @@ Optional<uint8_t> JSBigInt::singleDigitValueForString()
     return { };
 }
 
-JSBigInt* JSBigInt::parseInt(ExecState* exec, StringView s, ErrorParseMode parserMode)
+JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, StringView s, ErrorParseMode parserMode)
 {
     if (s.is8Bit())
-        return parseInt(exec, s.characters8(), s.length(), parserMode);
-    return parseInt(exec, s.characters16(), s.length(), parserMode);
+        return parseInt(globalObject, s.characters8(), s.length(), parserMode);
+    return parseInt(globalObject, s.characters16(), s.length(), parserMode);
 }
 
-JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
+JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, StringView s, uint8_t radix, ErrorParseMode parserMode, ParseIntSign sign)
 {
     if (s.is8Bit())
-        return parseInt(exec, vm, s.characters8(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
-    return parseInt(exec, vm, s.characters16(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
+        return parseInt(globalObject, vm, s.characters8(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
+    return parseInt(globalObject, vm, s.characters16(), s.length(), 0, radix, parserMode, sign, ParseIntMode::DisallowEmptyString);
 }
 
-JSBigInt* JSBigInt::stringToBigInt(ExecState* exec, StringView s)
+JSBigInt* JSBigInt::stringToBigInt(JSGlobalObject* globalObject, StringView s)
 {
-    return parseInt(exec, s, ErrorParseMode::IgnoreExceptions);
+    return parseInt(globalObject, s, ErrorParseMode::IgnoreExceptions);
 }
 
-String JSBigInt::toString(ExecState* exec, unsigned radix)
+String JSBigInt::toString(JSGlobalObject* globalObject, unsigned radix)
 {
     if (this->isZero())
-        return exec->vm().smallStrings.singleCharacterStringRep('0');
+        return globalObject->vm().smallStrings.singleCharacterStringRep('0');
 
     if (hasOneBitSet(radix))
-        return toStringBasePowerOfTwo(exec->vm(), exec, this, radix);
+        return toStringBasePowerOfTwo(globalObject->vm(), globalObject, this, radix);
 
-    return toStringGeneric(exec->vm(), exec, this, radix);
+    return toStringGeneric(globalObject->vm(), globalObject, this, radix);
 }
 
 String JSBigInt::tryGetString(VM& vm, JSBigInt* bigInt, unsigned radix)
@@ -241,13 +241,13 @@ void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
     internalMultiplyAdd(this, factor, summand, length(), this);
 }
 
-JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* exponent)
+JSBigInt* JSBigInt::exponentiate(JSGlobalObject* globalObject, JSBigInt* base, JSBigInt* exponent)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (exponent->sign()) {
-        throwRangeError(exec, scope, "Negative exponent is not allowed"_s);
+        throwRangeError(globalObject, scope, "Negative exponent is not allowed"_s);
         return nullptr;
     }
 
@@ -273,7 +273,7 @@ JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* expo
     // results.
     static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit::max()");
     if (exponent->length() > 1) {
-        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -281,7 +281,7 @@ JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* expo
     if (expValue == 1)
         return base;
     if (expValue >= maxLengthBits) {
-        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -290,7 +290,7 @@ JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* expo
     if (base->length() == 1 && base->digit(0) == 2) {
         // Fast path for 2^n.
         int neededDigits = 1 + (n / digitBits);
-        JSBigInt* result = JSBigInt::tryCreateWithLength(exec, neededDigits);
+        JSBigInt* result = JSBigInt::tryCreateWithLength(globalObject, neededDigits);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         result->initialize(InitializationType::WithZero);
@@ -313,14 +313,14 @@ JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* expo
 
     n >>= 1;
     for (; n; n >>= 1) {
-        JSBigInt* maybeResult = JSBigInt::multiply(exec, runningSquare, runningSquare);
+        JSBigInt* maybeResult = JSBigInt::multiply(globalObject, runningSquare, runningSquare);
         RETURN_IF_EXCEPTION(scope, nullptr);
         runningSquare = maybeResult;
         if (n & 1) {
             if (!result)
                 result = runningSquare;
             else {
-                maybeResult = JSBigInt::multiply(exec, result, runningSquare);
+                maybeResult = JSBigInt::multiply(globalObject, result, runningSquare);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 result = maybeResult;
             }
@@ -330,9 +330,9 @@ JSBigInt* JSBigInt::exponentiate(ExecState* exec, JSBigInt* base, JSBigInt* expo
     return result;
 }
 
-JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::multiply(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (x->isZero())
@@ -341,7 +341,7 @@ JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
         return y;
 
     unsigned resultLength = x->length() + y->length();
-    JSBigInt* result = JSBigInt::tryCreateWithLength(exec, resultLength);
+    JSBigInt* result = JSBigInt::tryCreateWithLength(globalObject, resultLength);
     RETURN_IF_EXCEPTION(scope, nullptr);
     result->initialize(InitializationType::WithZero);
 
@@ -352,14 +352,14 @@ JSBigInt* JSBigInt::multiply(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return result->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::divide(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::divide(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     // 1. If y is 0n, throw a RangeError exception.
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (y->isZero()) {
-        throwRangeError(exec, scope, "0 is an invalid divisor value."_s);
+        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
         return nullptr;
     }
 
@@ -379,7 +379,7 @@ JSBigInt* JSBigInt::divide(ExecState* exec, JSBigInt* x, JSBigInt* y)
         Digit remainder;
         absoluteDivWithDigitDivisor(vm, x, divisor, &quotient, remainder);
     } else {
-        absoluteDivWithBigIntDivisor(exec, x, y, &quotient, nullptr);
+        absoluteDivWithBigIntDivisor(globalObject, x, y, &quotient, nullptr);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
@@ -407,14 +407,14 @@ JSBigInt* JSBigInt::unaryMinus(VM& vm, JSBigInt* x)
     return result;
 }
 
-JSBigInt* JSBigInt::remainder(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::remainder(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     // 1. If y is 0n, throw a RangeError exception.
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (y->isZero()) {
-        throwRangeError(exec, scope, "0 is an invalid divisor value."_s);
+        throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
         return nullptr;
     }
 
@@ -437,7 +437,7 @@ JSBigInt* JSBigInt::remainder(ExecState* exec, JSBigInt* x, JSBigInt* y)
         remainder = createWithLengthUnchecked(vm, 1);
         remainder->setDigit(0, remainderDigit);
     } else {
-        absoluteDivWithBigIntDivisor(exec, x, y, nullptr, &remainder);
+        absoluteDivWithBigIntDivisor(globalObject, x, y, nullptr, &remainder);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
@@ -445,15 +445,15 @@ JSBigInt* JSBigInt::remainder(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return remainder->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::add(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::add(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     bool xSign = x->sign();
 
     // x + y == x + y
     // -x + -y == -(x + y)
     if (xSign == y->sign())
-        return absoluteAdd(exec, x, y, xSign);
+        return absoluteAdd(globalObject, x, y, xSign);
 
     // x + -y == x - y == -(y - x)
     // -x + y == y - x == -(x - y)
@@ -464,14 +464,14 @@ JSBigInt* JSBigInt::add(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::sub(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::sub(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     bool xSign = x->sign();
     if (xSign != y->sign()) {
         // x - (-y) == x + y
         // (-x) - y == -(x + y)
-        return absoluteAdd(exec, x, y, xSign);
+        return absoluteAdd(globalObject, x, y, xSign);
     }
     // x - y == -(y - x)
     // (-x) - (-y) == y - x == -(x - y)
@@ -482,9 +482,9 @@ JSBigInt* JSBigInt::sub(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return absoluteSub(vm, y, x, !xSign);
 }
 
-JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseAnd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!x->sign() && !y->sign()) {
@@ -496,14 +496,14 @@ JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
         int resultLength = std::max(x->length(), y->length()) + 1;
         // (-x) & (-y) == ~(x-1) & ~(y-1) == ~((x-1) | (y-1))
         // == -(((x-1) | (y-1)) + 1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
+        JSBigInt* result = absoluteSubOne(globalObject, x, resultLength);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
+        JSBigInt* y1 = absoluteSubOne(globalObject, y, y->length());
         RETURN_IF_EXCEPTION(scope, nullptr);
         result = absoluteOr(vm, result, y1);
         scope.release();
-        return absoluteAddOne(exec, result, SignOption::Signed);
+        return absoluteAddOne(globalObject, result, SignOption::Signed);
     }
 
     ASSERT(x->sign() != y->sign());
@@ -512,14 +512,14 @@ JSBigInt* JSBigInt::bitwiseAnd(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x & (-y) == x & ~(y-1) == x & ~(y-1)
-    JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
+    JSBigInt* y1 = absoluteSubOne(globalObject, y, y->length());
     RETURN_IF_EXCEPTION(scope, nullptr);
     return absoluteAndNot(vm, x, y1);
 }
 
-JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseOr(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned resultLength = std::max(x->length(), y->length());
@@ -532,15 +532,15 @@ JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
     if (x->sign() && y->sign()) {
         // (-x) | (-y) == ~(x-1) | ~(y-1) == ~((x-1) & (y-1))
         // == -(((x-1) & (y-1)) + 1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
+        JSBigInt* result = absoluteSubOne(globalObject, x, resultLength);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
+        JSBigInt* y1 = absoluteSubOne(globalObject, y, y->length());
         RETURN_IF_EXCEPTION(scope, nullptr);
         result = absoluteAnd(vm, result, y1);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         scope.release();
-        return absoluteAddOne(exec, result, SignOption::Signed);
+        return absoluteAddOne(globalObject, result, SignOption::Signed);
     }
     
     ASSERT(x->sign() != y->sign());
@@ -550,17 +550,17 @@ JSBigInt* JSBigInt::bitwiseOr(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x | (-y) == x | ~(y-1) == ~((y-1) &~ x) == -(((y-1) &~ x) + 1)
-    JSBigInt* result = absoluteSubOne(exec, y, resultLength);
+    JSBigInt* result = absoluteSubOne(globalObject, y, resultLength);
     RETURN_IF_EXCEPTION(scope, nullptr);
     result = absoluteAndNot(vm, result, x);
 
     scope.release();
-    return absoluteAddOne(exec, result, SignOption::Signed);
+    return absoluteAddOne(globalObject, result, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::bitwiseXor(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!x->sign() && !y->sign()) {
@@ -572,9 +572,9 @@ JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
         int resultLength = std::max(x->length(), y->length());
         
         // (-x) ^ (-y) == ~(x-1) ^ ~(y-1) == (x-1) ^ (y-1)
-        JSBigInt* result = absoluteSubOne(exec, x, resultLength);
+        JSBigInt* result = absoluteSubOne(globalObject, x, resultLength);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        JSBigInt* y1 = absoluteSubOne(exec, y, y->length());
+        JSBigInt* y1 = absoluteSubOne(globalObject, y, y->length());
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         scope.release();
@@ -588,44 +588,44 @@ JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
         std::swap(x, y);
     
     // x ^ (-y) == x ^ ~(y-1) == ~(x ^ (y-1)) == -((x ^ (y-1)) + 1)
-    JSBigInt* result = absoluteSubOne(exec, y, resultLength);
+    JSBigInt* result = absoluteSubOne(globalObject, y, resultLength);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     result = absoluteXor(vm, result, x);
     scope.release();
-    return absoluteAddOne(exec, result, SignOption::Signed);
+    return absoluteAddOne(globalObject, result, SignOption::Signed);
 }
 
-JSBigInt* JSBigInt::leftShift(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::leftShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     if (y->isZero() || x->isZero())
         return x;
 
     if (y->sign())
-        return rightShiftByAbsolute(exec, x, y);
+        return rightShiftByAbsolute(globalObject, x, y);
 
-    return leftShiftByAbsolute(exec, x, y);
+    return leftShiftByAbsolute(globalObject, x, y);
 }
 
-JSBigInt* JSBigInt::signedRightShift(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::signedRightShift(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
     if (y->isZero() || x->isZero())
         return x;
 
     if (y->sign())
-        return leftShiftByAbsolute(exec, x, y);
+        return leftShiftByAbsolute(globalObject, x, y);
 
-    return rightShiftByAbsolute(exec, x, y);
+    return rightShiftByAbsolute(globalObject, x, y);
 }
 
-JSBigInt* JSBigInt::bitwiseNot(ExecState* exec, JSBigInt* x)
+JSBigInt* JSBigInt::bitwiseNot(JSGlobalObject* globalObject, JSBigInt* x)
 {
     if (x->sign()) {
         // ~(-x) == ~(~(x-1)) == x-1
-        return absoluteSubOne(exec, x, x->length());
+        return absoluteSubOne(globalObject, x, x->length());
     } 
     // ~x == -x-1 == -(x+1)
-    return absoluteAddOne(exec, x, SignOption::Signed);
+    return absoluteAddOne(globalObject, x, SignOption::Signed);
 }
 
 #if USE(JSVALUE32_64)
@@ -921,12 +921,12 @@ inline JSBigInt::ComparisonResult JSBigInt::absoluteCompare(JSBigInt* x, JSBigIn
     return x->digit(i) > y->digit(i) ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
 }
 
-JSBigInt* JSBigInt::absoluteAdd(ExecState* exec, JSBigInt* x, JSBigInt* y, bool resultSign)
+JSBigInt* JSBigInt::absoluteAdd(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y, bool resultSign)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     if (x->length() < y->length())
-        return absoluteAdd(exec, y, x, resultSign);
+        return absoluteAdd(globalObject, y, x, resultSign);
 
     if (x->isZero()) {
         ASSERT(y->isZero());
@@ -936,7 +936,7 @@ JSBigInt* JSBigInt::absoluteAdd(ExecState* exec, JSBigInt* x, JSBigInt* y, bool 
     if (y->isZero())
         return resultSign == x->sign() ? x : unaryMinus(vm, x);
 
-    JSBigInt* result = JSBigInt::tryCreateWithLength(exec, x->length() + 1);
+    JSBigInt* result = JSBigInt::tryCreateWithLength(globalObject, x->length() + 1);
     if (!result)
         return nullptr;
     Digit carry = 0;
@@ -1043,11 +1043,11 @@ void JSBigInt::absoluteDivWithDigitDivisor(VM& vm, JSBigInt* x, Digit divisor, J
 // Both {quotient} and {remainder} are optional, for callers that are only
 // interested in one of them.
 // See Knuth, Volume 2, section 4.3.1, Algorithm D.
-void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder)
+void JSBigInt::absoluteDivWithBigIntDivisor(JSGlobalObject* globalObject, JSBigInt* dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder)
 {
     ASSERT(divisor->length() >= 2);
     ASSERT(dividend->length() >= divisor->length());
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // The unusual variable names inside this function are consistent with
@@ -1060,11 +1060,11 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     // The quotient to be computed.
     JSBigInt* q = nullptr;
     if (quotient != nullptr)
-        q = createWithLengthUnchecked(exec->vm(), m + 1);
+        q = createWithLengthUnchecked(globalObject->vm(), m + 1);
     
     // In each iteration, {qhatv} holds {divisor} * {current quotient digit}.
     // "v" is the book's name for {divisor}, "qhat" the current quotient digit.
-    JSBigInt* qhatv = tryCreateWithLength(exec, n + 1);
+    JSBigInt* qhatv = tryCreateWithLength(globalObject, n + 1);
     RETURN_IF_EXCEPTION(scope, void());
     
     // D1.
@@ -1076,13 +1076,13 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     unsigned shift = clz(lastDigit);
 
     if (shift > 0) {
-        divisor = absoluteLeftShiftAlwaysCopy(exec, divisor, shift, LeftShiftMode::SameSizeResult);
+        divisor = absoluteLeftShiftAlwaysCopy(globalObject, divisor, shift, LeftShiftMode::SameSizeResult);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
     // Holds the (continuously updated) remaining part of the dividend, which
     // eventually becomes the remainder.
-    JSBigInt* u = absoluteLeftShiftAlwaysCopy(exec, dividend, shift, LeftShiftMode::AlwaysAddOneDigit);
+    JSBigInt* u = absoluteLeftShiftAlwaysCopy(globalObject, dividend, shift, LeftShiftMode::AlwaysAddOneDigit);
     RETURN_IF_EXCEPTION(scope, void());
 
     // D2.
@@ -1211,14 +1211,14 @@ void JSBigInt::inplaceRightShift(unsigned shift)
 }
 
 // Always copies the input, even when {shift} == 0.
-JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(ExecState* exec, JSBigInt* x, unsigned shift, LeftShiftMode mode)
+JSBigInt* JSBigInt::absoluteLeftShiftAlwaysCopy(JSGlobalObject* globalObject, JSBigInt* x, unsigned shift, LeftShiftMode mode)
 {
     ASSERT(shift < digitBits);
     ASSERT(!x->isZero());
 
     unsigned n = x->length();
     unsigned resultLength = mode == LeftShiftMode::AlwaysAddOneDigit ? n + 1 : n;
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
+    JSBigInt* result = tryCreateWithLength(globalObject, resultLength);
     if (!result)
         return nullptr;
 
@@ -1325,7 +1325,7 @@ JSBigInt* JSBigInt::absoluteXor(VM& vm, JSBigInt* x, JSBigInt* y)
     return absoluteBitwiseOp(vm, x, y, ExtraDigitsHandling::Copy, SymmetricOp::Symmetric, digitOperation);
 }
     
-JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption signOption)
+JSBigInt* JSBigInt::absoluteAddOne(JSGlobalObject* globalObject, JSBigInt* x, SignOption signOption)
 {
     unsigned inputLength = x->length();
     // The addition will overflow into a new digit if all existing digits are
@@ -1339,7 +1339,7 @@ JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption sign
     }
 
     unsigned resultLength = inputLength + willOverflow;
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
+    JSBigInt* result = tryCreateWithLength(globalObject, resultLength);
     if (!result)
         return nullptr;
 
@@ -1355,17 +1355,17 @@ JSBigInt* JSBigInt::absoluteAddOne(ExecState* exec, JSBigInt* x, SignOption sign
         ASSERT(!carry);
 
     result->setSign(signOption == SignOption::Signed);
-    return result->rightTrim(exec->vm());
+    return result->rightTrim(globalObject->vm());
 }
 
-JSBigInt* JSBigInt::absoluteSubOne(ExecState* exec, JSBigInt* x, unsigned resultLength)
+JSBigInt* JSBigInt::absoluteSubOne(JSGlobalObject* globalObject, JSBigInt* x, unsigned resultLength)
 {
     ASSERT(!x->isZero());
     ASSERT(resultLength >= x->length());
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
+    JSBigInt* result = tryCreateWithLength(globalObject, resultLength);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned length = x->length();
@@ -1382,14 +1382,14 @@ JSBigInt* JSBigInt::absoluteSubOne(ExecState* exec, JSBigInt* x, unsigned result
     return result->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::leftShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto optionalShift = toShiftAmount(y);
     if (!optionalShift) {
-        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
@@ -1400,11 +1400,11 @@ JSBigInt* JSBigInt::leftShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* 
     bool grow = bitsShift && (x->digit(length - 1) >> (digitBits - bitsShift));
     int resultLength = length + digitShift + grow;
     if (static_cast<unsigned>(resultLength) > maxLength) {
-        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        throwRangeError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
 
-    JSBigInt* result = tryCreateWithLength(exec, resultLength);
+    JSBigInt* result = tryCreateWithLength(globalObject, resultLength);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!bitsShift) {
         unsigned i = 0;
@@ -1434,9 +1434,9 @@ JSBigInt* JSBigInt::leftShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* 
     return result->rightTrim(vm);
 }
 
-JSBigInt* JSBigInt::rightShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* y)
+JSBigInt* JSBigInt::rightShiftByAbsolute(JSGlobalObject* globalObject, JSBigInt* x, JSBigInt* y)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     unsigned length = x->length();
     bool sign = x->sign();
     auto optionalShift = toShiftAmount(y);
@@ -1500,7 +1500,7 @@ JSBigInt* JSBigInt::rightShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt*
             // Since the result is negative, rounding down means adding one to
             // its absolute value. This cannot overflow.
             result = result->rightTrim(vm);
-            return absoluteAddOne(exec, result, SignOption::Signed);
+            return absoluteAddOne(globalObject, result, SignOption::Signed);
         }
     }
 
@@ -1558,7 +1558,7 @@ uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned 
     return maximumCharactersRequired;
 }
 
-String JSBigInt::toStringBasePowerOfTwo(VM& vm, ExecState* exec, JSBigInt* x, unsigned radix)
+String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* globalObject, JSBigInt* x, unsigned radix)
 {
     ASSERT(hasOneBitSet(radix));
     ASSERT(radix >= 2 && radix <= 32);
@@ -1578,9 +1578,9 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, ExecState* exec, JSBigInt* x, un
     const size_t charsRequired = (bitLength + bitsPerChar - 1) / bitsPerChar + sign;
 
     if (charsRequired > JSString::MaxLength) {
-        if (exec) {
+        if (globalObject) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            throwOutOfMemoryError(exec, scope);            
+            throwOutOfMemoryError(globalObject, scope);            
         }
         return String();
     }
@@ -1620,7 +1620,7 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, ExecState* exec, JSBigInt* x, un
     return StringImpl::adopt(WTFMove(resultString));
 }
 
-String JSBigInt::toStringGeneric(VM& vm, ExecState* exec, JSBigInt* x, unsigned radix)
+String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* globalObject, JSBigInt* x, unsigned radix)
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=18067
@@ -1636,9 +1636,9 @@ String JSBigInt::toStringGeneric(VM& vm, ExecState* exec, JSBigInt* x, unsigned 
     uint64_t maximumCharactersRequired = calculateMaximumCharactersRequired(length, radix, x->digit(length - 1), sign);
 
     if (maximumCharactersRequired > JSString::MaxLength) {
-        if (exec) {
+        if (globalObject) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            throwOutOfMemoryError(exec, scope);            
+            throwOutOfMemoryError(globalObject, scope);            
         }
         return String();
     }
@@ -1731,7 +1731,7 @@ JSBigInt* JSBigInt::rightTrim(VM& vm)
     return trimmedBigInt;
 }
 
-JSBigInt* JSBigInt::allocateFor(ExecState* exec, VM& vm, unsigned radix, unsigned charcount)
+JSBigInt* JSBigInt::allocateFor(JSGlobalObject* globalObject, VM& vm, unsigned radix, unsigned charcount)
 {
     ASSERT(2 <= radix && radix <= 36);
 
@@ -1753,9 +1753,9 @@ JSBigInt* JSBigInt::allocateFor(ExecState* exec, VM& vm, unsigned radix, unsigne
         }
     }
 
-    if (exec) {
+    if (globalObject) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
     }
     return nullptr;
 }
@@ -1765,25 +1765,25 @@ size_t JSBigInt::estimatedSize(JSCell* cell, VM& vm)
     return Base::estimatedSize(cell, vm) + jsCast<JSBigInt*>(cell)->m_length * sizeof(Digit);
 }
 
-double JSBigInt::toNumber(ExecState* exec) const
+double JSBigInt::toNumber(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(exec, scope, "Conversion from 'BigInt' to 'number' is not allowed."_s);
+    throwTypeError(globalObject, scope, "Conversion from 'BigInt' to 'number' is not allowed."_s);
     return 0.0;
 }
 
-bool JSBigInt::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
+bool JSBigInt::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
 {
     result = this;
-    number = toNumber(exec);
+    number = toNumber(globalObject);
     return true;
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
+JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     unsigned p = 0;
     while (p < length && isStrWhiteSpace(data[p]))
@@ -1792,13 +1792,13 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, 
     // Check Radix from frist characters
     if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
-            return parseInt(exec, vm, data, length, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, length, p + 2, 2, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'x'))
-            return parseInt(exec, vm, data, length, p + 2, 16, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, length, p + 2, 16, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
         
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'o'))
-            return parseInt(exec, vm, data, length, p + 2, 8, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
+            return parseInt(globalObject, vm, data, length, p + 2, 8, errorParseMode, ParseIntSign::Unsigned, ParseIntMode::DisallowEmptyString);
     }
 
     ParseIntSign sign = ParseIntSign::Unsigned;
@@ -1811,7 +1811,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, 
         }
     }
 
-    JSBigInt* result = parseInt(exec, vm, data, length, p, 10, errorParseMode, sign);
+    JSBigInt* result = parseInt(globalObject, vm, data, length, p, 10, errorParseMode, sign);
 
     if (result && !result->isZero())
         result->setSign(sign == ParseIntSign::Signed);
@@ -1820,7 +1820,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, 
 }
 
 template <typename CharType>
-JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
+JSBigInt* JSBigInt::parseInt(JSGlobalObject* globalObject, VM& vm, CharType* data, unsigned length, unsigned startIndex, unsigned radix, ErrorParseMode errorParseMode, ParseIntSign sign, ParseIntMode parseMode)
 {
     ASSERT(length >= 0);
     unsigned p = startIndex;
@@ -1828,9 +1828,9 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned l
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (parseMode != ParseIntMode::AllowEmptyString && startIndex == length) {
-        ASSERT(exec);
+        ASSERT(globalObject);
         if (errorParseMode == ErrorParseMode::ThrowExceptions)
-            throwVMError(exec, scope, createSyntaxError(exec, "Failed to parse String to BigInt"));
+            throwVMError(globalObject, scope, createSyntaxError(globalObject, "Failed to parse String to BigInt"));
         return nullptr;
     }
 
@@ -1852,7 +1852,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned l
     unsigned limita = 'a' + (radix - 10);
     unsigned limitA = 'A' + (radix - 10);
 
-    JSBigInt* result = allocateFor(exec, vm, radix, length - p);
+    JSBigInt* result = allocateFor(globalObject, vm, radix, length - p);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->initialize(InitializationType::WithZero);
@@ -1875,9 +1875,9 @@ JSBigInt* JSBigInt::parseInt(ExecState* exec, VM& vm, CharType* data, unsigned l
     if (p == length)
         return result->rightTrim(vm);
 
-    ASSERT(exec);
+    ASSERT(globalObject);
     if (errorParseMode == ErrorParseMode::ThrowExceptions)
-        throwVMError(exec, scope, createSyntaxError(exec, "Failed to parse String to BigInt"));
+        throwVMError(globalObject, scope, createSyntaxError(globalObject, "Failed to parse String to BigInt"));
 
     return nullptr;
 }
@@ -1894,9 +1894,9 @@ inline void JSBigInt::setDigit(unsigned n, Digit value)
     dataStorage()[n] = value;
 }
 
-JSObject* JSBigInt::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+JSObject* JSBigInt::toObject(JSGlobalObject* globalObject) const
 {
-    return BigIntObject::create(exec->vm(), globalObject, const_cast<JSBigInt*>(this));
+    return BigIntObject::create(globalObject->vm(), globalObject, const_cast<JSBigInt*>(this));
 }
 
 bool JSBigInt::equalsToNumber(JSValue numValue)

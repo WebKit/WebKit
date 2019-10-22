@@ -29,8 +29,7 @@ namespace JSC {
 
 class CallFrame;
 class VM;
-using ExecState = CallFrame;
 
-void genericUnwind(VM&, ExecState*);
+void genericUnwind(VM&, CallFrame*);
 
 } // namespace JSC

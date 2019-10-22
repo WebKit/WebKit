@@ -52,8 +52,8 @@ namespace JSC {
 
 class CallFrame;
 class VM;
+class JSGlobalObject;
 class JSLock;
-using ExecState = CallFrame;
 
 // This class is used to protect the initialization of the legacy single 
 // shared VM.
@@ -70,7 +70,7 @@ class JSLockHolder {
 public:
     JS_EXPORT_PRIVATE JSLockHolder(VM*);
     JS_EXPORT_PRIVATE JSLockHolder(VM&);
-    JS_EXPORT_PRIVATE JSLockHolder(ExecState*);
+    JS_EXPORT_PRIVATE JSLockHolder(JSGlobalObject*);
 
     JS_EXPORT_PRIVATE ~JSLockHolder();
 
@@ -87,8 +87,8 @@ public:
     JS_EXPORT_PRIVATE void lock();
     JS_EXPORT_PRIVATE void unlock();
 
-    static void lock(ExecState*);
-    static void unlock(ExecState*);
+    static void lock(JSGlobalObject*);
+    static void unlock(JSGlobalObject*);
     static void lock(VM&);
     static void unlock(VM&);
 
@@ -107,7 +107,7 @@ public:
     class DropAllLocks {
         WTF_MAKE_NONCOPYABLE(DropAllLocks);
     public:
-        JS_EXPORT_PRIVATE DropAllLocks(ExecState*);
+        JS_EXPORT_PRIVATE DropAllLocks(JSGlobalObject*);
         JS_EXPORT_PRIVATE DropAllLocks(VM*);
         JS_EXPORT_PRIVATE DropAllLocks(VM&);
         JS_EXPORT_PRIVATE ~DropAllLocks();

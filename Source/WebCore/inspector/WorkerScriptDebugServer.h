@@ -53,8 +53,8 @@ private:
     void didPause(JSC::JSGlobalObject*) override { }
     void didContinue(JSC::JSGlobalObject*) override { }
     void runEventLoopWhilePaused() override;
-    bool isContentScript(JSC::ExecState*) const override { return false; }
-    void reportException(JSC::ExecState*, JSC::Exception*) const override;
+    bool isContentScript(JSC::JSGlobalObject*) const override { return false; }
+    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const override;
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

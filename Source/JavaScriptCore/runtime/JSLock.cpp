@@ -53,8 +53,8 @@ GlobalJSLock::~GlobalJSLock()
     s_sharedInstanceMutex.unlock();
 }
 
-JSLockHolder::JSLockHolder(ExecState* exec)
-    : JSLockHolder(exec->vm())
+JSLockHolder::JSLockHolder(JSGlobalObject* globalObject)
+    : JSLockHolder(globalObject->vm())
 {
 }
 
@@ -222,14 +222,14 @@ void JSLock::willReleaseLock()
     }
 }
 
-void JSLock::lock(ExecState* exec)
+void JSLock::lock(JSGlobalObject* globalObject)
 {
-    exec->vm().apiLock().lock();
+    globalObject->vm().apiLock().lock();
 }
 
-void JSLock::unlock(ExecState* exec)
+void JSLock::unlock(JSGlobalObject* globalObject)
 {
-    exec->vm().apiLock().unlock();
+    globalObject->vm().apiLock().unlock();
 }
 
 // This function returns the number of locks that were dropped.
@@ -287,8 +287,8 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
-JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
-    : DropAllLocks(exec ? &exec->vm() : nullptr)
+JSLock::DropAllLocks::DropAllLocks(JSGlobalObject* globalObject)
+    : DropAllLocks(globalObject ? &globalObject->vm() : nullptr)
 {
 }
 

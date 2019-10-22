@@ -64,7 +64,7 @@ namespace WebCore {
 using namespace JSC;
 
 // FIXME: This should use the IDLUnion JSConverter.
-JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, const WebGLAny& any)
+JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const WebGLAny& any)
 {
     return WTF::switchOn(any,
         [] (std::nullptr_t) {
@@ -86,108 +86,108 @@ JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, cons
             return jsNumber(value);
         },
         [&] (const String& value) {
-            return jsStringWithCache(&state, value);
+            return jsStringWithCache(&lexicalGlobalObject, value);
         },
         [&] (const Vector<bool>& values) {
             MarkedArgumentBuffer list;
             for (auto& value : values)
                 list.append(jsBoolean(value));
             RELEASE_ASSERT(!list.hasOverflowed());
-            return constructArray(&state, 0, &globalObject, list);
+            return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         },
         [&] (const Vector<int>& values) {
             MarkedArgumentBuffer list;
             for (auto& value : values)
                 list.append(jsNumber(value));
             RELEASE_ASSERT(!list.hasOverflowed());
-            return constructArray(&state, 0, &globalObject, list);
+            return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         },
         [&] (const RefPtr<Float32Array>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
         [&] (const RefPtr<Int32Array>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
         [&] (const RefPtr<Uint8Array>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
         [&] (const RefPtr<Uint32Array>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
         [&] (const RefPtr<WebGLBuffer>& buffer) {
-            return toJS(&state, &globalObject, buffer.get());
+            return toJS(&lexicalGlobalObject, &globalObject, buffer.get());
         },
         [&] (const RefPtr<WebGLFramebuffer>& buffer) {
-            return toJS(&state, &globalObject, buffer.get());
+            return toJS(&lexicalGlobalObject, &globalObject, buffer.get());
         },
         [&] (const RefPtr<WebGLProgram>& program) {
-            return toJS(&state, &globalObject, program.get());
+            return toJS(&lexicalGlobalObject, &globalObject, program.get());
         },
         [&] (const RefPtr<WebGLRenderbuffer>& buffer) {
-            return toJS(&state, &globalObject, buffer.get());
+            return toJS(&lexicalGlobalObject, &globalObject, buffer.get());
         },
         [&] (const RefPtr<WebGLTexture>& texture) {
-            return toJS(&state, &globalObject, texture.get());
+            return toJS(&lexicalGlobalObject, &globalObject, texture.get());
         },
         [&] (const RefPtr<WebGLVertexArrayObjectOES>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         }
 #if ENABLE(WEBGL2)
         ,
         [&] (const RefPtr<WebGLVertexArrayObject>& array) {
-            return toJS(&state, &globalObject, array.get());
+            return toJS(&lexicalGlobalObject, &globalObject, array.get());
         }
 #endif
     );
 }
 
-JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, WebGLExtension& extension)
+JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtension& extension)
 {
     switch (extension.getName()) {
     case WebGLExtension::WebGLLoseContextName:
-        return toJS(&state, &globalObject, static_cast<WebGLLoseContext&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLLoseContext&>(extension));
     case WebGLExtension::EXTShaderTextureLODName:
-        return toJS(&state, &globalObject, static_cast<EXTShaderTextureLOD&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTShaderTextureLOD&>(extension));
     case WebGLExtension::EXTTextureFilterAnisotropicName:
-        return toJS(&state, &globalObject, static_cast<EXTTextureFilterAnisotropic&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTTextureFilterAnisotropic&>(extension));
     case WebGLExtension::EXTsRGBName:
-        return toJS(&state, &globalObject, static_cast<EXTsRGB&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTsRGB&>(extension));
     case WebGLExtension::EXTFragDepthName:
-        return toJS(&state, &globalObject, static_cast<EXTFragDepth&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTFragDepth&>(extension));
     case WebGLExtension::EXTBlendMinMaxName:
-        return toJS(&state, &globalObject, static_cast<EXTBlendMinMax&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<EXTBlendMinMax&>(extension));
     case WebGLExtension::OESStandardDerivativesName:
-        return toJS(&state, &globalObject, static_cast<OESStandardDerivatives&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESStandardDerivatives&>(extension));
     case WebGLExtension::OESTextureFloatName:
-        return toJS(&state, &globalObject, static_cast<OESTextureFloat&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureFloat&>(extension));
     case WebGLExtension::OESTextureFloatLinearName:
-        return toJS(&state, &globalObject, static_cast<OESTextureFloatLinear&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureFloatLinear&>(extension));
     case WebGLExtension::OESTextureHalfFloatName:
-        return toJS(&state, &globalObject, static_cast<OESTextureHalfFloat&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureHalfFloat&>(extension));
     case WebGLExtension::OESTextureHalfFloatLinearName:
-        return toJS(&state, &globalObject, static_cast<OESTextureHalfFloatLinear&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESTextureHalfFloatLinear&>(extension));
     case WebGLExtension::OESVertexArrayObjectName:
-        return toJS(&state, &globalObject, static_cast<OESVertexArrayObject&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESVertexArrayObject&>(extension));
     case WebGLExtension::OESElementIndexUintName:
-        return toJS(&state, &globalObject, static_cast<OESElementIndexUint&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<OESElementIndexUint&>(extension));
     case WebGLExtension::WebGLDebugRendererInfoName:
-        return toJS(&state, &globalObject, static_cast<WebGLDebugRendererInfo&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugRendererInfo&>(extension));
     case WebGLExtension::WebGLDebugShadersName:
-        return toJS(&state, &globalObject, static_cast<WebGLDebugShaders&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDebugShaders&>(extension));
     case WebGLExtension::WebGLCompressedTextureATCName:
-        return toJS(&state, &globalObject, static_cast<WebGLCompressedTextureATC&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureATC&>(extension));
     case WebGLExtension::WebGLCompressedTexturePVRTCName:
-        return toJS(&state, &globalObject, static_cast<WebGLCompressedTexturePVRTC&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTexturePVRTC&>(extension));
     case WebGLExtension::WebGLCompressedTextureS3TCName:
-        return toJS(&state, &globalObject, static_cast<WebGLCompressedTextureS3TC&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureS3TC&>(extension));
     case WebGLExtension::WebGLCompressedTextureASTCName:
-        return toJS(&state, &globalObject, static_cast<WebGLCompressedTextureASTC&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLCompressedTextureASTC&>(extension));
     case WebGLExtension::WebGLDepthTextureName:
-        return toJS(&state, &globalObject, static_cast<WebGLDepthTexture&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDepthTexture&>(extension));
     case WebGLExtension::WebGLDrawBuffersName:
-        return toJS(&state, &globalObject, static_cast<WebGLDrawBuffers&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<WebGLDrawBuffers&>(extension));
     case WebGLExtension::ANGLEInstancedArraysName:
-        return toJS(&state, &globalObject, static_cast<ANGLEInstancedArrays&>(extension));
+        return toJS(&lexicalGlobalObject, &globalObject, static_cast<ANGLEInstancedArrays&>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

@@ -136,15 +136,15 @@ void PageDebuggerAgent::unmuteConsole()
     PageConsoleClient::unmute();
 }
 
-void PageDebuggerAgent::breakpointActionLog(JSC::ExecState& state, const String& message)
+void PageDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& message)
 {
-    m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state));
+    m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
+        JSC::JSGlobalObject* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
         return injectedScriptManager().injectedScriptFor(scriptState);
     }
 
@@ -185,7 +185,7 @@ void PageDebuggerAgent::didRequestAnimationFrame(int callbackId, Document& docum
     if (!breakpointsActive())
         return;
 
-    JSC::ExecState* scriptState = document.execState();
+    JSC::JSGlobalObject* scriptState = document.execState();
     if (!scriptState)
         return;
 

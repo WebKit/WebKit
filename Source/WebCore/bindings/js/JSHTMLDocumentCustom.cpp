@@ -30,19 +30,19 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
+JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
 {
     auto& document = passedDocument.get();
     auto* wrapper = createWrapper<HTMLDocument>(globalObject, WTFMove(passedDocument));
-    reportMemoryForDocumentIfFrameless(*state, document);
+    reportMemoryForDocumentIfFrameless(*lexicalGlobalObject, document);
     return wrapper;
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLDocument& document)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, HTMLDocument& document)
 {
-    if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
+    if (auto* wrapper = cachedDocumentWrapper(*lexicalGlobalObject, *globalObject, document))
         return wrapper;
-    return toJSNewlyCreated(state, globalObject, Ref<HTMLDocument>(document));
+    return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<HTMLDocument>(document));
 }
 
 } // namespace WebCore

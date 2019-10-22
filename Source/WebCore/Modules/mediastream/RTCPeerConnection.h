@@ -96,7 +96,7 @@ public:
     };
 
     using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
-    static void generateCertificate(JSC::ExecState&, AlgorithmIdentifier&&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
+    static void generateCertificate(JSC::JSGlobalObject&, AlgorithmIdentifier&&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 
     // 4.3.2 RTCPeerConnection Interface
     void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);

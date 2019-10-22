@@ -35,7 +35,6 @@ namespace JSC {
 
 class CallFrame;
 class CodeBlock;
-using ExecState = CallFrame;
 
 namespace DFG {
 
@@ -82,12 +81,12 @@ struct CatchEntrypointData {
 
 // Returns a pointer to a data buffer that the OSR entry thunk will recognize and
 // parse. If this returns null, it means 
-void* prepareOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
+void* prepareOSREntry(VM&, CallFrame*, CodeBlock*, unsigned bytecodeIndex);
 
 // If null is returned, we can't OSR enter. If it's not null, it's the PC to jump to.
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock*, unsigned bytecodeIndex);
 #else
-inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return nullptr; }
+inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, unsigned) { return nullptr; }
 #endif
 
 } } // namespace JSC::DFG

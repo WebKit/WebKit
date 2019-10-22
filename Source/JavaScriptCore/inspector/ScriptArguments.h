@@ -39,26 +39,25 @@
 namespace JSC {
 class CallFrame;
 class JSGlobalObject;
-using ExecState = CallFrame;
 }
 
 namespace Inspector {
 
 class JS_EXPORT_PRIVATE ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static Ref<ScriptArguments> create(JSC::ExecState&, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    static Ref<ScriptArguments> create(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     ~ScriptArguments();
 
     JSC::JSValue argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
-    JSC::ExecState* globalState() const;
+    JSC::JSGlobalObject* globalObject() const;
 
     bool getFirstArgumentAsString(String& result) const;
     bool isEqual(const ScriptArguments&) const;
 
 private:
-    ScriptArguments(JSC::ExecState&, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ScriptArguments(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<JSC::Strong<JSC::Unknown>> m_arguments;

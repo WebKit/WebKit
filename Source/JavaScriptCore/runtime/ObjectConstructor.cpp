@@ -115,10 +115,10 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 }
 
 // ES 19.1.1.1 Object([value])
-static ALWAYS_INLINE JSObject* constructObjectWithNewTarget(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget)
+static ALWAYS_INLINE JSObject* constructObjectWithNewTarget(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue newTarget)
 {
-    VM& vm = exec->vm();
-    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(exec->jsCallee());
+    VM& vm = globalObject->vm();
+    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(callFrame->jsCallee());
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We need to check newTarget condition in this caller side instead of InternalFunction::createSubclassStructure side.
@@ -127,38 +127,37 @@ static ALWAYS_INLINE JSObject* constructObjectWithNewTarget(ExecState* exec, JSG
     // 1. If NewTarget is neither undefined nor the active function, then
     if (newTarget && newTarget != objectConstructor) {
         // a. Return ? OrdinaryCreateFromConstructor(NewTarget, "%ObjectPrototype%").
-        Structure* objectStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->objectStructureForObjectConstructor());
+        Structure* objectStructure = InternalFunction::createSubclassStructure(globalObject, objectConstructor, newTarget, globalObject->objectStructureForObjectConstructor());
         RETURN_IF_EXCEPTION(scope, nullptr);
-        return constructEmptyObject(exec, objectStructure);
+        return constructEmptyObject(vm, objectStructure);
     }
 
     // 2. If value is null, undefined or not supplied, return ObjectCreate(%ObjectPrototype%).
-    ArgList args(exec);
-    JSValue arg = args.at(0);
-    if (arg.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject->objectStructureForObjectConstructor());
+    JSValue argument = callFrame->argument(0);
+    if (argument.isUndefinedOrNull())
+        return constructEmptyObject(vm, globalObject->objectStructureForObjectConstructor());
 
     // 3. Return ToObject(value).
-    RELEASE_AND_RETURN(scope, arg.toObject(exec, globalObject));
+    RELEASE_AND_RETURN(scope, argument.toObject(globalObject));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(constructObjectWithNewTarget(callFrame, globalObject, callFrame->newTarget()));
+    return JSValue::encode(constructObjectWithNewTarget(globalObject, callFrame, callFrame->newTarget()));
 }
 
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(constructObjectWithNewTarget(callFrame, globalObject, JSValue()));
+    return JSValue::encode(constructObjectWithNewTarget(globalObject, callFrame, JSValue()));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(object->getPrototype(vm, callFrame)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(object->getPrototype(vm, globalObject)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -168,63 +167,63 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(JSGlobalObject* glo
 
     JSValue objectValue = callFrame->argument(0);
     if (objectValue.isUndefinedOrNull())
-        return throwVMTypeError(callFrame, scope, "Cannot set prototype of undefined or null"_s);
+        return throwVMTypeError(globalObject, scope, "Cannot set prototype of undefined or null"_s);
 
     JSValue protoValue = callFrame->argument(1);
     if (!protoValue.isObject() && !protoValue.isNull())
-        return throwVMTypeError(callFrame, scope, "Prototype value can only be an object or null"_s);
+        return throwVMTypeError(globalObject, scope, "Prototype value can only be an object or null"_s);
 
-    JSObject* object = objectValue.toObject(callFrame);
+    JSObject* object = objectValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     bool shouldThrowIfCantSet = true;
-    bool didSetPrototype = object->setPrototype(vm, callFrame, protoValue, shouldThrowIfCantSet);
+    bool didSetPrototype = object->setPrototype(vm, globalObject, protoValue, shouldThrowIfCantSet);
     EXCEPTION_ASSERT_UNUSED(didSetPrototype, scope.exception() || didSetPrototype);
     return JSValue::encode(objectValue);
 }
 
-JSValue objectConstructorGetOwnPropertyDescriptor(ExecState* exec, JSObject* object, const Identifier& propertyName)
+JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject* globalObject, JSObject* object, const Identifier& propertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertyDescriptor descriptor;
-    if (!object->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+    if (!object->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
         RELEASE_AND_RETURN(scope, jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSObject* result = constructObjectFromPropertyDescriptor(exec, descriptor);
+    JSObject* result = constructObjectFromPropertyDescriptor(globalObject, descriptor);
     EXCEPTION_ASSERT(!!scope.exception() == !result);
     if (!result)
         return jsUndefined();
     return result;
 }
 
-JSValue objectConstructorGetOwnPropertyDescriptors(ExecState* exec, JSObject* object)
+JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject* globalObject, JSObject* object)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSObject* descriptors = constructEmptyObject(exec);
+    JSObject* descriptors = constructEmptyObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     for (auto& propertyName : properties) {
         PropertyDescriptor descriptor;
-        bool didGetDescriptor = object->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+        bool didGetDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!didGetDescriptor)
             continue;
 
-        JSObject* fromDescriptor = constructObjectFromPropertyDescriptor(exec, descriptor);
+        JSObject* fromDescriptor = constructObjectFromPropertyDescriptor(globalObject, descriptor);
         EXCEPTION_ASSERT(!!scope.exception() == !fromDescriptor);
         if (!fromDescriptor)
             return jsUndefined();
 
         PutPropertySlot slot(descriptors);
-        descriptors->putOwnDataPropertyMayBeIndex(exec, propertyName, fromDescriptor, slot);
+        descriptors->putOwnDataPropertyMayBeIndex(globalObject, propertyName, fromDescriptor, slot);
         scope.assertNoException();
     }
 
@@ -235,20 +234,20 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(JSGlobalO
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto propertyName = callFrame->argument(1).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(1).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorGetOwnPropertyDescriptor(callFrame, object, propertyName)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorGetOwnPropertyDescriptor(globalObject, object, propertyName)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorGetOwnPropertyDescriptors(callFrame, object)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorGetOwnPropertyDescriptors(globalObject, object)));
 }
 
 // FIXME: Use the enumeration cache.
@@ -256,9 +255,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(JSGlobalObject
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(callFrame, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include)));
 }
 
 // FIXME: Use the enumeration cache.
@@ -266,18 +265,18 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(JSGlobalObje
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(callFrame, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = callFrame->argument(0).toObject(callFrame);
+    JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(callFrame, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -287,8 +286,8 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
 
     JSValue targetValue = callFrame->argument(0);
     if (targetValue.isUndefinedOrNull())
-        return throwVMTypeError(callFrame, scope, "Object.assign requires that input parameter not be null or undefined"_s);
-    JSObject* target = targetValue.toObject(callFrame);
+        return throwVMTypeError(globalObject, scope, "Object.assign requires that input parameter not be null or undefined"_s);
+    JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Extend this for non JSFinalObject. For example, we would like to use this fast path for function objects too.
@@ -302,12 +301,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
         JSValue sourceValue = callFrame->uncheckedArgument(i);
         if (sourceValue.isUndefinedOrNull())
             continue;
-        JSObject* source = sourceValue.toObject(callFrame);
+        JSObject* source = sourceValue.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (targetCanPerformFastPut) {
             if (!source->staticPropertiesReified(vm)) {
-                source->reifyAllStaticProperties(callFrame);
+                source->reifyAllStaticProperties(globalObject);
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
@@ -373,12 +372,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
         targetCanPerformFastPut = false;
 
         PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-        source->methodTable(vm)->getOwnPropertyNames(source, callFrame, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+        source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
         RETURN_IF_EXCEPTION(scope, { });
 
         auto assign = [&] (PropertyName propertyName) {
             PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
-            bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, callFrame, propertyName, slot);
+            bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, globalObject, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, void());
             if (!hasProperty)
                 return;
@@ -387,13 +386,13 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObjec
 
             JSValue value;
             if (LIKELY(!slot.isTaintedByOpaqueObject()))
-                value = slot.getValue(callFrame, propertyName);
+                value = slot.getValue(globalObject, propertyName);
             else
-                value = source->get(callFrame, propertyName);
+                value = source->get(globalObject, propertyName);
             RETURN_IF_EXCEPTION(scope, void());
 
             PutPropertySlot putPropertySlot(target, true);
-            target->putInline(callFrame, propertyName, value, putPropertySlot);
+            target->putInline(globalObject, propertyName, value, putPropertySlot);
         };
 
         // First loop is for strings. Second loop is for symbols to keep standardized order requirement in the spec.
@@ -432,21 +431,21 @@ EncodedJSValue JSC_HOST_CALL objectConstructorValues(JSGlobalObject* globalObjec
 
     JSValue targetValue = callFrame->argument(0);
     if (targetValue.isUndefinedOrNull())
-        return throwVMTypeError(callFrame, scope, "Object.values requires that input parameter not be null or undefined"_s);
-    JSObject* target = targetValue.toObject(callFrame);
+        return throwVMTypeError(globalObject, scope, "Object.values requires that input parameter not be null or undefined"_s);
+    JSObject* target = targetValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSArray* values = constructEmptyArray(callFrame, nullptr);
+    JSArray* values = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     PropertyNameArray properties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    target->methodTable(vm)->getOwnPropertyNames(target, callFrame, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned index = 0;
     auto addValue = [&] (PropertyName propertyName) {
         PropertySlot slot(target, PropertySlot::InternalMethodType::GetOwnProperty);
-        bool hasProperty = target->methodTable(vm)->getOwnPropertySlot(target, callFrame, propertyName, slot);
+        bool hasProperty = target->methodTable(vm)->getOwnPropertySlot(target, globalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, void());
         if (!hasProperty)
             return;
@@ -455,12 +454,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorValues(JSGlobalObject* globalObjec
 
         JSValue value;
         if (LIKELY(!slot.isTaintedByOpaqueObject()))
-            value = slot.getValue(callFrame, propertyName);
+            value = slot.getValue(globalObject, propertyName);
         else
-            value = target->get(callFrame, propertyName);
+            value = target->get(globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
 
-        values->putDirectIndex(callFrame, index++, value);
+        values->putDirectIndex(globalObject, index++, value);
     };
 
     for (unsigned i = 0, numProperties = properties.size(); i < numProperties; i++) {
@@ -478,63 +477,63 @@ EncodedJSValue JSC_HOST_CALL objectConstructorValues(JSGlobalObject* globalObjec
 
 // ES6 6.2.4.5 ToPropertyDescriptor
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
-bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
+bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDescriptor& desc)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!in.isObject()) {
-        throwTypeError(exec, scope, "Property description must be an object."_s);
+        throwTypeError(globalObject, scope, "Property description must be an object."_s);
         return false;
     }
     JSObject* description = asObject(in);
 
-    bool hasProperty = description->hasProperty(exec, vm.propertyNames->enumerable);
+    bool hasProperty = description->hasProperty(globalObject, vm.propertyNames->enumerable);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue value = description->get(exec, vm.propertyNames->enumerable);
+        JSValue value = description->get(globalObject, vm.propertyNames->enumerable);
         RETURN_IF_EXCEPTION(scope, false);
-        desc.setEnumerable(value.toBoolean(exec));
+        desc.setEnumerable(value.toBoolean(globalObject));
     } else
         RETURN_IF_EXCEPTION(scope, false);
 
-    hasProperty = description->hasProperty(exec, vm.propertyNames->configurable);
+    hasProperty = description->hasProperty(globalObject, vm.propertyNames->configurable);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue value = description->get(exec, vm.propertyNames->configurable);
+        JSValue value = description->get(globalObject, vm.propertyNames->configurable);
         RETURN_IF_EXCEPTION(scope, false);
-        desc.setConfigurable(value.toBoolean(exec));
+        desc.setConfigurable(value.toBoolean(globalObject));
     } else
         RETURN_IF_EXCEPTION(scope, false);
 
     JSValue value;
-    hasProperty = description->hasProperty(exec, vm.propertyNames->value);
+    hasProperty = description->hasProperty(globalObject, vm.propertyNames->value);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue value = description->get(exec, vm.propertyNames->value);
+        JSValue value = description->get(globalObject, vm.propertyNames->value);
         RETURN_IF_EXCEPTION(scope, false);
         desc.setValue(value);
     } else
         RETURN_IF_EXCEPTION(scope, false);
 
-    hasProperty = description->hasProperty(exec, vm.propertyNames->writable);
+    hasProperty = description->hasProperty(globalObject, vm.propertyNames->writable);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue value = description->get(exec, vm.propertyNames->writable);
+        JSValue value = description->get(globalObject, vm.propertyNames->writable);
         RETURN_IF_EXCEPTION(scope, false);
-        desc.setWritable(value.toBoolean(exec));
+        desc.setWritable(value.toBoolean(globalObject));
     } else
         RETURN_IF_EXCEPTION(scope, false);
 
-    hasProperty = description->hasProperty(exec, vm.propertyNames->get);
+    hasProperty = description->hasProperty(globalObject, vm.propertyNames->get);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue get = description->get(exec, vm.propertyNames->get);
+        JSValue get = description->get(globalObject, vm.propertyNames->get);
         RETURN_IF_EXCEPTION(scope, false);
         if (!get.isUndefined()) {
             CallData callData;
             if (getCallData(vm, get, callData) == CallType::None) {
-                throwTypeError(exec, scope, "Getter must be a function."_s);
+                throwTypeError(globalObject, scope, "Getter must be a function."_s);
                 return false;
             }
         }
@@ -542,15 +541,15 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
     } else
         RETURN_IF_EXCEPTION(scope, false);
 
-    hasProperty = description->hasProperty(exec, vm.propertyNames->set);
+    hasProperty = description->hasProperty(globalObject, vm.propertyNames->set);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
-        JSValue set = description->get(exec, vm.propertyNames->set);
+        JSValue set = description->get(globalObject, vm.propertyNames->set);
         RETURN_IF_EXCEPTION(scope, false);
         if (!set.isUndefined()) {
             CallData callData;
             if (getCallData(vm, set, callData) == CallType::None) {
-                throwTypeError(exec, scope, "Setter must be a function."_s);
+                throwTypeError(globalObject, scope, "Setter must be a function."_s);
                 return false;
             }
         }
@@ -562,12 +561,12 @@ bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
         return true;
 
     if (desc.value()) {
-        throwTypeError(exec, scope, "Invalid property.  'value' present on property with getter or setter."_s);
+        throwTypeError(globalObject, scope, "Invalid property.  'value' present on property with getter or setter."_s);
         return false;
     }
 
     if (desc.writablePresent()) {
-        throwTypeError(exec, scope, "Invalid property.  'writable' present on property with getter or setter."_s);
+        throwTypeError(globalObject, scope, "Invalid property.  'writable' present on property with getter or setter."_s);
         return false;
     }
     return true;
@@ -579,28 +578,28 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!callFrame->argument(0).isObject())
-        return throwVMTypeError(callFrame, scope, "Properties can only be defined on Objects."_s);
+        return throwVMTypeError(globalObject, scope, "Properties can only be defined on Objects."_s);
     JSObject* obj = asObject(callFrame->argument(0));
-    auto propertyName = callFrame->argument(1).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(1).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     PropertyDescriptor descriptor;
-    auto success = toPropertyDescriptor(callFrame, callFrame->argument(2), descriptor);
+    auto success = toPropertyDescriptor(globalObject, callFrame->argument(2), descriptor);
     EXCEPTION_ASSERT(!scope.exception() == success);
     if (!success)
         return JSValue::encode(jsNull());
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
     scope.assertNoException();
-    obj->methodTable(vm)->defineOwnProperty(obj, callFrame, propertyName, descriptor, true);
+    obj->methodTable(vm)->defineOwnProperty(obj, globalObject, propertyName, descriptor, true);
     RELEASE_AND_RETURN(scope, JSValue::encode(obj));
 }
 
-static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* properties)
+static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, JSObject* properties)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    asObject(properties)->methodTable(vm)->getOwnPropertyNames(asObject(properties), exec, propertyNames, EnumerationMode(DontEnumPropertiesMode::Exclude));
+    asObject(properties)->methodTable(vm)->getOwnPropertyNames(asObject(properties), globalObject, propertyNames, EnumerationMode(DontEnumPropertiesMode::Exclude));
     RETURN_IF_EXCEPTION(scope, { });
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
@@ -612,10 +611,10 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
     } \
 } while (false)
     for (size_t i = 0; i < numProperties; i++) {
-        JSValue prop = properties->get(exec, propertyNames[i]);
+        JSValue prop = properties->get(globalObject, propertyNames[i]);
         RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
         PropertyDescriptor descriptor;
-        toPropertyDescriptor(exec, prop, descriptor);
+        toPropertyDescriptor(globalObject, prop, descriptor);
         RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
         descriptors.append(descriptor);
         // Ensure we mark all the values that we're accumulating
@@ -634,7 +633,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
         auto& propertyName = propertyNames[i];
         ASSERT(!propertyName.isPrivateName());
 
-        object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, descriptors[i], true);
+        object->methodTable(vm)->defineOwnProperty(object, globalObject, propertyName, descriptors[i], true);
         RETURN_IF_EXCEPTION(scope, { });
     }
     return object;
@@ -646,13 +645,13 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!callFrame->argument(0).isObject())
-        return throwVMTypeError(callFrame, scope, "Properties can only be defined on Objects."_s);
+        return throwVMTypeError(globalObject, scope, "Properties can only be defined on Objects."_s);
     JSObject* targetObj = asObject(callFrame->argument(0));
-    JSObject* props = callFrame->argument(1).toObject(callFrame);
+    JSObject* props = callFrame->argument(1).toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !props);
     if (UNLIKELY(!props))
         return encodedJSValue();
-    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(callFrame, targetObj, props)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(globalObject, targetObj, props)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorCreate(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -662,16 +661,16 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(JSGlobalObject* globalObjec
 
     JSValue proto = callFrame->argument(0);
     if (!proto.isObject() && !proto.isNull())
-        return throwVMTypeError(callFrame, scope, "Object prototype may only be an Object or null."_s);
+        return throwVMTypeError(globalObject, scope, "Object prototype may only be an Object or null."_s);
     JSObject* newObject = proto.isObject()
-        ? constructEmptyObject(callFrame, asObject(proto))
-        : constructEmptyObject(callFrame, globalObject->nullPrototypeObjectStructure());
+        ? constructEmptyObject(globalObject, asObject(proto))
+        : constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     if (callFrame->argument(1).isUndefined())
         return JSValue::encode(newObject);
-    JSObject* properties = callFrame->uncheckedArgument(1).toObject(callFrame);
+    JSObject* properties = callFrame->uncheckedArgument(1).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(callFrame, newObject, properties)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(globalObject, newObject, properties)));
 }
 
 enum class IntegrityLevel {
@@ -680,18 +679,18 @@ enum class IntegrityLevel {
 };
 
 template<IntegrityLevel level>
-bool setIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
+bool setIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
 {
     // See https://tc39.github.io/ecma262/#sec-setintegritylevel.
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool success = object->methodTable(vm)->preventExtensions(object, exec);
+    bool success = object->methodTable(vm)->preventExtensions(object, globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     if (UNLIKELY(!success))
         return false;
 
     PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     RETURN_IF_EXCEPTION(scope, false);
 
     PropertyNameArray::const_iterator end = properties.end();
@@ -703,7 +702,7 @@ bool setIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
         if (level == IntegrityLevel::Sealed)
             desc.setConfigurable(false);
         else {
-            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(exec, propertyName, desc);
+            bool hasPropertyDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, desc);
             RETURN_IF_EXCEPTION(scope, false);
             if (!hasPropertyDescriptor)
                 continue;
@@ -714,14 +713,14 @@ bool setIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
             desc.setConfigurable(false);
         }
 
-        object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
+        object->methodTable(vm)->defineOwnProperty(object, globalObject, propertyName, desc, true);
         RETURN_IF_EXCEPTION(scope, false);
     }
     return true;
 }
 
 template<IntegrityLevel level>
-bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
+bool testIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -729,7 +728,7 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
     // 2. Assert: level is either "sealed" or "frozen".
 
     // 3. Let status be ?IsExtensible(O).
-    bool status = object->isExtensible(exec);
+    bool status = object->isExtensible(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 4. If status is true, return false.
@@ -738,7 +737,7 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
 
     // 6. Let keys be ? O.[[OwnPropertyKeys]]().
     PropertyNameArray keys(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, keys, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, keys, EnumerationMode(DontEnumPropertiesMode::Include));
     RETURN_IF_EXCEPTION(scope, { });
 
     // 7. For each element k of keys, do
@@ -749,7 +748,7 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
 
         // a. Let currentDesc be ? O.[[GetOwnProperty]](k)
         PropertyDescriptor desc;
-        bool didGetDescriptor = object->getOwnPropertyDescriptor(exec, propertyName, desc);
+        bool didGetDescriptor = object->getOwnPropertyDescriptor(globalObject, propertyName, desc);
         RETURN_IF_EXCEPTION(scope, { });
 
         // b. If currentDesc is not undefined, then
@@ -769,9 +768,9 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
     return true;
 }
 
-JSObject* objectConstructorSeal(ExecState* exec, JSObject* object)
+JSObject* objectConstructorSeal(JSGlobalObject* globalObject, JSObject* object)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
@@ -779,10 +778,10 @@ JSObject* objectConstructorSeal(ExecState* exec, JSObject* object)
         return object;
     }
 
-    bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
+    bool success = setIntegrityLevel<IntegrityLevel::Sealed>(globalObject, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (UNLIKELY(!success)) {
-        throwTypeError(exec, scope, "Unable to prevent extension in Object.seal"_s);
+        throwTypeError(globalObject, scope, "Unable to prevent extension in Object.seal"_s);
         return nullptr;
     }
 
@@ -799,12 +798,12 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(JSGlobalObject* globalObject,
     if (!obj.isObject())
         return JSValue::encode(obj);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorSeal(callFrame, asObject(obj))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorSeal(globalObject, asObject(obj))));
 }
 
-JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
+JSObject* objectConstructorFreeze(JSGlobalObject* globalObject, JSObject* object)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (jsDynamicCast<JSFinalObject*>(vm, object) && !hasIndexedProperties(object->indexingType())) {
@@ -812,10 +811,10 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
         return object;
     }
 
-    bool success = setIntegrityLevel<IntegrityLevel::Frozen>(exec, vm, object);
+    bool success = setIntegrityLevel<IntegrityLevel::Frozen>(globalObject, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (UNLIKELY(!success)) {
-        throwTypeError(exec, scope, "Unable to prevent extension in Object.freeze"_s);
+        throwTypeError(globalObject, scope, "Unable to prevent extension in Object.freeze"_s);
         return nullptr;
     }
     return object;
@@ -829,7 +828,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(JSGlobalObject* globalObjec
     JSValue obj = callFrame->argument(0);
     if (!obj.isObject())
         return JSValue::encode(obj);
-    JSObject* result = objectConstructorFreeze(callFrame, asObject(obj));
+    JSObject* result = objectConstructorFreeze(globalObject, asObject(obj));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(result);
 }
@@ -841,7 +840,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(JSGlobalObject* 
     if (!argument.isObject())
         return JSValue::encode(argument);
     JSObject* object = asObject(argument);
-    object->methodTable(vm)->preventExtensions(object, callFrame);
+    object->methodTable(vm)->preventExtensions(object, globalObject);
     return JSValue::encode(object);
 }
 
@@ -860,7 +859,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(JSGlobalObject* globalObj
         return JSValue::encode(jsBoolean(object->isSealed(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "sealed").
-    return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Sealed>(callFrame, vm, object)));
+    return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Sealed>(globalObject, vm, object)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -878,7 +877,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(JSGlobalObject* globalObj
         return JSValue::encode(jsBoolean(object->isFrozen(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "frozen").
-    return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Frozen>(callFrame, vm, object)));
+    return JSValue::encode(jsBoolean(testIntegrityLevel<IntegrityLevel::Frozen>(globalObject, vm, object)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -889,22 +888,21 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(JSGlobalObject* globa
     if (!obj.isObject())
         return JSValue::encode(jsBoolean(false));
     JSObject* object = asObject(obj);
-    bool isExtensible = object->isExtensible(callFrame);
+    bool isExtensible = object->isExtensible(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsBoolean(isExtensible));
 }
 
-EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsBoolean(sameValue(callFrame, callFrame->argument(0), callFrame->argument(1))));
+    return JSValue::encode(jsBoolean(sameValue(globalObject, callFrame->argument(0), callFrame->argument(1))));
 }
 
-JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode)
+JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* globalObject = exec->lexicalGlobalObject();
     bool isObjectKeys = propertyNameMode == PropertyNameMode::Strings && dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude;
     // We attempt to look up own property keys cache in Object.keys case.
     if (isObjectKeys) {
@@ -917,7 +915,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     }
 
     PropertyNameArray properties(vm, propertyNameMode, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(dontEnumPropertiesMode));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (propertyNameMode != PropertyNameMode::StringsAndSymbols) {
@@ -965,12 +963,12 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         }
     }
 
-    JSArray* keys = constructEmptyArray(exec, nullptr);
+    JSArray* keys = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned index = 0;
-    auto pushDirect = [&] (ExecState* exec, JSArray* array, JSValue value) {
-        array->putDirectIndex(exec, index++, value);
+    auto pushDirect = [&] (JSGlobalObject* globalObject, JSArray* array, JSValue value) {
+        array->putDirectIndex(globalObject, index++, value);
     };
 
     switch (propertyNameMode) {
@@ -979,7 +977,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(!identifier.isSymbol());
-            pushDirect(exec, keys, jsOwnedString(vm, identifier.string()));
+            pushDirect(globalObject, keys, jsOwnedString(vm, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
@@ -991,7 +989,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
             ASSERT(!identifier.isPrivateName());
-            pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            pushDirect(globalObject, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
@@ -1008,13 +1006,13 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
                 continue;
             }
 
-            pushDirect(exec, keys, jsOwnedString(vm, identifier.string()));
+            pushDirect(globalObject, keys, jsOwnedString(vm, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
 
         // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
         for (const auto& identifier : propertySymbols) {
-            pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            pushDirect(globalObject, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
 

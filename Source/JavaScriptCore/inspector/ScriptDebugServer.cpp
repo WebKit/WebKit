@@ -93,7 +93,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     switch (breakpointAction.type) {
     case ScriptBreakpointActionTypeLog:
         dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
-            listener.breakpointActionLog(*debuggerCallFrame.globalExec(), breakpointAction.data);
+            listener.breakpointActionLog(debuggerCallFrame.globalObject(), breakpointAction.data);
         });
         break;
 
@@ -102,7 +102,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         JSObject* scopeExtensionObject = nullptr;
         debuggerCallFrame.evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
         if (exception)
-            reportException(debuggerCallFrame.globalExec(), exception);
+            reportException(debuggerCallFrame.globalObject(), exception);
         break;
     }
 
@@ -116,12 +116,12 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         NakedPtr<Exception> exception;
         JSObject* scopeExtensionObject = nullptr;
         JSValue result = debuggerCallFrame.evaluateWithScopeExtension(breakpointAction.data, scopeExtensionObject, exception);
-        JSC::ExecState* exec = debuggerCallFrame.globalExec();
+        JSC::JSGlobalObject* globalObject = debuggerCallFrame.globalObject();
         if (exception)
-            reportException(exec, exception);
+            reportException(globalObject, exception);
 
         dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
-            listener.breakpointActionProbe(*exec, breakpointAction, m_currentProbeBatchId, m_nextProbeSampleId++, exception ? exception->value() : result);
+            listener.breakpointActionProbe(globalObject, breakpointAction, m_currentProbeBatchId, m_nextProbeSampleId++, exception ? exception->value() : result);
         });
         break;
     }
@@ -133,7 +133,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     return true;
 }
 
-void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
+void ScriptDebugServer::sourceParsed(JSGlobalObject* globalObject, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     // Preemptively check whether we can dispatch so that we don't do any unnecessary allocations.
     if (!canDispatchFunctionToListeners())
@@ -158,7 +158,7 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     script.source = sourceProvider->source().toString();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
-    script.isContentScript = isContentScript(exec);
+    script.isContentScript = isContentScript(globalObject);
     script.sourceURL = sourceProvider->sourceURLDirective();
     script.sourceMappingURL = sourceProvider->sourceMappingURLDirective();
 
@@ -240,28 +240,27 @@ void ScriptDebugServer::handleBreakpointHit(JSC::JSGlobalObject* globalObject, c
     }
 }
 
-void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exec, JSC::Exception* exception) const
+void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::JSGlobalObject* globalObject, JSC::Exception* exception) const
 {
-    reportException(exec, exception);
+    reportException(globalObject, exception);
 }
 
-void ScriptDebugServer::handlePause(JSGlobalObject* vmEntryGlobalObject, Debugger::ReasonForPause)
+void ScriptDebugServer::handlePause(JSGlobalObject* globalObject, Debugger::ReasonForPause)
 {
     dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
         ASSERT(isPaused());
         auto& debuggerCallFrame = currentDebuggerCallFrame();
         auto* globalObject = debuggerCallFrame.scope()->globalObject();
-        auto& state = *globalObject->globalExec();
-        auto jsCallFrame = toJS(&state, globalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
-        listener.didPause(state, jsCallFrame, exceptionOrCaughtValue(&state));
+        auto jsCallFrame = toJS(globalObject, globalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());
+        listener.didPause(globalObject, jsCallFrame, exceptionOrCaughtValue(globalObject));
     });
 
-    didPause(vmEntryGlobalObject);
+    didPause(globalObject);
 
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
 
-    didContinue(vmEntryGlobalObject);
+    didContinue(globalObject);
 
     dispatchFunctionToListeners([&] (ScriptDebugListener& listener) {
         listener.didContinue();
@@ -291,7 +290,7 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, bool isBei
         detachDebugger(isBeingDestroyed);
 }
 
-JSC::JSValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState* state)
+JSC::JSValue ScriptDebugServer::exceptionOrCaughtValue(JSC::JSGlobalObject* globalObject)
 {
     if (reasonForPause() == PausedForException)
         return currentException();
@@ -299,7 +298,7 @@ JSC::JSValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState* state)
     for (RefPtr<DebuggerCallFrame> frame = &currentDebuggerCallFrame(); frame; frame = frame->callerFrame()) {
         DebuggerScope& scope = *frame->scope();
         if (scope.isCatchScope())
-            return scope.caughtValue(state);
+            return scope.caughtValue(globalObject);
     }
 
     return { };

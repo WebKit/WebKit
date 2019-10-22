@@ -152,7 +152,7 @@ protected:
     JS_EXPORT_PRIVATE JSArrayBufferView(VM&, ConstructionContext&);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
     
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
     
@@ -163,8 +163,8 @@ public:
     bool isShared();
     JS_EXPORT_PRIVATE ArrayBuffer* unsharedBuffer();
     inline ArrayBuffer* possiblySharedBuffer();
-    JSArrayBuffer* unsharedJSBuffer(ExecState* exec);
-    JSArrayBuffer* possiblySharedJSBuffer(ExecState* exec);
+    JSArrayBuffer* unsharedJSBuffer(JSGlobalObject* globalObject);
+    JSArrayBuffer* possiblySharedJSBuffer(JSGlobalObject* globalObject);
     RefPtr<ArrayBufferView> unsharedImpl();
     JS_EXPORT_PRIVATE RefPtr<ArrayBufferView> possiblySharedImpl();
     bool isNeutered() { return hasArrayBuffer() && !hasVector(); }
@@ -199,7 +199,7 @@ protected:
 
     ArrayBuffer* existingBufferInButterfly();
 
-    static String toStringName(const JSObject*, ExecState*);
+    static String toStringName(const JSObject*, JSGlobalObject*);
 
     VectorPtr m_vector;
     uint32_t m_length;

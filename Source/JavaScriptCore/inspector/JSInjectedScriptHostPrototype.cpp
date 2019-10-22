@@ -92,9 +92,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeEvaluate(JSGl
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->evaluate(callFrame));
+    return JSValue::encode(castedThis->evaluate(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeSavedResultAlias(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -105,9 +105,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeAttributeSavedResultAl
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->savedResultAlias(callFrame));
+    return JSValue::encode(castedThis->savedResultAlias(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionInternalConstructorName(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -118,9 +118,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionInternalConstr
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->internalConstructorName(callFrame));
+    return JSValue::encode(castedThis->internalConstructorName(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -131,9 +131,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsHTMLAllColle
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->isHTMLAllCollection(callFrame));
+    return JSValue::encode(castedThis->isHTMLAllCollection(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -144,9 +144,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIsPromiseRejec
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->isPromiseRejectedWithNativeGetterTypeError(callFrame));
+    return JSValue::encode(castedThis->isPromiseRejectedWithNativeGetterTypeError(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionProxyTargetValue(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -157,9 +157,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionProxyTargetVal
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->proxyTargetValue(callFrame));
+    return JSValue::encode(castedThis->proxyTargetValue(vm, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapSize(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -170,9 +170,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapSize(JS
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->weakMapSize(callFrame));
+    return JSValue::encode(castedThis->weakMapSize(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -183,9 +183,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakMapEntries
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->weakMapEntries(callFrame));
+    return JSValue::encode(castedThis->weakMapEntries(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetSize(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -196,9 +196,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetSize(JS
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->weakSetSize(callFrame));
+    return JSValue::encode(castedThis->weakSetSize(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -209,9 +209,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionWeakSetEntries
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->weakSetEntries(callFrame));
+    return JSValue::encode(castedThis->weakSetEntries(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntries(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -222,9 +222,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionIteratorEntrie
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->iteratorEntries(callFrame));
+    return JSValue::encode(castedThis->iteratorEntries(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -235,9 +235,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryInstances
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->queryInstances(callFrame));
+    return JSValue::encode(castedThis->queryInstances(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -248,9 +248,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionQueryHolders(J
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->queryHolders(callFrame));
+    return JSValue::encode(castedThis->queryHolders(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -261,9 +261,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionEvaluateWithSc
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->evaluateWithScopeExtension(callFrame));
+    return JSValue::encode(castedThis->evaluateWithScopeExtension(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -274,9 +274,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlob
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->subtype(callFrame));
+    return JSValue::encode(castedThis->subtype(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetails(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -287,9 +287,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetail
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->functionDetails(callFrame));
+    return JSValue::encode(castedThis->functionDetails(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionGetInternalProperties(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -300,9 +300,9 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionGetInternalPro
     JSValue thisValue = callFrame->thisValue();
     JSInjectedScriptHost* castedThis = jsDynamicCast<JSInjectedScriptHost*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->getInternalProperties(callFrame));
+    return JSValue::encode(castedThis->getInternalProperties(globalObject, callFrame));
 }
 
 } // namespace Inspector

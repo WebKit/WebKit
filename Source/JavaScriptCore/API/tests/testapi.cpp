@@ -27,6 +27,7 @@
 
 #include "APICast.h"
 #include "JSCJSValueInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSObject.h"
 
 #include <JavaScriptCore/JSContextRefPrivate.h>
@@ -72,9 +73,9 @@ public:
         APIString print("print");
         JSObjectRef printFunction = JSObjectMakeFunctionWithCallback(m_context, print, [] (JSContextRef ctx, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*) {
 
-            JSC::ExecState* exec = toJS(ctx);
+            JSC::JSGlobalObject* globalObject = toJS(ctx);
             for (unsigned i = 0; i < argumentCount; i++)
-                dataLog(toJS(exec, arguments[i]));
+                dataLog(toJS(globalObject, arguments[i]));
             dataLogLn();
             return JSValueMakeUndefined(ctx);
         });
@@ -88,7 +89,7 @@ public:
     }
 
     operator JSGlobalContextRef() { return m_context; }
-    operator JSC::ExecState*() { return toJS(m_context); }
+    operator JSC::JSGlobalObject*() { return toJS(m_context); }
 
 private:
     JSGlobalContextRef m_context;

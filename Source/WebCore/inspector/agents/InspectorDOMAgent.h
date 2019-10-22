@@ -48,7 +48,6 @@ class InjectedScriptManager;
 namespace JSC {
 class CallFrame;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -99,7 +98,7 @@ public:
     static Node* innerParentNode(Node*);
 
     static Node* scriptValueAsNode(JSC::JSValue);
-    static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
+    static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;

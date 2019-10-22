@@ -101,12 +101,12 @@ public:
         Identifier localName;
     };
 
-    Resolution resolveExport(ExecState*, const Identifier& exportName);
-    Resolution resolveImport(ExecState*, const Identifier& localName);
+    Resolution resolveExport(JSGlobalObject*, const Identifier& exportName);
+    Resolution resolveImport(JSGlobalObject*, const Identifier& localName);
 
-    AbstractModuleRecord* hostResolveImportedModule(ExecState*, const Identifier& moduleName);
+    AbstractModuleRecord* hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName);
 
-    JSModuleNamespaceObject* getModuleNamespace(ExecState*);
+    JSModuleNamespaceObject* getModuleNamespace(JSGlobalObject*);
     
     JSModuleEnvironment* moduleEnvironment()
     {
@@ -119,12 +119,12 @@ public:
         return m_moduleEnvironment.get();
     }
 
-    void link(ExecState*, JSValue scriptFetcher);
-    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
+    void link(JSGlobalObject*, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
 protected:
     AbstractModuleRecord(VM&, Structure*, const Identifier&);
-    void finishCreation(ExecState*, VM&);
+    void finishCreation(JSGlobalObject*, VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
@@ -133,7 +133,7 @@ protected:
 
 private:
     struct ResolveQuery;
-    static Resolution resolveExportImpl(ExecState*, const ResolveQuery&);
+    static Resolution resolveExportImpl(JSGlobalObject*, const ResolveQuery&);
     Optional<Resolution> tryGetCachedResolution(UniquedStringImpl* exportName);
     void cacheResolution(UniquedStringImpl* exportName, const Resolution&);
 

@@ -50,9 +50,9 @@ void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 // Returns true if we found enough information to terminate optimization.
-static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op, InitializationMode initializationMode)
+static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op, InitializationMode initializationMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (scope->isJSLexicalEnvironment()) {
@@ -79,7 +79,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         if (scope->type() == ModuleEnvironmentType) {
             JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
             AbstractModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
-            AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(exec, ident);
+            AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(globalObject, ident);
             RETURN_IF_EXCEPTION(throwScope, false);
             if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
                 AbstractModuleRecord* importedRecord = resolution.moduleRecord;
@@ -155,7 +155,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         }
 
         PropertySlot slot(globalObject, PropertySlot::InternalMethodType::VMInquiry);
-        bool hasOwnProperty = globalObject->getOwnPropertySlot(globalObject, exec, ident, slot);
+        bool hasOwnProperty = globalObject->getOwnPropertySlot(globalObject, globalObject, ident, slot);
         if (!hasOwnProperty) {
             op = ResolveOp(makeType(UnresolvedProperty, needsVarInjectionChecks), 0, 0, 0, 0, 0);
             return true;
@@ -201,27 +201,27 @@ JSObject* JSScope::objectAtScope(JSScope* scope)
 }
 
 // When an exception occurs, the result of isUnscopable becomes false.
-static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* object, const Identifier& ident)
+static inline bool isUnscopable(JSGlobalObject* globalObject, JSScope* scope, JSObject* object, const Identifier& ident)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (scope->type() != WithScopeType)
         return false;
 
-    JSValue unscopables = object->get(exec, vm.propertyNames->unscopablesSymbol);
+    JSValue unscopables = object->get(globalObject, vm.propertyNames->unscopablesSymbol);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (!unscopables.isObject())
         return false;
-    JSValue blocked = jsCast<JSObject*>(unscopables)->get(exec, ident);
+    JSValue blocked = jsCast<JSObject*>(unscopables)->get(globalObject, ident);
     RETURN_IF_EXCEPTION(throwScope, false);
 
-    return blocked.toBoolean(exec);
+    return blocked.toBoolean(globalObject);
 }
 
 template<typename ReturnPredicateFunctor, typename SkipPredicateFunctor>
-ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident, ReturnPredicateFunctor returnPredicate, SkipPredicateFunctor skipPredicate)
+ALWAYS_INLINE JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident, ReturnPredicateFunctor returnPredicate, SkipPredicateFunctor skipPredicate)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     ScopeChainIterator end = scope->end();
     ScopeChainIterator it = scope->begin();
@@ -233,12 +233,12 @@ ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const 
         if (++it == end) {
             JSScope* globalScopeExtension = scope->globalObject(vm)->globalScopeExtension();
             if (UNLIKELY(globalScopeExtension)) {
-                bool hasProperty = object->hasProperty(exec, ident);
+                bool hasProperty = object->hasProperty(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
                     return object;
                 JSObject* extensionScopeObject = JSScope::objectAtScope(globalScopeExtension);
-                hasProperty = extensionScopeObject->hasProperty(exec, ident);
+                hasProperty = extensionScopeObject->hasProperty(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
                     return extensionScopeObject;
@@ -249,10 +249,10 @@ ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const 
         if (skipPredicate(scope))
             continue;
 
-        bool hasProperty = object->hasProperty(exec, ident);
+        bool hasProperty = object->hasProperty(globalObject, ident);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
         if (hasProperty) {
-            bool unscopable = isUnscopable(exec, scope, object, ident);
+            bool unscopable = isUnscopable(globalObject, scope, object, ident);
             EXCEPTION_ASSERT(!throwScope.exception() || !unscopable);
             if (!unscopable)
                 return object;
@@ -263,9 +263,9 @@ ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const 
     }
 }
 
-JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, const Identifier& ident)
+JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto returnPredicate = [&] (JSScope* scope) -> bool {
@@ -274,14 +274,14 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope*
     auto skipPredicate = [&] (JSScope* scope) -> bool {
         return scope->isWithScope();
     };
-    JSObject* object = resolve(exec, scope, ident, returnPredicate, skipPredicate);
+    JSObject* object = resolve(globalObject, scope, ident, returnPredicate, skipPredicate);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     bool result = false;
     if (JSScope* scope = jsDynamicCast<JSScope*>(vm, object)) {
         if (SymbolTable* scopeSymbolTable = scope->symbolTable(vm)) {
             result = scope->isGlobalObject()
-                ? JSObject::isExtensible(object, exec)
+                ? JSObject::isExtensible(object, globalObject)
                 : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
         }
     }
@@ -289,7 +289,7 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope*
     return result ? JSValue(object) : jsUndefined();
 }
 
-JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& ident)
+JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident)
 {
     auto predicate1 = [&] (JSScope*) -> bool {
         return false;
@@ -297,12 +297,12 @@ JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& id
     auto predicate2 = [&] (JSScope*) -> bool {
         return false;
     };
-    return resolve(exec, scope, ident, predicate1, predicate2);
+    return resolve(globalObject, scope, ident, predicate1, predicate2);
 }
 
-ResolveOp JSScope::abstractResolve(ExecState* exec, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
+ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ResolveOp op(Dynamic, 0, 0, 0, 0, 0);
@@ -312,7 +312,7 @@ ResolveOp JSScope::abstractResolve(ExecState* exec, size_t depthOffset, JSScope*
     bool needsVarInjectionChecks = JSC::needsVarInjectionChecks(unlinkedType);
     size_t depth = depthOffset;
     for (; scope; scope = scope->next()) {
-        bool success = abstractAccess(exec, scope, ident, getOrPut, depth, needsVarInjectionChecks, op, initializationMode);
+        bool success = abstractAccess(globalObject, scope, ident, getOrPut, depth, needsVarInjectionChecks, op, initializationMode);
         RETURN_IF_EXCEPTION(throwScope, ResolveOp(Dynamic, 0, 0, 0, 0, 0));
         if (success)
             break;
@@ -409,11 +409,11 @@ SymbolTable* JSScope::symbolTable(VM& vm)
     return nullptr;
 }
 
-JSValue JSScope::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
+JSValue JSScope::toThis(JSCell*, JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)
         return jsUndefined();
-    return exec->globalThisValue();
+    return globalObject->globalThis();
 }
 
 } // namespace JSC

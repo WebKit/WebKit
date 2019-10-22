@@ -40,12 +40,12 @@ JS_EXPORT_PRIVATE JSValue setNeverInline(JSValue function);
 JS_EXPORT_PRIVATE JSValue setNeverOptimize(JSValue function);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
 
-JS_EXPORT_PRIVATE JSValue failNextNewCodeBlock(ExecState*);
-JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
-JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
-JS_EXPORT_PRIVATE JSValue setNeverOptimize(ExecState*);
-JS_EXPORT_PRIVATE JSValue setCannotUseOSRExitFuzzing(ExecState*);
-JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(ExecState*);
+JS_EXPORT_PRIVATE JSValue failNextNewCodeBlock(JSGlobalObject*);
+JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue setNeverInline(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue setNeverOptimize(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue setCannotUseOSRExitFuzzing(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSGlobalObject*, CallFrame*);
 
 JS_EXPORT_PRIVATE unsigned numberOfExceptionFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfExecutableAllocationFuzzChecks();

@@ -47,6 +47,6 @@ public:
     }
 };
 
-JS_EXPORT_PRIVATE NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
+JS_EXPORT_PRIVATE NumberObject* constructNumber(JSGlobalObject*, JSValue);
 
 } // namespace JSC

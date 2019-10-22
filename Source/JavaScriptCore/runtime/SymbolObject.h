@@ -54,9 +54,9 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
-    static String toStringName(const JSObject*, ExecState*);
+    static String toStringName(const JSObject*, JSGlobalObject*);
 
 protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&, Symbol*);

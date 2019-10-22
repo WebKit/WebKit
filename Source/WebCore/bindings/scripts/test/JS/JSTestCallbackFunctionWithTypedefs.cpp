@@ -64,17 +64,17 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithT
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
-    auto& state = *globalObject.globalExec();
+    auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(state, globalObject, sequenceArg));
+    args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(lexicalGlobalObject, globalObject, sequenceArg));
     args.append(toJS<IDLLong>(longArg));
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
-        reportException(&state, returnedException);
+        reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 

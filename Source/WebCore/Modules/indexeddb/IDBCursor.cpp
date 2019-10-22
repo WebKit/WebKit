@@ -101,7 +101,7 @@ IDBTransaction& IDBCursor::transaction() const
     return effectiveObjectStore().transaction();
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
+ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue value)
 {
     LOG(IndexedDB, "IDBCursor::update");
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
@@ -168,7 +168,7 @@ ExceptionOr<void> IDBCursor::advance(unsigned count)
     return { };
 }
 
-ExceptionOr<void> IDBCursor::continuePrimaryKey(ExecState& state, JSValue keyValue, JSValue primaryKeyValue)
+ExceptionOr<void> IDBCursor::continuePrimaryKey(JSGlobalObject& state, JSValue keyValue, JSValue primaryKeyValue)
 {
     if (!m_request)
         return Exception { InvalidStateError };
@@ -220,7 +220,7 @@ ExceptionOr<void> IDBCursor::continuePrimaryKey(ExecState& state, JSValue keyVal
     return { };
 }
 
-ExceptionOr<void> IDBCursor::continueFunction(ExecState& execState, JSValue keyValue)
+ExceptionOr<void> IDBCursor::continueFunction(JSGlobalObject& execState, JSValue keyValue)
 {
     RefPtr<IDBKey> key;
     if (!keyValue.isUndefined())
@@ -282,7 +282,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& 
     transaction().iterateCursor(*this, { key, primaryKey, 0 });
 }
 
-ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state)
+ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(JSGlobalObject& state)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
     ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());

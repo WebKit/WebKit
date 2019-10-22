@@ -47,10 +47,10 @@ private:
 
 public:
     static ClonedArguments* createEmpty(VM&, Structure*, JSFunction* callee, unsigned length);
-    static ClonedArguments* createEmpty(ExecState*, JSFunction* callee, unsigned length);
-    static ClonedArguments* createWithInlineFrame(ExecState* myFrame, ExecState* targetFrame, InlineCallFrame*, ArgumentsMode);
-    static ClonedArguments* createWithMachineFrame(ExecState* myFrame, ExecState* targetFrame, ArgumentsMode);
-    static ClonedArguments* createByCopyingFrom(ExecState*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
+    static ClonedArguments* createEmpty(JSGlobalObject*, JSFunction* callee, unsigned length);
+    static ClonedArguments* createWithInlineFrame(JSGlobalObject*, CallFrame* targetFrame, InlineCallFrame*, ArgumentsMode);
+    static ClonedArguments* createWithMachineFrame(JSGlobalObject*, CallFrame* targetFrame, ArgumentsMode);
+    static ClonedArguments* createByCopyingFrom(JSGlobalObject*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static Structure* createSlowPutStructure(VM&, JSGlobalObject*, JSValue prototype);
@@ -62,15 +62,15 @@ public:
 private:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype, IndexingType);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     
     bool specialsMaterialized() const { return !m_callee; }
-    void materializeSpecials(ExecState*);
-    void materializeSpecialsIfNecessary(ExecState*);
+    void materializeSpecials(JSGlobalObject*);
+    void materializeSpecialsIfNecessary(JSGlobalObject*);
     
     WriteBarrier<JSFunction> m_callee; // Set to nullptr when we materialize all of our special properties.
 };

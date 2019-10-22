@@ -138,7 +138,7 @@ inline void JSCell::visitOutputConstraints(JSCell*, SlotVisitor&)
 {
 }
 
-ALWAYS_INLINE VM& ExecState::vm() const
+ALWAYS_INLINE VM& CallFrame::vm() const
 {
     JSCell* callee = this->callee().asCell();
     ASSERT(callee);
@@ -347,13 +347,13 @@ ALWAYS_INLINE const ClassInfo* JSCell::classInfo(VM& vm) const
     return structure(vm)->classInfo();
 }
 
-inline bool JSCell::toBoolean(ExecState* exec) const
+inline bool JSCell::toBoolean(JSGlobalObject* globalObject) const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean();
     if (isBigInt())
         return static_cast<const JSBigInt*>(this)->toBoolean();
-    return !structure(exec->vm())->masqueradesAsUndefined(exec->lexicalGlobalObject());
+    return !structure(getVM(globalObject))->masqueradesAsUndefined(globalObject);
 }
 
 inline TriState JSCell::pureToBoolean() const
@@ -409,19 +409,19 @@ inline void JSCell::setPerCellBit(bool value)
         m_flags &= ~static_cast<TypeInfo::InlineTypeFlags>(TypeInfoPerCellBit);
 }
 
-inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+inline JSObject* JSCell::toObject(JSGlobalObject* globalObject) const
 {
     if (isObject())
         return jsCast<JSObject*>(const_cast<JSCell*>(this));
-    return toObjectSlow(exec, globalObject);
+    return toObjectSlow(globalObject);
 }
 
-ALWAYS_INLINE bool JSCell::putInline(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+ALWAYS_INLINE bool JSCell::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    auto putMethod = methodTable(exec->vm())->put;
+    auto putMethod = methodTable(getVM(globalObject))->put;
     if (LIKELY(putMethod == JSObject::put))
-        return JSObject::putInlineForJSObject(asObject(this), exec, propertyName, value, slot);
-    return putMethod(this, exec, propertyName, value, slot);
+        return JSObject::putInlineForJSObject(asObject(this), globalObject, propertyName, value, slot);
+    return putMethod(this, globalObject, propertyName, value, slot);
 }
 
 inline bool isWebAssemblyToJSCallee(const JSCell* cell)

@@ -84,9 +84,9 @@ EOF
         return codeBlock->metadata<Metadata>(opcodeID, #{Metadata.field_name});
     }
 
-    Metadata& metadata(ExecState* exec) const
+    Metadata& metadata(CallFrame* callFrame) const
     {
-        return metadata(exec->codeBlock());
+        return metadata(callFrame->codeBlock());
     }
 EOF
     end

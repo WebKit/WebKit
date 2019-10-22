@@ -80,9 +80,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithS
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->evaluateWithScopeExtension(callFrame));
+    return JSValue::encode(castedThis->evaluateWithScopeExtension(globalObject, callFrame));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeDescriptions(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -93,9 +93,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionScopeDescript
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->scopeDescriptions(callFrame));
+    return JSValue::encode(castedThis->scopeDescriptions(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeCaller(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -106,9 +106,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeCaller(JSGlobalObject
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->caller(callFrame));
+    return JSValue::encode(castedThis->caller(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeSourceID(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -119,9 +119,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeSourceID(JSGlobalObje
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->sourceID(callFrame));
+    return JSValue::encode(castedThis->sourceID(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeLine(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -132,9 +132,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeLine(JSGlobalObject* 
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->line(callFrame));
+    return JSValue::encode(castedThis->line(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeColumn(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -145,9 +145,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeColumn(JSGlobalObject
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->column(callFrame));
+    return JSValue::encode(castedThis->column(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeFunctionName(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -158,9 +158,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeFunctionName(JSGlobal
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->functionName(callFrame));
+    return JSValue::encode(castedThis->functionName(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeScopeChain(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -171,9 +171,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeScopeChain(JSGlobalOb
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->scopeChain(callFrame));
+    return JSValue::encode(castedThis->scopeChain(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeThisObject(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -184,9 +184,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeThisObject(JSGlobalOb
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->thisObject(callFrame));
+    return JSValue::encode(castedThis->thisObject(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -197,9 +197,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameAttributeType(JSGlobalObject* 
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->type(callFrame));
+    return JSValue::encode(castedThis->type(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameIsTailDeleted(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -210,9 +210,9 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameIsTailDeleted(JSGlobalObject* 
     JSValue thisValue = callFrame->thisValue();
     JSJavaScriptCallFrame* castedThis = jsDynamicCast<JSJavaScriptCallFrame*>(vm, thisValue);
     if (!castedThis)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    return JSValue::encode(castedThis->isTailDeleted(callFrame));
+    return JSValue::encode(castedThis->isTailDeleted(globalObject));
 }
 
 } // namespace Inspector

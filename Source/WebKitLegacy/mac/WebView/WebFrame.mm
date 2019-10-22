@@ -55,6 +55,7 @@
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSCJSValue.h>
 #import <JavaScriptCore/JSContextInternal.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSObject.h>
 #import <WebCore/AXObjectCache.h>
@@ -695,8 +696,8 @@ static NSURL *createUniqueWebDataURL();
     
 #if PLATFORM(IOS_FAMILY)
     ASSERT(WebThreadIsLockedOrDisabled());
-    JSC::ExecState* exec = _private->coreFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec();
-    JSC::JSLockHolder jscLock(exec);
+    JSC::JSGlobalObject* lexicalGlobalObject = _private->coreFrame->script().globalObject(WebCore::mainThreadNormalWorld());
+    JSC::JSLockHolder jscLock(lexicalGlobalObject);
 #endif
 
     JSC::JSValue result = _private->coreFrame->script().executeScript(string, forceUserGesture);
@@ -711,10 +712,10 @@ static NSURL *createUniqueWebDataURL();
         return @"";
 
 #if !PLATFORM(IOS_FAMILY)
-    JSC::ExecState* exec = _private->coreFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec();
-    JSC::JSLockHolder lock(exec);
+    JSC::JSGlobalObject* lexicalGlobalObject = _private->coreFrame->script().globalObject(WebCore::mainThreadNormalWorld());
+    JSC::JSLockHolder lock(lexicalGlobalObject);
 #endif
-    return result.toWTFString(exec);
+    return result.toWTFString(lexicalGlobalObject);
 }
 
 - (NSRect)_caretRectAtPosition:(const WebCore::Position&)pos affinity:(NSSelectionAffinity)affinity
@@ -2108,9 +2109,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
-    JSC::ExecState* exec = anyWorldGlobalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
-    return result.toWTFString(exec);
+    JSC::JSGlobalObject* lexicalGlobalObject = anyWorldGlobalObject;
+    JSC::JSLockHolder lock(lexicalGlobalObject);
+    return result.toWTFString(lexicalGlobalObject);
 }
 
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world
@@ -2121,7 +2122,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto* coreWorld = core(world);
     if (!coreWorld)
         return 0;
-    return toGlobalRef(coreFrame->script().globalObject(*coreWorld)->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(*coreWorld));
 }
 
 #if JSC_OBJC_API_ENABLED
@@ -2345,10 +2346,10 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return 0;
 
     WebCore::JSDOMWindow* globalObject = coreFrame->script().globalObject(*core(world));
-    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    JSC::JSLockHolder lock(exec);
-    return toRef(exec, toJS(exec, globalObject, core(node)));
+    JSC::JSLockHolder lock(lexicalGlobalObject);
+    return toRef(lexicalGlobalObject, toJS(lexicalGlobalObject, globalObject, core(node)));
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
@@ -2617,7 +2618,7 @@ static NSURL *createUniqueWebDataURL()
     auto* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return toGlobalRef(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld()));
 }
 
 #if JSC_OBJC_API_ENABLED

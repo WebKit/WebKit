@@ -116,19 +116,19 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
-    static bool putByIndex(JSCell*, ExecState*, unsigned, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
-    static bool setPrototype(JSObject*, ExecState*, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool) { RELEASE_ASSERT_NOT_REACHED(); return false; }
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName) { RELEASE_ASSERT_NOT_REACHED(); return false; }
 
 private:
     WriteBarrier<JSObject> m_getter;
     WriteBarrier<JSObject> m_setter;  
 };
 
-JSValue callGetter(ExecState*, JSValue base, JSValue getterSetter);
-JS_EXPORT_PRIVATE bool callSetter(ExecState*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
+JSValue callGetter(JSGlobalObject*, JSValue base, JSValue getterSetter);
+JS_EXPORT_PRIVATE bool callSetter(JSGlobalObject*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
 
 } // namespace JSC

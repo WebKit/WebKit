@@ -25,8 +25,8 @@
 
 namespace WebCore {
 
-template<> TestDerivedDictionary convertDictionary<TestDerivedDictionary>(JSC::ExecState&, JSC::JSValue);
+template<> TestDerivedDictionary convertDictionary<TestDerivedDictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
-JSC::JSObject* convertDictionaryToJS(JSC::ExecState&, JSDOMGlobalObject&, const TestDerivedDictionary&);
+JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestDerivedDictionary&);
 
 } // namespace WebCore

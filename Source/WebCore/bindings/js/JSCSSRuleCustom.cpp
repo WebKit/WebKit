@@ -58,7 +58,7 @@ void JSCSSRule::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&wrapped()));
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSRule>&& rule)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSRule>&& rule)
 {
     switch (rule->type()) {
     case CSSRule::STYLE_RULE:
@@ -88,9 +88,9 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSRul
     }
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, CSSRule& object)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSRule& object)
 {
-    return wrap(state, globalObject, object);
+    return wrap(lexicalGlobalObject, globalObject, object);
 }
 
 } // namespace WebCore

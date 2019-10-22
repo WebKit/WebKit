@@ -143,9 +143,9 @@ public:
                       double& destX, double& destY, NPCoordinateSpace destSpace);
 
     RefPtr<JSC::Bindings::Instance> createBindingsInstance(Ref<JSC::Bindings::RootObject>&&);
-    RetainPtr<NSData> marshalValues(JSC::ExecState*, const JSC::ArgList& args);
-    void marshalValue(JSC::ExecState*, JSC::JSValue, data_t& resultData, mach_msg_type_number_t& resultLength);
-    JSC::JSValue demarshalValue(JSC::ExecState*, const char* valueData, mach_msg_type_number_t valueLength);
+    RetainPtr<NSData> marshalValues(JSC::JSGlobalObject*, const JSC::ArgList& args);
+    void marshalValue(JSC::JSGlobalObject*, JSC::JSValue, data_t& resultData, mach_msg_type_number_t& resultLength);
+    JSC::JSValue demarshalValue(JSC::JSGlobalObject*, const char* valueData, mach_msg_type_number_t valueLength);
 
     // No-op if the value does not contain a local object.
     void retainLocalObject(JSC::JSValue);
@@ -167,7 +167,7 @@ public:
     void privateBrowsingModeDidChange(bool isPrivateBrowsingEnabled);
     
     static void setGlobalException(const WTF::String&);
-    static void moveGlobalExceptionToExecState(JSC::ExecState*);
+    static void moveGlobalExceptionToExecState(JSC::JSGlobalObject*);
 
     // Reply structs
     struct Reply {
@@ -307,10 +307,10 @@ private:
     
     // NPRuntime
 
-    void addValueToArray(NSMutableArray *, JSC::ExecState* exec, JSC::JSValue value);
+    void addValueToArray(NSMutableArray *, JSC::JSGlobalObject* exec, JSC::JSValue value);
     
-    bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
-    void demarshalValues(JSC::ExecState*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
+    bool demarshalValueFromArray(JSC::JSGlobalObject*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
+    void demarshalValues(JSC::JSGlobalObject*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
 
     class LocalObjectMap {
         WTF_MAKE_NONCOPYABLE(LocalObjectMap);

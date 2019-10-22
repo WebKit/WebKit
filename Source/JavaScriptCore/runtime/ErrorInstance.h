@@ -41,16 +41,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
     }
 
-    static ErrorInstance* create(ExecState* exec, VM& vm, Structure* structure, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
+    static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
         instance->m_sourceAppender = appender;
         instance->m_runtimeTypeForCause = type;
-        instance->finishCreation(exec, vm, message, useCurrentFrame);
+        instance->finishCreation(globalObject, vm, message, useCurrentFrame);
         return instance;
     }
 
-    static ErrorInstance* create(ExecState*, Structure*, JSValue message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
 
     bool hasSourceAppender() const { return !!m_sourceAppender; }
     SourceAppender sourceAppender() const { return m_sourceAppender; }
@@ -68,7 +68,7 @@ public:
     void setNativeGetterTypeError() { m_nativeGetterTypeError = true; }
     bool isNativeGetterTypeError() const { return m_nativeGetterTypeError; }
 
-    JS_EXPORT_PRIVATE String sanitizedToString(ExecState*);
+    JS_EXPORT_PRIVATE String sanitizedToString(JSGlobalObject*);
     
     Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
 
@@ -86,15 +86,15 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*);
 
-    void finishCreation(ExecState*, VM&, const String&, bool useCurrentFrame = true);
+    void finishCreation(JSGlobalObject*, VM&, const String&, bool useCurrentFrame = true);
     static void destroy(JSCell*);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static void getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
 
     void computeErrorInfo(VM&);
 

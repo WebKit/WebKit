@@ -31,25 +31,25 @@
 namespace WebCore {
 
 // Specialized by generated code for IDL enumeration conversion.
-template<typename T> Optional<T> parseEnumeration(JSC::ExecState&, JSC::JSValue);
+template<typename T> Optional<T> parseEnumeration(JSC::JSGlobalObject&, JSC::JSValue);
 template<typename T> const char* expectedEnumerationValues();
 
 // Specialized by generated code for IDL enumeration conversion.
-template<typename T> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, T);
+template<typename T> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, T);
 
 
 template<typename T> struct Converter<IDLEnumeration<T>> : DefaultConverter<IDLEnumeration<T>> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static T convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static T convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        auto& vm = state.vm();
+        auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        auto result = parseEnumeration<T>(state, value);
+        auto result = parseEnumeration<T>(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, { });
 
         if (UNLIKELY(!result)) {
-            exceptionThrower(state, throwScope);
+            exceptionThrower(lexicalGlobalObject, throwScope);
             return { };
         }
         return result.value();
@@ -60,9 +60,9 @@ template<typename T> struct JSConverter<IDLEnumeration<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::ExecState& exec, T value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, T value)
     {
-        return convertEnumerationToJS(exec, value);
+        return convertEnumerationToJS(lexicalGlobalObject, value);
     }
 };
 

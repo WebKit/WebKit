@@ -81,7 +81,6 @@
 #include "PluginMessageThrottlerWin.h"
 #endif
 
-using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
 using JSC::JSValue;
@@ -445,10 +444,10 @@ void PluginView::performRequest(PluginRequest* request)
     if (targetFrameName.isNull()) {
         CString cstr;
         {
-            JSC::ExecState& state = *m_parentFrame->script().globalObject(pluginWorld())->globalExec();
-            JSC::JSLockHolder lock(&state);
+            JSC::JSGlobalObject& globalObject = *m_parentFrame->script().globalObject(pluginWorld());
+            JSC::JSLockHolder lock(&globalObject);
             String resultString;
-            if (result && result.getString(&state, resultString))
+            if (result && result.getString(&globalObject, resultString))
                 cstr = resultString.utf8();
         }
 

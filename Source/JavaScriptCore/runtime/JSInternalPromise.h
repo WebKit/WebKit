@@ -48,7 +48,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE JSInternalPromise* then(ExecState*, JSFunction* = nullptr, JSFunction* = nullptr);
+    JS_EXPORT_PRIVATE JSInternalPromise* then(JSGlobalObject*, JSFunction* = nullptr, JSFunction* = nullptr);
 
 private:
     JSInternalPromise(VM&, Structure*);

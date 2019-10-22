@@ -57,21 +57,21 @@ EncodedJSValue JSC_HOST_CALL constructErrorConstructor(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->errorStructure());
+    Structure* errorStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->errorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false)));
 }
 
 EncodedJSValue JSC_HOST_CALL callErrorConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = globalObject->errorStructure();
-    return JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false));
+    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false));
 }
 
-bool ErrorConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit) {
@@ -84,18 +84,18 @@ bool ErrorConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyN
             thisObject->globalObject()->setStackTraceLimit(WTF::nullopt);
     }
 
-    return Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, globalObject, propertyName, value, slot);
 }
 
-bool ErrorConstructor::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit)
         thisObject->globalObject()->setStackTraceLimit(WTF::nullopt);
 
-    return Base::deleteProperty(thisObject, exec, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName);
 }
 
 } // namespace JSC

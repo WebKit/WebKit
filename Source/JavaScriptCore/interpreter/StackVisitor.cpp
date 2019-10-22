@@ -374,6 +374,9 @@ ClonedArguments* StackVisitor::Frame::createArguments()
 {
     ASSERT(m_callFrame);
     CallFrame* physicalFrame = m_callFrame;
+    // FIXME: Revisit JSGlobalObject.
+    // https://bugs.webkit.org/show_bug.cgi?id=203204
+    JSGlobalObject* globalObject = physicalFrame->lexicalGlobalObject();
     ClonedArguments* arguments;
     ArgumentsMode mode;
     if (Options::useFunctionDotArguments())
@@ -383,10 +386,10 @@ ClonedArguments* StackVisitor::Frame::createArguments()
 #if ENABLE(DFG_JIT)
     if (isInlinedFrame()) {
         ASSERT(m_inlineCallFrame);
-        arguments = ClonedArguments::createWithInlineFrame(physicalFrame, physicalFrame, m_inlineCallFrame, mode);
+        arguments = ClonedArguments::createWithInlineFrame(globalObject, physicalFrame, m_inlineCallFrame, mode);
     } else 
 #endif
-        arguments = ClonedArguments::createWithMachineFrame(physicalFrame, physicalFrame, mode);
+        arguments = ClonedArguments::createWithMachineFrame(globalObject, physicalFrame, mode);
     return arguments;
 }
 

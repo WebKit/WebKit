@@ -47,12 +47,12 @@ public:
 
     DECLARE_INFO;
 
-    void initializeDateTimeFormat(ExecState&, JSValue locales, JSValue options);
-    JSValue format(ExecState&, double value);
+    void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
+    JSValue format(JSGlobalObject*, double value);
 #if JSC_ICU_HAS_UFIELDPOSITER
-    JSValue formatToParts(ExecState&, double value);
+    JSValue formatToParts(JSGlobalObject*, double value);
 #endif
-    JSObject* resolvedOptions(ExecState&);
+    JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);

@@ -47,12 +47,12 @@ public:
 
     DECLARE_INFO;
 
-    void initializeNumberFormat(ExecState&, JSValue locales, JSValue optionsValue);
-    JSValue formatNumber(ExecState&, double number);
+    void initializeNumberFormat(JSGlobalObject*, JSValue locales, JSValue optionsValue);
+    JSValue formatNumber(JSGlobalObject*, double number);
 #if HAVE(ICU_FORMAT_DOUBLE_FOR_FIELDS)
-    JSValue formatToParts(ExecState&, double value);
+    JSValue formatToParts(JSGlobalObject*, double value);
 #endif
-    JSObject* resolvedOptions(ExecState&);
+    JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);

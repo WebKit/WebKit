@@ -52,7 +52,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -62,7 +62,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_column(column)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    autogenerateMetadata(state);
+    autogenerateMetadata(globalObject);
 }
 
 ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptCallStack>&& callStack, unsigned long requestIdentifier)
@@ -100,7 +100,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     }
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::ExecState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, Ref<ScriptArguments>&& arguments, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -109,15 +109,15 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    autogenerateMetadata(state);
+    autogenerateMetadata(globalObject);
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, Vector<JSONLogValue>&& messages, JSC::ExecState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, Vector<JSONLogValue>&& messages, JSC::JSGlobalObject* globalObject, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
     , m_url()
-    , m_scriptState(state)
+    , m_globalObject(globalObject)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
     if (!messages.size())
@@ -153,16 +153,16 @@ ConsoleMessage::~ConsoleMessage()
 {
 }
 
-void ConsoleMessage::autogenerateMetadata(JSC::ExecState* state)
+void ConsoleMessage::autogenerateMetadata(JSC::JSGlobalObject* globalObject)
 {
-    if (!state)
+    if (!globalObject)
         return;
 
     if (m_type == MessageType::EndGroup)
         return;
 
     // FIXME: Should this really be using "for console" in the generic ConsoleMessage autogeneration? This can skip the first frame.
-    m_callStack = createScriptCallStackForConsole(state);
+    m_callStack = createScriptCallStackForConsole(globalObject);
 
     if (const ScriptCallFrame* frame = m_callStack->firstNonNativeCallFrame()) {
         m_url = frame->sourceURL();
@@ -245,7 +245,7 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
         messageObject->setNetworkRequestId(m_requestId);
 
     if ((m_arguments && m_arguments->argumentCount()) || m_jsonLogValues.size()) {
-        InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(scriptState());
+        InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(globalObject());
         if (!injectedScript.hasNoValue()) {
             auto argumentsObject = JSON::ArrayOf<Protocol::Runtime::RemoteObject>::create();
             if (m_arguments && m_arguments->argumentCount()) {
@@ -342,13 +342,13 @@ void ConsoleMessage::clear()
         m_arguments = nullptr;
 }
 
-JSC::ExecState* ConsoleMessage::scriptState() const
+JSC::JSGlobalObject* ConsoleMessage::globalObject() const
 {
     if (m_arguments)
-        return m_arguments->globalState();
+        return m_arguments->globalObject();
 
-    if (m_scriptState)
-        return m_scriptState;
+    if (m_globalObject)
+        return m_globalObject;
 
     return nullptr;
 }

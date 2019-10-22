@@ -81,11 +81,11 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(JSGlobalObject* glob
         JSValue arg = callFrame->argument(argIndex);
         switch (signature.argument(argIndex)) {
         case Wasm::I32:
-            arg = JSValue::decode(arg.toInt32(callFrame));
+            arg = JSValue::decode(arg.toInt32(globalObject));
             break;
         case Wasm::Funcref: {
             if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
-                return JSValue::encode(throwException(callFrame, scope, createJSWebAssemblyRuntimeError(callFrame, vm, "Funcref must be an exported wasm function")));
+                return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));
             break;
         }
         case Wasm::Anyref:
@@ -94,10 +94,10 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(JSGlobalObject* glob
             arg = JSValue();
             break;
         case Wasm::F32:
-            arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(callFrame)));
+            arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(globalObject)));
             break;
         case Wasm::F64:
-            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(callFrame)));
+            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(globalObject)));
             break;
         case Wasm::Void:
         case Wasm::Func:
@@ -128,7 +128,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(JSGlobalObject* glob
         const intptr_t frameSize = (boxedArgs.size() + CallFrame::headerSizeInRegisters) * sizeof(Register);
         const intptr_t stackSpaceUsed = 2 * frameSize; // We're making two calls. One to the wrapper, and one to the actual wasm code.
         if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<intptr_t>(vm.softStackLimit()))))
-            return JSValue::encode(throwException(callFrame, scope, createStackOverflowError(callFrame)));
+            return JSValue::encode(throwException(globalObject, scope, createStackOverflowError(globalObject)));
     }
     vm.wasmContext.store(wasmInstance, vm.softStackLimit());
     ASSERT(wasmFunction->instance());

@@ -39,7 +39,7 @@
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     [Replaceable] readonly attribute DOMString name;
 
-    [CallWith=ExecState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
 
     void close();
 

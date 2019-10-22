@@ -34,9 +34,9 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
 
     static constexpr bool conversionHasSideEffects = false;
 
-    static bool convert(JSC::ExecState& state, JSC::JSValue value)
+    static bool convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return value.toBoolean(&state);
+        return value.toBoolean(&lexicalGlobalObject);
     }
 };
 

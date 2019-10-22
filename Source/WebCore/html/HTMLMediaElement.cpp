@@ -4370,11 +4370,11 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     m_processingPreferenceChange = false;
 }
 
-static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, HTMLMediaElement& media)
+static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, HTMLMediaElement& media)
 {
     JSC::VM& vm = globalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto mediaJSWrapper = toJS(&exec, &globalObject, media);
+    auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, media);
 
     // Retrieve the controller through the JS object graph
     JSC::JSObject* mediaJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, mediaJSWrapper);
@@ -4382,7 +4382,7 @@ static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& g
         return JSC::jsNull();
 
     JSC::Identifier controlsHost = JSC::Identifier::fromString(vm, "controlsHost");
-    JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&exec, controlsHost);
+    JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&lexicalGlobalObject, controlsHost);
     RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
     JSC::JSObject* controlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, controlsHostJSWrapper);
@@ -4390,7 +4390,7 @@ static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& g
         return JSC::jsNull();
 
     JSC::Identifier controllerID = JSC::Identifier::fromString(vm, "controller");
-    JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&exec, controllerID);
+    JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&lexicalGlobalObject, controllerID);
     RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
     return controllerJSWrapper;
@@ -4417,11 +4417,11 @@ bool HTMLMediaElement::setupAndCallJS(const JSSetupFunction& task)
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* exec = globalObject->globalExec();
+    auto* lexicalGlobalObject = globalObject;
 
     RETURN_IF_EXCEPTION(scope, false);
 
-    return task(*globalObject, *exec, scriptController, world);
+    return task(*globalObject, *lexicalGlobalObject, scriptController, world);
 }
 
 void HTMLMediaElement::updateCaptionContainer()
@@ -4438,10 +4438,10 @@ void HTMLMediaElement::updateCaptionContainer()
     if (!m_mediaControlsHost)
         m_mediaControlsHost = MediaControlsHost::create(this);
 
-    setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {
+    setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        auto controllerValue = controllerJSValue(exec, globalObject, *this);
+        auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
         auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, controllerValue);
         if (!controllerObject)
             return false;
@@ -4452,7 +4452,7 @@ void HTMLMediaElement::updateCaptionContainer()
         //     None
         // Return value:
         //     None
-        auto methodValue = controllerObject->get(&exec, JSC::Identifier::fromString(vm, "updateCaptionContainer"));
+        auto methodValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "updateCaptionContainer"));
         auto* methodObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, methodValue);
         if (!methodObject)
             return false;
@@ -4464,7 +4464,7 @@ void HTMLMediaElement::updateCaptionContainer()
 
         JSC::MarkedArgumentBuffer noArguments;
         ASSERT(!noArguments.hasOverflowed());
-        JSC::call(&exec, methodObject, callType, callData, controllerObject, noArguments);
+        JSC::call(&lexicalGlobalObject, methodObject, callType, callData, controllerObject, noArguments);
         scope.clearException();
 
         m_haveSetUpCaptionContainer = true;
@@ -7263,11 +7263,11 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (!mediaControlsScript.length())
         return false;
 
-    return setupAndCallJS([mediaControlsScript](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController& scriptController, DOMWrapperWorld& world) {
+    return setupAndCallJS([mediaControlsScript](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        auto functionValue = globalObject.get(&exec, JSC::Identifier::fromString(vm, "createControls"));
+        auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "createControls"));
         if (functionValue.isFunction(vm))
             return true;
 
@@ -7308,18 +7308,18 @@ void HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty()
 
 void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JSValue propertyValue)
 {
-    setupAndCallJS([this, propertyName, propertyValue](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {
+    setupAndCallJS([this, propertyName, propertyValue](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
-        auto controllerValue = controllerJSValue(exec, globalObject, *this);
+        auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
         if (controllerValue.isNull())
             return false;
 
         JSC::PutPropertySlot propertySlot(controllerValue);
-        auto* controllerObject = controllerValue.toObject(&exec);
+        auto* controllerObject = controllerValue.toObject(&lexicalGlobalObject);
         if (!controllerObject)
             return false;
 
-        controllerObject->methodTable(vm)->put(controllerObject, &exec, JSC::Identifier::fromString(vm, propertyName), propertyValue, propertySlot);
+        controllerObject->methodTable(vm)->put(controllerObject, &lexicalGlobalObject, JSC::Identifier::fromString(vm, propertyName), propertyValue, propertySlot);
 
         return true;
     });
@@ -7332,7 +7332,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     if (!ensureMediaControlsInjectedScript())
         return;
 
-    setupAndCallJS([this, &root](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {
+    setupAndCallJS([this, &root](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
@@ -7345,41 +7345,41 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         // Return value:
         //     A reference to the created media controller instance.
 
-        auto functionValue = globalObject.get(&exec, JSC::Identifier::fromString(vm, "createControls"));
+        auto functionValue = globalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "createControls"));
         if (functionValue.isUndefinedOrNull())
             return false;
 
         if (!m_mediaControlsHost)
             m_mediaControlsHost = MediaControlsHost::create(this);
 
-        auto mediaJSWrapper = toJS(&exec, &globalObject, *this);
-        auto mediaControlsHostJSWrapper = toJS(&exec, &globalObject, *m_mediaControlsHost);
+        auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
+        auto mediaControlsHostJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *m_mediaControlsHost);
 
         JSC::MarkedArgumentBuffer argList;
-        argList.append(toJS(&exec, &globalObject, root));
+        argList.append(toJS(&lexicalGlobalObject, &globalObject, root));
         argList.append(mediaJSWrapper);
         argList.append(mediaControlsHostJSWrapper);
         ASSERT(!argList.hasOverflowed());
 
-        auto* function = functionValue.toObject(&exec);
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
         JSC::CallData callData;
         auto callType = function->methodTable(vm)->getCallData(function, callData);
         if (callType == JSC::CallType::None)
             return false;
 
-        auto controllerValue = JSC::call(&exec, function, callType, callData, &globalObject, argList);
+        auto controllerValue = JSC::call(&lexicalGlobalObject, function, callType, callData, &globalObject, argList);
         scope.clearException();
         auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(vm, controllerValue);
         if (!controllerObject)
             return false;
 
         // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
-        auto* mediaJSWrapperObject = mediaJSWrapper.toObject(&exec);
+        auto* mediaJSWrapperObject = mediaJSWrapper.toObject(&lexicalGlobalObject);
         scope.assertNoException();
         auto controlsHost = JSC::Identifier::fromString(vm, "controlsHost");
 
-        ASSERT(!mediaJSWrapperObject->hasProperty(&exec, controlsHost));
+        ASSERT(!mediaJSWrapperObject->hasProperty(&lexicalGlobalObject, controlsHost));
 
         mediaJSWrapperObject->putDirect(vm, controlsHost, mediaControlsHostJSWrapper, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
 
@@ -7389,7 +7389,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
         auto controller = JSC::Identifier::fromString(vm, "controller");
 
-        ASSERT(!controllerObject->hasProperty(&exec, controller));
+        ASSERT(!controllerObject->hasProperty(&lexicalGlobalObject, controller));
 
         mediaControlsHostJSWrapperObject->putDirect(vm, controller, controllerValue, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
 
@@ -7434,20 +7434,20 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return;
 
-    setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {
+    setupAndCallJS([this](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto controllerValue = controllerJSValue(exec, globalObject, *this);
-        auto* controllerObject = controllerValue.toObject(&exec);
+        auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
+        auto* controllerObject = controllerValue.toObject(&lexicalGlobalObject);
 
         RETURN_IF_EXCEPTION(scope, false);
 
-        auto functionValue = controllerObject->get(&exec, JSC::Identifier::fromString(vm, "handlePresentationModeChange"));
+        auto functionValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "handlePresentationModeChange"));
         if (UNLIKELY(scope.exception()) || functionValue.isUndefinedOrNull())
             return false;
 
-        auto* function = functionValue.toObject(&exec);
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
         JSC::CallData callData;
         auto callType = function->methodTable(vm)->getCallData(function, callData);
@@ -7456,7 +7456,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
         JSC::MarkedArgumentBuffer argList;
         ASSERT(!argList.hasOverflowed());
-        JSC::call(&exec, function, callType, callData, controllerObject, argList);
+        JSC::call(&lexicalGlobalObject, function, callType, callData, controllerObject, argList);
 
         return true;
     });
@@ -7477,20 +7477,20 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     ensureMediaControlsShadowRoot();
 
     String status;
-    setupAndCallJS([this, &status](JSDOMGlobalObject& globalObject, JSC::ExecState& exec, ScriptController&, DOMWrapperWorld&) {
+    setupAndCallJS([this, &status](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto controllerValue = controllerJSValue(exec, globalObject, *this);
-        auto* controllerObject = controllerValue.toObject(&exec);
+        auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
+        auto* controllerObject = controllerValue.toObject(&lexicalGlobalObject);
 
         RETURN_IF_EXCEPTION(scope, false);
 
-        auto functionValue = controllerObject->get(&exec, JSC::Identifier::fromString(vm, "getCurrentControlsStatus"));
+        auto functionValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "getCurrentControlsStatus"));
         if (UNLIKELY(scope.exception()) || functionValue.isUndefinedOrNull())
             return false;
 
-        auto* function = functionValue.toObject(&exec);
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
         scope.assertNoException();
         JSC::CallData callData;
         auto callType = function->methodTable(vm)->getCallData(function, callData);
@@ -7499,11 +7499,11 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
         if (callType == JSC::CallType::None)
             return false;
 
-        auto outputValue = JSC::call(&exec, function, callType, callData, controllerObject, argList);
+        auto outputValue = JSC::call(&lexicalGlobalObject, function, callType, callData, controllerObject, argList);
 
         RETURN_IF_EXCEPTION(scope, false);
 
-        status = outputValue.getString(&exec);
+        status = outputValue.getString(&lexicalGlobalObject);
         return true;
     });
 

@@ -35,16 +35,16 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<ServiceWorkerClient>&& client)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<ServiceWorkerClient>&& client)
 {
     if (is<ServiceWorkerWindowClient>(client))
         return createWrapper<ServiceWorkerWindowClient>(globalObject, WTFMove(client));
     return createWrapper<ServiceWorkerClient>(globalObject, WTFMove(client));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, ServiceWorkerClient& client)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ServiceWorkerClient& client)
 {
-    return wrap(state, globalObject, client);
+    return wrap(lexicalGlobalObject, globalObject, client);
 }
 
 } // namespace WebCore

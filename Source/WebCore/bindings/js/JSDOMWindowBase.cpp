@@ -126,11 +126,11 @@ void JSDOMWindowBase::updateDocument()
     // users cannot change its attributes further.
     // Reaching here, the attributes of "document" property should be never changed.
     ASSERT(m_wrapped->document());
-    ExecState* exec = globalExec();
+    JSGlobalObject* lexicalGlobalObject = this;
     bool shouldThrowReadOnlyError = false;
     bool ignoreReadOnlyErrors = true;
     bool putResult = false;
-    symbolTablePutTouchWatchpointSet(this, exec, static_cast<JSVMClientData*>(exec->vm().clientData)->builtinNames().documentPublicName(), toJS(exec, this, m_wrapped->document()), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+    symbolTablePutTouchWatchpointSet(this, lexicalGlobalObject, static_cast<JSVMClientData*>(lexicalGlobalObject->vm().clientData)->builtinNames().documentPublicName(), toJS(lexicalGlobalObject, this, m_wrapped->document()), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
@@ -162,7 +162,7 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 static inline bool shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(Page* page)
 {
     // See <rdar://problem/5479443>. We don't think that page can ever be NULL
-    // in this case, but if it is, we've gotten into a state where we may have
+    // in this case, but if it is, we've gotten into a lexicalGlobalObject where we may have
     // hung the UI, with no way to ask the client whether to cancel execution.
     // For now, our solution is just to cancel execution no matter what,
     // ensuring that we never hang. We might want to consider other solutions
@@ -227,12 +227,12 @@ JSWindowProxy* JSDOMWindowBase::proxy() const
     return m_proxy;
 }
 
-JSValue toJS(ExecState* state, DOMWindow& domWindow)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, DOMWindow& domWindow)
 {
     auto* frame = domWindow.frame();
     if (!frame)
         return jsNull();
-    return toJS(state, frame->windowProxy());
+    return toJS(lexicalGlobalObject, frame->windowProxy());
 }
 
 JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
@@ -257,26 +257,26 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
     return nullptr;
 }
 
-DOMWindow& incumbentDOMWindow(ExecState& state)
+DOMWindow& incumbentDOMWindow(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    return asJSDOMWindow(&callerGlobalObject(state))->wrapped();
+    return asJSDOMWindow(&callerGlobalObject(lexicalGlobalObject, callFrame))->wrapped();
 }
 
-DOMWindow& activeDOMWindow(ExecState& state)
+DOMWindow& activeDOMWindow(JSGlobalObject& lexicalGlobalObject)
 {
-    return asJSDOMWindow(state.lexicalGlobalObject())->wrapped();
+    return asJSDOMWindow(&lexicalGlobalObject)->wrapped();
 }
 
-DOMWindow& firstDOMWindow(ExecState& state)
+DOMWindow& firstDOMWindow(JSGlobalObject& lexicalGlobalObject)
 {
-    VM& vm = state.vm();
-    return asJSDOMWindow(vm.vmEntryGlobalObject(&state))->wrapped();
+    VM& vm = lexicalGlobalObject.vm();
+    return asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(&lexicalGlobalObject))->wrapped();
 }
 
-Document* responsibleDocument(ExecState& state)
+Document* responsibleDocument(CallFrame& callFrame)
 {
     CallerFunctor functor;
-    state.iterate(functor);
+    callFrame.iterate(functor);
     auto* callerFrame = functor.callerFrame();
     if (!callerFrame)
         return nullptr;
@@ -302,60 +302,60 @@ void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
     }
 }
 
-JSC::Identifier JSDOMWindowBase::moduleLoaderResolve(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, JSC::JSValue scriptFetcher)
+JSC::Identifier JSDOMWindowBase::moduleLoaderResolve(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, JSC::JSValue scriptFetcher)
 {
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        return document->moduleLoader().resolve(globalObject, exec, moduleLoader, moduleName, importerModuleKey, scriptFetcher);
+        return document->moduleLoader().resolve(globalObject, moduleLoader, moduleName, importerModuleKey, scriptFetcher);
     return { };
 }
 
-JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderFetch(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        RELEASE_AND_RETURN(scope, document->moduleLoader().fetch(globalObject, exec, moduleLoader, moduleKey, parameters, scriptFetcher));
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+        RELEASE_AND_RETURN(scope, document->moduleLoader().fetch(globalObject, moduleLoader, moduleKey, parameters, scriptFetcher));
+    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, deferred->reject(exec, jsUndefined()));
+    RELEASE_AND_RETURN(scope, deferred->reject(globalObject, jsUndefined()));
 }
 
-JSC::JSValue JSDOMWindowBase::moduleLoaderEvaluate(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue scriptFetcher)
+JSC::JSValue JSDOMWindowBase::moduleLoaderEvaluate(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue scriptFetcher)
 {
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        return document->moduleLoader().evaluate(globalObject, exec, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
+        return document->moduleLoader().evaluate(globalObject, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
     return JSC::jsUndefined();
 }
 
-JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
+JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        RELEASE_AND_RETURN(scope, document->moduleLoader().importModule(globalObject, exec, moduleLoader, moduleName, parameters, sourceOrigin));
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+        RELEASE_AND_RETURN(scope, document->moduleLoader().importModule(globalObject, moduleLoader, moduleName, parameters, sourceOrigin));
+    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, deferred->reject(exec, jsUndefined()));
+    RELEASE_AND_RETURN(scope, deferred->reject(globalObject, jsUndefined()));
 }
 
-JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSModuleRecord* moduleRecord, JSC::JSValue scriptFetcher)
+JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSModuleRecord* moduleRecord, JSC::JSValue scriptFetcher)
 {
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
-        return document->moduleLoader().createImportMetaProperties(globalObject, exec, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
-    return constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
+        return document->moduleLoader().createImportMetaProperties(globalObject, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
+    return constructEmptyObject(globalObject->vm(), globalObject->nullPrototypeObjectStructure());
 }
 
 #if ENABLE(WEBASSEMBLY)
-static Optional<Vector<uint8_t>> tryAllocate(JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
+static Optional<Vector<uint8_t>> tryAllocate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
 {
     Vector<uint8_t> arrayBuffer;
     if (!arrayBuffer.tryReserveCapacity(byteSize)) {
-        promise->reject(exec, createOutOfMemoryError(exec));
+        promise->reject(lexicalGlobalObject, createOutOfMemoryError(lexicalGlobalObject));
         return WTF::nullopt;
     }
 
@@ -365,49 +365,48 @@ static Optional<Vector<uint8_t>> tryAllocate(JSC::ExecState* exec, JSC::JSPromis
     return arrayBuffer;
 }
 
-static bool isResponseCorrect(JSC::ExecState* exec, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise)
+static bool isResponseCorrect(JSC::JSGlobalObject* lexicalGlobalObject, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise)
 {
     bool isResponseCorsSameOrigin = inputResponse->type() == ResourceResponse::Type::Basic || inputResponse->type() == ResourceResponse::Type::Cors || inputResponse->type() == ResourceResponse::Type::Default;
 
     if (!isResponseCorsSameOrigin) {
-        promise->reject(exec, createTypeError(exec, "Response is not CORS-same-origin"_s));
+        promise->reject(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "Response is not CORS-same-origin"_s));
         return false;
     }
 
     if (!inputResponse->ok()) {
-        promise->reject(exec, createTypeError(exec, "Response has not returned OK status"_s));
+        promise->reject(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "Response has not returned OK status"_s));
         return false;
     }
 
     auto contentType = inputResponse->headers().fastGet(HTTPHeaderName::ContentType);
     if (!equalLettersIgnoringASCIICase(contentType, "application/wasm")) {
-        promise->reject(exec, createTypeError(exec, "Unexpected response MIME type. Expected 'application/wasm'"_s));
+        promise->reject(lexicalGlobalObject, createTypeError(lexicalGlobalObject, "Unexpected response MIME type. Expected 'application/wasm'"_s));
         return false;
     }
 
     return true;
 }
 
-static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise, Function<void(JSC::ExecState* exec, const char* data, size_t byteSize)>&& actionCallback)
+static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise, Function<void(JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize)>&& actionCallback)
 {
-    if (!isResponseCorrect(exec, inputResponse, promise))
+    if (!isResponseCorrect(globalObject, inputResponse, promise))
         return;
 
     if (inputResponse->isBodyReceivedByChunk()) {
         inputResponse->consumeBodyReceivedByChunk([promise, callback = WTFMove(actionCallback), globalObject, data = SharedBuffer::create()] (auto&& result) mutable {
-            ExecState* exec = globalObject->globalExec();
             if (result.hasException()) {
-                promise->reject(exec, createTypeError(exec, result.exception().message()));
+                promise->reject(globalObject, createTypeError(globalObject, result.exception().message()));
                 return;
             }
 
             if (auto chunk = result.returnValue())
                 data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
             else {
-                VM& vm = exec->vm();
+                VM& vm = globalObject->vm();
                 JSLockHolder lock(vm);
 
-                callback(exec, data->data(), data->size());
+                callback(globalObject, data->data(), data->size());
             }
         });
         return;
@@ -416,59 +415,59 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, J
     auto body = inputResponse->consumeBody();
     WTF::switchOn(body, [&] (Ref<FormData>& formData) {
         if (auto buffer = formData->asSharedBuffer()) {
-            VM& vm = exec->vm();
+            VM& vm = globalObject->vm();
             JSLockHolder lock(vm);
 
-            actionCallback(exec, buffer->data(), buffer->size());
+            actionCallback(globalObject, buffer->data(), buffer->size());
             return;
         }
         // FIXME: http://webkit.org/b/184886> Implement loading for the Blob type
-        promise->reject(exec, createTypeError(exec, "Unexpected Response's Content-type"_s));
+        promise->reject(globalObject, createTypeError(globalObject, "Unexpected Response's Content-type"_s));
     }, [&] (Ref<SharedBuffer>& buffer) {
-        VM& vm = exec->vm();
+        VM& vm = globalObject->vm();
         JSLockHolder lock(vm);
 
-        actionCallback(exec, buffer->data(), buffer->size());
+        actionCallback(globalObject, buffer->data(), buffer->size());
     }, [&] (std::nullptr_t&) {
-        promise->reject(exec, createTypeError(exec, "Unexpected Response's Content-type"_s));
+        promise->reject(globalObject, createTypeError(globalObject, "Unexpected Response's Content-type"_s));
     });
 }
 
-void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, JSC::JSValue source)
+void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromiseDeferred* promise, JSC::JSValue source)
 {
     ASSERT(source);
 
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
     ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
 
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
-        handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
-            if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
-                JSC::JSWebAssembly::webAssemblyModuleValidateAsync(exec, promise, WTFMove(*arrayBuffer));
+        handleResponseOnStreamingAction(globalObject, inputResponse, promise, [promise] (JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize) mutable {
+            if (auto arrayBuffer = tryAllocate(lexicalGlobalObject, promise, data, byteSize))
+                JSC::JSWebAssembly::webAssemblyModuleValidateAsync(lexicalGlobalObject, promise, WTFMove(*arrayBuffer));
         });
     } else
-        promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));
+        promise->reject(globalObject, createTypeError(globalObject, "first argument must be an Response or Promise for Response"_s));
 }
 
-void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSPromiseDeferred* promise, JSC::JSValue source, JSC::JSObject* importedObject)
+void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromiseDeferred* promise, JSC::JSValue source, JSC::JSObject* importedObject)
 {
     ASSERT(source);
 
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
     ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
     ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, importedObject));
 
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
-        handleResponseOnStreamingAction(globalObject, exec, inputResponse, promise, [promise, importedObject] (JSC::ExecState* exec, const char* data, size_t byteSize) mutable {
-            if (auto arrayBuffer = tryAllocate(exec, promise, data, byteSize))
-                JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync(exec, promise, WTFMove(*arrayBuffer), importedObject);
+        handleResponseOnStreamingAction(globalObject, inputResponse, promise, [promise, importedObject] (JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize) mutable {
+            if (auto arrayBuffer = tryAllocate(lexicalGlobalObject, promise, data, byteSize))
+                JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync(lexicalGlobalObject, promise, WTFMove(*arrayBuffer), importedObject);
         });
     } else
-        promise->reject(exec, createTypeError(exec, "first argument must be an Response or Promise for Response"_s));
+        promise->reject(globalObject, createTypeError(globalObject, "first argument must be an Response or Promise for Response"_s));
 }
 #endif
 

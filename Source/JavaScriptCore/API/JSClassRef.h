@@ -93,9 +93,9 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     JS_EXPORT_PRIVATE ~OpaqueJSClass();
     
     String className();
-    OpaqueJSClassStaticValuesTable* staticValues(JSC::ExecState*);
-    OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::ExecState*);
-    JSC::JSObject* prototype(JSC::ExecState*);
+    OpaqueJSClassStaticValuesTable* staticValues(JSC::JSGlobalObject*);
+    OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::JSGlobalObject*);
+    JSC::JSObject* prototype(JSC::JSGlobalObject*);
 
     OpaqueJSClass* parentClass;
     OpaqueJSClass* prototypeClass;
@@ -119,7 +119,7 @@ private:
     OpaqueJSClass(const OpaqueJSClass&);
     OpaqueJSClass(const JSClassDefinition*, OpaqueJSClass* protoClass);
 
-    OpaqueJSClassContextData& contextData(JSC::ExecState*);
+    OpaqueJSClassContextData& contextData(JSC::JSGlobalObject*);
 
     // Strings in these data members should not be put into any AtomStringTable.
     String m_className;

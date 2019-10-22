@@ -91,19 +91,20 @@ protected:
         
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
+        VM& vm = jit->vm();
         switch (m_arrayMode.type()) {
         case Array::Int32:
-            jit->callOperation(operationEnsureInt32, m_tempGPR, m_baseGPR);
+            jit->callOperation(operationEnsureInt32, m_tempGPR, &vm, m_baseGPR);
             break;
         case Array::Double:
-            jit->callOperation(operationEnsureDouble, m_tempGPR, m_baseGPR);
+            jit->callOperation(operationEnsureDouble, m_tempGPR, &vm, m_baseGPR);
             break;
         case Array::Contiguous:
-            jit->callOperation(operationEnsureContiguous, m_tempGPR, m_baseGPR);
+            jit->callOperation(operationEnsureContiguous, m_tempGPR, &vm, m_baseGPR);
             break;
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            jit->callOperation(operationEnsureArrayStorage, m_tempGPR, m_baseGPR);
+            jit->callOperation(operationEnsureArrayStorage, m_tempGPR, &vm, m_baseGPR);
             break;
         default:
             CRASH();

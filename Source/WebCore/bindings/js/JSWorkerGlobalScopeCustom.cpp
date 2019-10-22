@@ -48,17 +48,17 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
     wrapped().visitJSEventListeners(visitor);
 }
 
-JSValue JSWorkerGlobalScope::queueMicrotask(ExecState& state)
+JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+    if (UNLIKELY(callFrame.argumentCount() < 1))
+        return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    JSValue functionValue = state.uncheckedArgument(0);
+    JSValue functionValue = callFrame.uncheckedArgument(0);
     if (UNLIKELY(!functionValue.isFunction(vm)))
-        return JSValue::decode(throwArgumentMustBeFunctionError(state, scope, 0, "callback", "WorkerGlobalScope", "queueMicrotask"));
+        return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback", "WorkerGlobalScope", "queueMicrotask"));
 
     scope.release();
     Base::queueMicrotask(JSC::createJSMicrotask(vm, functionValue));

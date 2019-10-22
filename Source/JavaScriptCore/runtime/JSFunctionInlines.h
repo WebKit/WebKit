@@ -138,13 +138,13 @@ inline bool JSFunction::canUseAllocationProfile()
     return jsExecutable()->hasPrototypeProperty();
 }
 
-inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(ExecState* exec, unsigned inlineCapacity)
+inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobalObject* globalObject, unsigned inlineCapacity)
 {
     ASSERT(canUseAllocationProfile());
     if (UNLIKELY(!m_rareData))
-        return allocateAndInitializeRareData(exec, inlineCapacity);
+        return allocateAndInitializeRareData(globalObject, inlineCapacity);
     if (UNLIKELY(!m_rareData->isObjectAllocationProfileInitialized()))
-        return initializeRareData(exec, inlineCapacity);
+        return initializeRareData(globalObject, inlineCapacity);
     return m_rareData.get();
 }
 

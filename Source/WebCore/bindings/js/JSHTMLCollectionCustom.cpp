@@ -29,7 +29,7 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<HTMLCollection>&& collection)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<HTMLCollection>&& collection)
 {
     switch (collection->type()) {
     case FormControls:
@@ -45,9 +45,9 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<HTMLCo
     return createWrapper<HTMLCollection>(globalObject, WTFMove(collection));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLCollection& collection)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, HTMLCollection& collection)
 {
-    return wrap(state, globalObject, collection);
+    return wrap(lexicalGlobalObject, globalObject, collection);
 }
 
 } // namespace WebCore

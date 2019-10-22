@@ -51,17 +51,17 @@ void Bytecodes::dump(PrintStream& out) const
     out.print("#", m_hash, "(", m_id, ")");
 }
 
-JSValue Bytecodes::toJS(ExecState* exec) const
+JSValue Bytecodes::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
-    JSObject* result = constructEmptyObject(exec);
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
     
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_id));
     result->putDirect(vm, vm.propertyNames->inferredName, jsString(vm, String::fromUTF8(m_inferredName)));
     result->putDirect(vm, vm.propertyNames->sourceCode, jsString(vm, String::fromUTF8(m_sourceCode)));
     result->putDirect(vm, vm.propertyNames->hash, jsString(vm, String::fromUTF8(toCString(m_hash))));
     result->putDirect(vm, vm.propertyNames->instructionCount, jsNumber(m_instructionCount));
-    addSequenceProperties(exec, result);
+    addSequenceProperties(globalObject, result);
     
     return result;
 }

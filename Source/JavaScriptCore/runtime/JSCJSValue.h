@@ -53,7 +53,6 @@ class PropertyName;
 class PropertySlot;
 class PutPropertySlot;
 class Structure;
-using ExecState = CallFrame;
 #if ENABLE(DFG_JIT)
 namespace DFG {
 class JITCompiler;
@@ -246,76 +245,75 @@ public:
     const ClassInfo* classInfoOrNull(VM&) const;
         
     // Extracting the value.
-    bool getString(ExecState*, WTF::String&) const;
-    WTF::String getString(ExecState*) const; // null string if not a string
+    bool getString(JSGlobalObject*, WTF::String&) const;
+    WTF::String getString(JSGlobalObject*) const; // null string if not a string
     JSObject* getObject() const; // 0 if not an object
 
     // Extracting integer values.
     bool getUInt32(uint32_t&) const;
         
     // Basic conversions.
-    JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-    bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
+    JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType = NoPreference) const;
+    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&);
 
-    bool toBoolean(ExecState*) const;
+    bool toBoolean(JSGlobalObject*) const;
     TriState pureToBoolean() const;
 
     // toNumber conversion is expected to be side effect free if an exception has
-    // been set in the ExecState already.
-    double toNumber(ExecState*) const;
+    // been set in the CallFrame already.
+    double toNumber(JSGlobalObject*) const;
     
-    Variant<JSBigInt*, double> toNumeric(ExecState*) const;
-    Variant<JSBigInt*, int32_t> toBigIntOrInt32(ExecState*) const;
+    Variant<JSBigInt*, double> toNumeric(JSGlobalObject*) const;
+    Variant<JSBigInt*, int32_t> toBigIntOrInt32(JSGlobalObject*) const;
 
     // toNumber conversion if it can be done without side effects.
     Optional<double> toNumberFromPrimitive() const;
 
-    JSString* toString(ExecState*) const; // On exception, this returns the empty string.
-    JSString* toStringOrNull(ExecState*) const; // On exception, this returns null, to make exception checks faster.
-    Identifier toPropertyKey(ExecState*) const;
-    WTF::String toWTFString(ExecState*) const;
-    JSObject* toObject(ExecState*) const;
-    JSObject* toObject(ExecState*, JSGlobalObject*) const;
+    JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string.
+    JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster.
+    Identifier toPropertyKey(JSGlobalObject*) const;
+    WTF::String toWTFString(JSGlobalObject*) const;
+    JSObject* toObject(JSGlobalObject*) const;
 
     // Integer conversions.
-    JS_EXPORT_PRIVATE double toInteger(ExecState*) const;
-    JS_EXPORT_PRIVATE double toIntegerPreserveNaN(ExecState*) const;
-    int32_t toInt32(ExecState*) const;
-    uint32_t toUInt32(ExecState*) const;
-    uint32_t toIndex(ExecState*, const char* errorName) const;
-    double toLength(ExecState*) const;
+    JS_EXPORT_PRIVATE double toInteger(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
+    int32_t toInt32(JSGlobalObject*) const;
+    uint32_t toUInt32(JSGlobalObject*) const;
+    uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
+    double toLength(JSGlobalObject*) const;
 
     // Floating point conversions (this is a convenience function for WebCore;
     // single precision float is not a representation used in JS or JSC).
-    float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
+    float toFloat(JSGlobalObject* globalObject) const { return static_cast<float>(toNumber(globalObject)); }
 
     // Object operations, with the toObject operation included.
-    JSValue get(ExecState*, PropertyName) const;
-    JSValue get(ExecState*, PropertyName, PropertySlot&) const;
-    JSValue get(ExecState*, unsigned propertyName) const;
-    JSValue get(ExecState*, unsigned propertyName, PropertySlot&) const;
-    JSValue get(ExecState*, uint64_t propertyName) const;
+    JSValue get(JSGlobalObject*, PropertyName) const;
+    JSValue get(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    JSValue get(JSGlobalObject*, unsigned propertyName) const;
+    JSValue get(JSGlobalObject*, unsigned propertyName, PropertySlot&) const;
+    JSValue get(JSGlobalObject*, uint64_t propertyName) const;
 
-    bool getPropertySlot(ExecState*, PropertyName, PropertySlot&) const;
-    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(ExecState*, PropertyName, CallbackWhenNoException) const;
-    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(ExecState*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
+    bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
+    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
+    template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
-    bool getOwnPropertySlot(ExecState*, PropertyName, PropertySlot&) const;
+    bool getOwnPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
 
-    bool put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    bool putInline(ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE bool putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE bool putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    bool putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool put(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE bool putToPrimitive(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE bool putToPrimitiveByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
 
-    JSValue toThis(ExecState*, ECMAMode) const;
+    JSValue toThis(JSGlobalObject*, ECMAMode) const;
 
-    static bool equal(ExecState*, JSValue v1, JSValue v2);
-    static bool equalSlowCase(ExecState*, JSValue v1, JSValue v2);
-    static bool equalSlowCaseInline(ExecState*, JSValue v1, JSValue v2);
-    static bool strictEqual(ExecState*, JSValue v1, JSValue v2);
-    static bool strictEqualSlowCase(ExecState*, JSValue v1, JSValue v2);
-    static bool strictEqualSlowCaseInline(ExecState*, JSValue v1, JSValue v2);
+    static bool equal(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool equalSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool equalSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool strictEqual(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool strictEqualSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
+    static bool strictEqualSlowCaseInline(JSGlobalObject*, JSValue v1, JSValue v2);
     static TriState pureStrictEqual(JSValue v1, JSValue v2);
 
     bool isCell() const;
@@ -330,8 +328,8 @@ public:
     void dumpInContextAssumingStructure(PrintStream&, DumpContext*, Structure*) const;
     void dumpForBacktrace(PrintStream&) const;
 
-    JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
-    bool requireObjectCoercible(ExecState*) const;
+    JS_EXPORT_PRIVATE JSObject* synthesizePrototype(JSGlobalObject*) const;
+    bool requireObjectCoercible(JSGlobalObject*) const;
 
     // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
     // converted to Int52s and back again.
@@ -479,11 +477,11 @@ private:
     JSValue(HashTableDeletedValueTag);
 
     inline const JSValue asValue() const { return *this; }
-    JS_EXPORT_PRIVATE double toNumberSlowCase(ExecState*) const;
-    JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*, bool returnEmptyStringOnError) const;
-    JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(ExecState*) const;
-    JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE JSValue toThisSlowCase(ExecState*, ECMAMode) const;
+    JS_EXPORT_PRIVATE double toNumberSlowCase(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*, bool returnEmptyStringOnError) const;
+    JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSValue toThisSlowCase(JSGlobalObject*, ECMAMode) const;
 
     EncodedValueDescriptor u;
 };
@@ -634,6 +632,6 @@ inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != 
 bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 
 // See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
-bool sameValue(ExecState*, JSValue a, JSValue b);
+bool sameValue(JSGlobalObject*, JSValue a, JSValue b);
 
 } // namespace JSC

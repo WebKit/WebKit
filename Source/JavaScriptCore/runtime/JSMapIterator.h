@@ -51,12 +51,12 @@ public:
         return instance;
     }
 
-    ALWAYS_INLINE HashMapBucketType* advanceIter(ExecState* exec)
+    ALWAYS_INLINE HashMapBucketType* advanceIter(JSGlobalObject* globalObject)
     {
         HashMapBucketType* prev = m_iter.get();
         if (!prev)
             return nullptr;
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         HashMapBucketType* bucket = m_iter->next();
         while (bucket && bucket->deleted())
             bucket = bucket->next();
@@ -67,9 +67,9 @@ public:
         setIterator(vm, bucket); // We keep m_iter on the last value since the first thing we do in this function is call next().
         return bucket;
     }
-    bool next(ExecState* exec, JSValue& value)
+    bool next(JSGlobalObject* globalObject, JSValue& value)
     {
-        HashMapBucketType* bucket = advanceIter(exec);
+        HashMapBucketType* bucket = advanceIter(globalObject);
         if (!bucket)
             return false;
 
@@ -78,13 +78,13 @@ public:
         else if (m_kind == IterateKey)
             value = bucket->key();
         else
-            value = createPair(exec, bucket->key(), bucket->value());
+            value = createPair(globalObject, bucket->key(), bucket->value());
         return true;
     }
 
-    bool nextKeyValue(ExecState* exec, JSValue& key, JSValue& value)
+    bool nextKeyValue(JSGlobalObject* globalObject, JSValue& key, JSValue& value)
     {
-        HashMapBucketType* bucket = advanceIter(exec);
+        HashMapBucketType* bucket = advanceIter(globalObject);
         if (!bucket)
             return false;
 
@@ -108,7 +108,7 @@ private:
     }
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSMap*);
-    JSValue createPair(CallFrame*, JSValue, JSValue);
+    JSValue createPair(JSGlobalObject*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSMap> m_map;

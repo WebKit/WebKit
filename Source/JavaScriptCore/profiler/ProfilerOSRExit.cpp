@@ -45,12 +45,12 @@ OSRExit::~OSRExit()
 {
 }
 
-JSValue OSRExit::toJS(ExecState* exec) const
+JSValue OSRExit::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
-    JSObject* result = constructEmptyObject(exec);
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, vm.propertyNames->id, jsNumber(m_id));
-    result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(exec));
+    result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(globalObject));
     result->putDirect(vm, vm.propertyNames->exitKind, jsString(vm, exitKindToString(m_exitKind)));
     result->putDirect(vm, vm.propertyNames->isWatchpoint, jsBoolean(m_isWatchpoint));
     result->putDirect(vm, vm.propertyNames->count, jsNumber(m_counter));

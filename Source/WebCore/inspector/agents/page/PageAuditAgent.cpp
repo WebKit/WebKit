@@ -61,7 +61,7 @@ InjectedScript PageAuditAgent::injectedScriptForEval(const int* executionContext
     if (executionContextId)
         return injectedScriptManager().injectedScriptForId(*executionContextId);
 
-    JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
+    JSC::JSGlobalObject* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
     return injectedScriptManager().injectedScriptFor(scriptState);
 }
 
@@ -77,25 +77,25 @@ InjectedScript PageAuditAgent::injectedScriptForEval(ErrorString& errorString, c
     return injectedScript;
 }
 
-void PageAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::Strong<JSC::JSObject>& auditObject)
+void PageAuditAgent::populateAuditObject(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Strong<JSC::JSObject>& auditObject)
 {
-    InspectorAuditAgent::populateAuditObject(execState, auditObject);
+    InspectorAuditAgent::populateAuditObject(lexicalGlobalObject, auditObject);
 
-    ASSERT(execState);
-    if (!execState)
+    ASSERT(lexicalGlobalObject);
+    if (!lexicalGlobalObject)
         return;
 
-    if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(execState->lexicalGlobalObject())) {
+    if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)) {
         JSC::VM& vm = globalObject->vm();
         JSC::JSLockHolder lock(vm);
 
-        if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(execState, globalObject, InspectorAuditAccessibilityObject::create(*this)))
+        if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditAccessibilityObject::create(*this)))
             auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Accessibility"), jsInspectorAuditAccessibilityObject);
 
-        if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(execState, globalObject, InspectorAuditDOMObject::create(*this)))
+        if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditDOMObject::create(*this)))
             auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "DOM"), jsInspectorAuditDOMObject);
 
-        if (JSC::JSValue jsInspectorAuditResourcesObject = toJSNewlyCreated(execState, globalObject, InspectorAuditResourcesObject::create(*this)))
+        if (JSC::JSValue jsInspectorAuditResourcesObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditResourcesObject::create(*this)))
             auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Resources"), jsInspectorAuditResourcesObject);
     }
 }

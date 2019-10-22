@@ -74,7 +74,7 @@ JSC::JSValue createWrapper(JSDOMGlobalObject& globalObject, Ref<NodeList>&& node
     return createWrapper<NodeList>(&globalObject, WTFMove(nodeList));
 }
 
-JSC::JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<NodeList>&& nodeList)
+JSC::JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<NodeList>&& nodeList)
 {
     return createWrapper(*globalObject, WTFMove(nodeList));
 }

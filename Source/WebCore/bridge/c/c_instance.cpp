@@ -65,16 +65,16 @@ void CInstance::setGlobalException(String exception)
     globalExceptionString() = exception;
 }
 
-void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
+void CInstance::moveGlobalExceptionToExecState(JSGlobalObject* lexicalGlobalObject)
 {
     if (globalExceptionString().isNull())
         return;
 
     {
-        VM& vm = exec->vm();
+        VM& vm = lexicalGlobalObject->vm();
         JSLockHolder lock(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwException(exec, scope, createError(exec, globalExceptionString()));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, globalExceptionString()));
     }
 
     globalExceptionString() = String();
@@ -92,10 +92,10 @@ CInstance::~CInstance()
     _NPN_ReleaseObject(_object);
 }
 
-RuntimeObject* CInstance::newRuntimeObject(ExecState* exec)
+RuntimeObject* CInstance::newRuntimeObject(JSGlobalObject* lexicalGlobalObject)
 {
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
-    return CRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<CRuntimeObject>(exec), this);
+    return CRuntimeObject::create(lexicalGlobalObject->vm(), WebCore::deprecatedGetDOMStructure<CRuntimeObject>(lexicalGlobalObject), this);
 }
 
 Class *CInstance::getClass() const
@@ -114,12 +114,12 @@ class CRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
+    static CRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
-        Structure* domStructure = WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec);
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(lexicalGlobalObject);
         CRuntimeMethod* runtimeMethod = new (NotNull, allocateCell<CRuntimeMethod>(vm.heap)) CRuntimeMethod(globalObject, domStructure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
@@ -148,19 +148,19 @@ private:
 
 const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CRuntimeMethod) };
 
-JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
+JSValue CInstance::getMethod(JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
 {
     Method* method = getClass()->methodNamed(propertyName, this);
-    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), method);
+    return CRuntimeMethod::create(lexicalGlobalObject, lexicalGlobalObject, propertyName.publicName(), method);
 }
 
-JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
+JSValue CInstance::invokeMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, RuntimeMethod* runtimeMethod)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!asObject(runtimeMethod)->inherits<CRuntimeMethod>(vm))
-        return throwTypeError(exec, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
+        return throwTypeError(lexicalGlobalObject, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     CMethod* method = static_cast<CMethod*>(runtimeMethod->method());
     ASSERT(method);
@@ -169,12 +169,12 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     if (!_object->_class->hasMethod(_object, ident))
         return jsUndefined();
 
-    unsigned count = exec->argumentCount();
+    unsigned count = callFrame->argumentCount();
     Vector<NPVariant, 8> cArgs(count);
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, exec->uncheckedArgument(i), &cArgs[i]);
+        convertValueToNPVariant(lexicalGlobalObject, callFrame->uncheckedArgument(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     bool retval = true;
@@ -182,57 +182,57 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     VOID_TO_NPVARIANT(resultVariant);
 
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->invoke(_object, ident, cArgs.data(), count, &resultVariant);
-        moveGlobalExceptionToExecState(exec);
+        moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
 
-    JSValue resultValue = convertNPVariantToValue(exec, &resultVariant, m_rootObject.get());
+    JSValue resultValue = convertNPVariantToValue(lexicalGlobalObject, &resultVariant, m_rootObject.get());
     _NPN_ReleaseVariantValue(&resultVariant);
     return resultValue;
 }
 
 
-JSValue CInstance::invokeDefaultMethod(ExecState* exec)
+JSValue CInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!_object->_class->invokeDefault)
         return jsUndefined();
 
-    unsigned count = exec->argumentCount();
+    unsigned count = callFrame->argumentCount();
     Vector<NPVariant, 8> cArgs(count);
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, exec->uncheckedArgument(i), &cArgs[i]);
+        convertValueToNPVariant(lexicalGlobalObject, callFrame->uncheckedArgument(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     bool retval = true;
     NPVariant resultVariant;
     VOID_TO_NPVARIANT(resultVariant);
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->invokeDefault(_object, cArgs.data(), count, &resultVariant);
-        moveGlobalExceptionToExecState(exec);
+        moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
 
-    JSValue resultValue = convertNPVariantToValue(exec, &resultVariant, m_rootObject.get());
+    JSValue resultValue = convertNPVariantToValue(lexicalGlobalObject, &resultVariant, m_rootObject.get());
     _NPN_ReleaseVariantValue(&resultVariant);
     return resultValue;
 }
@@ -242,9 +242,9 @@ bool CInstance::supportsConstruct() const
     return _object->_class->construct;
 }
 
-JSValue CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
+JSValue CInstance::invokeConstruct(JSGlobalObject* lexicalGlobalObject, CallFrame*, const ArgList& args)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!_object->_class->construct)
@@ -255,50 +255,50 @@ JSValue CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, args.at(i), &cArgs[i]);
+        convertValueToNPVariant(lexicalGlobalObject, args.at(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     bool retval = true;
     NPVariant resultVariant;
     VOID_TO_NPVARIANT(resultVariant);
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->construct(_object, cArgs.data(), count, &resultVariant);
-        moveGlobalExceptionToExecState(exec);
+        moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Error calling method on NPObject."_s));
 
     for (i = 0; i < count; i++)
         _NPN_ReleaseVariantValue(&cArgs[i]);
 
-    JSValue resultValue = convertNPVariantToValue(exec, &resultVariant, m_rootObject.get());
+    JSValue resultValue = convertNPVariantToValue(lexicalGlobalObject, &resultVariant, m_rootObject.get());
     _NPN_ReleaseVariantValue(&resultVariant);
     return resultValue;
 }
 
-JSValue CInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue CInstance::defaultValue(JSGlobalObject* lexicalGlobalObject, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
-        return stringValue(exec);
+        return stringValue(lexicalGlobalObject);
     if (hint == PreferNumber)
-        return numberValue(exec);
-    return valueOf(exec);
+        return numberValue(lexicalGlobalObject);
+    return valueOf(lexicalGlobalObject);
 }
 
-JSValue CInstance::stringValue(ExecState* exec) const
+JSValue CInstance::stringValue(JSGlobalObject* lexicalGlobalObject) const
 {
     JSValue value;
-    if (toJSPrimitive(exec, "toString", value))
+    if (toJSPrimitive(lexicalGlobalObject, "toString", value))
         return value;
 
     // Fallback to default implementation.
-    return jsNontrivialString(exec->vm(), "NPObject"_s);
+    return jsNontrivialString(lexicalGlobalObject->vm(), "NPObject"_s);
 }
 
-JSValue CInstance::numberValue(ExecState*) const
+JSValue CInstance::numberValue(JSGlobalObject*) const
 {
     // FIXME: Implement something sensible.
     return jsNumber(0);
@@ -310,19 +310,19 @@ JSValue CInstance::booleanValue() const
     return jsBoolean(getObject());
 }
 
-JSValue CInstance::valueOf(ExecState* exec) const
+JSValue CInstance::valueOf(JSGlobalObject* lexicalGlobalObject) const
 {
     JSValue value;
-    if (toJSPrimitive(exec, "valueOf", value))
+    if (toJSPrimitive(lexicalGlobalObject, "valueOf", value))
         return value;
 
     // Fallback to default implementation.
-    return stringValue(exec);
+    return stringValue(lexicalGlobalObject);
 }
 
-bool CInstance::toJSPrimitive(ExecState* exec, const char* name, JSValue& resultValue) const
+bool CInstance::toJSPrimitive(JSGlobalObject* lexicalGlobalObject, const char* name, JSValue& resultValue) const
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     NPIdentifier ident = _NPN_GetStringIdentifier(name);
@@ -335,21 +335,21 @@ bool CInstance::toJSPrimitive(ExecState* exec, const char* name, JSValue& result
     VOID_TO_NPVARIANT(resultVariant);
 
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->invoke(_object, ident, 0, 0, &resultVariant);
-        moveGlobalExceptionToExecState(exec);
+        moveGlobalExceptionToExecState(lexicalGlobalObject);
     }
 
     if (!retval)
-        throwException(exec, scope, createError(exec, "Error calling method on NPObject."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Error calling method on NPObject."_s));
 
-    resultValue = convertNPVariantToValue(exec, &resultVariant, m_rootObject.get());
+    resultValue = convertNPVariantToValue(lexicalGlobalObject, &resultVariant, m_rootObject.get());
     _NPN_ReleaseVariantValue(&resultVariant);
     return true;
 }
 
-void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
+void CInstance::getPropertyNames(JSGlobalObject* lexicalGlobalObject, PropertyNameArray& nameArray)
 {
     if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(_object->_class) || !_object->_class->enumerate)
         return;
@@ -358,20 +358,20 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
     NPIdentifier* identifiers;
 
     {
-        JSLock::DropAllLocks dropAllLocks(exec);
+        JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
         ASSERT(globalExceptionString().isNull());
         bool ok = _object->_class->enumerate(_object, &identifiers, &count);
-        moveGlobalExceptionToExecState(exec);
+        moveGlobalExceptionToExecState(lexicalGlobalObject);
         if (!ok)
             return;
     }
 
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     for (uint32_t i = 0; i < count; i++) {
         IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
 
         if (identifier->isString())
-            nameArray.add(identifierFromNPIdentifier(exec, identifier->string()));
+            nameArray.add(identifierFromNPIdentifier(lexicalGlobalObject, identifier->string()));
         else
             nameArray.add(Identifier::from(vm, identifier->number()));
     }

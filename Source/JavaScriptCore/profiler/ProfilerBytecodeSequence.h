@@ -49,7 +49,7 @@ public:
     const Bytecode& forBytecodeIndex(unsigned bytecodeIndex) const;
 
 protected:
-    void addSequenceProperties(ExecState*, JSObject*) const;
+    void addSequenceProperties(JSGlobalObject*, JSObject*) const;
     
 private:
     Vector<CString> m_header;

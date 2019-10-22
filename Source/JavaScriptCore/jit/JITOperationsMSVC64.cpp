@@ -36,7 +36,7 @@ namespace JSC {
 // FIXME: The following is a workaround that is only needed because JITStubsMSVC64.asm
 // is built unconditionally even when the JIT is disable, and it references this function.
 // We only need to provide a stub to satisfy the linkage. It will never be called.
-extern "C" EncodedJSValue getHostCallReturnValueWithExecState(ExecState*)
+extern "C" EncodedJSValue getHostCallReturnValueWithExecState(JSGlobalObject*)
 {
     return JSValue::encode(JSValue());
 }

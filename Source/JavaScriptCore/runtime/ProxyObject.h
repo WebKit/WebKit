@@ -36,12 +36,12 @@ public:
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | ProhibitsPropertyCaching;
 
-    static ProxyObject* create(ExecState* exec, JSGlobalObject* globalObject, JSValue target, JSValue handler)
+    static ProxyObject* create(JSGlobalObject* globalObject, JSValue target, JSValue handler)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         Structure* structure = ProxyObject::structureForTarget(globalObject, target);
         ProxyObject* proxy = new (NotNull, allocateCell<ProxyObject>(vm.heap)) ProxyObject(vm, structure);
-        proxy->finishCreation(vm, exec, target, handler);
+        proxy->finishCreation(vm, globalObject, target, handler);
         return proxy;
     }
 
@@ -62,50 +62,50 @@ public:
     JSObject* target() const { return m_target.get(); }
     JSValue handler() const { return m_handler.get(); }
 
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    bool putByIndexCommon(ExecState*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);
-    JSValue performGetPrototype(ExecState*);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putByIndexCommon(JSGlobalObject*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);
+    JSValue performGetPrototype(JSGlobalObject*);
     void revoke(VM&);
     bool isRevoked() const;
 
 private:
     JS_EXPORT_PRIVATE ProxyObject(VM&, Structure*);
-    JS_EXPORT_PRIVATE void finishCreation(VM&, ExecState*, JSValue target, JSValue handler);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSValue target, JSValue handler);
     JS_EXPORT_PRIVATE static Structure* structureForTarget(JSGlobalObject*, JSValue target);
 
-    static String toStringName(const JSObject*, ExecState*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    static String toStringName(const JSObject*, JSGlobalObject*);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
     static CallType getCallData(JSCell*, CallData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
-    static bool preventExtensions(JSObject*, ExecState*);
-    static bool isExtensible(JSObject*, ExecState*);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static bool setPrototype(JSObject*, ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
-    static JSValue getPrototype(JSObject*, ExecState*);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
+    static bool preventExtensions(JSObject*, JSGlobalObject*);
+    static bool isExtensible(JSObject*, JSGlobalObject*);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static void getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static bool setPrototype(JSObject*, JSGlobalObject*, JSValue prototype, bool shouldThrowIfCantSet);
+    static JSValue getPrototype(JSObject*, JSGlobalObject*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    bool getOwnPropertySlotCommon(ExecState*, PropertyName, PropertySlot&);
-    bool performInternalMethodGetOwnProperty(ExecState*, PropertyName, PropertySlot&);
-    bool performGet(ExecState*, PropertyName, PropertySlot&);
-    bool performHasProperty(ExecState*, PropertyName, PropertySlot&);
+    bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
+    bool performInternalMethodGetOwnProperty(JSGlobalObject*, PropertyName, PropertySlot&);
+    bool performGet(JSGlobalObject*, PropertyName, PropertySlot&);
+    bool performHasProperty(JSGlobalObject*, PropertyName, PropertySlot&);
     template <typename DefaultDeleteFunction>
-    bool performDelete(ExecState*, PropertyName, DefaultDeleteFunction);
+    bool performDelete(JSGlobalObject*, PropertyName, DefaultDeleteFunction);
     template <typename PerformDefaultPutFunction>
-    bool performPut(ExecState*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction, bool shouldThrow);
-    bool performPreventExtensions(ExecState*);
-    bool performIsExtensible(ExecState*);
-    bool performDefineOwnProperty(ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    void performGetOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode);
-    bool performSetPrototype(ExecState*, JSValue prototype, bool shouldThrowIfCantSet);
+    bool performPut(JSGlobalObject*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction, bool shouldThrow);
+    bool performPreventExtensions(JSGlobalObject*);
+    bool performIsExtensible(JSGlobalObject*);
+    bool performDefineOwnProperty(JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    void performGetOwnPropertyNames(JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    bool performSetPrototype(JSGlobalObject*, JSValue prototype, bool shouldThrowIfCantSet);
 
     WriteBarrier<JSObject> m_target;
     WriteBarrier<Unknown> m_handler;

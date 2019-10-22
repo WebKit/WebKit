@@ -31,60 +31,60 @@
 
 namespace JSC {
 
-bool JSValue::equalSlowCase(ExecState* exec, JSValue v1, JSValue v2)
+bool JSValue::equalSlowCase(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    return equalSlowCaseInline(exec, v1, v2);
+    return equalSlowCaseInline(globalObject, v1, v2);
 }
 
-bool JSValue::strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2)
+bool JSValue::strictEqualSlowCase(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    return strictEqualSlowCaseInline(exec, v1, v2);
+    return strictEqualSlowCaseInline(globalObject, v1, v2);
 }
 
-NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
+NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     // exception for the Date exception in defaultValue()
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue p1 = v1.toPrimitive(callFrame);
+    JSValue p1 = v1.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    JSValue p2 = v2.toPrimitive(callFrame);
+    JSValue p2 = v2.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (p1.isString()) {
         if (p2.isCell()) {
-            JSString* p2String = p2.toString(callFrame);
+            JSString* p2String = p2.toString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            RELEASE_AND_RETURN(scope, jsString(callFrame, asString(p1), p2String));
+            RELEASE_AND_RETURN(scope, jsString(globalObject, asString(p1), p2String));
         }
-        String p2String = p2.toWTFString(callFrame);
+        String p2String = p2.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, jsString(callFrame, asString(p1), p2String));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, asString(p1), p2String));
     }
 
     if (p2.isString()) {
         if (p1.isCell()) {
-            JSString* p1String = p1.toString(callFrame);
+            JSString* p1String = p1.toString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            RELEASE_AND_RETURN(scope, jsString(callFrame, p1String, asString(p2)));
+            RELEASE_AND_RETURN(scope, jsString(globalObject, p1String, asString(p2)));
         }
-        String p1String = p1.toWTFString(callFrame);
+        String p1String = p1.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, jsString(callFrame, p1String, asString(p2)));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, p1String, asString(p2)));
     }
 
-    auto leftNumeric = p1.toNumeric(callFrame);
+    auto leftNumeric = p1.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto rightNumeric = p2.toNumeric(callFrame);
+    auto rightNumeric = p2.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
             scope.release();
-            return JSBigInt::add(callFrame, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            return JSBigInt::add(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
         }
 
-        return throwTypeError(callFrame, scope, "Invalid mix of BigInt and other type in addition."_s);
+        return throwTypeError(globalObject, scope, "Invalid mix of BigInt and other type in addition."_s);
     }
 
     return jsNumber(WTF::get<double>(leftNumeric) + WTF::get<double>(rightNumeric));
@@ -116,14 +116,14 @@ JSValue jsTypeStringForValue(VM& vm, JSGlobalObject* globalObject, JSValue v)
     return vm.smallStrings.objectString();
 }
 
-JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
+JSValue jsTypeStringForValue(JSGlobalObject* globalObject, JSValue v)
 {
-    return jsTypeStringForValue(callFrame->vm(), callFrame->lexicalGlobalObject(), v);
+    return jsTypeStringForValue(globalObject->vm(), globalObject, v);
 }
 
-bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
+bool jsIsObjectTypeOrNull(JSGlobalObject* globalObject, JSValue v)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     if (!v.isCell())
         return v.isNull();
 
@@ -131,7 +131,7 @@ bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
     if (type == StringType || type == SymbolType || type == BigIntType)
         return false;
     if (type >= ObjectType) {
-        if (asObject(v)->structure(vm)->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
+        if (asObject(v)->structure(vm)->masqueradesAsUndefined(globalObject))
             return false;
         JSObject* object = asObject(v);
         if (object->isFunction(vm))
@@ -140,13 +140,12 @@ bool jsIsObjectTypeOrNull(CallFrame* callFrame, JSValue v)
     return true;
 }
 
-size_t normalizePrototypeChain(CallFrame* callFrame, JSCell* base, bool& sawPolyProto)
+size_t normalizePrototypeChain(JSGlobalObject* globalObject, JSCell* base, bool& sawPolyProto)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     size_t count = 0;
     sawPolyProto = false;
     JSCell* current = base;
-    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
     while (1) {
         Structure* structure = current->structure(vm);
         if (structure->isProxy())

@@ -42,15 +42,15 @@ public:
         return &vm.programExecutableSpace.space;
     }
 
-    static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
+    static ProgramExecutable* create(JSGlobalObject* globalObject, const SourceCode& source)
     {
-        VM& vm = exec->vm();
-        ProgramExecutable* executable = new (NotNull, allocateCell<ProgramExecutable>(vm.heap)) ProgramExecutable(exec, source);
+        VM& vm = getVM(globalObject);
+        ProgramExecutable* executable = new (NotNull, allocateCell<ProgramExecutable>(vm.heap)) ProgramExecutable(globalObject, source);
         executable->finishCreation(vm);
         return executable;
     }
 
-    JSObject* initializeGlobalProperties(VM&, CallFrame*, JSScope*);
+    JSObject* initializeGlobalProperties(VM&, JSGlobalObject*, JSScope*);
 
     static void destroy(JSCell*);
 
@@ -79,7 +79,7 @@ private:
     friend class ExecutableBase;
     friend class ScriptExecutable;
 
-    ProgramExecutable(ExecState*, const SourceCode&);
+    ProgramExecutable(JSGlobalObject*, const SourceCode&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

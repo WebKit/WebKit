@@ -43,11 +43,11 @@ namespace JSC {
 
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProgramExecutable) };
 
-ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : Base(exec->vm().programExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
+ProgramExecutable::ProgramExecutable(JSGlobalObject* globalObject, const SourceCode& source)
+    : Base(globalObject->vm().programExecutableStructure.get(), globalObject->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (vm.typeProfiler() || vm.controlFlowProfiler())
         vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(vm), typeProfilingEndOffset(vm));
 }
@@ -63,21 +63,21 @@ enum class GlobalPropertyLookUpStatus {
     Configurable,
     NonConfigurable,
 };
-static GlobalPropertyLookUpStatus hasRestrictedGlobalProperty(ExecState* exec, JSGlobalObject* globalObject, PropertyName propertyName)
+static GlobalPropertyLookUpStatus hasRestrictedGlobalProperty(JSGlobalObject* globalObject, PropertyName propertyName)
 {
     PropertyDescriptor descriptor;
-    if (!globalObject->getOwnPropertyDescriptor(exec, propertyName, descriptor))
+    if (!globalObject->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
         return GlobalPropertyLookUpStatus::NotFound;
     if (descriptor.configurable())
         return GlobalPropertyLookUpStatus::Configurable;
     return GlobalPropertyLookUpStatus::NonConfigurable;
 }
 
-JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callFrame, JSScope* scope)
+JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
-    JSGlobalObject* globalObject = scope->globalObject(vm);
+    ASSERT(globalObject == scope->globalObject(vm));
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 
@@ -88,17 +88,15 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         vm, this, source(), strictMode, codeGenerationMode, error);
 
     if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(callFrame, source().provider(), error.line(), error.message());
+        globalObject->debugger()->sourceParsed(globalObject, source().provider(), error.line(), error.message());
 
     if (error.isValid())
         return error.toErrorObject(globalObject, source());
 
     JSValue nextPrototype = globalObject->getPrototypeDirect(vm);
     while (nextPrototype && nextPrototype.isObject()) {
-        if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType)) {
-            ExecState* exec = globalObject->globalExec();
-            return createTypeError(exec, "Proxy is not allowed in the global prototype chain."_s);
-        }
+        if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType))
+            return createTypeError(globalObject, "Proxy is not allowed in the global prototype chain."_s);
         nextPrototype = asObject(nextPrototype)->getPrototypeDirect(vm);
     }
     
@@ -108,22 +106,21 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     // The ES6 spec says that no vars/global properties/let/const can be duplicated in the global scope.
     // This carried out section 15.1.8 of the ES6 spec: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-globaldeclarationinstantiation
     {
-        ExecState* exec = globalObject->globalExec();
         // Check for intersection of "var" and "let"/"const"/"class"
         for (auto& entry : lexicalDeclarations) {
             if (variableDeclarations.contains(entry.key))
-                return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
         }
 
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names (with configurable = false), or "var"/"let"/"const" variables.
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
             // The ES6 spec says that RestrictedGlobalProperty can't be shadowed.
-            GlobalPropertyLookUpStatus status = hasRestrictedGlobalProperty(exec, globalObject, entry.key.get());
+            GlobalPropertyLookUpStatus status = hasRestrictedGlobalProperty(globalObject, entry.key.get());
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             switch (status) {
             case GlobalPropertyLookUpStatus::NonConfigurable:
-                return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
             case GlobalPropertyLookUpStatus::Configurable:
                 // Lexical bindings can shadow global properties if the given property's attribute is configurable.
                 // https://tc39.github.io/ecma262/#sec-globaldeclarationinstantiation step 5-c, `hasRestrictedGlobal` becomes false
@@ -136,7 +133,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
                 break;
             }
 
-            bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+            bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             if (hasProperty) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {
@@ -145,7 +142,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
                     if (globalLexicalEnvironment->isConstVariable(entry.key.get()))
                         continue;
                 }
-                return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
             }
         }
 
@@ -153,10 +150,10 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // It's an error to introduce a shadow.
         if (!globalLexicalEnvironment->isEmpty()) {
             for (auto& entry : variableDeclarations) {
-                bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+                bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
-                    return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                    return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
             }
         }
     }
@@ -169,7 +166,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     for (size_t i = 0, numberOfFunctions = unlinkedCodeBlock->numberOfFunctionDecls(); i < numberOfFunctions; ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
         ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
-        globalObject->addFunction(callFrame, unlinkedFunctionExecutable->name());
+        globalObject->addFunction(globalObject, unlinkedFunctionExecutable->name());
         if (vm.typeProfiler() || vm.controlFlowProfiler()) {
             vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
                 unlinkedFunctionExecutable->typeProfilingStartOffset(), 
@@ -179,7 +176,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     for (auto& entry : variableDeclarations) {
         ASSERT(entry.value.isVar());
-        globalObject->addVar(callFrame, Identifier::fromUid(vm, entry.key.get()));
+        globalObject->addVar(globalObject, Identifier::fromUid(vm, entry.key.get()));
         throwScope.assertNoException();
     }
 

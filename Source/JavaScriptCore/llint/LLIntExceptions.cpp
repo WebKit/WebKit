@@ -39,26 +39,24 @@
 
 namespace JSC { namespace LLInt {
 
-Instruction* returnToThrow(ExecState* exec)
+Instruction* returnToThrow(VM& vm)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(vm);
 #if LLINT_TRACING
     if (UNLIKELY(Options::traceLLIntSlowPath())) {
-        VM* vm = &exec->vm();
-        auto scope = DECLARE_CATCH_SCOPE(*vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         dataLog("Throwing exception ", JSValue(scope.exception()), " (returnToThrow).\n");
     }
 #endif
     return LLInt::exceptionInstructions();
 }
 
-void* callToThrow(ExecState* exec)
+void* callToThrow(VM& vm)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(vm);
 #if LLINT_TRACING
     if (UNLIKELY(Options::traceLLIntSlowPath())) {
-        VM* vm = &exec->vm();
-        auto scope = DECLARE_CATCH_SCOPE(*vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         dataLog("Throwing exception ", JSValue(scope.exception()), " (callToThrow).\n");
     }
 #endif

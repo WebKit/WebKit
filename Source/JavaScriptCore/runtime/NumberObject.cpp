@@ -44,10 +44,10 @@ void NumberObject::finishCreation(VM& vm)
     ASSERT(type() == NumberObjectType);
 }
 
-NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)
+NumberObject* constructNumber(JSGlobalObject* globalObject, JSValue number)
 {
-    NumberObject* object = NumberObject::create(exec->vm(), globalObject->numberObjectStructure());
-    object->setInternalValue(exec->vm(), number);
+    NumberObject* object = NumberObject::create(globalObject->vm(), globalObject->numberObjectStructure());
+    object->setInternalValue(globalObject->vm(), number);
     return object;
 }
 

@@ -40,26 +40,26 @@ namespace JSC {
 #define CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(functionName) do {                           \
     switch (thisValue.getObject()->classInfo(vm)->typedArrayStorageType) {                      \
     case TypeUint8Clamped:                                                                      \
-        return functionName<JSUint8ClampedArray>(vm, callFrame);                                \
+        return functionName<JSUint8ClampedArray>(vm, globalObject, callFrame);                  \
     case TypeInt32:                                                                             \
-        return functionName<JSInt32Array>(vm, callFrame);                                       \
+        return functionName<JSInt32Array>(vm, globalObject, callFrame);                         \
     case TypeUint32:                                                                            \
-        return functionName<JSUint32Array>(vm, callFrame);                                      \
+        return functionName<JSUint32Array>(vm, globalObject, callFrame);                        \
     case TypeFloat64:                                                                           \
-        return functionName<JSFloat64Array>(vm, callFrame);                                     \
+        return functionName<JSFloat64Array>(vm, globalObject, callFrame);                       \
     case TypeFloat32:                                                                           \
-        return functionName<JSFloat32Array>(vm, callFrame);                                     \
+        return functionName<JSFloat32Array>(vm, globalObject, callFrame);                       \
     case TypeInt8:                                                                              \
-        return functionName<JSInt8Array>(vm, callFrame);                                        \
+        return functionName<JSInt8Array>(vm, globalObject, callFrame);                          \
     case TypeUint8:                                                                             \
-        return functionName<JSUint8Array>(vm, callFrame);                                       \
+        return functionName<JSUint8Array>(vm, globalObject, callFrame);                         \
     case TypeInt16:                                                                             \
-        return functionName<JSInt16Array>(vm, callFrame);                                       \
+        return functionName<JSInt16Array>(vm, globalObject, callFrame);                         \
     case TypeUint16:                                                                            \
-        return functionName<JSUint16Array>(vm, callFrame);                                      \
+        return functionName<JSUint16Array>(vm, globalObject, callFrame);                        \
     case NotTypedArray:                                                                         \
     case TypeDataView:                                                                          \
-        return throwVMTypeError(callFrame, scope,                                               \
+        return throwVMTypeError(globalObject, scope,                                            \
             "Receiver should be a typed array view"_s);                                         \
     }                                                                                           \
     RELEASE_ASSERT_NOT_REACHED();                                                               \
@@ -77,12 +77,12 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = callFrame->argument(0);
     if (!argument.isCell() || !isTypedView(argument.asCell()->classInfo(vm)->typedArrayStorageType))
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
 
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
 
     if (thisObject->isNeutered())
-        return throwVMTypeError(callFrame, scope, "Underlying ArrayBuffer has been detached from the view"_s);
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
     return JSValue::encode(jsNumber(thisObject->length()));
 }
@@ -110,7 +110,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSet(JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (UNLIKELY(!thisValue.isObject()))
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSet);
 }
@@ -121,7 +121,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncCopyWithin(JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncCopyWithin);
 }
@@ -132,7 +132,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIncludes(JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMError(callFrame, scope, createTypeError(callFrame, "Receiver should be a typed array view but was not an object"));
+        return throwVMError(globalObject, scope, createTypeError(globalObject, "Receiver should be a typed array view but was not an object"));
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncIncludes);
 }
@@ -143,7 +143,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncLastIndexOf(JSGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncLastIndexOf);
 }
@@ -154,7 +154,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncIndexOf(JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncIndexOf);
 }
@@ -165,7 +165,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncJoin(JSGlobalObject* 
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncJoin);
 }
@@ -176,7 +176,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncBuffer(JSGlobal
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncBuffer);
 }
@@ -187,7 +187,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncLength(JSGlobal
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncLength);
 }
@@ -198,7 +198,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteLength(JSGl
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteLength);
 }
@@ -209,7 +209,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoGetterFuncByteOffset(JSGl
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoGetterFuncByteOffset);
 }
@@ -220,7 +220,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncReverse(JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncReverse);
 }
@@ -231,7 +231,7 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSubarrayCreate(JSGlobalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewPrivateFuncSubarrayCreate);
 }
@@ -242,7 +242,7 @@ static EncodedJSValue JSC_HOST_CALL typedArrayViewProtoFuncSlice(JSGlobalObject*
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue();
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope, "Receiver should be a typed array view but was not an object"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view but was not an object"_s);
     scope.release();
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncSlice);
 }

@@ -240,21 +240,21 @@ static JSCell* createDirectArgumentsDuringExit(Context& context, CodeBlock* code
 static JSCell* createClonedArgumentsDuringExit(Context& context, CodeBlock* codeBlock, InlineCallFrame* inlineCallFrame, JSFunction* callee, int32_t argumentCount)
 {
     VM& vm = *context.arg<VM*>();
-    ExecState* exec = context.fp<ExecState*>();
 
     ASSERT(vm.heap.isDeferred());
 
     if (inlineCallFrame)
         codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
 
+    JSGlobalObject* globalObject = codeBlock->globalObject();
     unsigned length = argumentCount - 1;
     ClonedArguments* result = ClonedArguments::createEmpty(
-        vm, codeBlock->globalObject()->clonedArgumentsStructure(), callee, length);
+        vm, globalObject->clonedArgumentsStructure(), callee, length);
 
     void* frameBase = context.fp<Register*>() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0);
     Frame frame(frameBase, context.stack());
     for (unsigned i = length; i--;)
-        result->putDirectIndex(exec, i, frame.argument(i));
+        result->putDirectIndex(globalObject, i, frame.argument(i));
     return result;
 }
 
@@ -334,8 +334,8 @@ void OSRExit::executeOSRExit(Context& context)
     VM& vm = *context.arg<VM*>();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ExecState* exec = context.fp<ExecState*>();
-    ASSERT(&exec->vm() == &vm);
+    CallFrame* callFrame = context.fp<CallFrame*>();
+    ASSERT(&callFrame->vm() == &vm);
     auto& cpu = context.cpu;
 
     if (validateDFGDoesGC) {
@@ -345,11 +345,11 @@ void OSRExit::executeOSRExit(Context& context)
     }
 
     if (vm.callFrameForCatch) {
-        exec = vm.callFrameForCatch;
-        context.fp() = exec;
+        callFrame = vm.callFrameForCatch;
+        context.fp() = callFrame;
     }
 
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     ASSERT(codeBlock);
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
 
@@ -602,7 +602,7 @@ void OSRExit::executeOSRExit(Context& context)
 
         switch (recovery.technique()) {
         case DisplacedInJSStack:
-            frame.setOperand(operand, exec->r(recovery.virtualRegister()).asanUnsafeJSValue());
+            frame.setOperand(operand, callFrame->r(recovery.virtualRegister()).asanUnsafeJSValue());
             break;
 
         case InFPR:
@@ -624,7 +624,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case CellDisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedCell()));
+            frame.setOperand(operand, JSValue(callFrame->r(recovery.virtualRegister()).asanUnsafeUnboxedCell()));
             break;
 
 #if USE(JSVALUE32_64)
@@ -635,9 +635,9 @@ void OSRExit::executeOSRExit(Context& context)
 
         case BooleanDisplacedInJSStack:
 #if USE(JSVALUE64)
-            frame.setOperand(operand, exec->r(recovery.virtualRegister()).asanUnsafeJSValue());
+            frame.setOperand(operand, callFrame->r(recovery.virtualRegister()).asanUnsafeJSValue());
 #else
-            frame.setOperand(operand, jsBoolean(exec->r(recovery.virtualRegister()).asanUnsafeJSValue().payload()));
+            frame.setOperand(operand, jsBoolean(callFrame->r(recovery.virtualRegister()).asanUnsafeJSValue().payload()));
 #endif
             break;
 
@@ -646,7 +646,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case Int32DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedInt32()));
+            frame.setOperand(operand, JSValue(callFrame->r(recovery.virtualRegister()).asanUnsafeUnboxedInt32()));
             break;
 
 #if USE(JSVALUE64)
@@ -655,7 +655,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case Int52DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedInt52()));
+            frame.setOperand(operand, JSValue(callFrame->r(recovery.virtualRegister()).asanUnsafeUnboxedInt52()));
             break;
 
         case UnboxedStrictInt52InGPR:
@@ -663,7 +663,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case StrictInt52DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedStrictInt52()));
+            frame.setOperand(operand, JSValue(callFrame->r(recovery.virtualRegister()).asanUnsafeUnboxedStrictInt52()));
             break;
 #endif
 
@@ -672,7 +672,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case DoubleDisplacedInJSStack:
-            frame.setOperand(operand, JSValue(JSValue::EncodeAsDouble, purifyNaN(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedDouble())));
+            frame.setOperand(operand, JSValue(JSValue::EncodeAsDouble, purifyNaN(callFrame->r(recovery.virtualRegister()).asanUnsafeUnboxedDouble())));
             break;
 
         case Constant:
@@ -874,10 +874,10 @@ static void adjustAndJumpToTarget(Context& context, VM& vm, CodeBlock* codeBlock
 
     if (exit.isExceptionHandler()) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
-        vm.callFrameForCatch = context.fp<ExecState*>();
+        vm.callFrameForCatch = context.fp<CallFrame*>();
     }
 
-    vm.topCallFrame = context.fp<ExecState*>();
+    vm.topCallFrame = context.fp<CallFrame*>();
 
     if (exitState->isJumpToLLInt) {
         CodeBlock* codeBlockForExit = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOrigin, baselineCodeBlock);
@@ -901,8 +901,8 @@ static void adjustAndJumpToTarget(Context& context, VM& vm, CodeBlock* codeBlock
 
 static void printOSRExit(Context& context, uint32_t osrExitIndex, const OSRExit& exit)
 {
-    ExecState* exec = context.fp<ExecState*>();
-    CodeBlock* codeBlock = exec->codeBlock();
+    CallFrame* callFrame = context.fp<CallFrame*>();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     CodeBlock* alternative = codeBlock->alternative();
     ExitKind kind = exit.m_kind;
     unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
@@ -1007,7 +1007,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
 
         static_assert(std::is_same<decltype(operationCreateDirectArgumentsDuringExit), decltype(operationCreateClonedArgumentsDuringExit)>::value, "We assume these functions have the same signature below.");
         jit.setupArguments<decltype(operationCreateDirectArgumentsDuringExit)>(
-            AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
+            AssemblyHelpers::TrustedImmPtr(&jit.vm()), AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
         switch (recovery.technique()) {
         case DirectArgumentsThatWereNotCreated:
             jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationCreateDirectArgumentsDuringExit)), GPRInfo::nonArgGPR0);
@@ -1026,9 +1026,9 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
     }
 }
 
-void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
+void JIT_OPERATION OSRExit::compileOSRExit(CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (validateDFGDoesGC) {
@@ -1038,9 +1038,9 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
     }
 
     if (vm.callFrameForCatch)
-        RELEASE_ASSERT(vm.callFrameForCatch == exec);
+        RELEASE_ASSERT(vm.callFrameForCatch == callFrame);
 
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     ASSERT(codeBlock);
     ASSERT(codeBlock->jitType() == JITType::DFGJIT);
 
@@ -1661,10 +1661,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     adjustAndJumpToTarget(vm, jit, exit);
 }
 
-void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)
+void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(CallFrame* callFrame, void* debugInfoRaw, void* scratch)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = callFrame->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;

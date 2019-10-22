@@ -158,11 +158,11 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
     }
 }
 
-static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLikeObject(ExecState& state, Strong<JSObject>&& keyframesInput, bool allowLists)
+static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLikeObject(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, bool allowLists)
 {
     // https://drafts.csswg.org/web-animations-1/#process-a-keyframe-like-object
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 1. Run the procedure to convert an ECMAScript value to a dictionary type [WEBIDL] with keyframe input as the ECMAScript value as follows:
@@ -186,9 +186,9 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     //    Store the result of this procedure as keyframe output.
     KeyframeEffect::BasePropertyIndexedKeyframe baseProperties;
     if (allowLists)
-        baseProperties = convert<IDLDictionary<KeyframeEffect::BasePropertyIndexedKeyframe>>(state, keyframesInput.get());
+        baseProperties = convert<IDLDictionary<KeyframeEffect::BasePropertyIndexedKeyframe>>(lexicalGlobalObject, keyframesInput.get());
     else {
-        auto baseKeyframe = convert<IDLDictionary<KeyframeEffect::BaseKeyframe>>(state, keyframesInput.get());
+        auto baseKeyframe = convert<IDLDictionary<KeyframeEffect::BaseKeyframe>>(lexicalGlobalObject, keyframesInput.get());
         if (baseKeyframe.offset)
             baseProperties.offset = baseKeyframe.offset.value();
         else
@@ -210,7 +210,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
     // 3. Let input properties be the result of calling the EnumerableOwnNames operation with keyframe input as the object.
     PropertyNameArray inputProperties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    JSObject::getOwnPropertyNames(keyframesInput.get(), &state, inputProperties, EnumerationMode());
+    JSObject::getOwnPropertyNames(keyframesInput.get(), &lexicalGlobalObject, inputProperties, EnumerationMode());
 
     // 4. Make up a new list animation properties that consists of all of the properties that are in both input properties and animatable
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
@@ -231,7 +231,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     for (size_t i = 0; i < numberOfAnimationProperties; ++i) {
         // 1. Let raw value be the result of calling the [[Get]] internal method on keyframe input, with property name as the property
         //    key and keyframe input as the receiver.
-        auto rawValue = keyframesInput->get(&state, animationProperties[i]);
+        auto rawValue = keyframesInput->get(&lexicalGlobalObject, animationProperties[i]);
 
         // 2. Check the completion record of raw value.
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
@@ -245,13 +245,13 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             // If property values is a single DOMString, replace property values with a sequence of DOMStrings with the original value of property
             // Values as the only element.
             if (rawValue.isObject())
-                propertyValues = convert<IDLSequence<IDLDOMString>>(state, rawValue);
+                propertyValues = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, rawValue);
             else
-                propertyValues = { rawValue.toWTFString(&state) };
+                propertyValues = { rawValue.toWTFString(&lexicalGlobalObject) };
         } else {
             // Otherwise,
             // Let property values be the result of converting raw value to a DOMString using the procedure for converting an ECMAScript value to a DOMString.
-            propertyValues = { convert<IDLDOMString>(state, rawValue) };
+            propertyValues = { convert<IDLDOMString>(lexicalGlobalObject, rawValue) };
         }
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
@@ -266,20 +266,20 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     return { WTFMove(keyframeOuput) };
 }
 
-static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
+static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
 {
     // 1. Let iter be GetIterator(object, method).
-    forEachInIterable(state, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, ExecState& state, JSValue nextValue) -> ExceptionOr<void> {
+    forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) -> ExceptionOr<void> {
         // Steps 2 through 6 are already implemented by forEachInIterable().
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextValue || !nextValue.isObject()) {
-            throwException(&state, scope, JSC::Exception::create(vm, createTypeError(&state)));
+            throwException(&lexicalGlobalObject, scope, JSC::Exception::create(vm, createTypeError(&lexicalGlobalObject)));
             return { };
         }
 
         // 7. Append to processed keyframes the result of running the procedure to process a keyframe-like object passing nextItem
         // as the keyframe input and with the allow lists flag set to false.
-        auto processKeyframeLikeObjectResult = processKeyframeLikeObject(state, Strong<JSObject>(vm, nextValue.toObject(&state)), false);
+        auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, Strong<JSObject>(vm, nextValue.toObject(&lexicalGlobalObject)), false);
         if (processKeyframeLikeObjectResult.hasException())
             return processKeyframeLikeObjectResult.releaseException();
         auto keyframeLikeObject = processKeyframeLikeObjectResult.returnValue();
@@ -321,10 +321,10 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
     return { };
 }
 
-static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
+static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes, Vector<String>& unusedEasings)
 {
     // 1. Let property-indexed keyframe be the result of running the procedure to process a keyframe-like object passing object as the keyframe input.
-    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(state, WTFMove(keyframesInput), true);
+    auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, WTFMove(keyframesInput), true);
     if (processKeyframeLikeObjectResult.hasException())
         return processKeyframeLikeObjectResult.releaseException();
     auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.returnValue();
@@ -462,7 +462,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, Optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, Optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
 
@@ -490,14 +490,14 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
             return updateTimingResult.releaseException();
     }
 
-    auto processKeyframesResult = keyframeEffect->processKeyframes(state, WTFMove(keyframes));
+    auto processKeyframesResult = keyframeEffect->processKeyframes(lexicalGlobalObject, WTFMove(keyframes));
     if (processKeyframesResult.hasException())
         return processKeyframesResult.releaseException();
 
     return keyframeEffect;
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::ExecState&, Ref<KeyframeEffect>&& source)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&& source)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(nullptr));
     keyframeEffect->copyPropertiesFromSource(WTFMove(source));
@@ -553,11 +553,11 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setBlendingKeyframes(keyframeList);
 }
 
-Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
+Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffectreadonly-getkeyframes
 
-    auto lock = JSLockHolder { &state };
+    auto lock = JSLockHolder { &lexicalGlobalObject };
 
     // Since keyframes are represented by a partially open-ended dictionary type that is not currently able to be expressed with WebIDL,
     // the procedure used to prepare the result of this method is defined in prose below:
@@ -591,7 +591,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
             // has no bearing since, as the last keyframe, its value will never be used.
             computedKeyframe.easing = is<CSSTransition>(animation()) && i == 1 ? "linear" : timingFunctionForKeyframeAtIndex(0)->cssText();
 
-            auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
+            auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
             // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
             auto& style = *keyframe.style();
@@ -605,14 +605,14 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId))
                     idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
-                auto value = toJS<IDLDOMString>(state, idlValue);
+                auto value = toJS<IDLDOMString>(lexicalGlobalObject, idlValue);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
                 //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &state, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+                JSObject::defineOwnProperty(outputKeyframe, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
             }
 
             // 5. Append output keyframe to result.
-            result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
+            result.append(JSC::Strong<JSC::JSObject> { lexicalGlobalObject.vm(), outputKeyframe });
         }
     } else {
         for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
@@ -635,7 +635,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
             computedKeyframe.easing = timingFunctionForKeyframeAtIndex(i)->cssText();
             computedKeyframe.composite = parsedKeyframe.composite;
 
-            auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
+            auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 
             // 3. For each animation property-value pair specified on keyframe, declaration, perform the following steps:
             for (auto it = parsedKeyframe.unparsedStyle.begin(), end = parsedKeyframe.unparsedStyle.end(); it != end; ++it) {
@@ -643,14 +643,14 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
                 auto propertyName = CSSPropertyIDToIDLAttributeName(it->key);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
-                auto value = toJS<IDLDOMString>(state, it->value);
+                auto value = toJS<IDLDOMString>(lexicalGlobalObject, it->value);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
                 //    Property Descriptor { [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true, [[Value]]: value } and Boolean flag false.
-                JSObject::defineOwnProperty(outputKeyframe, &state, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
+                JSObject::defineOwnProperty(outputKeyframe, &lexicalGlobalObject, AtomString(propertyName).impl(), PropertyDescriptor(value, 0), false);
             }
 
             // 4. Append output keyframe to result.
-            result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
+            result.append(JSC::Strong<JSC::JSObject> { lexicalGlobalObject.vm(), outputKeyframe });
         }
     }
 
@@ -658,25 +658,25 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(ExecState& state)
     return result;
 }
 
-ExceptionOr<void> KeyframeEffect::setKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
-    return processKeyframes(state, WTFMove(keyframesInput));
+    return processKeyframes(lexicalGlobalObject, WTFMove(keyframesInput));
 }
 
-ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSObject>&& keyframesInput)
+ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Strong<JSObject>&& keyframesInput)
 {
     // 1. If object is null, return an empty sequence of keyframes.
     if (!keyframesInput.get())
         return { };
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 2. Let processed keyframes be an empty sequence of keyframes.
     Vector<ParsedKeyframe> parsedKeyframes;
 
     // 3. Let method be the result of GetMethod(object, @@iterator).
-    auto method = keyframesInput.get()->get(&state, vm.propertyNames->iteratorSymbol);
+    auto method = keyframesInput.get()->get(&lexicalGlobalObject, vm.propertyNames->iteratorSymbol);
 
     // 4. Check the completion record of method.
     RETURN_IF_EXCEPTION(scope, Exception { TypeError });
@@ -684,9 +684,9 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
     // 5. Perform the steps corresponding to the first matching condition from below,
     Vector<String> unusedEasings;
     if (!method.isUndefined())
-        processIterableKeyframes(state, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
+        processIterableKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), WTFMove(method), parsedKeyframes);
     else
-        processPropertyIndexedKeyframes(state, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
+        processPropertyIndexedKeyframes(lexicalGlobalObject, WTFMove(keyframesInput), parsedKeyframes, unusedEasings);
 
     // 6. If processed keyframes is not loosely sorted by offset, throw a TypeError and abort these steps.
     // 7. If there exist any keyframe in processed keyframes whose keyframe offset is non-null and less than
@@ -1284,7 +1284,7 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 void KeyframeEffect::animationDidSeek()
 {
     // There is no need to seek if we're not playing an animation already. If seeking
-    // means we're moving into an active state, we'll pick this up in apply().
+    // means we're moving into an active lexicalGlobalObject, we'll pick this up in apply().
     if (m_shouldRunAccelerated && isRunningAccelerated())
         addPendingAcceleratedAction(AcceleratedAction::Seek);
 }

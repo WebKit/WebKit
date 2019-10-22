@@ -39,13 +39,13 @@ const ClassInfo AsyncFunctionConstructor::s_info = { "AsyncFunction", &Base::s_i
 static EncodedJSValue JSC_HOST_CALL callAsyncFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Async));
+    return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::Async));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructAsyncFunctionConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructFunction(callFrame, globalObject, args, FunctionConstructionMode::Async));
+    return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::Async));
 }
 
 AsyncFunctionConstructor::AsyncFunctionConstructor(VM& vm, Structure* structure)

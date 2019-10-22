@@ -43,29 +43,29 @@
 
 namespace WebCore {
 
-JSC::JSValue JSMessageEvent::ports(JSC::ExecState& state) const
+JSC::JSValue JSMessageEvent::ports(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    auto throwScope = DECLARE_THROW_SCOPE(state.vm());
-    return cachedPropertyValue(state, *this, wrapped().cachedPorts(), [&] {
-        JSC::JSValue ports = toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(state, *globalObject(), throwScope, wrapped().ports());
+    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedPorts(), [&] {
+        JSC::JSValue ports = toJS<IDLFrozenArray<IDLInterface<MessagePort>>>(lexicalGlobalObject, *globalObject(), throwScope, wrapped().ports());
         return ports;
     });
 }
 
-JSC::JSValue JSMessageEvent::data(JSC::ExecState& state) const
+JSC::JSValue JSMessageEvent::data(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(state, *this, wrapped().cachedData(), [this, &state] {
+    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedData(), [this, &lexicalGlobalObject] {
         return WTF::switchOn(wrapped().data(), [] (JSC::JSValue data) {
             return data ? data : JSC::jsNull();
-        }, [this, &state] (const Ref<SerializedScriptValue>& data) {
+        }, [this, &lexicalGlobalObject] (const Ref<SerializedScriptValue>& data) {
             // FIXME: Is it best to handle errors by returning null rather than throwing an exception?
-            return data->deserialize(state, globalObject(), wrapped().ports(), SerializationErrorMode::NonThrowing);
-        }, [&state] (const String& data) {
-            return toJS<IDLDOMString>(state, data);
-        }, [this, &state] (const Ref<Blob>& data) {
-            return toJS<IDLInterface<Blob>>(state, *globalObject(), data);
-        }, [this, &state] (const Ref<ArrayBuffer>& data) {
-            return toJS<IDLInterface<ArrayBuffer>>(state, *globalObject(), data);
+            return data->deserialize(lexicalGlobalObject, globalObject(), wrapped().ports(), SerializationErrorMode::NonThrowing);
+        }, [&lexicalGlobalObject] (const String& data) {
+            return toJS<IDLDOMString>(lexicalGlobalObject, data);
+        }, [this, &lexicalGlobalObject] (const Ref<Blob>& data) {
+            return toJS<IDLInterface<Blob>>(lexicalGlobalObject, *globalObject(), data);
+        }, [this, &lexicalGlobalObject] (const Ref<ArrayBuffer>& data) {
+            return toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *globalObject(), data);
         });
     });
 }

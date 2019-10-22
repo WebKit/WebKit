@@ -35,18 +35,17 @@
 
 namespace JSC {
 
-DirectEvalExecutable* DirectEvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
+DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType, const VariableEnvironment* variablesUnderTDZ)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
-        throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return 0;
     }
 
-    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
+    auto* executable = new (NotNull, allocateCell<DirectEvalExecutable>(vm.heap)) DirectEvalExecutable(globalObject, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(vm);
 
     ParserError error;
@@ -58,10 +57,10 @@ DirectEvalExecutable* DirectEvalExecutable::create(ExecState* exec, const Source
         vm, executable, executable->source(), strictMode, JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ);
 
     if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(exec, executable->source().provider(), error.line(), error.message());
+        globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        throwVMError(exec, scope, error.toErrorObject(globalObject, executable->source()));
+        throwVMError(globalObject, scope, error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
 
@@ -70,8 +69,8 @@ DirectEvalExecutable* DirectEvalExecutable::create(ExecState* exec, const Source
     return executable;
 }
 
-DirectEvalExecutable::DirectEvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
-    : EvalExecutable(exec, source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType)
+DirectEvalExecutable::DirectEvalExecutable(JSGlobalObject* globalObject, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
+    : EvalExecutable(globalObject, source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType)
 {
 }
 

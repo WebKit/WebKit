@@ -41,9 +41,9 @@ JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
+void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, AbstractModuleRecord* moduleRecord, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&& resolutions)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
@@ -79,7 +79,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, A
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-isextensible
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-preventextensions
-    methodTable(vm)->preventExtensions(this, exec);
+    methodTable(vm)->preventExtensions(this, globalObject);
     scope.assertNoException();
 }
 
@@ -113,9 +113,9 @@ static JSValue getValue(JSModuleEnvironment* environment, PropertyName localName
     return environment->variableAt(scopeOffset).get();
 }
 
-bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getownproperty-p
@@ -124,7 +124,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, Property
     // If the property name is a symbol, we don't look into the imported bindings.
     // It may return the descriptor with writable: true, but namespace objects does not allow it in [[Set]] / [[DefineOwnProperty]] side.
     if (propertyName.isSymbol())
-        return JSObject::getOwnPropertySlot(this, exec, propertyName, slot);
+        return JSObject::getOwnPropertySlot(this, globalObject, propertyName, slot);
 
     slot.setIsTaintedByOpaqueObject();
 
@@ -141,7 +141,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, Property
         JSValue value = getValue(environment, exportEntry.localName, scopeOffset);
         // If the value is filled with TDZ value, throw a reference error.
         if (!value) {
-            throwVMError(exec, scope, createTDZError(exec));
+            throwVMError(globalObject, scope, createTDZError(globalObject));
             return false;
         }
 
@@ -165,67 +165,67 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, Property
     return false;
 }
 
-bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
-    return thisObject->getOwnPropertySlotCommon(exec, propertyName, slot);
+    return thisObject->getOwnPropertySlotCommon(globalObject, propertyName, slot);
 }
 
-bool JSModuleNamespaceObject::getOwnPropertySlotByIndex(JSObject* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSModuleNamespaceObject::getOwnPropertySlotByIndex(JSObject* cell, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
-    return thisObject->getOwnPropertySlotCommon(exec, Identifier::from(vm, propertyName), slot);
+    return thisObject->getOwnPropertySlotCommon(globalObject, Identifier::from(vm, propertyName), slot);
 }
 
-bool JSModuleNamespaceObject::put(JSCell*, ExecState* exec, PropertyName, JSValue, PutPropertySlot& slot)
+bool JSModuleNamespaceObject::put(JSCell*, JSGlobalObject* globalObject, PropertyName, JSValue, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-set-p-v-receiver
     if (slot.isStrictMode())
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
+        throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
     return false;
 }
 
-bool JSModuleNamespaceObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool shouldThrow)
+bool JSModuleNamespaceObject::putByIndex(JSCell*, JSGlobalObject* globalObject, unsigned, JSValue, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (shouldThrow)
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
+        throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
     return false;
 }
 
-bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-delete-p
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
     if (propertyName.isSymbol())
-        return JSObject::deleteProperty(thisObject, exec, propertyName);
+        return JSObject::deleteProperty(thisObject, globalObject, propertyName);
 
     return !thisObject->m_exports.contains(propertyName.uid());
 }
 
-void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-ownpropertykeys
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
     for (const auto& name : thisObject->m_names)
         propertyNames.add(name.impl());
-    return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    return JSObject::getOwnPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
-bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, ExecState* exec, PropertyName, const PropertyDescriptor&, bool shouldThrow)
+bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, JSGlobalObject* globalObject, PropertyName, const PropertyDescriptor&, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
     if (shouldThrow)
-        throwTypeError(exec, scope, NonExtensibleObjectPropertyDefineError);
+        throwTypeError(globalObject, scope, NonExtensibleObjectPropertyDefineError);
     return false;
 }
 

@@ -84,12 +84,12 @@ ScopedArguments* ScopedArguments::create(VM& vm, Structure* structure, JSFunctio
     return result;
 }
 
-ScopedArguments* ScopedArguments::createByCopying(ExecState* exec, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)
+ScopedArguments* ScopedArguments::createByCopying(JSGlobalObject* globalObject, CallFrame* callFrame, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)
 {
     return createByCopyingFrom(
-        exec->vm(), exec->lexicalGlobalObject()->scopedArgumentsStructure(),
-        exec->registers() + CallFrame::argumentOffset(0), exec->argumentCount(),
-        jsCast<JSFunction*>(exec->jsCallee()), table, scope);
+        globalObject->vm(), globalObject->scopedArgumentsStructure(),
+        callFrame->registers() + CallFrame::argumentOffset(0), callFrame->argumentCount(),
+        jsCast<JSFunction*>(callFrame->jsCallee()), table, scope);
 }
 
 ScopedArguments* ScopedArguments::createByCopyingFrom(VM& vm, Structure* structure, Register* argumentsStart, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)
@@ -154,9 +154,9 @@ void ScopedArguments::unmapArgument(VM& vm, uint32_t i)
         overflowStorage()[i - namedLength].clear();
 }
 
-void ScopedArguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void ScopedArguments::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
-    GenericArguments::copyToArguments(exec, firstElementDest, offset, length);
+    GenericArguments::copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
 }
 
 } // namespace JSC

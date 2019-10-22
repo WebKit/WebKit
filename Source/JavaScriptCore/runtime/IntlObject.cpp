@@ -143,22 +143,22 @@ String convertICULocaleToBCP47LanguageTag(const char* localeID)
     return String();
 }
 
-bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property, bool& usesFallback)
+bool intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, bool& usesFallback)
 {
     // GetOption (options, property, type="boolean", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* opts = options.toObject(&state);
+    JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
-    JSValue value = opts->get(&state, property);
+    JSValue value = opts->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, false);
 
     if (!value.isUndefined()) {
-        bool booleanValue = value.toBoolean(&state);
+        bool booleanValue = value.toBoolean(globalObject);
         usesFallback = false;
         return booleanValue;
     }
@@ -168,26 +168,26 @@ bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property,
     return false;
 }
 
-String intlStringOption(ExecState& state, JSValue options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
+String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* opts = options.toObject(&state);
+    JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, String());
 
-    JSValue value = opts->get(&state, property);
+    JSValue value = opts->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, String());
 
     if (!value.isUndefined()) {
-        String stringValue = value.toWTFString(&state);
+        String stringValue = value.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, String());
 
         if (values.size() && std::find(values.begin(), values.end(), stringValue) == values.end()) {
-            throwException(&state, scope, createRangeError(&state, notFound));
+            throwException(globalObject, scope, createRangeError(globalObject, notFound));
             return { };
         }
         return stringValue;
@@ -196,37 +196,37 @@ String intlStringOption(ExecState& state, JSValue options, PropertyName property
     return fallback;
 }
 
-unsigned intlNumberOption(ExecState& state, JSValue options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+unsigned intlNumberOption(JSGlobalObject* globalObject, JSValue options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
 {
     // GetNumberOption (options, property, minimum, maximum, fallback)
     // https://tc39.github.io/ecma402/#sec-getnumberoption
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* opts = options.toObject(&state);
+    JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
 
-    JSValue value = opts->get(&state, property);
+    JSValue value = opts->get(globalObject, property);
     RETURN_IF_EXCEPTION(scope, 0);
 
-    RELEASE_AND_RETURN(scope, intlDefaultNumberOption(state, value, property, minimum, maximum, fallback));
+    RELEASE_AND_RETURN(scope, intlDefaultNumberOption(globalObject, value, property, minimum, maximum, fallback));
 }
 
-unsigned intlDefaultNumberOption(ExecState& state, JSValue value, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+unsigned intlDefaultNumberOption(JSGlobalObject* globalObject, JSValue value, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
 {
     // DefaultNumberOption (value, minimum, maximum, fallback)
     // https://tc39.github.io/ecma402/#sec-defaultnumberoption
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!value.isUndefined()) {
-        double doubleValue = value.toNumber(&state);
+        double doubleValue = value.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, 0);
 
         if (!(doubleValue >= minimum && doubleValue <= maximum)) {
-            throwException(&state, scope, createRangeError(&state, *property.publicName() + " is out of range"));
+            throwException(globalObject, scope, createRangeError(globalObject, *property.publicName() + " is out of range"));
             return 0;
         }
         return static_cast<unsigned>(doubleValue);
@@ -495,15 +495,14 @@ static String canonicalizeLanguageTag(const String& locale)
     return String();
 }
 
-Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
+Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
 {
     // CanonicalizeLocaleList (locales)
     // https://tc39.github.io/ecma402/#sec-canonicalizelocalelist
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = state.jsCallee()->globalObject(vm);
     Vector<String> seen;
 
     if (locales.isUndefined())
@@ -513,48 +512,48 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     if (locales.isString()) {
         JSArray* localesArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous));
         if (!localesArray) {
-            throwOutOfMemoryError(&state, scope);
+            throwOutOfMemoryError(globalObject, scope);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
         }
-        localesArray->push(&state, locales);
+        localesArray->push(globalObject, locales);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
 
         localesObject = localesArray;
     } else {
-        localesObject = locales.toObject(&state);
+        localesObject = locales.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
     }
 
     // 6. Let len be ToLength(Get(O, "length")).
-    JSValue lengthProperty = localesObject->get(&state, vm.propertyNames->length);
+    JSValue lengthProperty = localesObject->get(globalObject, vm.propertyNames->length);
     RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-    double length = lengthProperty.toLength(&state);
+    double length = lengthProperty.toLength(globalObject);
     RETURN_IF_EXCEPTION(scope, Vector<String>());
 
     HashSet<String> seenSet;
     for (double k = 0; k < length; ++k) {
-        bool kPresent = localesObject->hasProperty(&state, k);
+        bool kPresent = localesObject->hasProperty(globalObject, k);
         RETURN_IF_EXCEPTION(scope, Vector<String>());
 
         if (kPresent) {
-            JSValue kValue = localesObject->get(&state, k);
+            JSValue kValue = localesObject->get(globalObject, k);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
             if (!kValue.isString() && !kValue.isObject()) {
-                throwTypeError(&state, scope, "locale value must be a string or object"_s);
+                throwTypeError(globalObject, scope, "locale value must be a string or object"_s);
                 return Vector<String>();
             }
 
-            JSString* tag = kValue.toString(&state);
+            JSString* tag = kValue.toString(globalObject);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-            auto tagValue = tag->value(&state);
+            auto tagValue = tag->value(globalObject);
             RETURN_IF_EXCEPTION(scope, Vector<String>());
 
             String canonicalizedTag = canonicalizeLanguageTag(tagValue);
             if (canonicalizedTag.isNull()) {
-                throwException(&state, scope, createRangeError(&state, "invalid language tag: " + tagValue));
+                throwException(globalObject, scope, createRangeError(globalObject, "invalid language tag: " + tagValue));
                 return Vector<String>();
             }
 
@@ -589,7 +588,7 @@ String bestAvailableLocale(const HashSet<String>& availableLocales, const String
     return String();
 }
 
-String defaultLocale(ExecState& state)
+String defaultLocale(JSGlobalObject* globalObject)
 {
     // DefaultLocale ()
     // https://tc39.github.io/ecma402/#sec-defaultlocale
@@ -597,8 +596,7 @@ String defaultLocale(ExecState& state)
     // WebCore's global objects will have their own ideas of how to determine the language. It may
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
-    VM& vm = state.vm();
-    if (auto defaultLanguage = state.jsCallee()->globalObject(vm)->globalObjectMethodTable()->defaultLanguage) {
+    if (auto defaultLanguage = globalObject->globalObjectMethodTable()->defaultLanguage) {
         String locale = canonicalizeLanguageTag(defaultLanguage());
         if (!locale.isEmpty())
             return locale;
@@ -644,7 +642,7 @@ String removeUnicodeLocaleExtension(const String& locale)
     return builder.toString();
 }
 
-static MatcherResult lookupMatcher(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult lookupMatcher(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // LookupMatcher (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-lookupmatcher
@@ -681,17 +679,17 @@ static MatcherResult lookupMatcher(ExecState& state, const HashSet<String>& avai
             result.extensionIndex = extensionIndex;
         }
     } else
-        result.locale = defaultLocale(state);
+        result.locale = defaultLocale(globalObject);
     return result;
 }
 
-static MatcherResult bestFitMatcher(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult bestFitMatcher(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // BestFitMatcher (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-bestfitmatcher
 
     // FIXME: Implement something better than lookup.
-    return lookupMatcher(state, availableLocales, requestedLocales);
+    return lookupMatcher(globalObject, availableLocales, requestedLocales);
 }
 
 static void unicodeExtensionSubTags(const String& extension, Vector<String>& subtags)
@@ -733,15 +731,15 @@ static void unicodeExtensionSubTags(const String& extension, Vector<String>& sub
     subtags.append(extension.substring(valueStart, extensionLength - valueStart));
 }
 
-HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
+HashMap<String, String> resolveLocale(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t))
 {
     // ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData)
     // https://tc39.github.io/ecma402/#sec-resolvelocale
 
     const String& matcher = options.get("localeMatcher"_s);
     MatcherResult matcherResult = (matcher == "lookup")
-        ? lookupMatcher(state, availableLocales, requestedLocales)
-        : bestFitMatcher(state, availableLocales, requestedLocales);
+        ? lookupMatcher(globalObject, availableLocales, requestedLocales)
+        : bestFitMatcher(globalObject, availableLocales, requestedLocales);
 
     String foundLocale = matcherResult.locale;
 
@@ -800,19 +798,18 @@ HashMap<String, String> resolveLocale(ExecState& state, const HashSet<String>& a
     return result;
 }
 
-static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* lookupSupportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // LookupSupportedLocales (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-lookupsupportedlocales
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     size_t len = requestedLocales.size();
-    JSGlobalObject* globalObject = state.jsCallee()->globalObject(vm);
     JSArray* subset = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
     if (!subset) {
-        throwOutOfMemoryError(&state, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -822,7 +819,7 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
         String noExtensionsLocale = removeUnicodeLocaleExtension(locale);
         String availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
         if (!availableLocale.isNull()) {
-            subset->putDirectIndex(&state, index++, jsString(vm, locale));
+            subset->putDirectIndex(globalObject, index++, jsString(vm, locale));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -830,37 +827,37 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
     return subset;
 }
 
-static JSArray* bestFitSupportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* bestFitSupportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // BestFitSupportedLocales (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-bestfitsupportedlocales
 
     // FIXME: Implement something better than lookup.
-    return lookupSupportedLocales(state, availableLocales, requestedLocales);
+    return lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
 }
 
-JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
+JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
 {
     // SupportedLocales (availableLocales, requestedLocales, options)
     // https://tc39.github.io/ecma402/#sec-supportedlocales
 
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     String matcher;
 
     if (!options.isUndefined()) {
-        matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+        matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
         RETURN_IF_EXCEPTION(scope, JSValue());
     } else
         matcher = "best fit"_s;
 
     JSArray* supportedLocales = (matcher == "best fit")
-        ? bestFitSupportedLocales(state, availableLocales, requestedLocales)
-        : lookupSupportedLocales(state, availableLocales, requestedLocales);
+        ? bestFitSupportedLocales(globalObject, availableLocales, requestedLocales)
+        : lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     PropertyNameArray keys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
+    supportedLocales->getOwnPropertyNames(supportedLocales, globalObject, keys, EnumerationMode());
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     PropertyDescriptor desc;
@@ -869,10 +866,10 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
 
     size_t len = keys.size();
     for (size_t i = 0; i < len; ++i) {
-        supportedLocales->defineOwnProperty(supportedLocales, &state, keys[i], desc, true);
+        supportedLocales->defineOwnProperty(supportedLocales, globalObject, keys[i], desc, true);
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
-    supportedLocales->defineOwnProperty(supportedLocales, &state, vm.propertyNames->length, desc, true);
+    supportedLocales->defineOwnProperty(supportedLocales, globalObject, vm.propertyNames->length, desc, true);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     return supportedLocales;
@@ -925,18 +922,18 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<String> localeList = canonicalizeLocaleList(*callFrame, callFrame->argument(0));
+    Vector<String> localeList = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto length = localeList.size();
 
     JSArray* localeArray = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), length);
     if (!localeArray) {
-        throwOutOfMemoryError(callFrame, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return encodedJSValue();
     }
 
     for (size_t i = 0; i < length; ++i) {
-        localeArray->putDirectIndex(callFrame, i, jsString(vm, localeList[i]));
+        localeArray->putDirectIndex(globalObject, i, jsString(vm, localeList[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(localeArray);

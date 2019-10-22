@@ -37,20 +37,20 @@ void JSGlobalLexicalEnvironment::destroy(JSCell* cell)
     static_cast<JSGlobalLexicalEnvironment*>(cell)->JSGlobalLexicalEnvironment::~JSGlobalLexicalEnvironment();
 }
 
-bool JSGlobalLexicalEnvironment::getOwnPropertySlot(JSObject* object, ExecState*, PropertyName propertyName, PropertySlot& slot)
+bool JSGlobalLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject*, PropertyName propertyName, PropertySlot& slot)
 {
     JSGlobalLexicalEnvironment* thisObject = jsCast<JSGlobalLexicalEnvironment*>(object);
     return symbolTableGet(thisObject, propertyName, slot);
 }
 
-bool JSGlobalLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSGlobalLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalLexicalEnvironment* thisObject = jsCast<JSGlobalLexicalEnvironment*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     bool alwaysThrowWhenAssigningToConstProperty = true;
     bool ignoreConstAssignmentError = slot.isInitialization();
     bool putResult = false;
-    symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError, putResult);
+    symbolTablePutTouchWatchpointSet(thisObject, globalObject, propertyName, value, alwaysThrowWhenAssigningToConstProperty, ignoreConstAssignmentError, putResult);
     return putResult;
 }
 

@@ -46,7 +46,6 @@ class CallFrame;
 class JSObject;
 class JSValue;
 template<typename> class Strong;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -251,7 +250,7 @@ public:
 
     String crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin);
 
-    ExceptionOr<void> postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
     void postMessageTimerFired(PostMessageTimer&);
 
     void languagesChanged();
@@ -270,9 +269,9 @@ public:
     VisualViewport& visualViewport();
 
     // Timers
-    ExceptionOr<int> setTimeout(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setTimeout(JSC::JSGlobalObject&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);
-    ExceptionOr<int> setInterval(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<int> setInterval(JSC::JSGlobalObject&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearInterval(int timeoutId);
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);

@@ -75,7 +75,7 @@ private:
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* value);
 
-    static String toStringName(const JSObject*, ExecState*);
+    static String toStringName(const JSObject*, JSGlobalObject*);
 
     uintptr_t m_lastAccessVersion;
     WriteBarrier<JSObject> m_value;

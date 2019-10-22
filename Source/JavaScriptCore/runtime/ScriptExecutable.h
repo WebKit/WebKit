@@ -117,7 +117,7 @@ public:
     Exception* prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
 
     ScriptExecutable* topLevelExecutable();
-    JSArray* createTemplateObject(ExecState*, JSTemplateObjectDescriptor*);
+    JSArray* createTemplateObject(JSGlobalObject*, JSTemplateObjectDescriptor*);
 
 private:
     friend class ExecutableBase;

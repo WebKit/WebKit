@@ -50,7 +50,7 @@ public:
     const JSValueInWrappedObject& state() const { return m_state; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
 
-    RefPtr<SerializedScriptValue> trySerializeState(JSC::ExecState&);
+    RefPtr<SerializedScriptValue> trySerializeState(JSC::JSGlobalObject&);
     
     History* history() const { return m_history.get(); }
 

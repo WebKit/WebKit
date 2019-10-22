@@ -37,5 +37,5 @@ interface HTMLFrameElement : HTMLElement {
     [CEReactions=NotNeeded] readonly attribute long height;
 
     // FIXME: No other browser has this attribute.
-    [SetterCallWith=ExecState] attribute DOMString? location;
+    [SetterCallWith=GlobalObject] attribute DOMString? location;
 };

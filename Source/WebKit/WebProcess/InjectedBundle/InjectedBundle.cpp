@@ -51,6 +51,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
@@ -504,15 +505,14 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     if (!context || !exception)
         return;
 
-    JSC::ExecState* execState = toJS(context);
-    JSLockHolder lock(execState);
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
-    JSC::JSGlobalObject* globalObject = execState->lexicalGlobalObject();
     if (!toJSDOMWindow(globalObject->vm(), globalObject))
         return;
 
-    WebCore::reportException(execState, toJS(execState, exception));
+    WebCore::reportException(globalObject, toJS(globalObject, exception));
 }
 
 void InjectedBundle::didCreatePage(WebPage* page)
@@ -584,9 +584,9 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
 // FIXME Get rid of this function and move it into WKBundle.cpp.
 Ref<API::Data> InjectedBundle::createWebDataFromUint8Array(JSContextRef context, JSValueRef data)
 {
-    JSC::ExecState* execState = toJS(context);
-    JSLockHolder lock(execState);
-    RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(execState->vm(), toJS(execState, data));
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSLockHolder lock(globalObject);
+    RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(globalObject->vm(), toJS(globalObject, data));
     return API::Data::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
 }
 

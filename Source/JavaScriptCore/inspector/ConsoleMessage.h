@@ -39,7 +39,7 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
+class JSGlobalObject;
 }
 
 namespace Inspector {
@@ -54,11 +54,11 @@ class JS_EXPORT_PRIVATE ConsoleMessage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, Vector<JSONLogValue>&&, JSC::ExecState*, unsigned long requestIdentifier = 0);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, Vector<JSONLogValue>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
     void addToFrontend(ConsoleFrontendDispatcher&, InjectedScriptManager&, bool generatePreview);
@@ -72,7 +72,7 @@ public:
     unsigned line() const { return m_line; }
     unsigned column() const { return m_column; }
 
-    JSC::ExecState* scriptState() const;
+    JSC::JSGlobalObject* globalObject() const;
 
     void incrementCount() { ++m_repeatCount; }
 
@@ -84,7 +84,7 @@ public:
     void clear();
 
 private:
-    void autogenerateMetadata(JSC::ExecState* = nullptr);
+    void autogenerateMetadata(JSC::JSGlobalObject* = nullptr);
 
     MessageSource m_source;
     MessageType m_type;
@@ -94,7 +94,7 @@ private:
     RefPtr<ScriptCallStack> m_callStack;
     Vector<JSONLogValue> m_jsonLogValues;
     String m_url;
-    JSC::ExecState* m_scriptState { nullptr };
+    JSC::JSGlobalObject* m_globalObject { nullptr };
     unsigned m_line { 0 };
     unsigned m_column { 0 };
     unsigned m_repeatCount { 1 };

@@ -104,7 +104,7 @@ void JIT::emitEnterOptimizationCheck()
 
     copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-    callOperation(operationOptimize, m_bytecodeOffset);
+    callOperation(operationOptimize, &vm(), m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
     farJump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);
@@ -761,7 +761,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
 
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-        callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck);
+        callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, m_codeBlock->globalObject());
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
@@ -946,11 +946,10 @@ void JIT::privateCompileExceptionHandlers()
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
-
+        // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
+        prepareCallOperation(vm());
+        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(vm());
     }
 
@@ -960,10 +959,10 @@ void JIT::privateCompileExceptionHandlers()
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
+        // operationLookupExceptionHandler is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
+        prepareCallOperation(vm());
+        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
 }

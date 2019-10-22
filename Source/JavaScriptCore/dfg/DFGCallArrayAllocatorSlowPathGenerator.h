@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 class CallArrayAllocatorSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallArrayAllocatorSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_VmStZB function,
         GPRReg resultGPR, GPRReg storageGPR, RegisteredStructure structure, size_t size)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
@@ -55,7 +55,7 @@ protected:
         linkFrom(jit);
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
-        jit->callOperation(m_function, m_resultGPR, m_structure, m_size, m_storageGPR);
+        jit->callOperation(m_function, m_resultGPR, &jit->vm(), m_structure, m_size, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
@@ -64,7 +64,7 @@ protected:
     }
     
 private:
-    P_JITOperation_EStZB m_function;
+    P_JITOperation_VmStZB m_function;
     GPRReg m_resultGPR;
     GPRReg m_storageGPR;
     int m_size;
@@ -75,13 +75,14 @@ private:
 class CallArrayAllocatorWithVariableSizeSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallArrayAllocatorWithVariableSizeSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
-        GPRReg resultGPR, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,
+        GPRReg resultGPR, CCallHelpers::TrustedImmPtr globalObject, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_contiguousStructure(contiguousStructure)
         , m_arrayStorageOrContiguousStructure(arrayStorageStructure)
         , m_resultGPR(resultGPR)
+        , m_globalObject(globalObject)
         , m_sizeGPR(sizeGPR)
         , m_storageGPR(storageGPR)
     {
@@ -104,7 +105,7 @@ protected:
             done.link(&jit->m_jit);
         } else
             jit->m_jit.move(SpeculativeJIT::TrustedImmPtr(m_contiguousStructure), scratchGPR);
-        jit->callOperation(m_function, m_resultGPR, scratchGPR, m_sizeGPR, m_storageGPR);
+        jit->callOperation(m_function, m_resultGPR, m_globalObject, scratchGPR, m_sizeGPR, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
@@ -112,10 +113,11 @@ protected:
     }
     
 private:
-    P_JITOperation_EStZB m_function;
+    P_JITOperation_GStZB m_function;
     RegisteredStructure m_contiguousStructure;
     RegisteredStructure m_arrayStorageOrContiguousStructure;
     GPRReg m_resultGPR;
+    CCallHelpers::TrustedImmPtr m_globalObject;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;
@@ -124,11 +126,12 @@ private:
 class CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZB function,
-        GPRReg resultGPR, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR)
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,
+        GPRReg resultGPR, CCallHelpers::TrustedImmPtr globalObject, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_resultGPR(resultGPR)
+        , m_globalObject(globalObject)
         , m_structureGPR(structureGPR)
         , m_sizeGPR(sizeGPR)
         , m_storageGPR(storageGPR)
@@ -142,7 +145,7 @@ protected:
         linkFrom(jit);
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
-        jit->callOperation(m_function, m_resultGPR, m_structureGPR, m_sizeGPR, m_storageGPR);
+        jit->callOperation(m_function, m_resultGPR, m_globalObject, m_structureGPR, m_sizeGPR, m_storageGPR);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
@@ -150,8 +153,9 @@ protected:
     }
     
 private:
-    P_JITOperation_EStZB m_function;
+    P_JITOperation_GStZB m_function;
     GPRReg m_resultGPR;
+    CCallHelpers::TrustedImmPtr m_globalObject;
     GPRReg m_structureGPR;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;

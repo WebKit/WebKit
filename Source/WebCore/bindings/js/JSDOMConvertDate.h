@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-JSC::JSValue jsDate(JSC::ExecState&, double value);
-double valueToDate(JSC::ExecState&, JSC::JSValue); // NaN if the value can't be converted to a date.
+JSC::JSValue jsDate(JSC::JSGlobalObject&, double value);
+double valueToDate(JSC::JSGlobalObject&, JSC::JSValue); // NaN if the value can't be converted to a date.
 
 template<> struct Converter<IDLDate> : DefaultConverter<IDLDate> {
-    static double convert(JSC::ExecState& state, JSC::JSValue value)
+    static double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return valueToDate(state, value);
+        return valueToDate(lexicalGlobalObject, value);
     }
 };
 
@@ -45,9 +45,9 @@ template<> struct JSConverter<IDLDate> {
     static constexpr bool needsGlobalObject = false;
 
     // FIXME: This should be taking a JSDOMGlobalObject and passing it to jsDate.
-    static JSC::JSValue convert(JSC::ExecState& state, double value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, double value)
     {
-        return jsDate(state, value);
+        return jsDate(lexicalGlobalObject, value);
     }
 };
 

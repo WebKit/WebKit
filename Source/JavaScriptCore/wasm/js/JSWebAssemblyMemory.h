@@ -49,7 +49,7 @@ public:
         return &vm.eagerlySweptDestructibleObjectSpace;
     }
 
-    static JSWebAssemblyMemory* create(ExecState*, VM&, Structure*);
+    static JSWebAssemblyMemory* create(JSGlobalObject*, VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -57,7 +57,7 @@ public:
     void adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
-    Wasm::PageCount grow(VM&, ExecState*, uint32_t delta);
+    Wasm::PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
     void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
 
 private:

@@ -40,8 +40,6 @@ namespace JSC {
     class JSObject;
     class JSScope;
 
-    using ExecState = CallFrame;
-
     class Register {
         WTF_MAKE_FAST_ALLOCATED;
     public:

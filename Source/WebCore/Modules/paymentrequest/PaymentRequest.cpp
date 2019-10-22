@@ -251,7 +251,7 @@ enum class ShouldValidatePaymentMethodIdentifier {
     Yes,
 };
 
-static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetails(JSC::ExecState& execState, PaymentDetailsBase& details, bool requestShipping, ShouldValidatePaymentMethodIdentifier shouldValidatePaymentMethodIdentifier)
+static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetails(JSC::JSGlobalObject& execState, PaymentDetailsBase& details, bool requestShipping, ShouldValidatePaymentMethodIdentifier shouldValidatePaymentMethodIdentifier)
 {
     for (auto& item : details.displayItems) {
         auto exception = checkAndCanonicalizeAmount(item.amount);

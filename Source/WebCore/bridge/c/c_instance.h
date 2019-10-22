@@ -48,27 +48,27 @@ public:
     }
 
     static void setGlobalException(String);
-    static void moveGlobalExceptionToExecState(ExecState*);
+    static void moveGlobalExceptionToExecState(JSGlobalObject*);
 
     virtual ~CInstance();
 
     Class *getClass() const override;
 
-    JSValue valueOf(ExecState*) const override;
-    JSValue defaultValue(ExecState*, PreferredPrimitiveType) const override;
+    JSValue valueOf(JSGlobalObject*) const override;
+    JSValue defaultValue(JSGlobalObject*, PreferredPrimitiveType) const override;
 
-    JSValue getMethod(ExecState*, PropertyName) override;
-    JSValue invokeMethod(ExecState*, RuntimeMethod*) override;
+    JSValue getMethod(JSGlobalObject*, PropertyName) override;
+    JSValue invokeMethod(JSGlobalObject*, CallFrame*, RuntimeMethod*) override;
     bool supportsInvokeDefaultMethod() const override;
-    JSValue invokeDefaultMethod(ExecState*) override;
+    JSValue invokeDefaultMethod(JSGlobalObject*, CallFrame*) override;
 
     bool supportsConstruct() const override;
-    JSValue invokeConstruct(ExecState*, const ArgList&) override;
+    JSValue invokeConstruct(JSGlobalObject*, CallFrame*, const ArgList&) override;
 
-    void getPropertyNames(ExecState*, PropertyNameArray&) override;
+    void getPropertyNames(JSGlobalObject*, PropertyNameArray&) override;
 
-    JSValue stringValue(ExecState*) const;
-    JSValue numberValue(ExecState*) const;
+    JSValue stringValue(JSGlobalObject*) const;
+    JSValue numberValue(JSGlobalObject*) const;
     JSValue booleanValue() const;
 
     NPObject *getObject() const { return _object; }
@@ -76,8 +76,8 @@ public:
 private:
     CInstance(NPObject*, RefPtr<RootObject>&&);
 
-    RuntimeObject* newRuntimeObject(ExecState*) override;
-    bool toJSPrimitive(ExecState*, const char*, JSValue&) const;
+    RuntimeObject* newRuntimeObject(JSGlobalObject*) override;
+    bool toJSPrimitive(JSGlobalObject*, const char*, JSValue&) const;
 
 
     mutable CClass *_class;

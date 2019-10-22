@@ -35,13 +35,13 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
     static constexpr bool conversionHasSideEffects = false;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static RefPtr<T> convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!value.isFunction(vm)) {
-            exceptionThrower(state, scope);
+            exceptionThrower(lexicalGlobalObject, scope);
             return nullptr;
         }
         
@@ -69,13 +69,13 @@ template<typename T> struct JSConverter<IDLCallbackFunction<T>> {
 
 template<typename T> struct Converter<IDLCallbackInterface<T>> : DefaultConverter<IDLCallbackInterface<T>> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static RefPtr<T> convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!value.isObject()) {
-            exceptionThrower(state, scope);
+            exceptionThrower(lexicalGlobalObject, scope);
             return nullptr;
         }
 

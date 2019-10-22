@@ -43,32 +43,32 @@
 
 namespace JSC {
 
-ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
+ALWAYS_INLINE int32_t JSValue::toInt32(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
-    return JSC::toInt32(toNumber(exec));
+    return JSC::toInt32(toNumber(globalObject));
 }
 
-inline uint32_t JSValue::toUInt32(ExecState* exec) const
+inline uint32_t JSValue::toUInt32(JSGlobalObject* globalObject) const
 {
     // See comment on JSC::toUInt32, in JSCJSValue.h.
-    return toInt32(exec);
+    return toInt32(globalObject);
 }
 
-inline uint32_t JSValue::toIndex(ExecState* exec, const char* errorName) const
+inline uint32_t JSValue::toIndex(JSGlobalObject* globalObject, const char* errorName) const
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double d = toNumber(exec);
+    double d = toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
     if (d <= -1) {
-        throwException(exec, scope, createRangeError(exec, makeString(errorName, " cannot be negative")));
+        throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " cannot be negative")));
         return 0;
     }
     if (d > std::numeric_limits<unsigned>::max()) {
-        throwException(exec, scope, createRangeError(exec, makeString(errorName, " too large")));
+        throwException(globalObject, scope, createRangeError(globalObject, makeString(errorName, " too large")));
         return 0;
     }
 
@@ -638,19 +638,19 @@ inline bool JSValue::isObject() const
     return isCell() && asCell()->isObject();
 }
 
-inline bool JSValue::getString(ExecState* exec, String& s) const
+inline bool JSValue::getString(JSGlobalObject* globalObject, String& s) const
 {
-    return isCell() && asCell()->getString(exec, s);
+    return isCell() && asCell()->getString(globalObject, s);
 }
 
-inline String JSValue::getString(ExecState* exec) const
+inline String JSValue::getString(JSGlobalObject* globalObject) const
 {
-    return isCell() ? asCell()->getString(exec) : String();
+    return isCell() ? asCell()->getString(globalObject) : String();
 }
 
-template <typename Base> String HandleConverter<Base, Unknown>::getString(ExecState* exec) const
+template <typename Base> String HandleConverter<Base, Unknown>::getString(JSGlobalObject* globalObject) const
 {
-    return jsValue().getString(exec);
+    return jsValue().getString(globalObject);
 }
 
 inline JSObject* JSValue::getObject() const
@@ -673,40 +673,40 @@ ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
     return false;
 }
 
-ALWAYS_INLINE Identifier JSValue::toPropertyKey(ExecState* exec) const
+ALWAYS_INLINE Identifier JSValue::toPropertyKey(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (isString())
-        RELEASE_AND_RETURN(scope, asString(*this)->toIdentifier(exec));
+        RELEASE_AND_RETURN(scope, asString(*this)->toIdentifier(globalObject));
 
-    JSValue primitive = toPrimitive(exec, PreferString);
+    JSValue primitive = toPrimitive(globalObject, PreferString);
     RETURN_IF_EXCEPTION(scope, vm.propertyNames->emptyIdentifier);
     if (primitive.isSymbol())
         RELEASE_AND_RETURN(scope, Identifier::fromUid(asSymbol(primitive)->privateName()));
 
-    auto string = primitive.toString(exec);
+    auto string = primitive.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, string->toIdentifier(exec));
+    RELEASE_AND_RETURN(scope, string->toIdentifier(globalObject));
 }
 
-inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
+inline JSValue JSValue::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
-    return isCell() ? asCell()->toPrimitive(exec, preferredType) : asValue();
+    return isCell() ? asCell()->toPrimitive(globalObject, preferredType) : asValue();
 }
 
-inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue value)
+inline PreferredPrimitiveType toPreferredPrimitiveType(JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!value.isString()) {
-        throwTypeError(exec, scope, "Primitive hint is not a string."_s);
+        throwTypeError(globalObject, scope, "Primitive hint is not a string."_s);
         return NoPreference;
     }
 
-    StringImpl* hintString = asString(value)->value(exec).impl();
+    StringImpl* hintString = asString(value)->value(globalObject).impl();
     RETURN_IF_EXCEPTION(scope, NoPreference);
 
     if (WTF::equal(hintString, "default"))
@@ -716,11 +716,11 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
     if (WTF::equal(hintString, "string"))
         return PreferString;
 
-    throwTypeError(exec, scope, "Expected primitive hint to match one of 'default', 'number', 'string'."_s);
+    throwTypeError(globalObject, scope, "Expected primitive hint to match one of 'default', 'number', 'string'."_s);
     return NoPreference;
 }
 
-inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue& value)
+inline bool JSValue::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& value)
 {
     if (isInt32()) {
         number = asInt32();
@@ -733,7 +733,7 @@ inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue
         return true;
     }
     if (isCell())
-        return asCell()->getPrimitiveNumber(exec, number, value);
+        return asCell()->getPrimitiveNumber(globalObject, number, value);
     if (isTrue()) {
         number = 1.0;
         value = *this;
@@ -750,16 +750,16 @@ inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue
     return true;
 }
 
-ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const
+ALWAYS_INLINE double JSValue::toNumber(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
     if (isDouble())
         return asDouble();
-    return toNumberSlowCase(exec);
+    return toNumberSlowCase(globalObject);
 }
 
-ALWAYS_INLINE Variant<JSBigInt*, double> JSValue::toNumeric(ExecState* exec) const
+ALWAYS_INLINE Variant<JSBigInt*, double> JSValue::toNumeric(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
@@ -768,18 +768,18 @@ ALWAYS_INLINE Variant<JSBigInt*, double> JSValue::toNumeric(ExecState* exec) con
     if (isBigInt())
         return asBigInt(*this);
 
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue primValue = this->toPrimitive(exec, PreferNumber);
+    JSValue primValue = this->toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, 0);
     if (primValue.isBigInt())
         return asBigInt(primValue);
-    double value = primValue.toNumber(exec);
+    double value = primValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
     return value;
 }
 
-ALWAYS_INLINE Variant<JSBigInt*, int32_t> JSValue::toBigIntOrInt32(ExecState* exec) const
+ALWAYS_INLINE Variant<JSBigInt*, int32_t> JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
@@ -788,25 +788,20 @@ ALWAYS_INLINE Variant<JSBigInt*, int32_t> JSValue::toBigIntOrInt32(ExecState* ex
     if (isBigInt())
         return asBigInt(*this);
 
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue primValue = this->toPrimitive(exec, PreferNumber);
+    JSValue primValue = this->toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, 0);
     if (primValue.isBigInt())
         return asBigInt(primValue);
-    int32_t value = primValue.toInt32(exec);
+    int32_t value = primValue.toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
     return value;
 }
 
-inline JSObject* JSValue::toObject(ExecState* exec) const
+inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
 {
-    return isCell() ? asCell()->toObject(exec, exec->lexicalGlobalObject()) : toObjectSlowCase(exec, exec->lexicalGlobalObject());
-}
-
-inline JSObject* JSValue::toObject(ExecState* exec, JSGlobalObject* globalObject) const
-{
-    return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
+    return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
 }
 
 inline bool JSValue::isFunction(VM& vm) const
@@ -854,143 +849,143 @@ inline const ClassInfo* JSValue::classInfoOrNull(VM& vm) const
     return isCell() ? asCell()->classInfo(vm) : nullptr;
 }
 
-inline JSValue JSValue::toThis(ExecState* exec, ECMAMode ecmaMode) const
+inline JSValue JSValue::toThis(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable(exec->vm())->toThis(asCell(), exec, ecmaMode) : toThisSlowCase(exec, ecmaMode);
+    return isCell() ? asCell()->methodTable(getVM(globalObject))->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
 }
 
-ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const
+ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
-    return get(exec, propertyName, slot);
+    return get(globalObject, propertyName, slot);
 }
 
-ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
+ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
-    bool hasSlot = getPropertySlot(exec, propertyName, slot);
+    auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
+    bool hasSlot = getPropertySlot(globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasSlot);
     if (!hasSlot)
         return jsUndefined();
-    RELEASE_AND_RETURN(scope, slot.getValue(exec, propertyName));
+    RELEASE_AND_RETURN(scope, slot.getValue(globalObject, propertyName));
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, CallbackWhenNoException callback) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
-    return getPropertySlot(exec, propertyName, slot, callback);
+    return getPropertySlot(globalObject, propertyName, slot, callback);
 }
 
 template<typename CallbackWhenNoException>
-ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
+ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot, CallbackWhenNoException callback) const
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
-    bool found = getPropertySlot(exec, propertyName, slot);
+    auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
+    bool found = getPropertySlot(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, { });
     RELEASE_AND_RETURN(scope, callback(found, slot));
 }
 
-ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
+ALWAYS_INLINE bool JSValue::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
     // If this is a primitive, we'll need to synthesize the prototype -
     // and if it's a string there are special properties to check first.
     JSObject* object;
     if (UNLIKELY(!isObject())) {
         if (isString()) {
-            bool hasProperty = asString(*this)->getStringPropertySlot(exec, propertyName, slot);
+            bool hasProperty = asString(*this)->getStringPropertySlot(globalObject, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, false);
             if (hasProperty)
                 return true;
         }
-        object = synthesizePrototype(exec);
+        object = synthesizePrototype(globalObject);
         EXCEPTION_ASSERT(!!scope.exception() == !object);
         if (UNLIKELY(!object))
             return false;
     } else
         object = asObject(asCell());
 
-    RELEASE_AND_RETURN(scope, object->getPropertySlot(exec, propertyName, slot));
+    RELEASE_AND_RETURN(scope, object->getPropertySlot(globalObject, propertyName, slot));
 }
 
-ALWAYS_INLINE bool JSValue::getOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
+ALWAYS_INLINE bool JSValue::getOwnPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const
 {
     // If this is a primitive, we'll need to synthesize the prototype -
     // and if it's a string there are special properties to check first.
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
     if (UNLIKELY(!isObject())) {
         if (isString())
-            RELEASE_AND_RETURN(scope, asString(*this)->getStringPropertySlot(exec, propertyName, slot));
+            RELEASE_AND_RETURN(scope, asString(*this)->getStringPropertySlot(globalObject, propertyName, slot));
 
         if (isUndefinedOrNull())
-            throwException(exec, scope, createNotAnObjectError(exec, *this));
+            throwException(globalObject, scope, createNotAnObjectError(globalObject, *this));
         return false;
     }
-    RELEASE_AND_RETURN(scope, asObject(asCell())->getOwnPropertySlotInline(exec, propertyName, slot));
+    RELEASE_AND_RETURN(scope, asObject(asCell())->getOwnPropertySlotInline(globalObject, propertyName, slot));
 }
 
-ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
+ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, unsigned propertyName) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);
-    return get(exec, propertyName, slot);
+    return get(globalObject, propertyName, slot);
 }
 
-ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
+ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot) const
 {
-    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    auto scope = DECLARE_THROW_SCOPE(getVM(globalObject));
     // If this is a primitive, we'll need to synthesize the prototype -
     // and if it's a string there are special properties to check first.
     JSObject* object;
     if (UNLIKELY(!isObject())) {
         if (isString()) {
-            bool hasProperty = asString(*this)->getStringPropertySlot(exec, propertyName, slot);
+            bool hasProperty = asString(*this)->getStringPropertySlot(globalObject, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, { });
             if (hasProperty)
-                RELEASE_AND_RETURN(scope, slot.getValue(exec, propertyName));
+                RELEASE_AND_RETURN(scope, slot.getValue(globalObject, propertyName));
         }
-        object = synthesizePrototype(exec);
+        object = synthesizePrototype(globalObject);
         EXCEPTION_ASSERT(!!scope.exception() == !object);
         if (UNLIKELY(!object))
             return JSValue();
     } else
         object = asObject(asCell());
     
-    bool hasSlot = object->getPropertySlot(exec, propertyName, slot);
+    bool hasSlot = object->getPropertySlot(globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasSlot);
     if (!hasSlot)
         return jsUndefined();
-    RELEASE_AND_RETURN(scope, slot.getValue(exec, propertyName));
+    RELEASE_AND_RETURN(scope, slot.getValue(globalObject, propertyName));
 }
 
-ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, uint64_t propertyName) const
+ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, uint64_t propertyName) const
 {
     if (LIKELY(propertyName <= std::numeric_limits<unsigned>::max()))
-        return get(exec, static_cast<unsigned>(propertyName));
-    return get(exec, Identifier::from(exec->vm(), static_cast<double>(propertyName)));
+        return get(globalObject, static_cast<unsigned>(propertyName));
+    return get(globalObject, Identifier::from(getVM(globalObject), static_cast<double>(propertyName)));
 }
 
-inline bool JSValue::put(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell()))
-        return putToPrimitive(exec, propertyName, value, slot);
+        return putToPrimitive(globalObject, propertyName, value, slot);
 
-    return asCell()->methodTable(exec->vm())->put(asCell(), exec, propertyName, value, slot);
+    return asCell()->methodTable(getVM(globalObject))->put(asCell(), globalObject, propertyName, value, slot);
 }
 
-ALWAYS_INLINE bool JSValue::putInline(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+ALWAYS_INLINE bool JSValue::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell()))
-        return putToPrimitive(exec, propertyName, value, slot);
-    return asCell()->putInline(exec, propertyName, value, slot);
+        return putToPrimitive(globalObject, propertyName, value, slot);
+    return asCell()->putInline(globalObject, propertyName, value, slot);
 }
 
-inline bool JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+inline bool JSValue::putByIndex(JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     if (UNLIKELY(!isCell()))
-        return putToPrimitiveByIndex(exec, propertyName, value, shouldThrow);
+        return putToPrimitiveByIndex(globalObject, propertyName, value, shouldThrow);
 
-    return asCell()->methodTable(exec->vm())->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
+    return asCell()->methodTable(getVM(globalObject))->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
 }
 
 inline Structure* JSValue::structureOrNull() const
@@ -1008,17 +1003,17 @@ inline JSValue JSValue::structureOrUndefined() const
 }
 
 // ECMA 11.9.3
-inline bool JSValue::equal(ExecState* exec, JSValue v1, JSValue v2)
+inline bool JSValue::equal(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     if (v1.isInt32() && v2.isInt32())
         return v1 == v2;
 
-    return equalSlowCase(exec, v1, v2);
+    return equalSlowCase(globalObject, v1, v2);
 }
 
-ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2)
+ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     do {
         if (v1.isNumber() && v2.isNumber())
@@ -1027,12 +1022,12 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         bool s1 = v1.isString();
         bool s2 = v2.isString();
         if (s1 && s2)
-            RELEASE_AND_RETURN(scope, asString(v1)->equal(exec, asString(v2)));
+            RELEASE_AND_RETURN(scope, asString(v1)->equal(globalObject, asString(v2)));
 
         if (v1.isBigInt() && s2) {
-            String v2String = asString(v2)->value(exec);
+            String v2String = asString(v2)->value(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
-            JSBigInt* n = JSBigInt::stringToBigInt(exec, v2String);
+            JSBigInt* n = JSBigInt::stringToBigInt(globalObject, v2String);
             RETURN_IF_EXCEPTION(scope, false);
             if (!n)
                 return false;
@@ -1042,9 +1037,9 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         }
 
         if (s1 && v2.isBigInt()) {
-            String v1String = asString(v1)->value(exec);
+            String v1String = asString(v1)->value(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
-            JSBigInt* n = JSBigInt::stringToBigInt(exec, v1String);
+            JSBigInt* n = JSBigInt::stringToBigInt(globalObject, v1String);
             RETURN_IF_EXCEPTION(scope, false);
             if (!n)
                 return false;
@@ -1058,19 +1053,19 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
                 return true;
             if (!v2.isCell())
                 return false;
-            return v2.asCell()->structure(vm)->masqueradesAsUndefined(exec->lexicalGlobalObject());
+            return v2.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
         }
 
         if (v2.isUndefinedOrNull()) {
             if (!v1.isCell())
                 return false;
-            return v1.asCell()->structure(vm)->masqueradesAsUndefined(exec->lexicalGlobalObject());
+            return v1.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
         }
 
         if (v1.isObject()) {
             if (v2.isObject())
                 return v1 == v2;
-            JSValue p1 = v1.toPrimitive(exec);
+            JSValue p1 = v1.toPrimitive(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             v1 = p1;
             if (v1.isInt32() && v2.isInt32())
@@ -1079,7 +1074,7 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         }
 
         if (v2.isObject()) {
-            JSValue p2 = v2.toPrimitive(exec);
+            JSValue p2 = v2.toPrimitive(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             v2 = p2;
             if (v1.isInt32() && v2.isInt32())
@@ -1096,9 +1091,9 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
         }
 
         if (s1 || s2) {
-            double d1 = v1.toNumber(exec);
+            double d1 = v1.toNumber(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
-            double d2 = v2.toNumber(exec);
+            double d2 = v2.toNumber(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             return d1 == d2;
         }
@@ -1107,14 +1102,14 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
             if (v2.isNumber())
                 return static_cast<double>(v1.asBoolean()) == v2.asNumber();
             else if (v2.isBigInt()) {
-                v1 = JSValue(v1.toNumber(exec));
+                v1 = JSValue(v1.toNumber(globalObject));
                 continue;
             }
         } else if (v2.isBoolean()) {
             if (v1.isNumber())
                 return v1.asNumber() == static_cast<double>(v2.asBoolean());
             else if (v1.isBigInt()) {
-                v2 = JSValue(v2.toNumber(exec));
+                v2 = JSValue(v2.toNumber(globalObject));
                 continue;
             }
         }
@@ -1133,18 +1128,18 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(ExecState* exec, JSValue v1, JSV
 }
 
 // ECMA 11.9.3
-ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2)
+ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     ASSERT(v1.isCell() && v2.isCell());
 
     if (v1.asCell()->isString() && v2.asCell()->isString())
-        return asString(v1)->equal(exec, asString(v2));
+        return asString(v1)->equal(globalObject, asString(v2));
     if (v1.isBigInt() && v2.isBigInt())
         return JSBigInt::equals(asBigInt(v1), asBigInt(v2));
     return v1 == v2;
 }
 
-inline bool JSValue::strictEqual(ExecState* exec, JSValue v1, JSValue v2)
+inline bool JSValue::strictEqual(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     if (v1.isInt32() && v2.isInt32())
         return v1 == v2;
@@ -1155,7 +1150,7 @@ inline bool JSValue::strictEqual(ExecState* exec, JSValue v1, JSValue v2)
     if (!v1.isCell() || !v2.isCell())
         return v1 == v2;
 
-    return strictEqualSlowCaseInline(exec, v1, v2);
+    return strictEqualSlowCaseInline(globalObject, v1, v2);
 }
 
 inline int32_t JSValue::asInt32ForArithmetic() const
@@ -1198,14 +1193,14 @@ inline TriState JSValue::pureToBoolean() const
     return isTrue() ? TrueTriState : FalseTriState;
 }
 
-ALWAYS_INLINE bool JSValue::requireObjectCoercible(ExecState* exec) const
+ALWAYS_INLINE bool JSValue::requireObjectCoercible(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!isUndefinedOrNull())
         return true;
-    throwException(exec, scope, createNotAnObjectError(exec, *this));
+    throwException(globalObject, scope, createNotAnObjectError(globalObject, *this));
     return false;
 }
 
@@ -1225,10 +1220,10 @@ ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* bas
 }
 
 // See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
-ALWAYS_INLINE bool sameValue(ExecState* exec, JSValue a, JSValue b)
+ALWAYS_INLINE bool sameValue(JSGlobalObject* globalObject, JSValue a, JSValue b)
 {
     if (!a.isNumber())
-        return JSValue::strictEqual(exec, a, b);
+        return JSValue::strictEqual(globalObject, a, b);
     if (!b.isNumber())
         return false;
     double x = a.asNumber();

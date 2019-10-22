@@ -70,26 +70,26 @@ ThrowScope::~ThrowScope()
         simulateThrow();
 }
 
-Exception* ThrowScope::throwException(ExecState* exec, Exception* exception)
+Exception* ThrowScope::throwException(JSGlobalObject* globalObject, Exception* exception)
 {
     if (m_vm.exception() && m_vm.exception() != exception)
         m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
     
-    return m_vm.throwException(exec, exception);
+    return m_vm.throwException(globalObject, exception);
 }
 
-Exception* ThrowScope::throwException(ExecState* exec, JSValue error)
+Exception* ThrowScope::throwException(JSGlobalObject* globalObject, JSValue error)
 {
     if (!error.isCell() || !jsDynamicCast<Exception*>(m_vm, error.asCell()))
         m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
     
-    return m_vm.throwException(exec, error);
+    return m_vm.throwException(globalObject, error);
 }
 
-Exception* ThrowScope::throwException(ExecState* exec, JSObject* obj)
+Exception* ThrowScope::throwException(JSGlobalObject* globalObject, JSObject* obj)
 {
     m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
-    return m_vm.throwException(exec, obj);
+    return m_vm.throwException(globalObject, obj);
 }
 
 void ThrowScope::simulateThrow()

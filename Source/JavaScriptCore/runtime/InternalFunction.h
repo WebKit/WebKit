@@ -57,8 +57,7 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info()); 
     }
 
-    static Structure* createSubclassStructure(ExecState*, JSValue newTarget, Structure*);
-    static Structure* createSubclassStructure(ExecState*, JSObject* baseCallee, JSValue newTarget, Structure*);
+    static Structure* createSubclassStructure(JSGlobalObject*, JSObject* baseCallee, JSValue newTarget, Structure*);
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
@@ -90,7 +89,7 @@ protected:
     enum class NameAdditionMode { WithStructureTransition, WithoutStructureTransition };
     JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameVisibility = NameVisibility::Visible, NameAdditionMode = NameAdditionMode::WithStructureTransition);
 
-    JS_EXPORT_PRIVATE static Structure* createSubclassStructureSlow(ExecState*, JSValue newTarget, Structure*);
+    JS_EXPORT_PRIVATE static Structure* createSubclassStructureSlow(JSGlobalObject*, JSValue newTarget, Structure*);
 
     JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
     JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
@@ -101,17 +100,12 @@ protected:
     WriteBarrier<JSGlobalObject> m_globalObject;
 };
 
-ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue newTarget, Structure* baseClass)
-{
-    return createSubclassStructure(exec, exec->jsCallee(), newTarget, baseClass);
-}
-
-ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSObject* baseCallee, JSValue newTarget, Structure* baseClass)
+ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObject, JSObject* baseCallee, JSValue newTarget, Structure* baseClass)
 {
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.
-    // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->jsCallee()
+    // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == callFrame->jsCallee()
     if (newTarget && newTarget != baseCallee)
-        return createSubclassStructureSlow(exec, newTarget, baseClass);
+        return createSubclassStructureSlow(globalObject, newTarget, baseClass);
     return baseClass;
 }
 

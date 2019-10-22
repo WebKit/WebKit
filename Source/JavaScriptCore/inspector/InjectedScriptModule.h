@@ -47,14 +47,14 @@ class JS_EXPORT_PRIVATE InjectedScriptModule : public InjectedScriptBase {
 public:
     ~InjectedScriptModule() override;
     virtual String source() const = 0;
-    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const = 0;
+    virtual JSC::JSValue host(InjectedScriptManager*, JSC::JSGlobalObject*) const = 0;
 
 protected:
     // Do not expose constructor in the child classes as well. Instead provide
     // a static factory method that would create a new instance of the class
     // and call its ensureInjected() method immediately.
     explicit InjectedScriptModule(const String& name);
-    void ensureInjected(InjectedScriptManager*, JSC::ExecState*);
+    void ensureInjected(InjectedScriptManager*, JSC::JSGlobalObject*);
     void ensureInjected(InjectedScriptManager*, const InjectedScript&);
 };
 

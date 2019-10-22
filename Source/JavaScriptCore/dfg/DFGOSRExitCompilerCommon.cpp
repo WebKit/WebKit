@@ -334,11 +334,11 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     }
 }
 
-static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
+static void osrWriteBarrier(VM& vm, CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
     AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
-    jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
+    jit.setupArguments<decltype(operationOSRWriteBarrier)>(&vm, owner);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
     jit.call(scratch, OperationPtrTag);
 
@@ -352,7 +352,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     jit.move(
         AssemblyHelpers::TrustedImmPtr(
             jit.codeBlock()->baselineAlternative()), GPRInfo::argumentGPR1);
-    osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+    osrWriteBarrier(vm, jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
 
     // We barrier all inlined frames -- and not just the current inline stack --
     // because we don't know which inlined function owns the value profile that
@@ -367,7 +367,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
             jit.move(
                 AssemblyHelpers::TrustedImmPtr(
                     inlineCallFrame->baselineCodeBlock.get()), GPRInfo::argumentGPR1);
-            osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+            osrWriteBarrier(vm, jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
         }
     }
 

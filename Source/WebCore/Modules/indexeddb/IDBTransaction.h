@@ -113,18 +113,18 @@ public:
     std::unique_ptr<IDBIndex> createIndex(IDBObjectStore&, const IDBIndexInfo&);
     void renameIndex(IDBIndex&, const String& newName);
 
-    Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, RefPtr<IDBKey>&&, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
-    Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBGetRecordData&);
-    Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
-    Ref<IDBRequest> requestGetAllIndexRecords(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
-    Ref<IDBRequest> requestDeleteRecord(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
-    Ref<IDBRequest> requestClearObjectStore(JSC::ExecState&, IDBObjectStore&);
-    Ref<IDBRequest> requestCount(JSC::ExecState&, IDBObjectStore&, const IDBKeyRangeData&);
-    Ref<IDBRequest> requestCount(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&);
-    Ref<IDBRequest> requestGetValue(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&);
-    Ref<IDBRequest> requestGetKey(JSC::ExecState&, IDBIndex&, const IDBKeyRangeData&);
-    Ref<IDBRequest> requestOpenCursor(JSC::ExecState&, IDBObjectStore&, const IDBCursorInfo&);
-    Ref<IDBRequest> requestOpenCursor(JSC::ExecState&, IDBIndex&, const IDBCursorInfo&);
+    Ref<IDBRequest> requestPutOrAdd(JSC::JSGlobalObject&, IDBObjectStore&, RefPtr<IDBKey>&&, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
+    Ref<IDBRequest> requestGetRecord(JSC::JSGlobalObject&, IDBObjectStore&, const IDBGetRecordData&);
+    Ref<IDBRequest> requestGetAllObjectStoreRecords(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
+    Ref<IDBRequest> requestGetAllIndexRecords(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&, IndexedDB::GetAllType, Optional<uint32_t> count);
+    Ref<IDBRequest> requestDeleteRecord(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestClearObjectStore(JSC::JSGlobalObject&, IDBObjectStore&);
+    Ref<IDBRequest> requestCount(JSC::JSGlobalObject&, IDBObjectStore&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestCount(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestGetValue(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestGetKey(JSC::JSGlobalObject&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestOpenCursor(JSC::JSGlobalObject&, IDBObjectStore&, const IDBCursorInfo&);
+    Ref<IDBRequest> requestOpenCursor(JSC::JSGlobalObject&, IDBIndex&, const IDBCursorInfo&);
     void iterateCursor(IDBCursor&, const IDBIterateCursorData&);
 
     void deleteObjectStore(const String& objectStoreName);
@@ -173,7 +173,7 @@ private:
     void fireOnAbort();
     void enqueueEvent(Ref<Event>&&);
 
-    Ref<IDBRequest> requestIndexRecord(JSC::ExecState&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestIndexRecord(JSC::JSGlobalObject&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 
     void commitOnServer(IDBClient::TransactionOperation&);
     void abortOnServerAndCancelRequests(IDBClient::TransactionOperation&);
@@ -214,7 +214,7 @@ private:
     void deleteIndexOnServer(IDBClient::TransactionOperation&, const uint64_t& objectStoreIdentifier, const String& indexName);
     void didDeleteIndexOnServer(const IDBResultData&);
 
-    Ref<IDBRequest> doRequestOpenCursor(JSC::ExecState&, Ref<IDBCursor>&&);
+    Ref<IDBRequest> doRequestOpenCursor(JSC::JSGlobalObject&, Ref<IDBCursor>&&);
     void openCursorOnServer(IDBClient::TransactionOperation&, const IDBCursorInfo&);
     void didOpenCursorOnServer(IDBRequest&, const IDBResultData&);
 

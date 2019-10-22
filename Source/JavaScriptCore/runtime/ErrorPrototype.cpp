@@ -81,17 +81,17 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
     if (!thisValue.isObject())
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
     JSObject* thisObj = asObject(thisValue);
 
     // Guard against recursion!
-    StringRecursionChecker checker(callFrame, thisObj);
+    StringRecursionChecker checker(globalObject, thisObj);
     EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
     // 3. Let name be the result of calling the [[Get]] internal method of O with argument "name".
-    JSValue name = thisObj->get(callFrame, vm.propertyNames->name);
+    JSValue name = thisObj->get(globalObject, vm.propertyNames->name);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 4. If name is undefined, then let name be "Error"; else let name be ToString(name).
@@ -99,12 +99,12 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject
     if (name.isUndefined())
         nameString = "Error"_s;
     else {
-        nameString = name.toWTFString(callFrame);
+        nameString = name.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     // 5. Let msg be the result of calling the [[Get]] internal method of O with argument "message".
-    JSValue message = thisObj->get(callFrame, vm.propertyNames->message);
+    JSValue message = thisObj->get(globalObject, vm.propertyNames->message);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // (sic)
@@ -114,7 +114,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject
     if (message.isUndefined())
         messageString = String();
     else {
-        messageString = message.toWTFString(callFrame);
+        messageString = message.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(JSGlobalObject* globalObject
         return JSValue::encode(name.isString() ? name : jsString(vm, nameString));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(callFrame, nameString, ": ", messageString)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": ", messageString)));
 }
 
 } // namespace JSC

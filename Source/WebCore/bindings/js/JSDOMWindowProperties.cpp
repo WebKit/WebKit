@@ -41,7 +41,7 @@ using namespace JSC;
 
 const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
 
-static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, DOMWindow& window, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, DOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     // Check for child frames by name before built-in properties to match Mozilla. This does
     // not match IE, but some sites end up naming frames things that conflict with window
@@ -49,12 +49,12 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     // the Moz way.
     if (auto* frame = window.frame()) {
         if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomString(propertyName))) {
-            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
+            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
     }
 
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, window, ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, window, ThrowSecurityError))
         return false;
 
     // FIXME: Search the whole frame hierarchy somewhere around here.
@@ -70,9 +70,9 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
             if (UNLIKELY(htmlDocument.windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
                 Ref<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
                 ASSERT(collection->length() > 1);
-                namedItem = toJS(exec, thisObject->globalObject(), collection);
+                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
             } else
-                namedItem = toJS(exec, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
+                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
             slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, namedItem);
             return true;
         }
@@ -81,17 +81,17 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     return false;
 }
 
-bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
+bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSDOMWindowProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
+    if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
         return true;
-    JSValue proto = thisObject->getPrototypeDirect(state->vm());
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
+    JSValue proto = thisObject->getPrototypeDirect(lexicalGlobalObject->vm());
+    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(lexicalGlobalObject, propertyName))
         return false;
 
-    auto& vm = state->vm();
+    auto& vm = lexicalGlobalObject->vm();
 
     // FIXME: We should probably add support for JSRemoteDOMWindowBase too.
     auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(vm, thisObject->globalObject());
@@ -99,13 +99,13 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* stat
         return false;
 
     auto& window = jsWindow->wrapped();
-    return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, window, state, propertyName, slot);
+    return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, window, lexicalGlobalObject, propertyName, slot);
 }
 
-bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
+bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    VM& vm = state->vm();
-    return getOwnPropertySlot(object, state, Identifier::from(vm, index), slot);
+    VM& vm = lexicalGlobalObject->vm();
+    return getOwnPropertySlot(object, lexicalGlobalObject, Identifier::from(vm, index), slot);
 }
 
 } // namespace WebCore

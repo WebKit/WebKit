@@ -65,7 +65,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLEleme
     return pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject());
 }
 
-JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
+JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)
 {
     HTMLElement& element = jsHTMLElement->wrapped();
     if (!is<HTMLPlugInElement>(element))
@@ -91,60 +91,60 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     if (!instance || !instance->rootObject())
         return nullptr;
 
-    return instance->createRuntimeObject(exec);
+    return instance->createRuntimeObject(lexicalGlobalObject);
 }
     
-static EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
+static EncodedJSValue pluginElementPropertyGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(vm, JSValue::decode(thisValue));
     if (!thisObject)
-        return throwVMTypeError(exec, scope);
-    JSObject* scriptObject = pluginScriptObject(exec, thisObject);
+        return throwVMTypeError(lexicalGlobalObject, scope);
+    JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, thisObject);
     if (!scriptObject)
         return JSValue::encode(jsUndefined());
     
-    return JSValue::encode(scriptObject->get(exec, propertyName));
+    return JSValue::encode(scriptObject->get(lexicalGlobalObject, propertyName));
 }
 
-bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     if (!element->globalObject()->world().isNormal()) {
-        JSC::JSValue proto = element->getPrototypeDirect(exec->vm());
-        if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
+        JSC::JSValue proto = element->getPrototypeDirect(lexicalGlobalObject->vm());
+        if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;
     }
 
-    JSObject* scriptObject = pluginScriptObject(exec, element);
+    JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, element);
     if (!scriptObject)
         return false;
 
-    if (!scriptObject->hasProperty(exec, propertyName))
+    if (!scriptObject->hasProperty(lexicalGlobalObject, propertyName))
         return false;
 
     slot.setCustom(element, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, pluginElementPropertyGetter);
     return true;
 }
 
-bool pluginElementCustomPut(JSHTMLElement* element, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
+bool pluginElementCustomPut(JSHTMLElement* element, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
 {
-    JSObject* scriptObject = pluginScriptObject(exec, element);
+    JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, element);
     if (!scriptObject)
         return false;
-    if (!scriptObject->hasProperty(exec, propertyName))
+    if (!scriptObject->hasProperty(lexicalGlobalObject, propertyName))
         return false;
-    putResult = scriptObject->methodTable(exec->vm())->put(scriptObject, exec, propertyName, value, slot);
+    putResult = scriptObject->methodTable(lexicalGlobalObject->vm())->put(scriptObject, lexicalGlobalObject, propertyName, value, slot);
     return true;
 }
 
-static EncodedJSValue JSC_HOST_CALL callPlugin(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callPlugin(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     JSHTMLElement* element = jsCast<JSHTMLElement*>(callFrame->jsCallee());
 
     // Get the plug-in script object.
-    JSObject* scriptObject = pluginScriptObject(callFrame, element);
+    JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, element);
     ASSERT(scriptObject);
 
     size_t argumentCount = callFrame->argumentCount();
@@ -154,11 +154,11 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(JSGlobalObject* globalObject, Cal
     ASSERT(!argumentList.hasOverflowed());
 
     CallData callData;
-    CallType callType = getCallData(globalObject->vm(), scriptObject, callData);
+    CallType callType = getCallData(lexicalGlobalObject->vm(), scriptObject, callData);
     ASSERT(callType == CallType::Host);
 
     // Call the object.
-    JSValue result = call(callFrame, scriptObject, callType, callData, callFrame->thisValue(), argumentList);
+    JSValue result = call(lexicalGlobalObject, scriptObject, callType, callData, callFrame->thisValue(), argumentList);
     return JSValue::encode(result);
 }
 

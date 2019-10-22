@@ -45,9 +45,9 @@ void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_setter);
 }
 
-JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
+JSValue callGetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     // FIXME: Some callers may invoke get() without checking for an exception first.
     // We work around that by checking here.
@@ -57,18 +57,18 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
 
     CallData callData;
     CallType callType = getter->methodTable(vm)->getCallData(getter, callData);
-    RELEASE_AND_RETURN(scope, call(exec, getter, callType, callData, base, ArgList()));
+    RELEASE_AND_RETURN(scope, call(globalObject, getter, callType, callData, base, ArgList()));
 }
 
-bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
+bool callSetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
 
     if (getterSetterObj->isSetterNull())
-        return typeError(exec, scope, ecmaMode == StrictMode, ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, ecmaMode == StrictMode, ReadonlyPropertyWriteError);
 
     JSObject* setter = getterSetterObj->setter();
 
@@ -79,7 +79,7 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
     CallData callData;
     CallType callType = setter->methodTable(vm)->getCallData(setter, callData);
     scope.release();
-    call(exec, setter, callType, callData, base, args);
+    call(globalObject, setter, callType, callData, base, args);
     return true;
 }
 

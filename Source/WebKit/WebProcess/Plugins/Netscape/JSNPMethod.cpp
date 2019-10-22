@@ -33,7 +33,7 @@
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/IsoSubspacePerVM.h>
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/JSHTMLElement.h>
 #include <WebCore/JSPluginElementFunctions.h>
@@ -80,17 +80,17 @@ static EncodedJSValue JSC_HOST_CALL callMethod(JSGlobalObject* globalObject, Cal
         JSHTMLElement* element = jsCast<JSHTMLElement*>(asObject(thisValue));
 
         // Try to get the script object from the element
-        if (JSObject* scriptObject = pluginScriptObject(callFrame, element))
+        if (JSObject* scriptObject = pluginScriptObject(globalObject, element))
             thisValue = scriptObject;
     }
 
     if (thisValue.inherits<JSNPObject>(vm)) {
         JSNPObject* jsNPObject = jsCast<JSNPObject*>(asObject(thisValue));
 
-        return JSValue::encode(jsNPObject->callMethod(callFrame, jsNPMethod->npIdentifier()));
+        return JSValue::encode(jsNPObject->callMethod(globalObject, callFrame, jsNPMethod->npIdentifier()));
     }
 
-    return throwVMTypeError(callFrame, scope);
+    return throwVMTypeError(globalObject, scope);
 }
 
 } // namespace WebKit

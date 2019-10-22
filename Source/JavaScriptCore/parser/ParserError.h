@@ -90,23 +90,22 @@ public:
         SourceCode source, // Note: We must copy the source here, since the objects that pass in their SourceCode field may be destroyed in addErrorInfo.
         int overrideLineNumber = -1)
     {
-        ExecState* exec = globalObject->globalExec();
         switch (m_type) {
         case ErrorNone:
             return nullptr;
         case SyntaxError:
             return addErrorInfo(
-                exec, 
-                createSyntaxError(exec, m_message), 
+                globalObject->vm(), 
+                createSyntaxError(globalObject, m_message), 
                 overrideLineNumber == -1 ? m_line : overrideLineNumber, source);
         case EvalError:
-            return createSyntaxError(exec, m_message);
+            return createSyntaxError(globalObject, m_message);
         case StackOverflow: {
-            ErrorHandlingScope errorScope(globalObject->vm());
-            return createStackOverflowError(exec);
+            ErrorHandlingScope errorScope(getVM(globalObject));
+            return createStackOverflowError(globalObject);
         }
         case OutOfMemory:
-            return createOutOfMemoryError(exec);
+            return createOutOfMemoryError(globalObject);
         }
         CRASH();
         return nullptr;

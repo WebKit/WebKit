@@ -49,12 +49,11 @@ namespace JSC {
 
 class CallFrame;
 class VM;
-using ExecState = CallFrame;
 
 JS_EXPORT_PRIVATE void msToGregorianDateTime(VM&, double, WTF::TimeType outputTimeType, GregorianDateTime&);
 JS_EXPORT_PRIVATE double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, WTF::TimeType inputTimeType);
 JS_EXPORT_PRIVATE double getUTCOffset(VM&);
 JS_EXPORT_PRIVATE double parseDateFromNullTerminatedCharacters(VM&, const char* dateString);
-JS_EXPORT_PRIVATE double parseDate(ExecState*, VM&, const WTF::String&);
+JS_EXPORT_PRIVATE double parseDate(JSGlobalObject*, VM&, const WTF::String&);
 
 } // namespace JSC

@@ -54,7 +54,7 @@ private:
     {
     }
 
-    static String toStringName(const JSObject*, ExecState*);
+    static String toStringName(const JSObject*, JSGlobalObject*);
 };
 
 static_assert(std::is_final<JSWeakSet>::value, "Required for JSType based casting");

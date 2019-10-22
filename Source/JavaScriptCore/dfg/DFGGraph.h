@@ -53,7 +53,6 @@ namespace JSC {
 
 class CodeBlock;
 class CallFrame;
-using ExecState = CallFrame;
 
 namespace DFG {
 
@@ -442,7 +441,7 @@ public:
     JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
     {
         JSGlobalObject* object = globalObjectFor(codeOrigin);
-        return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object->globalExec(), NotStrictMode));
+        return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object, NotStrictMode));
     }
     
     ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)

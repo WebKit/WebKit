@@ -44,72 +44,72 @@ class JSExecState {
     WTF_FORBID_HEAP_ALLOCATION;
     friend class JSMainThreadNullState;
 public:
-    static JSC::ExecState* currentState()
+    static JSC::JSGlobalObject* currentState()
     {
         return threadGlobalData().currentState();
     };
     
-    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSExecState currentState(exec);
-        return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
+        JSExecState currentState(lexicalGlobalObject);
+        return JSC::call(lexicalGlobalObject, functionObject, callType, callData, thisValue, args, returnedException);
     };
 
-    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSExecState currentState(exec);
-        return JSC::evaluate(exec, source, thisValue, returnedException);
+        JSExecState currentState(lexicalGlobalObject);
+        return JSC::evaluate(lexicalGlobalObject, source, thisValue, returnedException);
     };
 
-    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
+    static JSC::JSValue evaluate(JSC::JSGlobalObject* lexicalGlobalObject, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
     {
         NakedPtr<JSC::Exception> unused;
-        return evaluate(exec, source, thisValue, unused);
+        return evaluate(lexicalGlobalObject, source, thisValue, unused);
     };
 
-    static JSC::JSValue profiledCall(JSC::ExecState* exec, JSC::ProfilingReason reason, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue profiledCall(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSExecState currentState(exec);
-        return JSC::profiledCall(exec, reason, functionObject, callType, callData, thisValue, args, returnedException);
+        JSExecState currentState(lexicalGlobalObject);
+        return JSC::profiledCall(lexicalGlobalObject, reason, functionObject, callType, callData, thisValue, args, returnedException);
     }
 
-    static JSC::JSValue profiledEvaluate(JSC::ExecState* exec, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSExecState currentState(exec);
-        return JSC::profiledEvaluate(exec, reason, source, thisValue, returnedException);
+        JSExecState currentState(lexicalGlobalObject);
+        return JSC::profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, returnedException);
     }
 
-    static JSC::JSValue profiledEvaluate(JSC::ExecState* exec, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
+    static JSC::JSValue profiledEvaluate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::ProfilingReason reason, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
     {
         NakedPtr<JSC::Exception> unused;
-        return profiledEvaluate(exec, reason, source, thisValue, unused);
+        return profiledEvaluate(lexicalGlobalObject, reason, source, thisValue, unused);
     }
 
-    static void runTask(JSC::ExecState* exec, JSC::Microtask& task)
+    static void runTask(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Microtask& task)
     {
-        JSExecState currentState(exec);
-        task.run(exec);
+        JSExecState currentState(lexicalGlobalObject);
+        task.run(lexicalGlobalObject);
     }
 
-    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const String& moduleName, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise& loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const String& moduleName, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
     {
-        JSExecState currentState(&state);
-        return *JSC::loadModule(&state, moduleName, parameters, scriptFetcher);
+        JSExecState currentState(&lexicalGlobalObject);
+        return *JSC::loadModule(&lexicalGlobalObject, moduleName, parameters, scriptFetcher);
     }
 
-    static JSC::JSInternalPromise& loadModule(JSC::ExecState& state, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise& loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
     {
-        JSExecState currentState(&state);
-        return *JSC::loadModule(&state, sourceCode, scriptFetcher);
+        JSExecState currentState(&lexicalGlobalObject);
+        return *JSC::loadModule(&lexicalGlobalObject, sourceCode, scriptFetcher);
     }
 
-    static JSC::JSValue linkAndEvaluateModule(JSC::ExecState& state, const JSC::Identifier& moduleKey, JSC::JSValue scriptFetcher, NakedPtr<JSC::Exception>& returnedException)
+    static JSC::JSValue linkAndEvaluateModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& moduleKey, JSC::JSValue scriptFetcher, NakedPtr<JSC::Exception>& returnedException)
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_CATCH_SCOPE(vm);
     
-        JSExecState currentState(&state);
-        auto returnValue = JSC::linkAndEvaluateModule(&state, moduleKey, scriptFetcher);
+        JSExecState currentState(&lexicalGlobalObject);
+        auto returnValue = JSC::linkAndEvaluateModule(&lexicalGlobalObject, moduleKey, scriptFetcher);
         if (UNLIKELY(scope.exception())) {
             returnedException = scope.exception();
             scope.clearException();
@@ -122,11 +122,11 @@ public:
     static void instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
 
 private:
-    explicit JSExecState(JSC::ExecState* exec)
+    explicit JSExecState(JSC::JSGlobalObject* lexicalGlobalObject)
         : m_previousState(currentState())
-        , m_lock(exec)
+        , m_lock(lexicalGlobalObject)
     {
-        setCurrentState(exec);
+        setCurrentState(lexicalGlobalObject);
     };
 
     ~JSExecState()
@@ -135,29 +135,29 @@ private:
         auto scope = DECLARE_CATCH_SCOPE(vm);
         scope.assertNoException();
 
-        JSC::ExecState* state = currentState();
-        bool didExitJavaScript = state && !m_previousState;
+        JSC::JSGlobalObject* lexicalGlobalObject = currentState();
+        bool didExitJavaScript = lexicalGlobalObject && !m_previousState;
 
         setCurrentState(m_previousState);
 
         if (didExitJavaScript)
-            didLeaveScriptContext(state);
+            didLeaveScriptContext(lexicalGlobalObject);
     }
 
-    static void setCurrentState(JSC::ExecState* state)
+    static void setCurrentState(JSC::JSGlobalObject* lexicalGlobalObject)
     {
-        threadGlobalData().setCurrentState(state);
+        threadGlobalData().setCurrentState(lexicalGlobalObject);
     }
 
     template<typename Type, Type jsType, typename DataType> static void instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
 
-    JSC::ExecState* m_previousState;
+    JSC::JSGlobalObject* m_previousState;
     JSC::JSLockHolder m_lock;
 
-    static void didLeaveScriptContext(JSC::ExecState*);
+    static void didLeaveScriptContext(JSC::JSGlobalObject*);
 };
 
-// Null state prevents origin security checks.
+// Null lexicalGlobalObject prevents origin security checks.
 // Used by non-JavaScript bindings (ObjC, GObject).
 class JSMainThreadNullState {
     WTF_MAKE_NONCOPYABLE(JSMainThreadNullState);
@@ -178,11 +178,11 @@ public:
     }
 
 private:
-    JSC::ExecState* m_previousState;
+    JSC::JSGlobalObject* m_previousState;
     CustomElementReactionStack m_customElementReactionStack;
 };
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::JSGlobalObject*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 } // namespace WebCore

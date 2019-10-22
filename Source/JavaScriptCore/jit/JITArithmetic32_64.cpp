@@ -140,7 +140,7 @@ void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalConditi
 }
 
 template <typename Op>
-void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleCondition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
@@ -151,7 +151,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction *instruction, DoubleConditio
 
     emitLoad(op1, regT1, regT0);
     emitLoad(op2, regT3, regT2);
-    callOperation(operation, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    callOperation(operation, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
     emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
 }
 

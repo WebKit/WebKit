@@ -34,21 +34,21 @@ template<typename IDLType>
 struct VariadicConverter {
     using Item = typename IDLType::ImplementationType;
 
-    static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+    static Optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        auto& vm = state.vm();
+        auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto result = Converter<IDLType>::convert(state, value);
+        auto result = Converter<IDLType>::convert(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, WTF::nullopt);
 
         return result;
     }
 };
 
-template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::ExecState& state, size_t startIndex)
+template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, size_t startIndex)
 {
-    size_t length = state.argumentCount();
+    size_t length = callFrame.argumentCount();
     if (startIndex >= length)
         return { };
 
@@ -56,7 +56,7 @@ template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> con
     result.reserveInitialCapacity(length - startIndex);
 
     for (size_t i = startIndex; i < length; ++i) {
-        auto value = VariadicConverter<IDLType>::convert(state, state.uncheckedArgument(i));
+        auto value = VariadicConverter<IDLType>::convert(lexicalGlobalObject, callFrame.uncheckedArgument(i));
         if (!value)
             return { };
         result.uncheckedAppend(WTFMove(*value));

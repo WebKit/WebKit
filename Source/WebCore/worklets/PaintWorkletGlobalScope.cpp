@@ -68,7 +68,7 @@ PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name
 }
 
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
-ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const String& name, Strong<JSObject> paintConstructor)
+ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& globalObject, const String& name, Strong<JSObject> paintConstructor)
 {
     auto& vm = paintConstructor->vm();
     JSC::JSLockHolder lock(vm);
@@ -90,27 +90,27 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
 
         Vector<String> inputProperties;
 
-        JSValue inputPropertiesIterableValue = paintConstructor->get(&state, Identifier::fromString(vm, "inputProperties"));
+        JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputPropertiesIterableValue.isUndefined())
-            inputProperties = convert<IDLSequence<IDLDOMString>>(state, inputPropertiesIterableValue);
+            inputProperties = convert<IDLSequence<IDLDOMString>>(globalObject, inputPropertiesIterableValue);
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         // FIXME: Validate input properties here (step 7).
 
         Vector<String> inputArguments;
 
-        JSValue inputArgumentsIterableValue = paintConstructor->get(&state, Identifier::fromString(vm, "inputArguments"));
+        JSValue inputArgumentsIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputArguments"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputArgumentsIterableValue.isUndefined())
-            inputArguments = convert<IDLSequence<IDLDOMString>>(state, inputArgumentsIterableValue);
+            inputArguments = convert<IDLSequence<IDLDOMString>>(globalObject, inputArgumentsIterableValue);
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
 
-        JSValue contextOptionsValue = paintConstructor->get(&state, Identifier::fromString(vm, "contextOptions"));
+        JSValue contextOptionsValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "contextOptions"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
         UNUSED_PARAM(contextOptionsValue);
 
@@ -119,19 +119,19 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
         if (!paintConstructor->isConstructor(vm))
             return Exception { TypeError, "The second argument must be a constructor" };
 
-        JSValue prototypeValue = paintConstructor->get(&state, vm.propertyNames->prototype);
+        JSValue prototypeValue = paintConstructor->get(&globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!prototypeValue.isObject())
             return Exception { TypeError, "The second argument must have a prototype that is an object" };
 
-        JSValue paintValue = prototypeValue.get(&state, Identifier::fromString(vm, "paint"));
+        JSValue paintValue = prototypeValue.get(&globalObject, Identifier::fromString(vm, "paint"));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (paintValue.isUndefined())
             return Exception { TypeError, "The class must have a paint method" };
 
-        RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(state, paintValue, globalObject);
+        RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(globalObject, paintValue, *jsCast<JSDOMGlobalObject*>(&globalObject));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         auto paintDefinition = makeUnique<PaintDefinition>(name, paintConstructor.get(), paint.releaseNonNull(), WTFMove(inputProperties), WTFMove(inputArguments));

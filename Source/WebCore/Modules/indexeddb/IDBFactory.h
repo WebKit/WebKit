@@ -36,7 +36,6 @@
 namespace JSC {
 class CallFrame;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -57,7 +56,7 @@ public:
     ExceptionOr<Ref<IDBOpenDBRequest>> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version);
     ExceptionOr<Ref<IDBOpenDBRequest>> deleteDatabase(ScriptExecutionContext&, const String& name);
 
-    ExceptionOr<short> cmp(JSC::ExecState&, JSC::JSValue first, JSC::JSValue second);
+    ExceptionOr<short> cmp(JSC::JSGlobalObject&, JSC::JSValue first, JSC::JSValue second);
 
     WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, WTF::Function<void (const Vector<String>&)>&&);
 

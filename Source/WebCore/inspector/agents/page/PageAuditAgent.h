@@ -43,7 +43,7 @@ private:
     Inspector::InjectedScript injectedScriptForEval(const int* executionContextId);
     Inspector::InjectedScript injectedScriptForEval(Inspector::ErrorString&, const int* executionContextId) override;
 
-    void populateAuditObject(JSC::ExecState*, JSC::Strong<JSC::JSObject>& auditObject) override;
+    void populateAuditObject(JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>& auditObject) override;
 
     void muteConsole() override;
     void unmuteConsole() override;

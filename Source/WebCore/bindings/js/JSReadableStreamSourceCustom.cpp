@@ -36,13 +36,13 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue JSReadableStreamSource::start(ExecState& state, Ref<DeferredPromise>&& promise)
+JSValue JSReadableStreamSource::start(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     
     // FIXME: Why is it ok to ASSERT the argument count here?
-    ASSERT(state.argumentCount());
-    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(vm, state.uncheckedArgument(0));
+    ASSERT(callFrame.argumentCount());
+    JSReadableStreamDefaultController* controller = jsDynamicCast<JSReadableStreamDefaultController*>(vm, callFrame.uncheckedArgument(0));
     ASSERT(controller);
 
     m_controller.set(vm, this, controller);
@@ -52,13 +52,13 @@ JSValue JSReadableStreamSource::start(ExecState& state, Ref<DeferredPromise>&& p
     return jsUndefined();
 }
 
-JSValue JSReadableStreamSource::pull(ExecState&, Ref<DeferredPromise>&& promise)
+JSValue JSReadableStreamSource::pull(JSGlobalObject&, CallFrame&, Ref<DeferredPromise>&& promise)
 {
     wrapped().pull(WTFMove(promise));
     return jsUndefined();
 }
 
-JSValue JSReadableStreamSource::controller(ExecState&) const
+JSValue JSReadableStreamSource::controller(JSGlobalObject&) const
 {
     ASSERT_NOT_REACHED();
     return jsUndefined();

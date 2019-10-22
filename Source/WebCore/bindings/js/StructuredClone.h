@@ -28,7 +28,6 @@ namespace JSC {
 class CallFrame;
 class JSGlobalObject;
 using EncodedJSValue = int64_t;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {

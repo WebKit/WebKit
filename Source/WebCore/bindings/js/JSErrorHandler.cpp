@@ -75,8 +75,6 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!globalObject)
         return;
 
-    ExecState* exec = globalObject->globalExec();
-
     CallData callData;
     CallType callType = jsFunction->methodTable(vm)->getCallData(jsFunction, callData);
 
@@ -89,11 +87,11 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         auto& errorEvent = downcast<ErrorEvent>(event);
 
         MarkedArgumentBuffer args;
-        args.append(toJS<IDLDOMString>(*exec, errorEvent.message()));
-        args.append(toJS<IDLUSVString>(*exec, errorEvent.filename()));
+        args.append(toJS<IDLDOMString>(*globalObject, errorEvent.message()));
+        args.append(toJS<IDLUSVString>(*globalObject, errorEvent.filename()));
         args.append(toJS<IDLUnsignedLong>(errorEvent.lineno()));
         args.append(toJS<IDLUnsignedLong>(errorEvent.colno()));
-        args.append(errorEvent.error(*exec, *globalObject));
+        args.append(errorEvent.error(*globalObject));
         ASSERT(!args.hasOverflowed());
 
         VM& vm = globalObject->vm();
@@ -102,14 +100,14 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
         NakedPtr<JSC::Exception> exception;
-        JSValue returnValue = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);
+        JSValue returnValue = JSExecState::profiledCall(globalObject, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);
 
         InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
         globalObject->setCurrentEvent(savedEvent);
 
         if (exception)
-            reportException(exec, exception);
+            reportException(globalObject, exception);
         else {
             if (returnValue.isTrue())
                 event.preventDefault();

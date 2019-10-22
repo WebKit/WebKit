@@ -52,7 +52,7 @@ static ALWAYS_INLINE bool isJSONWhiteSpace(const CharType& c)
 template <typename CharType>
 bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (m_lexer.next() != TokIdentifier)
         return false;
@@ -136,7 +136,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
 template <typename CharType>
 ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LChar* characters, size_t length)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     if (!length)
         return vm.propertyNames->emptyIdentifier;
     if (characters[0] >= MaximumCachableCharacter)
@@ -157,7 +157,7 @@ ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const LCh
 template <typename CharType>
 ALWAYS_INLINE const Identifier LiteralParser<CharType>::makeIdentifier(const UChar* characters, size_t length)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     if (!length)
         return vm.propertyNames->emptyIdentifier;
     if (characters[0] >= MaximumCachableCharacter)
@@ -820,7 +820,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
 template <typename CharType>
 JSValue LiteralParser<CharType>::parse(ParserState initialState)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ParserState state = initialState;
     MarkedArgumentBuffer objectStack;
@@ -832,7 +832,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         switch(state) {
             startParseArray:
             case StartParseArray: {
-                JSArray* array = constructEmptyArray(m_exec, 0);
+                JSArray* array = constructEmptyArray(m_globalObject, 0);
                 RETURN_IF_EXCEPTION(scope, JSValue());
                 objectStack.appendWithCrashOnOverflow(array);
             }
@@ -855,7 +855,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             }
             case DoParseArrayEndExpression: {
                 JSArray* array = asArray(objectStack.last());
-                array->putDirectIndex(m_exec, array->length(), lastValue);
+                array->putDirectIndex(m_globalObject, array->length(), lastValue);
                 RETURN_IF_EXCEPTION(scope, JSValue());
 
                 if (m_lexer.currentToken()->type == TokComma)
@@ -872,7 +872,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             }
             startParseObject:
             case StartParseObject: {
-                JSObject* object = constructEmptyObject(m_exec);
+                JSObject* object = constructEmptyObject(m_globalObject);
                 objectStack.appendWithCrashOnOverflow(object);
 
                 TokenType type = m_lexer.next();
@@ -933,12 +933,11 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                         return JSValue();
                     }
-                    CodeBlock* codeBlock = m_exec->codeBlock();
-                    PutPropertySlot slot(object, codeBlock ? codeBlock->isStrictMode() : false);
-                    objectStack.last().put(m_exec, ident, lastValue, slot);
+                    PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->isStrictMode() : false);
+                    objectStack.last().put(m_globalObject, ident, lastValue, slot);
                 } else {
                     if (Optional<uint32_t> index = parseIndex(ident))
-                        object->putDirectIndex(m_exec, index.value(), lastValue);
+                        object->putDirectIndex(m_globalObject, index.value(), lastValue);
                     else
                         object->putDirect(vm, ident, lastValue);
                 }

@@ -457,15 +457,15 @@ bool InspectorController::developerExtrasEnabled() const
     return m_page.settings().developerExtrasEnabled();
 }
 
-bool InspectorController::canAccessInspectedScriptState(JSC::ExecState* scriptState) const
+bool InspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject* lexicalGlobalObject) const
 {
-    JSLockHolder lock(scriptState);
+    JSLockHolder lock(lexicalGlobalObject);
 
-    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->vm(), scriptState->lexicalGlobalObject());
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(lexicalGlobalObject->vm(), lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 
-    return BindingSecurity::shouldAllowAccessToDOMWindow(scriptState, inspectedWindow->wrapped(), DoNotReportSecurityError);
+    return BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, inspectedWindow->wrapped(), DoNotReportSecurityError);
 }
 
 InspectorFunctionCallHandler InspectorController::functionCallHandler() const

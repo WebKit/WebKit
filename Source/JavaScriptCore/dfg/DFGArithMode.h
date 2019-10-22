@@ -30,7 +30,7 @@
 namespace JSC {
 
 class CallFrame;
-using ExecState = CallFrame;
+class JSGlobalObject;
 using EncodedJSValue = int64_t;
 
 namespace DFG {
@@ -83,7 +83,7 @@ enum class UnaryType : uint32_t {
 };
 
 typedef double (*UnaryFunction)(double);
-typedef double (*UnaryOperation)(ExecState*, EncodedJSValue);
+typedef double (*UnaryOperation)(JSGlobalObject*, EncodedJSValue);
 
 } // namespace Arith
 

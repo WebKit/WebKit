@@ -55,13 +55,13 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
  @end
  */
 
-static ALWAYS_INLINE JSWebAssemblyTable* getTable(ExecState* exec, VM& vm, JSValue v)
+static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(vm, v);
     if (!result) {
-        throwException(exec, throwScope, 
-            createTypeError(exec, "expected |this| value to be an instance of WebAssembly.Table"_s));
+        throwException(globalObject, throwScope, 
+            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Table"_s));
         return nullptr;
     }
     return result;
@@ -72,7 +72,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(JSGlobalObje
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyTable* table = getTable(callFrame, vm, callFrame->thisValue());
+    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(jsNumber(table->length()));
 }
@@ -82,16 +82,16 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(JSGlobalObject
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyTable* table = getTable(callFrame, vm, callFrame->thisValue());
+    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t delta = toNonWrappingUint32(callFrame, callFrame->argument(0));
+    uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     uint32_t oldLength = table->length();
 
     if (!table->grow(delta))
-        return JSValue::encode(throwException(callFrame, throwScope, createRangeError(callFrame, "WebAssembly.Table.prototype.grow could not grow the table"_s)));
+        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.grow could not grow the table"_s)));
 
     return JSValue::encode(jsNumber(oldLength));
 }
@@ -101,13 +101,13 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(JSGlobalObject*
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyTable* table = getTable(callFrame, vm, callFrame->thisValue());
+    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t index = toNonWrappingUint32(callFrame, callFrame->argument(0));
+    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (index >= table->length())
-        return JSValue::encode(throwException(callFrame, throwScope, createRangeError(callFrame, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s)));
+        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s)));
 
     return JSValue::encode(table->get(index));
 }
@@ -117,22 +117,22 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(JSGlobalObject*
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyTable* table = getTable(callFrame, vm, callFrame->thisValue());
+    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue value = callFrame->argument(1);
 
-    uint32_t index = toNonWrappingUint32(callFrame, callFrame->argument(0));
+    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (index >= table->length())
-        return JSValue::encode(throwException(callFrame, throwScope, createRangeError(callFrame, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s)));
+        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s)));
 
     if (table->table()->asFuncrefTable()) {
         WebAssemblyFunction* wasmFunction;
         WebAssemblyWrapperFunction* wasmWrapperFunction;
         if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction))
-            return JSValue::encode(throwException(callFrame, throwScope, createTypeError(callFrame, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s)));
 
         if (value.isNull())
             table->clear(index);

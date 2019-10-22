@@ -39,7 +39,7 @@ public:
     WebCoreTypedArrayController();
     virtual ~WebCoreTypedArrayController();
     
-    JSC::JSArrayBuffer* toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
+    JSC::JSArrayBuffer* toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JSC::ArrayBuffer*) override;
     void registerWrapper(JSC::JSGlobalObject*, ArrayBuffer*, JSC::JSArrayBuffer*) override;
     bool isAtomicsWaitAllowedOnCurrentThread() override;
 

@@ -27,6 +27,7 @@
 
 #include "JSGlobalObject.h"
 
+#include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
 #include "ObjectPrototype.h"
 
@@ -94,6 +95,16 @@ ALWAYS_INLINE bool JSGlobalObject::isMapPrototypeSetFastAndNonObservable()
 ALWAYS_INLINE bool JSGlobalObject::isSetPrototypeAddFastAndNonObservable()
 {
     return setAddWatchpointSet().isStillValid();
+}
+
+ALWAYS_INLINE Structure* JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation(JSGlobalObject* globalObject, IndexingType indexingType, JSValue newTarget) const
+{
+    return InternalFunction::createSubclassStructure(globalObject, globalObject->arrayConstructor(), newTarget, arrayStructureForIndexingTypeDuringAllocation(indexingType));
+}
+
+ALWAYS_INLINE VM& getVM(JSGlobalObject* globalObject)
+{
+    return globalObject->vm();
 }
 
 } // namespace JSC

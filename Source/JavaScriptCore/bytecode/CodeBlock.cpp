@@ -589,7 +589,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             RELEASE_ASSERT(bytecode.m_resolveType != LocalClosureVar);
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
             RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_resolveType = op.type;
@@ -624,7 +624,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             }
 
             const Identifier& ident = identifier(bytecode.m_var);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
+            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
             RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode());
@@ -658,7 +658,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
             const Identifier& ident = identifier(bytecode.m_var);
             metadata.m_watchpointSet = nullptr;
-            ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
+            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
             RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode());
@@ -691,7 +691,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 unsigned localScopeDepth = bytecode.m_symbolTableOrScopeDepth.scopeDepth();
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
-                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+                ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
                 RETURN_IF_EXCEPTION(throwScope, false);
 
                 if (op.type == ClosureVar || op.type == ModuleVar)
@@ -873,19 +873,18 @@ void CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
-    ExecState* exec = globalObject->globalExec();
 
     for (const auto& entry : constants) {
         const IdentifierSet& set = entry.first;
 
         Structure* setStructure = globalObject->setStructure();
         RETURN_IF_EXCEPTION(scope, void());
-        JSSet* jsSet = JSSet::create(exec, vm, setStructure, set.size());
+        JSSet* jsSet = JSSet::create(globalObject, vm, setStructure, set.size());
         RETURN_IF_EXCEPTION(scope, void());
 
         for (const auto& setEntry : set) {
             JSString* jsString = jsOwnedString(vm, setEntry.get()); 
-            jsSet->add(exec, jsString);
+            jsSet->add(globalObject, jsString);
             RETURN_IF_EXCEPTION(scope, void());
         }
         m_constantRegisters[entry.second].set(vm, this, jsSet);
@@ -897,7 +896,6 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
     VM& vm = *m_vm;
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
-    ExecState* exec = globalObject->globalExec();
 
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
@@ -923,7 +921,7 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
 
                     constant = clone;
                 } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
-                    auto* templateObject = topLevelExecutable->createTemplateObject(exec, descriptor);
+                    auto* templateObject = topLevelExecutable->createTemplateObject(globalObject, descriptor);
                     RETURN_IF_EXCEPTION(scope, void());
                     constant = templateObject;
                 }
@@ -1906,14 +1904,14 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 }
 
 #if ENABLE(JIT)
-void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
+void CodeBlock::linkIncomingCall(CallFrame* callerFrame, CallLinkInfo* incoming)
 {
     noticeIncomingCall(callerFrame);
     ConcurrentJSLocker locker(m_lock);
     ensureJITData(locker).m_incomingCalls.push(incoming);
 }
 
-void CodeBlock::linkIncomingPolymorphicCall(ExecState* callerFrame, PolymorphicCallNode* incoming)
+void CodeBlock::linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode* incoming)
 {
     noticeIncomingCall(callerFrame);
     {
@@ -1942,7 +1940,7 @@ void CodeBlock::unlinkIncomingCalls()
 #endif // ENABLE(JIT)
 }
 
-void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* incoming)
+void CodeBlock::linkIncomingCall(CallFrame* callerFrame, LLIntCallLinkInfo* incoming)
 {
     noticeIncomingCall(callerFrame);
     m_incomingLLIntCalls.push(incoming);
@@ -2167,7 +2165,7 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
+void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
 {
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     

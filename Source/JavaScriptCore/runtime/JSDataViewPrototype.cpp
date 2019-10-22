@@ -120,28 +120,28 @@ Structure* JSDataViewPrototype::createStructure(
 }
 
 template<typename Adaptor>
-EncodedJSValue getData(JSGlobalObject* globalObject, ExecState* exec)
+EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, scope, "Receiver of DataView method must be a DataView"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    unsigned byteOffset = exec->argument(0).toIndex(exec, "byteOffset");
+    unsigned byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
     unsigned elementSize = sizeof(typename Adaptor::Type);
-    if (elementSize > 1 && exec->argumentCount() >= 2) {
-        littleEndian = exec->uncheckedArgument(1).toBoolean(exec);
+    if (elementSize > 1 && callFrame->argumentCount() >= 2) {
+        littleEndian = callFrame->uncheckedArgument(1).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, scope, createRangeError(exec, "Out of bounds access"_s));
+        return throwVMError(globalObject, scope, createRangeError(globalObject, "Out of bounds access"_s));
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
     union {
@@ -163,16 +163,16 @@ EncodedJSValue getData(JSGlobalObject* globalObject, ExecState* exec)
 }
 
 template<typename Adaptor>
-EncodedJSValue setData(JSGlobalObject* globalObject, ExecState* exec)
+EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, exec->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!dataView)
-        return throwVMTypeError(exec, scope, "Receiver of DataView method must be a DataView"_s);
+        return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
-    unsigned byteOffset = exec->argument(0).toIndex(exec, "byteOffset");
+    unsigned byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset");
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const unsigned dataSize = sizeof(typename Adaptor::Type);
@@ -181,19 +181,19 @@ EncodedJSValue setData(JSGlobalObject* globalObject, ExecState* exec)
         uint8_t rawBytes[dataSize];
     } u;
 
-    u.value = toNativeFromValue<Adaptor>(exec, exec->argument(1));
+    u.value = toNativeFromValue<Adaptor>(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;
     unsigned elementSize = sizeof(typename Adaptor::Type);
-    if (elementSize > 1 && exec->argumentCount() >= 3) {
-        littleEndian = exec->uncheckedArgument(2).toBoolean(exec);
+    if (elementSize > 1 && callFrame->argumentCount() >= 3) {
+        littleEndian = callFrame->uncheckedArgument(2).toBoolean(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     unsigned byteLength = dataView->length();
     if (elementSize > byteLength || byteOffset > byteLength - elementSize)
-        return throwVMError(exec, scope, createRangeError(exec, "Out of bounds access"_s));
+        return throwVMError(globalObject, scope, createRangeError(globalObject, "Out of bounds access"_s));
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 
@@ -217,9 +217,9 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterBuffer(JSGlobalObject* globalObj
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
-    return JSValue::encode(view->possiblySharedJSBuffer(callFrame));
+    return JSValue::encode(view->possiblySharedJSBuffer(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -229,7 +229,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteLength(JSGlobalObject* globa
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->length()));
 }
@@ -241,7 +241,7 @@ EncodedJSValue JSC_HOST_CALL dataViewProtoGetterByteOffset(JSGlobalObject* globa
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
     if (!view)
-        return throwVMTypeError(callFrame, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
 
     return JSValue::encode(jsNumber(view->byteOffset()));
 }

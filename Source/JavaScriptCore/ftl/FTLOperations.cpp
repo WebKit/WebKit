@@ -34,6 +34,7 @@
 #include "DirectArguments.h"
 #include "FTLJITCode.h"
 #include "FTLLazySlowPath.h"
+#include "FrameTracers.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSAsyncFunction.h"
@@ -45,15 +46,18 @@
 #include "JSLexicalEnvironment.h"
 #include "RegExpObject.h"
 
+IGNORE_WARNINGS_BEGIN("frame-address")
+
 namespace JSC { namespace FTL {
 
-extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
-    ExecState* exec, ExitTimeObjectMaterialization* materialization,
-    EncodedJSValue* encodedValue, EncodedJSValue* values)
+extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* encodedValue, EncodedJSValue* values)
 {
     using namespace DFG;
-    VM& vm = exec->vm();
-    CodeBlock* codeBlock = exec->codeBlock();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
 
     // We cannot GC. We've got pointers in evil places.
     // FIXME: We are not doing anything that can GC here, and this is
@@ -122,7 +126,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
             if (property.location().kind() != RegExpObjectLastIndexPLoc)
                 continue;
 
-            regExpObject->setLastIndex(exec, JSValue::decode(values[i]), false /* shouldThrow */);
+            regExpObject->setLastIndex(globalObject, JSValue::decode(values[i]), false /* shouldThrow */);
             break;
         }
         break;
@@ -135,11 +139,12 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     }
 }
 
-extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
-    ExecState* exec, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
+extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
 {
     using namespace DFG;
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     // We cannot GC. We've got pointers in evil places.
     DeferGCForAWhile deferGC(vm.heap);
@@ -225,7 +230,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT(table);
 
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock()->baselineAlternative());
+            materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         Structure* structure = codeBlock->globalObject()->activationStructure();
 
         // It doesn't matter what values we initialize as bottom values inside the activation constructor because
@@ -281,19 +286,19 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         if (!materialization->origin().inlineCallFrame()) {
             switch (materialization->type()) {
             case PhantomDirectArguments:
-                return DirectArguments::createByCopying(exec);
+                return DirectArguments::createByCopying(globalObject, callFrame);
             case PhantomClonedArguments:
-                return ClonedArguments::createWithMachineFrame(exec, exec, ArgumentsMode::Cloned);
+                return ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned);
             case PhantomCreateRest: {
                 CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-                    materialization->origin(), exec->codeBlock()->baselineAlternative());
+                    materialization->origin(), callFrame->codeBlock()->baselineAlternative());
 
                 unsigned numberOfArgumentsToSkip = codeBlock->numberOfArgumentsToSkip();
                 JSGlobalObject* globalObject = codeBlock->globalObject();
                 Structure* structure = globalObject->restParameterStructure();
-                JSValue* argumentsToCopyRegion = exec->addressOfArgumentsStart() + numberOfArgumentsToSkip;
-                unsigned arraySize = exec->argumentCount() > numberOfArgumentsToSkip ? exec->argumentCount() - numberOfArgumentsToSkip : 0;
-                return constructArray(exec, structure, argumentsToCopyRegion, arraySize);
+                JSValue* argumentsToCopyRegion = callFrame->addressOfArgumentsStart() + numberOfArgumentsToSkip;
+                unsigned arraySize = callFrame->argumentCount() > numberOfArgumentsToSkip ? callFrame->argumentCount() - numberOfArgumentsToSkip : 0;
+                return constructArray(globalObject, structure, argumentsToCopyRegion, arraySize);
             }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -330,7 +335,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT(callee);
         
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock()->baselineAlternative());
+            materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         
         // We have an inline frame and we have all of the data we need to recreate it.
         switch (materialization->type()) {
@@ -376,7 +381,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned index = property.location().info();
                 if (index >= length)
                     continue;
-                result->putDirectIndex(exec, index, JSValue::decode(values[i]));
+                result->putDirectIndex(globalObject, index, JSValue::decode(values[i]));
             }
             
             return result;
@@ -404,7 +409,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned arrayIndex = argIndex - numberOfArgumentsToSkip;
                 if (arrayIndex >= arraySize)
                     continue;
-                array->putDirectIndex(exec, arrayIndex, JSValue::decode(values[i]));
+                array->putDirectIndex(globalObject, arrayIndex, JSValue::decode(values[i]));
             }
 
 #if !ASSERT_DISABLED
@@ -455,7 +460,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         // because we're guaranteed we won't be calling any getters. The reason for this is
         // that we only support PhantomSpread over CreateRest, which is an array we create.
         // Any attempts to put a getter on any indices on the rest array will escape the array.
-        JSFixedArray* fixedArray = JSFixedArray::createFromArray(exec, vm, array);
+        JSFixedArray* fixedArray = JSFixedArray::createFromArray(globalObject, vm, array);
         RELEASE_ASSERT(fixedArray);
         return fixedArray;
     }
@@ -473,13 +478,13 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
-        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex()).ptr();
         if (!currentInstruction->is<OpNewArrayBuffer>()) {
             // This case can happen if Object.keys, an OpCall is first converted into a NewArrayBuffer which is then converted into a PhantomNewArrayBuffer.
             // There is no need to update the array allocation profile in that case.
             RELEASE_ASSERT(currentInstruction->is<OpCall>());
-            Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(immutableButterfly->indexingMode());
+            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(immutableButterfly->indexingMode());
             return CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
         }
         auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
@@ -487,7 +492,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         // FIXME: Share the code with CommonSlowPaths. Currently, codeBlock etc. are slightly different.
         IndexingType indexingMode = profile->selectIndexingType();
-        Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
+        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
         ASSERT(isCopyOnWrite(indexingMode));
         ASSERT(!structure->outOfLineCapacity());
 
@@ -512,7 +517,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
     case PhantomNewArrayWithSpread: {
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
-            materialization->origin(), exec->codeBlock()->baselineAlternative());
+            materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         JSGlobalObject* globalObject = codeBlock->globalObject();
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
@@ -568,12 +573,12 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value)) {
                 for (unsigned i = 0; i < fixedArray->size(); i++) {
                     ASSERT(fixedArray->get(i));
-                    result->putDirectIndex(exec, arrayIndex, fixedArray->get(i));
+                    result->putDirectIndex(globalObject, arrayIndex, fixedArray->get(i));
                     ++arrayIndex;
                 }
             } else {
                 // We are not spreading.
-                result->putDirectIndex(exec, arrayIndex, value);
+                result->putDirectIndex(globalObject, arrayIndex, value);
                 ++arrayIndex;
             }
         }
@@ -591,7 +596,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             }
         }
         RELEASE_ASSERT(regExp);
-        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), callFrame->codeBlock()->baselineAlternative());
         Structure* structure = codeBlock->globalObject()->regExpStructure();
         return RegExpObject::create(vm, structure, regExp);
     }
@@ -602,14 +607,14 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     }
 }
 
-extern "C" void* JIT_OPERATION compileFTLLazySlowPath(ExecState* exec, unsigned index)
+extern "C" void* JIT_OPERATION compileFTLLazySlowPath(CallFrame* callFrame, unsigned index)
 {
-    VM& vm = exec->vm();
+    VM& vm = callFrame->vm();
 
     // We cannot GC. We've got pointers in evil places.
     DeferGCForAWhile deferGC(vm.heap);
 
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     JITCode* jitCode = codeBlock->jitCode()->ftl();
 
     LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
@@ -619,6 +624,8 @@ extern "C" void* JIT_OPERATION compileFTLLazySlowPath(ExecState* exec, unsigned 
 }
 
 } } // namespace JSC::FTL
+
+IGNORE_WARNINGS_END
 
 #endif // ENABLE(FTL_JIT)
 

@@ -79,7 +79,7 @@ void WebDebuggerAgent::didAddEventListener(EventTarget& target, const AtomString
     if (m_registeredEventListeners.contains(registeredListener.get()))
         return;
 
-    JSC::ExecState* scriptState = target.scriptExecutionContext()->execState();
+    JSC::JSGlobalObject* scriptState = target.scriptExecutionContext()->execState();
     if (!scriptState)
         return;
 
@@ -112,7 +112,7 @@ void WebDebuggerAgent::willHandleEvent(const RegisteredEventListener& listener)
     willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, it->value);
 }
 
-void WebDebuggerAgent::didPostMessage(const TimerBase& timer, JSC::ExecState& state)
+void WebDebuggerAgent::didPostMessage(const TimerBase& timer, JSC::JSGlobalObject& state)
 {
     if (!breakpointsActive())
         return;

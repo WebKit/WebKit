@@ -62,7 +62,7 @@ InjectedScriptBase::~InjectedScriptBase()
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {
-    return m_environment && m_environment->canAccessInspectedScriptState(m_injectedScriptObject.scriptState());
+    return m_environment && m_environment->canAccessInspectedScriptState(m_injectedScriptObject.globalObject());
 }
 
 const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
@@ -72,8 +72,8 @@ const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
 
 Expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function) const
 {
-    JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
-    JSC::DebuggerEvalEnabler evalEnabler(scriptState);
+    JSC::JSGlobalObject* globalObject = m_injectedScriptObject.globalObject();
+    JSC::DebuggerEvalEnabler evalEnabler(globalObject);
     return function.call();
 }
 
@@ -86,7 +86,7 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     if (!result)
         return JSON::Value::create("Exception while making a call.");
 
-    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(*m_injectedScriptObject.scriptState(), result.value());
+    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(m_injectedScriptObject.globalObject(), result.value());
     if (!resultJSONValue)
         return JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')'));
 
@@ -105,19 +105,17 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
         return;
     }
 
-    auto* scriptState = m_injectedScriptObject.scriptState();
-    JSC::VM& vm = scriptState->vm();
+    auto* globalObject = m_injectedScriptObject.globalObject();
+    JSC::VM& vm = globalObject->vm();
 
     JSC::JSNativeStdFunction* jsFunction = nullptr;
-    JSC::JSGlobalObject* globalObject = nullptr;
     {
         JSC::JSLockHolder locker(vm);
 
-        globalObject = scriptState->lexicalGlobalObject();
-        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTFMove(callback)] (JSC::JSGlobalObject*, JSC::CallFrame* callFrame) {
+        jsFunction = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, callback = WTFMove(callback)] (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) {
             if (!callFrame)
                 checkAsyncCallResult(JSON::Value::create("Exception while making a call."), callback);
-            else if (auto resultJSONValue = toInspectorValue(*callFrame, callFrame->argument(0)))
+            else if (auto resultJSONValue = toInspectorValue(globalObject, callFrame->argument(0)))
                 checkAsyncCallResult(resultJSONValue, callback);
             else
                 checkAsyncCallResult(JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')')), callback);

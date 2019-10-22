@@ -51,12 +51,11 @@ int testJSObjectGetProxyTarget()
     JSContextGroupRef group = JSContextGroupCreate();
     JSGlobalContextRef context = JSGlobalContextCreateInGroup(group, nullptr);
     
-    ExecState* exec = toJS(context);
     VM& vm = *toJS(group);
     JSObjectRef globalObjectProxy = JSContextGetGlobalObject(context);
 
     JSGlobalObject* globalObjectObject;
-    JSObjectRef globalObject;
+    JSObjectRef globalObjectRef;
     JSProxy* jsProxyObject;
 
     {
@@ -64,7 +63,7 @@ int testJSObjectGetProxyTarget()
         JSProxy* globalObjectProxyObject = jsCast<JSProxy*>(toJS(globalObjectProxy));
         globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
         Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), PureForwardingProxyType);
-        globalObject = toRef(globalObjectObject);
+        globalObjectRef = toRef(jsCast<JSObject*>(globalObjectObject));
         jsProxyObject = JSProxy::create(vm, proxyStructure);
     }
     
@@ -76,7 +75,7 @@ int testJSObjectGetProxyTarget()
         JSLockHolder locker(vm);
         Structure* emptyObjectStructure = JSFinalObject::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), 0);
         JSObject* handler = JSFinalObject::create(vm, emptyObjectStructure);
-        proxyObjectObject = ProxyObject::create(exec, globalObjectObject, toJS(array), handler);
+        proxyObjectObject = ProxyObject::create(globalObjectObject, toJS(array), handler);
     }
 
     JSObjectRef jsProxy = toRef(jsProxyObject);
@@ -91,11 +90,11 @@ int testJSObjectGetProxyTarget()
         jsProxyObject->setTarget(vm, globalObjectObject);
     }
     
-    test("proxy target of initialized JSProxy works", JSObjectGetProxyTarget(jsProxy) == globalObject);
+    test("proxy target of initialized JSProxy works", JSObjectGetProxyTarget(jsProxy) == globalObjectRef);
     
     test("proxy target of ProxyObject works", JSObjectGetProxyTarget(proxyObject) == array);
     
-    test("proxy target of GlobalObject is the globalObject", JSObjectGetProxyTarget(globalObjectProxy) == globalObject);
+    test("proxy target of GlobalObject is the globalObject", JSObjectGetProxyTarget(globalObjectProxy) == globalObjectRef);
 
     JSGlobalContextRelease(context);
     JSContextGroupRelease(group);

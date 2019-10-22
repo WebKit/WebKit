@@ -86,7 +86,7 @@ EncodedJSValue JSC_HOST_CALL inspectorInstrumentationObjectLog(JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue target = callFrame->argument(0);
-    String value = target.toWTFString(callFrame);
+    String value = target.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     dataLog(value, "\n");
     return JSValue::encode(jsUndefined());

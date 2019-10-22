@@ -62,7 +62,7 @@ public:
     static DirectArguments* create(VM&, Structure*, unsigned length, unsigned capacity);
     
     // Creates an arguments object by copying the argumnets from the stack.
-    static DirectArguments* createByCopying(ExecState*);
+    static DirectArguments* createByCopying(JSGlobalObject*, CallFrame*);
 
     static size_t estimatedSize(JSCell*, VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -72,14 +72,14 @@ public:
         return m_length;
     }
     
-    uint32_t length(ExecState* exec) const
+    uint32_t length(JSGlobalObject* globalObject) const
     {
         if (UNLIKELY(m_mappedArguments)) {
-            VM& vm = exec->vm();
+            VM& vm = getVM(globalObject);
             auto scope = DECLARE_THROW_SCOPE(vm);
-            JSValue value = get(exec, vm.propertyNames->length);
+            JSValue value = get(globalObject, vm.propertyNames->length);
             RETURN_IF_EXCEPTION(scope, 0);
-            RELEASE_AND_RETURN(scope, value.toUInt32(exec));
+            RELEASE_AND_RETURN(scope, value.toUInt32(globalObject));
         }
         return m_length;
     }
@@ -144,7 +144,7 @@ public:
         return GenericArguments<DirectArguments>::isModifiedArgumentDescriptor(index, m_length);
     }
 
-    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     DECLARE_INFO;
     

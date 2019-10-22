@@ -53,27 +53,27 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(JSGlobalObject*
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     if (callFrame->argumentCount() != 1)
-        return JSValue::encode(throwException(callFrame, throwScope, createTypeError(callFrame, "WebAssembly.Memory expects exactly one argument"_s)));
+        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects exactly one argument"_s)));
 
     JSObject* memoryDescriptor;
     {
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(callFrame, throwScope, createTypeError(callFrame, "WebAssembly.Memory expects its first argument to be an object"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects its first argument to be an object"_s)));
         memoryDescriptor = jsCast<JSObject*>(argument);
     }
 
     Wasm::PageCount initialPageCount;
     {
         Identifier initial = Identifier::fromString(vm, "initial");
-        JSValue minSizeValue = memoryDescriptor->get(callFrame, initial);
+        JSValue minSizeValue = memoryDescriptor->get(globalObject, initial);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        uint32_t size = toNonWrappingUint32(callFrame, minSizeValue);
+        uint32_t size = toNonWrappingUint32(globalObject, minSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!Wasm::PageCount::isValid(size))
-            return JSValue::encode(throwException(callFrame, throwScope, createRangeError(callFrame, "WebAssembly.Memory 'initial' page count is too large"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'initial' page count is too large"_s)));
         if (Wasm::PageCount(size).bytes() > MAX_ARRAY_BUFFER_SIZE)
-            return JSValue::encode(throwException(callFrame, throwScope, createOutOfMemoryError(callFrame)));
+            return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
         initialPageCount = Wasm::PageCount(size);
     }
 
@@ -82,23 +82,23 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(JSGlobalObject*
         // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
         // https://heycam.github.io/webidl/#idl-dictionaries
         Identifier maximum = Identifier::fromString(vm, "maximum");
-        JSValue maxSizeValue = memoryDescriptor->get(callFrame, maximum);
+        JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!maxSizeValue.isUndefined()) {
-            uint32_t size = toNonWrappingUint32(callFrame, maxSizeValue);
+            uint32_t size = toNonWrappingUint32(globalObject, maxSizeValue);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             if (!Wasm::PageCount::isValid(size))
-                return JSValue::encode(throwException(callFrame, throwScope, createRangeError(callFrame, "WebAssembly.Memory 'maximum' page count is too large"_s)));
+                return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'maximum' page count is too large"_s)));
             maximumPageCount = Wasm::PageCount(size);
 
             if (initialPageCount > maximumPageCount) {
-                return JSValue::encode(throwException(callFrame, throwScope,
-                    createRangeError(callFrame, "'maximum' page count must be than greater than or equal to the 'initial' page count"_s)));
+                return JSValue::encode(throwException(globalObject, throwScope,
+                    createRangeError(globalObject, "'maximum' page count must be than greater than or equal to the 'initial' page count"_s)));
             }
         }
     }
 
-    auto* jsMemory = JSWebAssemblyMemory::create(callFrame, vm, globalObject->webAssemblyMemoryStructure());
+    auto* jsMemory = JSWebAssemblyMemory::create(globalObject, vm, globalObject->webAssemblyMemoryStructure());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(initialPageCount, maximumPageCount,
@@ -106,18 +106,18 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(JSGlobalObject*
         [&vm] (Wasm::Memory::SyncTryToReclaim) { vm.heap.collectSync(CollectionScope::Full); },
         [&vm, jsMemory] (Wasm::Memory::GrowSuccess, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
     if (!memory)
-        return JSValue::encode(throwException(callFrame, throwScope, createOutOfMemoryError(callFrame)));
+        return JSValue::encode(throwException(globalObject, throwScope, createOutOfMemoryError(globalObject)));
 
     jsMemory->adopt(memory.releaseNonNull());
     
     return JSValue::encode(jsMemory);
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyMemory(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyMemory(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, throwScope, "WebAssembly.Memory"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, throwScope, "WebAssembly.Memory"));
 }
 
 WebAssemblyMemoryConstructor* WebAssemblyMemoryConstructor::create(VM& vm, Structure* structure, WebAssemblyMemoryPrototype* thisPrototype)

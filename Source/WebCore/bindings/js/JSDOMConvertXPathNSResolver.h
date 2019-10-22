@@ -35,13 +35,13 @@ template<typename T> struct Converter<IDLXPathNSResolver<T>> : DefaultConverter<
     using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = WrapperType::toWrapped(vm, state, value);
+        ReturnType object = WrapperType::toWrapped(vm, lexicalGlobalObject, value);
         if (UNLIKELY(!object))
-            exceptionThrower(state, scope);
+            exceptionThrower(lexicalGlobalObject, scope);
         return object;
     }
 };
@@ -51,15 +51,15 @@ template<typename T> struct JSConverter<IDLXPathNSResolver<T>> {
     static constexpr bool needsGlobalObject = true;
 
     template <typename U>
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
     {
-        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
     }
 
     template<typename U>
-    static JSC::JSValue convertNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
-        return toJSNewlyCreated(&state, &globalObject, std::forward<U>(value));
+        return toJSNewlyCreated(&lexicalGlobalObject, &globalObject, std::forward<U>(value));
     }
 };
 

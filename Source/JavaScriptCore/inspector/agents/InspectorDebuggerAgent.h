@@ -92,10 +92,10 @@ public:
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
     void willRunMicrotask() final;
     void didRunMicrotask() final;
-    void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
+    void didPause(JSC::JSGlobalObject*, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue) final;
     void didContinue() final;
     void breakpointActionSound(int breakpointActionIdentifier) final;
-    void breakpointActionProbe(JSC::ExecState&, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
+    void breakpointActionProbe(JSC::JSGlobalObject*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue sample) final;
 
     bool isPaused() const;
     bool breakpointsActive() const;
@@ -111,7 +111,7 @@ public:
         RequestAnimationFrame,
     };
 
-    void didScheduleAsyncCall(JSC::ExecState*, AsyncCallType, int callbackId, bool singleShot);
+    void didScheduleAsyncCall(JSC::JSGlobalObject*, AsyncCallType, int callbackId, bool singleShot);
     void didCancelAsyncCall(AsyncCallType, int callbackId);
     void willDispatchAsyncCall(AsyncCallType, int callbackId);
     void didDispatchAsyncCall();
@@ -197,7 +197,7 @@ private:
 
     HashSet<Listener*> m_listeners;
 
-    JSC::ExecState* m_pausedScriptState { nullptr };
+    JSC::JSGlobalObject* m_pausedGlobalObject { nullptr };
     JSC::Strong<JSC::Unknown> m_currentCallStack;
 
     HashMap<String, Vector<JSC::BreakpointID>> m_breakpointIdentifierToDebugServerBreakpointIDs;

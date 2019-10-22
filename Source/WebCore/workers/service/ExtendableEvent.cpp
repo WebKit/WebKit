@@ -78,7 +78,7 @@ private:
     {
     }
 
-    void run(JSC::ExecState*) final
+    void run(JSC::JSGlobalObject*) final
     {
         m_function();
     }

@@ -53,10 +53,10 @@ public:
     String descriptiveString() const;
     String description() const;
 
-    JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-    bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
-    JSObject* toObject(ExecState*, JSGlobalObject*) const;
-    double toNumber(ExecState*) const;
+    JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
+    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
+    JSObject* toObject(JSGlobalObject*) const;
+    double toNumber(JSGlobalObject*) const;
 
     static ptrdiff_t offsetOfSymbolImpl()
     {

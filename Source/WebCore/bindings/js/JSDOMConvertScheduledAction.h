@@ -33,14 +33,14 @@
 namespace WebCore {
 
 template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
-    static std::unique_ptr<ScheduledAction> convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject)
+    static std::unique_ptr<ScheduledAction> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         JSC::CallData callData;
         if (getCallData(vm, value, callData) == JSC::CallType::None) {
-            auto code = Converter<IDLDOMString>::convert(state, value);
+            auto code = Converter<IDLDOMString>::convert(lexicalGlobalObject, value);
             RETURN_IF_EXCEPTION(scope, nullptr);
             return ScheduledAction::create(globalObject.world(), WTFMove(code));
         }

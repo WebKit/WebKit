@@ -29,6 +29,7 @@
 #import "WebScriptObject.h"
 #import "WebScriptObjectProtocol.h"
 #import "objc_instance.h"
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 
 namespace JSC {
 namespace Bindings {
@@ -235,7 +236,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     return field;
 }
 
-JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, PropertyName propertyName)
+JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance* instance, PropertyName propertyName)
 {
     ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();
@@ -246,7 +247,7 @@ JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, PropertyN
     if (!propertyName.publicName())
         return jsUndefined();
 
-    return ObjcFallbackObjectImp::create(exec, exec->lexicalGlobalObject(), objcInstance, propertyName.publicName());
+    return ObjcFallbackObjectImp::create(lexicalGlobalObject, lexicalGlobalObject, objcInstance, propertyName.publicName());
 }
 
 }

@@ -41,8 +41,8 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestInterface* toWrapped(JSC::VM&, JSC::JSValue);
-    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
-    static bool putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
+    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -57,24 +57,24 @@ public:
 
     // Custom attributes
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue implementsStr3(JSC::ExecState&) const;
+    JSC::JSValue implementsStr3(JSC::JSGlobalObject&) const;
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    void setImplementsStr3(JSC::ExecState&, JSC::JSValue);
+    void setImplementsStr3(JSC::JSGlobalObject&, JSC::JSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    JSC::JSValue supplementalStr3(JSC::ExecState&) const;
+    JSC::JSValue supplementalStr3(JSC::JSGlobalObject&) const;
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    void setSupplementalStr3(JSC::ExecState&, JSC::JSValue);
+    void setSupplementalStr3(JSC::JSGlobalObject&, JSC::JSValue);
 #endif
 
     // Custom functions
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue implementsMethod3(JSC::ExecState&);
+    JSC::JSValue implementsMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    JSC::JSValue supplementalMethod3(JSC::ExecState&);
+    JSC::JSValue supplementalMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
 protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
@@ -99,10 +99,10 @@ inline void* wrapperKey(TestInterface* wrappableObject)
     return wrappableObject;
 }
 
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestInterface* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<TestInterface>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<TestInterface>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestInterface&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestInterface* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestInterface>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestInterface>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestInterface> {
     using WrapperClass = JSTestInterface;

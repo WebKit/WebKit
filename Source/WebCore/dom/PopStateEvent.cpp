@@ -66,7 +66,7 @@ Ref<PopStateEvent> PopStateEvent::createForBindings()
     return adoptRef(*new PopStateEvent);
 }
 
-RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::ExecState& executionState)
+RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::JSGlobalObject& executionState)
 {
     ASSERT(m_state);
     

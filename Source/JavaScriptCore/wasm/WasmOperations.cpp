@@ -28,6 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "FrameTracers.h"
+#include "JITExceptions.h"
+#include "JSWebAssemblyInstance.h"
 #include "ProbeContext.h"
 #include "WasmCallee.h"
 #include "WasmContextInlines.h"
@@ -44,7 +47,26 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 
+IGNORE_WARNINGS_BEGIN("frame-address")
+
 namespace JSC { namespace Wasm {
+
+void JIT_OPERATION operationThrowBadI64(JSWebAssemblyInstance* instance)
+{
+    VM& vm = instance->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        JSGlobalObject* globalObject = instance->globalObject();
+        auto* error = ErrorInstance::create(globalObject, vm, globalObject->errorStructure(ErrorType::TypeError), "i64 not allowed as return type or argument to an imported function"_s);
+        throwException(globalObject, throwScope, error);
+    }
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+}
 
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {
@@ -420,5 +442,7 @@ void JIT_OPERATION triggerTierUpNow(Instance* instance, uint32_t functionIndex)
 }
 
 } } // namespace JSC::Wasm
+
+IGNORE_WARNINGS_END
 
 #endif // ENABLE(WEBASSEMBLY)

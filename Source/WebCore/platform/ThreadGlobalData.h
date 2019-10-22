@@ -32,7 +32,7 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
+class JSGlobalObject;
 }
 
 namespace WebCore {
@@ -63,8 +63,8 @@ namespace WebCore {
 
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
-        JSC::ExecState* currentState() const { return m_currentState; }
-        void setCurrentState(JSC::ExecState* state) { m_currentState = state; }
+        JSC::JSGlobalObject* currentState() const { return m_currentState; }
+        void setCurrentState(JSC::JSGlobalObject* state) { m_currentState = state; }
 
 #if USE(WEB_THREAD)
         void setWebCoreThreadData();
@@ -78,7 +78,7 @@ namespace WebCore {
         std::unique_ptr<EventNames> m_eventNames;
         std::unique_ptr<ThreadTimers> m_threadTimers;
         std::unique_ptr<QualifiedNameCache> m_qualifiedNameCache;
-        JSC::ExecState* m_currentState { nullptr };
+        JSC::JSGlobalObject* m_currentState { nullptr };
 
 #ifndef NDEBUG
         bool m_isMainThread;

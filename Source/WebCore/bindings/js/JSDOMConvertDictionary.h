@@ -31,15 +31,15 @@
 namespace WebCore {
 
 // Specialized by generated code for IDL dictionary conversion.
-template<typename T> T convertDictionary(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convertDictionary(JSC::JSGlobalObject&, JSC::JSValue);
 
 
 template<typename T> struct Converter<IDLDictionary<T>> : DefaultConverter<IDLDictionary<T>> {
     using ReturnType = T;
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertDictionary<T>(state, value);
+        return convertDictionary<T>(lexicalGlobalObject, value);
     }
 };
 
@@ -47,9 +47,9 @@ template<typename T> struct JSConverter<IDLDictionary<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const T& dictionary)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const T& dictionary)
     {
-        return convertDictionaryToJS(state, globalObject, dictionary);
+        return convertDictionaryToJS(lexicalGlobalObject, globalObject, dictionary);
     }
 };
 

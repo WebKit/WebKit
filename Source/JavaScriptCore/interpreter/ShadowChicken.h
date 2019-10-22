@@ -44,8 +44,6 @@ class LLIntOffsetsExtractor;
 class SlotVisitor;
 class VM;
 
-using ExecState = CallFrame;
-
 // ShadowChicken is a log that can be used to produce a shadow stack of CHICKEN-style stack frames.
 // This enables the debugger to almost always see the tail-deleted stack frames, so long as we have
 // memory inside ShadowChicken to remember them.
@@ -186,9 +184,9 @@ public:
     ShadowChicken();
     ~ShadowChicken();
     
-    void log(VM& vm, ExecState* exec, const Packet&);
+    void log(VM& vm, CallFrame*, const Packet&);
     
-    void update(VM&, ExecState*);
+    void update(VM&, CallFrame*);
     
     // Expects this signature: (const Frame& frame) -> bool. Return true to keep iterating. Return false to stop iterating.
     // Note that this only works right with inlining disabled, but that's OK since for now we
@@ -196,7 +194,7 @@ public:
     // inlining, and would mostly require that we can request that StackVisitor doesn't skip tail
     // frames.
     template<typename Functor>
-    void iterate(VM&, ExecState*, const Functor&);
+    void iterate(VM&, CallFrame*, const Functor&);
     
     void visitChildren(SlotVisitor&);
     void reset();
@@ -209,7 +207,7 @@ public:
     
     void dump(PrintStream&) const;
     
-    JS_EXPORT_PRIVATE JSArray* functionsOnStack(ExecState*);
+    JS_EXPORT_PRIVATE JSArray* functionsOnStack(JSGlobalObject*, CallFrame*);
 
 private:
     friend class LLIntOffsetsExtractor;

@@ -879,9 +879,9 @@ JSCValue* jsc_context_evaluate_in_object(JSCContext* context, const char* code, 
 
     JSRetainPtr<JSGlobalContextRef> objectContext(Adopt,
         instance ? jscClassCreateContextWithJSWrapper(objectClass, context, instance) : JSGlobalContextCreateInGroup(jscVirtualMachineGetContextGroup(context->priv->vm.get()), nullptr));
-    JSC::ExecState* exec = toJS(objectContext.get());
-    JSC::VM& vm = exec->vm();
-    auto* jsObject = vm.vmEntryGlobalObject(exec);
+    JSC::JSGlobalObject* globalObject = toJS(objectContext.get());
+    JSC::VM& vm = globalObject->vm();
+    auto* jsObject = globalObject;
     jsObject->setGlobalScopeExtension(JSC::JSWithScope::create(vm, jsObject, jsObject->globalScope(), toJS(JSContextGetGlobalObject(context->priv->jsContext.get()))));
     JSValueRef exception = nullptr;
     JSValueRef result = evaluateScriptInContext(objectContext.get(), String::fromUTF8(code, length < 0 ? strlen(code) : length), uri, lineNumber, &exception);
@@ -939,8 +939,8 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     lineNumber = std::max<unsigned>(1, lineNumber);
 
     auto* jsContext = context->priv->jsContext.get();
-    JSC::ExecState* exec = toJS(jsContext);
-    JSC::VM& vm = exec->vm();
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
+    JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
 
     String sourceURLString = uri ? String::fromUTF8(uri) : String();
@@ -994,8 +994,8 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     }
 
     if (exception) {
-        auto* jsError = error.toErrorObject(exec->lexicalGlobalObject(), source);
-        *exception = jscExceptionCreate(context, toRef(exec, jsError)).leakRef();
+        auto* jsError = error.toErrorObject(globalObject, source);
+        *exception = jscExceptionCreate(context, toRef(globalObject, jsError)).leakRef();
     }
 
     return result;

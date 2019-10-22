@@ -298,9 +298,9 @@ inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalO
     return m_cachedPrototypeChain.get();
 }
 
-inline StructureChain* Structure::prototypeChain(ExecState* exec, JSObject* base) const
+inline StructureChain* Structure::prototypeChain(JSGlobalObject* globalObject, JSObject* base) const
 {
-    return prototypeChain(exec->vm(), exec->lexicalGlobalObject(), base);
+    return prototypeChain(globalObject->vm(), globalObject, base);
 }
 
 inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cachedPrototypeChain, JSObject* base) const
@@ -411,11 +411,11 @@ inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
     return currentCapacity * outOfLineGrowthFactor;
 }
 
-inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString* value, PropertySlot toStringTagSymbolSlot)
+inline void Structure::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, JSString* value, PropertySlot toStringTagSymbolSlot)
 {
     if (!hasRareData())
         allocateRareData(vm);
-    rareData()->setObjectToStringValue(exec, vm, this, value, toStringTagSymbolSlot);
+    rareData()->setObjectToStringValue(globalObject, vm, this, value, toStringTagSymbolSlot);
 }
 
 template<Structure::ShouldPin shouldPin, typename Func>

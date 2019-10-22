@@ -187,10 +187,10 @@ Ref<PluginPackage> PluginPackage::createPackageFromCache(const String& path, con
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-static void getListFromVariantArgs(JSC::ExecState* exec, const NPVariant* args, unsigned argCount, JSC::Bindings::RootObject* rootObject, JSC::MarkedArgumentBuffer& aList)
+static void getListFromVariantArgs(JSC::JSGlobalObject* lexicalGlobalObject, const NPVariant* args, unsigned argCount, JSC::Bindings::RootObject* rootObject, JSC::MarkedArgumentBuffer& aList)
 {
     for (unsigned i = 0; i < argCount; ++i)
-        aList.append(JSC::Bindings::convertNPVariantToValue(exec, &args[i], rootObject));
+        aList.append(JSC::Bindings::convertNPVariantToValue(lexicalGlobalObject, &args[i], rootObject));
 }
 
 static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
@@ -211,12 +211,11 @@ static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* vari
         JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        JSC::ExecState* exec = globalObject->globalExec();
         String scriptString = JSC::Bindings::convertNPStringToUTF16(s);
 
-        JSC::JSValue returnValue = JSC::evaluate(exec, JSC::makeSource(scriptString, { }), JSC::JSValue());
+        JSC::JSValue returnValue = JSC::evaluate(globalObject, JSC::makeSource(scriptString, { }), JSC::JSValue());
 
-        JSC::Bindings::convertValueToNPVariant(exec, returnValue, variant);
+        JSC::Bindings::convertValueToNPVariant(globalObject, returnValue, variant);
         scope.clearException();
         return true;
     }
@@ -253,8 +252,8 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
         JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
-        JSC::ExecState* exec = globalObject->globalExec();
-        JSC::JSValue function = obj->imp->get(exec, JSC::Bindings::identifierFromNPIdentifier(exec, i->string()));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
+        JSC::JSValue function = obj->imp->get(lexicalGlobalObject, JSC::Bindings::identifierFromNPIdentifier(lexicalGlobalObject, i->string()));
         JSC::CallData callData;
         JSC::CallType callType = getCallData(vm, function, callData);
         if (callType == JSC::CallType::None)
@@ -262,11 +261,11 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
 
         // Call the function object.
         JSC::MarkedArgumentBuffer argList;
-        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        JSC::JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
+        getListFromVariantArgs(lexicalGlobalObject, args, argCount, rootObject, argList);
+        JSC::JSValue resultV = JSC::call(lexicalGlobalObject, function, callType, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
-        JSC::Bindings::convertValueToNPVariant(exec, resultV, result);
+        JSC::Bindings::convertValueToNPVariant(lexicalGlobalObject, resultV, result);
         scope.clearException();
         return true;
     }

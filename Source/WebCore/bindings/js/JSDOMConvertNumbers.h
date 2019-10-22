@@ -37,43 +37,43 @@ namespace WebCore {
 // The conversion fails if the value cannot be converted to a number or, if EnforceRange is specified,
 // the value is outside the range of the destination integer type.
 
-template<typename T> T convertToInteger(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int8_t convertToInteger<int8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint8_t convertToInteger<uint8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int16_t convertToInteger<int16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint16_t convertToInteger<uint16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int32_t convertToInteger<int32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint32_t convertToInteger<uint32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int64_t convertToInteger<int64_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint64_t convertToInteger<uint64_t>(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convertToInteger(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int8_t convertToInteger<int8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint8_t convertToInteger<uint8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int16_t convertToInteger<int16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint16_t convertToInteger<uint16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int32_t convertToInteger<int32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint32_t convertToInteger<uint32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int64_t convertToInteger<int64_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint64_t convertToInteger<uint64_t>(JSC::JSGlobalObject&, JSC::JSValue);
 
-template<typename T> T convertToIntegerEnforceRange(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int8_t convertToIntegerEnforceRange<int8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint8_t convertToIntegerEnforceRange<uint8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int16_t convertToIntegerEnforceRange<int16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint16_t convertToIntegerEnforceRange<uint16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int32_t convertToIntegerEnforceRange<int32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint32_t convertToIntegerEnforceRange<uint32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int64_t convertToIntegerEnforceRange<int64_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint64_t convertToIntegerEnforceRange<uint64_t>(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convertToIntegerEnforceRange(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int8_t convertToIntegerEnforceRange<int8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint8_t convertToIntegerEnforceRange<uint8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int16_t convertToIntegerEnforceRange<int16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint16_t convertToIntegerEnforceRange<uint16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int32_t convertToIntegerEnforceRange<int32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint32_t convertToIntegerEnforceRange<uint32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int64_t convertToIntegerEnforceRange<int64_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint64_t convertToIntegerEnforceRange<uint64_t>(JSC::JSGlobalObject&, JSC::JSValue);
 
-template<typename T> T convertToIntegerClamp(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int8_t convertToIntegerClamp<int8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint8_t convertToIntegerClamp<uint8_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int16_t convertToIntegerClamp<int16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint16_t convertToIntegerClamp<uint16_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int32_t convertToIntegerClamp<int32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint32_t convertToIntegerClamp<uint32_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT int64_t convertToIntegerClamp<int64_t>(JSC::ExecState&, JSC::JSValue);
-template<> WEBCORE_EXPORT uint64_t convertToIntegerClamp<uint64_t>(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convertToIntegerClamp(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int8_t convertToIntegerClamp<int8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint8_t convertToIntegerClamp<uint8_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int16_t convertToIntegerClamp<int16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint16_t convertToIntegerClamp<uint16_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int32_t convertToIntegerClamp<int32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint32_t convertToIntegerClamp<uint32_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT int64_t convertToIntegerClamp<int64_t>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> WEBCORE_EXPORT uint64_t convertToIntegerClamp<uint64_t>(JSC::JSGlobalObject&, JSC::JSValue);
 
 // MARK: -
 // MARK: Integer types
 
 template<> struct Converter<IDLByte> : DefaultConverter<IDLByte> {
-    static int8_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static int8_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<int8_t>(state, value);
+        return convertToInteger<int8_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -90,9 +90,9 @@ template<> struct JSConverter<IDLByte> {
 };
 
 template<> struct Converter<IDLOctet> : DefaultConverter<IDLOctet> {
-    static uint8_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static uint8_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<uint8_t>(state, value);
+        return convertToInteger<uint8_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -109,9 +109,9 @@ template<> struct JSConverter<IDLOctet> {
 };
 
 template<> struct Converter<IDLShort> : DefaultConverter<IDLShort> {
-    static int16_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static int16_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<int16_t>(state, value);
+        return convertToInteger<int16_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -128,9 +128,9 @@ template<> struct JSConverter<IDLShort> {
 };
 
 template<> struct Converter<IDLUnsignedShort> : DefaultConverter<IDLUnsignedShort> {
-    static uint16_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static uint16_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<uint16_t>(state, value);
+        return convertToInteger<uint16_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -147,14 +147,14 @@ template<> struct JSConverter<IDLUnsignedShort> {
 };
 
 template<> struct Converter<IDLLong> : DefaultConverter<IDLLong> {
-    static inline int32_t convert(JSC::ExecState&, JSC::ThrowScope&, double number)
+    static inline int32_t convert(JSC::JSGlobalObject&, JSC::ThrowScope&, double number)
     {
         return JSC::toInt32(number);
     }
 
-    static int32_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static int32_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<int32_t>(state, value);
+        return convertToInteger<int32_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -171,9 +171,9 @@ template<> struct JSConverter<IDLLong> {
 };
 
 template<> struct Converter<IDLUnsignedLong> : DefaultConverter<IDLUnsignedLong> {
-    static uint32_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static uint32_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<uint32_t>(state, value);
+        return convertToInteger<uint32_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -190,9 +190,9 @@ template<> struct JSConverter<IDLUnsignedLong> {
 };
 
 template<> struct Converter<IDLLongLong> : DefaultConverter<IDLLongLong> {
-    static int64_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static int64_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<int64_t>(state, value);
+        return convertToInteger<int64_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -209,9 +209,9 @@ template<> struct JSConverter<IDLLongLong> {
 };
 
 template<> struct Converter<IDLUnsignedLongLong> : DefaultConverter<IDLUnsignedLongLong> {
-    static uint64_t convert(JSC::ExecState& state, JSC::JSValue value)
+    static uint64_t convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToInteger<uint64_t>(state, value);
+        return convertToInteger<uint64_t>(lexicalGlobalObject, value);
     }
 };
 
@@ -233,9 +233,9 @@ template<> struct JSConverter<IDLUnsignedLongLong> {
 template<typename T> struct Converter<IDLClampAdaptor<T>> : DefaultConverter<IDLClampAdaptor<T>> {
     using ReturnType = typename IDLClampAdaptor<T>::ImplementationType;
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToIntegerClamp<ReturnType>(state, value);
+        return convertToIntegerClamp<ReturnType>(lexicalGlobalObject, value);
     }
 };
 
@@ -255,9 +255,9 @@ template<typename T> struct JSConverter<IDLClampAdaptor<T>> {
 template<typename T> struct Converter<IDLEnforceRangeAdaptor<T>> : DefaultConverter<IDLEnforceRangeAdaptor<T>> {
     using ReturnType = typename IDLEnforceRangeAdaptor<T>::ImplementationType;
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return convertToIntegerEnforceRange<ReturnType>(state, value);
+        return convertToIntegerEnforceRange<ReturnType>(lexicalGlobalObject, value);
     }
 };
 
@@ -279,20 +279,20 @@ template<typename T> struct JSConverter<IDLEnforceRangeAdaptor<T>> {
 
 template<> struct Converter<IDLFloat> : DefaultConverter<IDLFloat> {
 
-    static inline float convert(JSC::ExecState& state, JSC::ThrowScope& scope, double number)
+    static inline float convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, double number)
     {
         if (UNLIKELY(!std::isfinite(number)))
-            throwNonFiniteTypeError(state, scope);
+            throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return static_cast<float>(number);
     }
 
-    static float convert(JSC::ExecState& state, JSC::JSValue value)
+    static float convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        double number = value.toNumber(&state);
+        double number = value.toNumber(&lexicalGlobalObject);
         if (UNLIKELY(!std::isfinite(number)))
-            throwNonFiniteTypeError(state, scope);
+            throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return static_cast<float>(number);
     }
 };
@@ -310,14 +310,14 @@ template<> struct JSConverter<IDLFloat> {
 };
 
 template<> struct Converter<IDLUnrestrictedFloat> : DefaultConverter<IDLUnrestrictedFloat> {
-    static inline float convert(JSC::ExecState&, JSC::ThrowScope&, double number)
+    static inline float convert(JSC::JSGlobalObject&, JSC::ThrowScope&, double number)
     {
         return static_cast<float>(number);
     }
 
-    static float convert(JSC::ExecState& state, JSC::JSValue value)
+    static float convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return static_cast<float>(value.toNumber(&state));
+        return static_cast<float>(value.toNumber(&lexicalGlobalObject));
     }
 };
 
@@ -334,20 +334,20 @@ template<> struct JSConverter<IDLUnrestrictedFloat> {
 };
 
 template<> struct Converter<IDLDouble> : DefaultConverter<IDLDouble> {
-    static inline double convert(JSC::ExecState& state, JSC::ThrowScope& scope, double number)
+    static inline double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, double number)
     {
         if (UNLIKELY(!std::isfinite(number)))
-            throwNonFiniteTypeError(state, scope);
+            throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return number;
     }
 
-    static double convert(JSC::ExecState& state, JSC::JSValue value)
+    static double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        double number = value.toNumber(&state);
+        double number = value.toNumber(&lexicalGlobalObject);
         if (UNLIKELY(!std::isfinite(number)))
-            throwNonFiniteTypeError(state, scope);
+            throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return number;
     }
 };
@@ -366,14 +366,14 @@ template<> struct JSConverter<IDLDouble> {
 };
 
 template<> struct Converter<IDLUnrestrictedDouble> : DefaultConverter<IDLUnrestrictedDouble> {
-    static inline double convert(JSC::ExecState&, JSC::ThrowScope&, double number)
+    static inline double convert(JSC::JSGlobalObject&, JSC::ThrowScope&, double number)
     {
         return number;
     }
 
-    static double convert(JSC::ExecState& state, JSC::JSValue value)
+    static double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return value.toNumber(&state);
+        return value.toNumber(&lexicalGlobalObject);
     }
 };
 

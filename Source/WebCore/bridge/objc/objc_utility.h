@@ -69,12 +69,12 @@ typedef enum {
 
 class RootObject;
 
-ObjcValue convertValueToObjcValue(ExecState*, JSValue, ObjcValueType);
-JSValue convertNSStringToString(ExecState* exec, NSString *nsstring);
-JSValue convertObjcValueToValue(ExecState*, void* buffer, ObjcValueType, RootObject*);
+ObjcValue convertValueToObjcValue(JSGlobalObject*, JSValue, ObjcValueType);
+JSValue convertNSStringToString(JSGlobalObject* lexicalGlobalObject, NSString *nsstring);
+JSValue convertObjcValueToValue(JSGlobalObject*, void* buffer, ObjcValueType, RootObject*);
 ObjcValueType objcValueTypeForType(const char *type);
 
-Exception *throwError(ExecState*, ThrowScope&, NSString *message);
+Exception *throwError(JSGlobalObject*, ThrowScope&, NSString *message);
 
 } // namespace Bindings
 } // namespace JSC

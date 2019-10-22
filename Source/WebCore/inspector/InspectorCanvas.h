@@ -76,7 +76,7 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
-    JSC::JSValue resolveContext(JSC::ExecState*) const;
+    JSC::JSValue resolveContext(JSC::JSGlobalObject*) const;
 
     HashSet<Element*> clientNodes() const;
 

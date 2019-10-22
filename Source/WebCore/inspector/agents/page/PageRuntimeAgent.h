@@ -37,7 +37,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -67,7 +66,7 @@ private:
     void muteConsole() override;
     void unmuteConsole() override;
     void reportExecutionContextCreation();
-    void notifyContextCreated(const String& frameId, JSC::ExecState*, SecurityOrigin*, bool isPageContext);
+    void notifyContextCreated(const String& frameId, JSC::JSGlobalObject*, SecurityOrigin*, bool isPageContext);
 
     std::unique_ptr<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;

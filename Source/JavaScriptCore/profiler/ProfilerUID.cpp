@@ -47,9 +47,9 @@ void UID::dump(PrintStream& out) const
     out.print(m_uid);
 }
 
-JSValue UID::toJS(ExecState* exec) const
+JSValue UID::toJS(JSGlobalObject* globalObject) const
 {
-    return jsString(exec->vm(), toString(*this));
+    return jsString(globalObject->vm(), toString(*this));
 }
 
 } } // namespace JSC::Profiler

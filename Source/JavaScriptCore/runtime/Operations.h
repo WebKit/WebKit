@@ -31,15 +31,15 @@ namespace JSC {
 
 #define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
 
-NEVER_INLINE JSValue jsAddSlowCase(CallFrame*, JSValue, JSValue);
-JSValue jsTypeStringForValue(CallFrame*, JSValue);
+NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject*, JSValue, JSValue);
+JSValue jsTypeStringForValue(JSGlobalObject*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
-bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
-size_t normalizePrototypeChain(CallFrame*, JSCell*, bool& sawPolyProto);
+bool jsIsObjectTypeOrNull(JSGlobalObject*, JSValue);
+size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, JSString* s2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, JSString* s2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = u1.length();
@@ -50,7 +50,7 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, JSString* s2
         return jsString(vm, u1);
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -63,19 +63,19 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, JSString* s2
         return JSRopeString::create(vm, jsString(vm, u1), s2);
 
     ASSERT(!s2->isRope());
-    const String& u2 = s2->value(exec);
+    const String& u2 = s2->value(globalObject);
     scope.assertNoException();
     String newString = tryMakeString(u1, u2);
     if (!newString) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     return JSString::create(vm, newString.releaseImpl().releaseNonNull());
 }
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, const String& u2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, const String& u2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = s1->length();
@@ -86,7 +86,7 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, const String& u2
         return s1;
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -96,19 +96,19 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, const String& u2
         return JSRopeString::create(vm, s1, jsString(vm, u2));
 
     ASSERT(!s1->isRope());
-    const String& u1 = s1->value(exec);
+    const String& u1 = s1->value(globalObject);
     scope.assertNoException();
     String newString = tryMakeString(u1, u2);
     if (!newString) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     return JSString::create(vm, newString.releaseImpl().releaseNonNull());
 }
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSString* s2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = s1->length();
@@ -119,42 +119,42 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
         return s1;
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
     return JSRopeString::create(vm, s1, s2);
 }
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JSString* s3)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, JSString* s1, JSString* s2, JSString* s3)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = s1->length();
     if (!length1)
-        RELEASE_AND_RETURN(scope, jsString(exec, s2, s3));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, s2, s3));
 
     unsigned length2 = s2->length();
     if (!length2)
-        RELEASE_AND_RETURN(scope, jsString(exec, s1, s3));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, s1, s3));
 
     unsigned length3 = s3->length();
     if (!length3)
-        RELEASE_AND_RETURN(scope, jsString(exec, s1, s2));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, s1, s2));
 
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2, length3)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
     return JSRopeString::create(vm, s1, s2, s3);
 }
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, const String& u2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = u1.length();
@@ -165,7 +165,7 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
         return jsString(vm, u1);
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -176,15 +176,15 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
 
     String newString = tryMakeString(u1, u2);
     if (!newString) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     return JSString::create(vm, newString.releaseImpl().releaseNonNull());
 }
 
-ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
+ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, const String& u2, const String& u3)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length1 = u1.length();
@@ -195,17 +195,17 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
     ASSERT(length3 <= JSString::MaxLength);
 
     if (!length1)
-        RELEASE_AND_RETURN(scope, jsString(exec, u2, u3));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, u2, u3));
 
     if (!length2)
-        RELEASE_AND_RETURN(scope, jsString(exec, u1, u3));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, u1, u3));
 
     if (!length3)
-        RELEASE_AND_RETURN(scope, jsString(exec, u1, u2));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, u1, u2));
 
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2, length3)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -216,44 +216,24 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
 
     String newString = tryMakeString(u1, u2, u3);
     if (!newString) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     return JSString::create(vm, newString.releaseImpl().releaseNonNull());
 }
 
-ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)
+ALWAYS_INLINE JSValue jsStringFromRegisterArray(JSGlobalObject* globalObject, Register* strings, unsigned count)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
 
     for (unsigned i = 0; i < count; ++i) {
         JSValue v = strings[-static_cast<int>(i)].jsValue();
-        JSString* string = v.toString(exec);
+        JSString* string = v.toString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!ropeBuilder.append(string))
-            return throwOutOfMemoryError(exec, scope);
-    }
-
-    return ropeBuilder.release();
-}
-
-ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
-    JSString* str = thisValue.toString(exec);
-    RETURN_IF_EXCEPTION(scope, { });
-    ropeBuilder.append(str);
-
-    for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-        JSValue v = exec->argument(i);
-        JSString* str = v.toString(exec);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (UNLIKELY(!ropeBuilder.append(str)))
-            return throwOutOfMemoryError(exec, scope);
+            return throwOutOfMemoryError(globalObject, scope);
     }
 
     return ropeBuilder.release();
@@ -268,12 +248,12 @@ ALWAYS_INLINE bool bigIntCompareResult(JSBigInt::ComparisonResult comparisonResu
     return comparisonResult == JSBigInt::ComparisonResult::LessThan || comparisonResult == JSBigInt::ComparisonResult::Equal;
 }
 
-ALWAYS_INLINE bool bigIntCompare(CallFrame* callFrame, JSValue v1, JSValue v2, JSBigInt::ComparisonMode comparisonMode)
+ALWAYS_INLINE bool bigIntCompare(JSGlobalObject* globalObject, JSValue v1, JSValue v2, JSBigInt::ComparisonMode comparisonMode)
 {
     ASSERT(v1.isBigInt() || v2.isBigInt());
     ASSERT(v1.isPrimitive() && v2.isPrimitive());
 
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (v1.isBigInt() && v2.isBigInt())
@@ -282,7 +262,7 @@ ALWAYS_INLINE bool bigIntCompare(CallFrame* callFrame, JSValue v1, JSValue v2, J
     if (v1.isBigInt()) {
         JSValue primValue = v2;
         if (primValue.isString()) {
-            JSBigInt* bigIntValue = JSBigInt::stringToBigInt(callFrame, asString(primValue)->value(callFrame));
+            JSBigInt* bigIntValue = JSBigInt::stringToBigInt(globalObject, asString(primValue)->value(globalObject));
             RETURN_IF_EXCEPTION(scope, false);
             if (!bigIntValue)
                 return false;
@@ -293,14 +273,14 @@ ALWAYS_INLINE bool bigIntCompare(CallFrame* callFrame, JSValue v1, JSValue v2, J
         if (primValue.isBigInt())
             return bigIntCompareResult(JSBigInt::compare(asBigInt(v1), asBigInt(primValue)), comparisonMode);
 
-        double numberValue = primValue.toNumber(callFrame);
+        double numberValue = primValue.toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         return bigIntCompareResult(JSBigInt::compareToDouble(asBigInt(v1), numberValue), comparisonMode);
     }
     
     JSValue primValue = v1;
     if (primValue.isString()) {
-        JSBigInt* bigIntValue = JSBigInt::stringToBigInt(callFrame, asString(primValue)->value(callFrame));
+        JSBigInt* bigIntValue = JSBigInt::stringToBigInt(globalObject, asString(primValue)->value(globalObject));
         RETURN_IF_EXCEPTION(scope, false);
         if (!bigIntValue)
             return false;
@@ -311,7 +291,7 @@ ALWAYS_INLINE bool bigIntCompare(CallFrame* callFrame, JSValue v1, JSValue v2, J
     if (primValue.isBigInt())
         return bigIntCompareResult(JSBigInt::compare(asBigInt(primValue), asBigInt(v2)), comparisonMode);
     
-    double numberValue = primValue.toNumber(callFrame);
+    double numberValue = primValue.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
     // Here we check inverted because BigInt is the v2
@@ -322,17 +302,17 @@ ALWAYS_INLINE bool bigIntCompare(CallFrame* callFrame, JSValue v1, JSValue v2, J
     return comparisonResult == JSBigInt::ComparisonResult::GreaterThan || comparisonResult == JSBigInt::ComparisonResult::Equal;
 }
 
-ALWAYS_INLINE bool toPrimitiveNumeric(CallFrame* callFrame, JSValue v, JSValue& p, double& n)
+ALWAYS_INLINE bool toPrimitiveNumeric(JSGlobalObject* globalObject, JSValue v, JSValue& p, double& n)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    p = v.toPrimitive(callFrame, PreferNumber);
+    p = v.toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, false);
     if (p.isBigInt())
         return true;
     
-    n = p.toNumber(callFrame);
+    n = p.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     return !p.isString();
 }
@@ -341,9 +321,9 @@ ALWAYS_INLINE bool toPrimitiveNumeric(CallFrame* callFrame, JSValue v, JSValue& 
 // evaluation ordering for argument conversions for '<' and '>'. For '<' pass the value
 // true, for leftFirst, for '>' pass the value false (and reverse operand order).
 template<bool leftFirst>
-ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
+ALWAYS_INLINE bool jsLess(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (v1.isInt32() && v2.isInt32())
@@ -353,9 +333,9 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
         return v1.asNumber() < v2.asNumber();
 
     if (isJSString(v1) && isJSString(v2)) {
-        String s1 = asString(v1)->value(callFrame);
+        String s1 = asString(v1)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        String s2 = asString(v2)->value(callFrame);
+        String s2 = asString(v2)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         return codePointCompareLessThan(s1, s2);
     }
@@ -367,33 +347,33 @@ ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     bool wasNotString1;
     bool wasNotString2;
     if (leftFirst) {
-        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
+        wasNotString1 = toPrimitiveNumeric(globalObject, v1, p1, n1);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
+        wasNotString2 = toPrimitiveNumeric(globalObject, v2, p2, n2);
     } else {
-        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
+        wasNotString2 = toPrimitiveNumeric(globalObject, v2, p2, n2);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
+        wasNotString1 = toPrimitiveNumeric(globalObject, v1, p1, n1);
     }
     RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2) {
         if (p1.isBigInt() || p2.isBigInt())
-            RELEASE_AND_RETURN(scope, bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThan));
+            RELEASE_AND_RETURN(scope, bigIntCompare(globalObject, p1, p2, JSBigInt::ComparisonMode::LessThan));
 
         return n1 < n2;
     }
 
-    return codePointCompareLessThan(asString(p1)->value(callFrame), asString(p2)->value(callFrame));
+    return codePointCompareLessThan(asString(p1)->value(globalObject), asString(p2)->value(globalObject));
 }
 
 // See ES5 11.8.3/11.8.4/11.8.5 for definition of leftFirst, this value ensures correct
 // evaluation ordering for argument conversions for '<=' and '=>'. For '<=' pass the
 // value true, for leftFirst, for '=>' pass the value false (and reverse operand order).
 template<bool leftFirst>
-ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
+ALWAYS_INLINE bool jsLessEq(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (v1.isInt32() && v2.isInt32())
@@ -403,9 +383,9 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
         return v1.asNumber() <= v2.asNumber();
 
     if (isJSString(v1) && isJSString(v2)) {
-        String s1 = asString(v1)->value(callFrame);
+        String s1 = asString(v1)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-        String s2 = asString(v2)->value(callFrame);
+        String s2 = asString(v2)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         return !codePointCompareLessThan(s2, s1);
     }
@@ -417,23 +397,23 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     bool wasNotString1;
     bool wasNotString2;
     if (leftFirst) {
-        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
+        wasNotString1 = toPrimitiveNumeric(globalObject, v1, p1, n1);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
+        wasNotString2 = toPrimitiveNumeric(globalObject, v2, p2, n2);
     } else {
-        wasNotString2 = toPrimitiveNumeric(callFrame, v2, p2, n2);
+        wasNotString2 = toPrimitiveNumeric(globalObject, v2, p2, n2);
         RETURN_IF_EXCEPTION(scope, false);
-        wasNotString1 = toPrimitiveNumeric(callFrame, v1, p1, n1);
+        wasNotString1 = toPrimitiveNumeric(globalObject, v1, p1, n1);
     }
     RETURN_IF_EXCEPTION(scope, false);
 
     if (wasNotString1 | wasNotString2) {
         if (p1.isBigInt() || p2.isBigInt())
-            RELEASE_AND_RETURN(scope, bigIntCompare(callFrame, p1, p2, JSBigInt::ComparisonMode::LessThanOrEqual));
+            RELEASE_AND_RETURN(scope, bigIntCompare(globalObject, p1, p2, JSBigInt::ComparisonMode::LessThanOrEqual));
 
         return n1 <= n2;
     }
-    return !codePointCompareLessThan(asString(p2)->value(callFrame), asString(p1)->value(callFrame));
+    return !codePointCompareLessThan(asString(p2)->value(globalObject), asString(p1)->value(globalObject));
 }
 
 // Fast-path choices here are based on frequency data from SunSpider:
@@ -446,71 +426,71 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
 //    4000    Add case: 3 5
 
 
-ALWAYS_INLINE JSValue jsAddNonNumber(CallFrame* callFrame, JSValue v1, JSValue v2)
+ALWAYS_INLINE JSValue jsAddNonNumber(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!v1.isNumber() || !v2.isNumber());
 
     if (LIKELY(v1.isString() && !v2.isObject())) {
         if (v2.isString())
-            RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), asString(v2)));
-        String s2 = v2.toWTFString(callFrame);
+            RELEASE_AND_RETURN(scope, jsString(globalObject, asString(v1), asString(v2)));
+        String s2 = v2.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), s2));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, asString(v1), s2));
     }
 
     // All other cases are pretty uncommon
-    RELEASE_AND_RETURN(scope, jsAddSlowCase(callFrame, v1, v2));
+    RELEASE_AND_RETURN(scope, jsAddSlowCase(globalObject, v1, v2));
 }
 
-ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
+ALWAYS_INLINE JSValue jsAdd(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
     if (v1.isNumber() && v2.isNumber())
         return jsNumber(v1.asNumber() + v2.asNumber());
         
-    return jsAddNonNumber(callFrame, v1, v2);
+    return jsAddNonNumber(globalObject, v1, v2);
 }
 
-ALWAYS_INLINE JSValue jsSub(ExecState* exec, JSValue v1, JSValue v2)
+ALWAYS_INLINE JSValue jsSub(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto leftNumeric = v1.toNumeric(exec);
+    auto leftNumeric = v1.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    auto rightNumeric = v2.toNumeric(exec);
+    auto rightNumeric = v2.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
             scope.release();
-            return JSBigInt::sub(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            return JSBigInt::sub(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
         }
 
-        return throwTypeError(exec, scope, "Invalid mix of BigInt and other type in subtraction."_s);
+        return throwTypeError(globalObject, scope, "Invalid mix of BigInt and other type in subtraction."_s);
     }
 
     return jsNumber(WTF::get<double>(leftNumeric) - WTF::get<double>(rightNumeric));
 }
 
-ALWAYS_INLINE JSValue jsMul(ExecState* state, JSValue v1, JSValue v2)
+ALWAYS_INLINE JSValue jsMul(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Variant<JSBigInt*, double> leftNumeric = v1.toNumeric(state);
+    Variant<JSBigInt*, double> leftNumeric = v1.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    Variant<JSBigInt*, double> rightNumeric = v2.toNumeric(state);
+    Variant<JSBigInt*, double> rightNumeric = v2.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
             scope.release();
-            return JSBigInt::multiply(state, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            return JSBigInt::multiply(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
         }
 
-        throwTypeError(state, scope, "Invalid mix of BigInt and other type in multiplication."_s);
+        throwTypeError(globalObject, scope, "Invalid mix of BigInt and other type in multiplication."_s);
         return { };
     }
 

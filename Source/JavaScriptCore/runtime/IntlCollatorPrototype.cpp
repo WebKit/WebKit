@@ -90,21 +90,21 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(JSGlobalObject* glob
     // 3. If x is not provided, let x be undefined.
     // 4. If y is not provided, let y be undefined.
     // 5. Let X be ToString(x).
-    JSString* x = callFrame->argument(0).toString(callFrame);
+    JSString* x = callFrame->argument(0).toString(globalObject);
     // 6. ReturnIfAbrupt(X).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 7. Let Y be ToString(y).
-    JSString* y = callFrame->argument(1).toString(callFrame);
+    JSString* y = callFrame->argument(1).toString(globalObject);
     // 8. ReturnIfAbrupt(Y).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 9. Return CompareStrings(collator, X, Y).
-    auto xViewWithString = x->viewWithUnderlyingString(callFrame);
+    auto xViewWithString = x->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto yViewWithString = y->viewWithUnderlyingString(callFrame);
+    auto yViewWithString = y->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(*callFrame, xViewWithString.view, yViewWithString.view)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, xViewWithString.view, yViewWithString.view)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -116,7 +116,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject* 
     // 1. Let collator be this Collator object.
     IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, callFrame->thisValue());
     if (!collator)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator"_s));
 
     JSBoundFunction* boundCompare = collator->boundCompare();
     // 2. If collator.[[boundCompare]] is undefined,
@@ -127,7 +127,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(JSGlobalObject* 
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, IntlCollatorFuncCompare, NoIntrinsic);
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
-        boundCompare = JSBoundFunction::create(vm, callFrame, globalObject, targetObject, collator, nullptr, 2, "compare"_s);
+        boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, nullptr, 2, "compare"_s);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set collator.[[boundCompare]] to bc.
         collator->setBoundCompare(vm, boundCompare);
@@ -144,9 +144,9 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(JSGlobalOb
     // 10.3.5 Intl.Collator.prototype.resolvedOptions() (ECMA-402 2.0)
     IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, callFrame->thisValue());
     if (!collator)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator"_s));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(collator->resolvedOptions(*callFrame)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(collator->resolvedOptions(globalObject)));
 }
 
 } // namespace JSC

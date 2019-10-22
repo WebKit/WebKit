@@ -29,6 +29,7 @@
 #include "JSDOMBinding.h"
 #include <JavaScriptCore/ArrayPrototype.h>
 #include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
 using namespace WebCore;
@@ -37,8 +38,8 @@ namespace JSC {
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
 
-RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
-    : JSArray(exec->vm(), structure, 0)
+RuntimeArray::RuntimeArray(JSGlobalObject* lexicalGlobalObject, Structure* structure)
+    : JSArray(lexicalGlobalObject->vm(), structure, 0)
     , m_array(0)
 {
 }
@@ -60,20 +61,20 @@ void RuntimeArray::destroy(JSCell* cell)
     static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
-EncodedJSValue RuntimeArray::lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue RuntimeArray::lengthGetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeArray* thisObject = jsDynamicCast<RuntimeArray*>(vm, JSValue::decode(thisValue));
     if (!thisObject)
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(lexicalGlobalObject, scope);
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
-void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RuntimeArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     unsigned length = thisObject->getLength();
     for (unsigned i = 0; i < length; ++i)
@@ -82,12 +83,12 @@ void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     if (mode.includeDontEnumProperties())
         propertyNames.add(vm.propertyNames->length);
 
-    JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
+    JSObject::getOwnPropertyNames(thisObject, lexicalGlobalObject, propertyNames, mode);
 }
 
-bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == vm.propertyNames->length) {
         slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->lengthGetter);
@@ -97,62 +98,62 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     Optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->getLength()) {
         slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum,
-            thisObject->getConcreteArray()->valueAt(exec, index.value()));
+            thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
     
-    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);
 }
 
-bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, unsigned index, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
         slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum,
-            thisObject->getConcreteArray()->valueAt(exec, index));
+            thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index));
         return true;
     }
     
-    return JSObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
+    return JSObject::getOwnPropertySlotByIndex(thisObject, lexicalGlobalObject, index, slot);
 }
 
-bool RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool RuntimeArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == vm.propertyNames->length) {
-        throwException(exec, scope, createRangeError(exec, "Range error"));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"));
         return false;
     }
     
     if (Optional<uint32_t> index = parseIndex(propertyName))
-        return thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
+        return thisObject->getConcreteArray()->setValueAt(lexicalGlobalObject, index.value(), value);
 
-    RELEASE_AND_RETURN(scope, JSObject::put(thisObject, exec, propertyName, value, slot));
+    RELEASE_AND_RETURN(scope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, slot));
 }
 
-bool RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)
+bool RuntimeArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {
-        throwException(exec, scope, createRangeError(exec, "Range error"));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Range error"));
         return false;
     }
     
-    return thisObject->getConcreteArray()->setValueAt(exec, index, value);
+    return thisObject->getConcreteArray()->setValueAt(lexicalGlobalObject, index, value);
 }
 
-bool RuntimeArray::deleteProperty(JSCell*, ExecState*, PropertyName)
+bool RuntimeArray::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
 {
     return false;
 }
 
-bool RuntimeArray::deletePropertyByIndex(JSCell*, ExecState*, unsigned)
+bool RuntimeArray::deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned)
 {
     return false;
 }

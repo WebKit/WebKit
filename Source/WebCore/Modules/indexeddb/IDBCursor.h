@@ -66,11 +66,11 @@ public:
     JSValueInWrappedObject& primaryKeyWrapper() { return m_primaryKeyWrapper; }
     JSValueInWrappedObject& valueWrapper() { return m_valueWrapper; }
 
-    ExceptionOr<Ref<IDBRequest>> update(JSC::ExecState&, JSC::JSValue);
+    ExceptionOr<Ref<IDBRequest>> update(JSC::JSGlobalObject&, JSC::JSValue);
     ExceptionOr<void> advance(unsigned);
-    ExceptionOr<void> continueFunction(JSC::ExecState&, JSC::JSValue key);
-    ExceptionOr<void> continuePrimaryKey(JSC::ExecState&, JSC::JSValue key, JSC::JSValue primaryKey);
-    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&);
+    ExceptionOr<void> continueFunction(JSC::JSGlobalObject&, JSC::JSValue key);
+    ExceptionOr<void> continuePrimaryKey(JSC::JSGlobalObject&, JSC::JSValue key, JSC::JSValue primaryKey);
+    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::JSGlobalObject&);
 
     ExceptionOr<void> continueFunction(const IDBKeyData&);
 

@@ -50,8 +50,8 @@ private:
     void didPause(JSC::JSGlobalObject*) override;
     void didContinue(JSC::JSGlobalObject*) override;
     void runEventLoopWhilePaused() override;
-    bool isContentScript(JSC::ExecState*) const override;
-    void reportException(JSC::ExecState*, JSC::Exception*) const override;
+    bool isContentScript(JSC::JSGlobalObject*) const override;
+    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const override;
 
     void runEventLoopWhilePausedInternal();
 

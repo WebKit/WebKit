@@ -47,17 +47,17 @@ EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFun
     if (customGetterSetterFunction->isSetter()) {
         CustomGetterSetter::CustomSetter setter = customGetterSetter->setter();
         ASSERT(setter);
-        callCustomSetter(callFrame, setter, true, thisValue, callFrame->argument(0));
+        callCustomSetter(globalObject, setter, true, thisValue, callFrame->argument(0));
         return JSValue::encode(jsUndefined());
     }
 
     if (customGetterSetter->inherits<DOMAttributeGetterSetter>(vm)) {
         auto domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter)->domAttribute();
         if (!thisValue.inherits(vm, domAttribute.classInfo))
-            return throwVMDOMAttributeGetterTypeError(callFrame, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
+            return throwVMDOMAttributeGetterTypeError(globalObject, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
     }
 
-    return customGetterSetter->getter()(callFrame, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
+    return customGetterSetter->getter()(globalObject, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
 }
 
 JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)

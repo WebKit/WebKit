@@ -33,15 +33,15 @@ namespace JSC {
 
 const ClassInfo JSSet::s_info = { "Set", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSet) };
 
-String JSSet::toStringName(const JSObject*, ExecState*)
+String JSSet::toStringName(const JSObject*, JSGlobalObject*)
 {
     return "Object"_s;
 }
 
-JSSet* JSSet::clone(ExecState* exec, VM& vm, Structure* structure)
+JSSet* JSSet::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
     JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure);
-    instance->finishCreation(exec, vm, this);
+    instance->finishCreation(globalObject, vm, this);
     return instance;
 }
 

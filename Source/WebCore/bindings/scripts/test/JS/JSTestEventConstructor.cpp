@@ -41,14 +41,14 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(ExecState& state, JSValue value)
+template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
+        throwTypeError(&lexicalGlobalObject, throwScope);
         return { };
     }
     TestEventConstructor::Init result;
@@ -56,11 +56,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
     else {
-        bubblesValue = object->get(&state, Identifier::fromString(vm, "bubbles"));
+        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bubblesValue.isUndefined()) {
-        result.bubbles = convert<IDLBoolean>(state, bubblesValue);
+        result.bubbles = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.bubbles = false;
@@ -68,11 +68,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
-        cancelableValue = object->get(&state, Identifier::fromString(vm, "cancelable"));
+        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!cancelableValue.isUndefined()) {
-        result.cancelable = convert<IDLBoolean>(state, cancelableValue);
+        result.cancelable = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.cancelable = false;
@@ -80,11 +80,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
-        composedValue = object->get(&state, Identifier::fromString(vm, "composed"));
+        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!composedValue.isUndefined()) {
-        result.composed = convert<IDLBoolean>(state, composedValue);
+        result.composed = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.composed = false;
@@ -92,11 +92,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         attr2Value = jsUndefined();
     else {
-        attr2Value = object->get(&state, Identifier::fromString(vm, "attr2"));
+        attr2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr2"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!attr2Value.isUndefined()) {
-        result.attr2 = convert<IDLDOMString>(state, attr2Value);
+        result.attr2 = convert<IDLDOMString>(lexicalGlobalObject, attr2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr2 = emptyString();
@@ -105,11 +105,11 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         attr3Value = jsUndefined();
     else {
-        attr3Value = object->get(&state, Identifier::fromString(vm, "attr3"));
+        attr3Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr3"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!attr3Value.isUndefined()) {
-        result.attr3 = convert<IDLDOMString>(state, attr3Value);
+        result.attr3 = convert<IDLDOMString>(lexicalGlobalObject, attr3Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr3 = emptyString();
@@ -119,12 +119,12 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
 
 // Attributes
 
-JSC::EncodedJSValue jsTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestEventConstructorAttr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestEventConstructorAttr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestEventConstructorConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestEventConstructorAttr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestEventConstructorAttr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #if ENABLE(SPECIAL_EVENT)
-JSC::EncodedJSValue jsTestEventConstructorAttr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestEventConstructorAttr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 
 class JSTestEventConstructorPrototype : public JSC::JSNonFinalObject {
@@ -154,21 +154,21 @@ private:
 
 using JSTestEventConstructorConstructor = JSDOMConstructor<JSTestEventConstructor>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(state->jsCallee());
+    auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    if (UNLIKELY(state->argumentCount() < 1))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto type = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto type = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*state, state->argument(1));
+    auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*lexicalGlobalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestEventConstructor::create(WTFMove(type), WTFMove(eventInitDict));
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*state, *castedThis->globalObject(), WTFMove(object)));
+    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestEventConstructor>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object)));
 }
 
 template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -238,75 +238,75 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestEventConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::cast(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestEventConstructor*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestEventConstructor*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEventConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestEventConstructor::getConstructor(state->vm(), prototype->globalObject()));
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(JSTestEventConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestEventConstructorConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEventConstructorPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
-        throwVMTypeError(state, throwScope);
+        throwVMTypeError(lexicalGlobalObject, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestEventConstructorAttr1Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr1());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr1());
     return result;
 }
 
-EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr1Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attr1");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr1");
 }
 
-static inline JSValue jsTestEventConstructorAttr2Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr2());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr2());
     return result;
 }
 
-EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr2Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attr2");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr2");
 }
 
 #if ENABLE(SPECIAL_EVENT)
-static inline JSValue jsTestEventConstructorAttr3Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr3());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr3());
     return result;
 }
 
-EncodedJSValue jsTestEventConstructorAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr3Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attr3");
+    return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr3");
 }
 
 #endif
@@ -329,7 +329,7 @@ extern "C" { extern void* _ZTVN7WebCore20TestEventConstructorE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
 {
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -353,9 +353,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     return createWrapper<TestEventConstructor>(globalObject, WTFMove(impl));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEventConstructor& impl)
 {
-    return wrap(state, globalObject, impl);
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 

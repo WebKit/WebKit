@@ -33,7 +33,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -45,19 +44,19 @@ public:
     virtual ~WorkletConsoleClient();
 
 private:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void count(JSC::ExecState*, const String& label) final;
-    void countReset(JSC::ExecState*, const String& label) final;
-    void profile(JSC::ExecState*, const String& title) final;
-    void profileEnd(JSC::ExecState*, const String& title) final;
-    void takeHeapSnapshot(JSC::ExecState*, const String& title) final;
-    void time(JSC::ExecState*, const String& label) final;
-    void timeLog(JSC::ExecState*, const String& label, Ref<Inspector::ScriptArguments>&&) final;
-    void timeEnd(JSC::ExecState*, const String& label) final;
-    void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
-    void screenshot(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) final;
+    void count(JSC::JSGlobalObject*, const String& label) final;
+    void countReset(JSC::JSGlobalObject*, const String& label) final;
+    void profile(JSC::JSGlobalObject*, const String& title) final;
+    void profileEnd(JSC::JSGlobalObject*, const String& title) final;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) final;
+    void time(JSC::JSGlobalObject*, const String& label) final;
+    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) final;
+    void timeEnd(JSC::JSGlobalObject*, const String& label) final;
+    void timeStamp(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) final;
+    void record(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) final;
+    void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) final;
+    void screenshot(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) final;
 
     WorkletGlobalScope& m_workletGlobalScope;
 };

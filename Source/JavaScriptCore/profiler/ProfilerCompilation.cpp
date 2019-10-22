@@ -112,63 +112,63 @@ void Compilation::dump(PrintStream& out) const
     out.print("Comp", m_uid);
 }
 
-JSValue Compilation::toJS(ExecState* exec) const
+JSValue Compilation::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* result = constructEmptyObject(exec);
+    JSObject* result = constructEmptyObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     result->putDirect(vm, vm.propertyNames->compilationKind, jsString(vm, String::fromUTF8(toCString(m_kind))));
     
-    JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
+    JSArray* profiledBytecodes = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_profiledBytecodes.size(); ++i) {
-        auto value = m_profiledBytecodes[i].toJS(exec);
+        auto value = m_profiledBytecodes[i].toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        profiledBytecodes->putDirectIndex(exec, i, value);
+        profiledBytecodes->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->profiledBytecodes, profiledBytecodes);
     
-    JSArray* descriptions = constructEmptyArray(exec, 0);
+    JSArray* descriptions = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_descriptions.size(); ++i) {
-        auto value = m_descriptions[i].toJS(exec);
+        auto value = m_descriptions[i].toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        descriptions->putDirectIndex(exec, i, value);
+        descriptions->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->descriptions, descriptions);
     
-    JSArray* counters = constructEmptyArray(exec, 0);
+    JSArray* counters = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (auto it = m_counters.begin(), end = m_counters.end(); it != end; ++it) {
-        JSObject* counterEntry = constructEmptyObject(exec);
+        JSObject* counterEntry = constructEmptyObject(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        auto value = it->key.toJS(exec);
+        auto value = it->key.toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         counterEntry->putDirect(vm, vm.propertyNames->origin, value);
         counterEntry->putDirect(vm, vm.propertyNames->executionCount, jsNumber(it->value->count()));
-        counters->push(exec, counterEntry);
+        counters->push(globalObject, counterEntry);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->counters, counters);
     
-    JSArray* exitSites = constructEmptyArray(exec, 0);
+    JSArray* exitSites = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_osrExitSites.size(); ++i) {
-        auto value = m_osrExitSites[i].toJS(exec);
+        auto value = m_osrExitSites[i].toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        exitSites->putDirectIndex(exec, i, value);
+        exitSites->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->osrExitSites, exitSites);
     
-    JSArray* exits = constructEmptyArray(exec, 0);
+    JSArray* exits = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_osrExits.size(); ++i) {
-        exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
+        exits->putDirectIndex(globalObject, i, m_osrExits[i].toJS(globalObject));
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->osrExits, exits);
@@ -180,7 +180,7 @@ JSValue Compilation::toJS(ExecState* exec) const
     if (!m_additionalJettisonReason.isNull())
         result->putDirect(vm, vm.propertyNames->additionalJettisonReason, jsString(vm, String::fromUTF8(m_additionalJettisonReason)));
     
-    result->putDirect(vm, vm.propertyNames->uid, m_uid.toJS(exec));
+    result->putDirect(vm, vm.propertyNames->uid, m_uid.toJS(globalObject));
     
     return result;
 }

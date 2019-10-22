@@ -29,9 +29,9 @@
 
 namespace JSC {
 
-inline void RegExpGlobalData::setInput(ExecState* exec, JSGlobalObject* owner, JSString* string)
+inline void RegExpGlobalData::setInput(JSGlobalObject* globalObject, JSString* string)
 {
-    m_cachedResult.setInput(exec, owner, string);
+    m_cachedResult.setInput(globalObject, globalObject, string);
 }
 
 /*

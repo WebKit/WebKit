@@ -46,7 +46,7 @@
 
 namespace JSC {
 
-typedef void (*V_DebugOperation_EPP)(ExecState*, void*, void*);
+typedef void (*V_DebugOperation_EPP)(CallFrame*, void*, void*);
 
 class AssemblyHelpers : public MacroAssembler {
 public:
@@ -1787,7 +1787,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
-    void emitDumbVirtualCall(VM&, CallLinkInfo*);
+    void emitDumbVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
     
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();

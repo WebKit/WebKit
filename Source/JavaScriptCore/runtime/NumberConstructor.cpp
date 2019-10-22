@@ -90,9 +90,9 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* g
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    double n = callFrame->argumentCount() ? callFrame->uncheckedArgument(0).toNumber(callFrame) : 0;
+    double n = callFrame->argumentCount() ? callFrame->uncheckedArgument(0).toNumber(globalObject) : 0;
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Structure* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->numberObjectStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->numberObjectStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     NumberObject* object = NumberObject::create(vm, structure);
@@ -101,9 +101,9 @@ static EncodedJSValue JSC_HOST_CALL constructNumberConstructor(JSGlobalObject* g
 }
 
 // ECMA 15.7.2
-static EncodedJSValue JSC_HOST_CALL callNumberConstructor(JSGlobalObject*, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callNumberConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(!callFrame->argumentCount() ? 0 : callFrame->uncheckedArgument(0).toNumber(callFrame)));
+    return JSValue::encode(jsNumber(!callFrame->argumentCount() ? 0 : callFrame->uncheckedArgument(0).toNumber(globalObject)));
 }
 
 // ECMA-262 20.1.2.3

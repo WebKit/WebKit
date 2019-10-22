@@ -43,47 +43,47 @@ template <typename T> inline T& getPtrOrRef(const Ref<T>& p) { return p.get(); }
 }
 
 struct DefaultExceptionThrower {
-    void operator()(JSC::ExecState& state, JSC::ThrowScope& scope)
+    void operator()(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)
     {
-        throwTypeError(&state, scope);
+        throwTypeError(&lexicalGlobalObject, scope);
     }
 };
 
-template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue);
-template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, JSC::JSObject&);
-template<typename T> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, JSDOMGlobalObject&);
-template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, ExceptionThrower&&);
-template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, JSC::JSObject&, ExceptionThrower&&);
-template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::ExecState&, JSC::JSValue, JSDOMGlobalObject&, ExceptionThrower&&);
+template<typename T> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue);
+template<typename T> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSObject&);
+template<typename T> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&);
+template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue, ExceptionThrower&&);
+template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSObject&, ExceptionThrower&&);
+template<typename T, typename ExceptionThrower> typename Converter<T>::ReturnType convert(JSC::JSGlobalObject&, JSC::JSValue, JSDOMGlobalObject&, ExceptionThrower&&);
 
-template<typename T> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+template<typename T> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return Converter<T>::convert(state, value);
+    return Converter<T>::convert(lexicalGlobalObject, value);
 }
 
-template<typename T> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSC::JSObject& thisObject)
+template<typename T> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject)
 {
-    return Converter<T>::convert(state, value, thisObject);
+    return Converter<T>::convert(lexicalGlobalObject, value, thisObject);
 }
 
-template<typename T> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject)
+template<typename T> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
 {
-    return Converter<T>::convert(state, value, globalObject);
+    return Converter<T>::convert(lexicalGlobalObject, value, globalObject);
 }
 
-template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
+template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
 {
-    return Converter<T>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    return Converter<T>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
 }
 
-template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
+template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
 {
-    return Converter<T>::convert(state, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
+    return Converter<T>::convert(lexicalGlobalObject, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
 }
 
-template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+template<typename T, typename ExceptionThrower> inline typename Converter<T>::ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
 {
-    return Converter<T>::convert(state, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
+    return Converter<T>::convert(lexicalGlobalObject, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
 }
 
 
@@ -95,48 +95,48 @@ struct IsExceptionOr : public std::integral_constant<bool, WTF::IsTemplate<std::
 template<typename T> struct JSConverter;
 
 template<typename T, typename U> inline JSC::JSValue toJS(U&&);
-template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, U&&);
-template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, U&&);
-template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, U&&);
-template<typename T, typename U> inline auto toJS(JSC::ExecState&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
-template<typename T, typename U> inline auto toJS(JSC::ExecState&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
-template<typename T, typename U> inline auto toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
-template<typename T, typename U> inline auto toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
-template<typename T, typename U> inline auto toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
-template<typename T, typename U> inline auto toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject&, U&&);
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, U&&);
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject&, JSDOMGlobalObject&, U&&);
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline auto toJSNewlyCreated(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>;
+template<typename T, typename U> inline auto toJSNewlyCreated(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::ThrowScope&, U&&) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>;
 
 template<typename T, bool needsState = JSConverter<T>::needsState, bool needsGlobalObject = JSConverter<T>::needsGlobalObject>
 struct JSConverterOverloader;
 
 template<typename T>
 struct JSConverterOverloader<T, true, true> {
-    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    template<typename U> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
-        return JSConverter<T>::convert(state, globalObject, std::forward<U>(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, globalObject, std::forward<U>(value));
     }
 };
 
 template<typename T>
 struct JSConverterOverloader<T, true, false> {
-    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, U&& value)
+    template<typename U> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
     {
-        return JSConverter<T>::convert(state, std::forward<U>(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, std::forward<U>(value));
     }
 
-    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject&, U&& value)
+    template<typename U> static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&, U&& value)
     {
-        return JSConverter<T>::convert(state, std::forward<U>(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, std::forward<U>(value));
     }
 };
 
 template<typename T>
 struct JSConverterOverloader<T, false, false> {
-    template<typename U> static JSC::JSValue convert(JSC::ExecState&, U&& value)
+    template<typename U> static JSC::JSValue convert(JSC::JSGlobalObject&, U&& value)
     {
         return JSConverter<T>::convert(std::forward<U>(value));
     }
 
-    template<typename U> static JSC::JSValue convert(JSC::ExecState&, JSDOMGlobalObject&, U&& value)
+    template<typename U> static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, U&& value)
     {
         return JSConverter<T>::convert(std::forward<U>(value));
     }
@@ -147,64 +147,64 @@ template<typename T, typename U> inline JSC::JSValue toJS(U&& value)
     return JSConverter<T>::convert(std::forward<U>(value));
 }
 
-template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, U&& value)
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
 {
-    return JSConverterOverloader<T>::convert(state, std::forward<U>(value));
+    return JSConverterOverloader<T>::convert(lexicalGlobalObject, std::forward<U>(value));
 }
 
-template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
 {
-    return JSConverterOverloader<T>::convert(state, globalObject, std::forward<U>(value));
+    return JSConverterOverloader<T>::convert(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 
-template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+template<typename T, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
 {
-    return JSConverter<T>::convertNewlyCreated(state, globalObject, std::forward<U>(value));
+    return JSConverter<T>::convertNewlyCreated(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 
-template<typename T, typename U> inline auto toJS(JSC::ExecState& state, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
 {
     if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
+        propagateException(lexicalGlobalObject, throwScope, value.releaseException());
         return { };
     }
 
-    return toJS<T>(state, value.releaseReturnValue());
+    return toJS<T>(lexicalGlobalObject, value.releaseReturnValue());
 }
 
-template<typename T, typename U> inline auto toJS(JSC::ExecState& state, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
 {
-    return toJS<T>(state, std::forward<U>(value));
+    return toJS<T>(lexicalGlobalObject, std::forward<U>(value));
 }
 
-template<typename T, typename U> inline auto toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
 {
     if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
+        propagateException(lexicalGlobalObject, throwScope, value.releaseException());
         return { };
     }
 
-    return toJS<T>(state, globalObject, value.releaseReturnValue());
+    return toJS<T>(lexicalGlobalObject, globalObject, value.releaseReturnValue());
 }
 
-template<typename T, typename U> inline auto toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
 {
-    return toJS<T>(state, globalObject, std::forward<U>(value));
+    return toJS<T>(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 
-template<typename T, typename U> inline auto toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJSNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, U&& value) -> std::enable_if_t<IsExceptionOr<U>::value, JSC::JSValue>
 {
     if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
+        propagateException(lexicalGlobalObject, throwScope, value.releaseException());
         return { };
     }
 
-    return toJSNewlyCreated<T>(state, globalObject, value.releaseReturnValue());
+    return toJSNewlyCreated<T>(lexicalGlobalObject, globalObject, value.releaseReturnValue());
 }
 
-template<typename T, typename U> inline auto toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
+template<typename T, typename U> inline auto toJSNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSC::ThrowScope&, U&& value) -> std::enable_if_t<!IsExceptionOr<U>::value, JSC::JSValue>
 {
-    return toJSNewlyCreated<T>(state, globalObject, std::forward<U>(value));
+    return toJSNewlyCreated<T>(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 
 

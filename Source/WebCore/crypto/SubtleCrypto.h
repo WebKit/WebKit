@@ -40,7 +40,6 @@ namespace JSC {
 class ArrayBufferView;
 class ArrayBuffer;
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -63,18 +62,18 @@ public:
     using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
     using KeyDataVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, JsonWebKey>;
 
-    void encrypt(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
-    void decrypt(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
-    void sign(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
-    void verify(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& signature, BufferSource&& data, Ref<DeferredPromise>&&);
-    void digest(JSC::ExecState&, AlgorithmIdentifier&&, BufferSource&& data, Ref<DeferredPromise>&&);
-    void generateKey(JSC::ExecState&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&& keyUsages, Ref<DeferredPromise>&&);
-    void deriveKey(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey& baseKey, AlgorithmIdentifier&& derivedKeyType, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
-    void deriveBits(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey& baseKey, unsigned length, Ref<DeferredPromise>&&);
-    void importKey(JSC::ExecState&, KeyFormat, KeyDataVariant&&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
+    void encrypt(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void decrypt(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void sign(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void verify(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& signature, BufferSource&& data, Ref<DeferredPromise>&&);
+    void digest(JSC::JSGlobalObject&, AlgorithmIdentifier&&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void generateKey(JSC::JSGlobalObject&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&& keyUsages, Ref<DeferredPromise>&&);
+    void deriveKey(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey& baseKey, AlgorithmIdentifier&& derivedKeyType, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
+    void deriveBits(JSC::JSGlobalObject&, AlgorithmIdentifier&&, CryptoKey& baseKey, unsigned length, Ref<DeferredPromise>&&);
+    void importKey(JSC::JSGlobalObject&, KeyFormat, KeyDataVariant&&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
     void exportKey(KeyFormat, CryptoKey&, Ref<DeferredPromise>&&);
-    void wrapKey(JSC::ExecState&, KeyFormat, CryptoKey&, CryptoKey& wrappingKey, AlgorithmIdentifier&& wrapAlgorithm, Ref<DeferredPromise>&&);
-    void unwrapKey(JSC::ExecState&, KeyFormat, BufferSource&& wrappedKey, CryptoKey& unwrappingKey, AlgorithmIdentifier&& unwrapAlgorithm, AlgorithmIdentifier&& unwrappedKeyAlgorithm, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
+    void wrapKey(JSC::JSGlobalObject&, KeyFormat, CryptoKey&, CryptoKey& wrappingKey, AlgorithmIdentifier&& wrapAlgorithm, Ref<DeferredPromise>&&);
+    void unwrapKey(JSC::JSGlobalObject&, KeyFormat, BufferSource&& wrappedKey, CryptoKey& unwrappingKey, AlgorithmIdentifier&& unwrapAlgorithm, AlgorithmIdentifier&& unwrappedKeyAlgorithm, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
 
 private:
     explicit SubtleCrypto(ScriptExecutionContext*);

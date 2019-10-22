@@ -44,7 +44,7 @@ struct CompactHashIndex {
 };
 
 // FIXME: There is no reason this get function can't be simpler.
-// ie. typedef JSValue (*GetFunction)(ExecState*, JSObject* baseObject)
+// ie. typedef JSValue (*GetFunction)(JSGlobalObject*, JSObject* baseObject)
 typedef PropertySlot::GetValueFunc GetFunction;
 typedef PutPropertySlot::PutValueFunc PutFunction;
 typedef FunctionExecutable* (*BuiltinGenerator)(VM&);
@@ -266,9 +266,9 @@ inline bool replaceStaticPropertySlot(VM& vm, JSObject* thisObject, PropertyName
 // 'base' means the object holding the property (possibly in the prototype chain of the object put was called on).
 // 'thisValue' is the object that put is being applied to (in the case of a proxy, the proxy target).
 // 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).
-inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+inline bool putEntry(JSGlobalObject* globalObject, const ClassInfo*, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrLazyProperty) {
@@ -279,11 +279,11 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
                 thisObject->putDirect(vm, propertyName, value);
             return true;
         }
-        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     }
 
     if (entry->attributes() & PropertyAttribute::Accessor)
-        return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 
     if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
         ASSERT_WITH_MESSAGE(!(entry->attributes() & PropertyAttribute::DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
@@ -295,12 +295,12 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
         else
             slot.setCustomValue(base, entry->propertyPutter());
 
-        bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
+        bool result = callCustomSetter(globalObject, entry->propertyPutter(), isAccessor, updateThisValue, value);
         RETURN_IF_EXCEPTION(scope, false);
         return result;
     }
 
-    return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+    return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 }
 
 /**
@@ -308,14 +308,14 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
  * It looks up a hash entry for the property to be set.  If an entry
  * is found it sets the value and returns true, else it returns false.
  */
-inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base, JSValue value, const HashTable& table, PutPropertySlot& slot, bool& putResult)
+inline bool lookupPut(JSGlobalObject* globalObject, PropertyName propertyName, JSObject* base, JSValue value, const HashTable& table, PutPropertySlot& slot, bool& putResult)
 {
     const HashTableValue* entry = table.entry(propertyName);
 
     if (!entry)
         return false;
 
-    putResult = putEntry(exec, table.classForThis, entry, base, base, propertyName, value, slot);
+    putResult = putEntry(globalObject, table.classForThis, entry, base, base, propertyName, value, slot);
     return true;
 }
 
@@ -405,9 +405,9 @@ inline void reifyStaticProperties(VM& vm, const ClassInfo* classInfo, const Hash
     }
 }
 
-template<RawNativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(ExecState* state, EncodedJSValue, PropertyName propertyName)
+template<RawNativeFunction nativeFunction, int length> EncodedJSValue nonCachingStaticFunctionGetter(JSGlobalObject* globalObject, EncodedJSValue, PropertyName propertyName)
 {
-    return JSValue::encode(JSFunction::create(state->vm(), state->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
+    return JSValue::encode(JSFunction::create(globalObject->vm(), globalObject, length, propertyName.publicName(), nativeFunction));
 }
 
 } // namespace JSC

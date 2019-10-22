@@ -40,20 +40,20 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     readonly attribute boolean multiEntry;
     readonly attribute boolean unique;
 
-    [CallWith=ExecState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [CallWith=ExecState, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
+    [CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=GlobalObject, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
 
-    [CallWith=ExecState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
-    [CallWith=ExecState, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
+    [CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=GlobalObject, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
 
-    [CallWith=ExecState, MayThrowException] IDBRequest get(IDBKeyRange? key);
-    [CallWith=ExecState, MayThrowException] IDBRequest get(any key);
-    [CallWith=ExecState, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
-    [CallWith=ExecState, MayThrowException] IDBRequest getKey(any key);
-    [CallWith=ExecState, MayThrowException] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [CallWith=ExecState, MayThrowException] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
-    [CallWith=ExecState, MayThrowException] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
-    [CallWith=ExecState, MayThrowException] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
-    [CallWith=ExecState, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
-    [CallWith=ExecState, MayThrowException] IDBRequest count(any key);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest get(IDBKeyRange? key);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest get(any key);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getKey(any key);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getAll(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getAll(any key, optional [EnforceRange] unsigned long count);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(optional IDBKeyRange? range = null, optional [EnforceRange] unsigned long count);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest getAllKeys(any key, optional [EnforceRange] unsigned long count);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest count(any key);
 };

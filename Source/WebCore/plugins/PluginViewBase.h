@@ -39,7 +39,6 @@ namespace JSC {
     class CallFrame;
     class JSGlobalObject;
     class JSObject;
-    using ExecState = CallFrame;
 }
 
 namespace WebCore {

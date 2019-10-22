@@ -91,7 +91,7 @@ private:
     StructureRareData* m_structureRareData;
 };
 
-void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structure* ownStructure, JSString* value, PropertySlot toStringTagSymbolSlot)
+void StructureRareData::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, Structure* ownStructure, JSString* value, PropertySlot toStringTagSymbolSlot)
 {
     if (m_giveUpOnObjectToStringValueCache)
         return;
@@ -107,12 +107,12 @@ void StructureRareData::setObjectToStringValue(ExecState* exec, VM& vm, Structur
 
         // This will not create a condition for the current structure but that is good because we know the Symbol.toStringTag
         // is not on the ownStructure so we will transisition if one is added and this cache will no longer be used.
-        preparePrototypeChainForCaching(exec->lexicalGlobalObject(), ownStructure, toStringTagSymbolSlot.slotBase());
-        conditionSet = generateConditionsForPrototypePropertyHit(vm, this, exec, ownStructure, toStringTagSymbolSlot.slotBase(), vm.propertyNames->toStringTagSymbol.impl());
+        preparePrototypeChainForCaching(globalObject, ownStructure, toStringTagSymbolSlot.slotBase());
+        conditionSet = generateConditionsForPrototypePropertyHit(vm, this, globalObject, ownStructure, toStringTagSymbolSlot.slotBase(), vm.propertyNames->toStringTagSymbol.impl());
         ASSERT(!conditionSet.isValid() || conditionSet.hasOneSlotBaseCondition());
     } else if (toStringTagSymbolSlot.isUnset()) {
-        preparePrototypeChainForCaching(exec->lexicalGlobalObject(), ownStructure, nullptr);
-        conditionSet = generateConditionsForPropertyMiss(vm, this, exec, ownStructure, vm.propertyNames->toStringTagSymbol.impl());
+        preparePrototypeChainForCaching(globalObject, ownStructure, nullptr);
+        conditionSet = generateConditionsForPropertyMiss(vm, this, globalObject, ownStructure, vm.propertyNames->toStringTagSymbol.impl());
     } else
         return;
 

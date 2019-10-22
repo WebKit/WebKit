@@ -53,13 +53,13 @@ public:
         JSLockHolder lock(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        ExecState* exec = m_globalObject->globalExec();
+        JSGlobalObject* lexicalGlobalObject = m_globalObject.get();
 
         ScriptExecutionContext* context = m_globalObject->scriptExecutionContext();
         // We will fail to get the context if the frame has been detached.
         if (!context)
             return;
-        JSExecState::runTask(exec, m_task);
+        JSExecState::runTask(lexicalGlobalObject, m_task);
         scope.assertNoException();
     }
 

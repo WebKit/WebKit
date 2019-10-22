@@ -23,6 +23,7 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/Frame.h>
 #include <WebCore/JSNode.h>
@@ -234,12 +235,11 @@ JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* 
     auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
     auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
     JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
-    JSC::ExecState* exec = globalObject->globalExec();
     JSValueRef jsValue = nullptr;
     {
-        JSC::JSLockHolder lock(exec);
+        JSC::JSLockHolder lock(globalObject);
         if (WEBKIT_DOM_IS_NODE(domObject))
-            jsValue = toRef(exec, toJS(exec, globalObject, WebKit::core(WEBKIT_DOM_NODE(domObject))));
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, WebKit::core(WEBKIT_DOM_NODE(domObject))));
     }
 
     return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue).leakRef() : nullptr;

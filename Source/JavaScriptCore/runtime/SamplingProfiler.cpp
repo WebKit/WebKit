@@ -83,7 +83,7 @@ ALWAYS_INLINE static void reportStats()
 
 class FrameWalker {
 public:
-    FrameWalker(VM& vm, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
+    FrameWalker(VM& vm, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
         : m_vm(vm)
         , m_callFrame(callFrame)
         , m_entryFrame(vm.topEntryFrame)
@@ -179,9 +179,9 @@ protected:
         }
     }
 
-    bool isValidFramePointer(void* exec)
+    bool isValidFramePointer(void* callFrame)
     {
-        uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
+        uint8_t* fpCast = bitwise_cast<uint8_t*>(callFrame);
         for (auto& thread : m_vm.heap.machineThreads().threads(m_machineThreadsLocker)) {
             uint8_t* stackBase = static_cast<uint8_t*>(thread->stack().origin());
             uint8_t* stackLimit = static_cast<uint8_t*>(thread->stack().end());
@@ -203,7 +203,7 @@ protected:
     }
 
     VM& m_vm;
-    ExecState* m_callFrame;
+    CallFrame* m_callFrame;
     EntryFrame* m_entryFrame;
     const AbstractLocker& m_codeBlockSetLocker;
     const AbstractLocker& m_machineThreadsLocker;
@@ -216,7 +216,7 @@ class CFrameWalker : public FrameWalker {
 public:
     typedef FrameWalker Base;
 
-    CFrameWalker(VM& vm, void* machineFrame, ExecState* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
+    CFrameWalker(VM& vm, void* machineFrame, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const AbstractLocker& wasmCalleeLocker)
         : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleeLocker)
         , m_machineFrame(machineFrame)
     {
@@ -369,7 +369,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
             // While the JSC thread is suspended, we can't do things like malloc because the JSC thread
             // may be holding the malloc lock.
             void* machineFrame;
-            ExecState* callFrame;
+            CallFrame* callFrame;
             void* machinePC;
             bool topFrameIsLLInt = false;
             void* llintPC;
@@ -377,7 +377,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 PlatformRegisters registers;
                 m_jscExecutionThread->getRegisters(registers);
                 machineFrame = MachineContext::framePointer(registers);
-                callFrame = static_cast<ExecState*>(machineFrame);
+                callFrame = static_cast<CallFrame*>(machineFrame);
                 auto instructionPointer = MachineContext::instructionPointer(registers);
                 if (instructionPointer)
                     machinePC = instructionPointer->untaggedExecutableAddress();
@@ -755,15 +755,15 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
         return String();
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    ExecState* exec = callee->globalObject(vm)->globalExec();
+    JSGlobalObject* globalObject = callee->globalObject(vm);
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
         PropertyName propertyName(ident);
-        bool hasProperty = callee->getPropertySlot(exec, propertyName, slot);
+        bool hasProperty = callee->getPropertySlot(globalObject, propertyName, slot);
         scope.assertNoException();
         if (hasProperty) {
             if (slot.isValue()) {
-                JSValue nameValue = slot.getValue(exec, propertyName);
+                JSValue nameValue = slot.getValue(globalObject, propertyName);
                 if (isJSString(nameValue))
                     return asString(nameValue)->tryGetValue();
             }

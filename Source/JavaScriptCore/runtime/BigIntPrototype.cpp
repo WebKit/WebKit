@@ -97,14 +97,14 @@ static JSValue bigIntProtoFuncToStringImpl(JSGlobalObject* globalObject, CallFra
 
     JSBigInt* value = toThisBigIntValue(vm, callFrame->thisValue());
     if (!value)
-        return throwTypeError(callFrame, scope, "'this' value must be a BigInt or BigIntObject"_s);
+        return throwTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
 
     ASSERT(value);
 
-    int32_t radix = extractToStringRadixArgument(callFrame, callFrame->argument(0), scope);
+    int32_t radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, { });
 
-    String resultString = value->toString(callFrame, radix);
+    String resultString = value->toString(globalObject, radix);
     RETURN_IF_EXCEPTION(scope, { });
     scope.release();
     if (resultString.length() == 1)
@@ -130,7 +130,7 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncValueOf(JSGlobalObject* globalObject
         return JSValue::encode(value);
     
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(callFrame, scope, "'this' value must be a BigInt or BigIntObject"_s);
+    return throwVMTypeError(globalObject, scope, "'this' value must be a BigInt or BigIntObject"_s);
 }
 
 } // namespace JSC

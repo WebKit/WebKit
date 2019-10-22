@@ -48,7 +48,7 @@ public:
     static Ref<DebuggerCallFrame> create(VM&, CallFrame*);
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
-    ExecState* globalExec();
+    JSGlobalObject* globalObject();
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
@@ -56,7 +56,7 @@ public:
     int column() const { return m_position.m_column.zeroBasedInt(); }
     JS_EXPORT_PRIVATE const TextPosition& position() const { return m_position; }
 
-    JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject() const;
+    JS_EXPORT_PRIVATE JSGlobalObject* deprecatedVMEntryGlobalObject() const;
     JS_EXPORT_PRIVATE DebuggerScope* scope();
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;

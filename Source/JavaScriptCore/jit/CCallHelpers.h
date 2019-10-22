@@ -43,7 +43,6 @@ namespace JSC {
 
 class CallFrame;
 class Structure;
-using ExecState = CallFrame;
 namespace DFG {
 class RegisteredStructure;
 };
@@ -83,6 +82,15 @@ public:
 
         functor(GPRInfo::nonArgGPR0);
         poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
+    }
+
+    void prepareCallOperation(VM& vm)
+    {
+#if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64)) && (OS(LINUX) || OS(DARWIN))
+        UNUSED_PARAM(vm);
+#else
+        storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
+#endif
     }
 
 private:
@@ -651,7 +659,7 @@ public:
 #define FIRST_ARGUMENT_TYPE typename FunctionTraits<OperationType>::template ArgumentType<0>
 
     template<typename OperationType, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_same<FIRST_ARGUMENT_TYPE, ExecState*>::value> setupArguments(Args... args)
+    ALWAYS_INLINE std::enable_if_t<std::is_same<FIRST_ARGUMENT_TYPE, CallFrame*>::value> setupArguments(Args... args)
     {
 #if USE(JSVALUE64)
         // This only really works for 64-bit since jsvalue regs mess things up for 32-bit...
@@ -661,7 +669,7 @@ public:
     }
 
     template<typename OperationType, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<!std::is_same<FIRST_ARGUMENT_TYPE, ExecState*>::value> setupArguments(Args... args)
+    ALWAYS_INLINE std::enable_if_t<!std::is_same<FIRST_ARGUMENT_TYPE, CallFrame*>::value> setupArguments(Args... args)
     {
 #if USE(JSVALUE64)
         // This only really works for 64-bit since jsvalue regs mess things up for 32-bit...

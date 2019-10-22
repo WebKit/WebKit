@@ -44,18 +44,18 @@ static String rangeErrorString(double value, double min, double max)
     return makeString("Value ", value, " is outside the range [", min, ", ", max, ']');
 }
 
-static double enforceRange(ExecState& state, double x, double minimum, double maximum)
+static double enforceRange(JSGlobalObject& lexicalGlobalObject, double x, double minimum, double maximum)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (std::isnan(x) || std::isinf(x)) {
-        throwTypeError(&state, scope, rangeErrorString(x, minimum, maximum));
+        throwTypeError(&lexicalGlobalObject, scope, rangeErrorString(x, minimum, maximum));
         return 0;
     }
     x = trunc(x);
     if (x < minimum || x > maximum) {
-        throwTypeError(&state, scope, rangeErrorString(x, minimum, maximum));
+        throwTypeError(&lexicalGlobalObject, scope, rangeErrorString(x, minimum, maximum));
         return 0;
     }
     return x;
@@ -96,9 +96,9 @@ struct IntTypeLimits<uint16_t> {
 }
 
 template <typename T, IntegerConversionConfiguration configuration>
-static inline T toSmallerInt(ExecState& state, JSValue value)
+static inline T toSmallerInt(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     static_assert(std::is_signed<T>::value && std::is_integral<T>::value, "Should only be used for signed integral types");
@@ -113,7 +113,7 @@ static inline T toSmallerInt(ExecState& state, JSValue value)
         case IntegerConversionConfiguration::Normal:
             break;
         case IntegerConversionConfiguration::EnforceRange:
-            throwTypeError(&state, scope);
+            throwTypeError(&lexicalGlobalObject, scope);
             return 0;
         case IntegerConversionConfiguration::Clamp:
             return d < LimitsTrait::minValue ? LimitsTrait::minValue : LimitsTrait::maxValue;
@@ -122,14 +122,14 @@ static inline T toSmallerInt(ExecState& state, JSValue value)
         return static_cast<T>(d > LimitsTrait::maxValue ? d - LimitsTrait::numberOfValues : d);
     }
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
 
     switch (configuration) {
     case IntegerConversionConfiguration::Normal:
         break;
     case IntegerConversionConfiguration::EnforceRange:
-        return enforceRange(state, x, LimitsTrait::minValue, LimitsTrait::maxValue);
+        return enforceRange(lexicalGlobalObject, x, LimitsTrait::minValue, LimitsTrait::maxValue);
     case IntegerConversionConfiguration::Clamp:
         return std::isnan(x) ? 0 : clampTo<T>(x);
     }
@@ -144,9 +144,9 @@ static inline T toSmallerInt(ExecState& state, JSValue value)
 }
 
 template <typename T, IntegerConversionConfiguration configuration>
-static inline T toSmallerUInt(ExecState& state, JSValue value)
+static inline T toSmallerUInt(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     static_assert(std::is_unsigned<T>::value && std::is_integral<T>::value, "Should only be used for unsigned integral types");
@@ -161,21 +161,21 @@ static inline T toSmallerUInt(ExecState& state, JSValue value)
         case IntegerConversionConfiguration::Normal:
             return static_cast<T>(d);
         case IntegerConversionConfiguration::EnforceRange:
-            throwTypeError(&state, scope);
+            throwTypeError(&lexicalGlobalObject, scope);
             return 0;
         case IntegerConversionConfiguration::Clamp:
             return LimitsTrait::maxValue;
         }
     }
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
 
     switch (configuration) {
     case IntegerConversionConfiguration::Normal:
         break;
     case IntegerConversionConfiguration::EnforceRange:
-        return enforceRange(state, x, 0, LimitsTrait::maxValue);
+        return enforceRange(lexicalGlobalObject, x, 0, LimitsTrait::maxValue);
     case IntegerConversionConfiguration::Clamp:
         return std::isnan(x) ? 0 : clampTo<T>(x);
     }
@@ -187,170 +187,170 @@ static inline T toSmallerUInt(ExecState& state, JSValue value)
     return static_cast<T>(fmod(x, LimitsTrait::numberOfValues));
 }
 
-template<> int8_t convertToIntegerEnforceRange<int8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int8_t convertToIntegerEnforceRange<int8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t, IntegerConversionConfiguration::EnforceRange>(state, value);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::EnforceRange>(lexicalGlobalObject, value);
 }
 
-template<> uint8_t convertToIntegerEnforceRange<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint8_t convertToIntegerEnforceRange<uint8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::EnforceRange>(state, value);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::EnforceRange>(lexicalGlobalObject, value);
 }
 
-template<> int8_t convertToIntegerClamp<int8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int8_t convertToIntegerClamp<int8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t, IntegerConversionConfiguration::Clamp>(state, value);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::Clamp>(lexicalGlobalObject, value);
 }
 
-template<> uint8_t convertToIntegerClamp<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint8_t convertToIntegerClamp<uint8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Clamp>(state, value);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Clamp>(lexicalGlobalObject, value);
 }
 
-template<> int8_t convertToInteger<int8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int8_t convertToInteger<int8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int8_t, IntegerConversionConfiguration::Normal>(state, value);
+    return toSmallerInt<int8_t, IntegerConversionConfiguration::Normal>(lexicalGlobalObject, value);
 }
 
-template<> uint8_t convertToInteger<uint8_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint8_t convertToInteger<uint8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Normal>(state, value);
+    return toSmallerUInt<uint8_t, IntegerConversionConfiguration::Normal>(lexicalGlobalObject, value);
 }
 
-template<> int16_t convertToIntegerEnforceRange<int16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int16_t convertToIntegerEnforceRange<int16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t, IntegerConversionConfiguration::EnforceRange>(state, value);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::EnforceRange>(lexicalGlobalObject, value);
 }
 
-template<> uint16_t convertToIntegerEnforceRange<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint16_t convertToIntegerEnforceRange<uint16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::EnforceRange>(state, value);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::EnforceRange>(lexicalGlobalObject, value);
 }
 
-template<> int16_t convertToIntegerClamp<int16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int16_t convertToIntegerClamp<int16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t, IntegerConversionConfiguration::Clamp>(state, value);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::Clamp>(lexicalGlobalObject, value);
 }
 
-template<> uint16_t convertToIntegerClamp<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint16_t convertToIntegerClamp<uint16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Clamp>(state, value);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Clamp>(lexicalGlobalObject, value);
 }
 
-template<> int16_t convertToInteger<int16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int16_t convertToInteger<int16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerInt<int16_t, IntegerConversionConfiguration::Normal>(state, value);
+    return toSmallerInt<int16_t, IntegerConversionConfiguration::Normal>(lexicalGlobalObject, value);
 }
 
-template<> uint16_t convertToInteger<uint16_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint16_t convertToInteger<uint16_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Normal>(state, value);
+    return toSmallerUInt<uint16_t, IntegerConversionConfiguration::Normal>(lexicalGlobalObject, value);
 }
 
-template<> int32_t convertToIntegerEnforceRange<int32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int32_t convertToIntegerEnforceRange<int32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
-    return enforceRange(state, x, kMinInt32, kMaxInt32);
+    return enforceRange(lexicalGlobalObject, x, kMinInt32, kMaxInt32);
 }
 
-template<> uint32_t convertToIntegerEnforceRange<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint32_t convertToIntegerEnforceRange<uint32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
-    return enforceRange(state, x, 0, kMaxUInt32);
+    return enforceRange(lexicalGlobalObject, x, 0, kMaxUInt32);
 }
 
-template<> int32_t convertToIntegerClamp<int32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int32_t convertToIntegerClamp<int32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     return std::isnan(x) ? 0 : clampTo<int32_t>(x);
 }
 
-template<> uint32_t convertToIntegerClamp<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint32_t convertToIntegerClamp<uint32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     return std::isnan(x) ? 0 : clampTo<uint32_t>(x);
 }
 
-template<> int32_t convertToInteger<int32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int32_t convertToInteger<int32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return value.toInt32(&state);
+    return value.toInt32(&lexicalGlobalObject);
 }
 
-template<> uint32_t convertToInteger<uint32_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint32_t convertToInteger<uint32_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return value.toUInt32(&state);
+    return value.toUInt32(&lexicalGlobalObject);
 }
 
-template<> int64_t convertToIntegerEnforceRange<int64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int64_t convertToIntegerEnforceRange<int64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
-    return enforceRange(state, x, -kJSMaxInteger, kJSMaxInteger);
+    return enforceRange(lexicalGlobalObject, x, -kJSMaxInteger, kJSMaxInteger);
 }
 
-template<> uint64_t convertToIntegerEnforceRange<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint64_t convertToIntegerEnforceRange<uint64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, 0);
-    return enforceRange(state, x, 0, kJSMaxInteger);
+    return enforceRange(lexicalGlobalObject, x, 0, kJSMaxInteger);
 }
 
-template<> int64_t convertToIntegerClamp<int64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int64_t convertToIntegerClamp<int64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     return std::isnan(x) ? 0 : static_cast<int64_t>(std::min<double>(std::max<double>(x, -kJSMaxInteger), kJSMaxInteger));
 }
 
-template<> uint64_t convertToIntegerClamp<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint64_t convertToIntegerClamp<uint64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
     return std::isnan(x) ? 0 : static_cast<uint64_t>(std::min<double>(std::max<double>(x, 0), kJSMaxInteger));
 }
 
-template<> int64_t convertToInteger<int64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> int64_t convertToInteger<int64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isInt32())
         return value.asInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
     unsigned long long n;
@@ -358,12 +358,12 @@ template<> int64_t convertToInteger<int64_t>(JSC::ExecState& state, JSC::JSValue
     return n;
 }
 
-template<> uint64_t convertToInteger<uint64_t>(JSC::ExecState& state, JSC::JSValue value)
+template<> uint64_t convertToInteger<uint64_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
     if (value.isUInt32())
         return value.asUInt32();
 
-    double x = value.toNumber(&state);
+    double x = value.toNumber(&lexicalGlobalObject);
 
     // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
     unsigned long long n;

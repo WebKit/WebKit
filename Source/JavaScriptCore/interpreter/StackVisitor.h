@@ -45,8 +45,6 @@ class ClonedArguments;
 class Register;
 class RegisterAtOffsetList;
 
-using ExecState = CallFrame;
-
 class StackVisitor {
 public:
     class Frame {

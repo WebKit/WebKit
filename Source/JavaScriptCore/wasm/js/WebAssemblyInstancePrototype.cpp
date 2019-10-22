@@ -49,13 +49,13 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance",
  @end
  */
 
-static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(ExecState* exec, VM& vm, JSValue v)
+static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(vm, v);
     if (!result) {
-        throwException(exec, throwScope, 
-            createTypeError(exec, "expected |this| value to be an instance of WebAssembly.Instance"_s));
+        throwException(globalObject, throwScope, 
+            createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Instance"_s));
         return nullptr;
     }
     return result;
@@ -66,7 +66,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstanceProtoFuncExports(JSGlobal
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyInstance* instance = getInstance(callFrame, vm, callFrame->thisValue()); 
+    JSWebAssemblyInstance* instance = getInstance(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(instance->moduleNamespaceObject());
 }

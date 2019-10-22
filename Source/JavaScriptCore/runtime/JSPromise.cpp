@@ -90,13 +90,12 @@ bool JSPromise::isHandled(VM&) const
     return flags & isHandledFlag;
 }
 
-JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)
+JSPromise* JSPromise::resolve(JSGlobalObject* globalObject, JSValue value)
 {
-    auto* exec = globalObject.globalExec();
-    auto& vm = exec->vm();
+    auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* promiseResolveFunction = globalObject.promiseResolveFunction();
+    auto* promiseResolveFunction = globalObject->promiseResolveFunction();
     CallData callData;
     auto callType = JSC::getCallData(vm, promiseResolveFunction, callData);
     ASSERT(callType != CallType::None);
@@ -104,7 +103,7 @@ JSPromise* JSPromise::resolve(JSGlobalObject& globalObject, JSValue value)
     MarkedArgumentBuffer arguments;
     arguments.append(value);
     ASSERT(!arguments.hasOverflowed());
-    auto result = call(exec, promiseResolveFunction, callType, callData, globalObject.promiseConstructor(), arguments);
+    auto result = call(globalObject, promiseResolveFunction, callType, callData, globalObject->promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(result.inherits<JSPromise>(vm));
     return jsCast<JSPromise*>(result);

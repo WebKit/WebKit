@@ -37,262 +37,264 @@ struct OSRExitBase;
 
 extern "C" {
 
-JSCell* JIT_OPERATION operationStringFromCharCode(ExecState*, int32_t)  WTF_INTERNAL; 
-EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(ExecState*, EncodedJSValue)  WTF_INTERNAL;
+JSCell* JIT_OPERATION operationStringFromCharCode(JSGlobalObject*, int32_t)  WTF_INTERNAL; 
+EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(JSGlobalObject*, EncodedJSValue)  WTF_INTERNAL;
 
 // These routines provide callbacks out to C++ implementations of operations too complex to JIT.
-JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState*, JSGlobalObject*, EncodedJSValue encodedTarget) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationToObject(ExecState*, JSGlobalObject*, EncodedJSValue encodedTarget, UniquedStringImpl*) WTF_INTERNAL;
-JSArray* JIT_OPERATION operationObjectKeys(ExecState*, EncodedJSValue) WTF_INTERNAL;
-JSArray* JIT_OPERATION operationObjectKeysObject(ExecState*, JSObject*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationObjectCreate(ExecState*, EncodedJSValue) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationObjectCreateObject(ExecState*, JSObject*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateThis(ExecState*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreatePromise(ExecState*, JSObject* constructor, JSGlobalObject*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateInternalPromise(ExecState*, JSObject* constructor, JSGlobalObject*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateGenerator(ExecState*, JSObject* constructor, JSGlobalObject*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateAsyncGenerator(ExecState*, JSObject* constructor, JSGlobalObject*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationToThis(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueMod(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValueDiv(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationValuePow(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-double JIT_OPERATION operationArithAbs(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-uint32_t JIT_OPERATION operationArithClz32(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-double JIT_OPERATION operationArithFRound(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
-double JIT_OPERATION operationArithSqrt(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCallObjectConstructor(JSGlobalObject*, EncodedJSValue encodedTarget) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationToObject(JSGlobalObject*, EncodedJSValue encodedTarget, UniquedStringImpl*) WTF_INTERNAL;
+JSArray* JIT_OPERATION operationObjectKeys(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+JSArray* JIT_OPERATION operationObjectKeysObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationObjectCreate(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationObjectCreateObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateThis(JSGlobalObject*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreatePromise(JSGlobalObject*, JSObject* constructor) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateInternalPromise(JSGlobalObject*, JSObject* constructor) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateGenerator(JSGlobalObject*, JSObject* constructor) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateAsyncGenerator(JSGlobalObject*, JSObject* constructor) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationToThis(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationToThisStrict(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueMod(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitNot(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitAnd(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitOr(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitXor(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitLShift(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitRShift(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitURShift(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueAddNotNumber(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueDiv(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValuePow(JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+double JIT_OPERATION operationArithAbs(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+uint32_t JIT_OPERATION operationArithClz32(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+double JIT_OPERATION operationArithFRound(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+double JIT_OPERATION operationArithSqrt(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
-double JIT_OPERATION operationArith##capitalizedName(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+double JIT_OPERATION operationArith##capitalizedName(JSGlobalObject*, EncodedJSValue encodedOp1) WTF_INTERNAL;
     FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
 
-EncodedJSValue JIT_OPERATION operationArithRound(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArithFloor(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArithCeil(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArithTrunc(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState*, JSCell*, EncodedJSValue encodedProperty) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValObjectInt(ExecState*, JSObject*, int32_t) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValStringInt(ExecState*, JSString*, int32_t) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValObjectString(ExecState*, JSCell*, JSCell* string) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(ExecState*, JSCell*, JSCell* symbol) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationToNumber(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetPrototypeOf(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState*, JSObject*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
-size_t JIT_OPERATION operationHasIndexedPropertyByInt(ExecState*, JSCell*, int32_t, int32_t);
-JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, EncodedJSValue);
-JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);
-JSCell* JIT_OPERATION operationNewRegexpWithLastIndex(ExecState*, JSCell*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
-char* JIT_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewArrayWithSize(ExecState*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState*, Structure*, int32_t, int32_t, Butterfly*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt8ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt16ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint16ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat32ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat64ArrayWithSize(ExecState*, Structure*, int32_t, char*) WTF_INTERNAL;
-char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellNonStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellStringStrict(ExecState*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellStringNonStrict(ExecState*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellSymbolStrict(ExecState*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValCellSymbolNonStrict(ExecState*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellNonStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellStringStrict(ExecState*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellStringNonStrict(ExecState*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellSymbolStrict(ExecState*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(ExecState*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState*, JSObject*, int32_t index, double value) WTF_INTERNAL;
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState*, JSObject*, int32_t index, double value) WTF_INTERNAL;
-void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(ExecState*, JSObject*, int32_t index, double value) WTF_INTERNAL;
-void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(ExecState*, JSObject*, int32_t index, double value) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdWithThis(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
-void JIT_OPERATION operationPutByIdWithThisStrict(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValWithThis(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationPutByValWithThisStrict(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-void JIT_OPERATION operationDefineDataProperty(ExecState*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineDataPropertyString(ExecState*, JSObject*, JSString*, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineDataPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineDataPropertySymbol(ExecState*, JSObject*, Symbol*, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineAccessorProperty(ExecState*, JSObject*, EncodedJSValue, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineAccessorPropertyString(ExecState*, JSObject*, JSString*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineAccessorPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationDefineAccessorPropertySymbol(ExecState*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState*, double value, JSArray*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(ExecState*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPop(ExecState*, JSArray*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState*, JSArray*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(ExecState*, JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(ExecState*, JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArithRound(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArithFloor(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArithCeil(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArithTrunc(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByVal(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValObjectInt(JSGlobalObject*, JSObject*, int32_t) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValStringInt(JSGlobalObject*, JSString*, int32_t) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValObjectString(JSGlobalObject*, JSCell*, JSCell* string) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(JSGlobalObject*, JSCell*, JSCell* symbol) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationToPrimitive(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationHasGenericProperty(JSGlobalObject*, EncodedJSValue, JSCell*);
+size_t JIT_OPERATION operationHasIndexedPropertyByInt(JSGlobalObject*, JSCell*, int32_t, int32_t);
+JSCell* JIT_OPERATION operationGetPropertyEnumerator(JSGlobalObject*, EncodedJSValue);
+JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(JSGlobalObject*, JSCell*);
+JSCell* JIT_OPERATION operationToIndexString(JSGlobalObject*, int32_t);
+JSCell* JIT_OPERATION operationNewRegexpWithLastIndex(JSGlobalObject*, JSCell*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewArray(JSGlobalObject*, Structure*, void*, size_t) WTF_INTERNAL;
+char* JIT_OPERATION operationNewEmptyArray(VM*, Structure*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewArrayWithSize(JSGlobalObject*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewArrayWithSizeAndHint(JSGlobalObject*, Structure*, int32_t, int32_t, Butterfly*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt8ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt16ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt32ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint16ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint32ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat32ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat64ArrayWithSize(JSGlobalObject*, Structure*, int32_t, char*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(JSGlobalObject*, Structure*, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValNonStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellStrict(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellNonStrict(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellStringStrict(JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellStringNonStrict(JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellSymbolStrict(JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValCellSymbolNonStrict(JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectNonStrict(JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellStrict(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellNonStrict(JSGlobalObject*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellStringStrict(JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellStringNonStrict(JSGlobalObject*, JSCell*, JSCell* string, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellSymbolStrict(JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(JSGlobalObject*, JSCell*, JSCell* symbol, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, EncodedJSValue encodedValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject*, JSObject*, int32_t index, double value) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValWithThis(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValWithThisStrict(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataProperty(JSGlobalObject*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertyString(JSGlobalObject*, JSObject*, JSString*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertyStringIdent(JSGlobalObject*, JSObject*, UniquedStringImpl*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertySymbol(JSGlobalObject*, JSObject*, Symbol*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorProperty(JSGlobalObject*, JSObject*, EncodedJSValue, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertyString(JSGlobalObject*, JSObject*, JSString*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertyStringIdent(JSGlobalObject*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertySymbol(JSGlobalObject*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPush(JSGlobalObject*, EncodedJSValue encodedValue, JSArray*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPushMultiple(JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPushDouble(JSGlobalObject*, double value, JSArray*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(JSGlobalObject*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPop(JSGlobalObject*, JSArray*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(JSGlobalObject*, JSArray*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExecString(JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExec(JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(JSGlobalObject*, RegExp*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
-size_t JIT_OPERATION operationRegExpTestString(ExecState*, JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
-size_t JIT_OPERATION operationRegExpTest(ExecState*, JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
-size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationSubBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationMulBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationModBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationDivBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationPowBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitAndBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitNotBigInt(ExecState*, JSCell* op1) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitOrBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitLShiftBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationAddBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitRShiftBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationBitXorBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
-size_t JIT_OPERATION operationSameValue(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);
-JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState*, Structure*, uint32_t length, uint32_t minCapacity);
-JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);
-JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment*);
-JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);
-JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee);
-JSCell* JIT_OPERATION operationCreateRest(ExecState*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize);
-JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState*, Structure*, JSCell*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationSetAdd(ExecState*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationMapSet(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationWeakSetAdd(ExecState*, JSCell*, JSCell*, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationWeakMapSet(ExecState*, JSCell*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTestString(JSGlobalObject*, RegExpObject*, JSString*) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTest(JSGlobalObject*, RegExpObject*, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationRegExpTestGeneric(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareStrictEqCell(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationSubBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationMulBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationModBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationDivBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationPowBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitAndBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitNotBigInt(JSGlobalObject*, JSCell* op1) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitOrBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitLShiftBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationAddBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitRShiftBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationBitXorBigInt(JSGlobalObject*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+size_t JIT_OPERATION operationSameValue(JSGlobalObject*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateActivationDirect(VM*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);
+JSCell* JIT_OPERATION operationCreateDirectArguments(VM*, Structure*, uint32_t length, uint32_t minCapacity);
+JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);
+JSCell* JIT_OPERATION operationCreateScopedArguments(JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment*);
+JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount);
+JSCell* JIT_OPERATION operationCreateClonedArguments(JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee);
+JSCell* JIT_OPERATION operationCreateRest(JSGlobalObject*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize);
+JSCell* JIT_OPERATION operationNewArrayBuffer(VM*, Structure*, JSCell*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationSetAdd(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationMapSet(JSGlobalObject*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationWeakSetAdd(VM*, JSCell*, JSCell*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationWeakMapSet(VM*, JSCell*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
-size_t JIT_OPERATION operationObjectIsObject(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
-size_t JIT_OPERATION operationObjectIsFunction(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationTypeOfObject(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
-int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
-char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(ExecState*) WTF_INTERNAL;
-char* JIT_OPERATION operationAllocateSimplePropertyStorage(ExecState*, size_t newSize) WTF_INTERNAL;
-char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(ExecState*, JSObject*) WTF_INTERNAL;
-char* JIT_OPERATION operationAllocateComplexPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;
-char* JIT_OPERATION operationEnsureInt32(ExecState*, JSCell*);
-char* JIT_OPERATION operationEnsureDouble(ExecState*, JSCell*);
-char* JIT_OPERATION operationEnsureContiguous(ExecState*, JSCell*);
-char* JIT_OPERATION operationEnsureArrayStorage(ExecState*, JSCell*);
-StringImpl* JIT_OPERATION operationResolveRope(ExecState*, JSString*);
-JSString* JIT_OPERATION operationSingleCharacterString(ExecState*, int32_t);
+size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM*) WTF_INTERNAL;
+char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM*, size_t newSize) WTF_INTERNAL;
+char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(VM*, JSObject*) WTF_INTERNAL;
+char* JIT_OPERATION operationAllocateComplexPropertyStorage(VM*, JSObject*, size_t newSize) WTF_INTERNAL;
+char* JIT_OPERATION operationEnsureInt32(VM*, JSCell*);
+char* JIT_OPERATION operationEnsureDouble(VM*, JSCell*);
+char* JIT_OPERATION operationEnsureContiguous(VM*, JSCell*);
+char* JIT_OPERATION operationEnsureArrayStorage(VM*, JSCell*);
+StringImpl* JIT_OPERATION operationResolveRope(JSGlobalObject*, JSString*);
+JSString* JIT_OPERATION operationSingleCharacterString(VM*, int32_t);
 
-JSCell* JIT_OPERATION operationStringSubstr(ExecState*, JSCell*, int32_t, int32_t);
-JSCell* JIT_OPERATION operationStringSlice(ExecState*, JSCell*, int32_t, int32_t);
-JSString* JIT_OPERATION operationStringValueOf(ExecState*, EncodedJSValue);
-JSString* JIT_OPERATION operationToLowerCase(ExecState*, JSString*, uint32_t);
+JSCell* JIT_OPERATION operationStringSubstr(JSGlobalObject*, JSCell*, int32_t, int32_t);
+JSCell* JIT_OPERATION operationStringSlice(JSGlobalObject*, JSCell*, int32_t, int32_t);
+JSString* JIT_OPERATION operationStringValueOf(JSGlobalObject*, EncodedJSValue);
+JSString* JIT_OPERATION operationToLowerCase(JSGlobalObject*, JSString*, uint32_t);
 
-char* JIT_OPERATION operationInt32ToString(ExecState*, int32_t, int32_t);
-char* JIT_OPERATION operationInt52ToString(ExecState*, int64_t, int32_t);
-char* JIT_OPERATION operationDoubleToString(ExecState*, double, int32_t);
-char* JIT_OPERATION operationInt32ToStringWithValidRadix(ExecState*, int32_t, int32_t);
-char* JIT_OPERATION operationInt52ToStringWithValidRadix(ExecState*, int64_t, int32_t);
-char* JIT_OPERATION operationDoubleToStringWithValidRadix(ExecState*, double, int32_t);
+char* JIT_OPERATION operationInt32ToString(JSGlobalObject*, int32_t, int32_t);
+char* JIT_OPERATION operationInt52ToString(JSGlobalObject*, int64_t, int32_t);
+char* JIT_OPERATION operationDoubleToString(JSGlobalObject*, double, int32_t);
+char* JIT_OPERATION operationInt32ToStringWithValidRadix(JSGlobalObject*, int32_t, int32_t);
+char* JIT_OPERATION operationInt52ToStringWithValidRadix(JSGlobalObject*, int64_t, int32_t);
+char* JIT_OPERATION operationDoubleToStringWithValidRadix(JSGlobalObject*, double, int32_t);
 
-int32_t JIT_OPERATION operationMapHash(ExecState*, EncodedJSValue input);
-JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
-JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState*, JSCell*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationMapHash(JSGlobalObject*, EncodedJSValue input);
+JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);
+JSCell* JIT_OPERATION operationJSSetFindBucket(JSGlobalObject*, JSCell*, EncodedJSValue, int32_t);
 
-EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState*, EncodedJSValue);
-EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState*, JSString*);
-EncodedJSValue JIT_OPERATION operationParseIntString(ExecState*, JSString*, int32_t);
-EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState*, EncodedJSValue, int32_t);
+EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(JSGlobalObject*, EncodedJSValue);
+EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(JSGlobalObject*, JSString*);
+EncodedJSValue JIT_OPERATION operationParseIntString(JSGlobalObject*, JSString*, int32_t);
+EncodedJSValue JIT_OPERATION operationParseIntGeneric(JSGlobalObject*, EncodedJSValue, int32_t);
 
-Symbol* JIT_OPERATION operationNewSymbol(ExecState*);
-Symbol* JIT_OPERATION operationNewSymbolWithDescription(ExecState*, JSString*);
-JSCell* JIT_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
-JSString* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
-JSString* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);
-JSString* JIT_OPERATION operationCallStringConstructorOnCell(ExecState*, JSCell*);
-JSString* JIT_OPERATION operationCallStringConstructor(ExecState*, EncodedJSValue);
-JSString* JIT_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
-JSString* JIT_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
-JSString* JIT_OPERATION operationStrCat2(ExecState*, EncodedJSValue, EncodedJSValue);
-JSString* JIT_OPERATION operationStrCat3(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
-char* JIT_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
-char* JIT_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
-int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState*, size_t tableIndex, JSString*);
+Symbol* JIT_OPERATION operationNewSymbol(VM*);
+Symbol* JIT_OPERATION operationNewSymbolWithDescription(JSGlobalObject*, JSString*);
+JSCell* JIT_OPERATION operationNewStringObject(VM*, JSString*, Structure*);
+JSString* JIT_OPERATION operationToStringOnCell(JSGlobalObject*, JSCell*);
+JSString* JIT_OPERATION operationToString(JSGlobalObject*, EncodedJSValue);
+JSString* JIT_OPERATION operationCallStringConstructorOnCell(JSGlobalObject*, JSCell*);
+JSString* JIT_OPERATION operationCallStringConstructor(JSGlobalObject*, EncodedJSValue);
+JSString* JIT_OPERATION operationMakeRope2(JSGlobalObject*, JSString*, JSString*);
+JSString* JIT_OPERATION operationMakeRope3(JSGlobalObject*, JSString*, JSString*, JSString*);
+JSString* JIT_OPERATION operationStrCat2(JSGlobalObject*, EncodedJSValue, EncodedJSValue);
+JSString* JIT_OPERATION operationStrCat3(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
+char* JIT_OPERATION operationFindSwitchImmTargetForDouble(VM*, EncodedJSValue, size_t tableIndex);
+char* JIT_OPERATION operationSwitchString(JSGlobalObject*, size_t tableIndex, JSString*);
+int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject*, size_t tableIndex, JSString*);
 uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl*, StringImpl*);
 uintptr_t JIT_OPERATION operationCompareStringImplLessEq(StringImpl*, StringImpl*);
 uintptr_t JIT_OPERATION operationCompareStringImplGreater(StringImpl*, StringImpl*);
 uintptr_t JIT_OPERATION operationCompareStringImplGreaterEq(StringImpl*, StringImpl*);
-uintptr_t JIT_OPERATION operationCompareStringLess(ExecState*, JSString*, JSString*);
-uintptr_t JIT_OPERATION operationCompareStringLessEq(ExecState*, JSString*, JSString*);
-uintptr_t JIT_OPERATION operationCompareStringGreater(ExecState*, JSString*, JSString*);
-uintptr_t JIT_OPERATION operationCompareStringGreaterEq(ExecState*, JSString*, JSString*);
-void JIT_OPERATION operationNotifyWrite(ExecState*, WatchpointSet*);
-void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState*) WTF_INTERNAL;
-int32_t JIT_OPERATION operationSizeOfVarargs(ExecState*, EncodedJSValue arguments, uint32_t firstVarArgOffset);
-void JIT_OPERATION operationLoadVarargs(ExecState*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum);
-void JIT_OPERATION operationThrowDFG(ExecState*, EncodedJSValue);
-void JIT_OPERATION operationThrowStaticError(ExecState*, JSString*, uint32_t);
+uintptr_t JIT_OPERATION operationCompareStringLess(JSGlobalObject*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringLessEq(JSGlobalObject*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringGreater(JSGlobalObject*, JSString*, JSString*);
+uintptr_t JIT_OPERATION operationCompareStringGreaterEq(JSGlobalObject*, JSString*, JSString*);
+void JIT_OPERATION operationNotifyWrite(VM*, WatchpointSet*);
+void JIT_OPERATION operationThrowStackOverflowForVarargs(JSGlobalObject*) WTF_INTERNAL;
+int32_t JIT_OPERATION operationSizeOfVarargs(JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset);
+void JIT_OPERATION operationLoadVarargs(JSGlobalObject*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum);
+void JIT_OPERATION operationThrowDFG(JSGlobalObject*, EncodedJSValue);
+void JIT_OPERATION operationThrowStaticError(JSGlobalObject*, JSString*, uint32_t);
 
-int32_t JIT_OPERATION operationHasOwnProperty(ExecState*, JSObject*, EncodedJSValue);
+int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject*, JSObject*, EncodedJSValue);
 
-int32_t JIT_OPERATION operationArrayIndexOfString(ExecState*, Butterfly*, JSString*, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValue(ExecState*, Butterfly*, EncodedJSValue, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValueDouble(ExecState*, Butterfly*, EncodedJSValue, int32_t);
-int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState*, Butterfly*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfString(JSGlobalObject*, Butterfly*, JSString*, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValue(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
+int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t);
 
-JSCell* JIT_OPERATION operationSpreadFastArray(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationSpreadGeneric(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState*, void*, uint32_t);
-JSCell* JIT_OPERATION operationCreateFixedArray(ExecState*, unsigned length);
+JSCell* JIT_OPERATION operationSpreadFastArray(JSGlobalObject*, JSCell*);
+JSCell* JIT_OPERATION operationSpreadGeneric(JSGlobalObject*, JSCell*);
+JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(JSGlobalObject*, void*, uint32_t);
+JSCell* JIT_OPERATION operationCreateFixedArray(JSGlobalObject*, unsigned length);
 
-JSCell* JIT_OPERATION operationResolveScope(ExecState*, JSScope*, UniquedStringImpl*);
-EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState*, JSScope*, UniquedStringImpl*);
-EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState*, JSObject* scope, UniquedStringImpl*, unsigned);
-void JIT_OPERATION operationPutDynamicVarStrict(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
-void JIT_OPERATION operationPutDynamicVarNonStrict(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
+JSCell* JIT_OPERATION operationResolveScope(JSGlobalObject*, JSScope*, UniquedStringImpl*);
+EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, UniquedStringImpl*);
+EncodedJSValue JIT_OPERATION operationGetDynamicVar(JSGlobalObject*, JSObject* scope, UniquedStringImpl*, unsigned);
+void JIT_OPERATION operationPutDynamicVarStrict(JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
+void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
 
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);
 
-int32_t JIT_OPERATION operationNumberIsInteger(ExecState*, EncodedJSValue);
+int32_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject*, EncodedJSValue);
 
-size_t JIT_OPERATION operationDefaultHasInstance(ExecState*, JSCell* value, JSCell* proto);
+size_t JIT_OPERATION operationDefaultHasInstance(JSGlobalObject*, JSCell* value, JSCell* proto);
 
-char* JIT_OPERATION operationNewRawObject(ExecState*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState*, Structure*, Butterfly*) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(ExecState*, Structure*, unsigned length, Butterfly*) WTF_INTERNAL;
+char* JIT_OPERATION operationNewRawObject(VM*, Structure*, int32_t, Butterfly*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM*, Structure*, Butterfly*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM*, Structure*, unsigned length, Butterfly*) WTF_INTERNAL;
 
-void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState*) WTF_INTERNAL;
+void JIT_OPERATION operationLinkDirectCall(CallLinkInfo*, JSFunction*) WTF_INTERNAL;
+
+void JIT_OPERATION operationProcessTypeProfilerLogDFG(VM*) WTF_INTERNAL;
 
 void JIT_OPERATION triggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*) WTF_INTERNAL;
 
@@ -301,14 +303,14 @@ double JIT_OPERATION operationRandom(JSGlobalObject*);
 #endif
 
 #if ENABLE(FTL_JIT)
-void JIT_OPERATION triggerTierUpNow(ExecState*) WTF_INTERNAL;
-void JIT_OPERATION triggerTierUpNowInLoop(ExecState*, unsigned bytecodeIndex) WTF_INTERNAL;
-char* JIT_OPERATION triggerOSREntryNow(ExecState*, unsigned bytecodeIndex) WTF_INTERNAL;
+void JIT_OPERATION triggerTierUpNow(VM*) WTF_INTERNAL;
+void JIT_OPERATION triggerTierUpNowInLoop(VM*, unsigned bytecodeIndex) WTF_INTERNAL;
+char* JIT_OPERATION triggerOSREntryNow(VM*, unsigned bytecodeIndex) WTF_INTERNAL;
 #endif // ENABLE(FTL_JIT)
 
 } // extern "C"
 
-inline P_JITOperation_EStZP operationNewTypedArrayWithSizeForType(TypedArrayType type)
+inline auto operationNewTypedArrayWithSizeForType(TypedArrayType type) -> decltype(&operationNewInt8ArrayWithSize)
 {
     switch (type) {
     case TypeInt8:
@@ -334,10 +336,10 @@ inline P_JITOperation_EStZP operationNewTypedArrayWithSizeForType(TypedArrayType
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
-inline P_JITOperation_EStJ operationNewTypedArrayWithOneArgumentForType(TypedArrayType type)
+inline auto operationNewTypedArrayWithOneArgumentForType(TypedArrayType type) -> decltype(&operationNewInt8ArrayWithOneArgument)
 {
     switch (type) {
     case TypeInt8:
@@ -363,7 +365,7 @@ inline P_JITOperation_EStJ operationNewTypedArrayWithOneArgumentForType(TypedArr
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 } } // namespace JSC::DFG

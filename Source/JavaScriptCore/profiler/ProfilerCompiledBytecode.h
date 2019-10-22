@@ -41,7 +41,7 @@ public:
     const OriginStack& originStack() const { return m_origin; }
     const CString& description() const { return m_description; }
     
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     OriginStack m_origin;

@@ -96,38 +96,38 @@ void Database::addCompilation(CodeBlock* codeBlock, Ref<Compilation>&& compilati
     m_compilationMap.set(codeBlock, WTFMove(compilation));
 }
 
-JSValue Database::toJS(ExecState* exec) const
+JSValue Database::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* result = constructEmptyObject(exec);
+    JSObject* result = constructEmptyObject(globalObject);
     
-    JSArray* bytecodes = constructEmptyArray(exec, 0);
+    JSArray* bytecodes = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_bytecodes.size(); ++i) {
-        auto value = m_bytecodes[i].toJS(exec);
+        auto value = m_bytecodes[i].toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        bytecodes->putDirectIndex(exec, i, value);
+        bytecodes->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->bytecodes, bytecodes);
     
-    JSArray* compilations = constructEmptyArray(exec, 0);
+    JSArray* compilations = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_compilations.size(); ++i) {
-        auto value = m_compilations[i]->toJS(exec);
+        auto value = m_compilations[i]->toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        compilations->putDirectIndex(exec, i, value);
+        compilations->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->compilations, compilations);
     
-    JSArray* events = constructEmptyArray(exec, 0);
+    JSArray* events = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
     for (unsigned i = 0; i < m_events.size(); ++i) {
-        auto value = m_events[i].toJS(exec);
+        auto value = m_events[i].toJS(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        events->putDirectIndex(exec, i, value);
+        events->putDirectIndex(globalObject, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
     result->putDirect(vm, vm.propertyNames->events, events);
@@ -141,9 +141,9 @@ String Database::toJSON() const
     JSGlobalObject* globalObject = JSGlobalObject::create(
         m_vm, JSGlobalObject::createStructure(m_vm, jsNull()));
 
-    auto value = toJS(globalObject->globalExec());
+    auto value = toJS(globalObject);
     RETURN_IF_EXCEPTION(scope, String());
-    RELEASE_AND_RETURN(scope, JSONStringify(globalObject->globalExec(), value, 0));
+    RELEASE_AND_RETURN(scope, JSONStringify(globalObject, value, 0));
 }
 
 bool Database::save(const char* filename) const

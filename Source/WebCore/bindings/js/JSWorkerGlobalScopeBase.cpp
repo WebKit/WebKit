@@ -143,12 +143,12 @@ void JSWorkerGlobalScopeBase::queueTaskToEventLoop(JSGlobalObject& object, Ref<J
     context.microtaskQueue().append(WTFMove(microtask));
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, WorkerGlobalScope& workerGlobalScope)
 {
-    return toJS(exec, workerGlobalScope);
+    return toJS(lexicalGlobalObject, workerGlobalScope);
 }
 
-JSValue toJS(ExecState*, WorkerGlobalScope& workerGlobalScope)
+JSValue toJS(JSGlobalObject*, WorkerGlobalScope& workerGlobalScope)
 {
     WorkerScriptController* script = workerGlobalScope.script();
     if (!script)

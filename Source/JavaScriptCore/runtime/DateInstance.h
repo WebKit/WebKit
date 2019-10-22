@@ -54,18 +54,18 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    const GregorianDateTime* gregorianDateTime(ExecState* exec) const
+    const GregorianDateTime* gregorianDateTime(JSGlobalObject* globalObject) const
     {
         if (m_data && m_data->m_gregorianDateTimeCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTime;
-        return calculateGregorianDateTime(exec);
+        return calculateGregorianDateTime(globalObject);
     }
 
-    const GregorianDateTime* gregorianDateTimeUTC(ExecState* exec) const
+    const GregorianDateTime* gregorianDateTimeUTC(JSGlobalObject* globalObject) const
     {
         if (m_data && m_data->m_gregorianDateTimeUTCCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTimeUTC;
-        return calculateGregorianDateTimeUTC(exec);
+        return calculateGregorianDateTimeUTC(globalObject);
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -74,8 +74,8 @@ public:
     }
 
 private:
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(JSGlobalObject*) const;
 
     double m_internalNumber { PNaN };
     mutable RefPtr<DateInstanceData> m_data;

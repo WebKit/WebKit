@@ -84,9 +84,9 @@ void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
-static double millisecondsFromComponents(ExecState* exec, const ArgList& args, WTF::TimeType timeType)
+static double millisecondsFromComponents(JSGlobalObject* globalObject, const ArgList& args, WTF::TimeType timeType)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Initialize doubleArguments with default values.
@@ -95,7 +95,7 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
     };
     unsigned numberOfUsedArguments = std::max(std::min<unsigned>(7U, args.size()), 1U);
     for (unsigned i = 0; i < numberOfUsedArguments; ++i) {
-        doubleArguments[i] = args.at(i).toNumber(exec);
+        doubleArguments[i] = args.at(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, 0);
     }
     for (unsigned i = 0; i < numberOfUsedArguments; ++i) {
@@ -116,9 +116,9 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
 }
 
 // ECMA 15.9.3
-JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, const ArgList& args)
+JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const ArgList& args)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     int numArgs = args.size();
 
@@ -131,21 +131,21 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
         if (auto* dateInstance = jsDynamicCast<DateInstance*>(vm, arg0))
             value = dateInstance->internalNumber();
         else {
-            JSValue primitive = arg0.toPrimitive(exec);
+            JSValue primitive = arg0.toPrimitive(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (primitive.isString()) {
-                String primitiveString = asString(primitive)->value(exec);
+                String primitiveString = asString(primitive)->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, nullptr);
-                value = parseDate(exec, vm, primitiveString);
+                value = parseDate(globalObject, vm, primitiveString);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             } else
-                value = primitive.toNumber(exec);
+                value = primitive.toNumber(globalObject);
         }
     } else
-        value = millisecondsFromComponents(exec, args, WTF::LocalTime);
+        value = millisecondsFromComponents(globalObject, args, WTF::LocalTime);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Structure* dateStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->dateStructure());
+    Structure* dateStructure = InternalFunction::createSubclassStructure(globalObject, globalObject->dateConstructor(), newTarget, globalObject->dateStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return DateInstance::create(vm, dateStructure, value);
@@ -154,7 +154,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructDate(callFrame, globalObject, callFrame->newTarget(), args));
+    return JSValue::encode(constructDate(globalObject, callFrame->newTarget(), args));
 }
 
 // ECMA 15.9.2
@@ -170,9 +170,9 @@ EncodedJSValue JSC_HOST_CALL dateParse(JSGlobalObject* globalObject, CallFrame* 
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String dateStr = callFrame->argument(0).toWTFString(callFrame);
+    String dateStr = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(parseDate(callFrame, vm, dateStr))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(parseDate(globalObject, vm, dateStr))));
 }
 
 JSValue dateNowImpl()
@@ -185,9 +185,9 @@ EncodedJSValue JSC_HOST_CALL dateNow(JSGlobalObject*, CallFrame*)
     return JSValue::encode(jsNumber(jsCurrentTime()));
 }
 
-EncodedJSValue JSC_HOST_CALL dateUTC(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL dateUTC(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    double ms = millisecondsFromComponents(callFrame, ArgList(callFrame), WTF::UTCTime);
+    double ms = millisecondsFromComponents(globalObject, ArgList(callFrame), WTF::UTCTime);
     return JSValue::encode(jsNumber(timeClip(ms)));
 }
 

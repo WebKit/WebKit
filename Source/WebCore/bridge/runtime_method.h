@@ -44,7 +44,7 @@ public:
         return subspaceForImpl(vm);
     }
     
-    static RuntimeMethod* create(ExecState*, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
+    static RuntimeMethod* create(JSGlobalObject*, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
         RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(vm.heap)) RuntimeMethod(globalObject, structure, method);
@@ -70,10 +70,10 @@ protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::Method*);
     void finishCreation(VM&, const String&);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
 
 private:
-    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue lengthGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     static IsoSubspace* subspaceForImpl(VM&);
 

@@ -161,7 +161,7 @@ void HTMLFrameElementBase::setLocation(const String& str)
         openURL(LockHistory::No, LockBackForwardList::No);
 }
 
-void HTMLFrameElementBase::setLocation(JSC::ExecState& state, const String& newLocation)
+void HTMLFrameElementBase::setLocation(JSC::JSGlobalObject& state, const String& newLocation)
 {
     if (WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(newLocation))) {
         if (!BindingSecurity::shouldAllowAccessToNode(state, contentDocument()))

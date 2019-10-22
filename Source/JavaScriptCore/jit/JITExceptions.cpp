@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-void genericUnwind(VM& vm, ExecState* callFrame)
+void genericUnwind(VM& vm, CallFrame* callFrame)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
     CallFrame* topJSCallFrame = vm.topJSCallFrame();

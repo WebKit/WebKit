@@ -66,7 +66,7 @@ public:
     void clearPreviousID();
 
     JSString* objectToStringValue() const;
-    void setObjectToStringValue(ExecState*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
+    void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);

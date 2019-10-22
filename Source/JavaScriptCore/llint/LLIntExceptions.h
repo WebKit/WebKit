@@ -30,7 +30,6 @@
 namespace JSC {
 
 class CallFrame;
-using ExecState = CallFrame;
 struct Instruction;
 
 namespace LLInt {
@@ -38,9 +37,9 @@ namespace LLInt {
 // Gives you a PC that you can tell the interpreter to go to, which when advanced
 // between 1 and 9 slots will give you an "instruction" that threads to the
 // interpreter's exception handler.
-Instruction* returnToThrow(ExecState*);
+Instruction* returnToThrow(VM&);
 
 // Use this when you're throwing to a call thunk.
-void* callToThrow(ExecState*);
+void* callToThrow(VM&);
 
 } } // namespace JSC::LLInt

@@ -3652,9 +3652,9 @@ HRESULT WebView::stringByEvaluatingJavaScriptFromString(_In_ BSTR script, // ass
     if (!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult.isString()) {
-        JSC::ExecState* exec = coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
-        JSC::JSLockHolder lock(exec);
-        *result = BString(scriptExecutionResult.getString(exec));
+        JSC::JSGlobalObject* lexicalGlobalObject = coreFrame->script().globalObject(mainThreadNormalWorld());
+        JSC::JSLockHolder lock(lexicalGlobalObject);
+        *result = BString(scriptExecutionResult.getString(lexicalGlobalObject));
     }
 
     return S_OK;
@@ -6554,14 +6554,14 @@ HRESULT WebView::reportException(_In_ JSContextRef context, _In_ JSValueRef exce
     if (!context || !exception)
         return E_INVALIDARG;
 
-    JSC::ExecState* execState = toJS(context);
-    JSC::JSLockHolder lock(execState);
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!toJSDOMWindow(execState->vm(), execState->lexicalGlobalObject()))
+    if (!toJSDOMWindow(globalObject->vm(), globalObject))
         return E_FAIL;
 
-    WebCore::reportException(execState, toJS(execState, exception));
+    WebCore::reportException(globalObject, toJS(globalObject, exception));
     return S_OK;
 }
 
@@ -6575,9 +6575,9 @@ HRESULT WebView::elementFromJS(_In_ JSContextRef context, _In_ JSValueRef nodeOb
     if (!context || !nodeObject)
         return E_INVALIDARG;
 
-    JSC::ExecState* exec = toJS(context);
-    JSC::JSLockHolder lock(exec);
-    Element* elt = JSElement::toWrapped(exec->vm(), toJS(exec, nodeObject));
+    JSC::JSGlobalObject* lexicalGlobalObject = toJS(context);
+    JSC::JSLockHolder lock(lexicalGlobalObject);
+    Element* elt = JSElement::toWrapped(lexicalGlobalObject->vm(), toJS(lexicalGlobalObject, nodeObject));
     if (!elt)
         return E_FAIL;
 

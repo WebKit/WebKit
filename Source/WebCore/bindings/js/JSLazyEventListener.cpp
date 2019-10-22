@@ -146,23 +146,23 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    ExecState* exec = globalObject->globalExec();
+    JSGlobalObject* lexicalGlobalObject = globalObject;
 
     MarkedArgumentBuffer args;
     args.append(jsNontrivialString(vm, m_eventParameterName));
-    args.append(jsStringWithCache(exec, m_code));
+    args.append(jsStringWithCache(lexicalGlobalObject, m_code));
     ASSERT(!args.hasOverflowed());
 
     // We want all errors to refer back to the line on which our attribute was
     // declared, regardless of any newlines in our JavaScript source text.
     int overrideLineNumber = m_sourcePosition.m_line.oneBasedInt();
 
-    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec,
-        exec->lexicalGlobalObject(), args, Identifier::fromString(vm, m_functionName),
+    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
+        lexicalGlobalObject, args, Identifier::fromString(vm, m_functionName),
         SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) },
         m_sourceURL, m_sourcePosition, overrideLineNumber);
     if (UNLIKELY(scope.exception())) {
-        reportCurrentException(exec);
+        reportCurrentException(lexicalGlobalObject);
         scope.clearException();
         return nullptr;
     }
@@ -173,12 +173,12 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         if (!wrapper()) {
             // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
             // FIXME: Should pass the global object associated with the node
-            setWrapper(vm, asObject(toJS(exec, globalObject, *m_originalNode)));
+            setWrapper(vm, asObject(toJS(lexicalGlobalObject, globalObject, *m_originalNode)));
         }
 
         // Add the event's home element to the scope
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
-        listenerAsFunction->setScope(vm, jsCast<JSNode*>(wrapper())->pushEventHandlerScope(exec, listenerAsFunction->scope()));
+        listenerAsFunction->setScope(vm, jsCast<JSNode*>(wrapper())->pushEventHandlerScope(lexicalGlobalObject, listenerAsFunction->scope()));
     }
 
     return jsFunction;

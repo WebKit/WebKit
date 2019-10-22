@@ -37,7 +37,7 @@
 namespace WebCore {
 using namespace JSC;
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TrackBase& track)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TrackBase& track)
 {
     switch (track.type()) {
     case TrackBase::BaseTrack:
@@ -46,11 +46,11 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TrackB
         break;
 
     case TrackBase::AudioTrack:
-        return wrap(state, globalObject, downcast<AudioTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, downcast<AudioTrack>(track));
     case TrackBase::VideoTrack:
-        return wrap(state, globalObject, downcast<VideoTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, downcast<VideoTrack>(track));
     case TrackBase::TextTrack:
-        return wrap(state, globalObject, downcast<TextTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, downcast<TextTrack>(track));
     }
 
     return jsNull();

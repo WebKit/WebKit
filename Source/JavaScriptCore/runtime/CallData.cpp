@@ -34,36 +34,36 @@
 
 namespace JSC {
 
-JSValue call(ExecState* exec, JSValue functionObject, const ArgList& args, const char* errorMessage)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const ArgList& args, const char* errorMessage)
 {
-    return call(exec, functionObject, functionObject, args, errorMessage);
+    return call(globalObject, functionObject, functionObject, args, errorMessage);
 }
 
-JSValue call(ExecState* exec, JSValue functionObject, JSValue thisValue, const ArgList& args, const char* errorMessage)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, const ArgList& args, const char* errorMessage)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
     CallType callType = getCallData(vm, functionObject, callData);
     if (callType == CallType::None)
-        return throwTypeError(exec, scope, errorMessage);
+        return throwTypeError(globalObject, scope, errorMessage);
 
-    RELEASE_AND_RETURN(scope, call(exec, functionObject, callType, callData, thisValue, args));
+    RELEASE_AND_RETURN(scope, call(globalObject, functionObject, callType, callData, thisValue, args));
 }
 
-JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ASSERT(callType == CallType::JS || callType == CallType::Host);
-    return vm.interpreter->executeCall(exec, asObject(functionObject), callType, callData, thisValue, args);
+    return vm.interpreter->executeCall(globalObject, asObject(functionObject), callType, callData, thisValue, args);
 }
 
-JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
+JSValue call(JSGlobalObject* globalObject, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSValue result = call(exec, functionObject, callType, callData, thisValue, args);
+    JSValue result = call(globalObject, functionObject, callType, callData, thisValue, args);
     if (UNLIKELY(scope.exception())) {
         returnedException = scope.exception();
         scope.clearException();
@@ -73,18 +73,18 @@ JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const C
     return result;
 }
 
-JSValue profiledCall(ExecState* exec, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
-    VM& vm = exec->vm();
-    ScriptProfilingScope profilingScope(vm.vmEntryGlobalObject(exec), reason);
-    return call(exec, functionObject, callType, callData, thisValue, args);
+    VM& vm = globalObject->vm();
+    ScriptProfilingScope profilingScope(vm.deprecatedVMEntryGlobalObject(globalObject), reason);
+    return call(globalObject, functionObject, callType, callData, thisValue, args);
 }
 
-JSValue profiledCall(ExecState* exec, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
+JSValue profiledCall(JSGlobalObject* globalObject, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
-    VM& vm = exec->vm();
-    ScriptProfilingScope profilingScope(vm.vmEntryGlobalObject(exec), reason);
-    return call(exec, functionObject, callType, callData, thisValue, args, returnedException);
+    VM& vm = globalObject->vm();
+    ScriptProfilingScope profilingScope(vm.deprecatedVMEntryGlobalObject(globalObject), reason);
+    return call(globalObject, functionObject, callType, callData, thisValue, args, returnedException);
 }
 
 } // namespace JSC

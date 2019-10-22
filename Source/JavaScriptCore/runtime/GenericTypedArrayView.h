@@ -118,7 +118,7 @@ public:
         return Adaptor::typeValue;
     }
 
-    JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) override;
+    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) override;
 };
 
 } // namespace JSC

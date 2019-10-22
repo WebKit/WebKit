@@ -81,7 +81,7 @@ struct CallInformation {
 
 class WasmCallingConvention {
 public:
-    static constexpr unsigned headerSizeInBytes = ExecState::headerSizeInRegisters * sizeof(Register);
+    static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
     WasmCallingConvention(Vector<Reg>&& gprs, Vector<Reg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
         : gprArgs(WTFMove(gprs))
@@ -166,7 +166,7 @@ public:
 
 class JSCallingConvention {
 public:
-    static constexpr unsigned headerSizeInBytes = ExecState::headerSizeInRegisters * sizeof(Register);
+    static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
     // vmEntryToWasm passes the JSWebAssemblyInstance corresponding to Wasm::Context*'s
     // instance as the first JS argument when we're not using fast TLS to hold the

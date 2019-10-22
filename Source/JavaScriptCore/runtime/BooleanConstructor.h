@@ -52,6 +52,6 @@ private:
     BooleanConstructor(VM&, Structure*);
 };
 
-JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject*, JSValue);
+JSObject* constructBooleanFromImmediateBoolean(JSGlobalObject*, JSValue);
 
 } // namespace JSC

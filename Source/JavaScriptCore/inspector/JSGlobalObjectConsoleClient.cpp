@@ -60,14 +60,14 @@ JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* 
 {
 }
 
-void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
     if (JSGlobalObjectConsoleClient::logToSystemConsole())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments.copyRef());
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, globalObject, arguments.copyRef());
 
     String message;
     arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), exec));
+    m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), globalObject));
 
     if (type == MessageType::Assert) {
         if (m_debuggerAgent)
@@ -75,17 +75,17 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     }
 }
 
-void JSGlobalObjectConsoleClient::count(ExecState* exec, const String& label)
+void JSGlobalObjectConsoleClient::count(JSGlobalObject* globalObject, const String& label)
 {
-    m_consoleAgent->count(exec, label);
+    m_consoleAgent->count(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::countReset(ExecState* exec, const String& label)
+void JSGlobalObjectConsoleClient::countReset(JSGlobalObject* globalObject, const String& label)
 {
-    m_consoleAgent->countReset(exec, label);
+    m_consoleAgent->countReset(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String& title)
+void JSGlobalObjectConsoleClient::profile(JSC::JSGlobalObject*, const String& title)
 {
     if (!m_consoleAgent->enabled())
         return;
@@ -106,7 +106,7 @@ void JSGlobalObjectConsoleClient::profile(JSC::ExecState*, const String& title)
     startConsoleProfile();
 }
 
-void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String& title)
+void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, const String& title)
 {
     if (!m_consoleAgent->enabled())
         return;
@@ -153,36 +153,36 @@ void JSGlobalObjectConsoleClient::stopConsoleProfile()
         m_debuggerAgent->setBreakpointsActive(ignored, m_profileRestoreBreakpointActiveValue);
 }
 
-void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)
+void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
 {
     m_consoleAgent->takeHeapSnapshot(title);
 }
 
-void JSGlobalObjectConsoleClient::time(ExecState* exec, const String& label)
+void JSGlobalObjectConsoleClient::time(JSGlobalObject* globalObject, const String& label)
 {
-    m_consoleAgent->startTiming(exec, label);
+    m_consoleAgent->startTiming(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::timeLog(ExecState* exec, const String& label, Ref<ScriptArguments>&& arguments)
+void JSGlobalObjectConsoleClient::timeLog(JSGlobalObject* globalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    m_consoleAgent->logTiming(exec, label, WTFMove(arguments));
+    m_consoleAgent->logTiming(globalObject, label, WTFMove(arguments));
 }
 
-void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& label)
+void JSGlobalObjectConsoleClient::timeEnd(JSGlobalObject* globalObject, const String& label)
 {
-    m_consoleAgent->stopTiming(exec, label);
+    m_consoleAgent->stopTiming(globalObject, label);
 }
 
-void JSGlobalObjectConsoleClient::timeStamp(ExecState*, Ref<ScriptArguments>&&)
+void JSGlobalObjectConsoleClient::timeStamp(JSGlobalObject*, Ref<ScriptArguments>&&)
 {
     // FIXME: JSContext inspection needs a timeline.
     warnUnimplemented("console.timeStamp"_s);
 }
 
-void JSGlobalObjectConsoleClient::record(ExecState*, Ref<ScriptArguments>&&) { }
-void JSGlobalObjectConsoleClient::recordEnd(ExecState*, Ref<ScriptArguments>&&) { }
+void JSGlobalObjectConsoleClient::record(JSGlobalObject*, Ref<ScriptArguments>&&) { }
+void JSGlobalObjectConsoleClient::recordEnd(JSGlobalObject*, Ref<ScriptArguments>&&) { }
 
-void JSGlobalObjectConsoleClient::screenshot(ExecState*, Ref<ScriptArguments>&&)
+void JSGlobalObjectConsoleClient::screenshot(JSGlobalObject*, Ref<ScriptArguments>&&)
 {
     warnUnimplemented("console.screenshot"_s);
 }

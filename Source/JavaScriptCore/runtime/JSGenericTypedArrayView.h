@@ -104,10 +104,10 @@ protected:
     JSGenericTypedArrayView(VM&, ConstructionContext&);
     
 public:
-    static JSGenericTypedArrayView* create(ExecState*, Structure*, unsigned length);
-    static JSGenericTypedArrayView* createWithFastVector(ExecState*, Structure*, unsigned length, void* vector);
-    static JSGenericTypedArrayView* createUninitialized(ExecState*, Structure*, unsigned length);
-    static JSGenericTypedArrayView* create(ExecState*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, unsigned length);
+    static JSGenericTypedArrayView* createWithFastVector(JSGlobalObject*, Structure*, unsigned length, void* vector);
+    static JSGenericTypedArrayView* createUninitialized(JSGlobalObject*, Structure*, unsigned length);
+    static JSGenericTypedArrayView* create(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
     static JSGenericTypedArrayView* create(VM&, Structure*, RefPtr<typename Adaptor::ViewType>&& impl);
     static JSGenericTypedArrayView* create(Structure*, JSGlobalObject*, RefPtr<typename Adaptor::ViewType>&& impl);
     
@@ -167,16 +167,16 @@ public:
         setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
-    bool setIndex(ExecState* exec, unsigned i, JSValue jsValue)
+    bool setIndex(JSGlobalObject* globalObject, unsigned i, JSValue jsValue)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(globalObject, jsValue);
         RETURN_IF_EXCEPTION(scope, false);
 
         if (isNeutered()) {
-            throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+            throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
             return false;
         }
 
@@ -187,7 +187,7 @@ public:
         return true;
     }
 
-    static ElementType toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue) { return toNativeFromValue<Adaptor>(exec, jsValue); }
+    static ElementType toAdaptorNativeFromValue(JSGlobalObject* globalObject, JSValue jsValue) { return toNativeFromValue<Adaptor>(globalObject, jsValue); }
 
     static Optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue jsValue) { return toNativeFromValueWithoutCoercion<Adaptor>(jsValue); }
 
@@ -219,11 +219,11 @@ public:
     
     // Like canSetQuickly, except: if it returns false, it will throw the
     // appropriate exception.
-    bool validateRange(ExecState*, unsigned offset, unsigned length);
+    bool validateRange(JSGlobalObject*, unsigned offset, unsigned length);
 
     // Returns true if successful, and false on error; if it returns false
     // then it will have thrown an exception.
-    bool set(ExecState*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
+    bool set(JSGlobalObject*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
     RefPtr<typename Adaptor::ViewType> possiblySharedTypedImpl();
     RefPtr<typename Adaptor::ViewType> unsharedTypedImpl();
@@ -272,18 +272,18 @@ public:
 protected:
     friend struct TypedArrayClassInfos;
 
-    static EncodedJSValue throwNeuteredTypedArrayTypeError(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue throwNeuteredTypedArrayTypeError(JSGlobalObject*, EncodedJSValue, PropertyName);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
 
-    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
-    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+    static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
     
-    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
     static size_t estimatedSize(JSCell*, VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -292,7 +292,7 @@ private:
     // Returns true if successful, and false on error; it will throw on error.
     template<typename OtherAdaptor>
     bool setWithSpecificType(
-        ExecState*, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>*,
+        JSGlobalObject*, unsigned offset, JSGenericTypedArrayView<OtherAdaptor>*,
         unsigned objectOffset, unsigned length, CopyType);
 
     // The ECMA 6 spec states that floating point Typed Arrays should have the following ordering:

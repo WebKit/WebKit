@@ -44,7 +44,7 @@ public:
     virtual Method* methodNamed(PropertyName, Instance*) const;
     virtual Field *fieldNamed(PropertyName, Instance*) const;
 
-    virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName);
+    virtual JSValue fallbackObject(JSGlobalObject*, Instance*, PropertyName);
     
     ClassStructPtr isa() { return _isa; }
     

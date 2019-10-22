@@ -40,6 +40,6 @@ typedef JSGenericTypedArrayView<Uint32Adaptor> JSUint32Array;
 typedef JSGenericTypedArrayView<Float32Adaptor> JSFloat32Array;
 typedef JSGenericTypedArrayView<Float64Adaptor> JSFloat64Array;
 
-JS_EXPORT_PRIVATE JSUint8Array* createUint8TypedArray(ExecState*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
+JS_EXPORT_PRIVATE JSUint8Array* createUint8TypedArray(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
 
 } // namespace JSC

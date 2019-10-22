@@ -204,31 +204,31 @@ struct GlobalObjectMethodTable {
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
     ShouldInterruptScriptBeforeTimeoutPtr shouldInterruptScriptBeforeTimeout;
 
-    typedef JSInternalPromise* (*ModuleLoaderImportModulePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);
+    typedef JSInternalPromise* (*ModuleLoaderImportModulePtr)(JSGlobalObject*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);
     ModuleLoaderImportModulePtr moduleLoaderImportModule;
 
-    typedef Identifier (*ModuleLoaderResolvePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
+    typedef Identifier (*ModuleLoaderResolvePtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     ModuleLoaderResolvePtr moduleLoaderResolve;
 
-    typedef JSInternalPromise* (*ModuleLoaderFetchPtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
+    typedef JSInternalPromise* (*ModuleLoaderFetchPtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     ModuleLoaderFetchPtr moduleLoaderFetch;
 
-    typedef JSObject* (*ModuleLoaderCreateImportMetaPropertiesPtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
+    typedef JSObject* (*ModuleLoaderCreateImportMetaPropertiesPtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
     ModuleLoaderCreateImportMetaPropertiesPtr moduleLoaderCreateImportMetaProperties;
 
-    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
+    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     ModuleLoaderEvaluatePtr moduleLoaderEvaluate;
 
-    typedef void (*PromiseRejectionTrackerPtr)(JSGlobalObject*, ExecState*, JSPromise*, JSPromiseRejectionOperation);
+    typedef void (*PromiseRejectionTrackerPtr)(JSGlobalObject*, JSPromise*, JSPromiseRejectionOperation);
     PromiseRejectionTrackerPtr promiseRejectionTracker;
 
     typedef String (*DefaultLanguageFunctionPtr)();
     DefaultLanguageFunctionPtr defaultLanguage;
 
-    typedef void (*CompileStreamingPtr)(JSGlobalObject*, ExecState*, JSPromiseDeferred*, JSValue);
+    typedef void (*CompileStreamingPtr)(JSGlobalObject*, JSPromiseDeferred*, JSValue);
     CompileStreamingPtr compileStreaming;
 
-    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, ExecState*, JSPromiseDeferred*, JSValue, JSObject*);
+    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, JSPromiseDeferred*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
 };
 
@@ -251,13 +251,15 @@ private:
         OpaqueJSClassDataMap opaqueJSClassData;
     };
 
+    VM& m_vm;
+
 // Our hashtable code-generator tries to access these properties, so we make them public.
 // However, we'd like it better if they could be protected.
 public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
-    
-    Register m_globalCallFrame[CallFrame::headerSizeInRegisters];
 
+    Register m_deprecatedCallFrameForDebugger[CallFrame::headerSizeInRegisters];
+    
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
@@ -274,6 +276,8 @@ public:
 
     WriteBarrier<ObjectConstructor> m_objectConstructor;
     WriteBarrier<ArrayConstructor> m_arrayConstructor;
+    WriteBarrier<RegExpConstructor> m_regExpConstructor;
+    WriteBarrier<FunctionConstructor> m_functionConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
@@ -430,8 +434,6 @@ public:
 
     Debugger* m_debugger;
 
-    VM& m_vm;
-
 #if ENABLE(REMOTE_INSPECTOR)
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
@@ -517,7 +519,7 @@ public:
     Optional<unsigned> m_stackTraceLimit;
 
 #if !ASSERT_DISABLED
-    const ExecState* m_callFrameAtDebuggerEntry { nullptr };
+    const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
 #endif
 
     static JS_EXPORT_PRIVATE const GlobalObjectMethodTable s_globalObjectMethodTable;
@@ -565,19 +567,19 @@ public:
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
-    JS_EXPORT_PRIVATE static void defineGetter(JSObject*, ExecState*, PropertyName, JSObject* getterFunc, unsigned attributes);
-    JS_EXPORT_PRIVATE static void defineSetter(JSObject*, ExecState*, PropertyName, JSObject* setterFunc, unsigned attributes);
-    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static void defineGetter(JSObject*, JSGlobalObject*, PropertyName, JSObject* getterFunc, unsigned attributes);
+    JS_EXPORT_PRIVATE static void defineSetter(JSObject*, JSGlobalObject*, PropertyName, JSObject* setterFunc, unsigned attributes);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    void addVar(ExecState* exec, const Identifier& propertyName)
+    void addVar(JSGlobalObject* globalObject, const Identifier& propertyName)
     {
-        if (!hasOwnProperty(exec, propertyName))
+        if (!hasOwnProperty(globalObject, propertyName))
             addGlobalVar(propertyName);
     }
-    void addFunction(ExecState*, const Identifier&);
+    void addFunction(JSGlobalObject*, const Identifier&);
 
     JSScope* globalScope() { return m_globalLexicalEnvironment.get(); }
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() { return m_globalLexicalEnvironment.get(); }
@@ -592,12 +594,14 @@ public:
     GetterSetter* speciesGetterSetter() const { return m_speciesGetterSetter.get(); }
 
     ArrayConstructor* arrayConstructor() const { return m_arrayConstructor.get(); }
+    RegExpConstructor* regExpConstructor() const { return m_regExpConstructor.get(); }
     ObjectConstructor* objectConstructor() const { return m_objectConstructor.get(); }
+    FunctionConstructor* functionConstructor() const { return m_functionConstructor.get(); }
     JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
 
 #if ENABLE(INTL)
-    IntlCollator* defaultCollator(ExecState*);
+    IntlCollator* defaultCollator(JSGlobalObject*);
 #endif
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
@@ -672,13 +676,10 @@ public:
         ASSERT(indexingType & IsArray);
         return m_arrayStructureForIndexingShapeDuringAllocation[arrayIndexFromIndexingType(indexingType)].get();
     }
-    Structure* arrayStructureForIndexingTypeDuringAllocation(ExecState* exec, IndexingType indexingType, JSValue newTarget) const
+    Structure* arrayStructureForIndexingTypeDuringAllocation(JSGlobalObject* globalObject, IndexingType indexingType, JSValue newTarget) const;
+    Structure* arrayStructureForProfileDuringAllocation(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, JSValue newTarget) const
     {
-        return InternalFunction::createSubclassStructure(exec, newTarget, arrayStructureForIndexingTypeDuringAllocation(indexingType));
-    }
-    Structure* arrayStructureForProfileDuringAllocation(ExecState* exec, ArrayAllocationProfile* profile, JSValue newTarget) const
-    {
-        return arrayStructureForIndexingTypeDuringAllocation(exec, ArrayAllocationProfile::selectIndexingTypeFor(profile), newTarget);
+        return arrayStructureForIndexingTypeDuringAllocation(globalObject, ArrayAllocationProfile::selectIndexingTypeFor(profile), newTarget);
     }
         
     bool isOriginalArrayStructure(Structure* structure)
@@ -943,9 +944,9 @@ public:
 
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 
-    static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
+    JS_EXPORT_PRIVATE CallFrame* deprecatedCallFrameForDebugger();
 
-    JS_EXPORT_PRIVATE ExecState* globalExec();
+    static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
@@ -969,8 +970,8 @@ public:
     }
 
 #if !ASSERT_DISABLED
-    const ExecState* callFrameAtDebuggerEntry() const { return m_callFrameAtDebuggerEntry; }
-    void setCallFrameAtDebuggerEntry(const ExecState* callFrame) { m_callFrameAtDebuggerEntry = callFrame; }
+    const JSGlobalObject* globalObjectAtDebuggerEntry() const { return m_globalObjectAtDebuggerEntry; }
+    void setGlobalObjectAtDebuggerEntry(const JSGlobalObject* globalObject) { m_globalObjectAtDebuggerEntry = globalObject; }
 #endif
 
     void resetPrototype(VM&, JSValue prototype);
@@ -1022,7 +1023,7 @@ public:
     void setWrapperMap(std::unique_ptr<WrapperMap>&&);
 #endif
 
-    void tryInstallArraySpeciesWatchpoint(ExecState*);
+    void tryInstallArraySpeciesWatchpoint(JSGlobalObject*);
 
 protected:
     struct GlobalPropertyInfo {
@@ -1064,75 +1065,50 @@ private:
 #endif
 };
 
-inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue newTarget = JSValue())
+inline JSArray* constructEmptyArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue newTarget = JSValue())
 {
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure;
     if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
-        structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(exec, ArrayWithArrayStorage, newTarget);
+        structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(globalObject, ArrayWithArrayStorage, newTarget);
     else
-        structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+        structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSArray* result = JSArray::tryCreate(vm, structure, initialLength);
     if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     return ArrayAllocationProfile::updateLastAllocationFor(profile, result);
 }
 
-inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue newTarget = JSValue())
+inline JSArray* constructArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const ArgList& values, JSValue newTarget = JSValue())
 {
-    return constructEmptyArray(exec, profile, exec->lexicalGlobalObject(), initialLength, newTarget);
-}
- 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values, JSValue newTarget = JSValue())
-{
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(globalObject, structure, values));
 }
 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const ArgList& values, JSValue newTarget = JSValue())
+inline JSArray* constructArray(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, newTarget);
-}
-
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
-{
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, structure, values, length));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(globalObject, structure, values, length));
 }
 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
+inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, length, newTarget);
-}
-
-inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
-{
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
+    Structure* structure = globalObject->arrayStructureForProfileDuringAllocation(globalObject, profile, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, structure, values, length));
-}
-
-inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
-{
-    return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length, newTarget);
-}
-
-inline JSObject* ExecState::globalThisValue() const
-{
-    return lexicalGlobalObject()->globalThis();
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(globalObject, structure, values, length));
 }
 
 inline JSObject* JSScope::globalThis()

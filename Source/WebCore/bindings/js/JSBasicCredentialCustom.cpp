@@ -34,16 +34,16 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<BasicCredential>&& credential)
+JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<BasicCredential>&& credential)
 {
     if (is<PublicKeyCredential>(credential))
         return createWrapper<PublicKeyCredential>(globalObject, WTFMove(credential));
     return createWrapper<BasicCredential>(globalObject, WTFMove(credential));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, BasicCredential& credential)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, BasicCredential& credential)
 {
-    return wrap(state, globalObject, credential);
+    return wrap(lexicalGlobalObject, globalObject, credential);
 }
 
 } // namespace WebCore

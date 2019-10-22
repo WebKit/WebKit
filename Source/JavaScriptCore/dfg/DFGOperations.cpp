@@ -40,6 +40,7 @@
 #include "DFGWorklist.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
+#include "EvalCodeBlock.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLOSREntry.h"
 #include "FrameTracers.h"
@@ -64,10 +65,12 @@
 #include "JSSet.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
+#include "ModuleProgramCodeBlock.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "ParseInt.h"
+#include "ProgramCodeBlock.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObjectInlines.h"
@@ -86,15 +89,17 @@
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
 
+IGNORE_WARNINGS_BEGIN("frame-address")
+
 namespace JSC { namespace DFG {
 
 template<bool strict, bool direct>
-static inline void putByVal(ExecState* exec, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
+static inline void putByVal(JSGlobalObject* globalObject, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
 {
     ASSERT(isIndex(index));
     if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
-        asObject(baseValue)->putDirectIndex(exec, index, value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        asObject(baseValue)->putDirectIndex(globalObject, index, value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         return;
     }
     if (baseValue.isObject()) {
@@ -104,15 +109,15 @@ static inline void putByVal(ExecState* exec, VM& vm, JSValue baseValue, uint32_t
             return;
         }
 
-        object->methodTable(vm)->putByIndex(object, exec, index, value, strict);
+        object->methodTable(vm)->putByIndex(object, globalObject, index, value, strict);
         return;
     }
 
-    baseValue.putByIndex(exec, index, value, strict);
+    baseValue.putByIndex(globalObject, index, value, strict);
 }
 
 template<bool strict, bool direct>
-ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+ALWAYS_INLINE static void putByValInternal(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -124,7 +129,7 @@ ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSVal
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
         ASSERT(isIndex(property.asUInt32()));
         scope.release();
-        putByVal<strict, direct>(exec, vm, baseValue, property.asUInt32(), value);
+        putByVal<strict, direct>(globalObject, vm, baseValue, property.asUInt32(), value);
         return;
     }
 
@@ -133,13 +138,13 @@ ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSVal
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsDouble == propertyAsUInt32 && isIndex(propertyAsUInt32)) {
             scope.release();
-            putByVal<strict, direct>(exec, vm, baseValue, propertyAsUInt32, value);
+            putByVal<strict, direct>(globalObject, vm, baseValue, propertyAsUInt32, value);
             return;
         }
     }
 
     // Don't put to an object if toString throws an exception.
-    auto propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
     PutPropertySlot slot(baseValue, strict);
@@ -148,94 +153,90 @@ ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSVal
         JSObject* baseObject = asObject(baseValue);
         if (Optional<uint32_t> index = parseIndex(propertyName)) {
             scope.release();
-            baseObject->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            baseObject->putDirectIndex(globalObject, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
         scope.release();
-        CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, propertyName, value, slot);
+        CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, propertyName, value, slot);
         return;
     }
     scope.release();
-    baseValue.put(exec, propertyName, value, slot);
+    baseValue.put(globalObject, propertyName, value, slot);
 }
 
 template<bool strict, bool direct>
-ALWAYS_INLINE static void putByValCellInternal(ExecState* exec, VM& vm, JSCell* base, PropertyName propertyName, JSValue value)
+ALWAYS_INLINE static void putByValCellInternal(JSGlobalObject* globalObject, VM& vm, JSCell* base, PropertyName propertyName, JSValue value)
 {
     PutPropertySlot slot(base, strict);
     if (direct) {
         RELEASE_ASSERT(base->isObject());
         JSObject* baseObject = asObject(base);
         if (Optional<uint32_t> index = parseIndex(propertyName)) {
-            baseObject->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            baseObject->putDirectIndex(globalObject, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
-        CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, propertyName, value, slot);
+        CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, propertyName, value, slot);
         return;
     }
-    base->putInline(exec, propertyName, value, slot);
+    base->putInline(globalObject, propertyName, value, slot);
 }
 
 template<bool strict, bool direct>
-ALWAYS_INLINE static void putByValCellStringInternal(ExecState* exec, VM& vm, JSCell* base, JSString* property, JSValue value)
+ALWAYS_INLINE static void putByValCellStringInternal(JSGlobalObject* globalObject, VM& vm, JSCell* base, JSString* property, JSValue value)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto propertyName = property->toIdentifier(exec);
+    auto propertyName = property->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
     scope.release();
-    putByValCellInternal<strict, direct>(exec, vm, base, propertyName, value);
+    putByValCellInternal<strict, direct>(globalObject, vm, base, propertyName, value);
 }
 
 template<typename ViewClass>
-char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size, char* vector)
+char* newTypedArrayWithSize(JSGlobalObject* globalObject, VM& vm, Structure* structure, int32_t size, char* vector)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (size < 0) {
-        throwException(exec, scope, createRangeError(exec, "Requested length is negative"_s));
+        throwException(globalObject, scope, createRangeError(globalObject, "Requested length is negative"_s));
         return 0;
     }
     
     if (vector)
-        return bitwise_cast<char*>(ViewClass::createWithFastVector(exec, structure, size, untagArrayPtr(vector, size)));
+        return bitwise_cast<char*>(ViewClass::createWithFastVector(globalObject, structure, size, untagArrayPtr(vector, size)));
 
-    RELEASE_AND_RETURN(scope, bitwise_cast<char*>(ViewClass::create(exec, structure, size)));
+    RELEASE_AND_RETURN(scope, bitwise_cast<char*>(ViewClass::create(globalObject, structure, size)));
 }
 
 template <bool strict>
-static ALWAYS_INLINE void putWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, const Identifier& ident)
+static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, const Identifier& ident)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue thisVal = JSValue::decode(encodedThis);
     JSValue putValue = JSValue::decode(encodedValue);
     PutPropertySlot slot(thisVal, strict);
-    baseValue.putInline(exec, ident, putValue, slot);
+    baseValue.putInline(globalObject, ident, putValue, slot);
 }
 
 template<typename BigIntOperation, typename NumberOperation>
-static ALWAYS_INLINE EncodedJSValue binaryOp(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, NumberOperation&& numberOp, const char* errorMessage)
+static ALWAYS_INLINE EncodedJSValue binaryOp(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, NumberOperation&& numberOp, const char* errorMessage)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
-    auto leftNumeric = op1.toNumeric(exec);
+    auto leftNumeric = op1.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toNumeric(exec);
+    auto rightNumeric = op2.toNumeric(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
-            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
+            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
 
-        return throwVMTypeError(exec, scope, errorMessage);
+        return throwVMTypeError(globalObject, scope, errorMessage);
     }
 
     scope.release();
@@ -244,25 +245,23 @@ static ALWAYS_INLINE EncodedJSValue binaryOp(ExecState* exec, EncodedJSValue enc
 }
 
 template<typename BigIntOperation, typename Int32Operation>
-static ALWAYS_INLINE EncodedJSValue bitwiseBinaryOp(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, Int32Operation&& int32Op, const char* errorMessage)
+static ALWAYS_INLINE EncodedJSValue bitwiseBinaryOp(JSGlobalObject* globalObject, VM& vm, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BigIntOperation&& bigIntOp, Int32Operation&& int32Op, const char* errorMessage)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
-    auto leftNumeric = op1.toBigIntOrInt32(exec);
+    auto leftNumeric = op1.toBigIntOrInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto rightNumeric = op2.toBigIntOrInt32(exec);
+    auto rightNumeric = op2.toBigIntOrInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric))
-            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
+            RELEASE_AND_RETURN(scope, JSValue::encode(bigIntOp(globalObject, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric))));
 
-        return throwVMTypeError(exec, scope, errorMessage);
+        return throwVMTypeError(globalObject, scope, errorMessage);
     }
 
     scope.release();
@@ -278,92 +277,99 @@ static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
     return JSValue::encode(jsNumber(input));
 }
 
-ALWAYS_INLINE static JSValue getByValObject(ExecState* exec, VM& vm, JSObject* base, PropertyName propertyName)
+ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm, JSObject* base, PropertyName propertyName)
 {
     Structure& structure = *base->structure(vm);
     if (JSCell::canUseFastGetOwnProperty(structure)) {
         if (JSValue result = base->fastGetOwnProperty(vm, structure, propertyName))
             return result;
     }
-    return base->get(exec, propertyName);
+    return base->get(globalObject, propertyName);
 }
 
 extern "C" {
 
-EncodedJSValue JIT_OPERATION operationToThis(ExecState* exec, EncodedJSValue encodedOp)
+EncodedJSValue JIT_OPERATION operationToThis(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, NotStrictMode));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, NotStrictMode));
 }
 
-EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState* exec, EncodedJSValue encodedOp)
+EncodedJSValue JIT_OPERATION operationToThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedOp)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, StrictMode));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, StrictMode));
 }
 
-JSArray* JIT_OPERATION operationObjectKeys(ExecState* exec, EncodedJSValue encodedObject)
+JSArray* JIT_OPERATION operationObjectKeys(JSGlobalObject* globalObject, EncodedJSValue encodedObject)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* object = JSValue::decode(encodedObject).toObject(exec);
+    JSObject* object = JSValue::decode(encodedObject).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     scope.release();
-    return ownPropertyKeys(exec, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
 }
 
-JSArray* JIT_OPERATION operationObjectKeysObject(ExecState* exec, JSObject* object)
+JSArray* JIT_OPERATION operationObjectKeysObject(JSGlobalObject* globalObject, JSObject* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return ownPropertyKeys(exec, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
 }
 
-JSCell* JIT_OPERATION operationObjectCreate(ExecState* exec, EncodedJSValue encodedPrototype)
+JSCell* JIT_OPERATION operationObjectCreate(JSGlobalObject* globalObject, EncodedJSValue encodedPrototype)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue prototype = JSValue::decode(encodedPrototype);
 
     if (!prototype.isObject() && !prototype.isNull()) {
-        throwVMTypeError(exec, scope, "Object prototype may only be an Object or null."_s);
+        throwVMTypeError(globalObject, scope, "Object prototype may only be an Object or null."_s);
         return nullptr;
     }
 
     if (prototype.isObject())
-        RELEASE_AND_RETURN(scope, constructEmptyObject(exec, asObject(prototype)));
-    RELEASE_AND_RETURN(scope, constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure()));
+        RELEASE_AND_RETURN(scope, constructEmptyObject(globalObject, asObject(prototype)));
+    RELEASE_AND_RETURN(scope, constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure()));
 }
 
-JSCell* JIT_OPERATION operationObjectCreateObject(ExecState* exec, JSObject* prototype)
+JSCell* JIT_OPERATION operationObjectCreateObject(JSGlobalObject* globalObject, JSObject* prototype)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return constructEmptyObject(exec, prototype);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return constructEmptyObject(globalObject, prototype);
 }
 
-JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, uint32_t inlineCapacity)
+JSCell* JIT_OPERATION operationCreateThis(JSGlobalObject* globalObject, JSObject* constructor, uint32_t inlineCapacity)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (constructor->type() == JSFunctionType && jsCast<JSFunction*>(constructor)->canUseAllocationProfile()) {
-        auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndAllocationProfile(exec, inlineCapacity);
+        auto rareData = jsCast<JSFunction*>(constructor)->ensureRareDataAndAllocationProfile(globalObject, inlineCapacity);
         scope.releaseAssertNoException();
         ObjectAllocationProfileWithPrototype* allocationProfile = rareData->objectAllocationProfile();
         Structure* structure = allocationProfile->structure();
-        JSObject* result = constructEmptyObject(exec, structure);
+        JSObject* result = constructEmptyObject(vm, structure);
         if (structure->hasPolyProto()) {
             JSObject* prototype = allocationProfile->prototype();
-            ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, exec));
+            ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, globalObject));
             result->putDirect(vm, knownPolyProtoOffset, prototype);
             prototype->didBecomePrototype();
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
@@ -371,70 +377,76 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         return result;
     }
 
-    JSValue proto = constructor->get(exec, vm.propertyNames->prototype);
+    JSValue proto = constructor->get(globalObject, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (proto.isObject())
-        return constructEmptyObject(exec, asObject(proto));
-    return constructEmptyObject(exec);
+        return constructEmptyObject(globalObject, asObject(proto));
+    return constructEmptyObject(globalObject);
 }
 
-JSCell* JIT_OPERATION operationCreatePromise(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+JSCell* JIT_OPERATION operationCreatePromise(JSGlobalObject* globalObject, JSObject* constructor)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->promiseConstructor(), constructor, globalObject->promiseStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->promiseConstructor(), constructor, globalObject->promiseStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSPromise::create(vm, structure));
 }
 
-JSCell* JIT_OPERATION operationCreateInternalPromise(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+JSCell* JIT_OPERATION operationCreateInternalPromise(JSGlobalObject* globalObject, JSObject* constructor)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(exec, globalObject->internalPromiseConstructor(), constructor, globalObject->internalPromiseStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, globalObject->internalPromiseConstructor(), constructor, globalObject->internalPromiseStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSInternalPromise::create(vm, structure));
 }
 
-JSCell* JIT_OPERATION operationCreateGenerator(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+JSCell* JIT_OPERATION operationCreateGenerator(JSGlobalObject* globalObject, JSObject* constructor)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(exec, nullptr, constructor, globalObject->generatorStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, nullptr, constructor, globalObject->generatorStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSGenerator::create(vm, structure));
 }
 
-JSCell* JIT_OPERATION operationCreateAsyncGenerator(ExecState* exec, JSObject* constructor, JSGlobalObject* globalObject)
+JSCell* JIT_OPERATION operationCreateAsyncGenerator(JSGlobalObject* globalObject, JSObject* constructor)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = InternalFunction::createSubclassStructure(exec, nullptr, constructor, globalObject->asyncGeneratorStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, nullptr, constructor, globalObject->asyncGeneratorStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
     RELEASE_AND_RETURN(scope, JSAsyncGenerator::create(vm, structure));
 }
 
-JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
+JSCell* JIT_OPERATION operationCallObjectConstructor(JSGlobalObject* globalObject, EncodedJSValue encodedTarget)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue value = JSValue::decode(encodedTarget);
     ASSERT(!value.isObject());
 
     if (value.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject->objectPrototype());
-    return value.toObject(exec, globalObject);
+        return constructEmptyObject(globalObject, globalObject->objectPrototype());
+    return value.toObject(globalObject);
 }
 
-JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedTarget, UniquedStringImpl* errorMessage)
+JSCell* JIT_OPERATION operationToObject(JSGlobalObject* globalObject, EncodedJSValue encodedTarget, UniquedStringImpl* errorMessage)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue value = JSValue::decode(encodedTarget);
@@ -442,277 +454,318 @@ JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalO
 
     if (UNLIKELY(value.isUndefinedOrNull())) {
         if (errorMessage->length()) {
-            throwVMTypeError(exec, scope, errorMessage);
+            throwVMTypeError(globalObject, scope, errorMessage);
             return nullptr;
         }
     }
 
-    RELEASE_AND_RETURN(scope, value.toObject(exec, globalObject));
+    RELEASE_AND_RETURN(scope, value.toObject(globalObject));
 }
 
-EncodedJSValue JIT_OPERATION operationValueMod(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueMod(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::remainder(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::remainder(globalObject, left, right);
     };
 
     auto numberOp = [] (double left, double right) -> double {
         return jsMod(left, right);
     };
 
-    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in remainder operation.");
+    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in remainder operation.");
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState* exec, EncodedJSValue encodedOp1)
+EncodedJSValue JIT_OPERATION operationValueBitNot(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
 
-    auto operandNumeric = op1.toBigIntOrInt32(exec);
+    auto operandNumeric = op1.toBigIntOrInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (WTF::holds_alternative<JSBigInt*>(operandNumeric))
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::bitwiseNot(exec, WTF::get<JSBigInt*>(operandNumeric))));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::bitwiseNot(globalObject, WTF::get<JSBigInt*>(operandNumeric))));
 
     return JSValue::encode(jsNumber(~WTF::get<int32_t>(operandNumeric)));
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitAnd(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseAnd(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::bitwiseAnd(globalObject, left, right);
     };
 
     auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
         return left & right;
     };
 
-    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'and' operation."_s);
+    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'and' operation."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitOr(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseOr(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::bitwiseOr(globalObject, left, right);
     };
 
     auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
         return left | right;
     };
 
-    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'or' operation."_s);
+    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'or' operation."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitXor(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::bitwiseXor(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::bitwiseXor(globalObject, left, right);
     };
 
     auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
         return left ^ right;
     };
 
-    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
+    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in bitwise 'xor' operation."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitLShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::leftShift(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::leftShift(globalObject, left, right);
     };
 
     auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
         return left << (right & 0x1f);
     };
 
-    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in left shift operation."_s);
+    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in left shift operation."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitRShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::signedRightShift(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::signedRightShift(globalObject, left, right);
     };
 
     auto int32Op = [] (int32_t left, int32_t right) -> int32_t {
         return left >> (right & 0x1f);
     };
 
-    return bitwiseBinaryOp(exec, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in signed right shift operation."_s);
+    return bitwiseBinaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, int32Op, "Invalid mix of BigInt and other type in signed right shift operation."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueBitURShift(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
 
-    uint32_t a = op1.toUInt32(exec);
+    uint32_t a = op1.toUInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    uint32_t b = op2.toUInt32(exec);
+    uint32_t b = op2.toUInt32(globalObject);
     return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
 }
 
-EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueAddNotNumber(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
     
-    return JSValue::encode(jsAddNonNumber(exec, op1, op2));
+    return JSValue::encode(jsAddNonNumber(globalObject, op1, op2));
 }
 
-EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValueDiv(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::divide(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::divide(globalObject, left, right);
     };
 
     auto numberOp = [] (double left, double right) -> double {
         return left / right;
     };
 
-    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in division operation.");
+    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in division operation.");
 }
 
-EncodedJSValue JIT_OPERATION operationValuePow(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+EncodedJSValue JIT_OPERATION operationValuePow(JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
-    auto bigIntOp = [] (ExecState* exec, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
-        return JSBigInt::exponentiate(exec, left, right);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    auto bigIntOp = [] (JSGlobalObject* globalObject, JSBigInt* left, JSBigInt* right) -> JSBigInt* {
+        return JSBigInt::exponentiate(globalObject, left, right);
     };
 
     auto numberOp = [] (double left, double right) -> double {
         return operationMathPow(left, right);
     };
 
-    return binaryOp(exec, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in exponentiation operation."_s);
+    return binaryOp(globalObject, vm, encodedOp1, encodedOp2, bigIntOp, numberOp, "Invalid mix of BigInt and other type in exponentiation operation."_s);
 }
 
-double JIT_OPERATION operationArithAbs(ExecState* exec, EncodedJSValue encodedOp1)
+double JIT_OPERATION operationArithAbs(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
+    double a = op1.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, PNaN);
     return fabs(a);
 }
 
-uint32_t JIT_OPERATION operationArithClz32(ExecState* exec, EncodedJSValue encodedOp1)
+uint32_t JIT_OPERATION operationArithClz32(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
-    uint32_t value = op1.toUInt32(exec);
+    uint32_t value = op1.toUInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);
     return clz(value);
 }
 
-double JIT_OPERATION operationArithFRound(ExecState* exec, EncodedJSValue encodedOp1)
+double JIT_OPERATION operationArithFRound(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
+    double a = op1.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, PNaN);
     return static_cast<float>(a);
 }
 
 #define DFG_ARITH_UNARY(capitalizedName, lowerName) \
-double JIT_OPERATION operationArith##capitalizedName(ExecState* exec, EncodedJSValue encodedOp1) \
+double JIT_OPERATION operationArith##capitalizedName(JSGlobalObject* globalObject, EncodedJSValue encodedOp1) \
 { \
-    VM& vm = exec->vm(); \
-    NativeCallFrameTracer tracer(vm, exec); \
+    VM& vm = globalObject->vm(); \
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm); \
+    NativeCallFrameTracer tracer(vm, callFrame); \
     auto scope = DECLARE_THROW_SCOPE(vm); \
     JSValue op1 = JSValue::decode(encodedOp1); \
-    double result = op1.toNumber(exec); \
+    double result = op1.toNumber(globalObject); \
     RETURN_IF_EXCEPTION(scope, PNaN); \
     return JSC::Math::lowerName(result); \
 }
     FOR_EACH_DFG_ARITH_UNARY_OP(DFG_ARITH_UNARY)
 #undef DFG_ARITH_UNARY
 
-double JIT_OPERATION operationArithSqrt(ExecState* exec, EncodedJSValue encodedOp1)
+double JIT_OPERATION operationArithSqrt(JSGlobalObject* globalObject, EncodedJSValue encodedOp1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue op1 = JSValue::decode(encodedOp1);
-    double a = op1.toNumber(exec);
+    double a = op1.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, PNaN);
     return sqrt(a);
 }
 
-EncodedJSValue JIT_OPERATION operationArithRound(ExecState* exec, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationArithRound(JSGlobalObject* globalObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue argument = JSValue::decode(encodedArgument);
-    double valueOfArgument = argument.toNumber(exec);
+    double valueOfArgument = argument.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(jsRound(valueOfArgument)));
 }
 
-EncodedJSValue JIT_OPERATION operationArithFloor(ExecState* exec, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationArithFloor(JSGlobalObject* globalObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue argument = JSValue::decode(encodedArgument);
-    double valueOfArgument = argument.toNumber(exec);
+    double valueOfArgument = argument.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(floor(valueOfArgument)));
 }
 
-EncodedJSValue JIT_OPERATION operationArithCeil(ExecState* exec, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationArithCeil(JSGlobalObject* globalObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue argument = JSValue::decode(encodedArgument);
-    double valueOfArgument = argument.toNumber(exec);
+    double valueOfArgument = argument.toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(ceil(valueOfArgument)));
 }
 
-EncodedJSValue JIT_OPERATION operationArithTrunc(ExecState* exec, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationArithTrunc(JSGlobalObject* globalObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue argument = JSValue::decode(encodedArgument);
-    double truncatedValueOfArgument = argument.toIntegerPreserveNaN(exec);
+    double truncatedValueOfArgument = argument.toIntegerPreserveNaN(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(truncatedValueOfArgument));
 }
 
-static ALWAYS_INLINE EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
+static ALWAYS_INLINE EncodedJSValue getByVal(JSGlobalObject* globalObject, JSCell* base, uint32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
     if (base->isObject()) {
         JSObject* object = asObject(base);
         if (object->canGetIndexQuickly(index))
@@ -720,15 +773,16 @@ static ALWAYS_INLINE EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint
     }
 
     if (isJSString(base) && asString(base)->canGetIndex(index))
-        return JSValue::encode(asString(base)->getIndex(exec, index));
+        return JSValue::encode(asString(base)->getIndex(globalObject, index));
 
-    return JSValue::encode(JSValue(base).get(exec, index));
+    return JSValue::encode(JSValue(base).get(globalObject, index));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
+EncodedJSValue JIT_OPERATION operationGetByVal(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -738,18 +792,18 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         JSCell* base = baseValue.asCell();
 
         if (property.isUInt32())
-            RELEASE_AND_RETURN(scope, getByVal(exec, base, property.asUInt32()));
+            RELEASE_AND_RETURN(scope, getByVal(globalObject, base, property.asUInt32()));
 
         if (property.isDouble()) {
             double propertyAsDouble = property.asDouble();
             uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
             if (propertyAsUInt32 == propertyAsDouble && isIndex(propertyAsUInt32))
-                RELEASE_AND_RETURN(scope, getByVal(exec, base, propertyAsUInt32));
+                RELEASE_AND_RETURN(scope, getByVal(globalObject, base, propertyAsUInt32));
 
         } else if (property.isString()) {
             Structure& structure = *base->structure(vm);
             if (JSCell::canUseFastGetOwnProperty(structure)) {
-                RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(exec);
+                RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(globalObject);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 if (existingAtomString) {
                     if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomString.get()))
@@ -759,34 +813,35 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
-    baseValue.requireObjectCoercible(exec);
+    baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(exec, propertyName)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, propertyName)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base, EncodedJSValue encodedProperty)
+EncodedJSValue JIT_OPERATION operationGetByValCell(JSGlobalObject* globalObject, JSCell* base, EncodedJSValue encodedProperty)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue property = JSValue::decode(encodedProperty);
 
     if (property.isUInt32())
-        RELEASE_AND_RETURN(scope, getByVal(exec, base, property.asUInt32()));
+        RELEASE_AND_RETURN(scope, getByVal(globalObject, base, property.asUInt32()));
 
     if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsUInt32 == propertyAsDouble)
-            RELEASE_AND_RETURN(scope, getByVal(exec, base, propertyAsUInt32));
+            RELEASE_AND_RETURN(scope, getByVal(globalObject, base, propertyAsUInt32));
 
     } else if (property.isString()) {
         Structure& structure = *base->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(exec);
+            RefPtr<AtomStringImpl> existingAtomString = asString(property)->toExistingAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (existingAtomString) {
                 if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomString.get()))
@@ -795,334 +850,368 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
         }
     }
 
-    auto propertyName = property.toPropertyKey(exec);
+    auto propertyName = property.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(JSValue(base).get(exec, propertyName)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSValue(base).get(globalObject, propertyName)));
 }
 
-ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int32_t index)
+ALWAYS_INLINE EncodedJSValue getByValCellInt(JSGlobalObject* globalObject, VM& vm, JSCell* base, int32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
     if (index < 0) {
         // Go the slowest way possible because negative indices don't use indexed storage.
-        return JSValue::encode(JSValue(base).get(exec, Identifier::from(vm, index)));
+        return JSValue::encode(JSValue(base).get(globalObject, Identifier::from(vm, index)));
     }
 
     // Use this since we know that the value is out of bounds.
-    return JSValue::encode(JSValue(base).get(exec, static_cast<unsigned>(index)));
+    return JSValue::encode(JSValue(base).get(globalObject, static_cast<unsigned>(index)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValObjectInt(ExecState* exec, JSObject* base, int32_t index)
+EncodedJSValue JIT_OPERATION operationGetByValObjectInt(JSGlobalObject* globalObject, JSObject* base, int32_t index)
 {
-    return getByValCellInt(exec, base, index);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    return getByValCellInt(globalObject, vm, base, index);
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValStringInt(ExecState* exec, JSString* base, int32_t index)
+EncodedJSValue JIT_OPERATION operationGetByValStringInt(JSGlobalObject* globalObject, JSString* base, int32_t index)
 {
-    return getByValCellInt(exec, base, index);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    return getByValCellInt(globalObject, vm, base, index);
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValObjectString(ExecState* exec, JSCell* base, JSCell* string)
+EncodedJSValue JIT_OPERATION operationGetByValObjectString(JSGlobalObject* globalObject, JSCell* base, JSCell* string)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto propertyName = asString(string)->toIdentifier(exec);
+    auto propertyName = asString(string)->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(getByValObject(exec, vm, asObject(base), propertyName)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(getByValObject(globalObject, vm, asObject(base), propertyName)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(ExecState* exec, JSCell* base, JSCell* symbol)
+EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(JSGlobalObject* globalObject, JSCell* base, JSCell* symbol)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto propertyName = asSymbol(symbol)->privateName();
-    return JSValue::encode(getByValObject(exec, vm, asObject(base), propertyName));
+    return JSValue::encode(getByValObject(globalObject, vm, asObject(base), propertyName));
 }
 
-void JIT_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<true, false>(exec, vm, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<true, false>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValNonStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<false, false>(exec, vm, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<false, false>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValCellStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellStrict(JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<true, false>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<true, false>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellNonStrict(JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<false, false>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<false, false>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValCellStringStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellStringStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putByValCellStringInternal<true, false>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+    putByValCellStringInternal<true, false>(globalObject, vm, cell, asString(string), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValCellStringNonStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellStringNonStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putByValCellStringInternal<false, false>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+    putByValCellStringInternal<false, false>(globalObject, vm, cell, asString(string), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValCellSymbolStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellSymbolStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto propertyName = asSymbol(symbol)->privateName();
-    putByValCellInternal<true, false>(exec, vm, cell, propertyName, JSValue::decode(encodedValue));
+    putByValCellInternal<true, false>(globalObject, vm, cell, propertyName, JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValCellSymbolNonStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValCellSymbolNonStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto propertyName = asSymbol(symbol)->privateName();
-    putByValCellInternal<false, false>(exec, vm, cell, propertyName, JSValue::decode(encodedValue));
+    putByValCellInternal<false, false>(globalObject, vm, cell, propertyName, JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (index >= 0) {
-        object->putByIndexInline(exec, index, JSValue::decode(encodedValue), true);
+        object->putByIndexInline(globalObject, index, JSValue::decode(encodedValue), true);
         return;
     }
     
     PutPropertySlot slot(object, true);
     object->methodTable(vm)->put(
-        object, exec, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
+        object, globalObject, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (index >= 0) {
-        object->putByIndexInline(exec, index, JSValue::decode(encodedValue), false);
+        object->putByIndexInline(globalObject, index, JSValue::decode(encodedValue), false);
         return;
     }
     
     PutPropertySlot slot(object, false);
     object->methodTable(vm)->put(
-        object, exec, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
+        object, globalObject, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, double value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
     
     if (index >= 0) {
-        object->putByIndexInline(exec, index, jsValue, true);
+        object->putByIndexInline(globalObject, index, jsValue, true);
         return;
     }
     
     PutPropertySlot slot(object, true);
     object->methodTable(vm)->put(
-        object, exec, Identifier::from(vm, index), jsValue, slot);
+        object, globalObject, Identifier::from(vm, index), jsValue, slot);
 }
 
-void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, double value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
     
     if (index >= 0) {
-        object->putByIndexInline(exec, index, jsValue, false);
+        object->putByIndexInline(globalObject, index, jsValue, false);
         return;
     }
     
     PutPropertySlot slot(object, false);
     object->methodTable(vm)->put(
-        object, exec, Identifier::from(vm, index), jsValue, slot);
+        object, globalObject, Identifier::from(vm, index), jsValue, slot);
 }
 
-void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, double value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
 
     if (index >= 0) {
-        object->putDirectIndex(exec, index, jsValue, 0, PutDirectIndexShouldThrow);
+        object->putDirectIndex(globalObject, index, jsValue, 0, PutDirectIndexShouldThrow);
         return;
     }
 
     PutPropertySlot slot(object, true);
-    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(vm, index), jsValue, slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, object, Identifier::from(vm, index), jsValue, slot);
 }
 
-void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, double value)
+void JIT_OPERATION operationPutDoubleByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, double value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue jsValue = JSValue(JSValue::EncodeAsDouble, value);
 
     if (index >= 0) {
-        object->putDirectIndex(exec, index, jsValue);
+        object->putDirectIndex(globalObject, index, jsValue);
         return;
     }
 
     PutPropertySlot slot(object, false);
-    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(vm, index), jsValue, slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, object, Identifier::from(vm, index), jsValue, slot);
 }
 
-void JIT_OPERATION operationPutByValDirectStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<true, true>(exec, vm, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<true, true>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValDirectNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectNonStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<false, true>(exec, vm, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<false, true>(globalObject, vm, encodedBase, encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValDirectCellStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellStrict(JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<true, true>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<true, true>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValDirectCellNonStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellNonStrict(JSGlobalObject* globalObject, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    putByValInternal<false, true>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<false, true>(globalObject, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void JIT_OPERATION operationPutByValDirectCellStringStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellStringStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putByValCellStringInternal<true, true>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+    putByValCellStringInternal<true, true>(globalObject, vm, cell, asString(string), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValDirectCellStringNonStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellStringNonStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putByValCellStringInternal<false, true>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+    putByValCellStringInternal<false, true>(globalObject, vm, cell, asString(string), JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValDirectCellSymbolStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellSymbolStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto propertyName = asSymbol(symbol)->privateName();
-    putByValCellInternal<true, true>(exec, vm, cell, propertyName, JSValue::decode(encodedValue));
+    putByValCellInternal<true, true>(globalObject, vm, cell, propertyName, JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(JSGlobalObject* globalObject, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto propertyName = asSymbol(symbol)->privateName();
-    putByValCellInternal<false, true>(exec, vm, cell, propertyName, JSValue::decode(encodedValue));
+    putByValCellInternal<false, true>(globalObject, vm, cell, propertyName, JSValue::decode(encodedValue));
 }
 
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     if (index >= 0) {
-        object->putDirectIndex(exec, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
+        object->putDirectIndex(globalObject, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
         return;
     }
     
     PutPropertySlot slot(object, true);
-    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, object, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
-void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* object, int32_t index, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(JSGlobalObject* globalObject, JSObject* object, int32_t index, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     if (index >= 0) {
-        object->putDirectIndex(exec, index, JSValue::decode(encodedValue));
+        object->putDirectIndex(globalObject, index, JSValue::decode(encodedValue));
         return;
     }
     
     PutPropertySlot slot(object, false);
-    CommonSlowPaths::putDirectWithReify(vm, exec, object, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, object, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
-EncodedJSValue JIT_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)
+EncodedJSValue JIT_OPERATION operationArrayPush(JSGlobalObject* globalObject, EncodedJSValue encodedValue, JSArray* array)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    array->pushInline(exec, JSValue::decode(encodedValue));
+    array->pushInline(globalObject, JSValue::decode(encodedValue));
     return JSValue::encode(jsNumber(array->length()));
 }
 
-EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState* exec, double value, JSArray* array)
+EncodedJSValue JIT_OPERATION operationArrayPushDouble(JSGlobalObject* globalObject, double value, JSArray* array)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    array->pushInline(exec, JSValue(JSValue::EncodeAsDouble, value));
+    array->pushInline(globalObject, JSValue(JSValue::EncodeAsDouble, value));
     return JSValue::encode(jsNumber(array->length()));
 }
 
-EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState* exec, JSArray* array, void* buffer, int32_t elementCount)
+EncodedJSValue JIT_OPERATION operationArrayPushMultiple(JSGlobalObject* globalObject, JSArray* array, void* buffer, int32_t elementCount)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We assume that multiple JSArray::push calls with ArrayWithInt32/ArrayWithContiguous do not cause JS traps.
@@ -1137,16 +1226,17 @@ EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState* exec, JSArray
 
     EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
     for (int32_t i = 0; i < elementCount; ++i) {
-        array->pushInline(exec, JSValue::decode(values[i]));
+        array->pushInline(globalObject, JSValue::decode(values[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(jsNumber(array->length()));
 }
 
-EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(ExecState* exec, JSArray* array, void* buffer, int32_t elementCount)
+EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(JSGlobalObject* globalObject, JSArray* array, void* buffer, int32_t elementCount)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We assume that multiple JSArray::push calls with ArrayWithDouble do not cause JS traps.
@@ -1157,63 +1247,68 @@ EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(ExecState* exec, J
 
     double* values = static_cast<double*>(buffer);
     for (int32_t i = 0; i < elementCount; ++i) {
-        array->pushInline(exec, JSValue(JSValue::EncodeAsDouble, values[i]));
+        array->pushInline(globalObject, JSValue(JSValue::EncodeAsDouble, values[i]));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(jsNumber(array->length()));
 }
 
-EncodedJSValue JIT_OPERATION operationArrayPop(ExecState* exec, JSArray* array)
+EncodedJSValue JIT_OPERATION operationArrayPop(JSGlobalObject* globalObject, JSArray* array)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue::encode(array->pop(exec));
+    return JSValue::encode(array->pop(globalObject));
 }
         
-EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState* exec, JSArray* array)
+EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(JSGlobalObject* globalObject, JSArray* array)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     array->butterfly()->setPublicLength(array->butterfly()->publicLength() + 1);
     
-    return JSValue::encode(array->pop(exec));
+    return JSValue::encode(array->pop(globalObject));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExecString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
+EncodedJSValue JIT_OPERATION operationRegExpExecString(JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue::encode(regExpObject->execInline(exec, globalObject, argument));
+    return JSValue::encode(regExpObject->execInline(globalObject, argument));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationRegExpExec(JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue argument = JSValue::decode(encodedArgument);
 
-    JSString* input = argument.toStringOrNull(exec);
+    JSString* input = argument.toStringOrNull(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return encodedJSValue();
-    RELEASE_AND_RETURN(scope, JSValue::encode(regExpObject->execInline(exec, globalObject, input)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(regExpObject->execInline(globalObject, input)));
 }
         
-EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(encodedBase);
@@ -1221,25 +1316,26 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
     if (UNLIKELY(!regexp))
-        return throwVMTypeError(exec, scope);
+        return throwVMTypeError(globalObject, scope);
 
-    JSString* input = argument.toStringOrNull(exec);
+    JSString* input = argument.toStringOrNull(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(scope, JSValue::encode(regexp->exec(exec, globalObject, input)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(regexp->exec(globalObject, input)));
 }
 
-EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(ExecState* exec, JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
+EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
 {
     SuperSamplerScope superSamplerScope(false);
 
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String input = string->value(exec);
+    String input = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned lastIndex = 0;
@@ -1255,125 +1351,134 @@ EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(ExecState* exe
     return JSValue::encode(array);
 }
 
-EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
 {
     SuperSamplerScope superSamplerScope(false);
 
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     if (!regExpObject->regExp()->global())
-        return JSValue::encode(regExpObject->execInline(exec, globalObject, argument));
-    return JSValue::encode(regExpObject->matchGlobal(exec, globalObject, argument));
+        return JSValue::encode(regExpObject->execInline(globalObject, argument));
+    return JSValue::encode(regExpObject->matchGlobal(globalObject, argument));
 }
 
-EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(ExecState* exec, JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastGlobalString(JSGlobalObject* globalObject, RegExp* regExp, JSString* string)
 {
     SuperSamplerScope superSamplerScope(false);
 
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(regExp->global());
 
-    String s = string->value(exec);
+    String s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, JSValue::encode(collectMatches(
-            vm, exec, string, s, globalObject, regExp,
+            vm, globalObject, string, s, regExp,
             [&] (size_t end) -> size_t {
                 return advanceStringUnicode(s, stringLength, end);
             })));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(collectMatches(
-        vm, exec, string, s, globalObject, regExp,
+        vm, globalObject, string, s, regExp,
         [&] (size_t end) -> size_t {
             return end + 1;
         })));
 }
 
-EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState* exec, EncodedJSValue value)
+EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return toStringView(exec, JSValue::decode(value), [&] (StringView view) {
+    return toStringView(globalObject, JSValue::decode(value), [&] (StringView view) {
         // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
         return parseIntResult(parseInt(view, 0));
     });
 }
 
-EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState* exec, JSString* string)
+EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(JSGlobalObject* globalObject, JSString* string)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(exec);
+    auto viewWithString = string->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
     return parseIntResult(parseInt(viewWithString.view, 0));
 }
 
-EncodedJSValue JIT_OPERATION operationParseIntString(ExecState* exec, JSString* string, int32_t radix)
+EncodedJSValue JIT_OPERATION operationParseIntString(JSGlobalObject* globalObject, JSString* string, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto viewWithString = string->viewWithUnderlyingString(exec);
+    auto viewWithString = string->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     return parseIntResult(parseInt(viewWithString.view, radix));
 }
 
-EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState* exec, EncodedJSValue value, int32_t radix)
+EncodedJSValue JIT_OPERATION operationParseIntGeneric(JSGlobalObject* globalObject, EncodedJSValue value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return toStringView(exec, JSValue::decode(value), [&] (StringView view) {
+    return toStringView(globalObject, JSValue::decode(value), [&] (StringView view) {
         return parseIntResult(parseInt(view, radix));
     });
 }
         
-size_t JIT_OPERATION operationRegExpTestString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* input)
+size_t JIT_OPERATION operationRegExpTestString(JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* input)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return regExpObject->testInline(exec, globalObject, input);
+    return regExpObject->testInline(globalObject, input);
 }
 
-size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
+size_t JIT_OPERATION operationRegExpTest(JSGlobalObject* globalObject, RegExpObject* regExpObject, EncodedJSValue encodedArgument)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue argument = JSValue::decode(encodedArgument);
 
-    JSString* input = argument.toStringOrNull(exec);
+    JSString* input = argument.toStringOrNull(globalObject);
     if (!input)
         return false;
-    return regExpObject->testInline(exec, globalObject, input);
+    return regExpObject->testInline(globalObject, input);
 }
 
-size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
+size_t JIT_OPERATION operationRegExpTestGeneric(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedArgument)
 {
     SuperSamplerScope superSamplerScope(false);
     
     VM& vm = globalObject->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(encodedBase);
@@ -1381,184 +1486,201 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
 
     auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
     if (UNLIKELY(!regexp)) {
-        throwTypeError(exec, scope);
+        throwTypeError(globalObject, scope);
         return false;
     }
 
-    JSString* input = argument.toStringOrNull(exec);
+    JSString* input = argument.toStringOrNull(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return false;
-    RELEASE_AND_RETURN(scope, regexp->test(exec, globalObject, input));
+    RELEASE_AND_RETURN(scope, regexp->test(globalObject, input));
 }
 
-JSCell* JIT_OPERATION operationSubBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationSubBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::sub(exec, leftOperand, rightOperand);
+    return JSBigInt::sub(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitNotBigInt(ExecState* exec, JSCell* op1)
+JSCell* JIT_OPERATION operationBitNotBigInt(JSGlobalObject* globalObject, JSCell* op1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSBigInt* operand = jsCast<JSBigInt*>(op1);
 
-    return JSBigInt::bitwiseNot(exec, operand);
+    return JSBigInt::bitwiseNot(globalObject, operand);
 }
 
-JSCell* JIT_OPERATION operationMulBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationMulBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::multiply(exec, leftOperand, rightOperand);
+    return JSBigInt::multiply(globalObject, leftOperand, rightOperand);
 }
     
-JSCell* JIT_OPERATION operationModBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationModBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::remainder(exec, leftOperand, rightOperand);
+    return JSBigInt::remainder(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationDivBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationDivBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::divide(exec, leftOperand, rightOperand);
+    return JSBigInt::divide(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationPowBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationPowBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::exponentiate(exec, leftOperand, rightOperand);
+    return JSBigInt::exponentiate(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitAndBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::bitwiseAnd(exec, leftOperand, rightOperand);
+    return JSBigInt::bitwiseAnd(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitLShiftBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitLShiftBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::leftShift(exec, leftOperand, rightOperand);
+    return JSBigInt::leftShift(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationAddBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationAddBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::add(exec, leftOperand, rightOperand);
+    return JSBigInt::add(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitRShiftBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitRShiftBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::signedRightShift(exec, leftOperand, rightOperand);
+    return JSBigInt::signedRightShift(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitOrBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitOrBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::bitwiseOr(exec, leftOperand, rightOperand);
+    return JSBigInt::bitwiseOr(globalObject, leftOperand, rightOperand);
 }
 
-JSCell* JIT_OPERATION operationBitXorBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+JSCell* JIT_OPERATION operationBitXorBigInt(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
 
-    return JSBigInt::bitwiseXor(exec, leftOperand, rightOperand);
+    return JSBigInt::bitwiseXor(globalObject, leftOperand, rightOperand);
 }
 
-size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, JSCell* op1, JSCell* op2)
+size_t JIT_OPERATION operationCompareStrictEqCell(JSGlobalObject* globalObject, JSCell* op1, JSCell* op2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
+    return JSValue::strictEqualSlowCaseInline(globalObject, op1, op2);
 }
 
-size_t JIT_OPERATION operationSameValue(ExecState* exec, EncodedJSValue arg1, EncodedJSValue arg2)
+size_t JIT_OPERATION operationSameValue(JSGlobalObject* globalObject, EncodedJSValue arg1, EncodedJSValue arg2)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return sameValue(exec, JSValue::decode(arg1), JSValue::decode(arg2));
+    return sameValue(globalObject, JSValue::decode(arg1), JSValue::decode(arg2));
 }
 
-EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)
+EncodedJSValue JIT_OPERATION operationToPrimitive(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
+    return JSValue::encode(JSValue::decode(value).toPrimitive(globalObject));
 }
 
-EncodedJSValue JIT_OPERATION operationToNumber(ExecState* exec, EncodedJSValue value)
+EncodedJSValue JIT_OPERATION operationToNumber(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(exec)));
+    return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(globalObject)));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)
+EncodedJSValue JIT_OPERATION operationGetByValWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -1568,7 +1690,7 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            RefPtr<AtomStringImpl> existingAtomString = asString(subscript)->toExistingAtomString(exec);
+            RefPtr<AtomStringImpl> existingAtomString = asString(subscript)->toExistingAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (existingAtomString) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomString.get()))
@@ -1581,177 +1703,192 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
-            return JSValue::encode(asString(baseValue)->getIndex(exec, i));
+            return JSValue::encode(asString(baseValue)->getIndex(globalObject, i));
         
-        RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(exec, i, slot)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, i, slot)));
     }
 
-    baseValue.requireObjectCoercible(exec);
+    baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto property = subscript.toPropertyKey(exec);
+    auto property = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(exec, property, slot)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(baseValue.get(globalObject, property, slot)));
 }
 
-void JIT_OPERATION operationPutByIdWithThisStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+void JIT_OPERATION operationPutByIdWithThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
+    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
 }
 
-void JIT_OPERATION operationPutByIdWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
+void JIT_OPERATION operationPutByIdWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, UniquedStringImpl* impl)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
+    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, Identifier::fromUid(vm, impl));
 }
 
-void JIT_OPERATION operationPutByValWithThisStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValWithThisStrict(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
+    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    putWithThis<true>(exec, encodedBase, encodedThis, encodedValue, property);
+    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, property);
 }
 
-void JIT_OPERATION operationPutByValWithThis(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+void JIT_OPERATION operationPutByValWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(exec);
+    Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    putWithThis<false>(exec, encodedBase, encodedThis, encodedValue, property);
+    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, property);
 }
 
-ALWAYS_INLINE static void defineDataProperty(ExecState* exec, VM& vm, JSObject* base, const Identifier& propertyName, JSValue value, int32_t attributes)
+ALWAYS_INLINE static void defineDataProperty(JSGlobalObject* globalObject, VM& vm, JSObject* base, const Identifier& propertyName, JSValue value, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(value, jsUndefined(), jsUndefined(), DefinePropertyAttributes(attributes));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
     if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
-        JSObject::defineOwnProperty(base, exec, propertyName, descriptor, true);
+        JSObject::defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     else
-        base->methodTable(vm)->defineOwnProperty(base, exec, propertyName, descriptor, true);
+        base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
 }
 
-void JIT_OPERATION operationDefineDataProperty(ExecState* exec, JSObject* base, EncodedJSValue encodedProperty, EncodedJSValue encodedValue, int32_t attributes)
+void JIT_OPERATION operationDefineDataProperty(JSGlobalObject* globalObject, JSObject* base, EncodedJSValue encodedProperty, EncodedJSValue encodedValue, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(exec);
+    Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    defineDataProperty(exec, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
-void JIT_OPERATION operationDefineDataPropertyString(ExecState* exec, JSObject* base, JSString* property, EncodedJSValue encodedValue, int32_t attributes)
+void JIT_OPERATION operationDefineDataPropertyString(JSGlobalObject* globalObject, JSObject* base, JSString* property, EncodedJSValue encodedValue, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier propertyName = property->toIdentifier(exec);
+    Identifier propertyName = property->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    defineDataProperty(exec, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
-void JIT_OPERATION operationDefineDataPropertyStringIdent(ExecState* exec, JSObject* base, UniquedStringImpl* property, EncodedJSValue encodedValue, int32_t attributes)
+void JIT_OPERATION operationDefineDataPropertyStringIdent(JSGlobalObject* globalObject, JSObject* base, UniquedStringImpl* property, EncodedJSValue encodedValue, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    defineDataProperty(exec, vm, base, Identifier::fromUid(vm, property), JSValue::decode(encodedValue), attributes);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    defineDataProperty(globalObject, vm, base, Identifier::fromUid(vm, property), JSValue::decode(encodedValue), attributes);
 }
 
-void JIT_OPERATION operationDefineDataPropertySymbol(ExecState* exec, JSObject* base, Symbol* property, EncodedJSValue encodedValue, int32_t attributes)
+void JIT_OPERATION operationDefineDataPropertySymbol(JSGlobalObject* globalObject, JSObject* base, Symbol* property, EncodedJSValue encodedValue, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    defineDataProperty(exec, vm, base, Identifier::fromUid(property->privateName()), JSValue::decode(encodedValue), attributes);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    defineDataProperty(globalObject, vm, base, Identifier::fromUid(property->privateName()), JSValue::decode(encodedValue), attributes);
 }
 
-ALWAYS_INLINE static void defineAccessorProperty(ExecState* exec, VM& vm, JSObject* base, const Identifier& propertyName, JSObject* getter, JSObject* setter, int32_t attributes)
+ALWAYS_INLINE static void defineAccessorProperty(JSGlobalObject* globalObject, VM& vm, JSObject* base, const Identifier& propertyName, JSObject* getter, JSObject* setter, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(jsUndefined(), getter, setter, DefinePropertyAttributes(attributes));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
     if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
-        JSObject::defineOwnProperty(base, exec, propertyName, descriptor, true);
+        JSObject::defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     else
-        base->methodTable(vm)->defineOwnProperty(base, exec, propertyName, descriptor, true);
+        base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
 }
 
-void JIT_OPERATION operationDefineAccessorProperty(ExecState* exec, JSObject* base, EncodedJSValue encodedProperty, JSObject* getter, JSObject* setter, int32_t attributes)
+void JIT_OPERATION operationDefineAccessorProperty(JSGlobalObject* globalObject, JSObject* base, EncodedJSValue encodedProperty, JSObject* getter, JSObject* setter, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(exec);
+    Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
-    defineAccessorProperty(exec, vm, base, propertyName, getter, setter, attributes);
+    defineAccessorProperty(globalObject, vm, base, propertyName, getter, setter, attributes);
 }
 
-void JIT_OPERATION operationDefineAccessorPropertyString(ExecState* exec, JSObject* base, JSString* property, JSObject* getter, JSObject* setter, int32_t attributes)
+void JIT_OPERATION operationDefineAccessorPropertyString(JSGlobalObject* globalObject, JSObject* base, JSString* property, JSObject* getter, JSObject* setter, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier propertyName = property->toIdentifier(exec);
+    Identifier propertyName = property->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
-    defineAccessorProperty(exec, vm, base, propertyName, getter, setter, attributes);
+    defineAccessorProperty(globalObject, vm, base, propertyName, getter, setter, attributes);
 }
 
-void JIT_OPERATION operationDefineAccessorPropertyStringIdent(ExecState* exec, JSObject* base, UniquedStringImpl* property, JSObject* getter, JSObject* setter, int32_t attributes)
+void JIT_OPERATION operationDefineAccessorPropertyStringIdent(JSGlobalObject* globalObject, JSObject* base, UniquedStringImpl* property, JSObject* getter, JSObject* setter, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    defineAccessorProperty(exec, vm, base, Identifier::fromUid(vm, property), getter, setter, attributes);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    defineAccessorProperty(globalObject, vm, base, Identifier::fromUid(vm, property), getter, setter, attributes);
 }
 
-void JIT_OPERATION operationDefineAccessorPropertySymbol(ExecState* exec, JSObject* base, Symbol* property, JSObject* getter, JSObject* setter, int32_t attributes)
+void JIT_OPERATION operationDefineAccessorPropertySymbol(JSGlobalObject* globalObject, JSObject* base, Symbol* property, JSObject* getter, JSObject* setter, int32_t attributes)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    defineAccessorProperty(exec, vm, base, Identifier::fromUid(property->privateName()), getter, setter, attributes);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    defineAccessorProperty(globalObject, vm, base, Identifier::fromUid(property->privateName()), getter, setter, attributes);
 }
 
-char* JIT_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure, void* buffer, size_t size)
+char* JIT_OPERATION operationNewArray(JSGlobalObject* globalObject, Structure* arrayStructure, void* buffer, size_t size)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return bitwise_cast<char*>(constructArray(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
+    return bitwise_cast<char*>(constructArray(globalObject, arrayStructure, static_cast<JSValue*>(buffer), size));
 }
 
-char* JIT_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStructure)
+char* JIT_OPERATION operationNewEmptyArray(VM* vmPointer, Structure* arrayStructure)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     return bitwise_cast<char*>(JSArray::create(vm, arrayStructure));
 }
 
-char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size, Butterfly* butterfly)
+char* JIT_OPERATION operationNewArrayWithSize(JSGlobalObject* globalObject, Structure* arrayStructure, int32_t size, Butterfly* butterfly)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwException(exec, scope, createRangeError(exec, "Array size is not a small enough positive integer."_s)));
+        return bitwise_cast<char*>(throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s)));
 
     JSArray* result;
     if (butterfly)
@@ -1761,14 +1898,15 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
     return bitwise_cast<char*>(result);
 }
 
-char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState* exec, Structure* arrayStructure, int32_t size, int32_t vectorLengthHint, Butterfly* butterfly)
+char* JIT_OPERATION operationNewArrayWithSizeAndHint(JSGlobalObject* globalObject, Structure* arrayStructure, int32_t size, int32_t vectorLengthHint, Butterfly* butterfly)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwException(exec, scope, createRangeError(exec, "Array size is not a small enough positive integer."_s)));
+        return bitwise_cast<char*>(throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s)));
 
     JSArray* result;
     if (butterfly)
@@ -1780,10 +1918,11 @@ char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState* exec, Structure*
     return bitwise_cast<char*>(result);
 }
 
-JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, JSCell* immutableButterflyCell)
+JSCell* JIT_OPERATION operationNewArrayBuffer(VM* vmPointer, Structure* arrayStructure, JSCell* immutableButterflyCell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     ASSERT(!arrayStructure->outOfLineCapacity());
     auto* immutableButterfly = jsCast<JSImmutableButterfly*>(immutableButterflyCell);
     ASSERT(arrayStructure->indexingMode() == immutableButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
@@ -1794,144 +1933,182 @@ JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayS
 }
 
 char* JIT_OPERATION operationNewInt8ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt8Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSInt8Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt8Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt8Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewInt16ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt16Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSInt16Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt16Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt16Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewInt32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSInt32Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSInt32Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt32Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewUint8ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint8Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSUint8Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint8ClampedArray>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSUint8ClampedArray>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8ClampedArray>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8ClampedArray>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewUint16ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint16Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSUint16Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint16Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint16Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewUint32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSUint32Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSUint32Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint32Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewFloat32ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSFloat32Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSFloat32Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat32Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
 char* JIT_OPERATION operationNewFloat64ArrayWithSize(
-    ExecState* exec, Structure* structure, int32_t length, char* vector)
+    JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector)
 {
-    return newTypedArrayWithSize<JSFloat64Array>(exec, structure, length, vector);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return newTypedArrayWithSize<JSFloat64Array>(globalObject, vm, structure, length, vector);
 }
 
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+    JSGlobalObject* globalObject, Structure* structure, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(exec, structure, encodedValue, 0, WTF::nullopt));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
 }
 
-JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState* exec, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)
+JSCell* JIT_OPERATION operationCreateActivationDirect(VM* vmPointer, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     JSValue initialValue = JSValue::decode(initialValueEncoded);
     ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
     return JSLexicalEnvironment::create(vm, structure, scope, table, initialValue);
 }
 
-JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure* structure, uint32_t length, uint32_t minCapacity)
+JSCell* JIT_OPERATION operationCreateDirectArguments(VM* vmPointer, Structure* structure, uint32_t length, uint32_t minCapacity)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     DirectArguments* result = DirectArguments::create(
         vm, structure, length, std::max(length, minCapacity));
     // The caller will store to this object without barriers. Most likely, at this point, this is
@@ -1941,10 +2118,11 @@ JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure*
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState* exec, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment* scope)
+JSCell* JIT_OPERATION operationCreateScopedArguments(JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment* scope)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     // We could pass the ScopedArgumentsTable* as an argument. We currently don't because I
     // didn't feel like changing the max number of arguments for a slow path call from 6 to 7.
@@ -1954,18 +2132,20 @@ JSCell* JIT_OPERATION operationCreateScopedArguments(ExecState* exec, Structure*
         vm, structure, argumentStart, length, callee, table, scope);
 }
 
-JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState* exec, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee)
+JSCell* JIT_OPERATION operationCreateClonedArguments(JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     return ClonedArguments::createByCopyingFrom(
-        exec, structure, argumentStart, length, callee);
+        globalObject, structure, argumentStart, length, callee);
 }
 
-JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
+JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(VM* vmPointer, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     DeferGCForAWhile deferGC(vm.heap);
     
@@ -1973,7 +2153,7 @@ JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, 
     if (inlineCallFrame)
         codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     else
-        codeBlock = exec->codeBlock();
+        codeBlock = callFrame->codeBlock();
     
     unsigned length = argumentCount - 1;
     unsigned capacity = std::max(length, static_cast<unsigned>(codeBlock->numParameters() - 1));
@@ -1983,7 +2163,7 @@ JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, 
     result->setCallee(vm, callee);
     
     Register* arguments =
-        exec->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
+        callFrame->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
         CallFrame::argumentOffset(0);
     for (unsigned i = length; i--;)
         result->setIndexQuickly(vm, i, arguments[i].jsValue());
@@ -1991,10 +2171,11 @@ JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, 
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
+JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(VM* vmPointer, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     DeferGCForAWhile deferGC(vm.heap);
     
@@ -2002,38 +2183,40 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
     if (inlineCallFrame)
         codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     else
-        codeBlock = exec->codeBlock();
+        codeBlock = callFrame->codeBlock();
     
     unsigned length = argumentCount - 1;
+    JSGlobalObject* globalObject = codeBlock->globalObject();
     ClonedArguments* result = ClonedArguments::createEmpty(
-        vm, codeBlock->globalObject()->clonedArgumentsStructure(), callee, length);
+        vm, globalObject->clonedArgumentsStructure(), callee, length);
     
     Register* arguments =
-        exec->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
+        callFrame->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
         CallFrame::argumentOffset(0);
     for (unsigned i = length; i--;)
-        result->putDirectIndex(exec, i, arguments[i].jsValue());
+        result->putDirectIndex(globalObject, i, arguments[i].jsValue());
 
     
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateRest(ExecState* exec, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
+JSCell* JIT_OPERATION operationCreateRest(JSGlobalObject* globalObject, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->restParameterStructure();
     static_assert(sizeof(Register) == sizeof(JSValue), "This is a strong assumption here.");
     JSValue* argumentsToCopyRegion = bitwise_cast<JSValue*>(argumentStart) + numberOfParamsToSkip;
-    return constructArray(exec, structure, argumentsToCopyRegion, arraySize);
+    return constructArray(globalObject, structure, argumentsToCopyRegion, arraySize);
 }
 
-size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject* globalObject, JSCell* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
@@ -2044,10 +2227,11 @@ size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* gl
     return true;
 }
 
-size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject* globalObject, JSCell* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
@@ -2058,10 +2242,11 @@ size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* 
     return false;
 }
 
-JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject* globalObject, JSCell* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
@@ -2072,10 +2257,11 @@ JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* glo
     return vm.smallStrings.objectString();
 }
 
-int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(JSGlobalObject* globalObject, JSCell* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
@@ -2086,47 +2272,52 @@ int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGloba
     return static_cast<int32_t>(TypeofType::Object);
 }
 
-char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(ExecState* exec)
+char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM* vmPointer)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
         Butterfly::createUninitialized(vm, 0, 0, initialOutOfLineCapacity, false, 0));
 }
 
-char* JIT_OPERATION operationAllocateSimplePropertyStorage(ExecState* exec, size_t newSize)
+char* JIT_OPERATION operationAllocateSimplePropertyStorage(VM* vmPointer, size_t newSize)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
         Butterfly::createUninitialized(vm, 0, 0, newSize, false, 0));
 }
 
-char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(ExecState* exec, JSObject* object)
+char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(VM* vmPointer, JSObject* object)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(!object->structure(vm)->outOfLineCapacity());
     return reinterpret_cast<char*>(
         object->allocateMoreOutOfLineStorage(vm, 0, initialOutOfLineCapacity));
 }
 
-char* JIT_OPERATION operationAllocateComplexPropertyStorage(ExecState* exec, JSObject* object, size_t newSize)
+char* JIT_OPERATION operationAllocateComplexPropertyStorage(VM* vmPointer, JSObject* object, size_t newSize)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
         object->allocateMoreOutOfLineStorage(vm, object->structure(vm)->outOfLineCapacity(), newSize));
 }
 
-char* JIT_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
+char* JIT_OPERATION operationEnsureInt32(VM* vmPointer, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
         return 0;
@@ -2136,10 +2327,11 @@ char* JIT_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)
     return result;
 }
 
-char* JIT_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
+char* JIT_OPERATION operationEnsureDouble(VM* vmPointer, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
         return 0;
@@ -2149,10 +2341,11 @@ char* JIT_OPERATION operationEnsureDouble(ExecState* exec, JSCell* cell)
     return result;
 }
 
-char* JIT_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
+char* JIT_OPERATION operationEnsureContiguous(VM* vmPointer, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
         return 0;
@@ -2162,10 +2355,11 @@ char* JIT_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
     return result;
 }
 
-char* JIT_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
+char* JIT_OPERATION operationEnsureArrayStorage(VM* vmPointer, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (!cell->isObject())
         return 0;
@@ -2175,94 +2369,102 @@ char* JIT_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
     return result;
 }
 
-EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, EncodedJSValue encodedBaseValue, JSCell* property)
+EncodedJSValue JIT_OPERATION operationHasGenericProperty(JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, JSCell* property)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue baseValue = JSValue::decode(encodedBaseValue);
     if (baseValue.isUndefinedOrNull())
         return JSValue::encode(jsBoolean(false));
 
-    JSObject* base = baseValue.toObject(exec);
+    JSObject* base = baseValue.toObject(globalObject);
     ASSERT(!scope.exception() || !base);
     if (!base)
         return JSValue::encode(JSValue());
-    auto propertyName = asString(property)->toIdentifier(exec);
+    auto propertyName = asString(property)->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasPropertyGeneric(exec, propertyName, PropertySlot::InternalMethodType::GetOwnProperty))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty))));
 }
 
-size_t JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
+size_t JIT_OPERATION operationHasIndexedPropertyByInt(JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    JSObject* object = baseCell->toObject(exec, exec->lexicalGlobalObject());
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
         // Go the slowest way possible because negative indices don't use indexed storage.
-        return object->hasPropertyGeneric(exec, Identifier::from(vm, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType));
+        return object->hasPropertyGeneric(globalObject, Identifier::from(vm, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType));
     }
-    return object->hasPropertyGeneric(exec, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType));
+    return object->hasPropertyGeneric(globalObject, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType));
 }
 
-JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, EncodedJSValue encodedBase)
+JSCell* JIT_OPERATION operationGetPropertyEnumerator(JSGlobalObject* globalObject, EncodedJSValue encodedBase)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(encodedBase);
     if (base.isUndefinedOrNull())
         return vm.emptyPropertyNameEnumerator();
 
-    JSObject* baseObject = base.toObject(exec);
+    JSObject* baseObject = base.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, propertyNameEnumerator(exec, baseObject));
+    RELEASE_AND_RETURN(scope, propertyNameEnumerator(globalObject, baseObject));
 }
 
-JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState* exec, JSCell* cell)
+JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(JSGlobalObject* globalObject, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* base = cell->toObject(exec, exec->lexicalGlobalObject());
+    JSObject* base = cell->toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, propertyNameEnumerator(exec, base));
+    RELEASE_AND_RETURN(scope, propertyNameEnumerator(globalObject, base));
 }
 
-JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
+JSCell* JIT_OPERATION operationToIndexString(JSGlobalObject* globalObject, int32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     return jsString(vm, Identifier::from(vm, index).string());
 }
 
-JSCell* JIT_OPERATION operationNewRegexpWithLastIndex(ExecState* exec, JSCell* regexpPtr, EncodedJSValue encodedLastIndex)
+JSCell* JIT_OPERATION operationNewRegexpWithLastIndex(JSGlobalObject* globalObject, JSCell* regexpPtr, EncodedJSValue encodedLastIndex)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     ASSERT(regexp->isValid());
-    return RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp, JSValue::decode(encodedLastIndex));
+    return RegExpObject::create(vm, globalObject->regExpStructure(), regexp, JSValue::decode(encodedLastIndex));
 }
 
-StringImpl* JIT_OPERATION operationResolveRope(ExecState* exec, JSString* string)
+StringImpl* JIT_OPERATION operationResolveRope(JSGlobalObject* globalObject, JSString* string)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return string->value(exec).impl();
+    return string->value(globalObject).impl();
 }
 
-JSString* JIT_OPERATION operationStringValueOf(ExecState* exec, EncodedJSValue encodedArgument)
+JSString* JIT_OPERATION operationStringValueOf(JSGlobalObject* globalObject, EncodedJSValue encodedArgument)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue argument = JSValue::decode(encodedArgument);
@@ -2273,36 +2475,39 @@ JSString* JIT_OPERATION operationStringValueOf(ExecState* exec, EncodedJSValue e
     if (auto* stringObject = jsDynamicCast<StringObject*>(vm, argument))
         return stringObject->internalValue();
 
-    throwVMTypeError(exec, scope);
+    throwVMTypeError(globalObject, scope);
     return nullptr;
 }
 
-JSCell* JIT_OPERATION operationStringSubstr(ExecState* exec, JSCell* cell, int32_t from, int32_t span)
+JSCell* JIT_OPERATION operationStringSubstr(JSGlobalObject* globalObject, JSCell* cell, int32_t from, int32_t span)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return jsSubstring(vm, exec, jsCast<JSString*>(cell), from, span);
+    return jsSubstring(vm, globalObject, jsCast<JSString*>(cell), from, span);
 }
 
-JSCell* JIT_OPERATION operationStringSlice(ExecState* exec, JSCell* cell, int32_t start, int32_t end)
+JSCell* JIT_OPERATION operationStringSlice(JSGlobalObject* globalObject, JSCell* cell, int32_t start, int32_t end)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSString* string = asString(cell);
     static_assert(static_cast<uint64_t>(JSString::MaxLength) <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()), "");
-    return stringSlice(exec, vm, string, string->length(), start, end);
+    return stringSlice(globalObject, vm, string, string->length(), start, end);
 }
 
-JSString* JIT_OPERATION operationToLowerCase(ExecState* exec, JSString* string, uint32_t failingIndex)
+JSString* JIT_OPERATION operationToLowerCase(JSGlobalObject* globalObject, JSString* string, uint32_t failingIndex)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String inputString = string->value(exec);
+    String inputString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!inputString.length())
         return vm.smallStrings.emptyString();
@@ -2313,200 +2518,218 @@ JSString* JIT_OPERATION operationToLowerCase(ExecState* exec, JSString* string, 
     RELEASE_AND_RETURN(scope, jsString(vm, lowercasedString));
 }
 
-char* JIT_OPERATION operationInt32ToString(ExecState* exec, int32_t value, int32_t radix)
+char* JIT_OPERATION operationInt32ToString(JSGlobalObject* globalObject, int32_t value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(exec, scope, createRangeError(exec, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
         return nullptr;
     }
 
     return reinterpret_cast<char*>(int32ToString(vm, value, radix));
 }
 
-char* JIT_OPERATION operationInt52ToString(ExecState* exec, int64_t value, int32_t radix)
+char* JIT_OPERATION operationInt52ToString(JSGlobalObject* globalObject, int64_t value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(exec, scope, createRangeError(exec, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
         return nullptr;
     }
 
     return reinterpret_cast<char*>(int52ToString(vm, value, radix));
 }
 
-char* JIT_OPERATION operationDoubleToString(ExecState* exec, double value, int32_t radix)
+char* JIT_OPERATION operationDoubleToString(JSGlobalObject* globalObject, double value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (radix < 2 || radix > 36) {
-        throwVMError(exec, scope, createRangeError(exec, "toString() radix argument must be between 2 and 36"_s));
+        throwVMError(globalObject, scope, createRangeError(globalObject, "toString() radix argument must be between 2 and 36"_s));
         return nullptr;
     }
 
     return reinterpret_cast<char*>(numberToString(vm, value, radix));
 }
 
-char* JIT_OPERATION operationInt32ToStringWithValidRadix(ExecState* exec, int32_t value, int32_t radix)
+char* JIT_OPERATION operationInt32ToStringWithValidRadix(JSGlobalObject* globalObject, int32_t value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(int32ToString(vm, value, radix));
 }
 
-char* JIT_OPERATION operationInt52ToStringWithValidRadix(ExecState* exec, int64_t value, int32_t radix)
+char* JIT_OPERATION operationInt52ToStringWithValidRadix(JSGlobalObject* globalObject, int64_t value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(int52ToString(vm, value, radix));
 }
 
-char* JIT_OPERATION operationDoubleToStringWithValidRadix(ExecState* exec, double value, int32_t radix)
+char* JIT_OPERATION operationDoubleToStringWithValidRadix(JSGlobalObject* globalObject, double value, int32_t radix)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(numberToString(vm, value, radix));
 }
 
-JSString* JIT_OPERATION operationSingleCharacterString(ExecState* exec, int32_t character)
+JSString* JIT_OPERATION operationSingleCharacterString(VM* vmPointer, int32_t character)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     return jsSingleCharacterString(vm, static_cast<UChar>(character));
 }
 
-Symbol* JIT_OPERATION operationNewSymbol(ExecState* exec)
+Symbol* JIT_OPERATION operationNewSymbol(VM* vmPointer)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     return Symbol::create(vm);
 }
 
-Symbol* JIT_OPERATION operationNewSymbolWithDescription(ExecState* exec, JSString* description)
+Symbol* JIT_OPERATION operationNewSymbolWithDescription(JSGlobalObject* globalObject, JSString* description)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String string = description->value(exec);
+    String string = description->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return Symbol::createWithDescription(vm, string);
 }
 
-JSCell* JIT_OPERATION operationNewStringObject(ExecState* exec, JSString* string, Structure* structure)
+JSCell* JIT_OPERATION operationNewStringObject(VM* vmPointer, JSString* string, Structure* structure)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     return StringObject::create(vm, structure, string);
 }
 
-JSString* JIT_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)
+JSString* JIT_OPERATION operationToStringOnCell(JSGlobalObject* globalObject, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
-    return JSValue(cell).toString(exec);
+    return JSValue(cell).toString(globalObject);
 }
 
-JSString* JIT_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
+JSString* JIT_OPERATION operationToString(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::decode(value).toString(exec);
+    return JSValue::decode(value).toString(globalObject);
 }
 
-JSString* JIT_OPERATION operationCallStringConstructorOnCell(ExecState* exec, JSCell* cell)
+JSString* JIT_OPERATION operationCallStringConstructorOnCell(JSGlobalObject* globalObject, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return stringConstructor(exec, cell);
+    return stringConstructor(globalObject, cell);
 }
 
-JSString* JIT_OPERATION operationCallStringConstructor(ExecState* exec, EncodedJSValue value)
+JSString* JIT_OPERATION operationCallStringConstructor(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return stringConstructor(exec, JSValue::decode(value));
+    return stringConstructor(globalObject, JSValue::decode(value));
 }
 
-JSString* JIT_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSString* right)
+JSString* JIT_OPERATION operationMakeRope2(JSGlobalObject* globalObject, JSString* left, JSString* right)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return jsString(exec, left, right);
+    return jsString(globalObject, left, right);
 }
 
-JSString* JIT_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString* b, JSString* c)
+JSString* JIT_OPERATION operationMakeRope3(JSGlobalObject* globalObject, JSString* a, JSString* b, JSString* c)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return jsString(exec, a, b, c);
+    return jsString(globalObject, a, b, c);
 }
 
-JSString* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, EncodedJSValue b)
+JSString* JIT_OPERATION operationStrCat2(JSGlobalObject* globalObject, EncodedJSValue a, EncodedJSValue b)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!JSValue::decode(a).isSymbol());
     ASSERT(!JSValue::decode(b).isSymbol());
-    JSString* str1 = JSValue::decode(a).toString(exec);
+    JSString* str1 = JSValue::decode(a).toString(globalObject);
     scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
-    JSString* str2 = JSValue::decode(b).toString(exec);
+    JSString* str2 = JSValue::decode(b).toString(globalObject);
     scope.assertNoException();
 
-    RELEASE_AND_RETURN(scope, jsString(exec, str1, str2));
+    RELEASE_AND_RETURN(scope, jsString(globalObject, str1, str2));
 }
     
-JSString* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
+JSString* JIT_OPERATION operationStrCat3(JSGlobalObject* globalObject, EncodedJSValue a, EncodedJSValue b, EncodedJSValue c)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!JSValue::decode(a).isSymbol());
     ASSERT(!JSValue::decode(b).isSymbol());
     ASSERT(!JSValue::decode(c).isSymbol());
-    JSString* str1 = JSValue::decode(a).toString(exec);
+    JSString* str1 = JSValue::decode(a).toString(globalObject);
     scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
-    JSString* str2 = JSValue::decode(b).toString(exec);
+    JSString* str2 = JSValue::decode(b).toString(globalObject);
     scope.assertNoException();
-    JSString* str3 = JSValue::decode(c).toString(exec);
+    JSString* str3 = JSValue::decode(c).toString(globalObject);
     scope.assertNoException();
 
-    RELEASE_AND_RETURN(scope, jsString(exec, str1, str2, str3));
+    RELEASE_AND_RETURN(scope, jsString(globalObject, str1, str2, str3));
 }
 
-char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
-    ExecState* exec, EncodedJSValue encodedValue, size_t tableIndex)
+char* JIT_OPERATION operationFindSwitchImmTargetForDouble(VM* vmPointer, EncodedJSValue encodedValue, size_t tableIndex)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    CodeBlock* codeBlock = exec->codeBlock();
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    CodeBlock* codeBlock = callFrame->codeBlock();
     SimpleJumpTable& table = codeBlock->switchJumpTable(tableIndex);
     JSValue value = JSValue::decode(encodedValue);
     ASSERT(value.isDouble());
@@ -2517,30 +2740,32 @@ char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
     return table.ctiDefault.executableAddress<char*>();
 }
 
-char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JSString* string)
+char* JIT_OPERATION operationSwitchString(JSGlobalObject* globalObject, size_t tableIndex, JSString* string)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    StringImpl* strImpl = string->value(exec).impl();
+    StringImpl* strImpl = string->value(globalObject).impl();
 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
-    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(strImpl).executableAddress<char*>();
+    return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(strImpl).executableAddress<char*>();
 }
 
-int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, size_t tableIndex, JSString* string)
+int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(JSGlobalObject* globalObject, size_t tableIndex, JSString* string)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    StringImpl* strImpl = string->value(exec).impl();
+    StringImpl* strImpl = string->value(globalObject).impl();
 
     RETURN_IF_EXCEPTION(throwScope, 0);
 
-    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
+    return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
 }
 
 uintptr_t JIT_OPERATION operationCompareStringImplLess(StringImpl* a, StringImpl* b)
@@ -2563,75 +2788,83 @@ uintptr_t JIT_OPERATION operationCompareStringImplGreaterEq(StringImpl* a, Strin
     return codePointCompare(a, b) >= 0;
 }
 
-uintptr_t JIT_OPERATION operationCompareStringLess(ExecState* exec, JSString* a, JSString* b)
+uintptr_t JIT_OPERATION operationCompareStringLess(JSGlobalObject* globalObject, JSString* a, JSString* b)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return codePointCompareLessThan(asString(a)->value(exec), asString(b)->value(exec));
+    return codePointCompareLessThan(asString(a)->value(globalObject), asString(b)->value(globalObject));
 }
 
-uintptr_t JIT_OPERATION operationCompareStringLessEq(ExecState* exec, JSString* a, JSString* b)
+uintptr_t JIT_OPERATION operationCompareStringLessEq(JSGlobalObject* globalObject, JSString* a, JSString* b)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return !codePointCompareLessThan(asString(b)->value(exec), asString(a)->value(exec));
+    return !codePointCompareLessThan(asString(b)->value(globalObject), asString(a)->value(globalObject));
 }
 
-uintptr_t JIT_OPERATION operationCompareStringGreater(ExecState* exec, JSString* a, JSString* b)
+uintptr_t JIT_OPERATION operationCompareStringGreater(JSGlobalObject* globalObject, JSString* a, JSString* b)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return codePointCompareLessThan(asString(b)->value(exec), asString(a)->value(exec));
+    return codePointCompareLessThan(asString(b)->value(globalObject), asString(a)->value(globalObject));
 }
 
-uintptr_t JIT_OPERATION operationCompareStringGreaterEq(ExecState* exec, JSString* a, JSString* b)
+uintptr_t JIT_OPERATION operationCompareStringGreaterEq(JSGlobalObject* globalObject, JSString* a, JSString* b)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return !codePointCompareLessThan(asString(a)->value(exec), asString(b)->value(exec));
+    return !codePointCompareLessThan(asString(a)->value(globalObject), asString(b)->value(globalObject));
 }
 
-void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
+void JIT_OPERATION operationNotifyWrite(VM* vmPointer, WatchpointSet* set)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     set->touch(vm, "Executed NotifyWrite");
 }
 
-void JIT_OPERATION operationThrowStackOverflowForVarargs(ExecState* exec)
+void JIT_OPERATION operationThrowStackOverflowForVarargs(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwStackOverflowError(exec, scope);
+    throwStackOverflowError(globalObject, scope);
 }
 
-int32_t JIT_OPERATION operationSizeOfVarargs(ExecState* exec, EncodedJSValue encodedArguments, uint32_t firstVarArgOffset)
+int32_t JIT_OPERATION operationSizeOfVarargs(JSGlobalObject* globalObject, EncodedJSValue encodedArguments, uint32_t firstVarArgOffset)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    return sizeOfVarargs(exec, arguments, firstVarArgOffset);
+    return sizeOfVarargs(globalObject, callFrame, arguments, firstVarArgOffset);
 }
 
-int32_t JIT_OPERATION operationHasOwnProperty(ExecState* exec, JSObject* thisObject, EncodedJSValue encodedKey)
+int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue key = JSValue::decode(encodedKey);
-    Identifier propertyName = key.toPropertyKey(exec);
+    Identifier propertyName = key.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    bool result = thisObject->hasOwnProperty(exec, propertyName.impl(), slot);
+    bool result = thisObject->hasOwnProperty(globalObject, propertyName.impl(), slot);
     RETURN_IF_EXCEPTION(scope, false);
 
     HasOwnPropertyCache* hasOwnPropertyCache = vm.hasOwnPropertyCache();
@@ -2640,17 +2873,19 @@ int32_t JIT_OPERATION operationHasOwnProperty(ExecState* exec, JSObject* thisObj
     return result;
 }
 
-int32_t JIT_OPERATION operationNumberIsInteger(ExecState* exec, EncodedJSValue value)
+int32_t JIT_OPERATION operationNumberIsInteger(JSGlobalObject* globalObject, EncodedJSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     return NumberConstructor::isIntegerImpl(JSValue::decode(value));
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfString(ExecState* exec, Butterfly* butterfly, JSString* searchElement, int32_t index)
+int32_t JIT_OPERATION operationArrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     int32_t length = butterfly->publicLength();
@@ -2662,7 +2897,7 @@ int32_t JIT_OPERATION operationArrayIndexOfString(ExecState* exec, Butterfly* bu
         auto* string = asString(value);
         if (string == searchElement)
             return index;
-        if (string->equal(exec, searchElement)) {
+        if (string->equal(globalObject, searchElement)) {
             scope.assertNoException();
             return index;
         }
@@ -2671,10 +2906,11 @@ int32_t JIT_OPERATION operationArrayIndexOfString(ExecState* exec, Butterfly* bu
     return -1;
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState* exec, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
+int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue searchElement = JSValue::decode(encodedValue);
@@ -2685,7 +2921,7 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState* exe
         JSValue value = data[index].get();
         if (!value)
             continue;
-        bool isEqual = JSValue::strictEqual(exec, searchElement, value);
+        bool isEqual = JSValue::strictEqual(globalObject, searchElement, value);
         RETURN_IF_EXCEPTION(scope, { });
         if (isEqual)
             return index;
@@ -2693,10 +2929,11 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState* exe
     return -1;
 }
 
-int32_t JIT_OPERATION operationArrayIndexOfValueDouble(ExecState* exec, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
+int32_t JIT_OPERATION operationArrayIndexOfValueDouble(JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSValue searchElement = JSValue::decode(encodedValue);
 
@@ -2714,16 +2951,17 @@ int32_t JIT_OPERATION operationArrayIndexOfValueDouble(ExecState* exec, Butterfl
     return -1;
 }
 
-void JIT_OPERATION operationLoadVarargs(ExecState* exec, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum)
+void JIT_OPERATION operationLoadVarargs(JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue encodedArguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    loadVarargs(exec, VirtualRegister(firstElementDest), arguments, offset, length);
+    loadVarargs(globalObject, callFrame, VirtualRegister(firstElementDest), arguments, offset, length);
     
     for (uint32_t i = length; i < mandatoryMinimum; ++i)
-        exec->r(firstElementDest + i) = jsUndefined();
+        callFrame->r(firstElementDest + i) = jsUndefined();
 }
 
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
@@ -2738,20 +2976,22 @@ double JIT_OPERATION operationRandom(JSGlobalObject* globalObject)
 }
 #endif
 
-JSCell* JIT_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
+JSCell* JIT_OPERATION operationStringFromCharCode(JSGlobalObject* globalObject, int32_t op1)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return JSC::stringFromCharCode(exec, op1);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return JSC::stringFromCharCode(globalObject, op1);
 }
 
-EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(ExecState* exec, EncodedJSValue encodedValue)
+EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(JSGlobalObject* globalObject, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     JSValue charValue = JSValue::decode(encodedValue);
-    int32_t chInt = charValue.toUInt32(exec);
-    return JSValue::encode(JSC::stringFromCharCode(exec, chInt));
+    int32_t chInt = charValue.toUInt32(globalObject);
+    return JSValue::encode(JSC::stringFromCharCode(globalObject, chInt));
 }
 
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue encodedValue)
@@ -2767,10 +3007,11 @@ int64_t JIT_OPERATION operationConvertDoubleToInt52(double value)
     return tryConvertToInt52(value);
 }
 
-char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure, int32_t length, Butterfly* butterfly)
+char* JIT_OPERATION operationNewRawObject(VM* vmPointer, Structure* structure, int32_t length, Butterfly* butterfly)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     if (!butterfly
         && (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType()))) {
@@ -2784,28 +3025,30 @@ char* JIT_OPERATION operationNewRawObject(ExecState* exec, Structure* structure,
             length * sizeof(EncodedJSValue));
     }
 
-    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
     return bitwise_cast<char*>(result);
 }
 
-JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec, Structure* structure, Butterfly* butterfly)
+JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM* vmPointer, Structure* structure, Butterfly* butterfly)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     
     if (!butterfly) {
         butterfly = Butterfly::create(
             vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
     }
     
-    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
     return result;
 }
 
-JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(ExecState* exec, Structure* structure, unsigned length, Butterfly* butterfly)
+JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM* vmPointer, Structure* structure, unsigned length, Butterfly* butterfly)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     IndexingHeader header;
     header.setVectorLength(length);
@@ -2819,14 +3062,15 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
     }
     
     // Paradoxically this may allocate a JSArray. That's totally cool.
-    JSObject* result = JSObject::createRawObject(exec, structure, butterfly);
+    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
     return result;
 }
 
-JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buffer, uint32_t numItems)
+JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(JSGlobalObject* globalObject, void* buffer, uint32_t numItems)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
@@ -2840,22 +3084,21 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     }
 
     if (UNLIKELY(checkedLength.hasOverflowed())) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
     unsigned length = checkedLength.unsafeGet();
     if (UNLIKELY(length >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
     JSArray* result = JSArray::tryCreate(vm, structure, length);
     if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -2866,13 +3109,13 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
         if (JSFixedArray* array = jsDynamicCast<JSFixedArray*>(vm, value)) {
             // We are spreading.
             for (unsigned i = 0; i < array->size(); i++) {
-                result->putDirectIndex(exec, index, array->get(i));
+                result->putDirectIndex(globalObject, index, array->get(i));
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 ++index;
             }
         } else {
             // We are not spreading.
-            result->putDirectIndex(exec, index, value);
+            result->putDirectIndex(globalObject, index, value);
             RETURN_IF_EXCEPTION(scope, nullptr);
             ++index;
         }
@@ -2881,36 +3124,37 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     return result;
 }
 
-JSCell* operationCreateFixedArray(ExecState* exec, unsigned length)
+JSCell* operationCreateFixedArray(JSGlobalObject* globalObject, unsigned length)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (JSFixedArray* result = JSFixedArray::tryCreate(vm, vm.fixedArrayStructure.get(), length))
         return result;
 
-    throwOutOfMemoryError(exec, scope);
+    throwOutOfMemoryError(globalObject, scope);
     return nullptr;
 }
 
-JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
+JSCell* JIT_OPERATION operationSpreadGeneric(JSGlobalObject* globalObject, JSCell* iterable)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (isJSArray(iterable)) {
         JSArray* array = jsCast<JSArray*>(iterable);
         if (array->isIteratorProtocolFastAndNonObservable())
-            RELEASE_AND_RETURN(throwScope, JSFixedArray::createFromArray(exec, vm, array));
+            RELEASE_AND_RETURN(throwScope, JSFixedArray::createFromArray(globalObject, vm, array));
     }
 
     // FIXME: we can probably make this path faster by having our caller JS code call directly into
     // the iteration protocol builtin: https://bugs.webkit.org/show_bug.cgi?id=164520
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSArray* array;
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
@@ -2921,233 +3165,303 @@ JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
         MarkedArgumentBuffer arguments;
         arguments.append(iterable);
         ASSERT(!arguments.hasOverflowed());
-        JSValue arrayResult = call(exec, iterationFunction, callType, callData, jsNull(), arguments);
+        JSValue arrayResult = call(globalObject, iterationFunction, callType, callData, jsNull(), arguments);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
         array = jsCast<JSArray*>(arrayResult);
     }
 
-    RELEASE_AND_RETURN(throwScope, JSFixedArray::createFromArray(exec, vm, array));
+    RELEASE_AND_RETURN(throwScope, JSFixedArray::createFromArray(globalObject, vm, array));
 }
 
-JSCell* JIT_OPERATION operationSpreadFastArray(ExecState* exec, JSCell* cell)
+JSCell* JIT_OPERATION operationSpreadFastArray(JSGlobalObject* globalObject, JSCell* cell)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     ASSERT(isJSArray(cell));
     JSArray* array = jsCast<JSArray*>(cell);
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
-    return JSFixedArray::createFromArray(exec, vm, array);
+    return JSFixedArray::createFromArray(globalObject, vm, array);
 }
 
-void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec) 
+void JIT_OPERATION operationProcessTypeProfilerLogDFG(VM* vmPointer) 
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     vm.typeProfilerLog()->processLogEntries(vm, "Log Full, called from inside DFG."_s);
 }
 
-EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)
+EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObject, JSScope* scope, UniquedStringImpl* impl)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
         
-    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(exec, scope, Identifier::fromUid(vm, impl));
+    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, Identifier::fromUid(vm, impl));
     return JSValue::encode(resolvedScope);
 }
     
-JSCell* JIT_OPERATION operationResolveScope(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)
+JSCell* JIT_OPERATION operationResolveScope(JSGlobalObject* globalObject, JSScope* scope, UniquedStringImpl* impl)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    JSObject* resolvedScope = JSScope::resolve(exec, scope, Identifier::fromUid(vm, impl));
+    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, Identifier::fromUid(vm, impl));
     return resolvedScope;
 }
 
-EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* scope, UniquedStringImpl* impl, unsigned getPutInfoBits)
+EncodedJSValue JIT_OPERATION operationGetDynamicVar(JSGlobalObject* globalObject, JSObject* scope, UniquedStringImpl* impl, unsigned getPutInfoBits)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Identifier ident = Identifier::fromUid(vm, impl);
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(scope->getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(scope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             GetPutInfo getPutInfo(getPutInfoBits);
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
-                throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
+                throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
             return jsUndefined();
         }
 
         if (scope->isGlobalLexicalEnvironment()) {
             // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-            JSValue result = slot.getValue(exec, ident);
+            JSValue result = slot.getValue(globalObject, ident);
             if (result == jsTDZValue()) {
-                throwException(exec, throwScope, createTDZError(exec));
+                throwException(globalObject, throwScope, createTDZError(globalObject));
                 return jsUndefined();
             }
             return result;
         }
 
-        return slot.getValue(exec, ident);
+        return slot.getValue(globalObject, ident);
     })));
 }
 
-ALWAYS_INLINE static void putDynamicVar(ExecState* exec, VM& vm, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits, bool isStrictMode)
+ALWAYS_INLINE static void putDynamicVar(JSGlobalObject* globalObject, VM& vm, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits, bool isStrictMode)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     const Identifier& ident = Identifier::fromUid(vm, impl);
     GetPutInfo getPutInfo(getPutInfoBits);
-    bool hasProperty = scope->hasProperty(exec, ident);
+    bool hasProperty = scope->hasProperty(globalObject, ident);
     RETURN_IF_EXCEPTION(throwScope, void());
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
         && !isInitialization(getPutInfo.initializationMode())) {
         // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
         PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
-        JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, exec, ident, slot);
-        if (slot.getValue(exec, ident) == jsTDZValue()) {
-            throwException(exec, throwScope, createTDZError(exec));
+        JSGlobalLexicalEnvironment::getOwnPropertySlot(scope, globalObject, ident, slot);
+        if (slot.getValue(globalObject, ident) == jsTDZValue()) {
+            throwException(globalObject, throwScope, createTDZError(globalObject));
             return;
         }
     }
 
     if (getPutInfo.resolveMode() == ThrowIfNotFound && !hasProperty) {
-        throwException(exec, throwScope, createUndefinedVariableError(exec, ident));
+        throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
         return;
     }
 
     PutPropertySlot slot(scope, isStrictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     throwScope.release();
-    scope->methodTable(vm)->put(scope, exec, ident, JSValue::decode(value), slot);
+    scope->methodTable(vm)->put(scope, globalObject, ident, JSValue::decode(value), slot);
 }
 
-void JIT_OPERATION operationPutDynamicVarStrict(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
+void JIT_OPERATION operationPutDynamicVarStrict(JSGlobalObject* globalObject, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     constexpr bool isStrictMode = true;
-    return putDynamicVar(exec, vm, scope, value, impl, getPutInfoBits, isStrictMode);
+    return putDynamicVar(globalObject, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
-void JIT_OPERATION operationPutDynamicVarNonStrict(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
+void JIT_OPERATION operationPutDynamicVarNonStrict(JSGlobalObject* globalObject, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     constexpr bool isStrictMode = false;
-    return putDynamicVar(exec, vm, scope, value, impl, getPutInfoBits, isStrictMode);
+    return putDynamicVar(globalObject, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
-int32_t JIT_OPERATION operationMapHash(ExecState* exec, EncodedJSValue input)
+int32_t JIT_OPERATION operationMapHash(JSGlobalObject* globalObject, EncodedJSValue input)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
-    return jsMapHash(exec, vm, JSValue::decode(input));
+    return jsMapHash(globalObject, vm, JSValue::decode(input));
 }
 
-JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState* exec, JSCell* map, EncodedJSValue key, int32_t hash)
+JSCell* JIT_OPERATION operationJSMapFindBucket(JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, JSValue::decode(key), hash);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
     if (!bucket)
         return vm.sentinelMapBucket();
     return *bucket;
 }
 
-JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, EncodedJSValue key, int32_t hash)
+JSCell* JIT_OPERATION operationJSSetFindBucket(JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, JSValue::decode(key), hash);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(globalObject, JSValue::decode(key), hash);
     if (!bucket)
         return vm.sentinelSetBucket();
     return *bucket;
 }
 
-JSCell* JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSValue key, int32_t hash)
+JSCell* JIT_OPERATION operationSetAdd(JSGlobalObject* globalObject, JSCell* set, EncodedJSValue key, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto* bucket = jsCast<JSSet*>(set)->addNormalized(exec, JSValue::decode(key), JSValue(), hash);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto* bucket = jsCast<JSSet*>(set)->addNormalized(globalObject, JSValue::decode(key), JSValue(), hash);
     if (!bucket)
         return vm.sentinelSetBucket();
     return bucket;
 }
 
-JSCell* JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
+JSCell* JIT_OPERATION operationMapSet(JSGlobalObject* globalObject, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    auto* bucket = jsCast<JSMap*>(map)->addNormalized(exec, JSValue::decode(key), JSValue::decode(value), hash);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto* bucket = jsCast<JSMap*>(map)->addNormalized(globalObject, JSValue::decode(key), JSValue::decode(value), hash);
     if (!bucket)
         return vm.sentinelMapBucket();
     return bucket;
 }
 
-void JIT_OPERATION operationWeakSetAdd(ExecState* exec, JSCell* set, JSCell* key, int32_t hash)
+void JIT_OPERATION operationWeakSetAdd(VM* vmPointer, JSCell* set, JSCell* key, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     jsCast<JSWeakSet*>(set)->add(vm, asObject(key), JSValue(), hash);
 }
 
-void JIT_OPERATION operationWeakMapSet(ExecState* exec, JSCell* map, JSCell* key, EncodedJSValue value, int32_t hash)
+void JIT_OPERATION operationWeakMapSet(VM* vmPointer, JSCell* map, JSCell* key, EncodedJSValue value, int32_t hash)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     jsCast<JSWeakMap*>(map)->add(vm, asObject(key), JSValue::decode(value), hash);
 }
 
-EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)
+EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(JSGlobalObject* globalObject, JSObject* thisObject)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return JSValue::encode(thisObject->getPrototype(vm, exec));
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(thisObject->getPrototype(vm, globalObject));
 }
 
-EncodedJSValue JIT_OPERATION operationGetPrototypeOf(ExecState* exec, EncodedJSValue encodedValue)
+EncodedJSValue JIT_OPERATION operationGetPrototypeOf(JSGlobalObject* globalObject, EncodedJSValue encodedValue)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = JSValue::decode(encodedValue).toThis(exec, StrictMode);
+    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, StrictMode);
     if (thisValue.isUndefinedOrNull())
-        return throwVMError(exec, scope, createNotAnObjectError(exec, thisValue));
+        return throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
 
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
     if (!thisObject) {
-        JSObject* prototype = thisValue.synthesizePrototype(exec);
+        JSObject* prototype = thisValue.synthesizePrototype(globalObject);
         EXCEPTION_ASSERT(!!scope.exception() == !prototype);
         if (UNLIKELY(!prototype))
             return JSValue::encode(JSValue());
         return JSValue::encode(prototype);
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPrototype(vm, exec)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPrototype(vm, globalObject)));
 }
 
-void JIT_OPERATION operationThrowDFG(ExecState* exec, EncodedJSValue valueToThrow)
+void JIT_OPERATION operationThrowDFG(JSGlobalObject* globalObject, EncodedJSValue valueToThrow)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    scope.throwException(exec, JSValue::decode(valueToThrow));
+    scope.throwException(globalObject, JSValue::decode(valueToThrow));
 }
 
-void JIT_OPERATION operationThrowStaticError(ExecState* exec, JSString* message, uint32_t errorType)
+void JIT_OPERATION operationThrowStaticError(JSGlobalObject* globalObject, JSString* message, uint32_t errorType)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    String errorMessage = message->value(exec);
-    scope.throwException(exec, createError(exec, static_cast<ErrorType>(errorType), errorMessage));
+    String errorMessage = message->value(globalObject);
+    scope.throwException(globalObject, createError(globalObject, static_cast<ErrorType>(errorType), errorMessage));
+}
+
+void JIT_OPERATION operationLinkDirectCall(CallLinkInfo* callLinkInfo, JSFunction* callee)
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    CodeSpecializationKind kind = callLinkInfo->specializationKind();
+    
+    RELEASE_ASSERT(callLinkInfo->isDirect());
+    
+    // This would happen if the executable died during GC but the CodeBlock did not die. That should
+    // not happen because the CodeBlock should have a weak reference to any executable it uses for
+    // this purpose.
+    RELEASE_ASSERT(callLinkInfo->executable());
+    
+    // Having a CodeBlock indicates that this is linked. We shouldn't be taking this path if it's
+    // linked.
+    RELEASE_ASSERT(!callLinkInfo->codeBlock());
+    
+    // We just don't support this yet.
+    RELEASE_ASSERT(!callLinkInfo->isVarargs());
+    
+    ExecutableBase* executable = callLinkInfo->executable();
+    RELEASE_ASSERT(callee->executable() == callLinkInfo->executable());
+
+    JSScope* scope = callee->scopeUnchecked();
+
+    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
+    CodeBlock* codeBlock = nullptr;
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+
+        RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
+        
+        Exception* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
+        EXCEPTION_ASSERT_UNUSED(throwScope, throwScope.exception() == error);
+        if (UNLIKELY(error))
+            return;
+        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
+        if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
+            codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);
+        else
+            codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired);
+    }
+    
+    linkDirectFor(callFrame, *callLinkInfo, codeBlock, codePtr);
 }
 
 extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase* exit)
@@ -3279,12 +3593,13 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
         codeBlock, CompilationDeferred);
 }
 
-void JIT_OPERATION triggerTierUpNow(ExecState* exec)
+void JIT_OPERATION triggerTierUpNow(VM* vmPointer)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     DeferGCForAWhile deferGC(vm.heap);
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     
     sanitizeStackForVM(vm);
 
@@ -3324,10 +3639,9 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     }
 }
 
-static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool canOSREnterHere)
+static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeIndex, bool canOSREnterHere)
 {
-    VM& vm = exec->vm();
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
 
     // Resolve any pending plan for OSR Enter on this function.
     Worklist::State worklistState;
@@ -3377,9 +3691,9 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool ca
             if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
                 if (Options::verboseOSR())
                     dataLog("OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock), "\n");
-                if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
+                if (void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
                     CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
-                    return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
+                    return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(callFrame));
                 }
             }
         }
@@ -3507,8 +3821,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool ca
 
     Operands<Optional<JSValue>> mustHandleValues;
     unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
-    jitCode->reconstruct(
-        exec, codeBlock, CodeOrigin(originBytecodeIndex), streamIndex, mustHandleValues);
+    jitCode->reconstruct(callFrame, codeBlock, CodeOrigin(originBytecodeIndex), streamIndex, mustHandleValues);
     CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
 
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLOSR", ());
@@ -3533,19 +3846,19 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool ca
     if (Options::verboseOSR())
         dataLog("Immediate OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(jitCode->osrEntryBlock()), "\n");
 
-    void* address = FTL::prepareOSREntry(
-        exec, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
+    void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
         return nullptr;
-    return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
+    return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(callFrame));
 }
 
-void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeIndex)
+void JIT_OPERATION triggerTierUpNowInLoop(VM* vmPointer, unsigned bytecodeIndex)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     DeferGCForAWhile deferGC(vm.heap);
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
 
     sanitizeStackForVM(vm);
 
@@ -3563,7 +3876,7 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
     }
 
     if (jitCode->tierUpInLoopHierarchy.contains(bytecodeIndex))
-        tierUpCommon(exec, bytecodeIndex, false);
+        tierUpCommon(vm, callFrame, bytecodeIndex, false);
     else if (shouldTriggerFTLCompile(codeBlock, jitCode))
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);
 
@@ -3574,12 +3887,13 @@ void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeInde
     }
 }
 
-char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
+char* JIT_OPERATION triggerOSREntryNow(VM* vmPointer, unsigned bytecodeIndex)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    NativeCallFrameTracer tracer(vm, callFrame);
     DeferGCForAWhile deferGC(vm.heap);
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
 
     sanitizeStackForVM(vm);
 
@@ -3596,13 +3910,15 @@ char* JIT_OPERATION triggerOSREntryNow(ExecState* exec, unsigned bytecodeIndex)
             jitCode->tierUpCounter, "\n");
     }
 
-    return tierUpCommon(exec, bytecodeIndex, true);
+    return tierUpCommon(vm, callFrame, bytecodeIndex, true);
 }
 
 #endif // ENABLE(FTL_JIT)
 
 } // extern "C"
 } } // namespace JSC::DFG
+
+IGNORE_WARNINGS_END
 
 #endif // ENABLE(DFG_JIT)
 

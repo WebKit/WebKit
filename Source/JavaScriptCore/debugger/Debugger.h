@@ -41,8 +41,6 @@ class JSGlobalObject;
 class SourceProvider;
 class VM;
 
-using ExecState = CallFrame;
-
 class JS_EXPORT_PRIVATE Debugger {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -122,11 +120,11 @@ public:
     bool suppressAllPauses() const { return m_suppressAllPauses; }
     void setSuppressAllPauses(bool suppress) { m_suppressAllPauses = suppress; }
 
-    virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
+    virtual void sourceParsed(JSGlobalObject*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
     virtual void willRunMicrotask() { }
     virtual void didRunMicrotask() { }
 
-    void exception(CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
+    void exception(JSGlobalObject*, CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
     void atExpression(CallFrame*);
     void callEvent(CallFrame*);
@@ -156,7 +154,7 @@ public:
 
 protected:
     virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
-    virtual void handleExceptionInBreakpointCondition(ExecState*, Exception*) const { }
+    virtual void handleExceptionInBreakpointCondition(JSGlobalObject*, Exception*) const { }
     virtual void handlePause(JSGlobalObject*, ReasonForPause) { }
     virtual void notifyDoneProcessingDebuggerEvents() { }
 
@@ -199,9 +197,9 @@ private:
     // bytecode PC key'ed breakpoint, we will not need these anymore and should
     // be able to remove them.
     enum CallFrameUpdateAction { AttemptPause, NoPause };
-    void updateCallFrame(JSC::CallFrame*, CallFrameUpdateAction);
+    void updateCallFrame(JSC::JSGlobalObject*, JSC::CallFrame*, CallFrameUpdateAction);
     void updateCallFrameInternal(JSC::CallFrame*);
-    void pauseIfNeeded(JSC::CallFrame*);
+    void pauseIfNeeded(JSC::JSGlobalObject*);
     void clearNextPauseState();
 
     enum SteppingMode {

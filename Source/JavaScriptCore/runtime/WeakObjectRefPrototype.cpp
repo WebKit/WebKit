@@ -47,13 +47,13 @@ void WeakObjectRefPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, "WeakRef"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
-ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSGlobalObject* globalObject, JSValue value)
+ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!value.isObject())) {
-        throwTypeError(callFrame, scope, "Called WeakRef function on non-object"_s);
+        throwTypeError(globalObject, scope, "Called WeakRef function on non-object"_s);
         return nullptr;
     }
 
@@ -61,14 +61,14 @@ ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(CallFrame* callFrame, JSGlobalO
     if (LIKELY(ref))
         return ref;
 
-    throwTypeError(callFrame, scope, "Called WeakRef function on a non-WeakRef object"_s);
+    throwTypeError(globalObject, scope, "Called WeakRef function on a non-WeakRef object"_s);
     return nullptr;
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakRefDeref(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
-    auto* ref = getWeakRef(callFrame, globalObject, callFrame->thisValue());
+    auto* ref = getWeakRef(globalObject, callFrame->thisValue());
     if (!ref)
         return JSValue::encode(jsUndefined());
 

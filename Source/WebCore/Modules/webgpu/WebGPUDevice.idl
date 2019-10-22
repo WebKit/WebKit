@@ -35,7 +35,7 @@ typedef sequence<any> GPUMappedBuffer;  // [GPUBuffer, ArrayBuffer]
     readonly attribute WebGPUAdapter adapter;
 
     WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);
-    [CallWith=ExecState] GPUMappedBuffer createBufferMapped(GPUBufferDescriptor descriptor);
+    [CallWith=GlobalObject] GPUMappedBuffer createBufferMapped(GPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
     WebGPUSampler createSampler(GPUSamplerDescriptor descriptor);
 

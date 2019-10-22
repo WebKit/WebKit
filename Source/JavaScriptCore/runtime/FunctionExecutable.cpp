@@ -95,16 +95,16 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
-    const Identifier& name, ExecState& exec, const SourceCode& source, 
+    const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 
     JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
-            name, exec, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
+            name, globalObject, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
     if (!unlinkedExecutable)
         return nullptr;
 
-    return unlinkedExecutable->link(exec.vm(), nullptr, source, overrideLineNumber);
+    return unlinkedExecutable->link(globalObject->vm(), nullptr, source, overrideLineNumber);
 }
 
 FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()

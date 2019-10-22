@@ -32,34 +32,34 @@
 namespace WebCore {
 using namespace JSC;
 
-static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope, String&& string)
+static inline String stringToByteString(JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, String&& string)
 {
     if (!string.isAllLatin1()) {
-        throwTypeError(&state, scope);
+        throwTypeError(&lexicalGlobalObject, scope);
         return { };
     }
 
     return WTFMove(string);
 }
 
-String identifierToByteString(ExecState& state, const Identifier& identifier)
+String identifierToByteString(JSGlobalObject& lexicalGlobalObject, const Identifier& identifier)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto string = identifier.string();
-    return stringToByteString(state, scope, WTFMove(string));
+    return stringToByteString(lexicalGlobalObject, scope, WTFMove(string));
 }
 
-String valueToByteString(ExecState& state, JSValue value)
+String valueToByteString(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto string = value.toWTFString(&state);
+    auto string = value.toWTFString(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return stringToByteString(state, scope, WTFMove(string));
+    return stringToByteString(lexicalGlobalObject, scope, WTFMove(string));
 }
 
 static inline bool hasUnpairedSurrogate(StringView string)
@@ -94,18 +94,18 @@ static inline String stringToUSVString(String&& string)
     return result.toString();
 }
 
-String identifierToUSVString(ExecState&, const Identifier& identifier)
+String identifierToUSVString(JSGlobalObject&, const Identifier& identifier)
 {
     auto string = identifier.string();
     return stringToUSVString(WTFMove(string));
 }
 
-String valueToUSVString(ExecState& state, JSValue value)
+String valueToUSVString(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto string = value.toWTFString(&state);
+    auto string = value.toWTFString(&lexicalGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     return stringToUSVString(WTFMove(string));

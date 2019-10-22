@@ -34,7 +34,7 @@ public:
     CommandLineAPIModule();
 
     String source() const override;
-    JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const override;
+    JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::JSGlobalObject*) const override;
 
     static void injectIfNeeded(Inspector::InjectedScriptManager*, const Inspector::InjectedScript&);
 };

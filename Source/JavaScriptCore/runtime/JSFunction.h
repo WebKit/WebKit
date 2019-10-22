@@ -136,7 +136,7 @@ public:
         return m_rareData.get();
     }
 
-    FunctionRareData* ensureRareDataAndAllocationProfile(ExecState*, unsigned inlineCapacity);
+    FunctionRareData* ensureRareDataAndAllocationProfile(JSGlobalObject*, unsigned inlineCapacity);
 
     FunctionRareData* rareData()
     {
@@ -157,10 +157,10 @@ public:
     JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
     bool isClassConstructorFunction() const;
 
-    void setFunctionName(ExecState*, JSValue name);
+    void setFunctionName(JSGlobalObject*, JSValue name);
 
     // Returns the __proto__ for the |this| value if this JSFunction were to be constructed.
-    JSObject* prototypeForConstruction(VM&, ExecState*);
+    JSObject* prototypeForConstruction(VM&, JSGlobalObject*);
 
     bool canUseAllocationProfile();
     bool canUseAllocationProfileNonInline();
@@ -170,7 +170,7 @@ public:
         Lazy,
         Reified,
     };
-    PropertyStatus reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyPropertyIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
@@ -179,13 +179,13 @@ protected:
     void finishCreation(VM&, NativeExecutable*, int length, const String& name);
     void finishCreation(VM&);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = EnumerationMode());
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode = EnumerationMode());
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -199,22 +199,22 @@ private:
     }
 
     FunctionRareData* allocateRareData(VM&);
-    FunctionRareData* allocateAndInitializeRareData(ExecState*, size_t inlineCapacity);
-    FunctionRareData* initializeRareData(ExecState*, size_t inlineCapacity);
+    FunctionRareData* allocateAndInitializeRareData(JSGlobalObject*, size_t inlineCapacity);
+    FunctionRareData* initializeRareData(JSGlobalObject*, size_t inlineCapacity);
 
     bool hasReifiedLength() const;
     bool hasReifiedName() const;
     void reifyLength(VM&);
-    void reifyName(VM&, ExecState*);
-    void reifyName(VM&, ExecState*, String name);
+    void reifyName(VM&, JSGlobalObject*);
+    void reifyName(VM&, JSGlobalObject*, String name);
 
     static bool isLazy(PropertyStatus property) { return property == PropertyStatus::Lazy || property == PropertyStatus::Reified; }
     static bool isReified(PropertyStatus property) { return property == PropertyStatus::Reified; }
 
-    PropertyStatus reifyLazyPropertyForHostOrBuiltinIfNeeded(VM&, ExecState*, PropertyName);
-    PropertyStatus reifyLazyLengthIfNeeded(VM&, ExecState*, PropertyName);
-    PropertyStatus reifyLazyNameIfNeeded(VM&, ExecState*, PropertyName);
-    PropertyStatus reifyLazyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyPropertyForHostOrBuiltinIfNeeded(VM&, JSGlobalObject*, PropertyName);
+    PropertyStatus reifyLazyLengthIfNeeded(VM&, JSGlobalObject*, PropertyName);
+    PropertyStatus reifyLazyNameIfNeeded(VM&, JSGlobalObject*, PropertyName);
+    PropertyStatus reifyLazyBoundNameIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
 #if ASSERT_DISABLED
     void assertTypeInfoFlagInvariants() { }
@@ -224,10 +224,8 @@ private:
 
     friend class LLIntOffsetsExtractor;
 
-    static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue callerGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue nameGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue argumentsGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue callerGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     WriteBarrier<ExecutableBase> m_executable;
     WriteBarrier<FunctionRareData> m_rareData;

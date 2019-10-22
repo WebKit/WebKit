@@ -28,14 +28,14 @@ namespace JSC {
 
 JSValue StringRecursionChecker::throwStackOverflowError()
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSC::throwStackOverflowError(m_exec, scope);
+    return JSC::throwStackOverflowError(m_globalObject, scope);
 }
 
 JSValue StringRecursionChecker::emptyString()
 {
-    return jsEmptyString(m_exec->vm());
+    return jsEmptyString(m_globalObject->vm());
 }
 
 }

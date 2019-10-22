@@ -286,7 +286,7 @@ public:
     virtual bool rendererIsNeeded(const RenderStyle&);
 
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
-    ShadowRoot* shadowRootForBindings(JSC::ExecState&) const;
+    ShadowRoot* shadowRootForBindings(JSC::JSGlobalObject&) const;
 
     struct ShadowRootInit {
         ShadowRootMode mode;
@@ -600,7 +600,7 @@ public:
 
     Element* findAnchorElementForLink(String& outAnchorName);
 
-    ExceptionOr<Ref<WebAnimation>> animate(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeAnimationOptions>>&&);
+    ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations();
 
     ElementIdentifier createElementIdentifier();

@@ -45,21 +45,21 @@ protected:
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
-    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     
     void initModifiedArgumentsDescriptor(VM&, unsigned length);
     void initModifiedArgumentsDescriptorIfNecessary(VM&, unsigned length);
     void setModifiedArgumentDescriptor(VM&, unsigned index, unsigned length);
     bool isModifiedArgumentDescriptor(unsigned index, unsigned length);
 
-    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     using ModifiedArgumentsPtr = CagedBarrierPtr<Gigacage::Primitive, bool>;
     ModifiedArgumentsPtr m_modifiedArgumentsDescriptor;

@@ -48,37 +48,34 @@
 
 using namespace JSC;
 
-JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, ExecState* exec, JSContextRef ctx, JSObjectRef thisObject, const SourceCode& source, JSValueRef* exception)
+JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, JSContextRef ctx, JSObjectRef thisObject, const SourceCode& source, JSValueRef* exception)
 {
-    UNUSED_PARAM(ctx);
-
     JSObject* jsThisObject = toJS(thisObject);
 
     // evaluate sets "this" to the global object if it is NULL
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = vm.vmEntryGlobalObject(exec);
+    JSGlobalObject* globalObject = toJS(ctx);
     NakedPtr<Exception> evaluationException;
-    JSValue returnValue = profiledEvaluate(globalObject->globalExec(), ProfilingReason::API, source, jsThisObject, evaluationException);
+    JSValue returnValue = profiledEvaluate(globalObject, ProfilingReason::API, source, jsThisObject, evaluationException);
 
     if (evaluationException) {
         if (exception)
-            *exception = toRef(exec, evaluationException->value());
+            *exception = toRef(globalObject, evaluationException->value());
 #if ENABLE(REMOTE_INSPECTOR)
         // FIXME: If we have a debugger attached we could learn about ParseError exceptions through
         // ScriptDebugServer::sourceParsed and this path could produce a duplicate warning. The
         // Debugger path is currently ignored by inspector.
         // NOTE: If we don't have a debugger, this SourceCode will be forever lost to the inspector.
         // We could stash it in the inspector in case an inspector is ever opened.
-        globalObject->inspectorController().reportAPIException(exec, evaluationException);
+        globalObject->inspectorController().reportAPIException(globalObject, evaluationException);
 #endif
         return nullptr;
     }
 
     if (returnValue)
-        return toRef(exec, returnValue);
+        return toRef(globalObject, returnValue);
 
     // happens, for example, when the only statement is an empty (';') statement
-    return toRef(exec, jsUndefined());
+    return toRef(globalObject, jsUndefined());
 }
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
@@ -87,8 +84,8 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
@@ -96,7 +93,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     auto sourceURLString = sourceURL ? sourceURL->string() : String();
     SourceCode source = makeSource(script->string(), SourceOrigin { sourceURLString }, URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
 
-    return JSEvaluateScriptInternal(locker, exec, ctx, thisObject, source, exception);
+    return JSEvaluateScriptInternal(locker, ctx, thisObject, source, exception);
 }
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
@@ -105,8 +102,8 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
         ASSERT_NOT_REACHED();
         return false;
     }
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
@@ -115,14 +112,14 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
     SourceCode source = makeSource(script->string(), SourceOrigin { sourceURLString }, URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
     
     JSValue syntaxException;
-    bool isValidSyntax = checkSyntax(vm.vmEntryGlobalObject(exec)->globalExec(), source, &syntaxException);
+    bool isValidSyntax = checkSyntax(globalObject, source, &syntaxException);
 
     if (!isValidSyntax) {
         if (exception)
-            *exception = toRef(exec, syntaxException);
+            *exception = toRef(globalObject, syntaxException);
 #if ENABLE(REMOTE_INSPECTOR)
         Exception* exception = Exception::create(vm, syntaxException);
-        vm.vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, exception);
+        globalObject->inspectorController().reportAPIException(globalObject, exception);
 #endif
         return false;
     }
@@ -140,8 +137,8 @@ void JSGarbageCollect(JSContextRef ctx)
     if (!ctx)
         return;
 
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
     vm.heap.reportAbandonedObjectGraph();
@@ -153,8 +150,8 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
         ASSERT_NOT_REACHED();
         return;
     }
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
     vm.heap.deprecatedReportExtraMemory(size);
@@ -168,8 +165,8 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
     if (!ctx)
         return;
 
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     vm.heap.collectNow(Sync, CollectionScope::Full);
 }
@@ -179,8 +176,8 @@ void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
     if (!ctx)
         return;
 
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     vm.heap.collectSync(CollectionScope::Eden);
 }

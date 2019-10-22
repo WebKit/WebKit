@@ -31,9 +31,9 @@
 namespace WebCore {
 
 template<typename T> struct Converter<IDLSerializedScriptValue<T>> : DefaultConverter<IDLSerializedScriptValue<T>> {
-    static RefPtr<T> convert(JSC::ExecState& state, JSC::JSValue value)
+    static RefPtr<T> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return T::create(state, value);
+        return T::create(lexicalGlobalObject, value);
     }
 };
 
@@ -41,9 +41,9 @@ template<typename T> struct JSConverter<IDLSerializedScriptValue<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, RefPtr<T> value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, RefPtr<T> value)
     {
-        return value ? value->deserialize(state, &globalObject) : JSC::jsNull();
+        return value ? value->deserialize(lexicalGlobalObject, &globalObject) : JSC::jsNull();
     }
 };
 

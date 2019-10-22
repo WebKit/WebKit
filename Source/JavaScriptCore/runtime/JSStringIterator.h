@@ -40,16 +40,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSStringIterator* create(ExecState* exec, Structure* structure, JSString* iteratedString)
+    static JSStringIterator* create(JSGlobalObject* globalObject, Structure* structure, JSString* iteratedString)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         JSStringIterator* instance = new (NotNull, allocateCell<JSStringIterator>(vm.heap)) JSStringIterator(vm, structure);
         instance->finishCreation(vm, structure->globalObject(), iteratedString);
         return instance;
     }
 
-    JSValue iteratedValue(ExecState*) const;
-    JSStringIterator* clone(ExecState*);
+    JSValue iteratedValue(JSGlobalObject*) const;
+    JSStringIterator* clone(JSGlobalObject*);
 
 private:
     JSStringIterator(VM& vm, Structure* structure)

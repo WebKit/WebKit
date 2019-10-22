@@ -56,14 +56,14 @@ private:
     ArrayConstructor(VM&, Structure*);
 };
 
-JSArray* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue length, JSValue prototype = JSValue());
+JSArray* constructArrayWithSizeQuirk(JSGlobalObject*, ArrayAllocationProfile*, JSValue length, JSValue prototype = JSValue());
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(JSGlobalObject*, CallFrame*);
-bool isArraySlow(ExecState*, ProxyObject* argument);
+bool isArraySlow(JSGlobalObject*, ProxyObject* argument);
 
 // ES6 7.2.2
 // https://tc39.github.io/ecma262/#sec-isarray
-inline bool isArray(ExecState* exec, JSValue argumentValue)
+inline bool isArray(JSGlobalObject* globalObject, JSValue argumentValue)
 {
     if (!argumentValue.isObject())
         return false;
@@ -74,7 +74,7 @@ inline bool isArray(ExecState* exec, JSValue argumentValue)
 
     if (argument->type() != ProxyObjectType)
         return false;
-    return isArraySlow(exec, jsCast<ProxyObject*>(argument));
+    return isArraySlow(globalObject, jsCast<ProxyObject*>(argument));
 }
 
 } // namespace JSC

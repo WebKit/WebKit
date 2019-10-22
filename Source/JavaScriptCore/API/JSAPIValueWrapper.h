@@ -30,7 +30,7 @@
 namespace JSC {
 
 class JSAPIValueWrapper final : public JSCell {
-    friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
+    friend JSValue jsAPIValueWrapper(JSGlobalObject*, JSValue);
 public:
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;

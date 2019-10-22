@@ -85,7 +85,7 @@ void OffscreenCanvas::setSize(const IntSize& newSize)
 }
 
 #if ENABLE(WEBGL)
-ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::ExecState& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_context && contextType == RenderingContextType::Webgl)
         return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };

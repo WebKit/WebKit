@@ -32,12 +32,12 @@
 
 namespace JSC {
 
-JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(ExecState* exec, VM& vm, Structure* structure, const String& message)
+JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message)
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyRuntimeError>(vm.heap)) JSWebAssemblyRuntimeError(vm, structure);
     instance->m_sourceAppender = defaultSourceAppender;
     bool useCurrentFrame = true;
-    instance->finishCreation(exec, vm, message, useCurrentFrame);
+    instance->finishCreation(globalObject, vm, message, useCurrentFrame);
     return instance;
 }
 
@@ -48,11 +48,10 @@ JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structur
 
 const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
 
-JSObject* createJSWebAssemblyRuntimeError(ExecState* exec, VM& vm, const String& message)
+JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    return JSWebAssemblyRuntimeError::create(exec, vm, globalObject->webAssemblyRuntimeErrorStructure(), message);
+    return JSWebAssemblyRuntimeError::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), message);
 }
     
 } // namespace JSC

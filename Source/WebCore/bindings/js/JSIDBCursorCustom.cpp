@@ -36,17 +36,17 @@
 namespace WebCore {
 using namespace JSC;
 
-JSC::JSValue JSIDBCursor::key(JSC::ExecState& state) const
+JSC::JSValue JSIDBCursor::key(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(state, *this, wrapped().keyWrapper(), [&] {
-        return toJS(state, *state.lexicalGlobalObject(), wrapped().key());
+    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().keyWrapper(), [&] {
+        return toJS(lexicalGlobalObject, lexicalGlobalObject, wrapped().key());
     });
 }
 
-JSC::JSValue JSIDBCursor::primaryKey(JSC::ExecState& state) const
+JSC::JSValue JSIDBCursor::primaryKey(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(state, *this, wrapped().primaryKeyWrapper(), [&] {
-        return toJS(state, *state.lexicalGlobalObject(), wrapped().primaryKey());
+    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().primaryKeyWrapper(), [&] {
+        return toJS(lexicalGlobalObject, lexicalGlobalObject, wrapped().primaryKey());
     });
 }
 
@@ -59,16 +59,16 @@ void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
     cursor.primaryKeyWrapper().visit(visitor);
 }
 
-JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<IDBCursor>&& cursor)
+JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<IDBCursor>&& cursor)
 {
     if (is<IDBCursorWithValue>(cursor))
         return createWrapper<IDBCursorWithValue>(globalObject, WTFMove(cursor));
     return createWrapper<IDBCursor>(globalObject, WTFMove(cursor));
 }
 
-JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, IDBCursor& cursor)
+JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, IDBCursor& cursor)
 {
-    return wrap(state, globalObject, cursor);
+    return wrap(lexicalGlobalObject, globalObject, cursor);
 }
 
 } // namespace WebCore

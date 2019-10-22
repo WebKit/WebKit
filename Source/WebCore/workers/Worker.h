@@ -41,7 +41,6 @@ namespace JSC {
 class CallFrame;
 class JSObject;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -59,7 +58,7 @@ public:
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, const Options&);
     virtual ~Worker();
 
-    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void terminate();
 

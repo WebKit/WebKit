@@ -57,7 +57,7 @@ public:
     JS_EXPORT_PRIVATE JSValue result(VM&) const;
     JS_EXPORT_PRIVATE bool isHandled(VM&) const;
 
-    JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject&, JSValue);
+    JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject*, JSValue);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

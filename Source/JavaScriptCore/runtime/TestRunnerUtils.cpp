@@ -107,51 +107,51 @@ JSValue optimizeNextInvocation(JSValue theFunctionValue)
     return jsUndefined();
 }
 
-JSValue failNextNewCodeBlock(ExecState* exec)
+JSValue failNextNewCodeBlock(JSGlobalObject* globalObject)
 {
-    exec->vm().setFailNextNewCodeBlock();
+    globalObject->vm().setFailNextNewCodeBlock();
 
     return jsUndefined();
 }
 
-JSValue numberOfDFGCompiles(ExecState* exec)
+JSValue numberOfDFGCompiles(JSGlobalObject*, CallFrame* callFrame)
 {
-    if (exec->argumentCount() < 1)
+    if (callFrame->argumentCount() < 1)
         return jsUndefined();
-    return numberOfDFGCompiles(exec->uncheckedArgument(0));
+    return numberOfDFGCompiles(callFrame->uncheckedArgument(0));
 }
 
-JSValue setNeverInline(ExecState* exec)
+JSValue setNeverInline(JSGlobalObject*, CallFrame* callFrame)
 {
-    if (exec->argumentCount() < 1)
+    if (callFrame->argumentCount() < 1)
         return jsUndefined();
-    return setNeverInline(exec->uncheckedArgument(0));
+    return setNeverInline(callFrame->uncheckedArgument(0));
 }
 
-JSValue setNeverOptimize(ExecState* exec)
+JSValue setNeverOptimize(JSGlobalObject*, CallFrame* callFrame)
 {
-    if (exec->argumentCount() < 1)
+    if (callFrame->argumentCount() < 1)
         return jsUndefined();
-    return setNeverOptimize(exec->uncheckedArgument(0));
+    return setNeverOptimize(callFrame->uncheckedArgument(0));
 }
 
-JSValue setCannotUseOSRExitFuzzing(ExecState* exec)
+JSValue setCannotUseOSRExitFuzzing(JSGlobalObject*, CallFrame* callFrame)
 {
-    if (exec->argumentCount() < 1)
+    if (callFrame->argumentCount() < 1)
         return jsUndefined();
 
-    JSValue theFunctionValue = exec->uncheckedArgument(0);
+    JSValue theFunctionValue = callFrame->uncheckedArgument(0);
     if (FunctionExecutable* executable = getExecutableForFunction(theFunctionValue))
         executable->setCanUseOSRExitFuzzing(false);
 
     return jsUndefined();
 }
 
-JSValue optimizeNextInvocation(ExecState* exec)
+JSValue optimizeNextInvocation(JSGlobalObject*, CallFrame* callFrame)
 {
-    if (exec->argumentCount() < 1)
+    if (callFrame->argumentCount() < 1)
         return jsUndefined();
-    return optimizeNextInvocation(exec->uncheckedArgument(0));
+    return optimizeNextInvocation(callFrame->uncheckedArgument(0));
 }
 
 // This is a hook called at the bitter end of some of our tests.

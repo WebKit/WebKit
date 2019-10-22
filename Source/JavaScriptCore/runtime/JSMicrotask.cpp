@@ -55,7 +55,7 @@ public:
     }
 
 private:
-    void run(ExecState*) override;
+    void run(JSGlobalObject*) override;
 
     Strong<Unknown> m_job;
     Strong<Unknown> m_arguments[maxArguments];
@@ -71,9 +71,9 @@ Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue
     return adoptRef(*new JSMicrotask(vm, job, argument0, argument1, argument2));
 }
 
-void JSMicrotask::run(ExecState* exec)
+void JSMicrotask::run(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     CallData handlerCallData;
@@ -90,10 +90,10 @@ void JSMicrotask::run(ExecState* exec)
     if (UNLIKELY(handlerArguments.hasOverflowed()))
         return;
 
-    if (UNLIKELY(exec->lexicalGlobalObject()->hasDebugger()))
-        exec->lexicalGlobalObject()->debugger()->willRunMicrotask();
+    if (UNLIKELY(globalObject->hasDebugger()))
+        globalObject->debugger()->willRunMicrotask();
 
-    profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
+    profiledCall(globalObject, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 }
 

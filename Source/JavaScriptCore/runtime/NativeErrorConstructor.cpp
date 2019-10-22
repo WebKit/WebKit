@@ -55,10 +55,10 @@ EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::constructNativeE
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), jsCast<NativeErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm));
+    Structure* errorStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<NativeErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(errorStructure);
-    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false)));
 }
 
 template<ErrorType errorType>
@@ -67,7 +67,7 @@ EncodedJSValue JSC_HOST_CALL NativeErrorConstructor<errorType>::callNativeErrorC
     VM& vm = globalObject->vm();
     JSValue message = callFrame->argument(0);
     Structure* errorStructure = jsCast<NativeErrorConstructor*>(callFrame->jsCallee())->errorStructure(vm);
-    return JSValue::encode(ErrorInstance::create(callFrame, errorStructure, message, nullptr, TypeNothing, false));
+    return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, nullptr, TypeNothing, false));
 }
 
 template class NativeErrorConstructor<ErrorType::EvalError>;

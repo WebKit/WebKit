@@ -91,27 +91,27 @@ protected:
 private:
     using ResponseCallback = WTF::Function<void(const char*, size_t)>;
 
-    static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-    static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-    static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-    static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
-    static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
+    static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
+    static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
 #if ENABLE(WEBASSEMBLY)
-    static void compileStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue);
-    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*);
+    static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromiseDeferred*, JSC::JSValue);
+    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*);
 #endif
 
     RefPtr<DOMWindow> m_wrapped;
     JSWindowProxy* m_proxy;
 };
 
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, DOMWindow&);
 // The following return a JSWindowProxy or jsNull()
 // JSDOMGlobalObject* is ignored, accessing a window in any context will use that DOMWindow's prototype chain.
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, DOMWindow& window) { return toJS(state, window); }
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(state, globalObject, *window) : JSC::jsNull(); }
-inline JSC::JSValue toJS(JSC::ExecState* state, DOMWindow* window) { return window ? toJS(state, *window) : JSC::jsNull(); }
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, DOMWindow& window) { return toJS(lexicalGlobalObject, window); }
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(lexicalGlobalObject, globalObject, *window) : JSC::jsNull(); }
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow* window) { return window ? toJS(lexicalGlobalObject, *window) : JSC::jsNull(); }
 
 // The following return a JSDOMWindow or nullptr.
 JSDOMWindow* toJSDOMWindow(Frame&, DOMWrapperWorld&);
@@ -123,16 +123,16 @@ WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
 // (<https://html.spec.whatwg.org/multipage/webappapis.html#concept-incumbent-everything>, 27 April 2017)
 // FIXME: Make this work for an "author function or script that originally scheduled the currently-running callback."
 // See <https://bugs.webkit.org/show_bug.cgi?id=163412>.
-DOMWindow& incumbentDOMWindow(JSC::ExecState&);
+DOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&, JSC::CallFrame&);
 
-DOMWindow& activeDOMWindow(JSC::ExecState&);
-DOMWindow& firstDOMWindow(JSC::ExecState&);
+DOMWindow& activeDOMWindow(JSC::JSGlobalObject&);
+DOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
 
 // FIXME: This should probably be removed in favor of one of the other DOMWindow accessors. It is intended
 //        to provide the document specfied as the 'responsible document' in the algorithm for document.open()
 //        (https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps steps 4
 //        and 23 and https://html.spec.whatwg.org/multipage/webappapis.html#responsible-document). It is only
 //        used by JSDocument.
-Document* responsibleDocument(JSC::ExecState&);
+Document* responsibleDocument(JSC::CallFrame&);
 
 } // namespace WebCore

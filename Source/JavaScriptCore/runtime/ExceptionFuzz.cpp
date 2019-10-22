@@ -36,7 +36,7 @@ static unsigned s_numberOfExceptionFuzzChecks;
 unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 
 // Call this only if you know that exception fuzzing is enabled.
-void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, const void* returnPC)
+void doExceptionFuzzing(JSGlobalObject* globalObject, ThrowScope& scope, const char* where, const void* returnPC)
 {
     VM& vm = scope.vm();
     ASSERT(Options::useExceptionFuzz());
@@ -47,7 +47,7 @@ void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, c
     
     unsigned fireTarget = Options::fireExceptionFuzzAt();
     if (fireTarget == s_numberOfExceptionFuzzChecks) {
-        printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p, seen in %s and return address %p.\n", exec, where, returnPC);
+        printf("JSC EXCEPTION FUZZ: Throwing fuzz exception with call frame %p, seen in %s and return address %p.\n", globalObject, where, returnPC);
         fflush(stdout);
 
         // The ThrowScope also checks for unchecked simulated exceptions before throwing a
@@ -58,7 +58,7 @@ void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, c
         // to placate the exception check verifier here.
         EXCEPTION_ASSERT(scope.exception() || !scope.exception());
 
-        throwException(exec, scope, createError(exec, "Exception Fuzz"_s));
+        throwException(globalObject, scope, createError(globalObject, "Exception Fuzz"_s));
     }
 }
 

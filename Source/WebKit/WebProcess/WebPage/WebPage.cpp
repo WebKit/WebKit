@@ -2508,6 +2508,7 @@ const WebEvent* WebPage::currentEvent()
 void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
 {
     auto oldReasons = m_layerTreeFreezeReasons.toRaw();
+    UNUSED_PARAM(oldReasons);
     m_layerTreeFreezeReasons.add(reason);
     RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Adding a reason %d to freeze layer tree (now %d); old reasons were %d", this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
@@ -2516,6 +2517,7 @@ void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
 void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
 {
     auto oldReasons = m_layerTreeFreezeReasons.toRaw();
+    UNUSED_PARAM(oldReasons);
     m_layerTreeFreezeReasons.remove(reason);
     RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Removing a reason %d to freeze layer tree (now %d); old reasons were %d", this, m_identifier.toUInt64(), static_cast<unsigned>(reason), m_layerTreeFreezeReasons.toRaw(), oldReasons);
     updateDrawingAreaLayerTreeFreezeState();
@@ -3344,7 +3346,7 @@ void WebPage::runJavaScript(WebFrame* frame, const String& script, bool forceUse
         if (JSValue resultValue = frame->coreFrame()->script().executeUserAgentScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
             hadException = false;
             serializedResultValue = SerializedScriptValue::create(frame->jsContextForWorld(world),
-                toRef(frame->coreFrame()->script().globalObject(world->coreWorld())->globalExec(), resultValue), nullptr);
+                toRef(frame->coreFrame()->script().globalObject(world->coreWorld()), resultValue), nullptr);
         }
     }
 

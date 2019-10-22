@@ -162,7 +162,7 @@ void WorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, Strin
     evaluate(sourceCode, exception, returnedExceptionMessage);
     if (exception) {
         JSLockHolder lock(vm());
-        reportException(m_workletGlobalScopeWrapper->globalExec(), exception);
+        reportException(m_workletGlobalScopeWrapper->globalObject(), exception);
     }
 }
 
@@ -174,26 +174,26 @@ void WorkletScriptController::evaluate(const ScriptSourceCode& sourceCode, Naked
 
     initScriptIfNeeded();
 
-    auto& state = *m_workletGlobalScopeWrapper->globalExec();
-    VM& vm = state.vm();
+    auto& globalObject = *m_workletGlobalScopeWrapper->globalObject();
+    VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
 
-    JSExecState::profiledEvaluate(&state, JSC::ProfilingReason::Other, sourceCode.jsSourceCode(), m_workletGlobalScopeWrapper->globalThis(), returnedException);
+    JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, sourceCode.jsSourceCode(), m_workletGlobalScopeWrapper->globalThis(), returnedException);
 
     if (returnedException && returnedExceptionMessage) {
         // This FIXME is from WorkerScriptController.
         // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
         // Do we need to do anything to handle that properly, if it, say, raises another exception?
-        *returnedExceptionMessage = returnedException->value().toWTFString(&state);
+        *returnedExceptionMessage = returnedException->value().toWTFString(&globalObject);
     }
 }
 
 void WorkletScriptController::setException(JSC::Exception* exception)
 {
-    auto* exec = m_workletGlobalScopeWrapper->globalExec();
-    VM& vm = exec->vm();
+    auto* lexicalGlobalObject = m_workletGlobalScopeWrapper->globalObject();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwException(exec, scope, exception);
+    throwException(lexicalGlobalObject, scope, exception);
 }
 
 } // namespace WebCore

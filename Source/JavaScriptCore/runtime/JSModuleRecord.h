@@ -43,10 +43,10 @@ public:
     DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
+    static JSModuleRecord* create(JSGlobalObject*, VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 
-    void link(ExecState*, JSValue scriptFetcher);
-    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
+    void link(JSGlobalObject*, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     const SourceCode& sourceCode() const { return m_sourceCode; }
     const VariableEnvironment& declaredVariables() const { return m_declaredVariables; }
@@ -55,12 +55,12 @@ public:
 private:
     JSModuleRecord(VM&, Structure*, const Identifier&, const SourceCode&, const VariableEnvironment&, const VariableEnvironment&);
 
-    void finishCreation(ExecState*, VM&);
+    void finishCreation(JSGlobalObject*, VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static void destroy(JSCell*);
 
-    void instantiateDeclarations(ExecState*, ModuleProgramExecutable*, JSValue scriptFetcher);
+    void instantiateDeclarations(JSGlobalObject*, ModuleProgramExecutable*, JSValue scriptFetcher);
 
     SourceCode m_sourceCode;
     VariableEnvironment m_declaredVariables;

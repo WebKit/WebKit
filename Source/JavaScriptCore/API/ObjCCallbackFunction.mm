@@ -455,7 +455,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(function));
     ObjCCallbackFunctionImpl* impl = callback->impl();
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(callback->globalObject()->globalExec())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(callback->globalObject())];
 
     if (impl->type() == CallbackInitMethod) {
         JSGlobalContextRef contextRef = [context JSGlobalContextRef];
@@ -481,7 +481,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
 
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(constructor));
     ObjCCallbackFunctionImpl* impl = callback->impl();
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(toJS(callerContext)->lexicalGlobalObject()->globalExec())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(toJS(callerContext))];
 
     CallbackData callbackData;
     JSValueRef result;
@@ -659,12 +659,12 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
         ++argumentCount;
     }
 
-    JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
-    JSC::VM& vm = exec->vm();
+    JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
+    JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto impl = makeUnique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
     const String& name = impl->name();
-    return toRef(JSC::ObjCCallbackFunction::create(vm, exec->lexicalGlobalObject(), name, WTFMove(impl)));
+    return toRef(JSC::ObjCCallbackFunction::create(vm, globalObject, name, WTFMove(impl)));
 }
 
 JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)

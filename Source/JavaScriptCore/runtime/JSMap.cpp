@@ -33,15 +33,15 @@ namespace JSC {
 
 const ClassInfo JSMap::s_info = { "Map", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
 
-String JSMap::toStringName(const JSObject*, ExecState*)
+String JSMap::toStringName(const JSObject*, JSGlobalObject*)
 {
     return "Object"_s;
 }
 
-JSMap* JSMap::clone(ExecState* exec, VM& vm, Structure* structure)
+JSMap* JSMap::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
     JSMap* instance = new (NotNull, allocateCell<JSMap>(vm.heap)) JSMap(vm, structure);
-    instance->finishCreation(exec, vm, this);
+    instance->finishCreation(globalObject, vm, this);
     return instance;
 }
 

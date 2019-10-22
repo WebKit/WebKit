@@ -68,17 +68,17 @@ void JSCell::analyzeHeap(JSCell*, HeapAnalyzer&)
 {
 }
 
-bool JSCell::getString(ExecState* exec, String& stringValue) const
+bool JSCell::getString(JSGlobalObject* globalObject, String& stringValue) const
 {
     if (!isString())
         return false;
-    stringValue = static_cast<const JSString*>(this)->value(exec);
+    stringValue = static_cast<const JSString*>(this)->value(globalObject);
     return true;
 }
 
-String JSCell::getString(ExecState* exec) const
+String JSCell::getString(JSGlobalObject* globalObject) const
 {
-    return isString() ? static_cast<const JSString*>(this)->value(exec) : String();
+    return isString() ? static_cast<const JSString*>(this)->value(globalObject) : String();
 }
 
 JSObject* JSCell::getObject()
@@ -107,87 +107,87 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
     return ConstructType::None;
 }
 
-bool JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)
+bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
     if (cell->isString() || cell->isSymbol() || cell->isBigInt())
-        return JSValue(cell).putToPrimitive(exec, identifier, value, slot);
+        return JSValue(cell).putToPrimitive(globalObject, identifier, value, slot);
 
-    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    return thisObject->methodTable(exec->vm())->put(thisObject, exec, identifier, value, slot);
+    JSObject* thisObject = cell->toObject(globalObject);
+    return thisObject->methodTable(globalObject->vm())->put(thisObject, globalObject, identifier, value, slot);
 }
 
-bool JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value, bool shouldThrow)
+bool JSCell::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier, JSValue value, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (cell->isString() || cell->isSymbol() || cell->isBigInt()) {
         PutPropertySlot slot(cell, shouldThrow);
-        return JSValue(cell).putToPrimitive(exec, Identifier::from(vm, identifier), value, slot);
+        return JSValue(cell).putToPrimitive(globalObject, Identifier::from(vm, identifier), value, slot);
     }
-    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    return thisObject->methodTable(vm)->putByIndex(thisObject, exec, identifier, value, shouldThrow);
+    JSObject* thisObject = cell->toObject(globalObject);
+    return thisObject->methodTable(vm)->putByIndex(thisObject, globalObject, identifier, value, shouldThrow);
 }
 
-bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, PropertyName identifier)
+bool JSCell::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier)
 {
-    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    return thisObject->methodTable(exec->vm())->deleteProperty(thisObject, exec, identifier);
+    JSObject* thisObject = cell->toObject(globalObject);
+    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier);
 }
 
-bool JSCell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned identifier)
+bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier)
 {
-    JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    return thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, identifier);
+    JSObject* thisObject = cell->toObject(globalObject);
+    return thisObject->methodTable(globalObject->vm())->deletePropertyByIndex(thisObject, globalObject, identifier);
 }
 
-JSValue JSCell::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
+JSValue JSCell::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)
         return cell;
-    return cell->toObject(exec, exec->lexicalGlobalObject());
+    return cell->toObject(globalObject);
 }
 
-JSValue JSCell::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
+JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
     if (isString())
-        return static_cast<const JSString*>(this)->toPrimitive(exec, preferredType);
+        return static_cast<const JSString*>(this)->toPrimitive(globalObject, preferredType);
     if (isSymbol())
-        return static_cast<const Symbol*>(this)->toPrimitive(exec, preferredType);
+        return static_cast<const Symbol*>(this)->toPrimitive(globalObject, preferredType);
     if (isBigInt())
-        return static_cast<const JSBigInt*>(this)->toPrimitive(exec, preferredType);
-    return static_cast<const JSObject*>(this)->toPrimitive(exec, preferredType);
+        return static_cast<const JSBigInt*>(this)->toPrimitive(globalObject, preferredType);
+    return static_cast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
 
-bool JSCell::getPrimitiveNumber(ExecState* exec, double& number, JSValue& value) const
+bool JSCell::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& value) const
 {
     if (isString())
-        return static_cast<const JSString*>(this)->getPrimitiveNumber(exec, number, value);
+        return static_cast<const JSString*>(this)->getPrimitiveNumber(globalObject, number, value);
     if (isSymbol())
-        return static_cast<const Symbol*>(this)->getPrimitiveNumber(exec, number, value);
+        return static_cast<const Symbol*>(this)->getPrimitiveNumber(globalObject, number, value);
     if (isBigInt())
-        return static_cast<const JSBigInt*>(this)->getPrimitiveNumber(exec, number, value);
-    return static_cast<const JSObject*>(this)->getPrimitiveNumber(exec, number, value);
+        return static_cast<const JSBigInt*>(this)->getPrimitiveNumber(globalObject, number, value);
+    return static_cast<const JSObject*>(this)->getPrimitiveNumber(globalObject, number, value);
 }
 
-double JSCell::toNumber(ExecState* exec) const
+double JSCell::toNumber(JSGlobalObject* globalObject) const
 {
     if (isString())
-        return static_cast<const JSString*>(this)->toNumber(exec);
+        return static_cast<const JSString*>(this)->toNumber(globalObject);
     if (isSymbol())
-        return static_cast<const Symbol*>(this)->toNumber(exec);
+        return static_cast<const Symbol*>(this)->toNumber(globalObject);
     if (isBigInt())
-        return static_cast<const JSBigInt*>(this)->toNumber(exec);
-    return static_cast<const JSObject*>(this)->toNumber(exec);
+        return static_cast<const JSBigInt*>(this)->toNumber(globalObject);
+    return static_cast<const JSObject*>(this)->toNumber(globalObject);
 }
 
-JSObject* JSCell::toObjectSlow(ExecState* exec, JSGlobalObject* globalObject) const
+JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
 {
     ASSERT(!isObject());
     if (isString())
-        return static_cast<const JSString*>(this)->toObject(exec, globalObject);
+        return static_cast<const JSString*>(this)->toObject(globalObject);
     if (isBigInt())
-        return static_cast<const JSBigInt*>(this)->toObject(exec, globalObject);
+        return static_cast<const JSBigInt*>(this)->toObject(globalObject);
     ASSERT(isSymbol());
-    return static_cast<const Symbol*>(this)->toObject(exec, globalObject);
+    return static_cast<const Symbol*>(this)->toObject(globalObject);
 }
 
 void slowValidateCell(JSCell* cell)
@@ -195,35 +195,35 @@ void slowValidateCell(JSCell* cell)
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
 }
 
-JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType)
+JSValue JSCell::defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return jsUndefined();
 }
 
-bool JSCell::getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&)
+bool JSCell::getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 
-bool JSCell::getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, PropertySlot&)
+bool JSCell::getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 
-void JSCell::doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&)
+void JSCell::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSCell::getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+void JSCell::getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSCell::getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+void JSCell::getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -234,7 +234,7 @@ String JSCell::className(const JSObject*, VM&)
     return String();
 }
 
-String JSCell::toStringName(const JSObject*, ExecState*)
+String JSCell::toStringName(const JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return String();
@@ -245,55 +245,55 @@ const char* JSCell::className(VM& vm) const
     return classInfo(vm)->className;
 }
 
-void JSCell::getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+void JSCell::getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::customHasInstance(JSObject*, ExecState*, JSValue)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool)
+bool JSCell::customHasInstance(JSObject*, JSGlobalObject*, JSValue)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 
-uint32_t JSCell::getEnumerableLength(ExecState*, JSObject*)
+bool JSCell::defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+uint32_t JSCell::getEnumerableLength(JSGlobalObject*, JSObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return 0;
 }
 
-void JSCell::getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+void JSCell::getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSCell::getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)
+void JSCell::getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::preventExtensions(JSObject*, ExecState*)
+bool JSCell::preventExtensions(JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::isExtensible(JSObject*, ExecState*)
+bool JSCell::isExtensible(JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::setPrototype(JSObject*, ExecState*, JSValue, bool)
+bool JSCell::setPrototype(JSObject*, JSGlobalObject*, JSValue, bool)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-JSValue JSCell::getPrototype(JSObject*, ExecState*)
+JSValue JSCell::getPrototype(JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

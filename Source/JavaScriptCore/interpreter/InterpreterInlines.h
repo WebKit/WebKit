@@ -76,7 +76,7 @@ ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(closure.oldCallFrame, mask);
+        vm.handleTraps(closure.protoCallFrame->globalObject, closure.oldCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 

@@ -51,7 +51,7 @@ private:
     void finishCreation(VM&, StringPrototype*);
 };
 
-JSString* JSC_HOST_CALL stringFromCharCode(ExecState*, int32_t);
-JSString* stringConstructor(ExecState*, JSValue);
+JSString* JSC_HOST_CALL stringFromCharCode(JSGlobalObject*, int32_t);
+JSString* stringConstructor(JSGlobalObject*, JSValue);
 
 } // namespace JSC

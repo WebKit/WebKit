@@ -35,6 +35,7 @@
 #include "PlatformMouseEvent.h"
 #include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -145,7 +146,7 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
 
 // FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).
 // We should remove this quirk when possible.
-void MouseEvent::initMouseEventQuirk(ExecState& state, ScriptExecutionContext& scriptExecutionContext, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, short button, JSValue relatedTargetValue)
+void MouseEvent::initMouseEventQuirk(JSGlobalObject& state, ScriptExecutionContext& scriptExecutionContext, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, short button, JSValue relatedTargetValue)
 {
     EventTarget* relatedTarget = nullptr;
 #if PLATFORM(MAC)
@@ -162,7 +163,7 @@ void MouseEvent::initMouseEventQuirk(ExecState& state, ScriptExecutionContext& s
 #endif
         // This is what the bindings generator would have produced.
         auto throwScope = DECLARE_THROW_SCOPE(state.vm());
-        relatedTarget = convert<IDLNullable<IDLInterface<EventTarget>>>(state, relatedTargetValue, [](ExecState& state, ThrowScope& scope) {
+        relatedTarget = convert<IDLNullable<IDLInterface<EventTarget>>>(state, relatedTargetValue, [](JSGlobalObject& state, ThrowScope& scope) {
             throwArgumentTypeError(state, scope, 14, "relatedTarget", "MouseEvent", "initMouseEvent", "EventTarget");
         });
         RETURN_IF_EXCEPTION(throwScope, void());

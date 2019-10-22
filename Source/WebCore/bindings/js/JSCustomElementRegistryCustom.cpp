@@ -40,42 +40,42 @@
 namespace WebCore {
 using namespace JSC;
 
-static JSObject* getCustomElementCallback(ExecState& state, JSObject& prototype, const Identifier& id)
+static JSObject* getCustomElementCallback(JSGlobalObject& lexicalGlobalObject, JSObject& prototype, const Identifier& id)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue callback = prototype.get(&state, id);
+    JSValue callback = prototype.get(&lexicalGlobalObject, id);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (callback.isUndefined())
         return nullptr;
     if (!callback.isFunction(vm)) {
-        throwTypeError(&state, scope, "A custom element callback must be a function"_s);
+        throwTypeError(&lexicalGlobalObject, scope, "A custom element callback must be a function"_s);
         return nullptr;
     }
     return callback.getObject();
 }
 
-static bool validateCustomElementNameAndThrowIfNeeded(ExecState& state, const AtomString& name)
+static bool validateCustomElementNameAndThrowIfNeeded(JSGlobalObject& lexicalGlobalObject, const AtomString& name)
 {
-    auto scope = DECLARE_THROW_SCOPE(state.vm());
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     switch (Document::validateCustomElementName(name)) {
     case CustomElementNameValidationStatus::Valid:
         return true;
     case CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter:
-        throwDOMSyntaxError(state, scope, "Custom element name must have a lowercase ASCII letter as its first character"_s);
+        throwDOMSyntaxError(lexicalGlobalObject, scope, "Custom element name must have a lowercase ASCII letter as its first character"_s);
         return false;
     case CustomElementNameValidationStatus::ContainsUppercaseASCIILetter:
-        throwDOMSyntaxError(state, scope, "Custom element name cannot contain an uppercase ASCII letter"_s);
+        throwDOMSyntaxError(lexicalGlobalObject, scope, "Custom element name cannot contain an uppercase ASCII letter"_s);
         return false;
     case CustomElementNameValidationStatus::ContainsNoHyphen:
-        throwDOMSyntaxError(state, scope, "Custom element name must contain a hyphen"_s);
+        throwDOMSyntaxError(lexicalGlobalObject, scope, "Custom element name must contain a hyphen"_s);
         return false;
     case CustomElementNameValidationStatus::ContainsDisallowedCharacter:
-        throwDOMSyntaxError(state, scope, "Custom element name contains a character that is not allowed"_s);
+        throwDOMSyntaxError(lexicalGlobalObject, scope, "Custom element name contains a character that is not allowed"_s);
         return false;
     case CustomElementNameValidationStatus::ConflictsWithStandardElementName:
-        throwDOMSyntaxError(state, scope, "Custom element name cannot be same as one of the standard elements"_s);
+        throwDOMSyntaxError(lexicalGlobalObject, scope, "Custom element name cannot be same as one of the standard elements"_s);
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -83,74 +83,74 @@ static bool validateCustomElementNameAndThrowIfNeeded(ExecState& state, const At
 }
 
 // https://html.spec.whatwg.org/#dom-customelementregistry-define
-JSValue JSCustomElementRegistry::define(ExecState& state)
+JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(state.argumentCount() < 2))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+    if (UNLIKELY(callFrame.argumentCount() < 2))
+        return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    AtomString localName(state.uncheckedArgument(0).toString(&state)->toAtomString(&state));
+    AtomString localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    JSValue constructorValue = state.uncheckedArgument(1);
+    JSValue constructorValue = callFrame.uncheckedArgument(1);
     if (!constructorValue.isConstructor(vm))
-        return throwTypeError(&state, scope, "The second argument must be a constructor"_s);
+        return throwTypeError(&lexicalGlobalObject, scope, "The second argument must be a constructor"_s);
     JSObject* constructor = constructorValue.getObject();
 
-    if (!validateCustomElementNameAndThrowIfNeeded(state, localName))
+    if (!validateCustomElementNameAndThrowIfNeeded(lexicalGlobalObject, localName))
         return jsUndefined();
 
     CustomElementRegistry& registry = wrapped();
 
     if (registry.elementDefinitionIsRunning()) {
-        throwNotSupportedError(state, scope, "Cannot define a custom element while defining another custom element"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define a custom element while defining another custom element"_s);
         return jsUndefined();
     }
     SetForScope<bool> change(registry.elementDefinitionIsRunning(), true);
 
     if (registry.findInterface(localName)) {
-        throwNotSupportedError(state, scope, "Cannot define multiple custom elements with the same tag name"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define multiple custom elements with the same tag name"_s);
         return jsUndefined();
     }
 
     if (registry.containsConstructor(constructor)) {
-        throwNotSupportedError(state, scope, "Cannot define multiple custom elements with the same class"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define multiple custom elements with the same class"_s);
         return jsUndefined();
     }
 
-    JSValue prototypeValue = constructor->get(&state, vm.propertyNames->prototype);
+    JSValue prototypeValue = constructor->get(&lexicalGlobalObject, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (!prototypeValue.isObject())
-        return throwTypeError(&state, scope, "Custom element constructor's prototype must be an object"_s);
+        return throwTypeError(&lexicalGlobalObject, scope, "Custom element constructor's prototype must be an object"_s);
     JSObject& prototypeObject = *asObject(prototypeValue);
 
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "connectedCallback"));
+    auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"));
     if (connectedCallback)
         elementInterface->setConnectedCallback(connectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* disconnectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "disconnectedCallback"));
+    auto* disconnectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "disconnectedCallback"));
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* adoptedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "adoptedCallback"));
+    auto* adoptedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "adoptedCallback"));
     if (adoptedCallback)
         elementInterface->setAdoptedCallback(adoptedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(vm, "attributeChangedCallback"));
+    auto* attributeChangedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "attributeChangedCallback"));
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (attributeChangedCallback) {
-        auto observedAttributesValue = constructor->get(&state, Identifier::fromString(vm, "observedAttributes"));
+        auto observedAttributesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "observedAttributes"));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (!observedAttributesValue.isUndefined()) {
-            auto observedAttributes = convert<IDLSequence<IDLDOMString>>(state, observedAttributesValue);
+            auto observedAttributes = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, observedAttributesValue);
             RETURN_IF_EXCEPTION(scope, JSValue());
             elementInterface->setAttributeChangedCallback(attributeChangedCallback, observedAttributes);
         }
@@ -175,17 +175,17 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
 }
 
 // https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
-static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromiseDeferred& promiseDeferred)
+static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromiseDeferred& promiseDeferred)
 {
-    auto scope = DECLARE_THROW_SCOPE(state.vm());
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
 
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
+    if (UNLIKELY(callFrame.argumentCount() < 1))
+        return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    AtomString localName(state.uncheckedArgument(0).toString(&state)->toAtomString(&state));
+    AtomString localName(callFrame.uncheckedArgument(0).toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    if (!validateCustomElementNameAndThrowIfNeeded(state, localName)) {
+    if (!validateCustomElementNameAndThrowIfNeeded(lexicalGlobalObject, localName)) {
         EXCEPTION_ASSERT(scope.exception());
         return jsUndefined();
     }
@@ -202,17 +202,17 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
     return result.iterator->value->promise();
 }
 
-JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
+JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
 
     ASSERT(globalObject());
-    auto promiseDeferred = JSPromiseDeferred::tryCreate(&state, globalObject());
+    auto promiseDeferred = JSPromiseDeferred::tryCreate(globalObject());
     RELEASE_ASSERT(promiseDeferred);
-    JSValue promise = whenDefinedPromise(state, *globalObject(), wrapped(), *promiseDeferred);
+    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), wrapped(), *promiseDeferred);
 
     if (UNLIKELY(scope.exception())) {
-        rejectPromiseWithExceptionIfAny(state, *globalObject(), *promiseDeferred);
+        rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *globalObject(), *promiseDeferred);
         scope.assertNoException();
         return promiseDeferred->promise();
     }

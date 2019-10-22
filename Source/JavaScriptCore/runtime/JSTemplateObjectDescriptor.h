@@ -48,7 +48,7 @@ public:
 
     const TemplateObjectDescriptor& descriptor() const { return m_descriptor.get(); }
 
-    JSArray* createTemplateObject(ExecState*);
+    JSArray* createTemplateObject(JSGlobalObject*);
 
     int endOffset() const { return m_endOffset; }
 

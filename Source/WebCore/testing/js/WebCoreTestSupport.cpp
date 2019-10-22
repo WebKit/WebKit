@@ -56,13 +56,13 @@ using namespace WebCore;
 
 void injectInternalsObject(JSContextRef context)
 {
-    ExecState* exec = toJS(context);
-    VM& vm = exec->vm();
+    JSGlobalObject* lexicalGlobalObject = toJS(context);
+    VM& vm = lexicalGlobalObject->vm();
     JSLockHolder lock(vm);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     if (is<Document>(*scriptContext)) {
-        globalObject->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(exec, globalObject, Internals::create(downcast<Document>(*scriptContext))));
+        globalObject->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(lexicalGlobalObject, globalObject, Internals::create(downcast<Document>(*scriptContext))));
         Options::useDollarVM() = true;
         globalObject->exposeDollarVM(vm);
     }
@@ -70,9 +70,9 @@ void injectInternalsObject(JSContextRef context)
 
 void resetInternalsObject(JSContextRef context)
 {
-    ExecState* exec = toJS(context);
-    JSLockHolder lock(exec);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+    JSGlobalObject* lexicalGlobalObject = toJS(context);
+    JSLockHolder lock(lexicalGlobalObject);
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     Page* page = downcast<Document>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(*page);

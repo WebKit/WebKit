@@ -47,7 +47,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyWrapperFunction(JSGlobalObjec
     JSObject* function = wasmFunction->function();
     CallType callType = function->methodTable(vm)->getCallData(function, callData);
     RELEASE_ASSERT(callType != CallType::None);
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(callFrame, function, callType, callData, jsUndefined(), ArgList(callFrame))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callType, callData, jsUndefined(), ArgList(callFrame))));
 }
 
 WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction)

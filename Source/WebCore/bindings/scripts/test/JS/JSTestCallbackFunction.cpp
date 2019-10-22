@@ -61,7 +61,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
-    auto& state = *globalObject.globalExec();
+    auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLLong>(argument));
@@ -70,12 +70,12 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
     NakedPtr<JSC::Exception> returnedException;
     auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
-        reportException(&state, returnedException);
+        reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto returnValue = convert<IDLDOMString>(state, jsResult);
+    auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
     return returnValue;
 }

@@ -64,7 +64,7 @@ public:
         return array;
     }
 
-    ALWAYS_INLINE static JSFixedArray* createFromArray(ExecState* exec, VM& vm, JSArray* array)
+    ALWAYS_INLINE static JSFixedArray* createFromArray(JSGlobalObject* globalObject, VM& vm, JSArray* array)
     {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -72,7 +72,7 @@ public:
         unsigned length = array->length();
         JSFixedArray* result = JSFixedArray::tryCreate(vm, vm.fixedArrayStructure.get(), length);
         if (UNLIKELY(!result)) {
-            throwOutOfMemoryError(exec, throwScope);
+            throwOutOfMemoryError(globalObject, throwScope);
             return nullptr;
         }
 
@@ -98,7 +98,7 @@ public:
         }
 
         for (unsigned i = 0; i < length; i++) {
-            JSValue value = array->getDirectIndex(exec, i);
+            JSValue value = array->getDirectIndex(globalObject, i);
             if (!value) {
                 // When we see a hole, we assume that it's safe to assume the get would have returned undefined.
                 // We may still call into this function when !globalObject->isArrayIteratorProtocolFastAndNonObservable(),
@@ -145,7 +145,7 @@ public:
         return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(JSFixedArray));
     }
 
-    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     static void dumpToStream(const JSCell*, PrintStream&);
 

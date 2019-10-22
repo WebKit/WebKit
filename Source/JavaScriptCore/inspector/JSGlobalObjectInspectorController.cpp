@@ -174,22 +174,22 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
     }
 }
 
-void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exception* exception)
+void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globalObject, Exception* exception)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (isTerminatedExecutionException(vm, exception))
         return;
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ErrorHandlingScope errorScope(vm);
 
-    Ref<ScriptCallStack> callStack = createScriptCallStackFromException(exec, exception);
+    Ref<ScriptCallStack> callStack = createScriptCallStackFromException(globalObject, exception);
     if (includesNativeCallStackWhenReportingExceptions())
         appendAPIBacktrace(callStack.get());
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage = exception->value().toWTFString(exec);
+    String errorMessage = exception->value().toWTFString(globalObject);
     scope.clearException();
 
     if (JSGlobalObjectConsoleClient::logToSystemConsole()) {

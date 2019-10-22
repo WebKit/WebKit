@@ -32,7 +32,7 @@
 
 namespace JSC { namespace FTL {
 
-// Points to a function of prototype: EncodedJSValue (*)(ExecState*).
+// Points to a function of prototype: EncodedJSValue (*)(JSGlobalObject*).
 using GeneratedFunction = CodeLocationLabel<JSEntryPtrTag>;
 
 } } // namespace JSC::FTL

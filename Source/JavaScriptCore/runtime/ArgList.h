@@ -181,9 +181,9 @@ public:
     {
     }
 
-    ArgList(ExecState* exec)
-        : m_args(reinterpret_cast<JSValue*>(&exec[CallFrame::argumentOffset(0)]))
-        , m_argCount(exec->argumentCount())
+    ArgList(CallFrame* callFrame)
+        : m_args(reinterpret_cast<JSValue*>(&callFrame[CallFrame::argumentOffset(0)]))
+        , m_argCount(callFrame->argumentCount())
     {
     }
 

@@ -38,14 +38,14 @@
 
 namespace JSC {
 
-void ExecState::initGlobalExec(ExecState* globalExec, JSCallee* globalCallee)
+void CallFrame::initDeprecatedCallFrameForDebugger(CallFrame* globalExec, JSCallee* globalCallee)
 {
     globalExec->setCodeBlock(nullptr);
     globalExec->setCallerFrame(noCaller());
     globalExec->setReturnPC(0);
     globalExec->setArgumentCountIncludingThis(0);
     globalExec->setCallee(globalCallee);
-    ASSERT(globalExec->isGlobalExec());
+    ASSERT(globalExec->isDeprecatedCallFrameForDebugger());
 }
 
 bool CallFrame::callSiteBitsAreBytecodeOffset() const
@@ -193,7 +193,7 @@ JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
 #if ENABLE(WEBASSEMBLY)
     if (!callee().isWasm())
         return lexicalGlobalObject();
-    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject(vm);
+    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
 #else
     UNUSED_PARAM(vm);
     return lexicalGlobalObject();
@@ -339,7 +339,7 @@ const char* CallFrame::describeFrame()
 
 void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound)
 {
-    ASSERT(!isGlobalExec());
+    ASSERT(!isDeprecatedCallFrameForDebugger());
     ASSERT(codeBlockToKeepAliveUntilFrameIsUnwound->inherits<CodeBlock>(vm));
 
     EntryFrame* entryFrame = vm.topEntryFrame;

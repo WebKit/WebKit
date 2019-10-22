@@ -49,7 +49,7 @@ public:
     String functionName() const { return m_debuggerCallFrame->functionName(); }
     JSC::DebuggerCallFrame::Type type() const { return m_debuggerCallFrame->type(); }
     JSC::DebuggerScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
-    JSC::JSGlobalObject* vmEntryGlobalObject() const { return m_debuggerCallFrame->vmEntryGlobalObject(); }
+    JSC::JSGlobalObject* deprecatedVMEntryGlobalObject() const { return m_debuggerCallFrame->deprecatedVMEntryGlobalObject(); }
     bool isTailDeleted() const { return m_debuggerCallFrame->isTailDeleted(); }
 
     JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }

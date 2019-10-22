@@ -38,7 +38,7 @@ protected:
     JSC::JSFunction* initializeFunction();
     void setInitializeFunction(JSC::VM&, JSC::JSFunction&);
 
-    static void callFunctionWithCurrentArguments(JSC::ExecState&, JSC::JSObject& thisObject, JSC::JSFunction&);
+    static void callFunctionWithCurrentArguments(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject& thisObject, JSC::JSFunction&);
 
 private:
     JSC::WriteBarrier<JSC::JSFunction> m_initializeFunction;

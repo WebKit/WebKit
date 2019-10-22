@@ -79,7 +79,7 @@ WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)
 }
 
 // callbacks - relay to delegate
-void WebScriptDebugger::sourceParsed(JSC::ExecState* exec, JSC::SourceProvider* sourceProvider, int errorLine, const String& errorMsg)
+void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, JSC::SourceProvider* sourceProvider, int errorLine, const String& errorMsg)
 {
     if (m_callingDelegate)
         return;
@@ -90,8 +90,8 @@ void WebScriptDebugger::sourceParsed(JSC::ExecState* exec, JSC::SourceProvider* 
     NSURL *nsURL = toNSURL(sourceProvider->url());
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
-    JSC::VM& vm = exec->vm();
-    WebFrame *webFrame = toWebFrame(vm.vmEntryGlobalObject(exec));
+    JSC::VM& vm = lexicalGlobalObject->vm();
+    WebFrame *webFrame = toWebFrame(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
     WebView *webView = [webFrame webView];
     WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
 

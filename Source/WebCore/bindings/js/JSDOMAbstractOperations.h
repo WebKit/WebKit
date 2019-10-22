@@ -40,7 +40,7 @@ enum class OverrideBuiltins {
 // An implementation of the 'named property visibility algorithm'
 // https://heycam.github.io/webidl/#dfn-named-property-visibility
 template<OverrideBuiltins overrideBuiltins, class JSClass>
-static bool isVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, JSC::PropertyName propertyName)
+static bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName)
 {
     // FIXME: It seems unfortunate that have to do two lookups for the property name,
     // one for isSupportedPropertyName and one by the user of this algorithm to access
@@ -60,7 +60,7 @@ static bool isVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, J
     
     // 2. If O has an own property named P, then return false.
     JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry };
-    if (JSC::JSObject::getOwnPropertySlot(&thisObject, &state, propertyName, slot))
+    if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
         return false;
     
     // 3. If O implements an interface that has the [OverrideBuiltins] extended attribute, then return true.
@@ -72,8 +72,8 @@ static bool isVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, J
     //    1. If prototype is not a named properties object, and prototype has an own property named P, then return false.
     // FIXME: Implement checking for 'named properties object'.
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
-    auto prototype = thisObject.getPrototypeDirect(state.vm());
-    if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&state, propertyName, slot))
+    auto prototype = thisObject.getPrototypeDirect(JSC::getVM(&lexicalGlobalObject));
+    if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&lexicalGlobalObject, propertyName, slot))
         return false;
 
     // 6. Return true.
@@ -86,7 +86,7 @@ static bool isVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, J
 // the property name twice; once for 'named property visibility algorithm' check, and then
 // again when the value is needed.
 template<OverrideBuiltins overrideBuiltins, class JSClass, class Functor>
-static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObject, JSC::PropertyName propertyName, Functor&& itemAccessor) -> decltype(itemAccessor(thisObject, propertyName))
+static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSClass& thisObject, JSC::PropertyName propertyName, Functor&& itemAccessor) -> decltype(itemAccessor(thisObject, propertyName))
 {
     // NOTE: While it is not specified, a Symbol can never be a 'supported property
     // name' so we check that first.
@@ -100,7 +100,7 @@ static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObjec
 
     // 2. If O has an own property named P, then return false.
     JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry };
-    if (JSC::JSObject::getOwnPropertySlot(&thisObject, &state, propertyName, slot))
+    if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
         return WTF::nullopt;
 
     // 3. If O implements an interface that has the [OverrideBuiltins] extended attribute, then return true.
@@ -112,8 +112,8 @@ static auto accessVisibleNamedProperty(JSC::ExecState& state, JSClass& thisObjec
     //    1. If prototype is not a named properties object, and prototype has an own property named P, then return false.
     // FIXME: Implement checking for 'named properties object'.
     //    2. Set prototype to be the value of the internal [[Prototype]] property of prototype.
-    auto prototype = thisObject.getPrototypeDirect(state.vm());
-    if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&state, propertyName, slot))
+    auto prototype = thisObject.getPrototypeDirect(JSC::getVM(&lexicalGlobalObject));
+    if (prototype.isObject() && JSC::asObject(prototype)->getPropertySlot(&lexicalGlobalObject, propertyName, slot))
         return WTF::nullopt;
 
     // 6. Return true.

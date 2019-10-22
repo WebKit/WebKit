@@ -1212,7 +1212,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
             continue;
         
         if (auto* existingIDBConnectionToServer = connection->existingIDBConnectionToServer()) {
-            ASSERT(idbConnection == &existingIDBConnectionToServer->coreConnectionToServer());
+            ASSERT_UNUSED(existingIDBConnectionToServer, idbConnection == &existingIDBConnectionToServer->coreConnectionToServer());
             page->corePage()->clearIDBConnection();
         }
     }

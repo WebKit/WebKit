@@ -152,9 +152,9 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
     
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(vm, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "createPluginReplacement"));
     if (replacementFunction.isFunction(vm))
         return true;
     
@@ -182,13 +182,13 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
     // Lookup the "createPluginReplacement" function.
-    JSC::JSValue replacementFunction = globalObject->get(exec, JSC::Identifier::fromString(vm, "createPluginReplacement"));
+    JSC::JSValue replacementFunction = globalObject->get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "createPluginReplacement"));
     if (replacementFunction.isUndefinedOrNull())
         return false;
-    JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
+    JSC::JSObject* replacementObject = replacementFunction.toObject(lexicalGlobalObject);
     scope.assertNoException();
     JSC::CallData callData;
     JSC::CallType callType = replacementObject->methodTable(vm)->getCallData(replacementObject, callData);
@@ -196,20 +196,20 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
         return false;
 
     JSC::MarkedArgumentBuffer argList;
-    argList.append(toJS(exec, globalObject, &root));
-    argList.append(toJS(exec, globalObject, m_parentElement));
-    argList.append(toJS(exec, globalObject, this));
-    argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*exec, *globalObject, m_names));
-    argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*exec, *globalObject, m_values));
+    argList.append(toJS(lexicalGlobalObject, globalObject, &root));
+    argList.append(toJS(lexicalGlobalObject, globalObject, m_parentElement));
+    argList.append(toJS(lexicalGlobalObject, globalObject, this));
+    argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, *globalObject, m_names));
+    argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, *globalObject, m_values));
     ASSERT(!argList.hasOverflowed());
-    JSC::JSValue replacement = call(exec, replacementObject, callType, callData, globalObject, argList);
+    JSC::JSValue replacement = call(lexicalGlobalObject, replacementObject, callType, callData, globalObject, argList);
     if (UNLIKELY(scope.exception())) {
         scope.clearException();
         return false;
     }
 
     // Get the <video> created to replace the plug-in.
-    JSC::JSValue value = replacement.get(exec, JSC::Identifier::fromString(vm, "video"));
+    JSC::JSValue value = replacement.get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "video"));
     if (!scope.exception() && !value.isUndefinedOrNull())
         m_mediaElement = JSHTMLVideoElement::toWrapped(vm, value);
 
@@ -220,9 +220,9 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     }
 
     // Get the scripting interface.
-    value = replacement.get(exec, JSC::Identifier::fromString(vm, "scriptObject"));
+    value = replacement.get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "scriptObject"));
     if (!scope.exception() && !value.isUndefinedOrNull()) {
-        m_scriptObject = value.toObject(exec);
+        m_scriptObject = value.toObject(lexicalGlobalObject);
         scope.assertNoException();
     }
 
@@ -366,7 +366,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSConte
 
 #endif
 
-JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) const
+JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::JSGlobalObject& state) const
 {
 #if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();
@@ -391,7 +391,7 @@ JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) 
 #endif
 }
 
-JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) const
+JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::JSGlobalObject& state) const
 {
 #if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();
@@ -413,7 +413,7 @@ JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) cons
 #endif
 }
 
-JSC::JSValue JSQuickTimePluginReplacement::errorLog(JSC::ExecState& state) const
+JSC::JSValue JSQuickTimePluginReplacement::errorLog(JSC::JSGlobalObject& state) const
 {
 #if PLATFORM(IOS_FAMILY)
     HTMLVideoElement* parent = wrapped().parentElement();

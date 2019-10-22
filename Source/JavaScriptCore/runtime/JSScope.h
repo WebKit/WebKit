@@ -47,9 +47,9 @@ public:
 
     static JSObject* objectAtScope(JSScope*);
 
-    static JSObject* resolve(ExecState*, JSScope*, const Identifier&);
-    static JSValue resolveScopeForHoistingFuncDeclInEval(ExecState*, JSScope*, const Identifier&);
-    static ResolveOp abstractResolve(ExecState*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
+    static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&);
+    static JSValue resolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, const Identifier&);
+    static ResolveOp abstractResolve(JSGlobalObject*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
 
     static bool hasConstantScope(ResolveType);
     static JSScope* constantScopeForCodeBlock(ResolveType, CodeBlock*);
@@ -74,13 +74,13 @@ public:
 
     SymbolTable* symbolTable(VM&);
 
-    JS_EXPORT_PRIVATE static JSValue toThis(JSCell*, ExecState*, ECMAMode);
+    JS_EXPORT_PRIVATE static JSValue toThis(JSCell*, JSGlobalObject*, ECMAMode);
 
 protected:
     JSScope(VM&, Structure*, JSScope* next);
 
     template<typename ReturnPredicateFunctor, typename SkipPredicateFunctor>
-    static JSObject* resolve(ExecState*, JSScope*, const Identifier&, ReturnPredicateFunctor, SkipPredicateFunctor);
+    static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&, ReturnPredicateFunctor, SkipPredicateFunctor);
 
 private:
     WriteBarrier<JSScope> m_next;
@@ -140,7 +140,7 @@ inline JSScope* Register::scope() const
     return jsCast<JSScope*>(unboxedCell());
 }
 
-inline JSGlobalObject* ExecState::lexicalGlobalObject() const
+inline JSGlobalObject* CallFrame::lexicalGlobalObject() const
 {
     return jsCallee()->globalObject();
 }

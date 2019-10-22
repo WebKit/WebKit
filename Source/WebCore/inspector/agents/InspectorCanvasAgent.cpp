@@ -528,7 +528,7 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(CanvasRenderingContext&
     m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), inspectorCanvas->releaseObjectForRecording());
 }
 
-void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::ExecState& exec, JSC::JSObject* options)
+void InspectorCanvasAgent::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::JSGlobalObject& exec, JSC::JSObject* options)
 {
     auto inspectorCanvas = findInspectorCanvas(context);
     ASSERT(inspectorCanvas);

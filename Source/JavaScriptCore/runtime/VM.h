@@ -158,6 +158,7 @@ class UnlinkedProgramCodeBlock;
 class UnlinkedModuleProgramCodeBlock;
 class VirtualRegister;
 class VMEntryScope;
+class TopLevelGlobalObjectScope;
 class Watchdog;
 class Watchpoint;
 class WatchpointSet;
@@ -179,8 +180,6 @@ struct EntryFrame;
 struct HashTable;
 struct Instruction;
 struct ValueProfile;
-
-using ExecState = CallFrame;
 
 struct LocalTimeOffsetCache {
     LocalTimeOffsetCache()
@@ -309,7 +308,7 @@ public:
     inline CallFrame* topJSCallFrame() const;
 
     // Global object in which execution began.
-    JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject(const CallFrame*) const;
+    JS_EXPORT_PRIVATE JSGlobalObject* deprecatedVMEntryGlobalObject(JSGlobalObject*) const;
 
     WeakRandom& random() { return m_random; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
@@ -490,12 +489,12 @@ public:
 
     VMType vmType;
     ClientData* clientData;
-    EntryFrame* topEntryFrame;
+    EntryFrame* topEntryFrame { nullptr };
     // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
     // topEntryFrame.
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
-    ExecState* topCallFrame { nullptr };
+    CallFrame* topCallFrame { nullptr };
 #if ENABLE(WEBASSEMBLY)
     Wasm::Context wasmContext;
 #endif
@@ -723,7 +722,7 @@ public:
 
     void clearLastException() { m_lastException = nullptr; }
 
-    ExecState** addressOfCallFrameForCatch() { return &callFrameForCatch; }
+    CallFrame** addressOfCallFrameForCatch() { return &callFrameForCatch; }
 
     JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
 
@@ -785,8 +784,8 @@ public:
 
     JSValue hostCallReturnValue;
     unsigned varargsLength;
-    ExecState* newCallFrameReturnValue;
-    ExecState* callFrameForCatch;
+    CallFrame* newCallFrameReturnValue;
+    CallFrame* callFrameForCatch;
     void* targetMachinePCForThrow;
     const Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
@@ -921,7 +920,7 @@ public:
 
     VMTraps& traps() { return m_traps; }
 
-    void handleTraps(ExecState* exec, VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { m_traps.handleTraps(exec, mask); }
+    void handleTraps(JSGlobalObject* globalObject, CallFrame* callFrame, VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { m_traps.handleTraps(globalObject, callFrame, mask); }
 
     bool needTrapHandling() { return m_traps.needTrapHandling(); }
     bool needTrapHandling(VMTraps::Mask mask) { return m_traps.needTrapHandling(mask); }
@@ -1008,9 +1007,9 @@ private:
     bool isSafeToRecurseSoftCLoop() const;
 #endif // ENABLE(C_LOOP)
 
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, Exception*);
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSObject*);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSObject*);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);

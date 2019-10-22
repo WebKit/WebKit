@@ -35,30 +35,30 @@ namespace JSC {
 
 JSValueRef failNextNewCodeBlock(JSContextRef context)
 {
-    ExecState* exec= toJS(context);
-    JSLockHolder holder(exec);
-    return toRef(exec, failNextNewCodeBlock(exec));
+    JSGlobalObject* globalObject= toJS(context);
+    JSLockHolder holder(globalObject);
+    return toRef(globalObject, failNextNewCodeBlock(globalObject));
 }
 
 JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
 {
-    ExecState* exec= toJS(context);
-    JSLockHolder holder(exec);
-    return toRef(exec, numberOfDFGCompiles(toJS(exec, theFunctionValueRef)));
+    JSGlobalObject* globalObject= toJS(context);
+    JSLockHolder holder(globalObject);
+    return toRef(globalObject, numberOfDFGCompiles(toJS(globalObject, theFunctionValueRef)));
 }
 
 JSValueRef setNeverInline(JSContextRef context, JSValueRef theFunctionValueRef)
 {
-    ExecState* exec= toJS(context);
-    JSLockHolder holder(exec);
-    return toRef(exec, setNeverInline(toJS(exec, theFunctionValueRef)));
+    JSGlobalObject* globalObject= toJS(context);
+    JSLockHolder holder(globalObject);
+    return toRef(globalObject, setNeverInline(toJS(globalObject, theFunctionValueRef)));
 }
 
 JSValueRef setNeverOptimize(JSContextRef context, JSValueRef theFunctionValueRef)
 {
-    ExecState* exec= toJS(context);
-    JSLockHolder holder(exec);
-    return toRef(exec, setNeverOptimize(toJS(exec, theFunctionValueRef)));
+    JSGlobalObject* globalObject= toJS(context);
+    JSLockHolder holder(globalObject);
+    return toRef(globalObject, setNeverOptimize(toJS(globalObject, theFunctionValueRef)));
 }
 
 } // namespace JSC

@@ -204,13 +204,13 @@ public:
         return bitwise_cast<BucketType**>(this);
     }
 
-    static HashMapBuffer* create(ExecState* exec, VM& vm, JSCell*, uint32_t capacity)
+    static HashMapBuffer* create(JSGlobalObject* globalObject, VM& vm, JSCell*, uint32_t capacity)
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
         void* data = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, allocationSize, nullptr, AllocationFailureMode::ReturnNull);
         if (!data) {
-            throwOutOfMemoryError(exec, scope);
+            throwOutOfMemoryError(globalObject, scope);
             return nullptr;
         }
 
@@ -225,13 +225,13 @@ public:
     }
 };
 
-ALWAYS_INLINE static bool areKeysEqual(ExecState* exec, JSValue a, JSValue b)
+ALWAYS_INLINE static bool areKeysEqual(JSGlobalObject* globalObject, JSValue a, JSValue b)
 {
     // We want +0 and -0 to be compared to true here. sameValue() itself doesn't
     // guarantee that, however, we normalize all keys before comparing and storing
     // them in the map. The normalization will convert -0.0 and 0.0 to the integer
     // representation for 0.
-    return sameValue(exec, a, b);
+    return sameValue(globalObject, a, b);
 }
 
 // Note that normalization is inlined in DFG's NormalizeMapKey.
@@ -271,13 +271,13 @@ static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
     return static_cast<unsigned>(key);
 }
 
-ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
+ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
 
     if (value.isString()) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        const String& wtfString = asString(value)->value(exec);
+        const String& wtfString = asString(value)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, UINT_MAX);
         return wtfString.impl()->hash();
     }
@@ -372,20 +372,20 @@ public:
         return m_buffer->buffer();
     }
 
-    void finishCreation(ExecState* exec, VM& vm)
+    void finishCreation(JSGlobalObject* globalObject, VM& vm)
     {
         ASSERT_WITH_MESSAGE(HashMapBucket<HashMapBucketDataKey>::offsetOfKey() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
 
         auto scope = DECLARE_THROW_SCOPE(vm);
         Base::finishCreation(vm);
 
-        makeAndSetNewBuffer(exec, vm);
+        makeAndSetNewBuffer(globalObject, vm);
         RETURN_IF_EXCEPTION(scope, void());
 
-        setUpHeadAndTail(exec, vm);
+        setUpHeadAndTail(globalObject, vm);
     }
 
-    void finishCreation(ExecState* exec, VM& vm, HashMapImpl* base)
+    void finishCreation(JSGlobalObject* globalObject, VM& vm, HashMapImpl* base)
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         Base::finishCreation(vm);
@@ -395,15 +395,15 @@ public:
         RELEASE_ASSERT(capacity <= (1U << 31));
         capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), 4U);
         m_capacity = capacity;
-        makeAndSetNewBuffer(exec, vm);
+        makeAndSetNewBuffer(globalObject, vm);
         RETURN_IF_EXCEPTION(scope, void());
 
-        setUpHeadAndTail(exec, vm);
+        setUpHeadAndTail(globalObject, vm);
 
         HashMapBucketType* bucket = base->m_head.get()->next();
         while (bucket) {
             if (!bucket->deleted()) {
-                addNormalizedNonExistingForCloning(exec, bucket->key(), HashMapBucketType::extractValue(*bucket));
+                addNormalizedNonExistingForCloning(globalObject, bucket->key(), HashMapBucketType::extractValue(*bucket));
                 RETURN_IF_EXCEPTION(scope, void());
             }
             bucket = bucket->next();
@@ -431,65 +431,65 @@ public:
         return bucket == deletedValue();
     }
 
-    ALWAYS_INLINE HashMapBucketType** findBucket(ExecState* exec, JSValue key)
+    ALWAYS_INLINE HashMapBucketType** findBucket(JSGlobalObject* globalObject, JSValue key)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         key = normalizeMapKey(key);
-        uint32_t hash = jsMapHash(exec, vm, key);
+        uint32_t hash = jsMapHash(globalObject, vm, key);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        return findBucket(exec, key, hash);
+        return findBucket(globalObject, key, hash);
     }
 
-    ALWAYS_INLINE HashMapBucketType** findBucket(ExecState* exec, JSValue key, uint32_t hash)
+    ALWAYS_INLINE HashMapBucketType** findBucket(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
     {
         ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
-        return findBucketAlreadyHashedAndNormalized(exec, key, hash);
+        return findBucketAlreadyHashedAndNormalized(globalObject, key, hash);
     }
 
     template <typename T = HashMapBucketType>
-    ALWAYS_INLINE typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKeyValue>>::value, JSValue>::type get(ExecState* exec, JSValue key)
+    ALWAYS_INLINE typename std::enable_if<std::is_same<T, HashMapBucket<HashMapBucketDataKeyValue>>::value, JSValue>::type get(JSGlobalObject* globalObject, JSValue key)
     {
-        if (HashMapBucketType** bucket = findBucket(exec, key))
+        if (HashMapBucketType** bucket = findBucket(globalObject, key))
             return (*bucket)->value();
         return jsUndefined();
     }
 
-    ALWAYS_INLINE bool has(ExecState* exec, JSValue key)
+    ALWAYS_INLINE bool has(JSGlobalObject* globalObject, JSValue key)
     {
-        return !!findBucket(exec, key);
+        return !!findBucket(globalObject, key);
     }
 
-    ALWAYS_INLINE void add(ExecState* exec, JSValue key, JSValue value = JSValue())
+    ALWAYS_INLINE void add(JSGlobalObject* globalObject, JSValue key, JSValue value = JSValue())
     {
         key = normalizeMapKey(key);
-        addNormalizedInternal(exec, key, value, [&] (HashMapBucketType* bucket) {
-            return !isDeleted(bucket) && areKeysEqual(exec, key, bucket->key());
+        addNormalizedInternal(globalObject, key, value, [&] (HashMapBucketType* bucket) {
+            return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
         });
         if (shouldRehashAfterAdd())
-            rehash(exec);
+            rehash(globalObject);
     }
 
-    ALWAYS_INLINE HashMapBucketType* addNormalized(ExecState* exec, JSValue key, JSValue value, uint32_t hash)
+    ALWAYS_INLINE HashMapBucketType* addNormalized(JSGlobalObject* globalObject, JSValue key, JSValue value, uint32_t hash)
     {
         ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
-        ASSERT_WITH_MESSAGE(jsMapHash(exec, exec->vm(), key) == hash, "We expect hash value is what we expect.");
+        ASSERT_WITH_MESSAGE(jsMapHash(globalObject, getVM(globalObject), key) == hash, "We expect hash value is what we expect.");
 
-        auto* bucket = addNormalizedInternal(exec->vm(), key, value, hash, [&] (HashMapBucketType* bucket) {
-            return !isDeleted(bucket) && areKeysEqual(exec, key, bucket->key());
+        auto* bucket = addNormalizedInternal(getVM(globalObject), key, value, hash, [&] (HashMapBucketType* bucket) {
+            return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
         });
         if (shouldRehashAfterAdd())
-            rehash(exec);
+            rehash(globalObject);
         return bucket;
     }
 
-    ALWAYS_INLINE bool remove(ExecState* exec, JSValue key)
+    ALWAYS_INLINE bool remove(JSGlobalObject* globalObject, JSValue key)
     {
-        HashMapBucketType** bucket = findBucket(exec, key);
+        HashMapBucketType** bucket = findBucket(globalObject, key);
         if (!bucket)
             return false;
 
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         HashMapBucketType* impl = *bucket;
         impl->next()->setPrev(vm, impl->prev());
         impl->prev()->setNext(vm, impl->next());
@@ -502,7 +502,7 @@ public:
         --m_keyCount;
 
         if (shouldShrink())
-            rehash(exec);
+            rehash(globalObject);
 
         return true;
     }
@@ -512,9 +512,9 @@ public:
         return m_keyCount;
     }
 
-    ALWAYS_INLINE void clear(ExecState* exec)
+    ALWAYS_INLINE void clear(JSGlobalObject* globalObject)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         m_keyCount = 0;
         m_deleteCount = 0;
         HashMapBucketType* head = m_head.get();
@@ -530,7 +530,7 @@ public:
         m_head->setNext(vm, m_tail.get());
         m_tail->setPrev(vm, m_head.get());
         m_capacity = 4;
-        makeAndSetNewBuffer(exec, vm);
+        makeAndSetNewBuffer(globalObject, vm);
         checkConsistency();
     }
 
@@ -577,7 +577,7 @@ private:
         return JSC::shouldShrink(m_capacity, m_keyCount);
     }
 
-    ALWAYS_INLINE void setUpHeadAndTail(ExecState*, VM& vm)
+    ALWAYS_INLINE void setUpHeadAndTail(JSGlobalObject*, VM& vm)
     {
         m_head.set(vm, this, HashMapBucketType::create(vm));
         m_tail.set(vm, this, HashMapBucketType::create(vm));
@@ -588,20 +588,20 @@ private:
         ASSERT(m_tail->deleted());
     }
 
-    ALWAYS_INLINE void addNormalizedNonExistingForCloning(ExecState* exec, JSValue key, JSValue value = JSValue())
+    ALWAYS_INLINE void addNormalizedNonExistingForCloning(JSGlobalObject* globalObject, JSValue key, JSValue value = JSValue())
     {
-        addNormalizedInternal(exec, key, value, [&] (HashMapBucketType*) {
+        addNormalizedInternal(globalObject, key, value, [&] (HashMapBucketType*) {
             return false;
         });
     }
 
     template<typename CanUseBucket>
-    ALWAYS_INLINE void addNormalizedInternal(ExecState* exec, JSValue key, JSValue value, const CanUseBucket& canUseBucket)
+    ALWAYS_INLINE void addNormalizedInternal(JSGlobalObject* globalObject, JSValue key, JSValue value, const CanUseBucket& canUseBucket)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        uint32_t hash = jsMapHash(exec, vm, key);
+        uint32_t hash = jsMapHash(globalObject, vm, key);
         RETURN_IF_EXCEPTION(scope, void());
         scope.release();
         addNormalizedInternal(vm, key, value, hash, canUseBucket);
@@ -640,7 +640,7 @@ private:
         return newEntry;
     }
 
-    ALWAYS_INLINE HashMapBucketType** findBucketAlreadyHashedAndNormalized(ExecState* exec, JSValue key, uint32_t hash)
+    ALWAYS_INLINE HashMapBucketType** findBucketAlreadyHashedAndNormalized(JSGlobalObject* globalObject, JSValue key, uint32_t hash)
     {
         const uint32_t mask = m_capacity - 1;
         uint32_t index = hash & mask;
@@ -648,7 +648,7 @@ private:
         HashMapBucketType* bucket = buffer[index];
 
         while (!isEmpty(bucket)) {
-            if (!isDeleted(bucket) && areKeysEqual(exec, key, bucket->key()))
+            if (!isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key()))
                 return buffer + index;
             index = (index + 1) & mask;
             bucket = buffer[index];
@@ -656,16 +656,16 @@ private:
         return nullptr;
     }
 
-    void rehash(ExecState* exec)
+    void rehash(JSGlobalObject* globalObject)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         uint32_t oldCapacity = m_capacity;
         m_capacity = nextCapacity(m_capacity, m_keyCount);
 
         if (m_capacity != oldCapacity) {
-            makeAndSetNewBuffer(exec, vm);
+            makeAndSetNewBuffer(globalObject, vm);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
             m_buffer->reset(m_capacity);
@@ -678,7 +678,7 @@ private:
         RELEASE_ASSERT(!(m_capacity & (m_capacity - 1)));
         HashMapBucketType** buffer = this->buffer();
         while (iter != end) {
-            uint32_t index = jsMapHash(exec, vm, iter->key()) & mask;
+            uint32_t index = jsMapHash(globalObject, vm, iter->key()) & mask;
             EXCEPTION_ASSERT_WITH_MESSAGE(!scope.exception(), "All keys should already be hashed before, so this should not throw because it won't resolve ropes.");
             {
                 HashMapBucketType* bucket = buffer[index];
@@ -710,11 +710,11 @@ private:
         }
     }
 
-    void makeAndSetNewBuffer(ExecState* exec, VM& vm)
+    void makeAndSetNewBuffer(JSGlobalObject* globalObject, VM& vm)
     {
         ASSERT(!(m_capacity & (m_capacity - 1)));
 
-        HashMapBufferType* buffer = HashMapBufferType::create(exec, vm, this, m_capacity);
+        HashMapBufferType* buffer = HashMapBufferType::create(globalObject, vm, this, m_capacity);
         if (UNLIKELY(!buffer))
             return;
 

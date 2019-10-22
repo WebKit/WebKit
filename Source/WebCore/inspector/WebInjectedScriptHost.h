@@ -33,8 +33,8 @@ class WebInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
     static Ref<WebInjectedScriptHost> create() { return adoptRef(*new WebInjectedScriptHost); }
 
-    JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) override;
-    JSC::JSValue getInternalProperties(JSC::VM&, JSC::ExecState*, JSC::JSValue) override;
+    JSC::JSValue subtype(JSC::JSGlobalObject*, JSC::JSValue) override;
+    JSC::JSValue getInternalProperties(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue) override;
     bool isHTMLAllCollection(JSC::VM&, JSC::JSValue) override;
 };
 

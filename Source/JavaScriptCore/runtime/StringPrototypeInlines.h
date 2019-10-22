@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename NumberType>
-ALWAYS_INLINE JSString* stringSlice(ExecState* exec, VM& vm, JSString* string, int32_t length, NumberType start, NumberType end)
+ALWAYS_INLINE JSString* stringSlice(JSGlobalObject* globalObject, VM& vm, JSString* string, int32_t length, NumberType start, NumberType end)
 {
     NumberType from = start < 0 ? length + start : start;
     NumberType to = end < 0 ? length + end : end;
@@ -39,7 +39,7 @@ ALWAYS_INLINE JSString* stringSlice(ExecState* exec, VM& vm, JSString* string, i
             from = 0;
         if (to > length)
             to = length;
-        return jsSubstring(vm, exec, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
+        return jsSubstring(vm, globalObject, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
     }
     return jsEmptyString(vm);
 }

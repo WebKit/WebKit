@@ -44,18 +44,18 @@ void JSSymbolTableObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_symbolTable);
 }
 
-bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool JSSymbolTableObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
     if (thisObject->symbolTable()->contains(propertyName.uid()))
         return false;
 
-    return Base::deleteProperty(thisObject, exec, propertyName);
+    return Base::deleteProperty(thisObject, globalObject, propertyName);
 }
 
-void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
     {
         ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
@@ -69,7 +69,7 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecStat
         }
     }
 
-    Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
+    Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
 } // namespace JSC

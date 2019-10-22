@@ -34,9 +34,9 @@
     [CustomGetter] readonly attribute any key;
     [CustomGetter] readonly attribute any primaryKey;
 
-    [CallWith=ExecState, MayThrowException] IDBRequest update(any value);
+    [CallWith=GlobalObject, MayThrowException] IDBRequest update(any value);
     [MayThrowException] void advance([EnforceRange] unsigned long count);
-    [CallWith=ExecState, ImplementedAs=continueFunction, MayThrowException] void continue(optional any key);
-    [CallWith=ExecState, MayThrowException] void continuePrimaryKey(any key, any primaryKey);
-    [CallWith=ExecState, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete();
+    [CallWith=GlobalObject, ImplementedAs=continueFunction, MayThrowException] void continue(optional any key);
+    [CallWith=GlobalObject, MayThrowException] void continuePrimaryKey(any key, any primaryKey);
+    [CallWith=GlobalObject, ImplementedAs=deleteFunction, MayThrowException] IDBRequest delete();
 };

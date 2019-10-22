@@ -1243,8 +1243,8 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
     if (&world != &mainThreadNormalWorld())
         return;
 
-    JSContextRef context = toRef(coreFrame->script().globalObject(world)->globalExec());
-    JSObjectRef windowObject = toRef(coreFrame->script().globalObject(world));
+    JSContextRef context = toRef(coreFrame->script().globalObject(world));
+    JSObjectRef windowObject = toRef(JSC::jsCast<JSC::JSObject*>(coreFrame->script().globalObject(world)));
     ASSERT(windowObject);
 
     if (FAILED(frameLoadDelegate->didClearWindowObject(webView, context, windowObject, m_webFrame)))

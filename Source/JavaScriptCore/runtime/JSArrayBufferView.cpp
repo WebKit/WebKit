@@ -42,7 +42,7 @@ const ClassInfo JSArrayBufferView::s_info = {
     "ArrayBufferView", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferView)
 };
 
-String JSArrayBufferView::toStringName(const JSObject*, ExecState*)
+String JSArrayBufferView::toStringName(const JSObject*, JSGlobalObject*)
 {
     return "Object"_s;
 }
@@ -176,15 +176,15 @@ void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 bool JSArrayBufferView::put(
-    JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
+    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+        return ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
     
-    return Base::put(thisObject, exec, propertyName, value, slot);
+    return Base::put(thisObject, globalObject, propertyName, value, slot);
 }
 
 ArrayBuffer* JSArrayBufferView::unsharedBuffer()
@@ -202,16 +202,16 @@ void JSArrayBufferView::finalize(JSCell* cell)
         Gigacage::free(Gigacage::Primitive, thisObject->vector());
 }
 
-JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)
+JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    return vm.m_typedArrayController->toJS(exec, globalObject(vm), unsharedBuffer());
+    VM& vm = globalObject->vm();
+    return vm.m_typedArrayController->toJS(globalObject, this->globalObject(vm), unsharedBuffer());
 }
 
-JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(ExecState* exec)
+JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    return vm.m_typedArrayController->toJS(exec, globalObject(vm), possiblySharedBuffer());
+    VM& vm = globalObject->vm();
+    return vm.m_typedArrayController->toJS(globalObject, this->globalObject(vm), possiblySharedBuffer());
 }
 
 void JSArrayBufferView::neuter()
@@ -244,7 +244,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     ASSERT(m_mode == FastTypedArray || m_mode == OversizeTypedArray);
 
     // We play this game because we want this to be callable even from places that
-    // don't have access to ExecState* or the VM, and we only allocate so little
+    // don't have access to CallFrame* or the VM, and we only allocate so little
     // memory here that it's not necessary to trigger a GC - just accounting what
     // we have done is good enough. The sort of bizarre exception to the "allocating
     // little memory" is when we transfer a backing buffer into the C heap; this

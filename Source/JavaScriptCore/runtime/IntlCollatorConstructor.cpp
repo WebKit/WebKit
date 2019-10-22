@@ -93,14 +93,14 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(JSGlobalObject* global
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     // 3. ReturnIfAbrupt(collator).
-    Structure* structure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), jsCast<IntlCollatorConstructor*>(callFrame->jsCallee())->collatorStructure(vm));
+    Structure* structure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), jsCast<IntlCollatorConstructor*>(callFrame->jsCallee())->collatorStructure(vm));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     IntlCollator* collator = IntlCollator::create(vm, structure);
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
     scope.release();
-    collator->initializeCollator(*callFrame, callFrame->argument(0), callFrame->argument(1));
+    collator->initializeCollator(globalObject, callFrame->argument(0), callFrame->argument(1));
     return JSValue::encode(collator);
 }
 
@@ -122,7 +122,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(JSGlobalObject* globalObjec
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
-    collator->initializeCollator(*callFrame, callFrame->argument(0), callFrame->argument(1));
+    collator->initializeCollator(globalObject, callFrame->argument(0), callFrame->argument(1));
     return JSValue::encode(collator);
 }
 
@@ -133,13 +133,13 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(JSGlo
     // 10.2.2 Intl.Collator.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(*callFrame, callFrame->argument(0));
+    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
 
     // 2. ReturnIfAbrupt(requestedLocales).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
-    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(*callFrame, globalObject->intlCollatorAvailableLocales(), requestedLocales, callFrame->argument(1))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(supportedLocales(globalObject, globalObject->intlCollatorAvailableLocales(), requestedLocales, callFrame->argument(1))));
 }
 
 } // namespace JSC

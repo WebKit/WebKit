@@ -35,7 +35,7 @@ template<> struct Converter<IDLAny> : DefaultConverter<IDLAny> {
 
     static constexpr bool conversionHasSideEffects = false;
 
-    static JSC::JSValue convert(JSC::ExecState&, JSC::JSValue value)
+    static JSC::JSValue convert(JSC::JSGlobalObject&, JSC::JSValue value)
     {
         return value;
     }
@@ -64,12 +64,12 @@ template<> struct JSConverter<IDLAny> {
 template<> struct VariadicConverter<IDLAny> {
     using Item = typename IDLAny::ImplementationType;
 
-    static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+    static Optional<Item> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        auto& vm = state.vm();
+        auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto result = Converter<IDLAny>::convert(state, value);
+        auto result = Converter<IDLAny>::convert(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, WTF::nullopt);
 
         return Item { vm, result };

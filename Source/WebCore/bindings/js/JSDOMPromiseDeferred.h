@@ -42,9 +42,9 @@ public:
         RetainPromiseOnResolve
     };
 
-    static RefPtr<DeferredPromise> create(JSC::ExecState& state, JSDOMGlobalObject& globalObject, Mode mode = Mode::ClearPromiseOnResolve)
+    static RefPtr<DeferredPromise> create(JSDOMGlobalObject& globalObject, Mode mode = Mode::ClearPromiseOnResolve)
     {
-        auto* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
+        auto* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
         if (!promiseDeferred)
             return nullptr;
         return adoptRef(new DeferredPromise(globalObject, *promiseDeferred, mode));
@@ -62,9 +62,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
     void resolve()
@@ -73,9 +73,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, JSC::jsUndefined());
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, JSC::jsUndefined());
     }
 
     template<class IDLType>
@@ -85,9 +85,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
     template<class IDLType>
@@ -97,9 +97,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        auto* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, toJSNewlyCreated<IDLType>(*exec, *globalObject(), createValue(*globalObject()->scriptExecutionContext())));
+        auto* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->scriptExecutionContext())));
     }
 
     template<class IDLType>
@@ -109,9 +109,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        reject(*exec, toJS<IDLType>(*exec, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        reject(*lexicalGlobalObject, toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
     void reject();
@@ -127,9 +127,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        resolve(*exec, callback(*exec, *globalObject()));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, callback(*globalObject()));
     }
 
     template<typename Callback>
@@ -139,9 +139,9 @@ public:
             return;
         ASSERT(deferred());
         ASSERT(globalObject());
-        JSC::ExecState* exec = globalObject()->globalExec();
-        JSC::JSLockHolder locker(exec);
-        reject(*exec, callback(*exec, *globalObject()));
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        reject(*lexicalGlobalObject, callback(*globalObject()));
     }
 
     JSC::JSValue promise() const;
@@ -157,10 +157,10 @@ private:
 
     JSC::JSPromiseDeferred* deferred() const { return guarded(); }
 
-    WEBCORE_EXPORT void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
+    WEBCORE_EXPORT void callFunction(JSC::JSGlobalObject&, JSC::JSValue function, JSC::JSValue resolution);
 
-    void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->resolve(), resolution); }
-    void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->reject(), resolution); }
+    void resolve(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, deferred()->resolve(), resolution); }
+    void reject(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, deferred()->reject(), resolution); }
 
     Mode m_mode;
 };
@@ -269,71 +269,71 @@ public:
 };
 
 
-Ref<DeferredPromise> createDeferredPromise(JSC::ExecState&, JSDOMWindow&);
+Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow&);
 
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
-WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
-JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&, RejectedPromiseWithTypeErrorCause);
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
 
-using PromiseFunction = void(JSC::ExecState&, Ref<DeferredPromise>&&);
+using PromiseFunction = void(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&);
 
 enum class PromiseExecutionScope { WindowOnly, WindowOrWorker };
 
 template<PromiseFunction promiseFunction, PromiseExecutionScope executionScope>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
+inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    JSC::VM& vm = state.vm();
+    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = callerGlobalObject(state);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
+    auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
     if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
         return JSC::jsUndefined();
 
-    promiseFunction(state, DeferredPromise::create(globalObject, *promiseDeferred));
+    promiseFunction(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promiseDeferred));
 
-    rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promiseDeferred);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
 }
 
 template<PromiseExecutionScope executionScope, typename PromiseFunctor>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, PromiseFunctor functor)
+inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromiseFunctor functor)
 {
-    JSC::VM& vm = state.vm();
+    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = callerGlobalObject(state);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
+    auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
     if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
         return JSC::jsUndefined();
 
-    functor(state, DeferredPromise::create(globalObject, *promiseDeferred));
+    functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promiseDeferred));
 
-    rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promiseDeferred);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
 }
 
-using BindingPromiseFunction = JSC::EncodedJSValue(JSC::ExecState*, Ref<DeferredPromise>&&);
+using BindingPromiseFunction = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, Ref<DeferredPromise>&&);
 template<BindingPromiseFunction bindingFunction>
-inline void bindingPromiseFunctionAdapter(JSC::ExecState& state, Ref<DeferredPromise>&& promise)
+inline void bindingPromiseFunctionAdapter(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise)
 {
-    bindingFunction(&state, WTFMove(promise));
+    bindingFunction(&lexicalGlobalObject, &callFrame, WTFMove(promise));
 }
 
 template<BindingPromiseFunction bindingPromiseFunction, PromiseExecutionScope executionScope>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
+inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>, executionScope>(state);
+    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>, executionScope>(lexicalGlobalObject, callFrame);
 }
 
 } // namespace WebCore

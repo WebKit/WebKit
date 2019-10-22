@@ -90,14 +90,13 @@ static void jscWeakValueInitialize(JSCWeakValue* weakValue, JSCValue* value)
 {
     JSCWeakValuePrivate* priv = weakValue->priv;
     auto* jsContext = jscContextGetJSContext(jsc_value_get_context(value));
-    JSC::ExecState* exec = toJS(jsContext);
-    JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSC::JSGlobalObject* globalObject = toJS(jsContext);
     auto& owner = weakValueHandleOwner();
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, &owner, weakValue);
     priv->globalObject.swap(weak);
-    priv->lock = &exec->vm().apiLock();
+    priv->lock = &globalObject->vm().apiLock();
 
-    JSC::JSValue jsValue = toJS(exec, jscValueGetJSValue(value));
+    JSC::JSValue jsValue = toJS(globalObject, jscValueGetJSValue(value));
     if (jsValue.isObject())
         priv->weakValueRef.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), owner, weakValue);
     else if (jsValue.isString())
@@ -206,7 +205,7 @@ JSCValue* jsc_weak_value_get_value(JSCWeakValue* weakValue)
     else
         value = priv->weakValueRef.object();
 
-    JSC::ExecState* exec = priv->globalObject->globalExec();
-    GRefPtr<JSCContext> context = jscContextGetOrCreate(toGlobalRef(exec));
-    return jscContextGetOrCreateValue(context.get(), toRef(exec, value)).leakRef();
+    JSC::JSGlobalObject* globalObject = priv->globalObject.get();
+    GRefPtr<JSCContext> context = jscContextGetOrCreate(toGlobalRef(globalObject));
+    return jscContextGetOrCreateValue(context.get(), toRef(globalObject, value)).leakRef();
 }

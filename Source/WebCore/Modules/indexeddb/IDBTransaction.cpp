@@ -827,7 +827,7 @@ void IDBTransaction::didRenameIndexOnServer(const IDBResultData& resultData)
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::RenameIndexSuccess || resultData.type() == IDBResultType::Error);
 }
 
-Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+Ref<IDBRequest> IDBTransaction::requestOpenCursor(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
     ASSERT(&m_database->originThread() == &Thread::current());
@@ -838,7 +838,7 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBObjectSto
     return doRequestOpenCursor(state, IDBCursorWithValue::create(objectStore, info));
 }
 
-Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBIndex& index, const IDBCursorInfo& info)
+Ref<IDBRequest> IDBTransaction::requestOpenCursor(JSGlobalObject& state, IDBIndex& index, const IDBCursorInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
     ASSERT(&m_database->originThread() == &Thread::current());
@@ -849,7 +849,7 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& state, IDBIndex& in
     return doRequestOpenCursor(state, IDBCursorWithValue::create(index, info));
 }
 
-Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(ExecState& state, Ref<IDBCursor>&& cursor)
+Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(JSGlobalObject& state, Ref<IDBCursor>&& cursor)
 {
     ASSERT(isActive());
     ASSERT(&m_database->originThread() == &Thread::current());
@@ -919,7 +919,7 @@ void IDBTransaction::didIterateCursorOnServer(IDBRequest& request, const IDBResu
     completeCursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::ExecState& state, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
+Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllObjectStoreRecords");
     ASSERT(isActive());
@@ -942,7 +942,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(JSC::ExecState& 
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(JSC::ExecState& state, IDBIndex& index, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
+Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(JSC::JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& keyRangeData, IndexedDB::GetAllType getAllType, Optional<uint32_t> count)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetAllIndexRecords");
     ASSERT(isActive());
@@ -998,7 +998,7 @@ void IDBTransaction::didGetAllRecordsOnServer(IDBRequest& request, const IDBResu
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& state, IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
+Ref<IDBRequest> IDBTransaction::requestGetRecord(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBGetRecordData& getRecordData)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
@@ -1022,7 +1022,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& state, IDBObjectStor
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetValue(ExecState& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestGetValue(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(&m_database->originThread() == &Thread::current());
@@ -1030,7 +1030,7 @@ Ref<IDBRequest> IDBTransaction::requestGetValue(ExecState& state, IDBIndex& inde
     return requestIndexRecord(state, index, IndexedDB::IndexRecordType::Value, range);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetKey(ExecState& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestGetKey(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(&m_database->originThread() == &Thread::current());
@@ -1038,7 +1038,7 @@ Ref<IDBRequest> IDBTransaction::requestGetKey(ExecState& state, IDBIndex& index,
     return requestIndexRecord(state, index, IndexedDB::IndexRecordType::Key, range);
 }
 
-Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& state, IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestIndexRecord(JSGlobalObject& state, IDBIndex& index, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(isActive());
@@ -1103,7 +1103,7 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestCount(ExecState& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestCount(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBObjectStore)");
     ASSERT(isActive());
@@ -1125,7 +1125,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(ExecState& state, IDBObjectStore& o
     return request;
 }
 
-Ref<IDBRequest> IDBTransaction::requestCount(ExecState& state, IDBIndex& index, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestCount(JSGlobalObject& state, IDBIndex& index, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBIndex)");
     ASSERT(isActive());
@@ -1164,7 +1164,7 @@ void IDBTransaction::didGetCountOnServer(IDBRequest& request, const IDBResultDat
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestDeleteRecord(ExecState& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
+Ref<IDBRequest> IDBTransaction::requestDeleteRecord(JSGlobalObject& state, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
 {
     LOG(IndexedDB, "IDBTransaction::requestDeleteRecord");
     ASSERT(isActive());
@@ -1202,7 +1202,7 @@ void IDBTransaction::didDeleteRecordOnServer(IDBRequest& request, const IDBResul
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestClearObjectStore(ExecState& state, IDBObjectStore& objectStore)
+Ref<IDBRequest> IDBTransaction::requestClearObjectStore(JSGlobalObject& state, IDBObjectStore& objectStore)
 {
     LOG(IndexedDB, "IDBTransaction::requestClearObjectStore");
     ASSERT(isActive());
@@ -1242,7 +1242,7 @@ void IDBTransaction::didClearObjectStoreOnServer(IDBRequest& request, const IDBR
     completeNoncursorRequest(request, resultData);
 }
 
-Ref<IDBRequest> IDBTransaction::requestPutOrAdd(ExecState& state, IDBObjectStore& objectStore, RefPtr<IDBKey>&& key, SerializedScriptValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+Ref<IDBRequest> IDBTransaction::requestPutOrAdd(JSGlobalObject& state, IDBObjectStore& objectStore, RefPtr<IDBKey>&& key, SerializedScriptValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBTransaction::requestPutOrAdd");
     ASSERT(isActive());

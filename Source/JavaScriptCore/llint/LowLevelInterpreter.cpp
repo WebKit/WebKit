@@ -156,7 +156,7 @@ public:
 #endif
     ALWAYS_INLINE Opcode opcode() const { return bitwise_cast<Opcode>(m_value); }
 
-    operator ExecState*() { return bitwise_cast<ExecState*>(m_value); }
+    operator CallFrame*() { return bitwise_cast<CallFrame*>(m_value); }
     operator const Instruction*() { return bitwise_cast<const Instruction*>(m_value); }
     operator JSCell*() { return bitwise_cast<JSCell*>(m_value); }
     operator ProtoCallFrame*() { return bitwise_cast<ProtoCallFrame*>(m_value); }

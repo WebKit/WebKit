@@ -44,41 +44,41 @@ template <typename T> static EncodedJSValue JSC_HOST_CALL construct(JSGlobalObje
 template <typename T>
 EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSContextRef execRef = toRef(callFrame);
+    JSContextRef execRef = toRef(globalObject);
     JSObjectRef functionRef = toRef(callFrame->jsCallee());
-    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(callFrame, NotStrictMode)));
+    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(globalObject, NotStrictMode)));
 
     int argumentCount = static_cast<int>(callFrame->argumentCount());
     Vector<JSValueRef, 16> arguments;
     arguments.reserveInitialCapacity(argumentCount);
     for (int i = 0; i < argumentCount; i++)
-        arguments.uncheckedAppend(toRef(callFrame, callFrame->uncheckedArgument(i)));
+        arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
 
     JSValueRef exception = 0;
     JSValueRef result;
     {
-        JSLock::DropAllLocks dropAllLocks(callFrame);
+        JSLock::DropAllLocks dropAllLocks(globalObject);
         result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
     if (exception)
-        throwException(callFrame, scope, toJS(callFrame, exception));
+        throwException(globalObject, scope, toJS(globalObject, exception));
 
     // result must be a valid JSValue.
     if (!result)
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(toJS(callFrame, result));
+    return JSValue::encode(toJS(globalObject, result));
 }
 
 template <typename T>
 EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* constructor = callFrame->jsCallee();
-    JSContextRef ctx = toRef(callFrame);
+    JSContextRef ctx = toRef(globalObject);
     JSObjectRef constructorRef = toRef(constructor);
 
     JSObjectCallAsConstructorCallback callback = jsCast<T*>(constructor)->constructCallback();
@@ -87,21 +87,21 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
         Vector<JSValueRef, 16> arguments;
         arguments.reserveInitialCapacity(argumentCount);
         for (size_t i = 0; i < argumentCount; ++i)
-            arguments.uncheckedAppend(toRef(callFrame, callFrame->uncheckedArgument(i)));
+            arguments.uncheckedAppend(toRef(globalObject, callFrame->uncheckedArgument(i)));
 
         JSValueRef exception = 0;
         JSObjectRef result;
         {
-            JSLock::DropAllLocks dropAllLocks(callFrame);
+            JSLock::DropAllLocks dropAllLocks(globalObject);
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
         if (exception) {
-            throwException(callFrame, scope, toJS(callFrame, exception));
-            return JSValue::encode(toJS(callFrame, exception));
+            throwException(globalObject, scope, toJS(globalObject, exception));
+            return JSValue::encode(toJS(globalObject, exception));
         }
         // result must be a valid JSValue.
         if (!result)
-            return throwVMTypeError(callFrame, scope);
+            return throwVMTypeError(globalObject, scope);
         return JSValue::encode(toJS(result));
     }
     

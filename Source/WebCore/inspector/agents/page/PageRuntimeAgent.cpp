@@ -99,7 +99,7 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame& frame)
 InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
+        JSC::JSGlobalObject* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
         InjectedScript result = injectedScriptManager().injectedScriptFor(scriptState);
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
@@ -128,14 +128,14 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     if (!pageAgent)
         return;
 
-    Vector<std::pair<JSC::ExecState*, SecurityOrigin*>> isolatedContexts;
+    Vector<std::pair<JSC::JSGlobalObject*, SecurityOrigin*>> isolatedContexts;
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;
 
         String frameId = pageAgent->frameId(frame);
 
-        JSC::ExecState* scriptState = mainWorldExecState(frame);
+        JSC::JSGlobalObject* scriptState = mainWorldExecState(frame);
         notifyContextCreated(frameId, scriptState, nullptr, true);
         frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
@@ -146,7 +146,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     }
 }
 
-void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecState* scriptState, SecurityOrigin* securityOrigin, bool isPageContext)
+void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::JSGlobalObject* scriptState, SecurityOrigin* securityOrigin, bool isPageContext)
 {
     ASSERT(securityOrigin || isPageContext);
 

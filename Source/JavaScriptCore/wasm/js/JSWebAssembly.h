@@ -42,9 +42,9 @@ public:
 
     DECLARE_INFO;
 
-    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&);
-    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(ExecState*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
-    static JSValue instantiate(ExecState*, JSPromiseDeferred*, const Identifier&, JSValue);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromiseDeferred*, Vector<uint8_t>&&);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(JSGlobalObject*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
+    static JSValue instantiate(JSGlobalObject*, JSPromiseDeferred*, const Identifier&, JSValue);
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);

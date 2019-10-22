@@ -56,19 +56,19 @@ public:
     void releaseImpl();
 
     // Functions.
-    JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);
-    JSC::JSValue scopeDescriptions(JSC::ExecState*);
+    JSC::JSValue evaluateWithScopeExtension(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue scopeDescriptions(JSC::JSGlobalObject*);
 
     // Attributes.
-    JSC::JSValue caller(JSC::ExecState*) const;
-    JSC::JSValue sourceID(JSC::ExecState*) const;
-    JSC::JSValue line(JSC::ExecState*) const;
-    JSC::JSValue column(JSC::ExecState*) const;
-    JSC::JSValue functionName(JSC::ExecState*) const;
-    JSC::JSValue scopeChain(JSC::ExecState*) const;
-    JSC::JSValue thisObject(JSC::ExecState*) const;
-    JSC::JSValue type(JSC::ExecState*) const;
-    JSC::JSValue isTailDeleted(JSC::ExecState*) const;
+    JSC::JSValue caller(JSC::JSGlobalObject*) const;
+    JSC::JSValue sourceID(JSC::JSGlobalObject*) const;
+    JSC::JSValue line(JSC::JSGlobalObject*) const;
+    JSC::JSValue column(JSC::JSGlobalObject*) const;
+    JSC::JSValue functionName(JSC::JSGlobalObject*) const;
+    JSC::JSValue scopeChain(JSC::JSGlobalObject*) const;
+    JSC::JSValue thisObject(JSC::JSGlobalObject*) const;
+    JSC::JSValue type(JSC::JSGlobalObject*) const;
+    JSC::JSValue isTailDeleted(JSC::JSGlobalObject*) const;
 
     // Constants.
     static constexpr unsigned short GLOBAL_SCOPE = 0;
@@ -89,6 +89,6 @@ private:
     JavaScriptCallFrame* m_impl;
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JavaScriptCallFrame*);
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JavaScriptCallFrame*);
 
 } // namespace Inspector

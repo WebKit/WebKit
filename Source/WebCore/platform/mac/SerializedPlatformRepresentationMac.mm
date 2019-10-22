@@ -72,19 +72,19 @@ RefPtr<ArrayBuffer> SerializedPlatformRepresentationMac::data() const
     return nullptr;
 }
 
-JSC::JSValue SerializedPlatformRepresentationMac::deserialize(JSC::ExecState* exec) const
+JSC::JSValue SerializedPlatformRepresentationMac::deserialize(JSC::JSGlobalObject* lexicalGlobalObject) const
 {
 #if JSC_OBJC_API_ENABLED
     if (!m_nativeValue)
         return JSC::jsNull();
 
-    JSGlobalContextRef jsGlobalContextRef = toGlobalRef(exec->lexicalGlobalObject()->globalExec());
+    JSGlobalContextRef jsGlobalContextRef = toGlobalRef(lexicalGlobalObject);
     JSContext *jsContext = [JSContext contextWithJSGlobalContextRef:jsGlobalContextRef];
     JSValue *serializedValue = jsValueWithValueInContext(m_nativeValue.get(), jsContext);
 
-    return toJS(exec, [serializedValue JSValueRef]);
+    return toJS(lexicalGlobalObject, [serializedValue JSValueRef]);
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(lexicalGlobalObject);
     return JSC::jsNull();
 #endif
 }
@@ -141,10 +141,10 @@ static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
 {
     auto dataArray = ArrayBuffer::tryCreate([data bytes], [data length]);
 
-    auto* state = toJS([context JSGlobalContextRef]);
-    JSC::JSValue array = toJS(state, JSC::jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), dataArray.get());
+    auto* lexicalGlobalObject = toJS([context JSGlobalContextRef]);
+    JSC::JSValue array = toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), dataArray.get());
 
-    return [JSValue valueWithJSValueRef:toRef(state, array) inContext:context];
+    return [JSValue valueWithJSValueRef:toRef(lexicalGlobalObject, array) inContext:context];
 }
 
 static JSValue *jsValueWithArrayInContext(NSArray *array, JSContext *context)

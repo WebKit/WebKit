@@ -144,23 +144,23 @@ void JSScriptRelease(JSScriptRef script)
 
 JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef thisValueRef, JSValueRef* exception)
 {
-    ExecState* exec = toJS(context);
-    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = toJS(context);
+    VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
     if (&script->vm() != &vm) {
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
     NakedPtr<Exception> internalException;
-    JSValue thisValue = thisValueRef ? toJS(exec, thisValueRef) : jsUndefined();
-    JSValue result = evaluate(exec, SourceCode(*script), thisValue, internalException);
+    JSValue thisValue = thisValueRef ? toJS(globalObject, thisValueRef) : jsUndefined();
+    JSValue result = evaluate(globalObject, SourceCode(*script), thisValue, internalException);
     if (internalException) {
         if (exception)
-            *exception = toRef(exec, internalException->value());
+            *exception = toRef(globalObject, internalException->value());
         return 0;
     }
     ASSERT(result);
-    return toRef(exec, result);
+    return toRef(globalObject, result);
 }
 
 }

@@ -58,7 +58,7 @@ void Watchdog::setTimeLimit(Seconds limit,
         startTimer(m_timeLimit);
 }
 
-bool Watchdog::shouldTerminate(ExecState* exec)
+bool Watchdog::shouldTerminate(JSGlobalObject* globalObject)
 {
     ASSERT(m_vm->currentThreadIsHoldingAPILock());
     if (MonotonicTime::now() < m_deadline)
@@ -81,7 +81,7 @@ bool Watchdog::shouldTerminate(ExecState* exec)
     // If m_callback is not set, then we terminate by default.
     // Else, we let m_callback decide if we should terminate or not.
     bool needsTermination = !m_callback
-        || m_callback(exec, m_callbackData1, m_callbackData2);
+        || m_callback(globalObject, m_callbackData1, m_callbackData2);
     if (needsTermination)
         return true;
 

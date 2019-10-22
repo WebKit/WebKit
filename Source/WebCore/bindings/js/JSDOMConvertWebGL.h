@@ -32,23 +32,23 @@
 
 namespace WebCore {
 
-JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
-JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, WebGLExtension&);
+JSC::JSValue convertToJSValue(JSC::JSGlobalObject&, JSDOMGlobalObject&, const WebGLAny&);
+JSC::JSValue convertToJSValue(JSC::JSGlobalObject&, JSDOMGlobalObject&, WebGLExtension&);
 
-inline JSC::JSValue convertToJSValue(JSC::ExecState& state, JSDOMGlobalObject& globalObject, WebGLExtension* extension)
+inline JSC::JSValue convertToJSValue(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, WebGLExtension* extension)
 {
     if (!extension)
         return JSC::jsNull();
-    return convertToJSValue(state, globalObject, *extension);
+    return convertToJSValue(lexicalGlobalObject, globalObject, *extension);
 }
 
 template<> struct JSConverter<IDLWebGLAny> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const WebGLAny& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const WebGLAny& value)
     {
-        return convertToJSValue(state, globalObject, value);
+        return convertToJSValue(lexicalGlobalObject, globalObject, value);
     }
 };
 
@@ -57,9 +57,9 @@ template<> struct JSConverter<IDLWebGLExtension> {
     static constexpr bool needsGlobalObject = true;
 
     template <typename T>
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const T& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const T& value)
     {
-        return convertToJSValue(state, globalObject, Detail::getPtrOrRef(value));
+        return convertToJSValue(lexicalGlobalObject, globalObject, Detail::getPtrOrRef(value));
     }
 };
 

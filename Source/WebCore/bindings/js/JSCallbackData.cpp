@@ -42,8 +42,8 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 {
     ASSERT(callback);
 
-    ExecState* exec = globalObject.globalExec();
-    VM& vm = exec->vm();
+    JSGlobalObject* lexicalGlobalObject = &globalObject;
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSValue function;
@@ -56,12 +56,12 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     }
     if (callType == CallType::None) {
         if (method == CallbackType::Function) {
-            returnedException = JSC::Exception::create(vm, createTypeError(exec));
+            returnedException = JSC::Exception::create(vm, createTypeError(lexicalGlobalObject));
             return JSValue();
         }
 
         ASSERT(!functionName.isNull());
-        function = callback->get(exec, functionName);
+        function = callback->get(lexicalGlobalObject, functionName);
         if (UNLIKELY(scope.exception())) {
             returnedException = scope.exception();
             scope.clearException();
@@ -70,7 +70,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
         callType = getCallData(vm, function, callData);
         if (callType == CallType::None) {
-            returnedException = JSC::Exception::create(vm, createTypeError(exec));
+            returnedException = JSC::Exception::create(vm, createTypeError(lexicalGlobalObject));
             return JSValue();
         }
     }
@@ -86,7 +86,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     JSExecState::instrumentFunctionCall(context, callType, callData);
 
     returnedException = nullptr;
-    JSValue result = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, thisValue, args, returnedException);
+    JSValue result = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, function, callType, callData, thisValue, args, returnedException);
 
     InspectorInstrumentation::didCallFunction(context);
 

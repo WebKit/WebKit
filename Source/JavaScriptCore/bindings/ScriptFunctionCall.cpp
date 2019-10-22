@@ -42,14 +42,14 @@ namespace Deprecated {
 
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
     m_arguments.append(jsString(vm, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
     m_arguments.append(jsString(vm, String(argument)));
 }
@@ -61,31 +61,31 @@ void ScriptCallArgumentHandler::appendArgument(JSValue argument)
 
 void ScriptCallArgumentHandler::appendArgument(long argument)
 {
-    JSLockHolder lock(m_exec);
+    JSLockHolder lock(m_globalObject);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(long long argument)
 {
-    JSLockHolder lock(m_exec);
+    JSLockHolder lock(m_globalObject);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(unsigned int argument)
 {
-    JSLockHolder lock(m_exec);
+    JSLockHolder lock(m_globalObject);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(uint64_t argument)
 {
-    JSLockHolder lock(m_exec);
+    JSLockHolder lock(m_globalObject);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(int argument)
 {
-    JSLockHolder lock(m_exec);
+    JSLockHolder lock(m_globalObject);
     m_arguments.append(jsNumber(argument));
 }
 
@@ -95,7 +95,7 @@ void ScriptCallArgumentHandler::appendArgument(bool argument)
 }
 
 ScriptFunctionCall::ScriptFunctionCall(const Deprecated::ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler callHandler)
-    : ScriptCallArgumentHandler(thisObject.scriptState())
+    : ScriptCallArgumentHandler(thisObject.globalObject())
     , m_callHandler(callHandler)
     , m_thisObject(thisObject)
     , m_name(name)
@@ -106,11 +106,11 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
-    VM& vm = m_exec->vm();
+    VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue function = thisObject->get(m_exec, Identifier::fromString(vm, m_name));
+    JSValue function = thisObject->get(m_globalObject, Identifier::fromString(vm, m_name));
     if (UNLIKELY(scope.exception()))
         return makeUnexpected(scope.exception());
 
@@ -122,9 +122,9 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
     JSValue result;
     NakedPtr<Exception> exception;
     if (m_callHandler)
-        result = m_callHandler(m_exec, function, callType, callData, thisObject, m_arguments, exception);
+        result = m_callHandler(m_globalObject, function, callType, callData, thisObject, m_arguments, exception);
     else
-        result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments, exception);
+        result = JSC::call(m_globalObject, function, callType, callData, thisObject, m_arguments, exception);
 
     if (exception) {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.

@@ -40,7 +40,7 @@ using namespace Inspector;
 
 namespace Inspector {
 
-static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue value, int maxDepth)
+static RefPtr<JSON::Value> jsToInspectorValue(JSGlobalObject* globalObject, JSValue value, int maxDepth)
 {
     if (!value) {
         ASSERT_NOT_REACHED();
@@ -61,7 +61,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
     if (value.isNumber() && value.isAnyInt())
         return JSON::Value::create(static_cast<int>(value.asAnyInt()));
     if (value.isString())
-        return JSON::Value::create(asString(value)->value(&scriptState));
+        return JSON::Value::create(asString(value)->value(globalObject));
 
     if (value.isObject()) {
         if (isJSArray(value)) {
@@ -69,20 +69,20 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
             auto& array = *asArray(value);
             unsigned length = array.length();
             for (unsigned i = 0; i < length; i++) {
-                auto elementValue = jsToInspectorValue(scriptState, array.getIndex(&scriptState, i), maxDepth);
+                auto elementValue = jsToInspectorValue(globalObject, array.getIndex(globalObject, i), maxDepth);
                 if (!elementValue)
                     return nullptr;
                 inspectorArray->pushValue(WTFMove(elementValue));
             }
             return inspectorArray;
         }
-        VM& vm = scriptState.vm();
+        VM& vm = globalObject->vm();
         auto inspectorObject = JSON::Object::create();
         auto& object = *value.getObject();
         PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        object.methodTable(vm)->getOwnPropertyNames(&object, &scriptState, propertyNames, EnumerationMode());
+        object.methodTable(vm)->getOwnPropertyNames(&object, globalObject, propertyNames, EnumerationMode());
         for (auto& name : propertyNames) {
-            auto inspectorValue = jsToInspectorValue(scriptState, object.get(&scriptState, name), maxDepth);
+            auto inspectorValue = jsToInspectorValue(globalObject, object.get(globalObject, name), maxDepth);
             if (!inspectorValue)
                 return nullptr;
             inspectorObject->setValue(name.string(), WTFMove(inspectorValue));
@@ -94,12 +94,12 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
     return nullptr;
 }
 
-RefPtr<JSON::Value> toInspectorValue(ExecState& state, JSValue value)
+RefPtr<JSON::Value> toInspectorValue(JSGlobalObject* globalObject, JSValue value)
 {
     // FIXME: Maybe we should move the JSLockHolder stuff to the callers since this function takes a JSValue directly.
     // Doing the locking here made sense when we were trying to abstract the difference between multiple JavaScript engines.
-    JSLockHolder holder(&state);
-    return jsToInspectorValue(state, value, JSON::Value::maxDepth);
+    JSLockHolder holder(globalObject);
+    return jsToInspectorValue(globalObject, value, JSON::Value::maxDepth);
 }
 
 } // namespace Inspector

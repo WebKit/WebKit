@@ -269,7 +269,7 @@ double InspectorTimelineAgent::timestamp()
     return m_environment.executionStopwatch()->elapsedTime().seconds();
 }
 
-void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String& title)
+void InspectorTimelineAgent::startFromConsole(JSC::JSGlobalObject* exec, const String& title)
 {
     // Allow duplicate unnamed profiles. Disallow duplicate named profiles.
     if (!title.isEmpty()) {
@@ -293,7 +293,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
 
-void InspectorTimelineAgent::stopFromConsole(JSC::ExecState*, const String& title)
+void InspectorTimelineAgent::stopFromConsole(JSC::JSGlobalObject*, const String& title)
 {
     // Stop profiles in reverse order. If the title is empty, then stop the last profile.
     // Otherwise, match the title of the profile to stop.
@@ -656,9 +656,9 @@ void InspectorTimelineAgent::didFireObserverCallback()
 
 // ScriptDebugListener
 
-void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState& state, const Inspector::ScriptBreakpointAction& action, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
+void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject* lexicalGlobalObject, const Inspector::ScriptBreakpointAction& action, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
 {
-    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(&state));
+    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(lexicalGlobalObject));
 }
 
 static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)

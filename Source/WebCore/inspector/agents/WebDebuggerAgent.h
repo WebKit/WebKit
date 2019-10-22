@@ -48,7 +48,7 @@ public:
     void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
-    void didPostMessage(const TimerBase&, JSC::ExecState&);
+    void didPostMessage(const TimerBase&, JSC::JSGlobalObject&);
     void didFailPostMessage(const TimerBase&);
     void willDispatchPostMessage(const TimerBase&);
     void didDispatchPostMessage(const TimerBase&);

@@ -45,17 +45,17 @@ public:
     }
     static StringObject* create(VM&, JSGlobalObject*, JSString*);
 
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
 
-    JS_EXPORT_PRIVATE static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
 
-    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
-    JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
+    JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     DECLARE_EXPORT_INFO;
 
@@ -79,13 +79,13 @@ JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 // FIXME: Basically any use of this is bad. toString() returns a JSString* so we don't need to
 // pass around the originalValue; we could just pass around the JSString*. Then you don't need
 // this function. You just use the JSString* that toString() returned.
-static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue, const String& string)
+static inline JSString* jsStringWithReuse(JSGlobalObject* globalObject, JSValue originalValue, const String& string)
 {
     if (originalValue.isString()) {
-        ASSERT(asString(originalValue)->value(exec) == string);
+        ASSERT(asString(originalValue)->value(globalObject) == string);
         return asString(originalValue);
     }
-    return jsString(exec->vm(), string);
+    return jsString(getVM(globalObject), string);
 }
 
 // Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
@@ -93,13 +93,13 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
 // pass around the originalValue; we could just pass around the JSString*. And since we've
 // resolved it, we know that we can just allocate the substring cell directly.
 // https://bugs.webkit.org/show_bug.cgi?id=158140
-static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, const String& string, unsigned offset, unsigned length)
+static inline JSString* jsSubstring(JSGlobalObject* globalObject, JSValue originalValue, const String& string, unsigned offset, unsigned length)
 {
     if (originalValue.isString()) {
-        ASSERT(asString(originalValue)->value(exec) == string);
-        return jsSubstring(exec, asString(originalValue), offset, length);
+        ASSERT(asString(originalValue)->value(globalObject) == string);
+        return jsSubstring(globalObject, asString(originalValue), offset, length);
     }
-    return jsSubstring(exec->vm(), string, offset, length);
+    return jsSubstring(getVM(globalObject), string, offset, length);
 }
 
 } // namespace JSC

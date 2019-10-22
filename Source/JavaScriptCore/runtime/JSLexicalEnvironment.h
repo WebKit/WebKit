@@ -105,12 +105,12 @@ public:
         return create(vm, structure, currentScope, symbolTable, initialValue);
     }
         
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
 
     DECLARE_INFO;
 

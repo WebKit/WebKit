@@ -86,10 +86,10 @@ private:
 
 // Returns a JSWorkerGlobalScope or jsNull()
 // Always ignores the execState and passed globalObject, WorkerGlobalScope is itself a globalObject and will always use its own prototype chain.
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerGlobalScope&);
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WorkerGlobalScope* scope) { return scope ? toJS(exec, globalObject, *scope) : JSC::jsNull(); }
-JSC::JSValue toJS(JSC::ExecState*, WorkerGlobalScope&);
-inline JSC::JSValue toJS(JSC::ExecState* exec, WorkerGlobalScope* scope) { return scope ? toJS(exec, *scope) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, WorkerGlobalScope&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, WorkerGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, globalObject, *scope) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, WorkerGlobalScope&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, WorkerGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, *scope) : JSC::jsNull(); }
 
 JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::VM&, JSC::JSValue);
 JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::VM&, JSC::JSValue);

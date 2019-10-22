@@ -31,11 +31,11 @@
 namespace JSC {
 
 template<typename Functor>
-void ShadowChicken::iterate(VM& vm, ExecState* exec, const Functor& functor)
+void ShadowChicken::iterate(VM& vm, CallFrame* callFrame, const Functor& functor)
 {
     DeferGC deferGC(vm.heap);
 
-    update(vm, exec);
+    update(vm, callFrame);
     
     for (unsigned i = m_stack.size(); i--;) {
         if (!functor(m_stack[i]))

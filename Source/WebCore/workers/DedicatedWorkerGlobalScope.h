@@ -37,7 +37,6 @@ namespace JSC {
 class CallFrame;
 class JSObject;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -55,7 +54,7 @@ public:
 
     const String& name() const { return m_name; }
 
-    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     DedicatedWorkerThread& thread();
 

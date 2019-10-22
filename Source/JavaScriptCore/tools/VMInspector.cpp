@@ -197,31 +197,31 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
 #endif
 }
 
-bool VMInspector::currentThreadOwnsJSLock(ExecState* exec)
+bool VMInspector::currentThreadOwnsJSLock(JSGlobalObject* globalObject)
 {
-    return exec->vm().currentThreadIsHoldingAPILock();
+    return globalObject->vm().currentThreadIsHoldingAPILock();
 }
 
-static bool ensureCurrentThreadOwnsJSLock(ExecState* exec)
+static bool ensureCurrentThreadOwnsJSLock(JSGlobalObject* globalObject)
 {
-    if (VMInspector::currentThreadOwnsJSLock(exec))
+    if (VMInspector::currentThreadOwnsJSLock(globalObject))
         return true;
     dataLog("ERROR: current thread does not own the JSLock\n");
     return false;
 }
 
-void VMInspector::gc(ExecState* exec)
+void VMInspector::gc(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    if (!ensureCurrentThreadOwnsJSLock(exec))
+    VM& vm = globalObject->vm();
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return;
     vm.heap.collectNow(Sync, CollectionScope::Full);
 }
 
-void VMInspector::edenGC(ExecState* exec)
+void VMInspector::edenGC(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    if (!ensureCurrentThreadOwnsJSLock(exec))
+    VM& vm = globalObject->vm();
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return;
     vm.heap.collectSync(CollectionScope::Eden);
 }
@@ -265,9 +265,9 @@ bool VMInspector::isValidCell(Heap* heap, JSCell* candidate)
     return functor.found;
 }
 
-bool VMInspector::isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
+bool VMInspector::isValidCodeBlock(JSGlobalObject* globalObject, CodeBlock* candidate)
 {
-    if (!ensureCurrentThreadOwnsJSLock(exec))
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return false;
 
     struct CodeBlockValidationFunctor {
@@ -286,15 +286,15 @@ bool VMInspector::isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
         mutable bool found { false };
     };
 
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     CodeBlockValidationFunctor functor(candidate);
     vm.heap.forEachCodeBlock(functor);
     return functor.found;
 }
 
-CodeBlock* VMInspector::codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber)
+CodeBlock* VMInspector::codeBlockForFrame(JSGlobalObject* globalObject, CallFrame* topCallFrame, unsigned frameNumber)
 {
-    if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return nullptr;
 
     if (!topCallFrame)
@@ -359,9 +359,9 @@ private:
     mutable unsigned m_currentFrame { 0 };
 };
 
-void VMInspector::dumpCallFrame(CallFrame* callFrame, unsigned framesToSkip)
+void VMInspector::dumpCallFrame(JSGlobalObject* globalObject, CallFrame* callFrame, unsigned framesToSkip)
 {
-    if (!ensureCurrentThreadOwnsJSLock(callFrame))
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return;
     DumpFrameFunctor functor(DumpFrameFunctor::DumpOne, framesToSkip);
     callFrame->iterate(functor);
@@ -458,9 +458,9 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogF("-----------------------------------------------------------------------------\n");
 }
 
-void VMInspector::dumpStack(CallFrame* topCallFrame, unsigned framesToSkip)
+void VMInspector::dumpStack(JSGlobalObject* globalObject, CallFrame* topCallFrame, unsigned framesToSkip)
 {
-    if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
+    if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return;
     if (!topCallFrame)
         return;

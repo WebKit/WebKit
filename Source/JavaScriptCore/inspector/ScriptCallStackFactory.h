@@ -38,7 +38,6 @@ namespace JSC {
 class CallFrame;
 class Exception;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace Inspector {
@@ -46,9 +45,9 @@ namespace Inspector {
 class ScriptArguments;
 
 // FIXME: The subtle differences between these should be eliminated.
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
-JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::Exception*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
-JS_EXPORT_PRIVATE Ref<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStack(JSC::JSGlobalObject*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject*, JSC::Exception*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
+JS_EXPORT_PRIVATE Ref<ScriptArguments> createScriptArguments(JSC::JSGlobalObject*, JSC::CallFrame*, unsigned skipArgumentCount);
 
 } // namespace Inspector

@@ -36,16 +36,16 @@ void RegExpGlobalData::visitAggregate(SlotVisitor& visitor)
     m_cachedResult.visitAggregate(visitor);
 }
 
-JSValue RegExpGlobalData::getBackref(ExecState* exec, JSGlobalObject* owner, unsigned i)
+JSValue RegExpGlobalData::getBackref(JSGlobalObject* globalObject, unsigned i)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* array = m_cachedResult.lastResult(exec, owner);
+    JSArray* array = m_cachedResult.lastResult(globalObject, globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (i < array->length()) {
-        JSValue result = JSValue(array).get(exec, i);
+        JSValue result = JSValue(array).get(globalObject, i);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(result.isString() || result.isUndefined());
         if (!result.isUndefined())
@@ -54,17 +54,17 @@ JSValue RegExpGlobalData::getBackref(ExecState* exec, JSGlobalObject* owner, uns
     return jsEmptyString(vm);
 }
 
-JSValue RegExpGlobalData::getLastParen(ExecState* exec, JSGlobalObject* owner)
+JSValue RegExpGlobalData::getLastParen(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* array = m_cachedResult.lastResult(exec, owner);
+    JSArray* array = m_cachedResult.lastResult(globalObject, globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned length = array->length();
     if (length > 1) {
-        JSValue result = JSValue(array).get(exec, length - 1);
+        JSValue result = JSValue(array).get(globalObject, length - 1);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(result.isString() || result.isUndefined());
         if (!result.isUndefined())
@@ -73,14 +73,14 @@ JSValue RegExpGlobalData::getLastParen(ExecState* exec, JSGlobalObject* owner)
     return jsEmptyString(vm);
 }
 
-JSValue RegExpGlobalData::getLeftContext(ExecState* exec, JSGlobalObject* owner)
+JSValue RegExpGlobalData::getLeftContext(JSGlobalObject* globalObject)
 {
-    return m_cachedResult.leftContext(exec, owner);
+    return m_cachedResult.leftContext(globalObject, globalObject);
 }
 
-JSValue RegExpGlobalData::getRightContext(ExecState* exec, JSGlobalObject* owner)
+JSValue RegExpGlobalData::getRightContext(JSGlobalObject* globalObject)
 {
-    return m_cachedResult.rightContext(exec, owner);
+    return m_cachedResult.rightContext(globalObject, globalObject);
 }
 
 } // namespace JSC

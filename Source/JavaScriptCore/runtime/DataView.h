@@ -43,7 +43,7 @@ public:
         return TypeDataView;
     }
 
-    JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) override;
+    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) override;
     
     template<typename T>
     T get(unsigned offset, bool littleEndian, bool* status = 0)

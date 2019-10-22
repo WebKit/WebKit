@@ -35,10 +35,10 @@ class JSWebAssemblyCompileError final : public ErrorInstance {
 public:
     typedef ErrorInstance Base;
 
-    static JSWebAssemblyCompileError* create(ExecState*, VM&, Structure*, const String&);
-    static JSWebAssemblyCompileError* create(ExecState* exec, VM& vm, Structure* structure, JSValue message)
+    static JSWebAssemblyCompileError* create(JSGlobalObject*, VM&, Structure*, const String&);
+    static JSWebAssemblyCompileError* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, JSValue message)
     {
-        return create(exec, vm, structure, message.isUndefined() ? String() : message.toWTFString(exec));
+        return create(globalObject, vm, structure, message.isUndefined() ? String() : message.toWTFString(globalObject));
     }
 
     DECLARE_INFO;
@@ -47,7 +47,7 @@ protected:
     JSWebAssemblyCompileError(VM&, Structure*);
 };
 
-JSObject* createJSWebAssemblyCompileError(ExecState*, VM&, const String&);
+JSObject* createJSWebAssemblyCompileError(JSGlobalObject*, VM&, const String&);
 
 } // namespace JSC
 

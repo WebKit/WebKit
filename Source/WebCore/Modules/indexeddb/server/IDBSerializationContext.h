@@ -34,7 +34,6 @@
 namespace JSC {
 class CallFrame;
 class VM;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -48,7 +47,7 @@ public:
     ~IDBSerializationContext();
 
     JSC::VM& vm();
-    JSC::ExecState& execState();
+    JSC::JSGlobalObject& execState();
 
 private:
     IDBSerializationContext(PAL::SessionID);

@@ -68,26 +68,26 @@ void Instance::end()
     virtualEnd();
 }
 
-JSObject* Instance::createRuntimeObject(ExecState* exec)
+JSObject* Instance::createRuntimeObject(JSGlobalObject* lexicalGlobalObject)
 {
     ASSERT(m_rootObject);
     ASSERT(m_rootObject->isValid());
     if (RuntimeObject* existingObject = m_runtimeObject.get())
         return existingObject;
 
-    JSLockHolder lock(exec);
-    RuntimeObject* newObject = newRuntimeObject(exec);
+    JSLockHolder lock(lexicalGlobalObject);
+    RuntimeObject* newObject = newRuntimeObject(lexicalGlobalObject);
     m_runtimeObject = JSC::Weak<RuntimeObject>(newObject);
-    m_rootObject->addRuntimeObject(exec->vm(), newObject);
+    m_rootObject->addRuntimeObject(lexicalGlobalObject->vm(), newObject);
     return newObject;
 }
 
-RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
+RuntimeObject* Instance::newRuntimeObject(JSGlobalObject* lexicalGlobalObject)
 {
-    JSLockHolder lock(exec);
+    JSLockHolder lock(lexicalGlobalObject);
 
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
-    return RuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(exec), this);
+    return RuntimeObject::create(lexicalGlobalObject->vm(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(lexicalGlobalObject), this);
 }
 
 void Instance::willInvalidateRuntimeObject()

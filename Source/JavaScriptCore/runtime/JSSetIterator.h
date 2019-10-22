@@ -51,12 +51,12 @@ public:
         return instance;
     }
 
-    ALWAYS_INLINE HashMapBucketType* advanceIter(ExecState* exec)
+    ALWAYS_INLINE HashMapBucketType* advanceIter(JSGlobalObject* globalObject)
     {
         HashMapBucketType* prev = m_iter.get();
         if (!prev)
             return nullptr;
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         HashMapBucketType* bucket = m_iter->next();
         while (bucket && bucket->deleted())
             bucket = bucket->next();
@@ -68,16 +68,16 @@ public:
         return bucket;
     }
 
-    bool next(ExecState* exec, JSValue& value)
+    bool next(JSGlobalObject* globalObject, JSValue& value)
     {
-        HashMapBucketType* bucket = advanceIter(exec);
+        HashMapBucketType* bucket = advanceIter(globalObject);
         if (!bucket)
             return false;
 
         if (m_kind == IterateValue || m_kind == IterateKey)
             value = bucket->key();
         else
-            value = createPair(exec, bucket->key(), bucket->key());
+            value = createPair(globalObject, bucket->key(), bucket->key());
         return true;
     }
 
@@ -97,7 +97,7 @@ private:
     }
 
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*);
-    JS_EXPORT_PRIVATE JSValue createPair(CallFrame*, JSValue, JSValue);
+    JS_EXPORT_PRIVATE JSValue createPair(JSGlobalObject*, JSValue, JSValue);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSSet> m_set;

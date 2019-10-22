@@ -53,11 +53,11 @@ WeakObjectRefConstructor::WeakObjectRefConstructor(VM& vm, Structure* structure)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakRef(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callWeakRef(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "WeakRef"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WeakRef"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakRef(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -66,9 +66,9 @@ static EncodedJSValue JSC_HOST_CALL constructWeakRef(JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!callFrame->argument(0).isObject())
-        return throwVMTypeError(callFrame, scope, "First argument to WeakRef should be an object"_s);
+        return throwVMTypeError(globalObject, scope, "First argument to WeakRef should be an object"_s);
 
-    Structure* WeakObjectRefStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->weakObjectRefStructure());
+    Structure* WeakObjectRefStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->weakObjectRefStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(JSWeakObjectRef::create(vm, WeakObjectRefStructure, callFrame->uncheckedArgument(0).getObject())));
 }

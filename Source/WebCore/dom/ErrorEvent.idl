@@ -38,7 +38,7 @@
     readonly attribute USVString filename;
     readonly attribute unsigned long lineno;
     readonly attribute unsigned long colno;
-    [CallWith=ExecState&GlobalObject] readonly attribute any error;
+    [CallWith=GlobalObject] readonly attribute any error;
 };
 
 dictionary ErrorEventInit : EventInit {

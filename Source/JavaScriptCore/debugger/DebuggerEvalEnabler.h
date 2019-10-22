@@ -34,44 +34,43 @@ class DebuggerEvalEnabler {
 public:
     enum class Mode {
         EvalOnCurrentCallFrame,
-        EvalOnCallFrameAtDebuggerEntry,
+        EvalOnGlobalObjectAtDebuggerEntry,
     };
 
-    DebuggerEvalEnabler(const ExecState* exec, Mode mode = Mode::EvalOnCurrentCallFrame)
-        : m_exec(exec)
+    DebuggerEvalEnabler(JSGlobalObject* globalObject, Mode mode = Mode::EvalOnCurrentCallFrame)
+        : m_globalObject(globalObject)
 #if !ASSERT_DISABLED
         , m_mode(mode)
 #endif
         
     {
         UNUSED_PARAM(mode);
-        if (exec) {
-            JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+        if (globalObject) {
             m_evalWasDisabled = !globalObject->evalEnabled();
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(true, globalObject->evalDisabledErrorMessage());
 #if !ASSERT_DISABLED
-            if (m_mode == Mode::EvalOnCallFrameAtDebuggerEntry)
-                globalObject->setCallFrameAtDebuggerEntry(exec);
+            if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
+                globalObject->setGlobalObjectAtDebuggerEntry(globalObject);
 #endif
         }
     }
 
     ~DebuggerEvalEnabler()
     {
-        if (m_exec) {
-            JSGlobalObject* globalObject = m_exec->lexicalGlobalObject();
+        if (m_globalObject) {
+            JSGlobalObject* globalObject = m_globalObject;
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(false, globalObject->evalDisabledErrorMessage());
 #if !ASSERT_DISABLED
-            if (m_mode == Mode::EvalOnCallFrameAtDebuggerEntry)
-                globalObject->setCallFrameAtDebuggerEntry(nullptr);
+            if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
+                globalObject->setGlobalObjectAtDebuggerEntry(nullptr);
 #endif
         }
     }
 
 private:
-    const ExecState* m_exec;
+    JSGlobalObject* m_globalObject;
     bool m_evalWasDisabled { false };
 #if !ASSERT_DISABLED
     DebuggerEvalEnabler::Mode m_mode;

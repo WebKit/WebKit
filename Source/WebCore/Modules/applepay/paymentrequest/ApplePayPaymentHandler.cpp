@@ -284,17 +284,17 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
         if (serializedModifierData[i].isEmpty())
             continue;
 
-        auto& execState = *document().execState();
-        auto scope = DECLARE_THROW_SCOPE(execState.vm());
+        auto& lexicalGlobalObject = *document().execState();
+        auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
         JSC::JSValue data;
         {
-            auto lock = JSC::JSLockHolder { &execState };
-            data = JSONParse(&execState, serializedModifierData[i]);
+            auto lock = JSC::JSLockHolder { &lexicalGlobalObject };
+            data = JSONParse(&lexicalGlobalObject, serializedModifierData[i]);
             if (scope.exception())
                 return Exception { ExistingExceptionError };
         }
 
-        auto applePayModifier = convertDictionary<ApplePayModifier>(execState, WTFMove(data));
+        auto applePayModifier = convertDictionary<ApplePayModifier>(lexicalGlobalObject, WTFMove(data));
         if (scope.exception())
             return Exception { ExistingExceptionError };
 
@@ -545,10 +545,10 @@ static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
 }
 
 template<typename T>
-static JSC::Strong<JSC::JSObject> toJSDictionary(JSC::ExecState& execState, const T& value)
+static JSC::Strong<JSC::JSObject> toJSDictionary(JSC::JSGlobalObject& lexicalGlobalObject, const T& value)
 {
-    JSC::JSLockHolder lock { &execState };
-    return { execState.vm(), asObject(toJS<IDLDictionary<T>>(execState, *JSC::jsCast<JSDOMGlobalObject*>(execState.lexicalGlobalObject()), value)) };
+    JSC::JSLockHolder lock { &lexicalGlobalObject };
+    return { lexicalGlobalObject.vm(), asObject(toJS<IDLDictionary<T>>(lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), value)) };
 }
 
 void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
@@ -557,8 +557,8 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
 
     auto applePayPayment = payment.toApplePayPayment(version());
     auto shippingContact = applePayPayment.shippingContact.valueOr(ApplePayPaymentContact());
-    auto detailsFunction = [applePayPayment = WTFMove(applePayPayment)](JSC::ExecState& execState) {
-        return toJSDictionary(execState, applePayPayment);
+    auto detailsFunction = [applePayPayment = WTFMove(applePayPayment)](JSC::JSGlobalObject& lexicalGlobalObject) {
+        return toJSDictionary(lexicalGlobalObject, applePayPayment);
     };
 
     m_paymentRequest->accept(WTF::get<URL>(m_identifier).string(), WTFMove(detailsFunction), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
@@ -587,8 +587,8 @@ void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& payment
 
     auto applePayPaymentMethod = paymentMethod.toApplePayPaymentMethod();
     m_selectedPaymentMethodType = applePayPaymentMethod.type;
-    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [applePayPaymentMethod = WTFMove(applePayPaymentMethod)](JSC::ExecState& execState) {
-        return toJSDictionary(execState, applePayPaymentMethod);
+    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [applePayPaymentMethod = WTFMove(applePayPaymentMethod)](JSC::JSGlobalObject& lexicalGlobalObject) {
+        return toJSDictionary(lexicalGlobalObject, applePayPaymentMethod);
     });
 }
 

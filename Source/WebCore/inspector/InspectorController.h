@@ -113,7 +113,7 @@ public:
 
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;
-    bool canAccessInspectedScriptState(JSC::ExecState*) const override;
+    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override;

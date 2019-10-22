@@ -244,11 +244,11 @@ int main(int argc, char **argv)
         Object global(new GlobalImp());
         Interpreter interp;
         interp.setGlobalObject(global);
-        ExecState *exec = interp.globalExec();
+        JSGlobalObject* lexicalGlobalObject = interp.globalObject();
         
         MyFirstInterface *myInterface = [[MyFirstInterface alloc] init];
         
-        global.put(exec, Identifier::fromString(exec, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface));
+        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface));
         
         for (int i = 1; i < argc; i++) {
             const char *code = readJavaScriptFromFile(argv[i]);
@@ -259,12 +259,12 @@ int main(int argc, char **argv)
                 
                 if (comp.complType() == Throw) {
                     Value exVal = comp.value();
-                    char *msg = exVal.toString(exec).ascii();
+                    char *msg = exVal.toString(lexicalGlobalObject).ascii();
                     int lineno = -1;
                     if (exVal.type() == ObjectType) {
-                        Value lineVal = Object::dynamicCast(exVal).get(exec, Identifier::fromString(exec, "line"));
+                        Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"));
                         if (lineVal.type() == NumberType)
-                            lineno = int(lineVal.toNumber(exec));
+                            lineno = int(lineVal.toNumber(lexicalGlobalObject));
                     }
                     if (lineno != -1)
                         fprintf(stderr,"Exception, line %d: %s\n",lineno,msg);
@@ -273,7 +273,7 @@ int main(int argc, char **argv)
                     ret = false;
                 }
                 else if (comp.complType() == ReturnValue) {
-                    char *msg = comp.value().toString(interp.globalExec()).ascii();
+                    char *msg = comp.value().toString(interp.globalObject()).ascii();
                     fprintf(stderr,"Return value: %s\n",msg);
                 }
             }

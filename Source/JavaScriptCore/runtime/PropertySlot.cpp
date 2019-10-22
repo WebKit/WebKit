@@ -29,40 +29,40 @@
 
 namespace JSC {
 
-JSValue PropertySlot::functionGetter(ExecState* exec) const
+JSValue PropertySlot::functionGetter(JSGlobalObject* globalObject) const
 {
     ASSERT(m_thisValue);
-    return callGetter(exec, m_thisValue, m_data.getter.getterSetter);
+    return callGetter(globalObject, m_thisValue, m_data.getter.getterSetter);
 }
 
-JSValue PropertySlot::customGetter(ExecState* exec, PropertyName propertyName) const
+JSValue PropertySlot::customGetter(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
     // FIXME: Remove this differences in custom values and custom accessors.
     // https://bugs.webkit.org/show_bug.cgi?id=158014
     JSValue thisValue = m_attributes & PropertyAttribute::CustomAccessor ? m_thisValue : JSValue(slotBase());
     if (auto domAttribute = this->domAttribute()) {
-        VM& vm = exec->vm();
+        VM& vm = globalObject->vm();
         if (!thisValue.inherits(vm, domAttribute->classInfo)) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            return throwDOMAttributeGetterTypeError(exec, scope, domAttribute->classInfo, propertyName);
+            return throwDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, propertyName);
         }
     }
-    return JSValue::decode(m_data.custom.getValue(exec, JSValue::encode(thisValue), propertyName));
+    return JSValue::decode(m_data.custom.getValue(globalObject, JSValue::encode(thisValue), propertyName));
 }
 
-JSValue PropertySlot::customAccessorGetter(ExecState* exec, PropertyName propertyName) const
+JSValue PropertySlot::customAccessorGetter(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
     if (!m_data.customAccessor.getterSetter->getter())
         return jsUndefined();
 
     if (auto domAttribute = this->domAttribute()) {
-        VM& vm = exec->vm();
+        VM& vm = globalObject->vm();
         if (!m_thisValue.inherits(vm, domAttribute->classInfo)) {
             auto scope = DECLARE_THROW_SCOPE(vm);
-            return throwDOMAttributeGetterTypeError(exec, scope, domAttribute->classInfo, propertyName);
+            return throwDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, propertyName);
         }
     }
-    return JSValue::decode(m_data.customAccessor.getterSetter->getter()(exec, JSValue::encode(m_thisValue), propertyName));
+    return JSValue::decode(m_data.customAccessor.getterSetter->getter()(globalObject, JSValue::encode(m_thisValue), propertyName));
 }
 
 JSValue PropertySlot::getPureResult() const

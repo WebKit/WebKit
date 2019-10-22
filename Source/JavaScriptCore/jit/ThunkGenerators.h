@@ -37,7 +37,6 @@ class VM;
 
 MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind);
 MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&);
 

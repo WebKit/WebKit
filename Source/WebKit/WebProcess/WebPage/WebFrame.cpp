@@ -47,6 +47,7 @@
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/ArchiveResource.h>
@@ -515,7 +516,7 @@ JSGlobalContextRef WebFrame::jsContext()
     if (!m_coreFrame)
         return nullptr;
 
-    return toGlobalRef(m_coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(m_coreFrame->script().globalObject(mainThreadNormalWorld()));
 }
 
 JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
@@ -523,7 +524,7 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
     if (!m_coreFrame)
         return nullptr;
 
-    return toGlobalRef(m_coreFrame->script().globalObject(world->coreWorld())->globalExec());
+    return toGlobalRef(m_coreFrame->script().globalObject(world->coreWorld()));
 }
 
 bool WebFrame::handlesPageScaleGesture() const
@@ -703,7 +704,7 @@ void WebFrame::stopLoading()
 WebFrame* WebFrame::frameForContext(JSContextRef context)
 {
 
-    JSC::JSGlobalObject* globalObjectObj = toJS(context)->lexicalGlobalObject();
+    JSC::JSGlobalObject* globalObjectObj = toJS(context);
     JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj);
     if (!window)
         return nullptr;
@@ -716,10 +717,9 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
         return 0;
 
     JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
-    ExecState* exec = globalObject->globalExec();
 
-    JSLockHolder lock(exec);
-    return toRef(exec, toJS(exec, globalObject, nodeHandle->coreNode()));
+    JSLockHolder lock(globalObject);
+    return toRef(globalObject, toJS(globalObject, globalObject, nodeHandle->coreNode()));
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, InjectedBundleScriptWorld* world)
@@ -728,10 +728,9 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
         return 0;
 
     JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
-    ExecState* exec = globalObject->globalExec();
 
-    JSLockHolder lock(exec);
-    return toRef(exec, toJS(exec, globalObject, rangeHandle->coreRange()));
+    JSLockHolder lock(globalObject);
+    return toRef(globalObject, toJS(globalObject, globalObject, rangeHandle->coreRange()));
 }
 
 String WebFrame::counterValue(JSObjectRef element)

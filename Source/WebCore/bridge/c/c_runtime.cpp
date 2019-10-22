@@ -38,7 +38,7 @@
 namespace JSC {
 namespace Bindings {
 
-JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
+JSValue CField::valueFromInstance(JSGlobalObject* lexicalGlobalObject, const Instance* inst) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();
@@ -48,12 +48,12 @@ JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
 
         bool result;
         {
-            JSLock::DropAllLocks dropAllLocks(exec);
+            JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
             result = obj->_class->getProperty(obj, _fieldIdentifier, &property);
-            CInstance::moveGlobalExceptionToExecState(exec);
+            CInstance::moveGlobalExceptionToExecState(lexicalGlobalObject);
         }
         if (result) {
-            JSValue result = convertNPVariantToValue(exec, &property, instance->rootObject());
+            JSValue result = convertNPVariantToValue(lexicalGlobalObject, &property, instance->rootObject());
             _NPN_ReleaseVariantValue(&property);
             return result;
         }
@@ -61,19 +61,19 @@ JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
     return jsUndefined();
 }
 
-bool CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue aValue) const
+bool CField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const Instance *inst, JSValue aValue) const
 {
     const CInstance* instance = static_cast<const CInstance*>(inst);
     NPObject* obj = instance->getObject();
     if (obj->_class->setProperty) {
         NPVariant variant;
-        convertValueToNPVariant(exec, aValue, &variant);
+        convertValueToNPVariant(lexicalGlobalObject, aValue, &variant);
 
         bool result = false;
         {
-            JSLock::DropAllLocks dropAllLocks(exec);
+            JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject);
             result = obj->_class->setProperty(obj, _fieldIdentifier, &variant);
-            CInstance::moveGlobalExceptionToExecState(exec);
+            CInstance::moveGlobalExceptionToExecState(lexicalGlobalObject);
         }
 
         _NPN_ReleaseVariantValue(&variant);

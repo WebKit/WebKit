@@ -130,7 +130,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
     }
 
-    ExecState* exec = globalObject->globalExec();
+    JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSValue handleEventFunction = jsFunction;
 
@@ -139,12 +139,12 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     // If jsFunction is not actually a function, see if it implements the EventListener interface and use that
     if (callType == CallType::None) {
-        handleEventFunction = jsFunction->get(exec, Identifier::fromString(vm, "handleEvent"));
+        handleEventFunction = jsFunction->get(lexicalGlobalObject, Identifier::fromString(vm, "handleEvent"));
         if (UNLIKELY(scope.exception())) {
             auto* exception = scope.exception();
             scope.clearException();
             event.target()->uncaughtExceptionInEventHandler();
-            reportException(exec, exception);
+            reportException(lexicalGlobalObject, exception);
             return;
         }
         callType = getCallData(vm, handleEventFunction, callData);
@@ -156,7 +156,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     Ref<JSEventListener> protectedThis(*this);
 
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, globalObject, &event));
+    args.append(toJS(lexicalGlobalObject, globalObject, &event));
     ASSERT(!args.hasOverflowed());
 
     Event* savedEvent = globalObject->currentEvent();
@@ -170,9 +170,9 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     JSExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
-    JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event.currentTarget()) : jsFunction;
+    JSValue thisValue = handleEventFunction == jsFunction ? toJS(lexicalGlobalObject, globalObject, event.currentTarget()) : jsFunction;
     NakedPtr<JSC::Exception> exception;
-    JSValue retval = JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
+    JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
 
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
@@ -187,7 +187,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     if (exception) {
         event.target()->uncaughtExceptionInEventHandler();
-        reportException(exec, exception);
+        reportException(lexicalGlobalObject, exception);
         return;
     }
 
@@ -201,7 +201,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     if (event.type() == eventNames().beforeunloadEvent) {
         // This is a OnBeforeUnloadEventHandler, and therefore the return value must be coerced into a String.
         if (is<BeforeUnloadEvent>(event))
-            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
+            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval));
         return;
     }
 
@@ -229,11 +229,11 @@ static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener
     return function;
 }
 
-static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribute(JSC::ExecState& state, JSC::JSValue listener, JSC::JSObject& wrapper)
+static inline RefPtr<JSEventListener> createEventListenerForEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue listener, JSC::JSObject& wrapper)
 {
     if (!listener.isObject())
         return nullptr;
-    return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(state));
+    return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(lexicalGlobalObject));
 }
 
 JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -241,9 +241,9 @@ JSC::JSValue eventHandlerAttribute(EventTarget& target, const AtomString& eventT
     return eventHandlerAttribute(target.attributeEventListener(eventType, isolatedWorld), *target.scriptExecutionContext());
 }
 
-void setEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, EventTarget& target, const AtomString& eventType, JSC::JSValue value)
+void setEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, EventTarget& target, const AtomString& eventType, JSC::JSValue value)
 {
-    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, wrapper), currentWorld(state));
+    target.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, wrapper), currentWorld(lexicalGlobalObject));
 }
 
 JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -252,10 +252,10 @@ JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString&
     return eventHandlerAttribute(document.getWindowAttributeEventListener(eventType, isolatedWorld), document);
 }
 
-void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
+void setWindowEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
 {
     ASSERT(wrapper.globalObject());
-    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *wrapper.globalObject()), currentWorld(state));
+    element.document().setWindowAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, *wrapper.globalObject()), currentWorld(lexicalGlobalObject));
 }
 
 JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -263,9 +263,9 @@ JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& ev
     return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
 
-void setWindowEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, DOMWindow& window, const AtomString& eventType, JSC::JSValue value)
+void setWindowEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, DOMWindow& window, const AtomString& eventType, JSC::JSValue value)
 {
-    setEventHandlerAttribute(state, wrapper, window, eventType, value);
+    setEventHandlerAttribute(lexicalGlobalObject, wrapper, window, eventType, value);
 }
 
 JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -274,13 +274,13 @@ JSC::JSValue documentEventHandlerAttribute(HTMLElement& element, const AtomStrin
     return eventHandlerAttribute(document.attributeEventListener(eventType, isolatedWorld), document);
 }
 
-void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
+void setDocumentEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, HTMLElement& element, const AtomString& eventType, JSC::JSValue value)
 {
     ASSERT(wrapper.globalObject());
     auto& document = element.document();
-    auto* documentWrapper = JSC::jsCast<JSDocument*>(toJS(&state, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
+    auto* documentWrapper = JSC::jsCast<JSDocument*>(toJS(&lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(wrapper.globalObject()), document));
     ASSERT(documentWrapper);
-    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(state, value, *documentWrapper), currentWorld(state));
+    document.setAttributeEventListener(eventType, createEventListenerForEventHandlerAttribute(lexicalGlobalObject, value, *documentWrapper), currentWorld(lexicalGlobalObject));
 }
 
 JSC::JSValue documentEventHandlerAttribute(Document& document, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
@@ -288,9 +288,9 @@ JSC::JSValue documentEventHandlerAttribute(Document& document, const AtomString&
     return eventHandlerAttribute(document, eventType, isolatedWorld);
 }
 
-void setDocumentEventHandlerAttribute(JSC::ExecState& state, JSC::JSObject& wrapper, Document& document, const AtomString& eventType, JSC::JSValue value)
+void setDocumentEventHandlerAttribute(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& wrapper, Document& document, const AtomString& eventType, JSC::JSValue value)
 {
-    setEventHandlerAttribute(state, wrapper, document, eventType, value);
+    setEventHandlerAttribute(lexicalGlobalObject, wrapper, document, eventType, value);
 }
 
 } // namespace WebCore

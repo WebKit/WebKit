@@ -33,13 +33,13 @@ namespace WebCore {
 template<typename T> struct Converter<IDLEventListener<T>> : DefaultConverter<IDLEventListener<T>> {
     using ReturnType = RefPtr<T>;
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSC::JSObject& thisObject)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject)
     {
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto scope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
-        auto listener = T::create(value, thisObject, false, currentWorld(state));
+        auto listener = T::create(value, thisObject, false, currentWorld(lexicalGlobalObject));
         if (!listener)
-            throwTypeError(&state, scope);
+            throwTypeError(&lexicalGlobalObject, scope);
     
         return listener;
     }

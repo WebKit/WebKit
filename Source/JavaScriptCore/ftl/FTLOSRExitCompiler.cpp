@@ -332,6 +332,7 @@ static void compileStub(
             
             static_assert(FunctionTraits<decltype(operationMaterializeObjectInOSR)>::arity < GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
             jit.setupArguments<decltype(operationMaterializeObjectInOSR)>(
+                CCallHelpers::TrustedImmPtr(codeBlock->globalObjectFor(materialization->origin())),
                 CCallHelpers::TrustedImmPtr(materialization),
                 CCallHelpers::TrustedImmPtr(materializationArguments));
             jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationMaterializeObjectInOSR)), GPRInfo::nonArgGPR0);
@@ -359,6 +360,7 @@ static void compileStub(
 
         static_assert(FunctionTraits<decltype(operationPopulateObjectInOSR)>::arity < GPRInfo::numberOfArgumentRegisters, "This call assumes that we don't pass arguments on the stack.");
         jit.setupArguments<decltype(operationPopulateObjectInOSR)>(
+            CCallHelpers::TrustedImmPtr(codeBlock->globalObjectFor(materialization->origin())),
             CCallHelpers::TrustedImmPtr(materialization),
             CCallHelpers::TrustedImmPtr(materializationToPointer.get(materialization)),
             CCallHelpers::TrustedImmPtr(materializationArguments));
@@ -498,12 +500,12 @@ static void compileStub(
         );
 }
 
-extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
+extern "C" void* compileFTLOSRExit(CallFrame* callFrame, unsigned exitID)
 {
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
 
-    VM& vm = exec->vm();
+    VM& vm = callFrame->vm();
 
     if (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized
@@ -512,9 +514,9 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     }
 
     if (vm.callFrameForCatch)
-        RELEASE_ASSERT(vm.callFrameForCatch == exec);
+        RELEASE_ASSERT(vm.callFrameForCatch == callFrame);
     
-    CodeBlock* codeBlock = exec->codeBlock();
+    CodeBlock* codeBlock = callFrame->codeBlock();
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->jitType() == JITType::FTLJIT);
@@ -531,7 +533,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Origin: ", exit.m_codeOrigin, "\n");
         if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)
             dataLog("    Origin for exit profile: ", exit.m_codeOriginForExitProfile, "\n");
-        dataLog("    Current call site index: ", exec->callSiteIndex().bits(), "\n");
+        dataLog("    Current call site index: ", callFrame->callSiteIndex().bits(), "\n");
         dataLog("    Exit is exception handler: ", exit.isExceptionHandler(), "\n");
         dataLog("    Is unwind handler: ", exit.isGenericUnwindHandler(), "\n");
         dataLog("    Exit values: ", exit.m_descriptor->m_values, "\n");

@@ -35,19 +35,19 @@
 namespace JSC {
 
 template<typename IntlInstance, typename Constructor, typename Factory>
-JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(ExecState& state, JSValue thisValue, Constructor* callee, Factory factory)
+JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObject* globalObject, JSValue thisValue, Constructor* callee, Factory factory)
 {
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!jsDynamicCast<IntlInstance*>(vm, thisValue)) {
         JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype);
-        bool hasInstance = JSObject::defaultHasInstance(&state, thisValue, prototype);
+        bool hasInstance = JSObject::defaultHasInstance(globalObject, thisValue, prototype);
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (hasInstance) {
-            JSObject* thisObject = thisValue.toObject(&state);
+            JSObject* thisObject = thisValue.toObject(globalObject);
             RETURN_IF_EXCEPTION(scope, JSValue());
 
             IntlInstance* instance = factory(vm);

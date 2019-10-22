@@ -54,11 +54,11 @@ public:
         vm.heap.writeBarrier(owner);
     }
 
-    JSArray* lastResult(ExecState*, JSObject* owner);
-    void setInput(ExecState*, JSObject* owner, JSString*);
+    JSArray* lastResult(JSGlobalObject*, JSObject* owner);
+    void setInput(JSGlobalObject*, JSObject* owner, JSString*);
 
-    JSString* leftContext(ExecState*, JSObject* owner);
-    JSString* rightContext(ExecState*, JSObject* owner);
+    JSString* leftContext(JSGlobalObject*, JSObject* owner);
+    JSString* rightContext(JSGlobalObject*, JSObject* owner);
 
     JSString* input()
     {

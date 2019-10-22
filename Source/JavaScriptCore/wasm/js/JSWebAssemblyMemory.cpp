@@ -37,18 +37,17 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
-JSWebAssemblyMemory* JSWebAssemblyMemory::create(ExecState* exec, VM& vm, Structure* structure)
+JSWebAssemblyMemory* JSWebAssemblyMemory::create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* globalObject = exec->lexicalGlobalObject();
 
     auto exception = [&] (JSObject* error) {
-        throwException(exec, throwScope, error);
+        throwException(globalObject, throwScope, error);
         return nullptr;
     };
 
     if (!globalObject->webAssemblyEnabled())
-        return exception(createEvalError(exec, globalObject->webAssemblyDisabledErrorMessage()));
+        return exception(createEvalError(globalObject, globalObject->webAssemblyDisabledErrorMessage()));
 
     auto* memory = new (NotNull, allocateCell<JSWebAssemblyMemory>(vm.heap)) JSWebAssemblyMemory(vm, structure);
     memory->finishCreation(vm);
@@ -88,7 +87,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
     return m_bufferWrapper.get();
 }
 
-Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delta)
+Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, uint32_t delta)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
@@ -96,16 +95,16 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
     if (!grown) {
         switch (grown.error()) {
         case Wasm::Memory::GrowFailReason::InvalidDelta:
-            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow expects the delta to be a valid page count"_s));
+            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow expects the delta to be a valid page count"_s));
             break;
         case Wasm::Memory::GrowFailReason::InvalidGrowSize:
-            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow expects the grown size to be a valid page count"_s));
+            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow expects the grown size to be a valid page count"_s));
             break;
         case Wasm::Memory::GrowFailReason::WouldExceedMaximum:
-            throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory.grow would exceed the memory's declared maximum size"_s));
+            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow would exceed the memory's declared maximum size"_s));
             break;
         case Wasm::Memory::GrowFailReason::OutOfMemory:
-            throwException(exec, throwScope, createOutOfMemoryError(exec));
+            throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
             break;
         }
         return Wasm::PageCount();

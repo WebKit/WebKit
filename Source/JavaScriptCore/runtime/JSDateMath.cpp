@@ -237,7 +237,7 @@ double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
     return localTimeMS - (offset * WTF::msPerMinute);
 }
 
-double parseDate(ExecState* exec, VM& vm, const String& date)
+double parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -246,7 +246,7 @@ double parseDate(ExecState* exec, VM& vm, const String& date)
     auto expectedString = date.tryGetUtf8();
     if (!expectedString) {
         if (expectedString.error() == UTF8ConversionError::OutOfMemory)
-            throwOutOfMemoryError(exec, scope);
+            throwOutOfMemoryError(globalObject, scope);
         // https://tc39.github.io/ecma262/#sec-date-objects section 20.3.3.2 states that:
         // "Unrecognizable Strings or dates containing illegal element values in the
         // format String shall cause Date.parse to return NaN."

@@ -216,7 +216,7 @@ void HTMLCanvasElement::setMaxPixelMemoryForTesting(size_t size)
     maxActivePixelMemoryForTesting = size;
 }
 
-ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecState& state, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlobalObject& state, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_context) {
         if (m_context->isPlaceholder())

@@ -109,6 +109,6 @@ public:
     static constexpr bool isBuiltin = false;
 };
 
-JSC::JSValue cloneAcrossWorlds(JSC::ExecState&, const JSDOMObject& owner, JSC::JSValue);
+JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject&, const JSDOMObject& owner, JSC::JSValue);
 
 } // namespace WebCore

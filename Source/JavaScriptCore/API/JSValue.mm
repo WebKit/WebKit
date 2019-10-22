@@ -691,8 +691,8 @@ inline id JSContainerConvertor::convert(JSValueRef value)
 
 void JSContainerConvertor::add(Task task)
 {
-    JSC::ExecState* exec = toJS(m_context);
-    m_jsValues.append(JSC::Strong<JSC::Unknown>(exec->vm(), toJSForGC(exec, task.js)));
+    JSC::JSGlobalObject* globalObject = toJS(m_context);
+    m_jsValues.append(JSC::Strong<JSC::Unknown>(globalObject->vm(), toJSForGC(globalObject, task.js)));
     m_objectMap.add(task.js, task.objc);
     if (task.type != ContainerNone)
         m_worklist.append(task);
@@ -709,17 +709,17 @@ JSContainerConvertor::Task JSContainerConvertor::take()
 #if ENABLE(REMOTE_INSPECTOR)
 static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue exceptionValue)
 {
-    JSC::ExecState* exec = toJS(context);
-    JSC::VM& vm = exec->vm();
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::VM& vm = globalObject->vm();
     JSC::Exception* exception = JSC::Exception::create(vm, exceptionValue);
-    vm.vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, exception);
+    globalObject->inspectorController().reportAPIException(globalObject, exception);
 }
 #endif
 
 static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef context, JSValueRef value)
 {
-    JSC::ExecState* exec = toJS(context);
-    JSC::VM& vm = exec->vm();
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::VM& vm = globalObject->vm();
 
     if (!JSValueIsObject(context, value)) {
         id primitive;
@@ -940,8 +940,8 @@ JSValueRef ObjcContainerConvertor::convert(id object)
 
 void ObjcContainerConvertor::add(ObjcContainerConvertor::Task task)
 {
-    JSC::ExecState* exec = toJS(m_context.JSGlobalContextRef);
-    m_jsValues.append(JSC::Strong<JSC::Unknown>(exec->vm(), toJSForGC(exec, task.js)));
+    JSC::JSGlobalObject* globalObject = toJS(m_context.JSGlobalContextRef);
+    m_jsValues.append(JSC::Strong<JSC::Unknown>(globalObject->vm(), toJSForGC(globalObject, task.js)));
     m_objectMap.add(task.objc, task.js);
     if (task.type != ContainerNone)
         m_worklist.append(task);

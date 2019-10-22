@@ -101,37 +101,37 @@ JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
 {
 }
 
-void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* globalObject)
+void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    JSMap* map = JSMap::create(exec, vm, globalObject->mapStructure());
+    JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
     scope.releaseAssertNoException();
     putDirect(vm, Identifier::fromString(vm, "registry"), map);
 }
 
 // ------------------------------ Functions --------------------------------
 
-static String printableModuleKey(ExecState* exec, JSValue key)
+static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (key.isString() || key.isSymbol()) {
-        auto propertyName = key.toPropertyKey(exec);
+        auto propertyName = key.toPropertyKey(globalObject);
         scope.assertNoException(); // This is OK since this function is just for debugging purpose.
         return propertyName.impl();
     }
     return vm.propertyNames->emptyIdentifier.impl();
 }
 
-JSArray* JSModuleLoader::dependencyKeysIfEvaluated(ExecState* exec, JSValue key)
+JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject, JSValue key)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().dependencyKeysIfEvaluatedPublicName()));
+    JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().dependencyKeysIfEvaluatedPublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
     CallData callData;
     CallType callType = JSC::getCallData(vm, function, callData);
@@ -140,18 +140,18 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(ExecState* exec, JSValue key)
     MarkedArgumentBuffer arguments;
     arguments.append(key);
 
-    JSValue result = call(exec, function, callType, callData, this, arguments);
+    JSValue result = call(globalObject, function, callType, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return jsDynamicCast<JSArray*>(vm, result);
 }
 
-JSValue JSModuleLoader::provideFetch(ExecState* exec, JSValue key, const SourceCode& sourceCode)
+JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, const SourceCode& sourceCode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().provideFetchPublicName()));
+    JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().provideFetchPublicName()));
     RETURN_IF_EXCEPTION(scope, { });
     CallData callData;
     CallType callType = JSC::getCallData(vm, function, callData);
@@ -163,15 +163,15 @@ JSValue JSModuleLoader::provideFetch(ExecState* exec, JSValue key, const SourceC
     arguments.append(JSSourceCode::create(vm, WTFMove(source)));
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, call(globalObject, function, callType, callData, this, arguments));
 }
 
-JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName()));
+    JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
     CallData callData;
     CallType callType = JSC::getCallData(vm, function, callData);
@@ -183,17 +183,17 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }
 
-JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().loadModulePublicName()));
+    JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().loadModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
     CallData callData;
     CallType callType = JSC::getCallData(vm, function, callData);
@@ -205,17 +205,17 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }
 
-JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey, JSValue scriptFetcher)
+JSValue JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName()));
+    JSObject* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName()));
     RETURN_IF_EXCEPTION(scope, { });
     CallData callData;
     CallType callType = JSC::getCallData(vm, function, callData);
@@ -226,15 +226,15 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, call(exec, function, callType, callData, this, arguments));
+    RELEASE_AND_RETURN(scope, call(globalObject, function, callType, callData, this, arguments));
 }
 
-JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().requestImportModulePublicName()));
+    auto* function = jsCast<JSObject*>(get(globalObject, vm.propertyNames->builtinNames().requestImportModulePublicName()));
     RETURN_IF_EXCEPTION(scope, nullptr);
     CallData callData;
     auto callType = JSC::getCallData(vm, function, callData);
@@ -246,143 +246,138 @@ JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Id
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    JSValue promise = call(globalObject, function, callType, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     return jsCast<JSInternalPromise*>(promise);
 }
 
-JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
+JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
 {
     if (Options::dumpModuleLoadingState())
-        dataLog("Loader [import] ", printableModuleKey(exec, moduleName), "\n");
+        dataLog("Loader [import] ", printableModuleKey(globalObject, moduleName), "\n");
 
-    auto* globalObject = exec->lexicalGlobalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
-        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, exec, this, moduleName, parameters, referrer));
+        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, parameters, referrer));
 
-    auto* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+    auto* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    auto moduleNameString = moduleName->value(exec);
+    auto moduleNameString = moduleName->value(globalObject);
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception()->value();
         catchScope.clearException();
-        deferred->reject(exec, exception);
+        deferred->reject(globalObject, exception);
         catchScope.clearException();
         return deferred->promise();
     }
-    deferred->reject(exec, createError(exec, makeString("Could not import the module '", moduleNameString, "'.")));
+    deferred->reject(globalObject, createError(globalObject, makeString("Could not import the module '", moduleNameString, "'.")));
     catchScope.clearException();
     return deferred->promise();
 }
 
-Identifier JSModuleLoader::resolveSync(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
+Identifier JSModuleLoader::resolveSync(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
     if (Options::dumpModuleLoadingState())
-        dataLog("Loader [resolve] ", printableModuleKey(exec, name), "\n");
+        dataLog("Loader [resolve] ", printableModuleKey(globalObject, name), "\n");
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderResolve)
-        return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, exec, this, name, referrer, scriptFetcher);
-    return name.toPropertyKey(exec);
+        return globalObject->globalObjectMethodTable()->moduleLoaderResolve(globalObject, this, name, referrer, scriptFetcher);
+    return name.toPropertyKey(globalObject);
 }
 
-JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, exec->lexicalGlobalObject());
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    const Identifier moduleKey = resolveSync(exec, name, referrer, scriptFetcher);
+    const Identifier moduleKey = resolveSync(globalObject, name, referrer, scriptFetcher);
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception();
         catchScope.clearException();
-        auto result = deferred->reject(exec, exception);
+        auto result = deferred->reject(globalObject, exception);
         catchScope.clearException();
         return result;
     }
-    auto result = deferred->resolve(exec, identifierToJSValue(vm, moduleKey));
+    auto result = deferred->resolve(globalObject, identifierToJSValue(vm, moduleKey));
     catchScope.clearException();
     return result;
 }
 
-JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, JSValue parameters, JSValue scriptFetcher)
 {
     if (Options::dumpModuleLoadingState())
-        dataLog("Loader [fetch] ", printableModuleKey(exec, key), "\n");
+        dataLog("Loader [fetch] ", printableModuleKey(globalObject, key), "\n");
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
-        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, parameters, scriptFetcher));
+        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, parameters, scriptFetcher));
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    String moduleKey = key.toWTFString(exec);
+    String moduleKey = key.toWTFString(globalObject);
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception()->value();
         catchScope.clearException();
-        deferred->reject(exec, exception);
+        deferred->reject(globalObject, exception);
         catchScope.clearException();
         return deferred->promise();
     }
-    deferred->reject(exec, createError(exec, makeString("Could not open the module '", moduleKey, "'.")));
+    deferred->reject(globalObject, createError(globalObject, makeString("Could not open the module '", moduleKey, "'.")));
     catchScope.clearException();
     return deferred->promise();
 }
 
-JSObject* JSModuleLoader::createImportMetaProperties(ExecState* exec, JSValue key, JSModuleRecord* moduleRecord, JSValue scriptFetcher)
+JSObject* JSModuleLoader::createImportMetaProperties(JSGlobalObject* globalObject, JSValue key, JSModuleRecord* moduleRecord, JSValue scriptFetcher)
 {
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderCreateImportMetaProperties)
-        return globalObject->globalObjectMethodTable()->moduleLoaderCreateImportMetaProperties(globalObject, exec, this, key, moduleRecord, scriptFetcher);
-    return constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());
+        return globalObject->globalObjectMethodTable()->moduleLoaderCreateImportMetaProperties(globalObject, this, key, moduleRecord, scriptFetcher);
+    return constructEmptyObject(globalObject->vm(), globalObject->nullPrototypeObjectStructure());
 }
 
-JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
+JSValue JSModuleLoader::evaluate(JSGlobalObject* globalObject, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
 {
     if (Options::dumpModuleLoadingState())
-        dataLog("Loader [evaluate] ", printableModuleKey(exec, key), "\n");
+        dataLog("Loader [evaluate] ", printableModuleKey(globalObject, key), "\n");
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue, scriptFetcher);
+        return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, this, key, moduleRecordValue, scriptFetcher);
 
-    return evaluateNonVirtual(exec, key, moduleRecordValue, scriptFetcher);
+    return evaluateNonVirtual(globalObject, key, moduleRecordValue, scriptFetcher);
 }
 
-JSValue JSModuleLoader::evaluateNonVirtual(ExecState* exec, JSValue, JSValue moduleRecordValue, JSValue)
+JSValue JSModuleLoader::evaluateNonVirtual(JSGlobalObject* globalObject, JSValue, JSValue moduleRecordValue, JSValue)
 {
-    if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(exec->vm(), moduleRecordValue))
-        return moduleRecord->evaluate(exec);
+    if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(globalObject->vm(), moduleRecordValue))
+        return moduleRecord->evaluate(globalObject);
     return jsUndefined();
 }
 
-JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exec, JSValue moduleRecordValue)
+JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(JSGlobalObject* globalObject, JSValue moduleRecordValue)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, moduleRecordValue);
     if (!moduleRecord) {
-        throwTypeError(exec, scope);
+        throwTypeError(globalObject, scope);
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(scope, moduleRecord->getModuleNamespace(exec));
+    RELEASE_AND_RETURN(scope, moduleRecord->getModuleNamespace(globalObject));
 }
 
 // ------------------------------ Functions --------------------------------
@@ -392,18 +387,18 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(callFrame, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue rejectionReason) {
         catchScope.clearException();
-        auto result = deferred->reject(callFrame, rejectionReason);
+        auto result = deferred->reject(globalObject, rejectionReason);
         catchScope.clearException();
         return JSValue::encode(result);
     };
 
-    const Identifier moduleKey = callFrame->argument(0).toPropertyKey(callFrame);
+    const Identifier moduleKey = callFrame->argument(0).toPropertyKey(globalObject);
     if (UNLIKELY(catchScope.exception()))
         return reject(catchScope.exception());
 
@@ -413,7 +408,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
-        return JSValue::encode(JSWebAssembly::instantiate(callFrame, deferred, moduleKey, jsSourceCode));
+        return JSValue::encode(JSWebAssembly::instantiate(globalObject, deferred, moduleKey, jsSourceCode));
 #endif
 
     CodeProfiling profile(sourceCode);
@@ -426,11 +421,11 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
         return reject(error.toErrorObject(globalObject, sourceCode));
     ASSERT(moduleProgramNode);
 
-    ModuleAnalyzer moduleAnalyzer(callFrame, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
+    ModuleAnalyzer moduleAnalyzer(globalObject, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     if (UNLIKELY(catchScope.exception()))
         return reject(catchScope.exception());
 
-    auto result = deferred->resolve(callFrame, moduleAnalyzer.analyze(*moduleProgramNode));
+    auto result = deferred->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
     catchScope.clearException();
     return JSValue::encode(result);
 }
@@ -441,13 +436,13 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderRequestedModules(JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, callFrame->argument(0));
     if (!moduleRecord) 
-        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(callFrame, nullptr)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
-    JSArray* result = constructEmptyArray(callFrame, nullptr, moduleRecord->requestedModules().size());
+    JSArray* result = constructEmptyArray(globalObject, nullptr, moduleRecord->requestedModules().size());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     size_t i = 0;
     for (auto& key : moduleRecord->requestedModules()) {
-        result->putDirectIndex(callFrame, i++, jsString(vm, key.get()));
+        result->putDirectIndex(globalObject, i++, jsString(vm, key.get()));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     return JSValue::encode(result);
@@ -464,7 +459,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderModuleDeclarationInstantiation(JSGlobal
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
-    moduleRecord->link(callFrame, callFrame->argument(1));
+    moduleRecord->link(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsUndefined());
@@ -482,7 +477,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderResolve(JSGlobalObject* globalObject, C
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->resolve(callFrame, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
+    return JSValue::encode(loader->resolve(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderResolveSync(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -493,7 +488,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderResolveSync(JSGlobalObject* globalObjec
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    auto result = loader->resolveSync(callFrame, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
+    auto result = loader->resolveSync(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(identifierToJSValue(vm, result));
 }
@@ -509,7 +504,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderFetch(JSGlobalObject* globalObject, Cal
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->fetch(callFrame, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
+    return JSValue::encode(loader->fetch(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderGetModuleNamespaceObject(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -520,7 +515,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderGetModuleNamespaceObject(JSGlobalObject
     auto* loader = jsDynamicCast<JSModuleLoader*>(vm, callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    auto* moduleNamespaceObject = loader->getModuleNamespaceObject(callFrame, callFrame->argument(0));
+    auto* moduleNamespaceObject = loader->getModuleNamespaceObject(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(moduleNamespaceObject);
 }
@@ -536,7 +531,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderEvaluate(JSGlobalObject* globalObject, 
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(loader->evaluate(callFrame, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
+    return JSValue::encode(loader->evaluate(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
 }
 
 } // namespace JSC

@@ -68,28 +68,28 @@ inline SymbolObject* SymbolObject::create(VM& vm, JSGlobalObject* globalObject, 
     return object;
 }
 
-JSValue Symbol::toPrimitive(ExecState*, PreferredPrimitiveType) const
+JSValue Symbol::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 {
     return const_cast<Symbol*>(this);
 }
 
-bool Symbol::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
+bool Symbol::getPrimitiveNumber(JSGlobalObject* globalObject, double& number, JSValue& result) const
 {
     result = this;
-    number = toNumber(exec);
+    number = toNumber(globalObject);
     return true;
 }
 
-JSObject* Symbol::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+JSObject* Symbol::toObject(JSGlobalObject* globalObject) const
 {
-    return SymbolObject::create(exec->vm(), globalObject, const_cast<Symbol*>(this));
+    return SymbolObject::create(globalObject->vm(), globalObject, const_cast<Symbol*>(this));
 }
 
-double Symbol::toNumber(ExecState* exec) const
+double Symbol::toNumber(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    throwTypeError(exec, scope, "Cannot convert a symbol to a number"_s);
+    throwTypeError(globalObject, scope, "Cannot convert a symbol to a number"_s);
     return 0.0;
 }
 

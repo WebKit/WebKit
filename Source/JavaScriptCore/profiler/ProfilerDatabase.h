@@ -52,10 +52,10 @@ public:
     void addCompilation(CodeBlock*, Ref<Compilation>&&);
     
     // Converts the database to a JavaScript object that is suitable for JSON stringification.
-    // Note that it's probably a good idea to use an ExecState* associated with a global
+    // Note that it's probably a good idea to use an CallFrame* associated with a global
     // object that is "clean" - i.e. array and object prototypes haven't had strange things
     // done to them. And yes, it should be appropriate to just use a globalExec here.
-    JS_EXPORT_PRIVATE JSValue toJS(ExecState*) const;
+    JS_EXPORT_PRIVATE JSValue toJS(JSGlobalObject*) const;
     
     // Converts the database to a JavaScript object using a private temporary global object,
     // and then returns the JSON representation of that object.

@@ -31,7 +31,6 @@ namespace JSC {
 class ArgList;
 class CallFrame;
 class JSObject;
-using ExecState = CallFrame;
 
 // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
 // is a 0.5% reduction.

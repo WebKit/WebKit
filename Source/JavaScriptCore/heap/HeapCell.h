@@ -69,7 +69,7 @@ public:
     // If you want performance and you know that your cell is small, you can do this instead:
     // ASSERT(!cell->isLargeAllocation());
     // cell->markedBlock().vm()
-    // We currently only use this hack for callees to make ExecState::vm() fast. It's not
+    // We currently only use this hack for callees to make CallFrame::vm() fast. It's not
     // recommended to use it for too many other things, since the large allocation cutoff is
     // a runtime option and its default value is small (400 bytes).
     Heap* heap() const;

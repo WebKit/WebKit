@@ -151,7 +151,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, OpGetByV
     Label coldPathBegin = label();
     gen.slowPathJump().link(this);
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, dst, gen.stubInfo(), regT0, propertyName.impl());
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, propertyName.impl());
     gen.reportSlowPathCall(coldPathBegin, call);
     slowDoneCase = jump();
 
@@ -188,7 +188,7 @@ void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<S
     
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationGetByValOptimize, dst, regT0, regT1, byValInfo);
+    Call call = callOperation(operationGetByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -384,7 +384,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Op bytec
     Label coldPathBegin = label();
     gen.slowPathJump().link(this);
 
-    Call call = callOperation(gen.slowPathFunction(), gen.stubInfo(), regT1, regT0, propertyName.impl());
+    Call call = callOperation(gen.slowPathFunction(), TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT1, regT0, propertyName.impl());
     gen.reportSlowPathCall(coldPathBegin, call);
     doneCases.append(jump());
 
@@ -417,7 +417,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
     emitGetVirtualRegister(value, regT2);
-    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, regT0, regT1, regT2, byValInfo);
+    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, regT2, byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -430,7 +430,7 @@ void JIT::emit_op_put_getter_by_id(const Instruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_base.offset(), regT0);
     int32_t options = bytecode.m_attributes;
     emitGetVirtualRegister(bytecode.m_accessor.offset(), regT1);
-    callOperation(operationPutGetterById, regT0, m_codeBlock->identifier(bytecode.m_property).impl(), options, regT1);
+    callOperation(operationPutGetterById, TrustedImmPtr(m_codeBlock->globalObject()), regT0, m_codeBlock->identifier(bytecode.m_property).impl(), options, regT1);
 }
 
 void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
@@ -439,7 +439,7 @@ void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_base.offset(), regT0);
     int32_t options = bytecode.m_attributes;
     emitGetVirtualRegister(bytecode.m_accessor.offset(), regT1);
-    callOperation(operationPutSetterById, regT0, m_codeBlock->identifier(bytecode.m_property).impl(), options, regT1);
+    callOperation(operationPutSetterById, TrustedImmPtr(m_codeBlock->globalObject()), regT0, m_codeBlock->identifier(bytecode.m_property).impl(), options, regT1);
 }
 
 void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
@@ -449,7 +449,7 @@ void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
     int32_t attribute = bytecode.m_attributes;
     emitGetVirtualRegister(bytecode.m_getter.offset(), regT1);
     emitGetVirtualRegister(bytecode.m_setter.offset(), regT2);
-    callOperation(operationPutGetterSetter, regT0, m_codeBlock->identifier(bytecode.m_property).impl(), attribute, regT1, regT2);
+    callOperation(operationPutGetterSetter, TrustedImmPtr(m_codeBlock->globalObject()), regT0, m_codeBlock->identifier(bytecode.m_property).impl(), attribute, regT1, regT2);
 }
 
 void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
@@ -459,7 +459,7 @@ void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_property.offset(), regT1);
     int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegister(bytecode.m_accessor, regT2);
-    callOperation(operationPutGetterByVal, regT0, regT1, attributes, regT2);
+    callOperation(operationPutGetterByVal, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, attributes, regT2);
 }
 
 void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
@@ -469,7 +469,7 @@ void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
     emitGetVirtualRegister(bytecode.m_property.offset(), regT1);
     int32_t attributes = bytecode.m_attributes;
     emitGetVirtualRegister(bytecode.m_accessor.offset(), regT2);
-    callOperation(operationPutSetterByVal, regT0, regT1, attributes, regT2);
+    callOperation(operationPutSetterByVal, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, attributes, regT2);
 }
 
 void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
@@ -479,7 +479,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     int base = bytecode.m_base.offset();
     int property = bytecode.m_property;
     emitGetVirtualRegister(base, regT0);
-    callOperation(operationDeleteByIdJSResult, dst, regT0, m_codeBlock->identifier(property).impl());
+    callOperation(operationDeleteByIdJSResult, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, m_codeBlock->identifier(property).impl());
 }
 
 void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
@@ -490,7 +490,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     int property = bytecode.m_property.offset();
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    callOperation(operationDeleteByValJSResult, dst, regT0, regT1);
+    callOperation(operationDeleteByValJSResult, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
 }
 
 void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
@@ -527,7 +527,7 @@ void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vecto
 
     Label coldPathBegin = label();
 
-    Call call = callOperation(operationTryGetByIdOptimize, resultVReg, gen.stubInfo(), regT0, ident->impl());
+    Call call = callOperation(operationTryGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
     
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -566,7 +566,7 @@ void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Ve
 
     Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdDirectOptimize, resultVReg, gen.stubInfo(), regT0, ident->impl());
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdDirectOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
 
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -636,7 +636,7 @@ void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<Sl
     
     Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, resultVReg, gen.stubInfo(), regT0, ident->impl());
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
 
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -653,7 +653,7 @@ void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction,
     
     Label coldPathBegin = label();
 
-    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdWithThisOptimize, resultVReg, gen.stubInfo(), regT0, regT1, ident->impl());
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByIdWithThisOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, regT1, ident->impl());
 
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -697,7 +697,7 @@ void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<Sl
     
     JITPutByIdGenerator& gen = m_putByIds[m_putByIdIndex++];
 
-    Call call = callOperation(gen.slowPathFunction(), gen.stubInfo(), regT1, regT0, ident->impl());
+    Call call = callOperation(gen.slowPathFunction(), TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT1, regT0, ident->impl());
 
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -735,7 +735,7 @@ void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<Slo
 
     Label coldPathBegin = label();
 
-    Call call = callOperation(operationInByIdOptimize, resultVReg, gen.stubInfo(), regT0, ident->impl());
+    Call call = callOperation(operationInByIdOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT0, ident->impl());
 
     gen.reportSlowPathCall(coldPathBegin, call);
 }
@@ -1010,7 +1010,7 @@ void JIT::emitSlow_op_get_from_scope(const Instruction* currentInstruction, Vect
 
     auto bytecode = currentInstruction->as<OpGetFromScope>();
     int dst = bytecode.m_dst.offset();
-    callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetFromScope, dst, currentInstruction);
+    callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetFromScope, dst, TrustedImmPtr(m_codeBlock->globalObject()), currentInstruction);
 }
 
 void JIT::emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet* set)
@@ -1170,7 +1170,7 @@ void JIT::emitSlow_op_put_to_scope(const Instruction* currentInstruction, Vector
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_throw_strict_mode_readonly_property_write_error);
         slowPathCall.call();
     } else
-        callOperation(operationPutToScope, currentInstruction);
+        callOperation(operationPutToScope, TrustedImmPtr(m_codeBlock->globalObject()), currentInstruction);
 }
 
 void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
@@ -1214,7 +1214,7 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
         ownerNotCell = branchIfNotCell(regT0);
 
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT0, regT1);
-    callOperation(operationWriteBarrierSlowPath, regT0);
+    callOperation(operationWriteBarrierSlowPath, &vm(), regT0);
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
@@ -1280,7 +1280,7 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
         ownerNotCell = branchIfNotCell(regT0);
 
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT1, regT2);
-    callOperation(operationWriteBarrierSlowPath, regT1);
+    callOperation(operationWriteBarrierSlowPath, &vm(), regT1);
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
@@ -1308,7 +1308,7 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 void JIT::emitWriteBarrier(JSCell* owner)
 {
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, regT0);
-    callOperation(operationWriteBarrierSlowPath, owner);
+    callOperation(operationWriteBarrierSlowPath, &vm(), owner);
     ownerIsRememberedOrInEden.link(this);
 }
 

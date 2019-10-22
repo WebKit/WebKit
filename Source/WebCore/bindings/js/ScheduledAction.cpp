@@ -100,27 +100,27 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     if (callType == CallType::None)
         return;
 
-    ExecState* exec = globalObject->globalExec();
+    JSGlobalObject* lexicalGlobalObject = globalObject;
 
     MarkedArgumentBuffer arguments;
     for (auto& argument : m_arguments)
         arguments.append(argument.get());
     if (UNLIKELY(arguments.hasOverflowed())) {
-        throwOutOfMemoryError(exec, scope);
+        throwOutOfMemoryError(lexicalGlobalObject, scope);
         NakedPtr<JSC::Exception> exception = scope.exception();
-        reportException(exec, exception);
+        reportException(lexicalGlobalObject, exception);
         return;
     }
 
     JSExecState::instrumentFunctionCall(&context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
+    JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
 
     InspectorInstrumentation::didCallFunction(&context);
 
     if (exception)
-        reportException(exec, exception);
+        reportException(lexicalGlobalObject, exception);
 }
 
 void ScheduledAction::execute(Document& document)

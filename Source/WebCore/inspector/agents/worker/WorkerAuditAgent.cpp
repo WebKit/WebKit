@@ -55,7 +55,7 @@ InjectedScript WorkerAuditAgent::injectedScriptForEval(ErrorString& errorString,
         return InjectedScript();
     }
 
-    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
+    JSC::JSGlobalObject* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
     return injectedScriptManager().injectedScriptFor(scriptState);
 }
 

@@ -78,7 +78,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(JSGlobalObject* globalObje
 
     auto* thisObject = jsDynamicCast<BooleanObject*>(vm, thisValue);
     if (UNLIKELY(!thisObject))
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
     if (thisObject->internalValue() == jsBoolean(false))
         return JSValue::encode(vm.smallStrings.falseString());
@@ -97,7 +97,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(JSGlobalObject* globalObjec
 
     auto* thisObject = jsDynamicCast<BooleanObject*>(vm, thisValue);
     if (UNLIKELY(!thisObject))
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
     return JSValue::encode(thisObject->internalValue());
 }

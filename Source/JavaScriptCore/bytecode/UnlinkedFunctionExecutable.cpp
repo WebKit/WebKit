@@ -189,21 +189,20 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, ScriptExecutable* t
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
-    const Identifier& name, ExecState& exec, const SourceCode& source, 
+    const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 
     JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition)
 {
     ParserError error;
-    VM& vm = exec.vm();
-    auto& globalObject = *exec.lexicalGlobalObject();
+    VM& vm = globalObject->vm();
     CodeCache* codeCache = vm.codeCache();
-    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject.defaultCodeGenerationMode();
+    OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, codeGenerationMode, functionConstructorParametersEndPosition, error);
 
-    if (globalObject.hasDebugger())
-        globalObject.debugger()->sourceParsed(&exec, source.provider(), error.line(), error.message());
+    if (globalObject->hasDebugger())
+        globalObject->debugger()->sourceParsed(globalObject, source.provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        exception = error.toErrorObject(&globalObject, source, overrideLineNumber);
+        exception = error.toErrorObject(globalObject, source, overrideLineNumber);
         return nullptr;
     }
 

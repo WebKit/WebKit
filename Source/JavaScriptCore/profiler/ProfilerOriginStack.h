@@ -65,7 +65,7 @@ public:
     bool isHashTableDeletedValue() const;
     
     void dump(PrintStream&) const;
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     Vector<Origin, 1> m_stack;

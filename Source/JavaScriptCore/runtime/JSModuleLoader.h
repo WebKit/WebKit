@@ -50,10 +50,10 @@ public:
         Ready,
     };
 
-    static JSModuleLoader* create(ExecState* exec, VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static JSModuleLoader* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
     {
         JSModuleLoader* object = new (NotNull, allocateCell<JSModuleLoader>(vm.heap)) JSModuleLoader(vm, structure);
-        object->finishCreation(exec, vm, globalObject);
+        object->finishCreation(globalObject, vm);
         return object;
     }
 
@@ -65,29 +65,29 @@ public:
     }
 
     // APIs to control the module loader.
-    JSValue provideFetch(ExecState*, JSValue key, const SourceCode&);
-    JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
-    JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
-    JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey, JSValue scriptFetcher);
-    JSInternalPromise* requestImportModule(ExecState*, const Identifier&, JSValue parameters, JSValue scriptFetcher);
+    JSValue provideFetch(JSGlobalObject*, JSValue key, const SourceCode&);
+    JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
+    JSInternalPromise* loadModule(JSGlobalObject*, JSValue moduleName, JSValue parameters, JSValue scriptFetcher);
+    JSValue linkAndEvaluateModule(JSGlobalObject*, JSValue moduleKey, JSValue scriptFetcher);
+    JSInternalPromise* requestImportModule(JSGlobalObject*, const Identifier&, JSValue parameters, JSValue scriptFetcher);
 
     // Platform dependent hooked APIs.
-    JSInternalPromise* importModule(ExecState*, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer);
-    JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
-    Identifier resolveSync(ExecState*, JSValue name, JSValue referrer, JSValue scriptFetcher);
-    JSInternalPromise* fetch(ExecState*, JSValue key, JSValue parameters, JSValue scriptFetcher);
-    JSObject* createImportMetaProperties(ExecState*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
+    JSInternalPromise* importModule(JSGlobalObject*, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer);
+    JSInternalPromise* resolve(JSGlobalObject*, JSValue name, JSValue referrer, JSValue scriptFetcher);
+    Identifier resolveSync(JSGlobalObject*, JSValue name, JSValue referrer, JSValue scriptFetcher);
+    JSInternalPromise* fetch(JSGlobalObject*, JSValue key, JSValue parameters, JSValue scriptFetcher);
+    JSObject* createImportMetaProperties(JSGlobalObject*, JSValue key, JSModuleRecord*, JSValue scriptFetcher);
 
     // Additional platform dependent hooked APIs.
-    JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord, JSValue scriptFetcher);
-    JSValue evaluateNonVirtual(ExecState*, JSValue key, JSValue moduleRecord, JSValue scriptFetcher);
+    JSValue evaluate(JSGlobalObject*, JSValue key, JSValue moduleRecord, JSValue scriptFetcher);
+    JSValue evaluateNonVirtual(JSGlobalObject*, JSValue key, JSValue moduleRecord, JSValue scriptFetcher);
 
     // Utility functions.
-    JSModuleNamespaceObject* getModuleNamespaceObject(ExecState*, JSValue moduleRecord);
-    JSArray* dependencyKeysIfEvaluated(ExecState*, JSValue key);
+    JSModuleNamespaceObject* getModuleNamespaceObject(JSGlobalObject*, JSValue moduleRecord);
+    JSArray* dependencyKeysIfEvaluated(JSGlobalObject*, JSValue key);
 
 protected:
-    void finishCreation(ExecState*, VM&, JSGlobalObject*);
+    void finishCreation(JSGlobalObject*, VM&);
 };
 
 } // namespace JSC

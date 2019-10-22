@@ -31,6 +31,7 @@
 #import "ProxyRuntimeObject.h"
 #import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/FunctionPrototype.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/PropertyNameArray.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/IdentifierRep.h>
@@ -81,20 +82,20 @@ public:
     uint64_t serverIdentifier() const { return m_serverIdentifier; }
 
 private:
-    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
-    virtual bool setValueToInstance(ExecState*, const Instance*, JSValue) const;
+    virtual JSValue valueFromInstance(JSGlobalObject*, const Instance*) const;
+    virtual bool setValueToInstance(JSGlobalObject*, const Instance*, JSValue) const;
     
     uint64_t m_serverIdentifier;
 };
 
-JSValue ProxyField::valueFromInstance(ExecState* exec, const Instance* instance) const
+JSValue ProxyField::valueFromInstance(JSGlobalObject* lexicalGlobalObject, const Instance* instance) const
 {
-    return static_cast<const ProxyInstance*>(instance)->fieldValue(exec, this);
+    return static_cast<const ProxyInstance*>(instance)->fieldValue(lexicalGlobalObject, this);
 }
     
-bool ProxyField::setValueToInstance(ExecState* exec, const Instance* instance, JSValue value) const
+bool ProxyField::setValueToInstance(JSGlobalObject* lexicalGlobalObject, const Instance* instance, JSValue value) const
 {
-    return static_cast<const ProxyInstance*>(instance)->setFieldValue(exec, this, value);
+    return static_cast<const ProxyInstance*>(instance)->setFieldValue(lexicalGlobalObject, this, value);
 }
 
 class ProxyMethod : public JSC::Bindings::Method {
@@ -130,10 +131,10 @@ ProxyInstance::~ProxyInstance()
     invalidate();
 }
     
-RuntimeObject* ProxyInstance::newRuntimeObject(ExecState* exec)
+RuntimeObject* ProxyInstance::newRuntimeObject(JSGlobalObject* lexicalGlobalObject)
 {
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
-    return ProxyRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec), *this);
+    return ProxyRuntimeObject::create(lexicalGlobalObject->vm(), WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(lexicalGlobalObject), *this);
 }
 
 JSC::Bindings::Class* ProxyInstance::getClass() const
@@ -141,12 +142,12 @@ JSC::Bindings::Class* ProxyInstance::getClass() const
     return proxyClass();
 }
 
-JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t identifier, const ArgList& args)
+JSValue ProxyInstance::invoke(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, InvokeType type, uint64_t identifier, const ArgList& args)
 {
     if (!m_instanceProxy)
         return jsUndefined();
 
-    RetainPtr<NSData> arguments(m_instanceProxy->marshalValues(exec, args));
+    RetainPtr<NSData> arguments(m_instanceProxy->marshalValues(lexicalGlobalObject, args));
 
     uint32_t requestID = m_instanceProxy->nextRequestID();
 
@@ -162,7 +163,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
     }
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(lexicalGlobalObject);
 
     if (m_instanceProxy) {
         for (unsigned i = 0; i < args.size(); i++)
@@ -172,19 +173,19 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
     if (!reply || !reply->m_returnValue)
         return jsUndefined();
     
-    return m_instanceProxy->demarshalValue(exec, reinterpret_cast<char*>(const_cast<unsigned char*>(CFDataGetBytePtr(reply->m_result.get()))), CFDataGetLength(reply->m_result.get()));
+    return m_instanceProxy->demarshalValue(lexicalGlobalObject, reinterpret_cast<char*>(const_cast<unsigned char*>(CFDataGetBytePtr(reply->m_result.get()))), CFDataGetLength(reply->m_result.get()));
 }
 
 class ProxyRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
+    static ProxyRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // exec-vm() is also likely wrong.
-        Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec);
+        // lexicalGlobalObject-vm() is also likely wrong.
+        Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(lexicalGlobalObject);
         ProxyRuntimeMethod* runtimeMethod = new (allocateCell<ProxyRuntimeMethod>(vm.heap)) ProxyRuntimeMethod(globalObject, domStructure, method);
         runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
@@ -212,24 +213,24 @@ private:
 
 const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyRuntimeMethod) };
 
-JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName)
+JSValue ProxyInstance::getMethod(JSC::JSGlobalObject* lexicalGlobalObject, PropertyName propertyName)
 {
     Method* method = getClass()->methodNamed(propertyName, this);
-    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), method);
+    return ProxyRuntimeMethod::create(lexicalGlobalObject, lexicalGlobalObject, propertyName.publicName(), method);
 }
 
-JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
+JSValue ProxyInstance::invokeMethod(JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, JSC::RuntimeMethod* runtimeMethod)
 {
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!asObject(runtimeMethod)->inherits<ProxyRuntimeMethod>(vm))
-        return throwTypeError(exec, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
+        return throwTypeError(lexicalGlobalObject, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     ProxyMethod* method = static_cast<ProxyMethod*>(runtimeMethod->method());
     ASSERT(method);
 
-    return invoke(exec, Invoke, method->serverIdentifier(), ArgList(exec));
+    return invoke(lexicalGlobalObject, callFrame, Invoke, method->serverIdentifier(), ArgList(callFrame));
 }
 
 bool ProxyInstance::supportsInvokeDefaultMethod() const
@@ -246,9 +247,9 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
     return reply && reply->m_result;
 }
 
-JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec)
+JSValue ProxyInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    return invoke(exec, InvokeDefault, 0, ArgList(exec));
+    return invoke(lexicalGlobalObject, callFrame, InvokeDefault, 0, ArgList(callFrame));
 }
 
 bool ProxyInstance::supportsConstruct() const
@@ -265,27 +266,27 @@ bool ProxyInstance::supportsConstruct() const
     return reply && reply->m_result;
 }
     
-JSValue ProxyInstance::invokeConstruct(ExecState* exec, const ArgList& args)
+JSValue ProxyInstance::invokeConstruct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, const ArgList& args)
 {
-    return invoke(exec, Construct, 0, args);
+    return invoke(lexicalGlobalObject, callFrame, Construct, 0, args);
 }
 
-JSValue ProxyInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSValue ProxyInstance::defaultValue(JSGlobalObject* lexicalGlobalObject, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
-        return stringValue(exec);
+        return stringValue(lexicalGlobalObject);
     if (hint == PreferNumber)
-        return numberValue(exec);
-    return valueOf(exec);
+        return numberValue(lexicalGlobalObject);
+    return valueOf(lexicalGlobalObject);
 }
 
-JSValue ProxyInstance::stringValue(ExecState* exec) const
+JSValue ProxyInstance::stringValue(JSGlobalObject* lexicalGlobalObject) const
 {
     // FIXME: Implement something sensible.
-    return jsEmptyString(exec->vm());
+    return jsEmptyString(lexicalGlobalObject->vm());
 }
 
-JSValue ProxyInstance::numberValue(ExecState*) const
+JSValue ProxyInstance::numberValue(JSGlobalObject*) const
 {
     // FIXME: Implement something sensible.
     return jsNumber(0);
@@ -297,12 +298,12 @@ JSValue ProxyInstance::booleanValue() const
     return jsBoolean(false);
 }
 
-JSValue ProxyInstance::valueOf(ExecState* exec) const
+JSValue ProxyInstance::valueOf(JSGlobalObject* lexicalGlobalObject) const
 {
-    return stringValue(exec);
+    return stringValue(lexicalGlobalObject);
 }
 
-void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
+void ProxyInstance::getPropertyNames(JSGlobalObject* lexicalGlobalObject, PropertyNameArray& nameArray)
 {
     if (!m_instanceProxy)
         return;
@@ -313,13 +314,13 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
         return;
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(lexicalGlobalObject);
     if (!reply || !reply->m_returnValue)
         return;
     
     NSArray *array = [NSPropertyListSerialization propertyListWithData:(__bridge NSData *)reply->m_result.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
     
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     for (NSNumber *number in array) {
         IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>([number longLongValue]);
         if (!IdentifierRep::isValid(identifier))
@@ -402,7 +403,7 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     return mapAddResult.iterator->value.get();
 }
 
-JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
+JSC::JSValue ProxyInstance::fieldValue(JSGlobalObject* lexicalGlobalObject, const Field* field) const
 {
     if (!m_instanceProxy)
         return jsUndefined();
@@ -414,14 +415,14 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
         return jsUndefined();
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(lexicalGlobalObject);
     if (!reply || !reply->m_returnValue)
         return jsUndefined();
     
-    return m_instanceProxy->demarshalValue(exec, reinterpret_cast<char*>(const_cast<unsigned char*>(CFDataGetBytePtr(reply->m_result.get()))), CFDataGetLength(reply->m_result.get()));
+    return m_instanceProxy->demarshalValue(lexicalGlobalObject, reinterpret_cast<char*>(const_cast<unsigned char*>(CFDataGetBytePtr(reply->m_result.get()))), CFDataGetLength(reply->m_result.get()));
 }
     
-bool ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue value) const
+bool ProxyInstance::setFieldValue(JSGlobalObject* lexicalGlobalObject, const Field* field, JSValue value) const
 {
     if (!m_instanceProxy)
         return false;
@@ -432,7 +433,7 @@ bool ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
     data_t valueData;
     mach_msg_type_number_t valueLength;
 
-    m_instanceProxy->marshalValue(exec, value, valueData, valueLength);
+    m_instanceProxy->marshalValue(lexicalGlobalObject, value, valueData, valueLength);
     m_instanceProxy->retainLocalObject(value);
     kern_return_t kr = _WKPHNPObjectSetProperty(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID, serverIdentifier, valueData, valueLength);
     mig_deallocate(reinterpret_cast<vm_address_t>(valueData), valueLength);
@@ -442,7 +443,7 @@ bool ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
         return false;
     
     waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
+    NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(lexicalGlobalObject);
     return true;
 }
 

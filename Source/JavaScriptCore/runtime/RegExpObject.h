@@ -60,43 +60,43 @@ public:
         return bitwise_cast<RegExp*>(m_regExpAndLastIndexIsNotWritableFlag & (~lastIndexIsNotWritableFlag));
     }
 
-    bool setLastIndex(ExecState* exec, size_t lastIndex)
+    bool setLastIndex(JSGlobalObject* globalObject, size_t lastIndex)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (LIKELY(lastIndexIsWritable())) {
             m_lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
             return true;
         }
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
+        throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
         return false;
     }
-    bool setLastIndex(ExecState* exec, JSValue lastIndex, bool shouldThrow)
+    bool setLastIndex(JSGlobalObject* globalObject, JSValue lastIndex, bool shouldThrow)
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (LIKELY(lastIndexIsWritable())) {
             m_lastIndex.set(vm, this, lastIndex);
             return true;
         }
-        return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
+        return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
     JSValue getLastIndex() const
     {
         return m_lastIndex.get();
     }
 
-    bool test(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return !!match(exec, globalObject, string); }
-    bool testInline(ExecState* exec, JSGlobalObject* globalObject, JSString* string) { return !!matchInline(exec, globalObject, string); }
-    JSValue exec(ExecState*, JSGlobalObject*, JSString*);
-    JSValue execInline(ExecState*, JSGlobalObject*, JSString*);
-    MatchResult match(ExecState*, JSGlobalObject*, JSString*);
-    JSValue matchGlobal(ExecState*, JSGlobalObject*, JSString*);
+    bool test(JSGlobalObject* globalObject, JSString* string) { return !!match(globalObject, string); }
+    bool testInline(JSGlobalObject* globalObject, JSString* string) { return !!matchInline(globalObject, string); }
+    JSValue exec(JSGlobalObject*, JSString*);
+    JSValue execInline(JSGlobalObject*, JSString*);
+    MatchResult match(JSGlobalObject*, JSString*);
+    JSValue matchGlobal(JSGlobalObject*, JSString*);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     DECLARE_EXPORT_INFO;
 
@@ -137,14 +137,14 @@ protected:
         m_regExpAndLastIndexIsNotWritableFlag = (m_regExpAndLastIndexIsNotWritableFlag | lastIndexIsNotWritableFlag);
     }
 
-    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
 private:
-    MatchResult matchInline(ExecState*, JSGlobalObject*, JSString*);
+    MatchResult matchInline(JSGlobalObject*, JSString*);
 
     uintptr_t m_regExpAndLastIndexIsNotWritableFlag { 0 };
     WriteBarrier<Unknown> m_lastIndex;

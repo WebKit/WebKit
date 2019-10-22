@@ -76,7 +76,7 @@ protected:
     friend class ScriptExecutable;
 
     using Base::finishCreation;
-    EvalExecutable(ExecState*, const SourceCode&, bool inStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
+    EvalExecutable(JSGlobalObject*, const SourceCode&, bool inStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

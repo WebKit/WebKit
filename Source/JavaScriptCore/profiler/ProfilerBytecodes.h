@@ -46,7 +46,7 @@ public:
 
     void dump(PrintStream&) const;
     
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     size_t m_id;

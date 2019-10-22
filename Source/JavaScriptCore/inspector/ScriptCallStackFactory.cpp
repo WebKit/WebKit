@@ -84,15 +84,15 @@ private:
     mutable size_t m_remainingCapacityForFrameCapture;
 };
 
-Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStack(JSC::JSGlobalObject* globalObject, size_t maxStackSize)
 {
-    if (!exec)
+    if (!globalObject)
         return ScriptCallStack::create();
 
-    JSLockHolder locker(exec);
+    JSLockHolder locker(globalObject);
     Vector<ScriptCallFrame> frames;
 
-    CallFrame* frame = exec->vm().topCallFrame;
+    CallFrame* frame = globalObject->vm().topCallFrame;
     if (!frame)
         return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
@@ -101,15 +101,15 @@ Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStack
     return ScriptCallStack::create(frames);
 }
 
-Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject* globalObject, size_t maxStackSize)
 {
-    if (!exec)
+    if (!globalObject)
         return ScriptCallStack::create();
 
-    JSLockHolder locker(exec);
+    JSLockHolder locker(globalObject);
     Vector<ScriptCallFrame> frames;
 
-    CallFrame* frame = exec->vm().topCallFrame;
+    CallFrame* frame = globalObject->vm().topCallFrame;
     if (!frame)
         return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(true, frames, maxStackSize);
@@ -123,9 +123,9 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_
     return ScriptCallStack::create(frames);
 }
 
-static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
+static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObject, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
@@ -136,9 +136,9 @@ static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     bool result = false;
     if (lineValue && lineValue.isNumber()
         && sourceURLValue && sourceURLValue.isString()) {
-        *lineNumber = int(lineValue.toNumber(exec));
-        *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
-        *sourceURL = sourceURLValue.toWTFString(exec);
+        *lineNumber = int(lineValue.toNumber(globalObject));
+        *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(globalObject)) : 0;
+        *sourceURL = sourceURLValue.toWTFString(globalObject);
         result = true;
     } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(vm, exceptionObject)) {
         unsigned unsignedLine;
@@ -155,11 +155,11 @@ static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     return result;
 }
 
-Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* globalObject, JSC::Exception* exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
     auto& stackTrace = exception->stack();
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     for (size_t i = 0; i < stackTrace.size() && i < maxStackSize; i++) {
         unsigned line;
         unsigned column;
@@ -170,13 +170,13 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
 
     // Fallback to getting at least the line and sourceURL from the exception object if it has values and the exceptionStack doesn't.
     if (exception->value().isObject()) {
-        JSObject* exceptionObject = exception->value().toObject(exec);
+        JSObject* exceptionObject = exception->value().toObject(globalObject);
         ASSERT(exceptionObject);
         int lineNumber;
         int columnNumber;
         String exceptionSourceURL;
         if (!frames.size()) {
-            if (extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
+            if (extractSourceInformationFromException(globalObject, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
                 frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineNumber, columnNumber));
         } else {
             // FIXME: The typical stack trace will have a native frame at the top, and consumers of
@@ -186,7 +186,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
             // https://bugs.webkit.org/show_bug.cgi?id=176663
             if (!stackTrace[0].hasLineAndColumnInfo() || stackTrace[0].sourceURL().isEmpty()) {
                 const ScriptCallFrame& firstCallFrame = frames.first();
-                if (extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
+                if (extractSourceInformationFromException(globalObject, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
                     frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineNumber, columnNumber);
             }
         }
@@ -195,14 +195,14 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
     return ScriptCallStack::create(frames);
 }
 
-Ref<ScriptArguments> createScriptArguments(JSC::ExecState* state, unsigned skipArgumentCount)
+Ref<ScriptArguments> createScriptArguments(JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame, unsigned skipArgumentCount)
 {
-    VM& vm = state->vm();
+    VM& vm = globalObject->vm();
     Vector<JSC::Strong<JSC::Unknown>> arguments;
-    size_t argumentCount = state->argumentCount();
+    size_t argumentCount = callFrame->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append({ vm, state->uncheckedArgument(i) });
-    return ScriptArguments::create(*state, WTFMove(arguments));
+        arguments.append({ vm, callFrame->uncheckedArgument(i) });
+    return ScriptArguments::create(globalObject, WTFMove(arguments));
 }
 
 } // namespace Inspector

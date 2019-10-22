@@ -56,10 +56,10 @@ void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
         return;
 
     for (auto& message : m_consoleMessages) {
-        JSC::ExecState* exec = message->scriptState();
-        if (!exec)
+        JSC::JSGlobalObject* lexicalGlobalObject = message->globalObject();
+        if (!lexicalGlobalObject)
             continue;
-        if (domWindowFromExecState(exec) != window)
+        if (domWindowFromExecState(lexicalGlobalObject) != window)
             continue;
         message->clear();
     }

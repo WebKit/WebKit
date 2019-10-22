@@ -76,11 +76,11 @@ inline void boxWasmResult(CCallHelpers& jit, Wasm::Type type, Reg src, JSValueRe
 // FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid
 // spilling the results onto the stack.
 // Saved result registers should be placed on the stack just above the last stack result.
-static JSArray* allocateResultsArray(ExecState* exec, Wasm::Instance* instance, const Signature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee)
+static JIT_OPERATION JSArray* allocateResultsArray(CallFrame* callFrame, Wasm::Instance* instance, const Signature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee)
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     VM& vm = jsInstance->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    NativeCallFrameTracer tracer(vm, callFrame);
 
     JSGlobalObject* globalObject = jsInstance->globalObject();
     ObjectInitializationScope initializationScope(globalObject->vm());

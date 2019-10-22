@@ -33,16 +33,16 @@
 
 namespace WebCore {
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<MediaStreamTrack>&& object)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<MediaStreamTrack>&& object)
 {
     if (is<CanvasCaptureMediaStreamTrack>(object))
         return createWrapper<CanvasCaptureMediaStreamTrack>(globalObject, WTFMove(object));
     return createWrapper<MediaStreamTrack>(globalObject, WTFMove(object));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, MediaStreamTrack& track)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MediaStreamTrack& track)
 {
-    return wrap(state, globalObject, track);
+    return wrap(lexicalGlobalObject, globalObject, track);
 }
 
 }

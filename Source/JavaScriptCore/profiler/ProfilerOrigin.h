@@ -71,7 +71,7 @@ public:
     bool isHashTableDeletedValue() const;
     
     void dump(PrintStream&) const;
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     Bytecodes* m_bytecodes;

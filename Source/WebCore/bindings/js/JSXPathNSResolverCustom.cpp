@@ -33,15 +33,15 @@
 namespace WebCore {
 using namespace JSC;
 
-RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(VM& vm, ExecState& state, JSValue value)
+RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     if (value.inherits<JSXPathNSResolver>(vm))
         return &jsCast<JSXPathNSResolver*>(asObject(value))->wrapped();
 
-    auto result = JSCustomXPathNSResolver::create(state, value);
+    auto result = JSCustomXPathNSResolver::create(lexicalGlobalObject, value);
     if (UNLIKELY(result.hasException())) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        propagateException(state, scope, result.releaseException());
+        propagateException(lexicalGlobalObject, scope, result.releaseException());
         return nullptr;
     }
     return result.releaseReturnValue();

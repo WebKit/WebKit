@@ -45,9 +45,9 @@ public:
 
     DECLARE_INFO;
 
-    void initializeCollator(ExecState&, JSValue locales, JSValue optionsValue);
-    JSValue compareStrings(ExecState&, StringView, StringView);
-    JSObject* resolvedOptions(ExecState&);
+    void initializeCollator(JSGlobalObject*, JSValue locales, JSValue optionsValue);
+    JSValue compareStrings(JSGlobalObject*, StringView, StringView);
+    JSObject* resolvedOptions(JSGlobalObject*);
 
     JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }
     void setBoundCompare(VM&, JSBoundFunction*);
@@ -67,7 +67,7 @@ private:
         void operator()(UCollator*) const;
     };
 
-    void createCollator(ExecState&);
+    void createCollator(JSGlobalObject*);
     static ASCIILiteral usageString(Usage);
     static ASCIILiteral sensitivityString(Sensitivity);
     static ASCIILiteral caseFirstString(CaseFirst);

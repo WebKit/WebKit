@@ -92,8 +92,9 @@ ALWAYS_INLINE void setParserTokenString(LiteralParserToken<CharType>&, const Cha
 template <typename CharType>
 class LiteralParser {
 public:
-    LiteralParser(ExecState* exec, const CharType* characters, unsigned length, ParserMode mode)
-        : m_exec(exec)
+    LiteralParser(JSGlobalObject* globalObject, const CharType* characters, unsigned length, ParserMode mode, CodeBlock* nullOrCodeBlock = nullptr)
+        : m_globalObject(globalObject)
+        , m_nullOrCodeBlock(nullOrCodeBlock)
         , m_lexer(characters, length, mode)
         , m_mode(mode)
     {
@@ -190,7 +191,8 @@ private:
     class StackGuard;
     JSValue parse(ParserState);
 
-    ExecState* m_exec;
+    JSGlobalObject* m_globalObject;
+    CodeBlock* m_nullOrCodeBlock;
     typename LiteralParser<CharType>::Lexer m_lexer;
     ParserMode m_mode;
     String m_parseErrorMessage;

@@ -56,12 +56,12 @@ void BigIntObject::finishCreation(VM& vm, JSBigInt* bigInt)
     setInternalValue(vm, bigInt);
 }
 
-String BigIntObject::toStringName(const JSObject*, ExecState*)
+String BigIntObject::toStringName(const JSObject*, JSGlobalObject*)
 {
     return "Object"_s;
 }
 
-JSValue BigIntObject::defaultValue(const JSObject* object, ExecState*, PreferredPrimitiveType)
+JSValue BigIntObject::defaultValue(const JSObject* object, JSGlobalObject*, PreferredPrimitiveType)
 {
     const BigIntObject* bigIntObject = jsCast<const BigIntObject*>(object);
     return bigIntObject->internalValue();

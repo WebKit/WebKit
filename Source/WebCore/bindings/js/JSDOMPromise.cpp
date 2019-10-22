@@ -38,16 +38,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
+static inline JSC::JSValue callFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::CallData callData;
     auto callType = JSC::getCallData(vm, jsFunction, callData);
     ASSERT(callType != JSC::CallType::None);
-    auto result = call(&state, jsFunction, callType, callData, thisValue, arguments);
+    auto result = call(&lexicalGlobalObject, jsFunction, callType, callData, thisValue, arguments);
 
-    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(state.vm(), scope.exception()));
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 
     return result;
 }
@@ -59,8 +59,8 @@ void DOMPromise::whenSettled(std::function<void()>&& callback)
 
 void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSObject* promise, Function<void()>&& callback)
 {
-    auto& state = *globalObject->globalExec();
-    auto& vm = state.vm();
+    auto& lexicalGlobalObject = *globalObject;
+    auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
     auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTFMove(callback)] (JSGlobalObject*, CallFrame*) mutable {
         callback();
@@ -68,23 +68,23 @@ void DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     });
 
     const JSC::Identifier& privateName = vm.propertyNames->builtinNames().thenPrivateName();
-    auto thenFunction = promise->get(&state, privateName);
+    auto thenFunction = promise->get(&lexicalGlobalObject, privateName);
     ASSERT(thenFunction.isFunction(vm));
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);
     arguments.append(handler);
-    callFunction(state, thenFunction, promise, arguments);
+    callFunction(lexicalGlobalObject, thenFunction, promise, arguments);
 }
 
 JSC::JSValue DOMPromise::result() const
 {
-    return promise()->result(m_globalObject->globalExec()->vm());
+    return promise()->result(m_globalObject->vm());
 }
 
 DOMPromise::Status DOMPromise::status() const
 {
-    switch (promise()->status(m_globalObject->globalExec()->vm())) {
+    switch (promise()->status(m_globalObject->vm())) {
     case JSC::JSPromise::Status::Pending:
         return Status::Pending;
     case JSC::JSPromise::Status::Fulfilled:

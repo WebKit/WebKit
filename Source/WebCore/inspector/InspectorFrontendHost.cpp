@@ -152,15 +152,15 @@ void InspectorFrontendHost::disconnectClient()
 
 void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
 {
-    auto& state = *execStateFromPage(world, m_frontendPage);
-    auto& vm = state.vm();
+    auto& lexicalGlobalObject = *execStateFromPage(world, m_frontendPage);
+    auto& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
-    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(state, globalObject, *this));
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(lexicalGlobalObject, globalObject, *this));
     if (UNLIKELY(scope.exception()))
-        reportException(&state, scope.exception());
+        reportException(&lexicalGlobalObject, scope.exception());
 }
 
 void InspectorFrontendHost::loaded()
@@ -408,9 +408,9 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
 #if ENABLE(CONTEXT_MENUS)
     ASSERT(m_frontendPage);
 
-    auto& state = *execStateFromPage(debuggerWorld(), m_frontendPage);
-    auto& vm = state.vm();
-    auto value = state.lexicalGlobalObject()->get(&state, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
+    auto& lexicalGlobalObject = *execStateFromPage(debuggerWorld(), m_frontendPage);
+    auto& vm = lexicalGlobalObject.vm();
+    auto value = lexicalGlobalObject.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
     ASSERT(value);
     ASSERT(value.isObject());
     auto* frontendAPIObject = asObject(value);
@@ -418,7 +418,7 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     ContextMenu menu;
     populateContextMenu(WTFMove(items), menu);
 
-    auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendAPIObject }, menu.items());
+    auto menuProvider = FrontendMenuProvider::create(this, { &lexicalGlobalObject, frontendAPIObject }, menu.items());
     m_menuProvider = menuProvider.ptr();
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else

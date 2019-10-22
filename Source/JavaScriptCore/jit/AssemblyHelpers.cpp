@@ -624,9 +624,10 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #endif
 }
 
-void AssemblyHelpers::emitDumbVirtualCall(VM& vm, CallLinkInfo* info)
+void AssemblyHelpers::emitDumbVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
 {
     move(TrustedImmPtr(info), GPRInfo::regT2);
+    move(TrustedImmPtr(globalObject), GPRInfo::regT3);
     Call call = nearCall();
     addLinkTask(
         [=, &vm] (LinkBuffer& linkBuffer) {

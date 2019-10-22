@@ -49,14 +49,13 @@ void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_iter);
 }
 
-JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)
+JSValue JSMapIterator::createPair(JSGlobalObject* globalObject, JSValue key, JSValue value)
 {
     MarkedArgumentBuffer args;
     args.append(key);
     args.append(value);
     ASSERT(!args.hasOverflowed());
-    JSGlobalObject* globalObject = callFrame->jsCallee()->globalObject(callFrame->vm());
-    return constructArray(callFrame, 0, globalObject, args);
+    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args);
 }
 
 }

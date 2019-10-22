@@ -91,7 +91,7 @@ public:
     }
 
 protected:
-    static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
+    static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
     JSDOMStructureMap m_structures;
     JSDOMConstructorMap m_constructors;
@@ -124,7 +124,7 @@ inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& gl
     return constructor;
 }
 
-WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::ExecState&);
+WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject&, JSC::CallFrame&);
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);
 

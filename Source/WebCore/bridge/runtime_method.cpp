@@ -33,6 +33,7 @@
 #include "runtime_object.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/FunctionPrototype.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 
 using namespace WebCore;
 
@@ -57,7 +58,7 @@ void RuntimeMethod::finishCreation(VM& vm, const String& ident)
     ASSERT(inherits(vm, info()));
 }
 
-EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue RuntimeMethod::lengthGetter(JSGlobalObject* exec, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -68,7 +69,7 @@ EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue thisV
     return JSValue::encode(jsNumber(thisObject->m_method->numParameters()));
 }
 
-bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+bool RuntimeMethod::getOwnPropertySlot(JSObject* object, JSGlobalObject* exec, PropertyName propertyName, PropertySlot &slot)
 {
     VM& vm = exec->vm();
     RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(object);
@@ -102,18 +103,18 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(JSGlobalObject* globalObje
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
-            return JSValue::encode(RuntimeObject::throwInvalidAccessError(callFrame, scope));
+            return JSValue::encode(RuntimeObject::throwInvalidAccessError(globalObject, scope));
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits<JSHTMLElement>(vm))
             instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
         if (!instance)
-            return throwVMTypeError(callFrame, scope);
+            return throwVMTypeError(globalObject, scope);
     }
     ASSERT(instance);
 
     instance->begin();
-    JSValue result = instance->invokeMethod(callFrame, method);
+    JSValue result = instance->invokeMethod(globalObject, callFrame, method);
     instance->end();
     return JSValue::encode(result);
 }

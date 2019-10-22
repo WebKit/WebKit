@@ -95,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoGetterDescription(JSGlobalObject* global
 
     Symbol* symbol = tryExtractSymbol(vm, callFrame->thisValue());
     if (!symbol)
-        return throwVMTypeError(callFrame, scope, SymbolDescriptionTypeError);
+        return throwVMTypeError(globalObject, scope, SymbolDescriptionTypeError);
     scope.release();
     const auto description = symbol->description();
     return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, description));
@@ -108,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncToString(JSGlobalObject* globalObjec
 
     Symbol* symbol = tryExtractSymbol(vm, callFrame->thisValue());
     if (!symbol)
-        return throwVMTypeError(callFrame, scope, SymbolToStringTypeError);
+        return throwVMTypeError(globalObject, scope, SymbolToStringTypeError);
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(vm, symbol->descriptiveString())));
 }
 
@@ -119,7 +119,7 @@ EncodedJSValue JSC_HOST_CALL symbolProtoFuncValueOf(JSGlobalObject* globalObject
 
     Symbol* symbol = tryExtractSymbol(vm, callFrame->thisValue());
     if (!symbol)
-        return throwVMTypeError(callFrame, scope, SymbolValueOfTypeError);
+        return throwVMTypeError(globalObject, scope, SymbolValueOfTypeError);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(symbol));
 }

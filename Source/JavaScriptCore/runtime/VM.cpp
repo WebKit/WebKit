@@ -801,10 +801,11 @@ void VM::clearSourceProviderCaches()
     sourceProviderCacheMap.clear();
 }
 
-Exception* VM::throwException(ExecState* exec, Exception* exception)
+Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception)
 {
-    ASSERT(exec == topCallFrame || exec->isGlobalExec() || exec == exec->lexicalGlobalObject()->callFrameAtDebuggerEntry());
-    CallFrame* throwOriginFrame = exec->isGlobalExec() ? exec : topJSCallFrame();
+    CallFrame* throwOriginFrame = topJSCallFrame();
+    if (!throwOriginFrame)
+        throwOriginFrame = globalObject->deprecatedCallFrameForDebugger();
 
     if (Options::breakOnThrow()) {
         CodeBlock* codeBlock = throwOriginFrame ? throwOriginFrame->codeBlock() : nullptr;
@@ -812,7 +813,7 @@ Exception* VM::throwException(ExecState* exec, Exception* exception)
         CRASH();
     }
 
-    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, throwOriginFrame, exception);
+    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exception);
 
     setException(exception);
 
@@ -823,19 +824,19 @@ Exception* VM::throwException(ExecState* exec, Exception* exception)
     return exception;
 }
 
-Exception* VM::throwException(ExecState* exec, JSValue thrownValue)
+Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)
 {
     VM& vm = *this;
     Exception* exception = jsDynamicCast<Exception*>(vm, thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);
 
-    return throwException(exec, exception);
+    return throwException(globalObject, exception);
 }
 
-Exception* VM::throwException(ExecState* exec, JSObject* error)
+Exception* VM::throwException(JSGlobalObject* globalObject, JSObject* error)
 {
-    return throwException(exec, JSValue(error));
+    return throwException(globalObject, JSValue(error));
 }
 
 void VM::setStackPointerAtVMEntry(void* sp)
@@ -1113,7 +1114,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     MarkedArgumentBuffer args;
     args.append(promise.get());
     args.append(promise->result(*this));
-    call(promise->globalObject()->globalExec(), callback, callType, callData, jsNull(), args);
+    call(promise->globalObject(), callback, callType, callData, jsNull(), args);
     scope.clearException();
 }
 
@@ -1148,7 +1149,7 @@ void VM::drainMicrotasks()
 
 void QueuedTask::run()
 {
-    m_microtask->run(m_globalObject->globalExec());
+    m_microtask->run(m_globalObject.get());
 }
 
 void sanitizeStackForVM(VM& vm)
@@ -1364,15 +1365,11 @@ JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
     return enumerator;
 }
 
-JSGlobalObject* VM::vmEntryGlobalObject(const CallFrame* callFrame) const
+JSGlobalObject* VM::deprecatedVMEntryGlobalObject(JSGlobalObject* globalObject) const
 {
-    if (callFrame && callFrame->isGlobalExec()) {
-        ASSERT(callFrame->callee().isCell() && callFrame->callee().asCell()->isObject());
-        ASSERT(callFrame == callFrame->lexicalGlobalObject()->globalExec());
-        return callFrame->lexicalGlobalObject();
-    }
-    ASSERT(entryScope);
-    return entryScope->globalObject();
+    if (entryScope)
+        return entryScope->globalObject();
+    return globalObject;
 }
 
 void VM::setCrashOnVMCreation(bool shouldCrash)

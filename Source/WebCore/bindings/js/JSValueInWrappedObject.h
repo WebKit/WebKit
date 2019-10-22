@@ -53,7 +53,7 @@ private:
     Value m_value;
 };
 
-JSC::JSValue cachedPropertyValue(JSC::ExecState&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const WTF::Function<JSC::JSValue()>&);
+JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject&, const JSDOMObject& owner, JSValueInWrappedObject& cacheSlot, const WTF::Function<JSC::JSValue()>&);
 
 inline auto JSValueInWrappedObject::makeValue(JSC::JSValue value) -> Value
 {
@@ -114,12 +114,12 @@ inline void JSValueInWrappedObject::clear()
     }, [] (auto&) { });
 }
 
-inline JSC::JSValue cachedPropertyValue(JSC::ExecState& state, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const WTF::Function<JSC::JSValue()>& function)
+inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const WTF::Function<JSC::JSValue()>& function)
 {
-    if (cachedValue && isWorldCompatible(state, cachedValue))
+    if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue))
         return cachedValue;
-    cachedValue = cloneAcrossWorlds(state, owner, function());
-    ASSERT(isWorldCompatible(state, cachedValue));
+    cachedValue = cloneAcrossWorlds(lexicalGlobalObject, owner, function());
+    ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue));
     return cachedValue;
 }
 

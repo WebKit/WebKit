@@ -32,8 +32,8 @@
 
 namespace JSC {
 
+class JSGlobalObject;
 class CallFrame;
-using ExecState = CallFrame;
 
 }
 
@@ -69,7 +69,7 @@ public:
     class ElementQueue {
     public:
         void add(Element&);
-        void processQueue(JSC::ExecState*);
+        void processQueue(JSC::JSGlobalObject*);
 
     private:
         void invokeAll();
@@ -137,14 +137,14 @@ private:
 
 class CustomElementReactionStack : public CustomElementReactionDisallowedScope::AllowedScope {
 public:
-    ALWAYS_INLINE CustomElementReactionStack(JSC::ExecState* state)
+    ALWAYS_INLINE CustomElementReactionStack(JSC::JSGlobalObject* state)
         : m_previousProcessingStack(s_currentProcessingStack)
         , m_state(state)
     {
         s_currentProcessingStack = this;
     }
 
-    ALWAYS_INLINE CustomElementReactionStack(JSC::ExecState& state)
+    ALWAYS_INLINE CustomElementReactionStack(JSC::JSGlobalObject& state)
         : CustomElementReactionStack(&state)
     { }
 
@@ -156,11 +156,11 @@ public:
     }
 
 private:
-    WEBCORE_EXPORT void processQueue(JSC::ExecState*);
+    WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
 
     CustomElementReactionQueue::ElementQueue* m_queue { nullptr }; // Use raw pointer to avoid generating delete in the destructor.
     CustomElementReactionStack* m_previousProcessingStack;
-    JSC::ExecState* m_state;
+    JSC::JSGlobalObject* m_state;
 
     WEBCORE_EXPORT static CustomElementReactionStack* s_currentProcessingStack;
 

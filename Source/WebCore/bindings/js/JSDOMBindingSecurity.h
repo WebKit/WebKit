@@ -28,7 +28,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -43,43 +42,43 @@ enum SecurityReportingOption { DoNotReportSecurityError, LogSecurityError, Throw
 
 namespace BindingSecurity {
 
-template<typename T> T* checkSecurityForNode(JSC::ExecState&, T&);
-template<typename T> T* checkSecurityForNode(JSC::ExecState&, T*);
-template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::ExecState&, ExceptionOr<T*>&&);
-template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::ExecState&, ExceptionOr<T&>&&);
+template<typename T> T* checkSecurityForNode(JSC::JSGlobalObject&, T&);
+template<typename T> T* checkSecurityForNode(JSC::JSGlobalObject&, T*);
+template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::JSGlobalObject&, ExceptionOr<T*>&&);
+template<typename T> ExceptionOr<T*> checkSecurityForNode(JSC::JSGlobalObject&, ExceptionOr<T&>&&);
 
-bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::ExecState&, DOMWindow&, String& message);
-bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToDOMWindow(JSC::ExecState&, DOMWindow*, String& message);
-bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = LogSecurityError);
-bool shouldAllowAccessToFrame(JSC::ExecState&, Frame&, String& message);
-bool shouldAllowAccessToNode(JSC::ExecState&, Node*);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow&, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow&, String& message);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject*, DOMWindow*, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToDOMWindow(JSC::JSGlobalObject&, DOMWindow*, String& message);
+bool shouldAllowAccessToFrame(JSC::JSGlobalObject*, Frame*, SecurityReportingOption = LogSecurityError);
+bool shouldAllowAccessToFrame(JSC::JSGlobalObject&, Frame&, String& message);
+bool shouldAllowAccessToNode(JSC::JSGlobalObject&, Node*);
 
 }
 
-template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecState& state, T& node)
+template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::JSGlobalObject& lexicalGlobalObject, T& node)
 {
-    return shouldAllowAccessToNode(state, &node) ? &node : nullptr;
+    return shouldAllowAccessToNode(lexicalGlobalObject, &node) ? &node : nullptr;
 }
 
-template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::ExecState& state, T* node)
+template<typename T> inline T* BindingSecurity::checkSecurityForNode(JSC::JSGlobalObject& lexicalGlobalObject, T* node)
 {
-    return shouldAllowAccessToNode(state, node) ? node : nullptr;
+    return shouldAllowAccessToNode(lexicalGlobalObject, node) ? node : nullptr;
 }
 
-template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::ExecState& state, ExceptionOr<T*>&& value)
-{
-    if (value.hasException())
-        return value.releaseException();
-    return checkSecurityForNode(state, value.releaseReturnValue());
-}
-
-template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::ExecState& state, ExceptionOr<T&>&& value)
+template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::JSGlobalObject& lexicalGlobalObject, ExceptionOr<T*>&& value)
 {
     if (value.hasException())
         return value.releaseException();
-    return checkSecurityForNode(state, value.releaseReturnValue());
+    return checkSecurityForNode(lexicalGlobalObject, value.releaseReturnValue());
+}
+
+template<typename T> inline ExceptionOr<T*> BindingSecurity::checkSecurityForNode(JSC::JSGlobalObject& lexicalGlobalObject, ExceptionOr<T&>&& value)
+{
+    if (value.hasException())
+        return value.releaseException();
+    return checkSecurityForNode(lexicalGlobalObject, value.releaseReturnValue());
 }
 
 } // namespace WebCore

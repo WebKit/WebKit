@@ -149,12 +149,12 @@ void JITCompiler::compileExceptionHandlers()
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        // lookupExceptionHandlerFromCallerFrame is passed two arguments, the VM and the exec (the CallFrame*).
+        // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        prepareCallOperation(vm());
         addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
 
-        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
+        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
 
         jumpToExceptionHandler(vm());
     }
@@ -164,11 +164,11 @@ void JITCompiler::compileExceptionHandlers()
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
+        // operationLookupExceptionHandler is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+        prepareCallOperation(vm());
 
-        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
+        m_calls.append(CallLinkRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
 
         jumpToExceptionHandler(vm());
     }
@@ -474,7 +474,7 @@ void JITCompiler::compileFunction()
         emitStoreCodeOrigin(CodeOrigin(0));
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-        m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
+        m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0, m_codeBlock->globalObject());
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);

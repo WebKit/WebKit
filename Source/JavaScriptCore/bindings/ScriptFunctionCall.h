@@ -45,7 +45,7 @@ namespace Deprecated {
 
 class JS_EXPORT_PRIVATE ScriptCallArgumentHandler {
 public:
-    ScriptCallArgumentHandler(JSC::ExecState* state) : m_exec(state) { }
+    ScriptCallArgumentHandler(JSC::JSGlobalObject* globalObject) : m_globalObject(globalObject) { }
 
     void appendArgument(const char*);
     void appendArgument(const String&);
@@ -59,7 +59,7 @@ public:
 
 protected:
     JSC::MarkedArgumentBuffer m_arguments;
-    JSC::ExecState* m_exec;
+    JSC::JSGlobalObject* m_globalObject;
 
 private:
     // MarkedArgumentBuffer must be stack allocated, so prevent heap
@@ -70,7 +70,7 @@ private:
 
 class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
-    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
+    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
     ScriptFunctionCall(const ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler handler = nullptr);
     Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 

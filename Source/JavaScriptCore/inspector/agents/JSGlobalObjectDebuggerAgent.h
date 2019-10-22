@@ -39,7 +39,7 @@ public:
     ~JSGlobalObjectDebuggerAgent() override;
 
     // ScriptDebugListener
-    void breakpointActionLog(JSC::ExecState&, const String&) override;
+    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
 
 private:
     InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;

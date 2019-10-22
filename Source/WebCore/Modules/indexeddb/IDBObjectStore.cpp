@@ -144,7 +144,7 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(ExecState& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(JSGlobalObject& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -164,14 +164,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenCursor(ExecState& execState, 
     return m_transaction.requestOpenCursor(execState, *this, info);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(JSGlobalObject& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
     return doOpenCursor(execState, direction, [range = WTFMove(range)]() {
         return range;
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(JSGlobalObject& execState, JSValue key, IDBCursorDirection direction)
 {
     return doOpenCursor(execState, direction, [state=&execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
@@ -182,7 +182,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, JS
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(ExecState& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(JSGlobalObject& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::openKeyCursor");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -202,14 +202,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doOpenKeyCursor(ExecState& execStat
     return m_transaction.requestOpenCursor(execState, *this, info);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(JSGlobalObject& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
     return doOpenKeyCursor(execState, direction, [range = WTFMove(range)]() {
         return range;
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(JSGlobalObject& execState, JSValue key, IDBCursorDirection direction)
 {
     return doOpenCursor(execState, direction, [state=&execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
@@ -220,7 +220,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState,
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, JSValue key)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -238,7 +238,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, JSValue k
     return m_transaction.requestGetRecord(execState, *this, { idbKey.ptr(), IDBGetRecordDataType::KeyAndValue });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, IDBKeyRange* keyRange)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     LOG(IndexedDB, "IDBObjectStore::get");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -256,7 +256,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::get(ExecState& execState, IDBKeyRan
     return m_transaction.requestGetRecord(execState, *this, { keyRangeData, IDBGetRecordDataType::KeyAndValue });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(ExecState& execState, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, JSValue key)
 {
     LOG(IndexedDB, "IDBObjectStore::getKey");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -274,7 +274,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(ExecState& execState, JSValu
     return m_transaction.requestGetRecord(execState, *this, { idbKey.ptr(), IDBGetRecordDataType::KeyOnly });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(ExecState& execState, IDBKeyRange* keyRange)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     LOG(IndexedDB, "IDBObjectStore::getKey");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -292,7 +292,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getKey(ExecState& execState, IDBKey
     return m_transaction.requestGetRecord(execState, *this, { keyRangeData, IDBGetRecordDataType::KeyOnly });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::add(ExecState& execState, JSValue value, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::add(JSGlobalObject& execState, JSValue value, JSValue key)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -300,7 +300,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::add(ExecState& execState, JSValue v
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::put(ExecState& execState, JSValue value, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::put(JSGlobalObject& execState, JSValue value, JSValue key)
 {
     RefPtr<IDBKey> idbKey;
     if (!key.isUndefined())
@@ -308,12 +308,12 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::put(ExecState& execState, JSValue v
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putForCursorUpdate(ExecState& state, JSValue value, RefPtr<IDBKey> key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putForCursorUpdate(JSGlobalObject& state, JSValue value, RefPtr<IDBKey> key)
 {
     return putOrAdd(state, value, WTFMove(key), IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor, InlineKeyCheck::DoNotPerform);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -379,14 +379,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     return m_transaction.requestPutOrAdd(state, *this, WTFMove(key), *serializedValue, overwriteMode);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(ExecState& execState, IDBKeyRange* keyRange)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     return doDelete(execState, [keyRange]() {
         return makeRefPtr(keyRange);
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(ExecState& execState, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(JSGlobalObject& execState, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::deleteFunction");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -416,7 +416,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doDelete(ExecState& execState, WTF:
     return m_transaction.requestDeleteRecord(execState, *this, keyRangeData);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(ExecState& execState, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& execState, JSValue key)
 {
     return doDelete(execState, [state=&execState, key]() {
         auto idbKey = scriptValueToIDBKey(*state, key);
@@ -426,7 +426,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(ExecState& execState
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(ExecState& execState)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(JSGlobalObject& execState)
 {
     LOG(IndexedDB, "IDBObjectStore::clear");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -448,7 +448,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(ExecState& execState)
     return m_transaction.requestClearObjectStore(execState, *this);
 }
 
-ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
+ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(JSGlobalObject&, const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s (keyPath: %s, unique: %i, multiEntry: %i)", name.utf8().data(), loggingString(keyPath).utf8().data(), parameters.unique, parameters.multiEntry);
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -558,7 +558,7 @@ ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
     return { };
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(ExecState& execState, JSValue key)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(JSGlobalObject& execState, JSValue key)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
@@ -567,14 +567,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(ExecState& execState, JSValue
     return doCount(execState, IDBKeyRangeData(idbKey->isValid() ? idbKey.ptr() : nullptr));
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(ExecState& execState, IDBKeyRange* range)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::count(JSGlobalObject& execState, IDBKeyRange* range)
 {
     LOG(IndexedDB, "IDBObjectStore::count");
 
     return doCount(execState, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys());
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(ExecState& execState, const IDBKeyRangeData& range)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(JSGlobalObject& execState, const IDBKeyRangeData& range)
 {
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
 
@@ -595,7 +595,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doCount(ExecState& execState, const
     return m_transaction.requestCount(execState, *this, range);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAll(ExecState& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAll(JSGlobalObject& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::getAll");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -614,14 +614,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAll(ExecState& execState, Opti
     return m_transaction.requestGetAllObjectStoreRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Values, count);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(ExecState& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(JSGlobalObject& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
 {
     return doGetAll(execState, count, [range = WTFMove(range)]() {
         return range;
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(ExecState& execState, JSValue key, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(JSGlobalObject& execState, JSValue key, Optional<uint32_t> count)
 {
     return doGetAll(execState, count, [state=&execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
@@ -632,7 +632,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAll(ExecState& execState, JSValu
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllKeys(ExecState& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllKeys(JSGlobalObject& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBObjectStore::getAllKeys");
     ASSERT(&m_transaction.database().originThread() == &Thread::current());
@@ -651,14 +651,14 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::doGetAllKeys(ExecState& execState, 
     return m_transaction.requestGetAllObjectStoreRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Keys, count);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(ExecState& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(JSGlobalObject& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
 {
     return doGetAllKeys(execState, count, [range = WTFMove(range)]() {
         return range;
     });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(ExecState& execState, JSValue key, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::getAllKeys(JSGlobalObject& execState, JSValue key, Optional<uint32_t> count)
 {
     return doGetAllKeys(execState, count, [state=&execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);

@@ -25,7 +25,7 @@
 
 [
     Constructor(DOMString type, TestPromiseRejectionEventInit eventInitDict),
-    ConstructorCallWith=ExecState,
+    ConstructorCallWith=GlobalObject,
     Exposed=(Window,Worker),
 ] interface TestPromiseRejectionEvent : Event {
     readonly attribute Promise<any> promise;

@@ -42,13 +42,13 @@ ProfiledBytecodes::~ProfiledBytecodes()
 {
 }
 
-JSValue ProfiledBytecodes::toJS(ExecState* exec) const
+JSValue ProfiledBytecodes::toJS(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
-    JSObject* result = constructEmptyObject(exec);
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
     
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
-    addSequenceProperties(exec, result);
+    addSequenceProperties(globalObject, result);
     
     return result;
 }

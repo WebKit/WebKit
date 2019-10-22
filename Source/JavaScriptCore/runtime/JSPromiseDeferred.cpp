@@ -39,39 +39,39 @@ namespace JSC {
 
 const ClassInfo JSPromiseDeferred::s_info = { "JSPromiseDeferred", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPromiseDeferred) };
 
-JSPromiseDeferred::DeferredData JSPromiseDeferred::createDeferredData(ExecState* exec, JSGlobalObject* globalObject, JSPromiseConstructor* promiseConstructor)
+JSPromiseDeferred::DeferredData JSPromiseDeferred::createDeferredData(JSGlobalObject* globalObject, JSPromiseConstructor* promiseConstructor)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
     CallData callData;
-    CallType callType = JSC::getCallData(exec->vm(), newPromiseCapabilityFunction, callData);
+    CallType callType = JSC::getCallData(globalObject->vm(), newPromiseCapabilityFunction, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(promiseConstructor);
     ASSERT(!arguments.hasOverflowed());
-    JSValue deferred = call(exec, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
+    JSValue deferred = call(globalObject, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
     RETURN_IF_EXCEPTION(scope, { });
 
     DeferredData result;
-    result.promise = jsCast<JSPromise*>(deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName()));
+    result.promise = jsCast<JSPromise*>(deferred.get(globalObject, vm.propertyNames->builtinNames().promisePrivateName()));
     RETURN_IF_EXCEPTION(scope, { });
-    result.resolve = jsCast<JSFunction*>(deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName()));
+    result.resolve = jsCast<JSFunction*>(deferred.get(globalObject, vm.propertyNames->builtinNames().resolvePrivateName()));
     RETURN_IF_EXCEPTION(scope, { });
-    result.reject = jsCast<JSFunction*>(deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName()));
+    result.reject = jsCast<JSFunction*>(deferred.get(globalObject, vm.propertyNames->builtinNames().rejectPrivateName()));
     RETURN_IF_EXCEPTION(scope, { });
 
     return result;
 }
 
-JSPromiseDeferred* JSPromiseDeferred::tryCreate(ExecState* exec, JSGlobalObject* globalObject)
+JSPromiseDeferred* JSPromiseDeferred::tryCreate(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DeferredData data = createDeferredData(exec, globalObject, globalObject->promiseConstructor());
+    DeferredData data = createDeferredData(globalObject, globalObject->promiseConstructor());
     RETURN_IF_EXCEPTION(scope, { });
     return JSPromiseDeferred::create(vm, data.promise, data.resolve, data.reject);
 }
@@ -93,36 +93,36 @@ JSPromiseDeferred::JSPromiseDeferred(VM& vm, Structure* structure)
 {
 }
 
-static inline void callFunction(ExecState* exec, JSValue function, JSValue value)
+static inline void callFunction(JSGlobalObject* globalObject, JSValue function, JSValue value)
 {
     CallData callData;
-    CallType callType = getCallData(exec->vm(), function, callData);
+    CallType callType = getCallData(globalObject->vm(), function, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);
     ASSERT(!arguments.hasOverflowed());
 
-    call(exec, function, callType, callData, jsUndefined(), arguments);
+    call(globalObject, function, callType, callData, jsUndefined(), arguments);
 }
 
-void JSPromiseDeferred::resolve(ExecState* exec, JSValue value)
+void JSPromiseDeferred::resolve(JSGlobalObject* globalObject, JSValue value)
 {
-    callFunction(exec, m_resolve.get(), value);
-    bool wasPending = exec->vm().promiseDeferredTimer->cancelPendingPromise(this);
+    callFunction(globalObject, m_resolve.get(), value);
+    bool wasPending = globalObject->vm().promiseDeferredTimer->cancelPendingPromise(this);
     ASSERT_UNUSED(wasPending, wasPending == m_promiseIsAsyncPending);
 }
 
-void JSPromiseDeferred::reject(ExecState* exec, JSValue reason)
+void JSPromiseDeferred::reject(JSGlobalObject* globalObject, JSValue reason)
 {
-    callFunction(exec, m_reject.get(), reason);
-    bool wasPending = exec->vm().promiseDeferredTimer->cancelPendingPromise(this);
+    callFunction(globalObject, m_reject.get(), reason);
+    bool wasPending = globalObject->vm().promiseDeferredTimer->cancelPendingPromise(this);
     ASSERT_UNUSED(wasPending, wasPending == m_promiseIsAsyncPending);
 }
 
-void JSPromiseDeferred::reject(ExecState* exec, Exception* reason)
+void JSPromiseDeferred::reject(JSGlobalObject* globalObject, Exception* reason)
 {
-    reject(exec, reason->value());
+    reject(globalObject, reason->value());
 }
 
 void JSPromiseDeferred::finishCreation(VM& vm, JSPromise* promise, JSFunction* resolve, JSFunction* reject)

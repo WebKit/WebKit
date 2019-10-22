@@ -69,51 +69,51 @@ void ArrayConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Arra
 
 // ------------------------------ Functions ---------------------------
 
-JSArray* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length, JSValue newTarget)
+JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject, ArrayAllocationProfile* profile, JSValue length, JSValue newTarget)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!length.isNumber())
-        RELEASE_AND_RETURN(scope, constructArrayNegativeIndexed(exec, profile, globalObject, &length, 1, newTarget));
+        RELEASE_AND_RETURN(scope, constructArrayNegativeIndexed(globalObject, profile, &length, 1, newTarget));
     
-    uint32_t n = length.toUInt32(exec);
-    if (n != length.toNumber(exec)) {
-        throwException(exec, scope, createRangeError(exec, "Array size is not a small enough positive integer."_s));
+    uint32_t n = length.toUInt32(globalObject);
+    if (n != length.toNumber(globalObject)) {
+        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
         return nullptr;
     }
-    RELEASE_AND_RETURN(scope, constructEmptyArray(exec, profile, globalObject, n, newTarget));
+    RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, profile, n, newTarget));
 }
 
-static inline JSArray* constructArrayWithSizeQuirk(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, JSValue newTarget)
+static inline JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject, const ArgList& args, JSValue newTarget)
 {
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1)
-        return constructArrayWithSizeQuirk(exec, nullptr, globalObject, args.at(0), newTarget);
+        return constructArrayWithSizeQuirk(globalObject, nullptr, args.at(0), newTarget);
 
     // otherwise the array is constructed with the arguments in it
-    return constructArray(exec, nullptr, globalObject, args, newTarget);
+    return constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), args, newTarget);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructArrayWithSizeQuirk(callFrame, globalObject, args, callFrame->newTarget()));
+    return JSValue::encode(constructArrayWithSizeQuirk(globalObject, args, callFrame->newTarget()));
 }
 
 static EncodedJSValue JSC_HOST_CALL callArrayConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);
-    return JSValue::encode(constructArrayWithSizeQuirk(callFrame, globalObject, args, JSValue()));
+    return JSValue::encode(constructArrayWithSizeQuirk(globalObject, args, JSValue()));
 }
 
-static ALWAYS_INLINE bool isArraySlowInline(ExecState* exec, ProxyObject* proxy)
+static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyObject* proxy)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     while (true) {
         if (proxy->isRevoked()) {
-            throwTypeError(exec, scope, "Array.isArray cannot be called on a Proxy that has been revoked"_s);
+            throwTypeError(globalObject, scope, "Array.isArray cannot be called on a Proxy that has been revoked"_s);
             return false;
         }
         JSObject* argument = proxy->target();
@@ -130,9 +130,9 @@ static ALWAYS_INLINE bool isArraySlowInline(ExecState* exec, ProxyObject* proxy)
     ASSERT_NOT_REACHED();
 }
 
-bool isArraySlow(ExecState* exec, ProxyObject* argument)
+bool isArraySlow(JSGlobalObject* globalObject, ProxyObject* argument)
 {
-    return isArraySlowInline(exec, argument);
+    return isArraySlowInline(globalObject, argument);
 }
 
 // ES6 7.2.2
@@ -140,7 +140,7 @@ bool isArraySlow(ExecState* exec, ProxyObject* argument)
 EncodedJSValue JSC_HOST_CALL arrayConstructorPrivateFuncIsArraySlow(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(globalObject->vm(), callFrame->argument(0)));
-    return JSValue::encode(jsBoolean(isArraySlowInline(callFrame, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
+    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
 }
 
 } // namespace JSC

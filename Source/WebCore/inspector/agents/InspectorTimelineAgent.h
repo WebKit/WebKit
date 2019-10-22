@@ -105,11 +105,11 @@ public:
     void failedToParseSource(const String&, const String&, int, int, const String&) override { }
     void willRunMicrotask() override { }
     void didRunMicrotask() override { }
-    void didPause(JSC::ExecState&, JSC::JSValue, JSC::JSValue) override { }
+    void didPause(JSC::JSGlobalObject*, JSC::JSValue, JSC::JSValue) override { }
     void didContinue() override { }
-    void breakpointActionLog(JSC::ExecState&, const String&) override { }
+    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override { }
     void breakpointActionSound(int) override { }
-    void breakpointActionProbe(JSC::ExecState&, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) override;
+    void breakpointActionProbe(JSC::JSGlobalObject*, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) override;
 
     // InspectorInstrumentation
     void didInstallTimer(int timerId, Seconds timeout, bool singleShot, Frame*);
@@ -145,8 +145,8 @@ public:
     void mainFrameNavigated();
 
     // Console
-    void startFromConsole(JSC::ExecState*, const String& title);
-    void stopFromConsole(JSC::ExecState*, const String& title);
+    void startFromConsole(JSC::JSGlobalObject*, const String& title);
+    void stopFromConsole(JSC::JSGlobalObject*, const String& title);
 
 private:
     void startProgrammaticCapture();

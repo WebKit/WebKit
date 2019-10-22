@@ -58,19 +58,19 @@ private:
 
 static_assert(sizeof(RegExpConstructor) == sizeof(InternalFunction), "");
 
-JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = jsUndefined());
+JSObject* constructRegExp(JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = jsUndefined());
 
-ALWAYS_INLINE bool isRegExp(VM& vm, ExecState* exec, JSValue value)
+ALWAYS_INLINE bool isRegExp(VM& vm, JSGlobalObject* globalObject, JSValue value)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!value.isObject())
         return false;
 
     JSObject* object = asObject(value);
-    JSValue matchValue = object->get(exec, vm.propertyNames->matchSymbol);
+    JSValue matchValue = object->get(globalObject, vm.propertyNames->matchSymbol);
     RETURN_IF_EXCEPTION(scope, false);
     if (!matchValue.isUndefined())
-        return matchValue.toBoolean(exec);
+        return matchValue.toBoolean(globalObject);
 
     return object->inherits<RegExpObject>(vm);
 }

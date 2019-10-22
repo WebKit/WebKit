@@ -45,14 +45,14 @@
 namespace WebCore {
 using namespace JSC;
 
-template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectionEvent::Init>(ExecState& state, JSValue value)
+template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectionEvent::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = state.vm();
+    VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
+        throwTypeError(&lexicalGlobalObject, throwScope);
         return { };
     }
     TestPromiseRejectionEvent::Init result;
@@ -60,11 +60,11 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
     else {
-        bubblesValue = object->get(&state, Identifier::fromString(vm, "bubbles"));
+        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bubblesValue.isUndefined()) {
-        result.bubbles = convert<IDLBoolean>(state, bubblesValue);
+        result.bubbles = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.bubbles = false;
@@ -72,11 +72,11 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
-        cancelableValue = object->get(&state, Identifier::fromString(vm, "cancelable"));
+        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!cancelableValue.isUndefined()) {
-        result.cancelable = convert<IDLBoolean>(state, cancelableValue);
+        result.cancelable = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.cancelable = false;
@@ -84,11 +84,11 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
-        composedValue = object->get(&state, Identifier::fromString(vm, "composed"));
+        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!composedValue.isUndefined()) {
-        result.composed = convert<IDLBoolean>(state, composedValue);
+        result.composed = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.composed = false;
@@ -96,25 +96,25 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         promiseValue = jsUndefined();
     else {
-        promiseValue = object->get(&state, Identifier::fromString(vm, "promise"));
+        promiseValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!promiseValue.isUndefined()) {
-        result.promise = convert<IDLPromise<IDLAny>>(state, promiseValue);
+        result.promise = convert<IDLPromise<IDLAny>>(lexicalGlobalObject, promiseValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwRequiredMemberTypeError(state, throwScope, "promise", "TestPromiseRejectionEventInit", "Promise");
+        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "promise", "TestPromiseRejectionEventInit", "Promise");
         return { };
     }
     JSValue reasonValue;
     if (isNullOrUndefined)
         reasonValue = jsUndefined();
     else {
-        reasonValue = object->get(&state, Identifier::fromString(vm, "reason"));
+        reasonValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "reason"));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!reasonValue.isUndefined()) {
-        result.reason = convert<IDLAny>(state, reasonValue);
+        result.reason = convert<IDLAny>(lexicalGlobalObject, reasonValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.reason = jsUndefined();
@@ -123,10 +123,10 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
 
 // Attributes
 
-JSC::EncodedJSValue jsTestPromiseRejectionEventConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestPromiseRejectionEventConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestPromiseRejectionEventPromise(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-JSC::EncodedJSValue jsTestPromiseRejectionEventReason(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestPromiseRejectionEventConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestPromiseRejectionEventPromise(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestPromiseRejectionEventReason(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestPromiseRejectionEventPrototype : public JSC::JSNonFinalObject {
 public:
@@ -155,22 +155,21 @@ private:
 
 using JSTestPromiseRejectionEventConstructor = JSDOMConstructor<JSTestPromiseRejectionEvent>;
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestPromiseRejectionEventConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestPromiseRejectionEventConstructor*>(state->jsCallee());
+    auto* castedThis = jsCast<JSTestPromiseRejectionEventConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    if (UNLIKELY(state->argumentCount() < 2))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto type = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    if (UNLIKELY(callFrame->argumentCount() < 2))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto type = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto eventInitDict = convert<IDLDictionary<TestPromiseRejectionEvent::Init>>(*state, state->uncheckedArgument(1));
+    auto eventInitDict = convert<IDLDictionary<TestPromiseRejectionEvent::Init>>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestPromiseRejectionEvent::create(*state, WTFMove(type), WTFMove(eventInitDict));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestPromiseRejectionEvent>>(*state, *castedThis->globalObject(), WTFMove(object)));
+    auto object = TestPromiseRejectionEvent::create(*castedThis->globalObject(), WTFMove(type), WTFMove(eventInitDict));
+    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestPromiseRejectionEvent>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(object)));
 }
 
 template<> JSValue JSTestPromiseRejectionEventConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -235,60 +234,60 @@ JSValue JSTestPromiseRejectionEvent::getConstructor(VM& vm, const JSGlobalObject
     return getDOMConstructor<JSTestPromiseRejectionEventConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-template<> inline JSTestPromiseRejectionEvent* IDLAttribute<JSTestPromiseRejectionEvent>::cast(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestPromiseRejectionEvent* IDLAttribute<JSTestPromiseRejectionEvent>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestPromiseRejectionEvent*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestPromiseRejectionEvent*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestPromiseRejectionEventConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestPromiseRejectionEventPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestPromiseRejectionEvent::getConstructor(state->vm(), prototype->globalObject()));
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(JSTestPromiseRejectionEvent::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestPromiseRejectionEventConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestPromiseRejectionEventConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestPromiseRejectionEventPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
-        throwVMTypeError(state, throwScope);
+        throwVMTypeError(lexicalGlobalObject, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestPromiseRejectionEventPromiseGetter(ExecState& state, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestPromiseRejectionEventPromiseGetter(JSGlobalObject& lexicalGlobalObject, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLPromise<IDLAny>>(state, *thisObject.globalObject(), throwScope, impl.promise());
+    JSValue result = toJS<IDLPromise<IDLAny>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.promise());
     return result;
 }
 
-EncodedJSValue jsTestPromiseRejectionEventPromise(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestPromiseRejectionEventPromise(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventPromiseGetter, CastedThisErrorBehavior::RejectPromise>(*state, thisValue, "promise");
+    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventPromiseGetter, CastedThisErrorBehavior::RejectPromise>(*lexicalGlobalObject, thisValue, "promise");
 }
 
-static inline JSValue jsTestPromiseRejectionEventReasonGetter(ExecState& state, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestPromiseRejectionEventReasonGetter(JSGlobalObject& lexicalGlobalObject, JSTestPromiseRejectionEvent& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(state, throwScope, impl.reason());
+    JSValue result = toJS<IDLAny>(lexicalGlobalObject, throwScope, impl.reason());
     return result;
 }
 
-EncodedJSValue jsTestPromiseRejectionEventReason(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestPromiseRejectionEventReason(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventReasonGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "reason");
+    return IDLAttribute<JSTestPromiseRejectionEvent>::get<jsTestPromiseRejectionEventReasonGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reason");
 }
 
 void JSTestPromiseRejectionEvent::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -309,7 +308,7 @@ extern "C" { extern void* _ZTVN7WebCore25TestPromiseRejectionEventE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestPromiseRejectionEvent>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestPromiseRejectionEvent>&& impl)
 {
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -333,9 +332,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     return createWrapper<TestPromiseRejectionEvent>(globalObject, WTFMove(impl));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestPromiseRejectionEvent& impl)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestPromiseRejectionEvent& impl)
 {
-    return wrap(state, globalObject, impl);
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 

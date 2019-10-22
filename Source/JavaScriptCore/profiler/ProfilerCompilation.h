@@ -78,7 +78,7 @@ public:
     UID uid() const { return m_uid; }
     
     void dump(PrintStream&) const;
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     CompilationKind m_kind;

@@ -122,7 +122,7 @@ void JIT::emitSlow_op_new_object(const Instruction* currentInstruction, Vector<S
     auto& metadata = bytecode.metadata(m_codeBlock);
     int dst = bytecode.m_dst.offset();
     Structure* structure = metadata.m_objectAllocationProfile.structure();
-    callOperation(operationNewObject, structure);
+    callOperation(operationNewObject, TrustedImmPtr(&vm()), structure);
     emitStoreCell(dst, returnValueGPR);
 }
 
@@ -191,7 +191,7 @@ void JIT::emitSlow_op_instanceof(const Instruction* currentInstruction, Vector<S
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
     
     Label coldPathBegin = label();
-    Call call = callOperation(operationInstanceOfOptimize, resultVReg, gen.stubInfo(), regT2, regT1);
+    Call call = callOperation(operationInstanceOfOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT2, regT1);
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
@@ -362,7 +362,7 @@ void JIT::emit_op_set_function_name(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpSetFunctionName>();
     emitGetVirtualRegister(bytecode.m_function.offset(), regT0);
     emitGetVirtualRegister(bytecode.m_name.offset(), regT1);
-    callOperation(operationSetFunctionName, regT0, regT1);
+    callOperation(operationSetFunctionName, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
 }
 
 void JIT::emit_op_not(const Instruction* currentInstruction)
@@ -539,7 +539,7 @@ void JIT::emit_op_throw(const Instruction* currentInstruction)
     ASSERT(regT0 == returnValueGPR);
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
     emitGetVirtualRegister(bytecode.m_value.offset(), regT0);
-    callOperationNoExceptionCheck(operationThrow, regT0);
+    callOperationNoExceptionCheck(operationThrow, TrustedImmPtr(m_codeBlock->globalObject()), regT0);
     jumpToExceptionHandler(vm());
 }
 
@@ -632,7 +632,7 @@ void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<Sl
 
     auto bytecode = currentInstruction->as<OpJstricteq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    callOperation(operationCompareStrictEq, regT0, regT1);
+    callOperation(operationCompareStrictEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
@@ -642,7 +642,7 @@ void JIT::emitSlow_op_jnstricteq(const Instruction* currentInstruction, Vector<S
 
     auto bytecode = currentInstruction->as<OpJnstricteq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    callOperation(operationCompareStrictEq, regT0, regT1);
+    callOperation(operationCompareStrictEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
@@ -699,7 +699,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler);
+    callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler, TrustedImmPtr(&vm()));
     Jump isCatchableException = branchTest32(Zero, returnValueGPR);
     jumpToExceptionHandler(vm());
     isCatchableException.link(this);
@@ -720,9 +720,9 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndOperandBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
-        callOperation(operationTryOSREnterAtCatch, m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeOffset);
     else
-        callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, ExceptionHandlerPtrTag);
@@ -764,7 +764,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, regT0, tableIndex);
+    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
@@ -781,7 +781,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
     jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchCharWithUnknownKeyType, regT0, tableIndex);
+    callOperation(operationSwitchCharWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
@@ -797,7 +797,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchStringWithUnknownKeyType, regT0, tableIndex);
+    callOperation(operationSwitchStringWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
@@ -806,7 +806,7 @@ void JIT::emit_op_debug(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpDebug>();
     load32(codeBlock()->debuggerRequestsAddress(), regT0);
     Jump noDebuggerRequests = branchTest32(Zero, regT0);
-    callOperation(operationDebug, static_cast<int>(bytecode.m_debugHookType));
+    callOperation(operationDebug, &vm(), static_cast<int>(bytecode.m_debugHookType));
     noDebuggerRequests.link(this);
 }
 
@@ -962,7 +962,7 @@ void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseE
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpEq>();
-    callOperation(operationCompareEq, regT0, regT1);
+    callOperation(operationCompareEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(bytecode.m_dst.offset(), returnValueGPR);
 }
@@ -972,7 +972,7 @@ void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCase
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpNeq>();
-    callOperation(operationCompareEq, regT0, regT1);
+    callOperation(operationCompareEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     xor32(TrustedImm32(0x1), regT0);
     boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(bytecode.m_dst.offset(), returnValueGPR);
@@ -984,7 +984,7 @@ void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCase
 
     auto bytecode = currentInstruction->as<OpJeq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    callOperation(operationCompareEq, regT0, regT1);
+    callOperation(operationCompareEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
@@ -994,7 +994,7 @@ void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCas
 
     auto bytecode = currentInstruction->as<OpJneq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    callOperation(operationCompareEq, regT0, regT1);
+    callOperation(operationCompareEq, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
@@ -1011,7 +1011,7 @@ void JIT::emitSlow_op_instanceof_custom(const Instruction* currentInstruction, V
     emitGetVirtualRegister(value, regT0);
     emitGetVirtualRegister(constructor, regT1);
     emitGetVirtualRegister(hasInstanceValue, regT2);
-    callOperation(operationInstanceOfCustom, regT0, regT1, regT2);
+    callOperation(operationInstanceOfCustom, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, regT2);
     boxBoolean(returnValueGPR, JSValueRegs { returnValueGPR });
     emitPutVirtualRegister(dst, returnValueGPR);
 }
@@ -1036,7 +1036,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
 
         copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        callOperation(operationOptimize, m_bytecodeOffset);
+        callOperation(operationOptimize, &vm(), m_bytecodeOffset);
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (!ASSERT_DISABLED) {
             Jump ok = branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
@@ -1077,7 +1077,7 @@ void JIT::emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::ite
 {
     linkAllSlowCases(iter);
 
-    callOperation(operationHandleTraps);
+    callOperation(operationHandleTraps, TrustedImmPtr(m_codeBlock->globalObject()));
 }
 
 void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
@@ -1085,7 +1085,7 @@ void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpNewRegexp>();
     int dst = bytecode.m_dst.offset();
     int regexp = bytecode.m_regexp.offset();
-    callOperation(operationNewRegexp, jsCast<RegExp*>(m_codeBlock->getConstant(regexp)));
+    callOperation(operationNewRegexp, TrustedImmPtr(m_codeBlock->globalObject()), jsCast<RegExp*>(m_codeBlock->getConstant(regexp)));
     emitStoreCell(dst, returnValueGPR);
 }
 
@@ -1105,14 +1105,14 @@ void JIT::emitNewFuncCommon(const Instruction* currentInstruction)
 
     OpcodeID opcodeID = Op::opcodeID;
     if (opcodeID == op_new_func)
-        callOperation(operationNewFunction, dst, regT0, funcExec);
+        callOperation(operationNewFunction, dst, &vm(), regT0, funcExec);
     else if (opcodeID == op_new_generator_func)
-        callOperation(operationNewGeneratorFunction, dst, regT0, funcExec);
+        callOperation(operationNewGeneratorFunction, dst, &vm(), regT0, funcExec);
     else if (opcodeID == op_new_async_func)
-        callOperation(operationNewAsyncFunction, dst, regT0, funcExec);
+        callOperation(operationNewAsyncFunction, dst, &vm(), regT0, funcExec);
     else {
         ASSERT(opcodeID == op_new_async_generator_func);
-        callOperation(operationNewAsyncGeneratorFunction, dst, regT0, funcExec);
+        callOperation(operationNewAsyncGeneratorFunction, dst, &vm(), regT0, funcExec);
     }
 }
 
@@ -1151,14 +1151,14 @@ void JIT::emitNewFuncExprCommon(const Instruction* currentInstruction)
     OpcodeID opcodeID = Op::opcodeID;
 
     if (opcodeID == op_new_func_exp)
-        callOperation(operationNewFunction, dst, regT0, function);
+        callOperation(operationNewFunction, dst, &vm(), regT0, function);
     else if (opcodeID == op_new_generator_func_exp)
-        callOperation(operationNewGeneratorFunction, dst, regT0, function);
+        callOperation(operationNewGeneratorFunction, dst, &vm(), regT0, function);
     else if (opcodeID == op_new_async_func_exp)
-        callOperation(operationNewAsyncFunction, dst, regT0, function);
+        callOperation(operationNewAsyncFunction, dst, &vm(), regT0, function);
     else {
         ASSERT(opcodeID == op_new_async_generator_func_exp);
-        callOperation(operationNewAsyncGeneratorFunction, dst, regT0, function);
+        callOperation(operationNewAsyncGeneratorFunction, dst, &vm(), regT0, function);
     }
 }
 
@@ -1190,7 +1190,7 @@ void JIT::emit_op_new_array(const Instruction* currentInstruction)
     int valuesIndex = bytecode.m_argv.offset();
     int size = bytecode.m_argc;
     addPtr(TrustedImm32(valuesIndex * sizeof(Register)), callFrameRegister, regT0);
-    callOperation(operationNewArrayWithProfile, dst,
+    callOperation(operationNewArrayWithProfile, dst, TrustedImmPtr(m_codeBlock->globalObject()),
         &metadata.m_arrayAllocationProfile, regT0, size);
 }
 
@@ -1202,11 +1202,11 @@ void JIT::emit_op_new_array_with_size(const Instruction* currentInstruction)
     int sizeIndex = bytecode.m_length.offset();
 #if USE(JSVALUE64)
     emitGetVirtualRegister(sizeIndex, regT0);
-    callOperation(operationNewArrayWithSizeAndProfile, dst,
+    callOperation(operationNewArrayWithSizeAndProfile, dst, TrustedImmPtr(m_codeBlock->globalObject()),
         &metadata.m_arrayAllocationProfile, regT0);
 #else
     emitLoad(sizeIndex, regT1, regT0);
-    callOperation(operationNewArrayWithSizeAndProfile, dst,
+    callOperation(operationNewArrayWithSizeAndProfile, dst, TrustedImmPtr(m_codeBlock->globalObject()),
         &metadata.m_arrayAllocationProfile, JSValueRegs(regT1, regT0));
 #endif
 }
@@ -1318,7 +1318,7 @@ void JIT::emitSlow_op_has_indexed_property(const Instruction* currentInstruction
     
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, regT0, regT1, byValInfo);
+    Call call = callOperation(operationHasIndexedPropertyDefault, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -1472,7 +1472,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
     store64(regT1, Address(regT2, TypeProfilerLog::currentLogEntryOffset()));
     Jump skipClearLog = branchPtr(NotEqual, regT1, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr()));
     // Clear the log if we're at the end of the log.
-    callOperation(operationProcessTypeProfilerLog);
+    callOperation(operationProcessTypeProfilerLog, &vm());
     skipClearLog.link(this);
 
     jumpToEnd.link(this);

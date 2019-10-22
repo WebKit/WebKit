@@ -45,7 +45,7 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<SVGPathSeg>&& object)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<SVGPathSeg>&& object)
 {
     switch (object->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
@@ -92,9 +92,9 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<SVGPat
     }
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, SVGPathSeg& object)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, SVGPathSeg& object)
 {
-    return wrap(state, globalObject, object);
+    return wrap(lexicalGlobalObject, globalObject, object);
 }
 
 }

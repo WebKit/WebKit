@@ -47,8 +47,8 @@ private:
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
-    JSC::EncodedJSValue callConstructor(JSC::ExecState&, JSC::JSObject&);
-    JSC::EncodedJSValue callConstructor(JSC::ExecState&, JSC::JSObject*);
+    JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
+    JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject*);
 
     // Usually defined for each specialization class.
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }
@@ -76,19 +76,19 @@ template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishC
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::ExecState& state, JSC::JSObject& object)
+template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject& object)
 {
-    Base::callFunctionWithCurrentArguments(state, object, *initializeFunction());
+    Base::callFunctionWithCurrentArguments(lexicalGlobalObject, callFrame, object, *initializeFunction());
     return JSC::JSValue::encode(&object);
 }
 
-template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::ExecState& state, JSC::JSObject* object)
+template<typename JSClass> inline JSC::EncodedJSValue JSDOMBuiltinConstructor<JSClass>::callConstructor(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, JSC::JSObject* object)
 {
-    JSC::VM& vm = state.vm();
+    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!object)
-        return throwConstructorScriptExecutionContextUnavailableError(state, scope, info()->className);
-    return callConstructor(state, *object);
+        return throwConstructorScriptExecutionContextUnavailableError(lexicalGlobalObject, scope, info()->className);
+    return callConstructor(lexicalGlobalObject, callFrame, *object);
 }
 
 template<typename JSClass>
@@ -111,11 +111,11 @@ typename std::enable_if<JSDOMObjectInspector<JSClass>::isComplexWrapper, JSC::JS
     return context ? createWrapper<typename JSClass::DOMWrapped>(constructor.globalObject(), JSClass::DOMWrapped::create(*context)) : nullptr;
 }
 
-template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltinConstructor<JSClass>::construct(JSC::JSGlobalObject*, JSC::CallFrame* callFrame)
+template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSDOMBuiltinConstructor<JSClass>::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
 {
     ASSERT(callFrame);
     auto* castedThis = JSC::jsCast<JSDOMBuiltinConstructor*>(callFrame->jsCallee());
-    return castedThis->callConstructor(*callFrame, createJSObject(*castedThis));
+    return castedThis->callConstructor(*lexicalGlobalObject, *callFrame, createJSObject(*castedThis));
 }
 
 template<typename JSClass> inline JSC::ConstructType JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)

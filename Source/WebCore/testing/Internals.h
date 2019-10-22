@@ -675,8 +675,8 @@ public:
     void setResourceLoadStatisticsEnabled(bool);
 
 #if ENABLE(STREAMS_API)
-    bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
-    JSC::JSValue cloneArrayBuffer(JSC::ExecState&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
+    bool isReadableStreamDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
+    JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
 #endif
 
     String composedTreeAsText(Node&);

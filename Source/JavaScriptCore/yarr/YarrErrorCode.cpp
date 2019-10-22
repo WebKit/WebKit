@@ -60,7 +60,7 @@ const char* errorMessage(ErrorCode error)
     return errorMessages[static_cast<unsigned>(error)];
 }
 
-JSObject* errorToThrow(ExecState* exec, ErrorCode error)
+JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
 {
     switch (error) {
     case ErrorCode::NoError:
@@ -84,9 +84,9 @@ JSObject* errorToThrow(ExecState* exec, ErrorCode error)
     case ErrorCode::InvalidUnicodePropertyExpression:
     case ErrorCode::OffsetTooLarge:
     case ErrorCode::InvalidRegularExpressionFlags:
-        return createSyntaxError(exec, errorMessage(error));
+        return createSyntaxError(globalObject, errorMessage(error));
     case ErrorCode::TooManyDisjunctions:
-        return createOutOfMemoryError(exec, errorMessage(error));
+        return createOutOfMemoryError(globalObject, errorMessage(error));
     }
 
     ASSERT_NOT_REACHED();

@@ -164,7 +164,7 @@ void Debugger::attach(JSGlobalObject* globalObject)
         m_vm.heap.objectSpace().forEachLiveCell(iterationScope, gatherSourceProviders);
     }
     for (auto* sourceProvider : gatherSourceProviders.sourceProviders)
-        sourceParsed(globalObject->globalExec(), sourceProvider, -1, String());
+        sourceParsed(globalObject, sourceProvider, -1, String());
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
@@ -525,13 +525,14 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     if (!m_currentCallFrame)
         return false;
 
+    JSGlobalObject* globalObject = m_currentCallFrame->lexicalGlobalObject();
     if (exception) {
         // An erroneous condition counts as "false".
-        handleExceptionInBreakpointCondition(m_currentCallFrame, exception);
+        handleExceptionInBreakpointCondition(globalObject, exception);
         return false;
     }
 
-    return result.toBoolean(m_currentCallFrame);
+    return result.toBoolean(globalObject);
 }
 
 class Debugger::ClearCodeBlockDebuggerRequestsFunctor {
@@ -625,7 +626,7 @@ void Debugger::breakProgram()
     m_pauseAtNextOpportunity = true;
     setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm.topCallFrame;
-    pauseIfNeeded(m_currentCallFrame);
+    pauseIfNeeded(m_currentCallFrame->lexicalGlobalObject());
 }
 
 void Debugger::continueProgram()
@@ -670,17 +671,23 @@ void Debugger::stepOutOfFunction()
     notifyDoneProcessingDebuggerEvents();
 }
 
-void Debugger::updateCallFrame(CallFrame* callFrame, CallFrameUpdateAction action)
+static inline JSGlobalObject* lexicalGlobalObjectForCallFrame(VM& vm, CallFrame* callFrame)
+{
+    if (!callFrame)
+        return nullptr;
+    return callFrame->wasmAwareLexicalGlobalObject(vm);
+}
+
+void Debugger::updateCallFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrameUpdateAction action)
 {
     if (!callFrame) {
         m_currentCallFrame = nullptr;
         return;
     }
-
     updateCallFrameInternal(callFrame);
 
     if (action == AttemptPause)
-        pauseIfNeeded(callFrame);
+        pauseIfNeeded(globalObject);
 
     if (!isStepping())
         m_currentCallFrame = nullptr;
@@ -696,11 +703,10 @@ void Debugger::updateCallFrameInternal(CallFrame* callFrame)
     }
 }
 
-void Debugger::pauseIfNeeded(CallFrame* callFrame)
+void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 {
     VM& vm = m_vm;
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(callFrame);
 
     if (m_isPaused)
         return;
@@ -736,10 +742,8 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     // reseting the pause state before executing any breakpoint actions.
     TemporaryPausedState pausedState(*this);
 
-    JSGlobalObject* vmEntryGlobalObject = vm.vmEntryGlobalObject(callFrame);
-
     if (didHitBreakpoint) {
-        handleBreakpointHit(vmEntryGlobalObject, breakpoint);
+        handleBreakpointHit(globalObject, breakpoint);
         // Note that the actions can potentially stop the debugger, so we need to check that
         // we still have a current call frame when we get back.
         if (!m_currentCallFrame)
@@ -767,7 +771,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
             reason = PausedForBreakpoint;
         PauseReasonDeclaration rauseReasonDeclaration(*this, reason);
 
-        handlePause(vmEntryGlobalObject, m_reasonForPause);
+        handlePause(globalObject, m_reasonForPause);
         scope.releaseAssertNoException();
     }
 
@@ -779,7 +783,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     }
 }
 
-void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasCatchHandler)
+void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue exception, bool hasCatchHandler)
 {
     if (m_isPaused)
         return;
@@ -802,7 +806,7 @@ void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasCatchH
 
     m_hasHandlerForExceptionCallback = true;
     m_currentException = exception;
-    updateCallFrame(callFrame, AttemptPause);
+    updateCallFrame(globalObject, callFrame, AttemptPause);
     m_currentException = JSValue();
     m_hasHandlerForExceptionCallback = false;
 }
@@ -815,7 +819,7 @@ void Debugger::atStatement(CallFrame* callFrame)
     m_pastFirstExpressionInStatement = false;
 
     PauseReasonDeclaration reason(*this, PausedAtStatement);
-    updateCallFrame(callFrame, AttemptPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }
 
 void Debugger::atExpression(CallFrame* callFrame)
@@ -833,7 +837,7 @@ void Debugger::atExpression(CallFrame* callFrame)
     bool shouldAttemptPause = m_pauseAtNextOpportunity || m_pauseOnStepOut;
 
     PauseReasonDeclaration reason(*this, PausedAtExpression);
-    updateCallFrame(callFrame, shouldAttemptPause ? AttemptPause : NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, shouldAttemptPause ? AttemptPause : NoPause);
 }
 
 void Debugger::callEvent(CallFrame* callFrame)
@@ -841,7 +845,7 @@ void Debugger::callEvent(CallFrame* callFrame)
     if (m_isPaused)
         return;
 
-    updateCallFrame(callFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
 }
 
 void Debugger::returnEvent(CallFrame* callFrame)
@@ -851,7 +855,7 @@ void Debugger::returnEvent(CallFrame* callFrame)
 
     {
         PauseReasonDeclaration reason(*this, PausedBeforeReturn);
-        updateCallFrame(callFrame, AttemptPause);
+        updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
     }
 
     // Detach may have been called during pauseIfNeeded.
@@ -870,7 +874,7 @@ void Debugger::returnEvent(CallFrame* callFrame)
         m_pauseOnStepOut = true;
     }
 
-    updateCallFrame(callerFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callerFrame), callerFrame, NoPause);
 }
 
 void Debugger::unwindEvent(CallFrame* callFrame)
@@ -878,7 +882,7 @@ void Debugger::unwindEvent(CallFrame* callFrame)
     if (m_isPaused)
         return;
 
-    updateCallFrame(callFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
 
     if (!m_currentCallFrame)
         return;
@@ -890,7 +894,7 @@ void Debugger::unwindEvent(CallFrame* callFrame)
     if (m_currentCallFrame == m_pauseOnCallFrame)
         m_pauseOnCallFrame = callerFrame;
 
-    updateCallFrame(callerFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callerFrame), callerFrame, NoPause);
 }
 
 void Debugger::willExecuteProgram(CallFrame* callFrame)
@@ -898,7 +902,7 @@ void Debugger::willExecuteProgram(CallFrame* callFrame)
     if (m_isPaused)
         return;
 
-    updateCallFrame(callFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, NoPause);
 }
 
 void Debugger::didExecuteProgram(CallFrame* callFrame)
@@ -907,7 +911,7 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         return;
 
     PauseReasonDeclaration reason(*this, PausedAtEndOfProgram);
-    updateCallFrame(callFrame, AttemptPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 
     // Detach may have been called during pauseIfNeeded.
     if (!m_currentCallFrame)
@@ -925,7 +929,7 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
         m_pauseAtNextOpportunity = true;
     }
 
-    updateCallFrame(callerFrame, NoPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callerFrame), callerFrame, NoPause);
 
     // Do not continue stepping into an unknown future program.
     if (!m_currentCallFrame)
@@ -948,7 +952,7 @@ void Debugger::didReachBreakpoint(CallFrame* callFrame)
     PauseReasonDeclaration reason(*this, PausedForDebuggerStatement);
     m_pauseAtNextOpportunity = true;
     setSteppingMode(SteppingModeEnabled);
-    updateCallFrame(callFrame, AttemptPause);
+    updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }
 
 DebuggerCallFrame& Debugger::currentDebuggerCallFrame()

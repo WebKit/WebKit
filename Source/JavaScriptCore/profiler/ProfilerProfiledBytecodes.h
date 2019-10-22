@@ -37,7 +37,7 @@ public:
     
     const Bytecodes* bytecodes() const { return m_bytecodes; }
     
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     Bytecodes* m_bytecodes;

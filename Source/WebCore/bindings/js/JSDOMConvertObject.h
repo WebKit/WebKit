@@ -36,13 +36,13 @@ template<> struct Converter<IDLObject> : DefaultConverter<IDLObject> {
     static constexpr bool conversionHasSideEffects = false;
 
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static JSC::Strong<JSC::JSObject> convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static JSC::Strong<JSC::JSObject> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (!value.isObject()) {
-            exceptionThrower(state, scope);
+            exceptionThrower(lexicalGlobalObject, scope);
             return { };
         }
         

@@ -42,18 +42,18 @@ void JSStringIterator::finishCreation(VM& vm, JSGlobalObject*, JSString* iterate
     putDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName(), jsNumber(0));
 }
 
-JSValue JSStringIterator::iteratedValue(ExecState* exec) const
+JSValue JSStringIterator::iteratedValue(JSGlobalObject* globalObject) const
 {
-    return getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedStringPrivateName());
+    return getDirect(globalObject->vm(), globalObject->vm().propertyNames->builtinNames().iteratedStringPrivateName());
 }
 
-JSStringIterator* JSStringIterator::clone(ExecState* exec)
+JSStringIterator* JSStringIterator::clone(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     JSValue iteratedString = getDirect(vm, vm.propertyNames->builtinNames().iteratedStringPrivateName());
     JSValue nextIndex = getDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName());
 
-    auto clone = JSStringIterator::create(exec, exec->jsCallee()->globalObject(vm)->stringIteratorStructure(), asString(iteratedString));
+    auto clone = JSStringIterator::create(globalObject, globalObject->stringIteratorStructure(), asString(iteratedString));
     clone->putDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName(), nextIndex);
     return clone;
 }

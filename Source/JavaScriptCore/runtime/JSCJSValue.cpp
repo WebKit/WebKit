@@ -39,26 +39,26 @@
 namespace JSC {
 
 // ECMA 9.4
-double JSValue::toInteger(ExecState* exec) const
+double JSValue::toInteger(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
-    double d = toNumber(exec);
+    double d = toNumber(globalObject);
     return std::isnan(d) ? 0.0 : trunc(d);
 }
 
-double JSValue::toIntegerPreserveNaN(ExecState* exec) const
+double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
-    return trunc(toNumber(exec));
+    return trunc(toNumber(globalObject));
 }
 
-double JSValue::toLength(ExecState* exec) const
+double JSValue::toLength(JSGlobalObject* globalObject) const
 {
     // ECMA 7.1.15
     // http://www.ecma-international.org/ecma-262/6.0/#sec-tolength
-    double d = toInteger(exec);
+    double d = toInteger(globalObject);
     if (d <= 0)
         return 0.0;
     if (std::isinf(d))
@@ -66,11 +66,11 @@ double JSValue::toLength(ExecState* exec) const
     return std::min(d, maxSafeInteger());
 }
 
-double JSValue::toNumberSlowCase(ExecState* exec) const
+double JSValue::toNumberSlowCase(JSGlobalObject* globalObject) const
 {
     ASSERT(!isInt32() && !isDouble());
     if (isCell())
-        return asCell()->toNumber(exec);
+        return asCell()->toNumber(globalObject);
     if (isTrue())
         return 1.0;
     return isUndefined() ? PNaN : 0; // null and false both convert to 0.
@@ -91,23 +91,23 @@ Optional<double> JSValue::toNumberFromPrimitive() const
     return WTF::nullopt;
 }
 
-JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObject) const
+JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!isCell());
 
     if (isInt32() || isDouble())
-        return constructNumber(exec, globalObject, asValue());
+        return constructNumber(globalObject, asValue());
     if (isTrue() || isFalse())
-        return constructBooleanFromImmediateBoolean(exec, globalObject, asValue());
+        return constructBooleanFromImmediateBoolean(globalObject, asValue());
 
     ASSERT(isUndefinedOrNull());
-    throwException(exec, scope, createNotAnObjectError(exec, *this));
+    throwException(globalObject, scope, createNotAnObjectError(globalObject, *this));
     return nullptr;
 }
 
-JSValue JSValue::toThisSlowCase(ExecState* exec, ECMAMode ecmaMode) const
+JSValue JSValue::toThisSlowCase(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
     ASSERT(!isCell());
 
@@ -115,48 +115,48 @@ JSValue JSValue::toThisSlowCase(ExecState* exec, ECMAMode ecmaMode) const
         return *this;
 
     if (isInt32() || isDouble())
-        return constructNumber(exec, exec->lexicalGlobalObject(), asValue());
+        return constructNumber(globalObject, asValue());
     if (isTrue() || isFalse())
-        return constructBooleanFromImmediateBoolean(exec, exec->lexicalGlobalObject(), asValue());
+        return constructBooleanFromImmediateBoolean(globalObject, asValue());
     ASSERT(isUndefinedOrNull());
-    return exec->globalThisValue();
+    return globalObject->globalThis();
 }
 
-JSObject* JSValue::synthesizePrototype(ExecState* exec) const
+JSObject* JSValue::synthesizePrototype(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (isCell()) {
         if (isString())
-            return exec->lexicalGlobalObject()->stringPrototype();
+            return globalObject->stringPrototype();
         if (isBigInt())
-            return exec->lexicalGlobalObject()->bigIntPrototype();
+            return globalObject->bigIntPrototype();
         ASSERT(isSymbol());
-        return exec->lexicalGlobalObject()->symbolPrototype();
+        return globalObject->symbolPrototype();
     }
 
     if (isNumber())
-        return exec->lexicalGlobalObject()->numberPrototype();
+        return globalObject->numberPrototype();
     if (isBoolean())
-        return exec->lexicalGlobalObject()->booleanPrototype();
+        return globalObject->booleanPrototype();
 
     ASSERT(isUndefinedOrNull());
-    throwException(exec, scope, createNotAnObjectError(exec, *this));
+    throwException(globalObject, scope, createNotAnObjectError(globalObject, *this));
     return nullptr;
 }
 
 // ECMA 8.7.2
-bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (Optional<uint32_t> index = parseIndex(propertyName))
-        RELEASE_AND_RETURN(scope, putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode()));
+        RELEASE_AND_RETURN(scope, putToPrimitiveByIndex(globalObject, index.value(), value, slot.isStrictMode()));
 
     // Check if there are any setters or getters in the prototype chain
-    JSObject* obj = synthesizePrototype(exec);
+    JSObject* obj = synthesizePrototype(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !obj);
     if (UNLIKELY(!obj))
         return false;
@@ -166,11 +166,11 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             Structure* structure = obj->structure(vm);
             if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().hasPutPropertySecurityCheck())
                 break;
-            prototype = obj->getPrototype(vm, exec);
+            prototype = obj->getPrototype(vm, globalObject);
             RETURN_IF_EXCEPTION(scope, false);
 
             if (prototype.isNull())
-                return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+                return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
             obj = asObject(prototype);
         }
     }
@@ -178,57 +178,57 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     for (; ; obj = asObject(prototype)) {
         Structure* structure = obj->structure(vm);
         if (UNLIKELY(structure->typeInfo().hasPutPropertySecurityCheck())) {
-            obj->methodTable(vm)->doPutPropertySecurityCheck(obj, exec, propertyName, slot);
+            obj->methodTable(vm)->doPutPropertySecurityCheck(obj, globalObject, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, false);
         }
         unsigned attributes;
         PropertyOffset offset = structure->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
             if (attributes & PropertyAttribute::ReadOnly)
-                return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+                return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter())
-                RELEASE_AND_RETURN(scope, callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode));
+                RELEASE_AND_RETURN(scope, callSetter(globalObject, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode));
 
             if (gs.isCustomGetterSetter())
-                return callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+                return callCustomSetter(globalObject, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.
             break;
         }
 
-        prototype = obj->getPrototype(vm, exec);
+        prototype = obj->getPrototype(vm, globalObject);
         RETURN_IF_EXCEPTION(scope, false);
         if (prototype.isNull())
             break;
     }
     
-    return typeError(exec, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+    return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 }
 
-bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+bool JSValue::putToPrimitiveByIndex(JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(*this, shouldThrow);
-        return putToPrimitive(exec, Identifier::from(vm, propertyName), value, slot);
+        return putToPrimitive(globalObject, Identifier::from(vm, propertyName), value, slot);
     }
     
-    JSObject* prototype = synthesizePrototype(exec);
+    JSObject* prototype = synthesizePrototype(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !prototype);
     if (UNLIKELY(!prototype))
         return false;
     bool putResult = false;
-    bool success = prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult);
+    bool success = prototype->attemptToInterceptPutByIndexOnHoleForPrototype(globalObject, *this, propertyName, value, shouldThrow, putResult);
     RETURN_IF_EXCEPTION(scope, false);
     if (success)
         return putResult;
     
-    return typeError(exec, scope, shouldThrow, ReadonlyPropertyWriteError);
+    return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 }
 
 void JSValue::dump(PrintStream& out) const
@@ -353,9 +353,9 @@ bool JSValue::isValidCallee()
     return asObject(asCell())->globalObject();
 }
 
-JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnError) const
+JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmptyStringOnError) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto errorValue = [&] () -> JSString* {
@@ -382,30 +382,30 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
     if (isUndefined())
         return vm.smallStrings.undefinedString();
     if (isSymbol()) {
-        throwTypeError(exec, scope, "Cannot convert a symbol to a string"_s);
+        throwTypeError(globalObject, scope, "Cannot convert a symbol to a string"_s);
         return errorValue();
     }
     if (isBigInt()) {
         JSBigInt* bigInt = asBigInt(*this);
         if (auto digit = bigInt->singleDigitValueForString())
             return vm.smallStrings.singleCharacterString(*digit + '0');
-        JSString* returnString = jsNontrivialString(vm, bigInt->toString(exec, 10));
+        JSString* returnString = jsNontrivialString(vm, bigInt->toString(globalObject, 10));
         RETURN_IF_EXCEPTION(scope, errorValue());
         return returnString;
     }
 
     ASSERT(isCell());
-    JSValue value = asCell()->toPrimitive(exec, PreferString);
+    JSValue value = asCell()->toPrimitive(globalObject, PreferString);
     RETURN_IF_EXCEPTION(scope, errorValue());
     ASSERT(!value.isObject());
-    JSString* result = value.toString(exec);
+    JSString* result = value.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, errorValue());
     return result;
 }
 
-String JSValue::toWTFStringSlowCase(ExecState* exec) const
+String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (isInt32())
         return vm.numericStrings.add(asInt32());
     if (isDouble())
@@ -418,7 +418,7 @@ String JSValue::toWTFStringSlowCase(ExecState* exec) const
         return vm.propertyNames->nullKeyword.string();
     if (isUndefined())
         return vm.propertyNames->undefinedKeyword.string();
-    return toString(exec)->value(exec);
+    return toString(globalObject)->value(globalObject);
 }
 
 } // namespace JSC

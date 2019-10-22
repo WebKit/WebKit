@@ -85,32 +85,32 @@ RejectedPromiseTracker::RejectedPromiseTracker(ScriptExecutionContext& context, 
 
 RejectedPromiseTracker::~RejectedPromiseTracker() = default;
 
-static RefPtr<ScriptCallStack> createScriptCallStackFromReason(ExecState& state, JSValue reason)
+static RefPtr<ScriptCallStack> createScriptCallStackFromReason(JSGlobalObject& lexicalGlobalObject, JSValue reason)
 {
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
 
     // Always capture a stack from the exception if this rejection was an exception.
     if (auto* exception = vm.lastException()) {
         if (exception->value() == reason)
-            return createScriptCallStackFromException(&state, exception);
+            return createScriptCallStackFromException(&lexicalGlobalObject, exception);
     }
 
     // Otherwise, only capture a stack if a debugger is open.
-    if (state.lexicalGlobalObject()->debugger())
-        return createScriptCallStack(&state);
+    if (lexicalGlobalObject.debugger())
+        return createScriptCallStack(&lexicalGlobalObject);
 
     return nullptr;
 }
 
-void RejectedPromiseTracker::promiseRejected(ExecState& state, JSDOMGlobalObject& globalObject, JSPromise& promise)
+void RejectedPromiseTracker::promiseRejected(JSDOMGlobalObject& globalObject, JSPromise& promise)
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#the-hostpromiserejectiontracker-implementation
 
-    JSValue reason = promise.result(state.vm());
-    m_aboutToBeNotifiedRejectedPromises.append(UnhandledPromise { globalObject, promise, createScriptCallStackFromReason(state, reason) });
+    JSValue reason = promise.result(globalObject.vm());
+    m_aboutToBeNotifiedRejectedPromises.append(UnhandledPromise { globalObject, promise, createScriptCallStackFromReason(globalObject, reason) });
 }
 
-void RejectedPromiseTracker::promiseHandled(ExecState&, JSDOMGlobalObject& globalObject, JSPromise& promise)
+void RejectedPromiseTracker::promiseHandled(JSDOMGlobalObject& globalObject, JSPromise& promise)
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#the-hostpromiserejectiontracker-implementation
 
@@ -155,7 +155,7 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
         auto& domPromise = unhandledPromise.promise();
         if (domPromise.isSuspended())
             continue;
-        auto& state = *domPromise.globalObject()->globalExec();
+        auto& lexicalGlobalObject = *domPromise.globalObject();
         auto& promise = *domPromise.promise();
 
         if (promise.isHandled(vm))
@@ -171,7 +171,7 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
         target->dispatchEvent(event);
 
         if (!event->defaultPrevented())
-            m_context.reportUnhandledPromiseRejection(state, promise, unhandledPromise.callStack());
+            m_context.reportUnhandledPromiseRejection(lexicalGlobalObject, promise, unhandledPromise.callStack());
 
         if (!promise.isHandled(vm))
             m_outstandingRejectedPromises.set(&promise, &promise);

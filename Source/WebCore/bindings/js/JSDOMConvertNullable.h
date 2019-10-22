@@ -68,44 +68,44 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
     // 2. Otherwise, if V is null or undefined, then return the IDL nullable type T? value null.
     // 3. Otherwise, return the result of converting V using the rules for the inner IDL type T.
 
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         if (value.isUndefinedOrNull())
             return T::nullValue();
-        return Converter<T>::convert(state, value);
+        return Converter<T>::convert(lexicalGlobalObject, value);
     }
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSC::JSObject& thisObject)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject)
     {
         if (value.isUndefinedOrNull())
             return T::nullValue();
-        return Converter<T>::convert(state, value, thisObject);
+        return Converter<T>::convert(lexicalGlobalObject, value, thisObject);
     }
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject)
     {
         if (value.isUndefinedOrNull())
             return T::nullValue();
-        return Converter<T>::convert(state, value, globalObject);
-    }
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
-    {
-        if (value.isUndefinedOrNull())
-            return T::nullValue();
-        return Converter<T>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+        return Converter<T>::convert(lexicalGlobalObject, value, globalObject);
     }
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefinedOrNull())
             return T::nullValue();
-        return Converter<T>::convert(state, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
+        return Converter<T>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSC::JSObject& thisObject, ExceptionThrower&& exceptionThrower)
     {
         if (value.isUndefinedOrNull())
             return T::nullValue();
-        return Converter<T>::convert(state, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
+        return Converter<T>::convert(lexicalGlobalObject, value, thisObject, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, ExceptionThrower&& exceptionThrower)
+    {
+        if (value.isUndefinedOrNull())
+            return T::nullValue();
+        return Converter<T>::convert(lexicalGlobalObject, value, globalObject, std::forward<ExceptionThrower>(exceptionThrower));
     }
 };
 
@@ -123,26 +123,26 @@ template<typename T> struct JSConverter<IDLNullable<T>> {
         return JSConverter<T>::convert(T::extractValueFromNullable(value));
     }
     template<typename U>
-    static JSC::JSValue convert(JSC::ExecState& state, U&& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(state, T::extractValueFromNullable(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, T::extractValueFromNullable(value));
     }
     template<typename U>
-    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(state, globalObject, T::extractValueFromNullable(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, globalObject, T::extractValueFromNullable(value));
     }
 
     template<typename U>
-    static JSC::JSValue convertNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
         if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(state, globalObject, T::extractValueFromNullable(value));
+        return JSConverter<T>::convert(lexicalGlobalObject, globalObject, T::extractValueFromNullable(value));
     }
 };
 

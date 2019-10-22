@@ -134,12 +134,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
     *state.exceptionHandler = jit.label();
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
-    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+    jit.prepareCallOperation(vm);
     CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.jumpToExceptionHandler(vm);
     jit.addLinkTask(
         [=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(lookupExceptionHandler));
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
         });
 
     state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);

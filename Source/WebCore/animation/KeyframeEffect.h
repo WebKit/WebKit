@@ -47,8 +47,8 @@ class FilterOperations;
 class KeyframeEffect : public AnimationEffect
     , public CSSPropertyBlendingClient {
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeEffectOptions>>&&);
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Ref<KeyframeEffect>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&);
     ~KeyframeEffect() { }
 
@@ -101,8 +101,8 @@ public:
     Element* target() const { return m_target.get(); }
     void setTarget(RefPtr<Element>&&);
 
-    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::ExecState&);
-    ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
+    ExceptionOr<void> setKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
 
     IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }
     void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
@@ -143,7 +143,7 @@ private:
     enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
 
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
-    ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
     void updateAcceleratedAnimationState();
     void setAnimatedPropertiesInStyle(RenderStyle&, double);

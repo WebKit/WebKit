@@ -94,7 +94,7 @@ private:
 
     RefPtr<Element> tryToConstructCustomElement(Document&, const AtomString&);
 
-    void invokeCallback(Element&, JSC::JSObject* callback, const WTF::Function<void(JSC::ExecState*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&)>& addArguments = [](JSC::ExecState*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
+    void invokeCallback(Element&, JSC::JSObject* callback, const WTF::Function<void(JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&)>& addArguments = [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 
     QualifiedName m_name;
     JSC::Weak<JSC::JSObject> m_constructor;

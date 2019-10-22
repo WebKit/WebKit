@@ -127,64 +127,64 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // ------------------------------ Functions --------------------------------
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(fabs(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsNumber(fabs(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::acos(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::acos(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncASin(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncASin(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::asin(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::asin(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncATan(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncATan(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::atan(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::atan(callFrame->argument(0).toNumber(globalObject))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    double arg0 = callFrame->argument(0).toNumber(callFrame);
+    double arg0 = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    double arg1 = callFrame->argument(1).toNumber(callFrame);
+    double arg1 = callFrame->argument(1).toNumber(globalObject);
     return JSValue::encode(jsDoubleNumber(atan2(arg0, arg1)));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(ceil(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsNumber(ceil(callFrame->argument(0).toNumber(globalObject))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    uint32_t value = callFrame->argument(0).toUInt32(callFrame);
+    uint32_t value = callFrame->argument(0).toUInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(JSValue(clz(value)));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::cos(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::cos(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::exp(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::exp(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(floor(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsNumber(floor(callFrame->argument(0).toNumber(globalObject))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -196,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(JSGlobalObject* globalObject, Ca
     Vector<double, 8> args;
     args.reserveInitialCapacity(argsCount);
     for (unsigned i = 0; i < argsCount; ++i) {
-        args.uncheckedAppend(callFrame->uncheckedArgument(i).toNumber(callFrame));
+        args.uncheckedAppend(callFrame->uncheckedArgument(i).toNumber(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isinf(args[i]))
             return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
@@ -217,9 +217,9 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(JSGlobalObject* globalObject, Ca
     return JSValue::encode(jsDoubleNumber(sqrt(sum) * max));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::log(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::log(callFrame->argument(0).toNumber(globalObject))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -229,7 +229,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(JSGlobalObject* globalObject, Call
     unsigned argsCount = callFrame->argumentCount();
     double result = -std::numeric_limits<double>::infinity();
     for (unsigned k = 0; k < argsCount; ++k) {
-        double val = callFrame->uncheckedArgument(k).toNumber(callFrame);
+        double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {
             result = PNaN;
@@ -246,7 +246,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(JSGlobalObject* globalObject, Call
     unsigned argsCount = callFrame->argumentCount();
     double result = +std::numeric_limits<double>::infinity();
     for (unsigned k = 0; k < argsCount; ++k) {
-        double val = callFrame->uncheckedArgument(k).toNumber(callFrame);
+        double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {
             result = PNaN;
@@ -263,10 +263,10 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(JSGlobalObject* globalObject, Call
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    double arg = callFrame->argument(0).toNumber(callFrame);
+    double arg = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    double arg2 = callFrame->argument(1).toNumber(callFrame);
+    double arg2 = callFrame->argument(1).toNumber(globalObject);
 
     return JSValue::encode(JSValue(operationMathPow(arg, arg2)));
 }
@@ -276,14 +276,14 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncRandom(JSGlobalObject* globalObject, C
     return JSValue::encode(jsDoubleNumber(globalObject->weakRandomNumber()));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(jsRound(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsNumber(jsRound(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    double arg = callFrame->argument(0).toNumber(callFrame);
+    double arg = callFrame->argument(0).toNumber(globalObject);
     if (std::isnan(arg))
         return JSValue::encode(jsNaN());
     if (!arg)
@@ -291,95 +291,95 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(JSGlobalObject*, CallFrame* callF
     return JSValue::encode(jsNumber(std::signbit(arg) ? -1 : 1));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::sin(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::sin(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(sqrt(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(sqrt(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::tan(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::tan(callFrame->argument(0).toNumber(globalObject))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    int32_t left = callFrame->argument(0).toInt32(callFrame);
+    int32_t left = callFrame->argument(0).toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    int32_t right = callFrame->argument(1).toInt32(callFrame);
+    int32_t right = callFrame->argument(1).toInt32(globalObject);
     return JSValue::encode(jsNumber(left * right));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncACosh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncACosh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::acosh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::acosh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncASinh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncASinh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::asinh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::asinh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncATanh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncATanh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::atanh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::atanh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncCbrt(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCbrt(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::cbrt(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::cbrt(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::cosh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::cosh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::expm1(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::expm1(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(static_cast<float>(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(static_cast<float>(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncLog1p(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog1p(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::log1p(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::log1p(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncLog10(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog10(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::log10(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::log10(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncLog2(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog2(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::log2(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::log2(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::sinh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::sinh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncTanh(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTanh(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsDoubleNumber(Math::tanh(callFrame->argument(0).toNumber(callFrame))));
+    return JSValue::encode(jsDoubleNumber(Math::tanh(callFrame->argument(0).toNumber(globalObject))));
 }
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    return JSValue::encode(jsNumber(callFrame->argument(0).toIntegerPreserveNaN(callFrame)));
+    return JSValue::encode(jsNumber(callFrame->argument(0).toIntegerPreserveNaN(globalObject)));
 }
 
 } // namespace JSC

@@ -41,21 +41,21 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSMapType, StructureFlags), info());
     }
 
-    static JSMap* create(ExecState* exec, VM& vm, Structure* structure)
+    static JSMap* create(JSGlobalObject* globalObject, VM& vm, Structure* structure)
     {
         JSMap* instance = new (NotNull, allocateCell<JSMap>(vm.heap)) JSMap(vm, structure);
-        instance->finishCreation(exec, vm);
+        instance->finishCreation(globalObject, vm);
         return instance;
     }
 
-    ALWAYS_INLINE void set(ExecState* exec, JSValue key, JSValue value)
+    ALWAYS_INLINE void set(JSGlobalObject* globalObject, JSValue key, JSValue value)
     {
-        add(exec, key, value);
+        add(globalObject, key, value);
     }
 
     bool isIteratorProtocolFastAndNonObservable();
     bool canCloneFastAndNonObservable(Structure*);
-    JSMap* clone(ExecState*, VM&, Structure*);
+    JSMap* clone(JSGlobalObject*, VM&, Structure*);
 
 private:
     JSMap(VM& vm, Structure* structure)
@@ -63,7 +63,7 @@ private:
     {
     }
 
-    static String toStringName(const JSObject*, ExecState*);
+    static String toStringName(const JSObject*, JSGlobalObject*);
 };
 
 static_assert(std::is_final<JSMap>::value, "Required for JSType based casting");

@@ -147,11 +147,11 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
     }
 }
 
-OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
+OpaqueJSClassContextData& OpaqueJSClass::contextData(JSGlobalObject* globalObject)
 {
-    std::unique_ptr<OpaqueJSClassContextData>& contextData = exec->lexicalGlobalObject()->opaqueJSClassData().add(this, nullptr).iterator->value;
+    std::unique_ptr<OpaqueJSClassContextData>& contextData = globalObject->opaqueJSClassData().add(this, nullptr).iterator->value;
     if (!contextData)
-        contextData = makeUnique<OpaqueJSClassContextData>(exec->vm(), this);
+        contextData = makeUnique<OpaqueJSClassContextData>(globalObject->vm(), this);
     return *contextData;
 }
 
@@ -161,17 +161,17 @@ String OpaqueJSClass::className()
     return m_className.isolatedCopy();
 }
 
-OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::ExecState* exec)
+OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::JSGlobalObject* globalObject)
 {
-    return contextData(exec).staticValues.get();
+    return contextData(globalObject).staticValues.get();
 }
 
-OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(JSC::ExecState* exec)
+OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(JSC::JSGlobalObject* globalObject)
 {
-    return contextData(exec).staticFunctions.get();
+    return contextData(globalObject).staticFunctions.get();
 }
 
-JSObject* OpaqueJSClass::prototype(ExecState* exec)
+JSObject* OpaqueJSClass::prototype(JSGlobalObject* globalObject)
 {
     /* Class (C++) and prototype (JS) inheritance are parallel, so:
      *     (C++)      |        (JS)
@@ -184,16 +184,16 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
     if (!prototypeClass)
         return 0;
 
-    OpaqueJSClassContextData& jsClassData = contextData(exec);
+    OpaqueJSClassContextData& jsClassData = contextData(globalObject);
 
     if (JSObject* prototype = jsClassData.cachedPrototype.get())
         return prototype;
 
     // Recursive, but should be good enough for our purposes
-    JSObject* prototype = JSCallbackObject<JSDestructibleObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
+    JSObject* prototype = JSCallbackObject<JSDestructibleObject>::create(globalObject, globalObject->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
     if (parentClass) {
-        if (JSObject* parentPrototype = parentClass->prototype(exec))
-            prototype->setPrototypeDirect(exec->vm(), parentPrototype);
+        if (JSObject* parentPrototype = parentClass->prototype(globalObject))
+            prototype->setPrototypeDirect(globalObject->vm(), parentPrototype);
     }
 
     jsClassData.cachedPrototype = Weak<JSObject>(prototype);

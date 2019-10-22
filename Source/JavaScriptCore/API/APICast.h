@@ -38,7 +38,6 @@ namespace JSC {
     class VM;
     class JSObject;
     class JSValue;
-    using ExecState = CallFrame;
 }
 
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
@@ -50,26 +49,26 @@ typedef struct OpaqueJSValue* JSObjectRef;
 
 /* Opaque typing convenience methods */
 
-inline JSC::ExecState* toJS(JSContextRef c)
+inline JSC::JSGlobalObject* toJS(JSContextRef context)
 {
-    ASSERT(c);
-    return reinterpret_cast<JSC::ExecState*>(const_cast<OpaqueJSContext*>(c));
+    ASSERT(context);
+    return reinterpret_cast<JSC::JSGlobalObject*>(const_cast<OpaqueJSContext*>(context));
 }
 
-inline JSC::ExecState* toJS(JSGlobalContextRef c)
+inline JSC::JSGlobalObject* toJS(JSGlobalContextRef context)
 {
-    ASSERT(c);
-    return reinterpret_cast<JSC::ExecState*>(c);
+    ASSERT(context);
+    return reinterpret_cast<JSC::JSGlobalObject*>(context);
 }
 
 inline JSC::JSGlobalObject* toJSGlobalObject(JSGlobalContextRef context)
 {
-    return toJS(context)->lexicalGlobalObject();
+    return toJS(context);
 }
 
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
+inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
 {
-    ASSERT_UNUSED(exec, exec);
+    ASSERT_UNUSED(globalObject, globalObject);
 #if !CPU(ADDRESS64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
@@ -85,13 +84,13 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
     if (!result)
         return JSC::jsNull();
     if (result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable(exec->vm()));
+        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
     return result;
 }
 
-inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
+inline JSC::JSValue toJSForGC(JSC::JSGlobalObject* globalObject, JSValueRef v)
 {
-    ASSERT_UNUSED(exec, exec);
+    ASSERT_UNUSED(globalObject, globalObject);
 #if !CPU(ADDRESS64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
@@ -101,7 +100,7 @@ inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
     JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
 #endif
     if (result && result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable(exec->vm()));
+        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
     return result;
 }
 
@@ -144,9 +143,9 @@ inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
 #endif
 }
 
-inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
+inline JSValueRef toRef(JSC::JSGlobalObject* globalObject, JSC::JSValue v)
 {
-    return toRef(exec->vm(), v);
+    return toRef(getVM(globalObject), v);
 }
 
 inline JSObjectRef toRef(JSC::JSObject* o)
@@ -159,15 +158,14 @@ inline JSObjectRef toRef(const JSC::JSObject* o)
     return reinterpret_cast<JSObjectRef>(const_cast<JSC::JSObject*>(o));
 }
 
-inline JSContextRef toRef(JSC::ExecState* e)
+inline JSContextRef toRef(JSC::JSGlobalObject* globalObject)
 {
-    return reinterpret_cast<JSContextRef>(e);
+    return reinterpret_cast<JSContextRef>(globalObject);
 }
 
-inline JSGlobalContextRef toGlobalRef(JSC::ExecState* e)
+inline JSGlobalContextRef toGlobalRef(JSC::JSGlobalObject* globalObject)
 {
-    ASSERT(e == e->lexicalGlobalObject()->globalExec());
-    return reinterpret_cast<JSGlobalContextRef>(e);
+    return reinterpret_cast<JSGlobalContextRef>(globalObject);
 }
 
 inline JSPropertyNameAccumulatorRef toRef(JSC::PropertyNameArray* l)

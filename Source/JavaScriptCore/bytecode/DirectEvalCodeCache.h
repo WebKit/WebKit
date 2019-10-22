@@ -89,10 +89,10 @@ namespace JSC {
             return m_cacheMap.inlineGet(CacheKey(evalSource, callSiteIndex)).get();
         }
         
-        void set(ExecState* exec, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)
+        void set(JSGlobalObject* globalObject, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)
         {
             if (m_cacheMap.size() < maxCacheEntries)
-                setSlow(exec, owner, evalSource, callSiteIndex, evalExecutable);
+                setSlow(globalObject, owner, evalSource, callSiteIndex, evalExecutable);
         }
 
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
@@ -104,7 +104,7 @@ namespace JSC {
     private:
         static constexpr int maxCacheEntries = 64;
 
-        void setSlow(ExecState*, JSCell* owner, const String& evalSource, CallSiteIndex, DirectEvalExecutable*);
+        void setSlow(JSGlobalObject*, JSCell* owner, const String& evalSource, CallSiteIndex, DirectEvalExecutable*);
 
         typedef HashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;

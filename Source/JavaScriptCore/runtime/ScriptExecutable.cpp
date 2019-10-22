@@ -256,7 +256,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     ASSERT(endColumn() != UINT_MAX);
 
     JSGlobalObject* globalObject = scope->globalObject(vm);
-    ExecState* exec = globalObject->globalExec();
 
     if (classInfo(vm) == EvalExecutable::info()) {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
@@ -268,8 +267,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
-                exec, throwScope,
-                createOutOfMemoryError(exec));
+                globalObject, throwScope,
+                createOutOfMemoryError(globalObject));
             return nullptr;
         }
         return codeBlock;
@@ -285,8 +284,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
-                exec, throwScope,
-                createOutOfMemoryError(exec));
+                globalObject, throwScope,
+                createOutOfMemoryError(globalObject));
             return nullptr;
         }
         return codeBlock;
@@ -302,8 +301,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
-                exec, throwScope,
-                createOutOfMemoryError(exec));
+                globalObject, throwScope,
+                createOutOfMemoryError(globalObject));
             return nullptr;
         }
         return codeBlock;
@@ -334,7 +333,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         lastLine(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = throwException(
-            globalObject->globalExec(), throwScope,
+            globalObject, throwScope,
             error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
@@ -413,8 +412,8 @@ Exception* ScriptExecutable::prepareForExecutionImpl(
     DeferGCForAWhile deferGC(vm.heap);
 
     if (UNLIKELY(vm.getAndClearFailNextNewCodeBlock())) {
-        auto& state = *scope->globalObject(vm)->globalExec();
-        return throwException(&state, throwScope, createError(&state, "Forced Failure"_s));
+        JSGlobalObject* globalObject = scope->globalObject(vm);
+        return throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
     }
 
     Exception* exception = nullptr;
@@ -446,9 +445,9 @@ ScriptExecutable* ScriptExecutable::topLevelExecutable()
     }
 }
 
-JSArray* ScriptExecutable::createTemplateObject(ExecState* exec, JSTemplateObjectDescriptor* descriptor)
+JSArray* ScriptExecutable::createTemplateObject(JSGlobalObject* globalObject, JSTemplateObjectDescriptor* descriptor)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     TemplateObjectMap& templateObjectMap = ensureTemplateObjectMap(vm);
@@ -459,7 +458,7 @@ JSArray* ScriptExecutable::createTemplateObject(ExecState* exec, JSTemplateObjec
     }
     if (JSArray* array = result.iterator->value.get())
         return array;
-    JSArray* templateObject = descriptor->createTemplateObject(exec);
+    JSArray* templateObject = descriptor->createTemplateObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     result.iterator->value.set(vm, this, templateObject);
     return templateObject;

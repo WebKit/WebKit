@@ -35,43 +35,43 @@ class ScriptArguments;
 namespace JSC {
 
 class CallFrame;
-using ExecState = CallFrame;
+class JSGlobalObject;
 
 class ConsoleClient {
 public:
     virtual ~ConsoleClient() { }
 
     JS_EXPORT_PRIVATE static void printConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber);
-    JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&);
+    JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
 
-    void logWithLevel(ExecState*, Ref<Inspector::ScriptArguments>&&, MessageLevel);
-    void clear(ExecState*);
-    void dir(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void dirXML(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void table(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void trace(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void assertion(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void group(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void groupCollapsed(ExecState*, Ref<Inspector::ScriptArguments>&&);
-    void groupEnd(ExecState*, Ref<Inspector::ScriptArguments>&&);
+    void logWithLevel(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&, MessageLevel);
+    void clear(JSGlobalObject*);
+    void dir(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void dirXML(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void table(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void trace(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void assertion(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void group(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void groupCollapsed(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
+    void groupEnd(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);
 
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void count(ExecState*, const String& label) = 0;
-    virtual void countReset(ExecState*, const String& label) = 0;
-    virtual void profile(ExecState*, const String& title) = 0;
-    virtual void profileEnd(ExecState*, const String& title) = 0;
-    virtual void takeHeapSnapshot(ExecState*, const String& title) = 0;
-    virtual void time(ExecState*, const String& label) = 0;
-    virtual void timeLog(ExecState*, const String& label, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void timeEnd(ExecState*, const String& label) = 0;
-    virtual void timeStamp(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void record(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void recordEnd(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
-    virtual void screenshot(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void count(JSGlobalObject*, const String& label) = 0;
+    virtual void countReset(JSGlobalObject*, const String& label) = 0;
+    virtual void profile(JSGlobalObject*, const String& title) = 0;
+    virtual void profileEnd(JSGlobalObject*, const String& title) = 0;
+    virtual void takeHeapSnapshot(JSGlobalObject*, const String& title) = 0;
+    virtual void time(JSGlobalObject*, const String& label) = 0;
+    virtual void timeLog(JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void timeEnd(JSGlobalObject*, const String& label) = 0;
+    virtual void timeStamp(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void record(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void recordEnd(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void screenshot(JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) = 0;
 
 private:
     enum ArgumentRequirement { ArgumentRequired, ArgumentNotRequired };
-    void internalMessageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&, ArgumentRequirement);
+    void internalMessageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&, ArgumentRequirement);
 };
 
 } // namespace JSC

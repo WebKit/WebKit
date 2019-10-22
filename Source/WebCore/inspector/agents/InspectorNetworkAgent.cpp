@@ -963,7 +963,7 @@ WebSocket* InspectorNetworkAgent::webSocketForRequestId(const String& requestId)
     return nullptr;
 }
 
-static JSC::JSValue webSocketAsScriptValue(JSC::ExecState& state, WebSocket* webSocket)
+static JSC::JSValue webSocketAsScriptValue(JSC::JSGlobalObject& state, WebSocket* webSocket)
 {
     JSC::JSLockHolder lock(&state);
     return toJS(&state, deprecatedGlobalObjectForPrototype(&state), webSocket);

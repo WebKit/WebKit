@@ -646,17 +646,17 @@ void RTCPeerConnection::dispatchEvent(Event& event)
     EventTarget::dispatchEvent(event);
 }
 
-static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certificateTypeFromAlgorithmIdentifier(JSC::ExecState& state, RTCPeerConnection::AlgorithmIdentifier&& algorithmIdentifier)
+static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certificateTypeFromAlgorithmIdentifier(JSC::JSGlobalObject& lexicalGlobalObject, RTCPeerConnection::AlgorithmIdentifier&& algorithmIdentifier)
 {
     if (WTF::holds_alternative<String>(algorithmIdentifier))
         return Exception { NotSupportedError, "Algorithm is not supported"_s };
 
     auto& value = WTF::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
 
-    JSC::VM& vm = state.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto parameters = convertDictionary<RTCPeerConnection::CertificateParameters>(state, value.get());
+    auto parameters = convertDictionary<RTCPeerConnection::CertificateParameters>(lexicalGlobalObject, value.get());
     if (UNLIKELY(scope.exception())) {
         scope.clearException();
         return Exception { TypeError, "Unable to read certificate parameters"_s };
@@ -692,14 +692,14 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
     return Exception { NotSupportedError, "Algorithm is not supported"_s };
 }
 
-void RTCPeerConnection::generateCertificate(JSC::ExecState& state, AlgorithmIdentifier&& algorithmIdentifier, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
+void RTCPeerConnection::generateCertificate(JSC::JSGlobalObject& lexicalGlobalObject, AlgorithmIdentifier&& algorithmIdentifier, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
 {
-    auto parameters = certificateTypeFromAlgorithmIdentifier(state, WTFMove(algorithmIdentifier));
+    auto parameters = certificateTypeFromAlgorithmIdentifier(lexicalGlobalObject, WTFMove(algorithmIdentifier));
     if (parameters.hasException()) {
         promise.reject(parameters.releaseException());
         return;
     }
-    auto& document = downcast<Document>(*JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext());
+    auto& document = downcast<Document>(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext());
     PeerConnectionBackend::generateCertificate(document, parameters.returnValue(), WTFMove(promise));
 }
 

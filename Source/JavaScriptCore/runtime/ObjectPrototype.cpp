@@ -78,10 +78,10 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 
 // ------------------------------ Functions --------------------------------
 
-EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    JSValue thisValue = callFrame->thisValue().toThis(callFrame, StrictMode);
-    JSObject* valueObj = thisValue.toObject(callFrame);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
     return JSValue::encode(valueObj);
@@ -92,10 +92,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(callFrame, StrictMode);
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSObject* thisObject = thisValue.toObject(callFrame);
+    JSObject* thisObject = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
@@ -103,13 +103,13 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(JSGlobalObject* globa
     Structure* structure = thisObject->structure(vm);
     HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
     if (Optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
-        ASSERT(*result == thisObject->hasOwnProperty(callFrame, propertyName));
+        ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName));
         scope.assertNoException();
         return JSValue::encode(jsBoolean(*result));
     }
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    bool result = thisObject->hasOwnProperty(callFrame, propertyName, slot);
+    bool result = thisObject->hasOwnProperty(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName, result);
@@ -121,8 +121,8 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(callFrame, StrictMode);
-    JSObject* thisObj = thisValue.toObject(callFrame);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
+    JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
@@ -130,7 +130,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
     if (!callFrame->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
 
-    JSValue v = asObject(callFrame->argument(0))->getPrototype(vm, callFrame);
+    JSValue v = asObject(callFrame->argument(0))->getPrototype(vm, globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     while (true) {
@@ -138,7 +138,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(JSGlobalObject* global
             return JSValue::encode(jsBoolean(false));
         if (v == thisObj)
             return JSValue::encode(jsBoolean(true));
-        v = asObject(v)->getPrototype(vm, callFrame);
+        v = asObject(v)->getPrototype(vm, globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 }
@@ -148,15 +148,15 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue get = callFrame->argument(1);
     CallData callData;
     if (getCallData(vm, get, callData) == CallType::None)
-        return throwVMTypeError(callFrame, scope, "invalid getter usage"_s);
+        return throwVMTypeError(globalObject, scope, "invalid getter usage"_s);
 
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertyDescriptor descriptor;
@@ -166,7 +166,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineGetter(JSGlobalObject* globalO
 
     bool shouldThrow = true;
     scope.release();
-    thisObject->methodTable(vm)->defineOwnProperty(thisObject, callFrame, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -176,15 +176,15 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue set = callFrame->argument(1);
     CallData callData;
     if (getCallData(vm, set, callData) == CallType::None)
-        return throwVMTypeError(callFrame, scope, "invalid setter usage"_s);
+        return throwVMTypeError(globalObject, scope, "invalid setter usage"_s);
 
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertyDescriptor descriptor;
@@ -194,7 +194,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncDefineSetter(JSGlobalObject* globalO
 
     bool shouldThrow = true;
     scope.release();
-    thisObject->methodTable(vm)->defineOwnProperty(thisObject, callFrame, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -204,14 +204,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    bool hasProperty = thisObject->getPropertySlot(callFrame, propertyName, slot);
+    bool hasProperty = thisObject->getPropertySlot(globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
         if (slot.isAccessor()) {
@@ -221,7 +221,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(JSGlobalObject* globalO
         if (slot.attributes() & PropertyAttribute::CustomAccessor) {
             PropertyDescriptor descriptor;
             ASSERT(slot.slotBase());
-            if (slot.slotBase()->getOwnPropertyDescriptor(callFrame, propertyName, descriptor))
+            if (slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
                 return descriptor.getterPresent() ? JSValue::encode(descriptor.getter()) : JSValue::encode(jsUndefined());
         }
     }
@@ -234,14 +234,14 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = callFrame->thisValue().toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
-    bool hasProperty = thisObject->getPropertySlot(callFrame, propertyName, slot);
+    bool hasProperty = thisObject->getPropertySlot(globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
         if (slot.isAccessor()) {
@@ -251,7 +251,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(JSGlobalObject* globalO
         if (slot.attributes() & PropertyAttribute::CustomAccessor) {
             PropertyDescriptor descriptor;
             ASSERT(slot.slotBase());
-            if (slot.slotBase()->getOwnPropertyDescriptor(callFrame, propertyName, descriptor))
+            if (slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
                 return descriptor.setterPresent() ? JSValue::encode(descriptor.setter()) : JSValue::encode(jsUndefined());
         }
     }
@@ -264,15 +264,15 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto propertyName = callFrame->argument(0).toPropertyKey(callFrame);
+    auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSObject* thisObject = callFrame->thisValue().toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* thisObject = callFrame->thisValue().toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     scope.release();
     PropertyDescriptor descriptor;
-    bool enumerable = thisObject->getOwnPropertyDescriptor(callFrame, propertyName, descriptor) && descriptor.enumerable();
+    bool enumerable = thisObject->getOwnPropertyDescriptor(globalObject, propertyName, descriptor) && descriptor.enumerable();
     return JSValue::encode(jsBoolean(enumerable));
 }
 
@@ -288,24 +288,24 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(JSGlobalObject* globa
     // 2. Invoke(V, "toString")
 
     // Let O be the result of calling ToObject passing the this value as the argument.
-    JSObject* object = thisValue.toThis(callFrame, StrictMode).toObject(callFrame);
+    JSObject* object = thisValue.toThis(globalObject, StrictMode).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // Let toString be the O.[[Get]]("toString", V)
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
-    bool hasProperty = object->getPropertySlot(callFrame, vm.propertyNames->toString, slot);
+    bool hasProperty = object->getPropertySlot(globalObject, vm.propertyNames->toString, slot);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    JSValue toString = hasProperty ? slot.getValue(callFrame, vm.propertyNames->toString) : jsUndefined();
+    JSValue toString = hasProperty ? slot.getValue(globalObject, vm.propertyNames->toString) : jsUndefined();
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // If IsCallable(toString) is false, throw a TypeError exception.
     CallData callData;
     CallType callType = getCallData(vm, toString, callData);
     if (callType == CallType::None)
-        return throwVMTypeError(callFrame, scope);
+        return throwVMTypeError(globalObject, scope);
 
     // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(callFrame, toString, callType, callData, thisValue, *vm.emptyList)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, toString, callType, callData, thisValue, *vm.emptyList)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -313,10 +313,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(callFrame, StrictMode);
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, StrictMode);
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
-    JSObject* thisObject = thisValue.toObject(callFrame);
+    JSObject* thisObject = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (!thisObject)
         return JSValue::encode(jsUndefined());
@@ -326,26 +326,26 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(JSGlobalObject* globalObjec
         return JSValue::encode(result);
 
     PropertyName toStringTagSymbol = vm.propertyNames->toStringTagSymbol;
-    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPropertySlot(callFrame, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
+    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->getPropertySlot(globalObject, toStringTagSymbol, [&] (bool found, PropertySlot& toStringTagSlot) -> JSValue {
         if (found) {
-            JSValue stringTag = toStringTagSlot.getValue(callFrame, toStringTagSymbol);
+            JSValue stringTag = toStringTagSlot.getValue(globalObject, toStringTagSymbol);
             RETURN_IF_EXCEPTION(scope, { });
             if (stringTag.isString()) {
-                JSString* result = jsString(callFrame, vm.smallStrings.objectStringStart(), asString(stringTag), vm.smallStrings.singleCharacterString(']'));
+                JSString* result = jsString(globalObject, vm.smallStrings.objectStringStart(), asString(stringTag), vm.smallStrings.singleCharacterString(']'));
                 RETURN_IF_EXCEPTION(scope, { });
-                thisObject->structure(vm)->setObjectToStringValue(callFrame, vm, result, toStringTagSlot);
+                thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, result, toStringTagSlot);
                 return result;
             }
         }
 
-        String tag = thisObject->methodTable(vm)->toStringName(thisObject, callFrame);
+        String tag = thisObject->methodTable(vm)->toStringName(thisObject, globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         String newString = tryMakeString("[object ", WTFMove(tag), "]");
         if (!newString)
-            return throwOutOfMemoryError(callFrame, scope);
+            return throwOutOfMemoryError(globalObject, scope);
 
         auto result = jsNontrivialString(vm, newString);
-        thisObject->structure(vm)->setObjectToStringValue(callFrame, vm, result, toStringTagSlot);
+        thisObject->structure(vm)->setObjectToStringValue(globalObject, vm, result, toStringTagSlot);
         return result;
     })));
 }

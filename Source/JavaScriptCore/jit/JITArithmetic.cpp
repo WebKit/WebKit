@@ -265,7 +265,7 @@ void JIT::emit_compareUnsigned(const Instruction* instruction, RelationalConditi
 }
 
 template<typename Op>
-void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleCondition condition, size_t (JIT_OPERATION *operation)(JSGlobalObject*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
     int op1 = bytecode.m_lhs.offset();
@@ -281,7 +281,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
 
         emitGetVirtualRegister(op1, argumentGPR0);
         emitGetVirtualRegister(op2, argumentGPR1);
-        callOperation(operation, argumentGPR0, argumentGPR1);
+        callOperation(operation, TrustedImmPtr(m_codeBlock->globalObject()), argumentGPR0, argumentGPR1);
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
         return;
     }
@@ -307,7 +307,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
         }
 
         emitGetVirtualRegister(op2, regT1);
-        callOperation(operation, regT0, regT1);
+        callOperation(operation, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
         return;
     }
@@ -333,7 +333,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
         }
 
         emitGetVirtualRegister(op1, regT2);
-        callOperation(operation, regT2, regT1);
+        callOperation(operation, TrustedImmPtr(m_codeBlock->globalObject()), regT2, regT1);
         emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
         return;
     }
@@ -359,7 +359,7 @@ void JIT::emit_compareAndJumpSlow(const Instruction* instruction, DoubleConditio
     }
 
     linkSlowCase(iter); // RHS is not Int.
-    callOperation(operation, regT0, regT1);
+    callOperation(operation, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
 }
 
@@ -687,9 +687,9 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
     if (!generatedInlineCode) {
         ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, resultRegs, srcRegs, arithProfile);
+            callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, arithProfile);
         else
-            callOperationWithResult(nonProfiledFunction, resultRegs, srcRegs);
+            callOperationWithResult(nonProfiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs);
     } else
         addSlowCase(mathICGenerationState.slowPathJumps);
 
@@ -760,9 +760,9 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
             emitGetVirtualRegister(op2, rightRegs);
         ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, resultRegs, leftRegs, rightRegs, arithProfile);
+            callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, arithProfile);
         else
-            callOperationWithResult(nonProfiledFunction, resultRegs, leftRegs, rightRegs);
+            callOperationWithResult(nonProfiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs);
     } else
         addSlowCase(mathICGenerationState.slowPathJumps);
 
@@ -801,11 +801,11 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
     ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
-            mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(profiledRepatchFunction), resultRegs, srcRegs, TrustedImmPtr(mathIC));
+            mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_GJMic>(profiledRepatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, srcRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, arithProfile);
     } else
-        mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(repatchFunction), resultRegs, srcRegs, TrustedImmPtr(mathIC));
+        mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_GJMic>(repatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, TrustedImmPtr(mathIC));
 
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
@@ -867,11 +867,11 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
-            mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(profiledRepatchFunction), resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+            mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(profiledRepatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, leftRegs, rightRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, arithProfile);
     } else
-        mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(repatchFunction), resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+        mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(repatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, TrustedImmPtr(mathIC));
 
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();

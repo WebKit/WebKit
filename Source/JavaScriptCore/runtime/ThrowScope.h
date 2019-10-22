@@ -31,7 +31,6 @@ namespace JSC {
 
 class CallFrame;
 class JSObject;
-using ExecState = CallFrame;
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
@@ -48,9 +47,9 @@ public:
     ThrowScope(const ThrowScope&) = delete;
     ThrowScope(ThrowScope&&) = default;
 
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, Exception*);
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSObject*);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSObject*);
 
     void release() { m_isReleased = true; }
 
@@ -78,9 +77,9 @@ public:
     ThrowScope(const ThrowScope&) = delete;
     ThrowScope(ThrowScope&&) = default;
 
-    ALWAYS_INLINE Exception* throwException(ExecState* exec, Exception* exception) { return m_vm.throwException(exec, exception); }
-    ALWAYS_INLINE Exception* throwException(ExecState* exec, JSValue value) { return m_vm.throwException(exec, value); }
-    ALWAYS_INLINE Exception* throwException(ExecState* exec, JSObject* obj) { return m_vm.throwException(exec, obj); }
+    ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, Exception* exception) { return m_vm.throwException(globalObject, exception); }
+    ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, JSValue value) { return m_vm.throwException(globalObject, value); }
+    ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, JSObject* obj) { return m_vm.throwException(globalObject, obj); }
 
     ALWAYS_INLINE void release() { }
 };
@@ -90,19 +89,19 @@ public:
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
-ALWAYS_INLINE Exception* throwException(ExecState* exec, ThrowScope& scope, Exception* exception)
+ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, ThrowScope& scope, Exception* exception)
 {
-    return scope.throwException(exec, exception);
+    return scope.throwException(globalObject, exception);
 }
 
-ALWAYS_INLINE Exception* throwException(ExecState* exec, ThrowScope& scope, JSValue value)
+ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, ThrowScope& scope, JSValue value)
 {
-    return scope.throwException(exec, value);
+    return scope.throwException(globalObject, value);
 }
 
-ALWAYS_INLINE Exception* throwException(ExecState* exec, ThrowScope& scope, JSObject* obj)
+ALWAYS_INLINE Exception* throwException(JSGlobalObject* globalObject, ThrowScope& scope, JSObject* obj)
 {
-    return scope.throwException(exec, obj);
+    return scope.throwException(globalObject, obj);
 }
 
 } // namespace JSC

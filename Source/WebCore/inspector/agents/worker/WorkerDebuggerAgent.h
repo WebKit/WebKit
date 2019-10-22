@@ -39,7 +39,7 @@ public:
     ~WorkerDebuggerAgent() override;
 
     // ScriptDebugListener
-    void breakpointActionLog(JSC::ExecState&, const String&) override;
+    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
 
 private:
     // We don't need to mute console for workers.

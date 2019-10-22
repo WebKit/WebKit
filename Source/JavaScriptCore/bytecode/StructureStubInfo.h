@@ -252,7 +252,7 @@ inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStu
     return structureStubInfo.codeOrigin;
 }
 
-inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(AccessType type)
+inline auto appropriateOptimizingGetByIdFunction(AccessType type) -> decltype(&operationGetByIdOptimize)
 {
     switch (type) {
     case AccessType::Get:
@@ -268,7 +268,7 @@ inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(AccessType typ
     }
 }
 
-inline J_JITOperation_EJI appropriateGenericGetByIdFunction(AccessType type)
+inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&operationGetByIdGeneric)
 {
     switch (type) {
     case AccessType::Get:

@@ -35,6 +35,7 @@
 #include "JSCInlines.h"
 #include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
+#include "ProbeContext.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
 #include <wtf/StringPrintStream.h>
@@ -70,8 +71,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM
 
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
 
-    jit.setupArguments<decltype(lookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::callFrameRegister);
-    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(lookupExceptionHandler)), GPRInfo::nonArgGPR0);
+    jit.setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm));
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.jumpToExceptionHandler(vm);
@@ -80,7 +82,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Throw exception from call slow path thunk");
 }
 
-static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_ECli slowPathFunction)
+static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_EGCli slowPathFunction)
 {
     jit.sanitizeStackInline(vm, GPRInfo::nonArgGPR0);
     jit.emitFunctionPrologue();
@@ -91,7 +93,11 @@ static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_ECli slowPa
     // Moving the stack down maxFrameExtentForSlowPathCall bytes gives us room for our 3 arguments
     // and space for the 16 byte return area.
     jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
-    jit.move(GPRInfo::regT2, GPRInfo::argumentGPR2);
+    static_assert(GPRInfo::regT2 != GPRInfo::argumentGPR0);
+    static_assert(GPRInfo::regT3 != GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::regT2, GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::regT3, GPRInfo::argumentGPR2);
+    jit.move(GPRInfo::argumentGPR0, GPRInfo::argumentGPR3);
     jit.addPtr(CCallHelpers::TrustedImm32(32), CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(slowPathFunction)), GPRInfo::nonArgGPR0);
@@ -103,7 +109,7 @@ static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_ECli slowPa
 #else
     if (maxFrameExtentForSlowPathCall)
         jit.addPtr(CCallHelpers::TrustedImm32(-maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-    jit.setupArguments<decltype(slowPathFunction)>(GPRInfo::regT2);
+    jit.setupArguments<decltype(slowPathFunction)>(GPRInfo::regT3, GPRInfo::regT2);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(slowPathFunction)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -317,12 +323,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm.topCallFrame);
-
 #if OS(WINDOWS)
     // Allocate space on stack for the 4 parameter registers.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
+    jit.move(CCallHelpers::TrustedImmPtr(&vm), JSInterfaceJIT::argumentGPR0);
     jit.move(JSInterfaceJIT::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationVMHandleException)), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3, OperationPtrTag);
 #if OS(WINDOWS)
@@ -1162,11 +1167,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM& v
     
     jit.negPtr(GPRInfo::regT2);
     jit.addPtr(CCallHelpers::stackPointerRegister, GPRInfo::regT2);
+    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT3);
     CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
 
     // Throw Stack Overflow exception
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
-    jit.setupArguments<decltype(throwStackOverflowErrorFromThunk)>(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::callFrameRegister);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, JSBoundFunction::offsetOfGlobalObject()), GPRInfo::regT3);
+    jit.setupArguments<decltype(throwStackOverflowErrorFromThunk)>(GPRInfo::regT3);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(throwStackOverflowErrorFromThunk)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -1177,8 +1184,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM& v
 
     // Do basic callee frame setup, including 'this'.
     
-    jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT3);
-
     jit.store32(GPRInfo::regT1, CCallHelpers::calleeFramePayloadSlot(CallFrameSlot::argumentCount));
     
     JSValueRegs valueRegs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT0, GPRInfo::regT2);

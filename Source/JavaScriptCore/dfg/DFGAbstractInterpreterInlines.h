@@ -78,7 +78,7 @@ AbstractInterpreter<AbstractStateType>::booleanResult(
 {
     JSValue childConst = value.value();
     if (childConst) {
-        if (childConst.toBoolean(m_codeBlock->globalObjectFor(node->origin.semantic)->globalExec()))
+        if (childConst.toBoolean(m_codeBlock->globalObjectFor(node->origin.semantic)))
             return DefinitelyTrue;
         return DefinitelyFalse;
     }
@@ -2759,7 +2759,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (base.isNull())
                 structure = globalObject->nullPrototypeObjectStructure();
             else if (base.isObject())
-                structure = globalObject->vm().structureCache.emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
+                structure = m_vm.structureCache.emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
             
             if (structure) {
                 m_state.setFoundConstants(true);

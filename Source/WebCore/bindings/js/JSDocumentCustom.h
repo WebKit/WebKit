@@ -46,7 +46,7 @@ struct InheritsTraits<WebCore::JSDocument> {
 
 namespace WebCore {
 
-JSC::JSObject* cachedDocumentWrapper(JSC::ExecState&, JSDOMGlobalObject&, Document&);
-void reportMemoryForDocumentIfFrameless(JSC::ExecState&, Document&);
+JSC::JSObject* cachedDocumentWrapper(JSC::JSGlobalObject&, JSDOMGlobalObject&, Document&);
+void reportMemoryForDocumentIfFrameless(JSC::JSGlobalObject&, Document&);
 
 } // namespace WebCore

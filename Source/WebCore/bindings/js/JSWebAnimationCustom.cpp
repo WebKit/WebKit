@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<WebAnimation>&& value)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<WebAnimation>&& value)
 {
     if (value->isCSSAnimation())
         return createWrapper<CSSAnimation>(globalObject, WTFMove(value));
@@ -47,38 +47,38 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<WebAni
     return createWrapper<WebAnimation>(globalObject, WTFMove(value));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, WebAnimation& value)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, WebAnimation& value)
 {
-    return wrap(state, globalObject, value);
+    return wrap(lexicalGlobalObject, globalObject, value);
 }
 
-EncodedJSValue constructJSWebAnimation(JSGlobalObject* globalObject, ExecState& state)
+EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, CallFrame& callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(state.jsCallee());
+    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(callFrame.jsCallee());
     ASSERT(jsConstructor);
     auto* context = jsConstructor->scriptExecutionContext();
     if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(state, throwScope, "Animation");
+        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "Animation");
     auto& document = downcast<Document>(*context);
-    auto effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(state, state.argument(0), [](ExecState& state, ThrowScope& scope) {
-        throwArgumentTypeError(state, scope, 0, "effect", "Animation", nullptr, "AnimationEffect");
+    auto effect = convert<IDLNullable<IDLInterface<AnimationEffect>>>(*lexicalGlobalObject, callFrame.argument(0), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
+        throwArgumentTypeError(lexicalGlobalObject, scope, 0, "effect", "Animation", nullptr, "AnimationEffect");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (state.argument(1).isUndefined()) {
+    if (callFrame.argument(1).isUndefined()) {
         auto object = WebAnimation::create(document, WTFMove(effect));
-        return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(state, *jsConstructor->globalObject(), WTFMove(object)));
+        return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTFMove(object)));
     }
 
-    auto timeline = convert<IDLNullable<IDLInterface<AnimationTimeline>>>(state, state.uncheckedArgument(1), [](ExecState& state, ThrowScope& scope) {
-        throwArgumentTypeError(state, scope, 1, "timeline", "Animation", nullptr, "AnimationTimeline");
+    auto timeline = convert<IDLNullable<IDLInterface<AnimationTimeline>>>(*lexicalGlobalObject, callFrame.uncheckedArgument(1), [](JSGlobalObject& lexicalGlobalObject, ThrowScope& scope) {
+        throwArgumentTypeError(lexicalGlobalObject, scope, 1, "timeline", "Animation", nullptr, "AnimationTimeline");
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = WebAnimation::create(document, WTFMove(effect), WTFMove(timeline));
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(state, *jsConstructor->globalObject(), WTFMove(object)));
+    return JSValue::encode(toJSNewlyCreated<IDLInterface<WebAnimation>>(*lexicalGlobalObject, *jsConstructor->globalObject(), WTFMove(object)));
 }
 
 } // namespace WebCore

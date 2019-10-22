@@ -84,7 +84,7 @@ public:
         reset();
     }
 
-    ExceptionOr<Optional<RenderingContext>> getContext(JSC::ExecState&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<Optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     CanvasRenderingContext* getContext(const String&);
 

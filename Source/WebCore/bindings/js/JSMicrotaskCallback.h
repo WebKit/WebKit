@@ -43,7 +43,7 @@ public:
         JSC::VM& vm = m_globalObject->vm();
         JSC::JSLockHolder lock(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSExecState::runTask(m_globalObject->globalExec(), m_task);
+        JSExecState::runTask(m_globalObject.get(), m_task);
         scope.assertNoException();
     }
 

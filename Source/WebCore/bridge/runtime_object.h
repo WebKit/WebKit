@@ -46,20 +46,20 @@ public:
 
     static void destroy(JSCell*);
 
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
     static CallType getCallData(JSCell*, CallData&);
     static ConstructType getConstructData(JSCell*, ConstructData&);
 
-    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
     void invalidate();
 
     Instance* getInternalInstance() const { return m_instance.get(); }
 
-    static Exception* throwInvalidAccessError(ExecState*, ThrowScope&);
+    static Exception* throwInvalidAccessError(JSGlobalObject*, ThrowScope&);
 
     DECLARE_INFO;
 
@@ -78,9 +78,9 @@ protected:
     void finishCreation(VM&);
 
 private:
-    static EncodedJSValue fallbackObjectGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue fieldGetter(ExecState*, EncodedJSValue, PropertyName);
-    static EncodedJSValue methodGetter(ExecState*, EncodedJSValue, PropertyName);
+    static EncodedJSValue fallbackObjectGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue fieldGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
+    static EncodedJSValue methodGetter(JSGlobalObject*, EncodedJSValue, PropertyName);
 
     RefPtr<Instance> m_instance;
 };

@@ -48,14 +48,14 @@ public:
         return vm.boundFunctionSpace<mode>();
     }
 
-    static JSBoundFunction* create(VM&, ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs, int, const String& name);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSArray* boundArgs, int, const String& name);
     
-    static bool customHasInstance(JSObject*, ExecState*, JSValue);
+    static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }
     JSArray* boundArgs() { return m_boundArgs.get(); } // DO NOT allow this array to be mutated!
-    JSArray* boundArgsCopy(ExecState*);
+    JSArray* boundArgsCopy(JSGlobalObject*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

@@ -46,16 +46,16 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JIT_OPERATION operationAtomicsAdd(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsAnd(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsCompareExchange(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue expected, EncodedJSValue newValue);
-EncodedJSValue JIT_OPERATION operationAtomicsExchange(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsIsLockFree(ExecState* exec, EncodedJSValue size);
-EncodedJSValue JIT_OPERATION operationAtomicsLoad(ExecState* exec, EncodedJSValue base, EncodedJSValue index);
-EncodedJSValue JIT_OPERATION operationAtomicsOr(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsStore(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsSub(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
-EncodedJSValue JIT_OPERATION operationAtomicsXor(ExecState* exec, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsAdd(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsAnd(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsCompareExchange(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue expected, EncodedJSValue newValue);
+EncodedJSValue JIT_OPERATION operationAtomicsExchange(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsIsLockFree(JSGlobalObject*, EncodedJSValue size);
+EncodedJSValue JIT_OPERATION operationAtomicsLoad(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index);
+EncodedJSValue JIT_OPERATION operationAtomicsOr(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsStore(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsSub(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
+EncodedJSValue JIT_OPERATION operationAtomicsXor(JSGlobalObject*, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand);
 
 } // namespace JSC
 

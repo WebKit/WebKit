@@ -35,16 +35,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationTimeline>&& value)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<AnimationTimeline>&& value)
 {
     if (value->isDocumentTimeline())
         return createWrapper<DocumentTimeline>(globalObject, WTFMove(value));
     return createWrapper<AnimationTimeline>(globalObject, WTFMove(value));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationTimeline& value)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, AnimationTimeline& value)
 {
-    return wrap(state, globalObject, value);
+    return wrap(lexicalGlobalObject, globalObject, value);
 }
 
 } // namespace WebCore

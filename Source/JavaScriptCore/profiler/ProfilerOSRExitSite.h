@@ -40,7 +40,7 @@ public:
     
     const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
     
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     Vector<MacroAssemblerCodePtr<JSInternalPtrTag>> m_codeAddresses;

@@ -252,7 +252,7 @@ InspectorDebuggerAgent::AsyncCallIdentifier InspectorDebuggerAgent::asyncCallIde
     return std::make_pair(static_cast<unsigned>(asyncCallType), callbackId);
 }
 
-void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::ExecState* exec, AsyncCallType asyncCallType, int callbackId, bool singleShot)
+void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObject, AsyncCallType asyncCallType, int callbackId, bool singleShot)
 {
     if (!m_asyncStackTraceDepth)
         return;
@@ -260,7 +260,7 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::ExecState* exec, AsyncCal
     if (!m_scriptDebugServer.breakpointsActive())
         return;
 
-    Ref<ScriptCallStack> callStack = createScriptCallStack(exec, m_asyncStackTraceDepth);
+    Ref<ScriptCallStack> callStack = createScriptCallStack(globalObject, m_asyncStackTraceDepth);
     ASSERT(callStack->size());
     if (!callStack->size())
         return;
@@ -757,7 +757,7 @@ void InspectorDebuggerAgent::pause(ErrorString&)
 
 void InspectorDebuggerAgent::resume(ErrorString& errorString)
 {
-    if (!m_pausedScriptState && !m_javaScriptPauseScheduled) {
+    if (!m_pausedGlobalObject && !m_javaScriptPauseScheduled) {
         errorString = "Must be paused or waiting to pause"_s;
         return;
     }
@@ -1063,13 +1063,13 @@ void InspectorDebuggerAgent::didRunMicrotask()
         cancelPauseOnNextStatement();
 }
 
-void InspectorDebuggerAgent::didPause(JSC::ExecState& scriptState, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue)
+void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue)
 {
-    ASSERT(!m_pausedScriptState);
-    m_pausedScriptState = &scriptState;
-    m_currentCallStack = { scriptState.vm(), callFrames };
+    ASSERT(!m_pausedGlobalObject);
+    m_pausedGlobalObject = globalObject;
+    m_currentCallStack = { globalObject->vm(), callFrames };
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(&scriptState);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_pauseReason == DebuggerFrontendDispatcher::Reason::Other) {
@@ -1163,9 +1163,9 @@ void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifie
     m_frontendDispatcher->playBreakpointActionSound(breakpointActionIdentifier);
 }
 
-void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState& scriptState, const ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
+void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalObject, const ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(&scriptState);
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     auto payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action), true);
     auto result = Protocol::Debugger::ProbeSample::create()
         .setProbeId(action.identifier)
@@ -1184,7 +1184,7 @@ void InspectorDebuggerAgent::didContinue()
         m_injectedScriptManager.inspectorEnvironment().executionStopwatch()->start();
     }
 
-    m_pausedScriptState = nullptr;
+    m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
     m_injectedScriptManager.releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     clearPauseDetails();
@@ -1221,7 +1221,7 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
         m_scriptDebugServer.clearBlackbox();
     }
 
-    m_pausedScriptState = nullptr;
+    m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
     m_scripts.clear();
     m_breakpointIdentifierToDebugServerBreakpointIDs.clear();
@@ -1250,7 +1250,7 @@ void InspectorDebuggerAgent::didClearGlobalObject()
 
 bool InspectorDebuggerAgent::assertPaused(ErrorString& errorString)
 {
-    if (!m_pausedScriptState) {
+    if (!m_pausedGlobalObject) {
         errorString = "Must be paused"_s;
         return false;
     }

@@ -87,10 +87,10 @@ static bool isSafeInteger(JSValue argument)
     return trunc(number) == number && std::abs(number) <= maxSafeInteger();
 }
 
-static EncodedJSValue toBigInt(ExecState& state, JSValue argument)
+static EncodedJSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
 {
     ASSERT(argument.isPrimitive());
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     
     if (argument.isBigInt())
         return JSValue::encode(argument);
@@ -101,12 +101,12 @@ static EncodedJSValue toBigInt(ExecState& state, JSValue argument)
         RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::createFrom(vm, argument.asBoolean())));
     
     if (argument.isUndefinedOrNull() || argument.isNumber() || argument.isSymbol())
-        return throwVMTypeError(&state, scope, "Invalid argument type in ToBigInt operation"_s);
+        return throwVMTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
     
     ASSERT(argument.isString());
     
-    RELEASE_AND_RETURN(scope, toStringView(&state, argument, [&] (StringView view) {
-        return JSValue::encode(JSBigInt::parseInt(&state, view));
+    RELEASE_AND_RETURN(scope, toStringView(globalObject, argument, [&] (StringView view) {
+        return JSValue::encode(JSBigInt::parseInt(globalObject, view));
     }));
 }
 
@@ -116,12 +116,12 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue value = callFrame->argument(0);
-    JSValue primitive = value.toPrimitive(callFrame);
+    JSValue primitive = value.toPrimitive(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (primitive.isNumber()) {
         if (!isSafeInteger(primitive))
-            return throwVMError(callFrame, scope, createRangeError(callFrame, "Not safe integer"_s));
+            return throwVMError(globalObject, scope, createRangeError(globalObject, "Not safe integer"_s));
         
         scope.release();
         if (primitive.isInt32())
@@ -133,7 +133,7 @@ static EncodedJSValue JSC_HOST_CALL callBigIntConstructor(JSGlobalObject* global
         return JSValue::encode(JSBigInt::createFrom(vm, static_cast<int64_t>(primitive.asDouble())));
     }
     
-    EncodedJSValue result = toBigInt(*callFrame, primitive);
+    EncodedJSValue result = toBigInt(globalObject, primitive);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return result;
 }

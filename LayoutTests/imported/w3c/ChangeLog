@@ -1,3 +1,12 @@
+2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Thread JSGlobalObject* instead of ExecState*
+        https://bugs.webkit.org/show_bug.cgi?id=202392
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-other-document-expected.txt:
+
 2019-10-22  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=169667

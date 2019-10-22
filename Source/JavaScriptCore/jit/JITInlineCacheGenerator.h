@@ -135,7 +135,7 @@ public:
     
     void generateFastPath(MacroAssembler&);
     
-    V_JITOperation_ESsiJJI slowPathFunction();
+    V_JITOperation_GSsiJJI slowPathFunction();
 
 private:
     ECMAMode m_ecmaMode;

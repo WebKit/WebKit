@@ -38,18 +38,18 @@ namespace Deprecated {
 
 class ScriptObject : public ScriptValue {
 public:
-    JS_EXPORT_PRIVATE ScriptObject(JSC::ExecState*, JSC::JSObject*);
+    JS_EXPORT_PRIVATE ScriptObject(JSC::JSGlobalObject*, JSC::JSObject*);
     ScriptObject() = default;
 
     operator JSC::JSObject*() const { return jsObject(); }
 
     JSC::JSObject* jsObject() const { return asObject(jsValue()); }
-    JSC::ExecState* scriptState() const { return m_scriptState; }
+    JSC::JSGlobalObject* globalObject() const { return m_globalObject; }
 
     using ScriptValue::hasNoValue;
 
 private:
-    JSC::ExecState* m_scriptState { nullptr };
+    JSC::JSGlobalObject* m_globalObject { nullptr };
 };
 
 } // namespace Deprecated

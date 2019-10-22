@@ -42,10 +42,10 @@ void GenericArguments<Type>::visitChildren(JSCell* thisCell, SlotVisitor& visito
 }
 
 template<typename Type>
-bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName ident, PropertySlot& slot)
+bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, PropertySlot& slot)
 {
     Type* thisObject = jsCast<Type*>(object);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     
     if (!thisObject->overrodeThings()) {
         if (ident == vm.propertyNames->length) {
@@ -63,13 +63,13 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
     }
     
     if (Optional<uint32_t> index = parseIndex(ident))
-        return GenericArguments<Type>::getOwnPropertySlotByIndex(thisObject, exec, *index, slot);
+        return GenericArguments<Type>::getOwnPropertySlotByIndex(thisObject, globalObject, *index, slot);
 
-    return Base::getOwnPropertySlot(thisObject, exec, ident, slot);
+    return Base::getOwnPropertySlot(thisObject, globalObject, ident, slot);
 }
 
 template<typename Type>
-bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
+bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned index, PropertySlot& slot)
 {
     Type* thisObject = jsCast<Type*>(object);
     
@@ -78,7 +78,7 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecSta
         return true;
     }
     
-    bool result = Base::getOwnPropertySlotByIndex(object, exec, index, slot);
+    bool result = Base::getOwnPropertySlotByIndex(object, globalObject, index, slot);
     
     if (thisObject->isMappedArgument(index)) {
         ASSERT(result);
@@ -90,9 +90,9 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecSta
 }
 
 template<typename Type>
-void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
+void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     Type* thisObject = jsCast<Type*>(object);
 
     if (array.includeStringProperties()) {
@@ -109,14 +109,14 @@ void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, ExecState* ex
         if (array.includeSymbolProperties())
             array.add(vm.propertyNames->iteratorSymbol);
     }
-    Base::getOwnPropertyNames(thisObject, exec, array, mode);
+    Base::getOwnPropertyNames(thisObject, globalObject, array, mode);
 }
 
 template<typename Type>
-bool GenericArguments<Type>::put(JSCell* cell, ExecState* exec, PropertyName ident, JSValue value, PutPropertySlot& slot)
+bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, JSValue value, PutPropertySlot& slot)
 {
     Type* thisObject = jsCast<Type*>(cell);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     
     if (!thisObject->overrodeThings()
         && (ident == vm.propertyNames->length
@@ -124,13 +124,13 @@ bool GenericArguments<Type>::put(JSCell* cell, ExecState* exec, PropertyName ide
             || ident == vm.propertyNames->iteratorSymbol)) {
         thisObject->overrideThings(vm);
         PutPropertySlot dummy = slot; // This put is not cacheable, so we shadow the slot that was given to us.
-        return Base::put(thisObject, exec, ident, value, dummy);
+        return Base::put(thisObject, globalObject, ident, value, dummy);
     }
 
     // https://tc39.github.io/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver
     // Fall back to the OrdinarySet when the receiver is altered from the thisObject.
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        return ordinarySetSlow(exec, thisObject, ident, value, slot.thisValue(), slot.isStrictMode());
+        return ordinarySetSlow(globalObject, thisObject, ident, value, slot.thisValue(), slot.isStrictMode());
     
     Optional<uint32_t> index = parseIndex(ident);
     if (index && thisObject->isMappedArgument(index.value())) {
@@ -138,28 +138,28 @@ bool GenericArguments<Type>::put(JSCell* cell, ExecState* exec, PropertyName ide
         return true;
     }
     
-    return Base::put(thisObject, exec, ident, value, slot);
+    return Base::put(thisObject, globalObject, ident, value, slot);
 }
 
 template<typename Type>
-bool GenericArguments<Type>::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)
+bool GenericArguments<Type>::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned index, JSValue value, bool shouldThrow)
 {
     Type* thisObject = jsCast<Type*>(cell);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     if (thisObject->isMappedArgument(index)) {
         thisObject->setIndexQuickly(vm, index, value);
         return true;
     }
     
-    return Base::putByIndex(cell, exec, index, value, shouldThrow);
+    return Base::putByIndex(cell, globalObject, index, value, shouldThrow);
 }
 
 template<typename Type>
-bool GenericArguments<Type>::deleteProperty(JSCell* cell, ExecState* exec, PropertyName ident)
+bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident)
 {
     Type* thisObject = jsCast<Type*>(cell);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     
     if (!thisObject->overrodeThings()
         && (ident == vm.propertyNames->length
@@ -168,21 +168,21 @@ bool GenericArguments<Type>::deleteProperty(JSCell* cell, ExecState* exec, Prope
         thisObject->overrideThings(vm);
     
     if (Optional<uint32_t> index = parseIndex(ident))
-        return GenericArguments<Type>::deletePropertyByIndex(thisObject, exec, *index);
+        return GenericArguments<Type>::deletePropertyByIndex(thisObject, globalObject, *index);
 
-    return Base::deleteProperty(thisObject, exec, ident);
+    return Base::deleteProperty(thisObject, globalObject, ident);
 }
 
 template<typename Type>
-bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned index)
+bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned index)
 {
     Type* thisObject = jsCast<Type*>(cell);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
 
     bool propertyMightBeInJSObjectStorage = thisObject->isModifiedArgumentDescriptor(index) || !thisObject->isMappedArgument(index);
     bool deletedProperty = true;
     if (propertyMightBeInJSObjectStorage)
-        deletedProperty = Base::deletePropertyByIndex(cell, exec, index);
+        deletedProperty = Base::deletePropertyByIndex(cell, globalObject, index);
 
     if (deletedProperty) {
         // Deleting an indexed property unconditionally unmaps it.
@@ -197,10 +197,10 @@ bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, ExecState* exec
 }
 
 template<typename Type>
-bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)
+bool GenericArguments<Type>::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     Type* thisObject = jsCast<Type*>(object);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     if (ident == vm.propertyNames->length
@@ -227,7 +227,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
                     // If it is a new entry, we need to put direct to initialize argument[i] descriptor properly
                     JSValue value = thisObject->getIndexQuickly(index);
                     ASSERT(value);
-                    object->putDirectMayBeIndex(exec, ident, value);
+                    object->putDirectMayBeIndex(globalObject, ident, value);
                     scope.assertNoException();
 
                     thisObject->setModifiedArgumentDescriptor(vm, index);
@@ -243,7 +243,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
                     if (!descriptor.isAccessorDescriptor()) {
                         JSValue value = thisObject->getIndexQuickly(index);
                         ASSERT(value);
-                        object->putDirectMayBeIndex(exec, ident, value);
+                        object->putDirectMayBeIndex(globalObject, ident, value);
                         scope.assertNoException();
                     }
                     thisObject->unmapArgument(vm, index);
@@ -254,7 +254,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, ExecState* exec
     }
 
     // Now just let the normal object machinery do its thing.
-    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, ident, descriptor, shouldThrow));
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, ident, descriptor, shouldThrow));
 }
 
 template<typename Type>
@@ -297,17 +297,17 @@ bool GenericArguments<Type>::isModifiedArgumentDescriptor(unsigned index, unsign
 }
 
 template<typename Type>
-void GenericArguments<Type>::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void GenericArguments<Type>::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Type* thisObject = static_cast<Type*>(this);
     for (unsigned i = 0; i < length; ++i) {
         if (thisObject->isMappedArgument(i + offset))
-            exec->r(firstElementDest + i) = thisObject->getIndexQuickly(i + offset);
+            callFrame->r(firstElementDest + i) = thisObject->getIndexQuickly(i + offset);
         else {
-            exec->r(firstElementDest + i) = get(exec, i + offset);
+            callFrame->r(firstElementDest + i) = get(globalObject, i + offset);
             RETURN_IF_EXCEPTION(scope, void());
         }
     }

@@ -39,7 +39,6 @@ namespace JSC {
 struct InlineCallFrame;
 class CallFrame;
 class JSFunction;
-using ExecState = CallFrame;
 
 struct InlineCallFrame {
     enum Kind {
@@ -208,7 +207,7 @@ struct InlineCallFrame {
     JSFunction* calleeConstant() const;
     
     // Get the callee given a machine call frame to which this InlineCallFrame belongs.
-    JSFunction* calleeForCallFrame(ExecState*) const;
+    JSFunction* calleeForCallFrame(CallFrame*) const;
     
     CString inferredName() const;
     CodeBlockHash hash() const;

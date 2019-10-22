@@ -60,12 +60,12 @@ public:
     virtual void willRunMicrotask() = 0;
     virtual void didRunMicrotask() = 0;
 
-    virtual void didPause(JSC::ExecState&, JSC::JSValue callFrames, JSC::JSValue exception) = 0;
+    virtual void didPause(JSC::JSGlobalObject*, JSC::JSValue callFrames, JSC::JSValue exception) = 0;
     virtual void didContinue() = 0;
 
-    virtual void breakpointActionLog(JSC::ExecState&, const String&) = 0;
+    virtual void breakpointActionLog(JSC::JSGlobalObject*, const String&) = 0;
     virtual void breakpointActionSound(int breakpointActionIdentifier) = 0;
-    virtual void breakpointActionProbe(JSC::ExecState&, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) = 0;
+    virtual void breakpointActionProbe(JSC::JSGlobalObject*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) = 0;
 };
 
 } // namespace Inspector

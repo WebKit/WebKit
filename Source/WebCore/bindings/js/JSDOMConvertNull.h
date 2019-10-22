@@ -31,7 +31,7 @@
 namespace WebCore {
 
 template<> struct Converter<IDLNull> : DefaultConverter<IDLNull> {
-    static std::nullptr_t convert(JSC::ExecState&, JSC::JSValue)
+    static std::nullptr_t convert(JSC::JSGlobalObject&, JSC::JSValue)
     {
         return nullptr;
     }

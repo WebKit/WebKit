@@ -67,7 +67,7 @@ static String convertUTF8ToUTF16WithLatin1Fallback(const NPUTF8* UTF8Chars, int 
 }
 
 // Variant value must be released with NPReleaseVariantValue()
-void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
+void convertValueToNPVariant(JSGlobalObject* exec, JSValue value, NPVariant* result)
 {
     JSLockHolder lock(exec);
     VM& vm = exec->vm();
@@ -96,7 +96,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
                 OBJECT_TO_NPVARIANT(obj, *result);
             }
         } else {
-            JSGlobalObject* globalObject = vm.vmEntryGlobalObject(exec);
+            JSGlobalObject* globalObject = vm.deprecatedVMEntryGlobalObject(exec);
 
             RootObject* rootObject = findRootObject(globalObject);
             if (rootObject) {
@@ -107,7 +107,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
     }
 }
 
-JSValue convertNPVariantToValue(ExecState* exec, const NPVariant* variant, RootObject* rootObject)
+JSValue convertNPVariantToValue(JSGlobalObject* exec, const NPVariant* variant, RootObject* rootObject)
 {
     JSLockHolder lock(exec);
     
@@ -144,7 +144,7 @@ String convertNPStringToUTF16(const NPString* string)
     return String::fromUTF8WithLatin1Fallback(string->UTF8Characters, string->UTF8Length);
 }
 
-Identifier identifierFromNPIdentifier(ExecState* exec, const NPUTF8* name)
+Identifier identifierFromNPIdentifier(JSGlobalObject* exec, const NPUTF8* name)
 {
     VM& vm = exec->vm();
     return Identifier::fromString(vm, convertUTF8ToUTF16WithLatin1Fallback(name, -1));

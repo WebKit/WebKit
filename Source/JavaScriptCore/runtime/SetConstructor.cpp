@@ -55,11 +55,11 @@ SetConstructor::SetConstructor(VM& vm, Structure* structure)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callSet(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callSet(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "Set"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Set"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -67,35 +67,35 @@ static EncodedJSValue JSC_HOST_CALL constructSet(JSGlobalObject* globalObject, C
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* setStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->setStructure());
+    Structure* setStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->setStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull()) 
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(callFrame, vm, setStructure)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(globalObject, vm, setStructure)));
 
     if (auto* iterableSet = jsDynamicCast<JSSet*>(vm, iterable)) {
         if (iterableSet->canCloneFastAndNonObservable(setStructure)) 
-            RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(callFrame, vm, setStructure)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(globalObject, vm, setStructure)));
     }
 
-    JSSet* set = JSSet::create(callFrame, vm, setStructure);
+    JSSet* set = JSSet::create(globalObject, vm, setStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = set->JSObject::get(callFrame, vm.propertyNames->add);
+    JSValue adderFunction = set->JSObject::get(globalObject, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (UNLIKELY(adderFunctionCallType == CallType::None))
-        return JSValue::encode(throwTypeError(callFrame, scope));
+        return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
-    forEachInIterable(callFrame, iterable, [&](VM&, ExecState* callFrame, JSValue nextValue) {
+    forEachInIterable(globalObject, iterable, [&](VM&, JSGlobalObject* globalObject, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());
-        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
+        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, set, arguments);
     });
 
     return JSValue::encode(set);

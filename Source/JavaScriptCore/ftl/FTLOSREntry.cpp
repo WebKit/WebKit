@@ -40,10 +40,9 @@ namespace JSC { namespace FTL {
 
 SUPPRESS_ASAN
 void* prepareOSREntry(
-    ExecState* exec, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock,
+    VM& vm, CallFrame* callFrame, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock,
     unsigned bytecodeIndex, unsigned streamIndex)
 {
-    VM& vm = exec->vm();
     CodeBlock* baseline = dfgCodeBlock->baselineVersion();
     ExecutableBase* executable = dfgCodeBlock->ownerExecutable();
     DFG::JITCode* dfgCode = dfgCodeBlock->jitCode()->dfg();
@@ -70,14 +69,13 @@ void* prepareOSREntry(
     }
     
     Operands<Optional<JSValue>> values;
-    dfgCode->reconstruct(
-        exec, dfgCodeBlock, CodeOrigin(bytecodeIndex), streamIndex, values);
+    dfgCode->reconstruct(callFrame, dfgCodeBlock, CodeOrigin(bytecodeIndex), streamIndex, values);
     
     if (Options::verboseOSR())
         dataLog("    Values at entry: ", values, "\n");
     
     for (int argument = values.numberOfArguments(); argument--;) {
-        JSValue valueOnStack = exec->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
+        JSValue valueOnStack = callFrame->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
         Optional<JSValue> reconstructedValue = values.argument(argument);
         if ((reconstructedValue && valueOnStack == reconstructedValue.value()) || !argument)
             continue;
@@ -102,13 +100,13 @@ void* prepareOSREntry(
     }
     
     int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
-    if (UNLIKELY(!vm.ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()]))) {
+    if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(stackFrameSize - 1).offset()]))) {
         if (Options::verboseOSR())
             dataLog("    OSR failed because stack growth failed.\n");
         return 0;
     }
     
-    exec->setCodeBlock(entryCodeBlock);
+    callFrame->setCodeBlock(entryCodeBlock);
     
     void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
     if (Options::verboseOSR())

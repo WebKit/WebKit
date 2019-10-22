@@ -404,10 +404,10 @@ public:
             return;
         }
 
-        auto* state = context.execState();
-        auto key =  toJS(*state, *state->lexicalGlobalObject(), cursor->key());
-        auto primaryKey = toJS(*state, *state->lexicalGlobalObject(), cursor->primaryKey());
-        auto value = deserializeIDBValueToJSValue(*state, cursor->value());
+        auto* lexicalGlobalObject = context.execState();
+        auto key =  toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->key());
+        auto primaryKey = toJS(*lexicalGlobalObject, *lexicalGlobalObject, cursor->primaryKey());
+        auto value = deserializeIDBValueToJSValue(*lexicalGlobalObject, cursor->value());
         auto dataEntry = DataEntry::create()
             .setKey(m_injectedScript.wrapObject(key, String(), true))
             .setPrimaryKey(m_injectedScript.wrapObject(primaryKey, String(), true))

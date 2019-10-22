@@ -31,7 +31,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -43,19 +42,19 @@ public:
     virtual ~WorkerConsoleClient();
 
 protected:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void count(JSC::ExecState*, const String& label) override;
-    void countReset(JSC::ExecState*, const String& label) override;
-    void profile(JSC::ExecState*, const String& title) override;
-    void profileEnd(JSC::ExecState*, const String& title) override;
-    void takeHeapSnapshot(JSC::ExecState*, const String& title) override;
-    void time(JSC::ExecState*, const String& label) override;
-    void timeLog(JSC::ExecState*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
-    void timeEnd(JSC::ExecState*, const String& label) override;
-    void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void screenshot(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void count(JSC::JSGlobalObject*, const String& label) override;
+    void countReset(JSC::JSGlobalObject*, const String& label) override;
+    void profile(JSC::JSGlobalObject*, const String& title) override;
+    void profileEnd(JSC::JSGlobalObject*, const String& title) override;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) override;
+    void time(JSC::JSGlobalObject*, const String& label) override;
+    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
+    void timeEnd(JSC::JSGlobalObject*, const String& label) override;
+    void timeStamp(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void record(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void screenshot(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
 
 private:
     WorkerGlobalScope& m_workerGlobalScope;

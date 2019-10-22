@@ -53,14 +53,14 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory", &Ba
 @end
 */
 
-ALWAYS_INLINE JSWebAssemblyMemory* getMemory(ExecState* exec, VM& vm, JSValue value)
+ALWAYS_INLINE JSWebAssemblyMemory* getMemory(JSGlobalObject* globalObject, VM& vm, JSValue value)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value); 
     if (!memory) {
-        throwException(exec, throwScope, 
-            createTypeError(exec, "WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value"_s));
+        throwException(globalObject, throwScope, 
+            createTypeError(globalObject, "WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value"_s));
         return nullptr;
     }
     return memory;
@@ -71,13 +71,13 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncGrow(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(callFrame, vm, callFrame->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     
-    uint32_t delta = toNonWrappingUint32(callFrame, callFrame->argument(0));
+    uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    Wasm::PageCount result = memory->grow(vm, callFrame, delta);
+    Wasm::PageCount result = memory->grow(vm, globalObject, delta);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     return JSValue::encode(jsNumber(result.pageCount()));
@@ -88,7 +88,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = getMemory(callFrame, vm, callFrame->thisValue()); 
+    JSWebAssemblyMemory* memory = getMemory(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(memory->buffer(globalObject->vm(), globalObject));
 }

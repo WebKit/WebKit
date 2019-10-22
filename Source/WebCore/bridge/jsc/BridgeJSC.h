@@ -51,8 +51,8 @@ class RuntimeObject;
 class Field {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual JSValue valueFromInstance(ExecState*, const Instance*) const = 0;
-    virtual bool setValueToInstance(ExecState*, const Instance*, JSValue) const = 0;
+    virtual JSValue valueFromInstance(JSGlobalObject*, const Instance*) const = 0;
+    virtual bool setValueToInstance(JSGlobalObject*, const Instance*, JSValue) const = 0;
 
     virtual ~Field() = default;
 };
@@ -63,7 +63,7 @@ public:
     Class() = default;
     virtual Method* methodNamed(PropertyName, Instance*) const = 0;
     virtual Field* fieldNamed(PropertyName, Instance*) const = 0;
-    virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName) { return jsUndefined(); }
+    virtual JSValue fallbackObject(JSGlobalObject*, Instance*, PropertyName) { return jsUndefined(); }
 
     virtual ~Class() = default;
 };
@@ -79,38 +79,38 @@ public:
     void end();
 
     virtual Class* getClass() const = 0;
-    WEBCORE_EXPORT JSObject* createRuntimeObject(ExecState*);
+    WEBCORE_EXPORT JSObject* createRuntimeObject(JSGlobalObject*);
     void willInvalidateRuntimeObject();
 
     // Returns false if the value was not set successfully.
-    virtual bool setValueOfUndefinedField(ExecState*, PropertyName, JSValue) { return false; }
+    virtual bool setValueOfUndefinedField(JSGlobalObject*, PropertyName, JSValue) { return false; }
 
-    virtual JSValue getMethod(ExecState*, PropertyName) = 0;
-    virtual JSValue invokeMethod(ExecState*, RuntimeMethod* method) = 0;
+    virtual JSValue getMethod(JSGlobalObject*, PropertyName) = 0;
+    virtual JSValue invokeMethod(JSGlobalObject*, CallFrame*, RuntimeMethod* method) = 0;
 
     virtual bool supportsInvokeDefaultMethod() const { return false; }
-    virtual JSValue invokeDefaultMethod(ExecState*) { return jsUndefined(); }
+    virtual JSValue invokeDefaultMethod(JSGlobalObject*, CallFrame*) { return jsUndefined(); }
 
     virtual bool supportsConstruct() const { return false; }
-    virtual JSValue invokeConstruct(ExecState*, const ArgList&) { return JSValue(); }
+    virtual JSValue invokeConstruct(JSGlobalObject*, CallFrame*, const ArgList&) { return JSValue(); }
 
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
+    virtual void getPropertyNames(JSGlobalObject*, PropertyNameArray&) { }
 
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const = 0;
+    virtual JSValue defaultValue(JSGlobalObject*, PreferredPrimitiveType) const = 0;
 
-    virtual JSValue valueOf(ExecState* exec) const = 0;
+    virtual JSValue valueOf(JSGlobalObject* exec) const = 0;
 
     RootObject* rootObject() const;
 
     WEBCORE_EXPORT virtual ~Instance();
 
-    virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { return false; }
-    virtual bool put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { return false; }
+    virtual bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&) { return false; }
+    virtual bool put(JSObject*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&) { return false; }
 
 protected:
     virtual void virtualBegin() { }
     virtual void virtualEnd() { }
-    WEBCORE_EXPORT virtual RuntimeObject* newRuntimeObject(ExecState*);
+    WEBCORE_EXPORT virtual RuntimeObject* newRuntimeObject(JSGlobalObject*);
 
     RefPtr<RootObject> m_rootObject;
 
@@ -124,8 +124,8 @@ public:
     explicit Array(RefPtr<RootObject>&&);
     virtual ~Array();
 
-    virtual bool setValueAt(ExecState*, unsigned index, JSValue) const = 0;
-    virtual JSValue valueAt(ExecState*, unsigned index) const = 0;
+    virtual bool setValueAt(JSGlobalObject*, unsigned index, JSValue) const = 0;
+    virtual JSValue valueAt(JSGlobalObject*, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
 
 protected:

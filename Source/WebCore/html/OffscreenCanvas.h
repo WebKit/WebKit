@@ -72,7 +72,7 @@ public:
     void setSize(const IntSize&) final;
 
 #if ENABLE(WEBGL)
-    ExceptionOr<OffscreenRenderingContext> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<OffscreenRenderingContext> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 #endif
     RefPtr<ImageBitmap> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);

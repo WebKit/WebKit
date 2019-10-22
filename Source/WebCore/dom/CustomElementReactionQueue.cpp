@@ -262,7 +262,7 @@ inline void CustomElementReactionQueue::ElementQueue::invokeAll()
     m_elements.clear();
 }
 
-inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::ExecState* state)
+inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::JSGlobalObject* state)
 {
     if (!state) {
         invokeAll();
@@ -310,7 +310,7 @@ unsigned CustomElementReactionDisallowedScope::s_customElementReactionDisallowed
 
 CustomElementReactionStack* CustomElementReactionStack::s_currentProcessingStack = nullptr;
 
-void CustomElementReactionStack::processQueue(JSC::ExecState* state)
+void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
 {
     ASSERT(m_queue);
     m_queue->processQueue(state);

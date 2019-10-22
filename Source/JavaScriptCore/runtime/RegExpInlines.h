@@ -141,8 +141,10 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 
     auto throwError = [&] {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
-        ExecState* exec = vm.topCallFrame;
-        throwScope.throwException(exec, errorToThrow(exec));
+        // FIXME: Revisit JSGlobalObject.
+        // https://bugs.webkit.org/show_bug.cgi?id=203204
+        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject();
+        throwScope.throwException(globalObject, errorToThrow(globalObject));
         if (!hasHardError(m_constructionErrorCode))
             reset();
         return -1;
@@ -269,8 +271,10 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
 
     auto throwError = [&] {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
-        ExecState* exec = vm.topCallFrame;
-        throwScope.throwException(exec, errorToThrow(exec));
+        // FIXME: Revisit JSGlobalObject.
+        // https://bugs.webkit.org/show_bug.cgi?id=203204
+        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject();
+        throwScope.throwException(globalObject, errorToThrow(globalObject));
         if (!hasHardError(m_constructionErrorCode))
             reset();
         return MatchResult::failed();

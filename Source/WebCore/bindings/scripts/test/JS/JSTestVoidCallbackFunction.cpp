@@ -71,21 +71,21 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction:
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
-    auto& state = *globalObject.globalExec();
+    auto& lexicalGlobalObject = globalObject;
     JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
-    args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
-    args.append(toJS<IDLDOMString>(state, strArg));
+    args.append(toJS<IDLFloat32Array>(lexicalGlobalObject, globalObject, arrayParam));
+    args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(lexicalGlobalObject, globalObject, srzParam));
+    args.append(toJS<IDLDOMString>(lexicalGlobalObject, strArg));
     args.append(toJS<IDLBoolean>(boolParam));
     args.append(toJS<IDLLong>(longParam));
-    args.append(toJS<IDLInterface<TestNode>>(state, globalObject, testNodeParam));
+    args.append(toJS<IDLInterface<TestNode>>(lexicalGlobalObject, globalObject, testNodeParam));
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
-        reportException(&state, returnedException);
+        reportException(&lexicalGlobalObject, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 

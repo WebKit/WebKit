@@ -61,7 +61,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     return visitor.containsOpaqueRoot(root(textTrackCue.track()));
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TextTrackCue>&& cue)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TextTrackCue>&& cue)
 {
     switch (cue->cueType()) {
     case TextTrackCue::Data:
@@ -75,9 +75,9 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TextTr
     }
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, TextTrackCue& cue)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TextTrackCue& cue)
 {
-    return wrap(state, globalObject, cue);
+    return wrap(lexicalGlobalObject, globalObject, cue);
 }
 
 void JSTextTrackCue::visitAdditionalChildren(SlotVisitor& visitor)

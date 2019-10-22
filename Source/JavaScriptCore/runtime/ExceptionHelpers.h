@@ -35,30 +35,29 @@
 
 namespace JSC {
 
-typedef JSObject* (*ErrorFactory)(ExecState*, const String&, ErrorInstance::SourceAppender);
+typedef JSObject* (*ErrorFactory)(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
 
 String defaultSourceAppender(const String&, const String&, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 
 JSObject* createTerminatedExecutionException(VM*);
 JS_EXPORT_PRIVATE bool isTerminatedExecutionException(VM&, Exception*);
-JS_EXPORT_PRIVATE JSObject* createError(ExecState*, JSValue, const String&, ErrorInstance::SourceAppender);
-JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
-JSObject* createStackOverflowError(ExecState*, JSGlobalObject*);
-JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
-JSObject* createTDZError(ExecState*);
-JSObject* createNotAnObjectError(ExecState*, JSValue);
-JSObject* createInvalidFunctionApplyParameterError(ExecState*, JSValue);
-JSObject* createInvalidInParameterError(ExecState*, JSValue);
-JSObject* createInvalidInstanceofParameterErrorNotFunction(ExecState*, JSValue);
-JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecState*, JSValue);
-JSObject* createNotAConstructorError(ExecState*, JSValue);
-JSObject* createNotAFunctionError(ExecState*, JSValue);
-JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);
-String errorDescriptionForValue(ExecState*, JSValue);
+JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, const String&, ErrorInstance::SourceAppender);
+JS_EXPORT_PRIVATE JSObject* createStackOverflowError(JSGlobalObject*);
+JSObject* createUndefinedVariableError(JSGlobalObject*, const Identifier&);
+JSObject* createTDZError(JSGlobalObject*);
+JSObject* createNotAnObjectError(JSGlobalObject*, JSValue);
+JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject*, JSValue);
+JSObject* createInvalidInParameterError(JSGlobalObject*, JSValue);
+JSObject* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject*, JSValue);
+JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject*, JSValue);
+JSObject* createNotAConstructorError(JSGlobalObject*, JSValue);
+JSObject* createNotAFunctionError(JSGlobalObject*, JSValue);
+JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject*, const String&);
+String errorDescriptionForValue(JSGlobalObject*, JSValue);
 
-JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE Exception* throwStackOverflowError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwStackOverflowError(JSGlobalObject*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(JSGlobalObject*, ThrowScope&);
 
 
 class TerminatedExecutionError final : public JSNonFinalObject {
@@ -86,7 +85,7 @@ private:
     {
     }
 
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
 };
 

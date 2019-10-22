@@ -62,7 +62,7 @@ public:
     const CString& detail() const { return m_detail; }
     
     void dump(PrintStream&) const;
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     WallTime m_time { };

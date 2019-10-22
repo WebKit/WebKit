@@ -73,7 +73,7 @@ void CommandLineAPIHost::disconnect()
     m_instrumentingAgents = nullptr;
 }
 
-void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInspect, JSC::JSValue hintsValue)
+void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue valueToInspect, JSC::JSValue hintsValue)
 {
     if (!m_instrumentingAgents)
         return;
@@ -83,14 +83,14 @@ void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInsp
         return;
 
     RefPtr<JSON::Object> hintsObject;
-    if (!Inspector::toInspectorValue(state, hintsValue)->asObject(hintsObject))
+    if (!Inspector::toInspectorValue(&lexicalGlobalObject, hintsValue)->asObject(hintsObject))
         return;
 
-    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(Inspector::toInspectorValue(state, valueToInspect));
+    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(Inspector::toInspectorValue(&lexicalGlobalObject, valueToInspect));
     inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
 }
 
-CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(ExecState& state, EventTarget& target)
+CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(JSGlobalObject& lexicalGlobalObject, EventTarget& target)
 {
     auto* scriptExecutionContext = target.scriptExecutionContext();
     if (!scriptExecutionContext)
@@ -98,7 +98,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(E
 
     EventListenersRecord result;
 
-    VM& vm = state.vm();
+    VM& vm = lexicalGlobalObject.vm();
 
     for (auto& eventType : target.eventTypes()) {
         Vector<CommandLineAPIHost::ListenerEntry> entries;
@@ -110,7 +110,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(E
             auto& jsListener = downcast<JSEventListener>(eventListener->callback());
 
             // Hide listeners from other contexts.
-            if (&jsListener.isolatedWorld() != &currentWorld(state))
+            if (&jsListener.isolatedWorld() != &currentWorld(lexicalGlobalObject))
                 continue;
 
             auto* function = jsListener.jsFunction(*scriptExecutionContext);
@@ -145,7 +145,7 @@ void CommandLineAPIHost::copyText(const String& text)
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
-JSC::JSValue CommandLineAPIHost::InspectableObject::get(JSC::ExecState&)
+JSC::JSValue CommandLineAPIHost::InspectableObject::get(JSC::JSGlobalObject&)
 {
     return { };
 }
@@ -155,13 +155,13 @@ void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::
     m_inspectedObject = WTFMove(object);
 }
 
-JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::ExecState& state)
+JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::JSGlobalObject& lexicalGlobalObject)
 {
     if (!m_inspectedObject)
         return jsUndefined();
 
-    JSC::JSLockHolder lock(&state);
-    auto scriptValue = m_inspectedObject->get(state);
+    JSC::JSLockHolder lock(&lexicalGlobalObject);
+    auto scriptValue = m_inspectedObject->get(lexicalGlobalObject);
     return scriptValue ? scriptValue : jsUndefined();
 }
 
@@ -179,7 +179,7 @@ String CommandLineAPIHost::storageId(Storage& storage)
     return InspectorDOMStorageAgent::storageId(storage);
 }
 
-JSValue CommandLineAPIHost::wrapper(ExecState* exec, JSDOMGlobalObject* globalObject)
+JSValue CommandLineAPIHost::wrapper(JSGlobalObject* exec, JSDOMGlobalObject* globalObject)
 {
     JSValue value = m_wrappers.getWrapper(globalObject);
     if (value)

@@ -101,9 +101,9 @@
 
 namespace JSC {
 
-JSValue eval(CallFrame* callFrame)
+JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!callFrame->argumentCount())
@@ -114,12 +114,11 @@ JSValue eval(CallFrame* callFrame)
         return program;
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
-    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
-        throwException(callFrame, scope, createEvalError(callFrame, globalObject->evalDisabledErrorMessage()));
+        throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return jsUndefined();
     }
-    String programSource = asString(program)->value(callFrame);
+    String programSource = asString(program)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
     
     CallFrame* callerFrame = callFrame->callerFrame();
@@ -149,12 +148,12 @@ JSValue eval(CallFrame* callFrame)
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
             if (programSource.is8Bit()) {
-                LiteralParser<LChar> preparser(callFrame, programSource.characters8(), programSource.length(), NonStrictJSON);
+                LiteralParser<LChar> preparser(globalObject, programSource.characters8(), programSource.length(), NonStrictJSON, callerCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
             } else {
-                LiteralParser<UChar> preparser(callFrame, programSource.characters16(), programSource.length(), NonStrictJSON);
+                LiteralParser<UChar> preparser(globalObject, programSource.characters16(), programSource.length(), NonStrictJSON, callerCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
@@ -164,20 +163,20 @@ JSValue eval(CallFrame* callFrame)
         
         VariableEnvironment variablesUnderTDZ;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
-        eval = DirectEvalExecutable::create(callFrame, makeSource(programSource, callerCodeBlock->source().provider()->sourceOrigin()), callerCodeBlock->isStrictMode(), derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
+        eval = DirectEvalExecutable::create(globalObject, makeSource(programSource, callerCodeBlock->source().provider()->sourceOrigin()), callerCodeBlock->isStrictMode(), derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
         EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
             return jsUndefined();
 
-        callerCodeBlock->directEvalCodeCache().set(callFrame, callerCodeBlock, programSource, callerCallSiteIndex, eval);
+        callerCodeBlock->directEvalCodeCache().set(globalObject, callerCodeBlock, programSource, callerCallSiteIndex, eval);
     }
 
     JSValue thisValue = callerFrame->thisValue();
     Interpreter* interpreter = vm.interpreter;
-    RELEASE_AND_RETURN(scope, interpreter->execute(eval, callFrame, thisValue, callerScopeChain));
+    RELEASE_AND_RETURN(scope, interpreter->execute(eval, globalObject, thisValue, callerScopeChain));
 }
 
-unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVarArgOffset)
+unsigned sizeOfVarargs(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue arguments, uint32_t firstVarArgOffset)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -186,7 +185,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
         if (arguments.isUndefinedOrNull())
             return 0;
         
-        throwException(callFrame, scope, createInvalidFunctionApplyParameterError(callFrame, arguments));
+        throwException(globalObject, scope, createInvalidFunctionApplyParameterError(globalObject, arguments));
         return 0;
     }
     
@@ -194,10 +193,10 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     unsigned length;
     switch (cell->type()) {
     case DirectArgumentsType:
-        length = jsCast<DirectArguments*>(cell)->length(callFrame);
+        length = jsCast<DirectArguments*>(cell)->length(globalObject);
         break;
     case ScopedArgumentsType:
-        length = jsCast<ScopedArguments*>(cell)->length(callFrame);
+        length = jsCast<ScopedArguments*>(cell)->length(globalObject);
         break;
     case JSFixedArrayType:
         length = jsCast<JSFixedArray*>(cell)->size();
@@ -208,12 +207,12 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     case StringType:
     case SymbolType:
     case BigIntType:
-        throwException(callFrame, scope, createInvalidFunctionApplyParameterError(callFrame,  arguments));
+        throwException(globalObject, scope, createInvalidFunctionApplyParameterError(globalObject,  arguments));
         return 0;
         
     default:
         RELEASE_ASSERT(arguments.isObject());
-        length = clampToUnsigned(toLength(callFrame, jsCast<JSObject*>(cell)));
+        length = clampToUnsigned(toLength(globalObject, jsCast<JSObject*>(cell)));
         break;
     }
     RETURN_IF_EXCEPTION(scope, 0);
@@ -226,73 +225,73 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
     return length;
 }
 
-unsigned sizeFrameForForwardArguments(CallFrame* callFrame, VM& vm, unsigned numUsedStackSlots)
+unsigned sizeFrameForForwardArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, unsigned numUsedStackSlots)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned length = callFrame->argumentCount();
     CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
     if (UNLIKELY(!vm.ensureStackCapacityFor(calleeFrame->registers())))
-        throwStackOverflowError(callFrame, scope);
+        throwStackOverflowError(globalObject, scope);
 
     return length;
 }
 
-unsigned sizeFrameForVarargs(CallFrame* callFrame, VM& vm, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset)
+unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame, VM& vm, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length = sizeOfVarargs(callFrame, arguments, firstVarArgOffset);
+    unsigned length = sizeOfVarargs(globalObject, callFrame, arguments, firstVarArgOffset);
     RETURN_IF_EXCEPTION(scope, 0);
 
     CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
     if (UNLIKELY(length > maxArguments || !vm.ensureStackCapacityFor(calleeFrame->registers()))) {
-        throwStackOverflowError(callFrame, scope);
+        throwStackOverflowError(globalObject, scope);
         return 0;
     }
     
     return length;
 }
 
-void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
+void loadVarargs(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
     if (UNLIKELY(!arguments.isCell()) || !length)
         return;
 
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* cell = arguments.asCell();
 
     switch (cell->type()) {
     case DirectArgumentsType:
         scope.release();
-        jsCast<DirectArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
+        jsCast<DirectArguments*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
         return;
     case ScopedArgumentsType:
         scope.release();
-        jsCast<ScopedArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
+        jsCast<ScopedArguments*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
         return;
     case JSFixedArrayType:
         scope.release();
-        jsCast<JSFixedArray*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
+        jsCast<JSFixedArray*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
         return;
     case JSImmutableButterflyType:
         scope.release();
-        jsCast<JSImmutableButterfly*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
+        jsCast<JSImmutableButterfly*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
         return; 
     default: {
         ASSERT(arguments.isObject());
         JSObject* object = jsCast<JSObject*>(cell);
         if (isJSArray(object)) {
             scope.release();
-            jsCast<JSArray*>(object)->copyToArguments(callFrame, firstElementDest, offset, length);
+            jsCast<JSArray*>(object)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
             return;
         }
         unsigned i;
         for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
             callFrame->r(firstElementDest + i) = object->getIndexQuickly(i + offset);
         for (; i < length; ++i) {
-            JSValue value = object->get(callFrame, i + offset);
+            JSValue value = object->get(globalObject, i + offset);
             RETURN_IF_EXCEPTION(scope, void());
             callFrame->r(firstElementDest + i) = value;
         }
@@ -300,11 +299,12 @@ void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue
     } }
 }
 
-void setupVarargsFrame(CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
+void setupVarargsFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
 {
     VirtualRegister calleeFrameOffset(newCallFrame - callFrame);
     
     loadVarargs(
+        globalObject,
         callFrame,
         calleeFrameOffset + CallFrame::argumentOffset(0),
         arguments, offset, length);
@@ -312,13 +312,13 @@ void setupVarargsFrame(CallFrame* callFrame, CallFrame* newCallFrame, JSValue ar
     newCallFrame->setArgumentCountIncludingThis(length + 1);
 }
 
-void setupVarargsFrameAndSetThis(CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length)
+void setupVarargsFrameAndSetThis(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length)
 {
-    setupVarargsFrame(callFrame, newCallFrame, arguments, firstVarArgOffset, length);
+    setupVarargsFrame(globalObject, callFrame, newCallFrame, arguments, firstVarArgOffset, length);
     newCallFrame->setThisValue(thisValue);
 }
 
-void setupForwardArgumentsFrame(CallFrame* execCaller, CallFrame* execCallee, uint32_t length)
+void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, uint32_t length)
 {
     ASSERT(length == execCaller->argumentCount());
     unsigned offset = execCaller->argumentOffset(0) * sizeof(Register);
@@ -326,9 +326,9 @@ void setupForwardArgumentsFrame(CallFrame* execCaller, CallFrame* execCallee, ui
     execCallee->setArgumentCountIncludingThis(length + 1);
 }
 
-void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length)
+void setupForwardArgumentsFrameAndSetThis(JSGlobalObject* globalObject, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length)
 {
-    setupForwardArgumentsFrame(execCaller, execCallee, length);
+    setupForwardArgumentsFrame(globalObject, execCaller, execCallee, length);
     execCallee->setThisValue(thisValue);
 }
 
@@ -515,8 +515,9 @@ private:
 
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
+    JSGlobalObject* globalObject = callFrame->wasmAwareLexicalGlobalObject(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
-    if (Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger()) {
+    if (Debugger* debugger = globalObject->debugger()) {
         SuspendExceptionScope scope(&vm);
         if (callFrame->isAnyWasmCallee()
             || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
@@ -633,9 +634,9 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     return handler;
 }
 
-void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFrame, Exception* exception)
+void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, Exception* exception)
 {
-    Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger();
+    Debugger* debugger = globalObject->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
@@ -654,18 +655,19 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, CallFrame* callFra
             hasCatchHandler = !!handler;
         }
 
-        debugger->exception(callFrame, exception->value(), hasCatchHandler);
+        debugger->exception(globalObject, callFrame, exception->value(), hasCatchHandler);
     }
     exception->setDidNotifyInspectorOfThrow();
 }
 
-JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFrame, JSObject* thisObj)
+JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, JSObject* thisObj)
 {
     JSScope* scope = thisObj->globalObject()->globalScope();
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* globalObject = scope->globalObject(vm);
 
-    ProgramExecutable* program = ProgramExecutable::create(callFrame, source);
+    ProgramExecutable* program = ProgramExecutable::create(globalObject, source);
     EXCEPTION_ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
 
@@ -676,23 +678,22 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
         return jsNull();
 
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
-        return checkedReturn(throwStackOverflowError(callFrame, throwScope));
+        return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
     // First check if the "program" is actually just a JSON object. If so,
     // we'll handle the JSON object here. Else, we'll handle real JS code
     // below at failedJSONP.
 
-    JSGlobalObject* globalObject = scope->globalObject(vm);
     Vector<JSONPData> JSONPData;
     bool parseResult;
     StringView programSource = program->source().view();
     if (programSource.isNull())
         return jsUndefined();
     if (programSource.is8Bit()) {
-        LiteralParser<LChar> literalParser(callFrame, programSource.characters8(), programSource.length(), JSONP);
+        LiteralParser<LChar> literalParser(globalObject, programSource.characters8(), programSource.length(), JSONP);
         parseResult = literalParser.tryJSONPParse(JSONPData, globalObject->globalObjectMethodTable()->supportsRichSourceInfo(globalObject));
     } else {
-        LiteralParser<UChar> literalParser(callFrame, programSource.characters16(), programSource.length(), JSONP);
+        LiteralParser<UChar> literalParser(globalObject, programSource.characters16(), programSource.length(), JSONP);
         parseResult = literalParser.tryJSONPParse(JSONPData, globalObject->globalObjectMethodTable()->supportsRichSourceInfo(globalObject));
     }
 
@@ -704,10 +705,10 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             JSONPPath.swap(JSONPData[entry].m_path);
             JSValue JSONPValue = JSONPData[entry].m_value.get();
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclareVar) {
-                globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
+                globalObject->addVar(globalObject, JSONPPath[0].m_pathEntryName);
                 RETURN_IF_EXCEPTION(throwScope, { });
                 PutPropertySlot slot(globalObject);
-                globalObject->methodTable(vm)->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                globalObject->methodTable(vm)->put(globalObject, globalObject, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 RETURN_IF_EXCEPTION(throwScope, { });
                 result = jsUndefined();
                 continue;
@@ -722,8 +723,8 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
 
                         auto doGet = [&] (JSSegmentedVariableObject* scope) {
                             PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
-                            if (scope->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot))
-                                return slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
+                            if (scope->getPropertySlot(globalObject, JSONPPath[i].m_pathEntryName, slot))
+                                return slot.getValue(globalObject, JSONPPath[i].m_pathEntryName);
                             return JSValue();
                         };
 
@@ -742,16 +743,16 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
                         }
 
                         if (entry)
-                            return throwException(callFrame, throwScope, createUndefinedVariableError(callFrame, JSONPPath[i].m_pathEntryName));
+                            return throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, JSONPPath[i].m_pathEntryName));
                         goto failedJSONP;
                     }
 
-                    baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
+                    baseObject = baseObject.get(globalObject, JSONPPath[i].m_pathEntryName);
                     RETURN_IF_EXCEPTION(throwScope, JSValue());
                     continue;
                 }
                 case JSONPPathEntryTypeLookup: {
-                    baseObject = baseObject.get(callFrame, static_cast<unsigned>(JSONPPath[i].m_pathIndex));
+                    baseObject = baseObject.get(globalObject, static_cast<unsigned>(JSONPPath[i].m_pathIndex));
                     RETURN_IF_EXCEPTION(throwScope, JSValue());
                     continue;
                 }
@@ -764,7 +765,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             if (JSONPPath.size() == 1 && JSONPPath.last().m_type != JSONPPathEntryTypeLookup) {
                 RELEASE_ASSERT(baseObject == globalObject);
                 JSGlobalLexicalEnvironment* scope = globalObject->globalLexicalEnvironment();
-                if (scope->hasProperty(callFrame, JSONPPath.last().m_pathEntryName))
+                if (scope->hasProperty(globalObject, JSONPPath.last().m_pathEntryName))
                     baseObject = scope;
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
             }
@@ -772,27 +773,27 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             PutPropertySlot slot(baseObject);
             switch (JSONPPath.last().m_type) {
             case JSONPPathEntryTypeCall: {
-                JSValue function = baseObject.get(callFrame, JSONPPath.last().m_pathEntryName);
+                JSValue function = baseObject.get(globalObject, JSONPPath.last().m_pathEntryName);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 CallData callData;
                 CallType callType = getCallData(vm, function, callData);
                 if (callType == CallType::None)
-                    return throwException(callFrame, throwScope, createNotAFunctionError(callFrame, function));
+                    return throwException(globalObject, throwScope, createNotAFunctionError(globalObject, function));
                 MarkedArgumentBuffer jsonArg;
                 jsonArg.append(JSONPValue);
                 ASSERT(!jsonArg.hasOverflowed());
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined() : baseObject;
-                JSONPValue = JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
+                JSONPValue = JSC::call(globalObject, function, callType, callData, thisValue, jsonArg);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
             case JSONPPathEntryTypeDot: {
-                baseObject.put(callFrame, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
+                baseObject.put(globalObject, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
             case JSONPPathEntryTypeLookup: {
-                baseObject.putByIndex(callFrame, JSONPPath.last().m_pathIndex, JSONPValue, slot.isStrictMode());
+                baseObject.putByIndex(globalObject, JSONPPath.last().m_pathIndex, JSONPValue, slot.isStrictMode());
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }
@@ -811,10 +812,10 @@ failedJSONP:
     VMEntryScope entryScope(vm, globalObject);
 
     // Compile source to bytecode if necessary:
-    JSObject* error = program->initializeGlobalProperties(vm, callFrame, scope);
+    JSObject* error = program->initializeGlobalProperties(vm, globalObject, scope);
     EXCEPTION_ASSERT(!throwScope.exception() || !error);
     if (UNLIKELY(error))
-        return checkedReturn(throwException(callFrame, throwScope, error));
+        return checkedReturn(throwException(globalObject, throwScope, error));
 
     ProgramCodeBlock* codeBlock;
     {
@@ -828,7 +829,7 @@ failedJSONP:
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(callFrame, mask);
+        vm.handleTraps(globalObject, vm.topCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -846,9 +847,9 @@ failedJSONP:
     return checkedReturn(result);
 }
 
-JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -873,7 +874,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     VMEntryScope entryScope(vm, globalObject);
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
-        return checkedReturn(throwStackOverflowError(callFrame, throwScope));
+        return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
     if (isJSCall) {
         // Compile the callee:
@@ -889,7 +890,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(callFrame, mask);
+        vm.handleTraps(globalObject, vm.topCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -911,9 +912,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     return checkedReturn(result);
 }
 
-JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* constructor, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
+JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSObject* constructor, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -921,7 +922,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     // We throw in this case because we have to return something "valid" but we're
     // already in an invalid state.
     if (UNLIKELY(vm.isCollectorBusyOnCurrentThread())) {
-        throwStackOverflowError(callFrame, throwScope);
+        throwStackOverflowError(lexicalGlobalObject, throwScope);
         return nullptr;
     }
 
@@ -942,7 +943,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     VMEntryScope entryScope(vm, globalObject);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(callFrame, throwScope);
+        throwStackOverflowError(globalObject, throwScope);
         return nullptr;
     }
 
@@ -960,7 +961,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(callFrame, mask);
+        vm.handleTraps(globalObject, vm.topCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
 
@@ -1010,21 +1011,22 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     return result;
 }
 
-JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
+JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobalObject, JSValue thisValue, JSScope* scope)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(&vm == &callFrame->vm());
+    ASSERT_UNUSED(lexicalGlobalObject, &vm == &lexicalGlobalObject->vm());
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
-    VMEntryScope entryScope(vm, scope->globalObject(vm));
+    JSGlobalObject* globalObject = scope->globalObject(vm);
+    VMEntryScope entryScope(vm, globalObject);
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
-        return checkedReturn(throwStackOverflowError(callFrame, throwScope));
+        return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
     unsigned numVariables = eval->numVariables();
     unsigned numTopLevelFunctionDecls = eval->numTopLevelFunctionDecls();
@@ -1032,7 +1034,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     JSScope* variableObject;
     if ((numVariables || numTopLevelFunctionDecls) && eval->isStrictMode()) {
-        scope = StrictEvalActivation::create(vm, callFrame->lexicalGlobalObject()->strictEvalActivationStructure(), scope);
+        scope = StrictEvalActivation::create(vm, globalObject->strictEvalActivationStructure(), scope);
         variableObject = scope;
     } else {
         for (JSScope* node = scope; ; node = node->next()) {
@@ -1068,16 +1070,16 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = unlinkedCodeBlock->variable(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry);
-            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, ident, slot)) {
-                return checkedReturn(throwTypeError(callFrame, throwScope, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'")));
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, ident, slot)) {
+                return checkedReturn(throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '", String(ident.impl()), "'")));
             }
         }
 
         for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
             PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry);
-            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, callFrame, function->name(), slot)) {
-                return checkedReturn(throwTypeError(callFrame, throwScope, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'")));
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, function->name(), slot)) {
+                return checkedReturn(throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '", String(function->name().impl()), "'")));
             }
         }
     }
@@ -1092,13 +1094,13 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = unlinkedCodeBlock->variable(i);
-            bool hasProperty = variableObject->hasProperty(callFrame, ident);
+            bool hasProperty = variableObject->hasProperty(globalObject, ident);
             RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             if (!hasProperty) {
                 PutPropertySlot slot(variableObject);
-                if (!variableObject->isExtensible(callFrame))
-                    return checkedReturn(throwTypeError(callFrame, throwScope, NonExtensibleObjectPropertyDefineError));
-                variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
+                if (!variableObject->isExtensible(globalObject))
+                    return checkedReturn(throwTypeError(globalObject, throwScope, NonExtensibleObjectPropertyDefineError));
+                variableObject->methodTable(vm)->put(variableObject, globalObject, ident, jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
         }
@@ -1108,32 +1110,32 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 FunctionExecutable* function = codeBlock->functionDecl(i);
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
-                variableObject->methodTable(vm)->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
+                variableObject->methodTable(vm)->put(variableObject, globalObject, function->name(), jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
         } else {
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
                 FunctionExecutable* function = codeBlock->functionDecl(i);
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, function->name());
+                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                 if (resolvedScope.isUndefined())
-                    return checkedReturn(throwSyntaxError(callFrame, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
+                    return checkedReturn(throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
-                variableObject->methodTable(vm)->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
+                variableObject->methodTable(vm)->put(variableObject, globalObject, function->name(), jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
 
             for (unsigned i = 0; i < numFunctionHoistingCandidates; ++i) {
                 const Identifier& ident = unlinkedCodeBlock->functionHoistingCandidate(i);
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, ident);
+                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                 if (!resolvedScope.isUndefined()) {
-                    bool hasProperty = variableObject->hasProperty(callFrame, ident);
+                    bool hasProperty = variableObject->hasProperty(globalObject, ident);
                     RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                     if (!hasProperty) {
                         PutPropertySlot slot(variableObject);
-                        variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
+                        variableObject->methodTable(vm)->put(variableObject, globalObject, ident, jsUndefined(), slot);
                         RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                     }
                 }
@@ -1143,13 +1145,12 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(callFrame, mask);
+        vm.handleTraps(globalObject, vm.topCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
 
-    JSGlobalObject* globalObject = scope->globalObject(vm);
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), thisValue, 1);
 
@@ -1160,21 +1161,22 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     return checkedReturn(result);
 }
 
-JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, CallFrame* callFrame, JSModuleEnvironment* scope)
+JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, JSGlobalObject* lexicalGlobalObject, JSModuleEnvironment* scope)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(&vm == &callFrame->vm());
+    ASSERT_UNUSED(lexicalGlobalObject, &vm == &lexicalGlobalObject->vm());
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
+    JSGlobalObject* globalObject = scope->globalObject(vm);
     VMEntryScope entryScope(vm, scope->globalObject(vm));
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
-        return checkedReturn(throwStackOverflowError(callFrame, throwScope));
+        return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
     ModuleProgramCodeBlock* codeBlock;
     {
@@ -1188,7 +1190,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
 
     VMTraps::Mask mask(VMTraps::NeedTermination, VMTraps::NeedWatchdogCheck);
     if (UNLIKELY(vm.needTrapHandling(mask))) {
-        vm.handleTraps(callFrame, mask);
+        vm.handleTraps(globalObject, vm.topCallFrame, mask);
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
     }
 
@@ -1200,7 +1202,6 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
     // The |this| of the module is always `undefined`.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
-    JSGlobalObject* globalObject = scope->globalObject(vm);
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(codeBlock, globalObject, JSCallee::create(vm, globalObject, scope), jsUndefined(), 1);
 
@@ -1215,7 +1216,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    Debugger* debugger = vm.vmEntryGlobalObject(callFrame)->debugger();
+    Debugger* debugger = callFrame->lexicalGlobalObject()->debugger();
     if (!debugger)
         return;
 

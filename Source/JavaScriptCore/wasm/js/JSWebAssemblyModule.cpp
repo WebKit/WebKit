@@ -44,13 +44,13 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, Wasm::Module::ValidationResult&& result)
+JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Module::ValidationResult&& result)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!result.has_value()) {
-        auto* error = JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->webAssemblyCompileErrorStructure(), result.error());
+        auto* error = JSWebAssemblyCompileError::create(globalObject, vm, structure->globalObject()->webAssemblyCompileErrorStructure(), result.error());
         RETURN_IF_EXCEPTION(scope, nullptr);
-        throwException(exec, scope, error);
+        throwException(globalObject, scope, error);
         return nullptr;
     }
 

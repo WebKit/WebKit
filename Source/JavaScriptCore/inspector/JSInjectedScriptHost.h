@@ -56,25 +56,25 @@ public:
     InjectedScriptHost& impl() const { return m_wrapped; }
 
     // Attributes.
-    JSC::JSValue evaluate(JSC::ExecState*) const;
-    JSC::JSValue savedResultAlias(JSC::ExecState*) const;
+    JSC::JSValue evaluate(JSC::JSGlobalObject*) const;
+    JSC::JSValue savedResultAlias(JSC::JSGlobalObject*) const;
 
     // Functions.
-    JSC::JSValue evaluateWithScopeExtension(JSC::ExecState*);
-    JSC::JSValue internalConstructorName(JSC::ExecState*);
-    JSC::JSValue isHTMLAllCollection(JSC::ExecState*);
-    JSC::JSValue isPromiseRejectedWithNativeGetterTypeError(JSC::ExecState*);
-    JSC::JSValue subtype(JSC::ExecState*);
-    JSC::JSValue functionDetails(JSC::ExecState*);
-    JSC::JSValue getInternalProperties(JSC::ExecState*);
-    JSC::JSValue proxyTargetValue(JSC::ExecState*);
-    JSC::JSValue weakMapSize(JSC::ExecState*);
-    JSC::JSValue weakMapEntries(JSC::ExecState*);
-    JSC::JSValue weakSetSize(JSC::ExecState*);
-    JSC::JSValue weakSetEntries(JSC::ExecState*);
-    JSC::JSValue iteratorEntries(JSC::ExecState*);
-    JSC::JSValue queryInstances(JSC::ExecState*);
-    JSC::JSValue queryHolders(JSC::ExecState*);
+    JSC::JSValue evaluateWithScopeExtension(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue internalConstructorName(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue isHTMLAllCollection(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue isPromiseRejectedWithNativeGetterTypeError(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue subtype(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue functionDetails(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue getInternalProperties(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue proxyTargetValue(JSC::VM&, JSC::CallFrame*);
+    JSC::JSValue weakMapSize(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue weakMapEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue weakSetSize(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue weakSetEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue iteratorEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue queryInstances(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue queryHolders(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 protected:
     void finishCreation(JSC::VM&);

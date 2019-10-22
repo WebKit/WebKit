@@ -48,9 +48,9 @@ InjectedScriptModule::~InjectedScriptModule()
 {
 }
 
-void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::ExecState* scriptState)
+void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::JSGlobalObject* globalObject)
 {
-    InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(scriptState);
+    InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(globalObject);
     ensureInjected(injectedScriptManager, injectedScript);
 }
 
@@ -61,7 +61,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         return;
 
     // FIXME: Make the InjectedScript a module itself.
-    JSC::JSLockHolder locker(injectedScript.scriptState());
+    JSC::JSLockHolder locker(injectedScript.globalObject());
     Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "hasInjectedModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     auto hasInjectedModuleResult = injectedScript.callFunctionWithEvalEnabled(function);
@@ -74,7 +74,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         auto& stack = error->stack();
         if (stack.size() > 0)
             stack[0].computeLineAndColumn(line, column);
-        WTFLogAlways("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.scriptState()).utf8().data(), line, column);
+        WTFLogAlways("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), line, column);
         WTFLogAlways("%s\n", source().utf8().data());
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -82,7 +82,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule"_s, injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());
         function.appendArgument(source());
-        function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
+        function.appendArgument(host(injectedScriptManager, injectedScript.globalObject()));
         auto injectModuleResult = injectedScript.callFunctionWithEvalEnabled(function);
         if (!injectModuleResult) {
             auto& error = injectModuleResult.error();
@@ -92,7 +92,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
             auto& stack = error->stack();
             if (stack.size() > 0)
                 stack[0].computeLineAndColumn(line, column);
-            WTFLogAlways("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.scriptState()).utf8().data(), line, column);
+            WTFLogAlways("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", name().utf8().data(), error->value().toWTFString(injectedScript.globalObject()).utf8().data(), line, column);
             WTFLogAlways("%s\n", source().utf8().data());
             RELEASE_ASSERT_NOT_REACHED();
         }

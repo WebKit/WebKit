@@ -67,12 +67,12 @@ JSC::JSValue toJS(TestCallbackInterface&);
 inline JSC::JSValue toJS(TestCallbackInterface* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 String convertEnumerationToString(TestCallbackInterface::Enum);
-template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, TestCallbackInterface::Enum);
+template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestCallbackInterface::Enum);
 
-template<> Optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::ExecState&, JSC::JSValue);
+template<> Optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>();
 
-template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSC::ExecState&, JSC::JSValue);
+template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInterface::Dictionary>(JSC::JSGlobalObject&, JSC::JSValue);
 
 } // namespace WebCore
 

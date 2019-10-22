@@ -35,7 +35,6 @@
 namespace JSC {
 class CallFrame;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {

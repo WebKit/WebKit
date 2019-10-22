@@ -53,11 +53,11 @@ WeakMapConstructor::WeakMapConstructor(VM& vm, Structure* structure)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakMap(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callWeakMap(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "WeakMap"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WeakMap"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakMap(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -65,33 +65,33 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* weakMapStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->weakMapStructure());
+    Structure* weakMapStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->weakMapStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSWeakMap* weakMap = JSWeakMap::create(vm, weakMapStructure);
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(weakMap);
 
-    JSValue adderFunction = weakMap->JSObject::get(callFrame, vm.propertyNames->set);
+    JSValue adderFunction = weakMap->JSObject::get(globalObject, vm.propertyNames->set);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(callFrame, scope));
+        return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
-    forEachInIterable(callFrame, iterable, [&](VM& vm, ExecState* callFrame, JSValue nextItem) {
+    forEachInIterable(globalObject, iterable, [&](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextItem.isObject()) {
-            throwTypeError(callFrame, scope);
+            throwTypeError(globalObject, scope);
             return;
         }
 
-        JSValue key = nextItem.get(callFrame, static_cast<unsigned>(0));
+        JSValue key = nextItem.get(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue value = nextItem.get(callFrame, static_cast<unsigned>(1));
+        JSValue value = nextItem.get(globalObject, static_cast<unsigned>(1));
         RETURN_IF_EXCEPTION(scope, void());
 
         MarkedArgumentBuffer arguments;
@@ -99,7 +99,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(JSGlobalObject* globalObjec
         arguments.append(value);
         ASSERT(!arguments.hasOverflowed());
         scope.release();
-        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, weakMap, arguments);
+        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, weakMap, arguments);
     });
 
     return JSValue::encode(weakMap);

@@ -63,9 +63,9 @@ using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
 
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
-    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing);
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing);
 
-    WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::ExecState&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationContext = SerializationContext::Default);
+    WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationContext = SerializationContext::Default);
 
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(StringView);
     static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
@@ -75,9 +75,9 @@ public:
 
     static Ref<SerializedScriptValue> nullValue();
 
-    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing);
-    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing);
-    JSC::JSValue deserialize(JSC::ExecState&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
+    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing);
+    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing);
+    JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing);
 
     static uint32_t wireFormatVersion();
 

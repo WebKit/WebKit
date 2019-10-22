@@ -55,34 +55,34 @@ void JSTemplateObjectDescriptor::destroy(JSCell* cell)
     static_cast<JSTemplateObjectDescriptor*>(cell)->JSTemplateObjectDescriptor::~JSTemplateObjectDescriptor();
 }
 
-JSArray* JSTemplateObjectDescriptor::createTemplateObject(ExecState* exec)
+JSArray* JSTemplateObjectDescriptor::createTemplateObject(JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned count = descriptor().cookedStrings().size();
-    JSArray* templateObject = constructEmptyArray(exec, nullptr, count);
+    JSArray* templateObject = constructEmptyArray(globalObject, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    JSArray* rawObject = constructEmptyArray(exec, nullptr, count);
+    JSArray* rawObject = constructEmptyArray(globalObject, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     for (unsigned index = 0; index < count; ++index) {
         auto cooked = descriptor().cookedStrings()[index];
         if (cooked)
-            templateObject->putDirectIndex(exec, index, jsString(vm, cooked.value()), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
+            templateObject->putDirectIndex(globalObject, index, jsString(vm, cooked.value()), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         else
-            templateObject->putDirectIndex(exec, index, jsUndefined(), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
+            templateObject->putDirectIndex(globalObject, index, jsUndefined(), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
-        rawObject->putDirectIndex(exec, index, jsString(vm, descriptor().rawStrings()[index]), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
+        rawObject->putDirectIndex(globalObject, index, jsString(vm, descriptor().rawStrings()[index]), PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete, PutDirectIndexLikePutDirect);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    objectConstructorFreeze(exec, rawObject);
+    objectConstructorFreeze(globalObject, rawObject);
     scope.assertNoException();
 
     templateObject->putDirect(vm, vm.propertyNames->raw, rawObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 
-    objectConstructorFreeze(exec, templateObject);
+    objectConstructorFreeze(globalObject, templateObject);
     scope.assertNoException();
 
     return templateObject;

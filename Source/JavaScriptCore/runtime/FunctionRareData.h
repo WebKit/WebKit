@@ -89,10 +89,10 @@ public:
     bool isObjectAllocationProfileInitialized() { return !m_objectAllocationProfile.isNull(); }
 
     Structure* internalFunctionAllocationStructure() { return m_internalFunctionAllocationProfile.structure(); }
-    Structure* createInternalFunctionAllocationStructureFromBase(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)
+    Structure* createInternalFunctionAllocationStructureFromBase(VM& vm, JSGlobalObject* baseGlobalObject, JSObject* prototype, Structure* baseStructure)
     {
         initializeAllocationProfileWatchpointSet();
-        return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, globalObject, this, prototype, baseStructure);
+        return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, baseGlobalObject, this, prototype, baseStructure);
     }
     void clearInternalFunctionAllocationProfile(const char* reason)
     {

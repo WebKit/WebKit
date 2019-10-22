@@ -182,22 +182,22 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
     int firstVarArgOffset = bytecode.m_firstVarArg;
 
     emitLoad(arguments, regT1, regT0);
-    Z_JITOperation_EJZZ sizeOperation;
+    Z_JITOperation_GJZZ sizeOperation;
     if (Op::opcodeID == op_tail_call_forward_arguments)
         sizeOperation = operationSizeFrameForForwardArguments;
     else
         sizeOperation = operationSizeFrameForVarargs;
-    callOperation(sizeOperation, JSValueRegs(regT1, regT0), -firstFreeRegister, firstVarArgOffset);
+    callOperation(sizeOperation, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), -firstFreeRegister, firstVarArgOffset);
     move(TrustedImm32(-firstFreeRegister), regT1);
     emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
     addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
     emitLoad(arguments, regT2, regT4);
-    F_JITOperation_EFJZZ setupOperation;
+    F_JITOperation_GFJZZ setupOperation;
     if (opcodeID == op_tail_call_forward_arguments)
         setupOperation = operationSetupForwardArgumentsFrame;
     else
         setupOperation = operationSetupVarargsFrame;
-    callOperation(setupOperation, regT1, JSValueRegs(regT2, regT4), firstVarArgOffset, regT0);
+    callOperation(setupOperation, m_codeBlock->globalObject(), regT1, JSValueRegs(regT2, regT4), firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
 
     // Profile the argument count.
@@ -229,7 +229,7 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperation(operationCallEval, regT1);
+    callOperation(operationCallEval, m_codeBlock->globalObject(), regT1);
 
     addSlowCase(branchIfEmpty(regT1));
 
@@ -254,7 +254,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     emitLoad(callee, regT1, regT0);
-    emitDumbVirtualCall(vm(), info);
+    emitDumbVirtualCall(vm(), m_codeBlock->globalObject(), info);
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
@@ -342,6 +342,7 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
 
     linkAllSlowCases(iter);
 
+    move(TrustedImmPtr(m_codeBlock->globalObject()), regT3);
     move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)

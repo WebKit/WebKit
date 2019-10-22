@@ -159,43 +159,43 @@ static unsigned computeCurrencyDigits(const String& currency)
     return 2;
 }
 
-void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales, JSValue optionsValue)
+void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSValue locales, JSValue optionsValue)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.1.2 InitializeNumberFormat (numberFormat, locales, options) (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-initializenumberformat
 
-    auto requestedLocales = canonicalizeLocaleList(state, locales);
+    auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options;
     if (optionsValue.isUndefined())
-        options = constructEmptyObject(&state, state.lexicalGlobalObject()->nullPrototypeObjectStructure());
+        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     else {
-        options = optionsValue.toObject(&state);
+        options = optionsValue.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
     HashMap<String, String> opt;
 
-    String matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    String matcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
     opt.add("localeMatcher"_s, matcher);
 
-    auto& availableLocales = state.jsCallee()->globalObject(vm)->intlNumberFormatAvailableLocales();
-    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
+    auto& availableLocales = globalObject->intlNumberFormatAvailableLocales();
+    auto result = resolveLocale(globalObject, availableLocales, requestedLocales, opt, relevantNumberExtensionKeys, WTF_ARRAY_LENGTH(relevantNumberExtensionKeys), IntlNFInternal::localeData);
 
     m_locale = result.get("locale"_s);
     if (m_locale.isEmpty()) {
-        throwTypeError(&state, scope, "failed to initialize NumberFormat due to invalid locale"_s);
+        throwTypeError(globalObject, scope, "failed to initialize NumberFormat due to invalid locale"_s);
         return;
     }
 
     m_numberingSystem = result.get("nu"_s);
 
-    String styleString = intlStringOption(state, options, Identifier::fromString(vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
+    String styleString = intlStringOption(globalObject, options, Identifier::fromString(vm, "style"), { "decimal", "percent", "currency" }, "style must be either \"decimal\", \"percent\", or \"currency\"", "decimal");
     RETURN_IF_EXCEPTION(scope, void());
     if (styleString == "decimal")
         m_style = Style::Decimal;
@@ -206,11 +206,11 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     else
         ASSERT_NOT_REACHED();
 
-    String currency = intlStringOption(state, options, Identifier::fromString(vm, "currency"), { }, nullptr, nullptr);
+    String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"), { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!currency.isNull()) {
         if (currency.length() != 3 || !currency.isAllSpecialCharacters<isASCIIAlpha>()) {
-            throwException(&state, scope, createRangeError(&state, "currency is not a well-formed currency code"_s));
+            throwException(globalObject, scope, createRangeError(globalObject, "currency is not a well-formed currency code"_s));
             return;
         }
     }
@@ -218,7 +218,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     unsigned currencyDigits = 0;
     if (m_style == Style::Currency) {
         if (currency.isNull()) {
-            throwTypeError(&state, scope, "currency must be a string"_s);
+            throwTypeError(globalObject, scope, "currency must be a string"_s);
             return;
         }
 
@@ -227,7 +227,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
         currencyDigits = computeCurrencyDigits(currency);
     }
 
-    String currencyDisplayString = intlStringOption(state, options, Identifier::fromString(vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
+    String currencyDisplayString = intlStringOption(globalObject, options, Identifier::fromString(vm, "currencyDisplay"), { "code", "symbol", "name" }, "currencyDisplay must be either \"code\", \"symbol\", or \"name\"", "symbol");
     RETURN_IF_EXCEPTION(scope, void());
     if (m_style == Style::Currency) {
         if (currencyDisplayString == "code")
@@ -240,13 +240,13 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
             ASSERT_NOT_REACHED();
     }
 
-    unsigned minimumIntegerDigits = intlNumberOption(state, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
+    unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumIntegerDigits = minimumIntegerDigits;
 
     unsigned minimumFractionDigitsDefault = (m_style == Style::Currency) ? currencyDigits : 0;
 
-    unsigned minimumFractionDigits = intlNumberOption(state, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
+    unsigned minimumFractionDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumFractionDigits = minimumFractionDigits;
 
@@ -258,27 +258,27 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     else
         maximumFractionDigitsDefault = std::max(minimumFractionDigits, 3u);
 
-    unsigned maximumFractionDigits = intlNumberOption(state, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
+    unsigned maximumFractionDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_maximumFractionDigits = maximumFractionDigits;
 
-    JSValue minimumSignificantDigitsValue = options->get(&state, Identifier::fromString(vm, "minimumSignificantDigits"));
+    JSValue minimumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "minimumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(&state, Identifier::fromString(vm, "maximumSignificantDigits"));
+    JSValue maximumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "maximumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
-        unsigned minimumSignificantDigits = intlDefaultNumberOption(state, minimumSignificantDigitsValue, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlDefaultNumberOption(globalObject, minimumSignificantDigitsValue, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlDefaultNumberOption(state, maximumSignificantDigitsValue, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlDefaultNumberOption(globalObject, maximumSignificantDigitsValue, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         m_minimumSignificantDigits = minimumSignificantDigits;
         m_maximumSignificantDigits = maximumSignificantDigits;
     }
 
     bool usesFallback;
-    bool useGrouping = intlBooleanOption(state, options, Identifier::fromString(vm, "useGrouping"), usesFallback);
+    bool useGrouping = intlBooleanOption(globalObject, options, Identifier::fromString(vm, "useGrouping"), usesFallback);
     if (usesFallback)
         useGrouping = true;
     RETURN_IF_EXCEPTION(scope, void());
@@ -314,14 +314,14 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     UErrorCode status = U_ZERO_ERROR;
     m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&state, scope, "failed to initialize NumberFormat"_s);
+        throwTypeError(globalObject, scope, "failed to initialize NumberFormat"_s);
         return;
     }
 
     if (m_style == Style::Currency) {
         unum_setTextAttribute(m_numberFormat.get(), UNUM_CURRENCY_CODE, StringView(m_currency).upconvertedCharacters(), m_currency.length(), &status);
         if (U_FAILURE(status)) {
-            throwTypeError(&state, scope, "failed to initialize NumberFormat"_s);
+            throwTypeError(globalObject, scope, "failed to initialize NumberFormat"_s);
             return;
         }
     }
@@ -340,14 +340,14 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     m_initializedNumberFormat = true;
 }
 
-JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
+JSValue IntlNumberFormat::formatNumber(JSGlobalObject* globalObject, double number)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.3.4 FormatNumber abstract operation (ECMA-402 2.0)
     if (!m_initializedNumberFormat)
-        return throwTypeError(&state, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
+        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s);
 
     // Map negative zero to positive zero.
     if (!number)
@@ -362,7 +362,7 @@ JSValue IntlNumberFormat::formatNumber(ExecState& state, double number)
         unum_formatDouble(m_numberFormat.get(), number, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwException(&state, scope, createError(&state, "Failed to format a number."_s));
+        return throwException(globalObject, scope, createError(globalObject, "Failed to format a number."_s));
 
     return jsString(vm, String(buffer.data(), length));
 }
@@ -395,9 +395,9 @@ ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDis
     return ASCIILiteral::null();
 }
 
-JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
+JSObject* IntlNumberFormat::resolvedOptions(JSGlobalObject* globalObject)
 {
-    VM& vm = state.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.3.5 Intl.NumberFormat.prototype.resolvedOptions() (ECMA-402 2.0)
@@ -410,11 +410,11 @@ JSObject* IntlNumberFormat::resolvedOptions(ExecState& state)
     // slots are not present are not assigned.
 
     if (!m_initializedNumberFormat) {
-        initializeNumberFormat(state, jsUndefined(), jsUndefined());
+        initializeNumberFormat(globalObject, jsUndefined(), jsUndefined());
         scope.assertNoException();
     }
 
-    JSObject* options = constructEmptyObject(&state);
+    JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
     options->putDirect(vm, Identifier::fromString(vm, "numberingSystem"), jsString(vm, m_numberingSystem));
     options->putDirect(vm, Identifier::fromString(vm, "style"), jsNontrivialString(vm, styleString(m_style)));
@@ -483,9 +483,9 @@ ASCIILiteral IntlNumberFormat::partTypeString(UNumberFormatFields field, double 
     return "unknown"_s;
 }
 
-JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
+JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double value)
 {
-    VM& vm = exec.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // FormatNumberToParts (ECMA-402)
@@ -493,12 +493,12 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     // https://tc39.github.io/ecma402/#sec-partitionnumberpattern
 
     if (!m_initializedNumberFormat)
-        return throwTypeError(&exec, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s);
+        return throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to open field position iterator"_s);
+        return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
     status = U_ZERO_ERROR;
     Vector<UChar, 32> result(32);
@@ -509,7 +509,7 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
         unum_formatDoubleForFields(m_numberFormat.get(), value, result.data(), resultLength, fieldItr.get(), &status);
     }
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to format a number."_s);
+        return throwTypeError(globalObject, scope, "failed to format a number."_s);
 
     int32_t literalFieldType = -1;
     auto literalField = IntlNumberFormatField(literalFieldType, resultLength);
@@ -527,10 +527,9 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
         fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
     }
 
-    JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
-        return throwOutOfMemoryError(&exec, scope);
+        return throwOutOfMemoryError(globalObject, scope);
     unsigned index = 0;
 
     auto resultString = String(result.data(), resultLength);
@@ -545,10 +544,10 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
             ++currentIndex;
         auto partType = fieldType == literalFieldType ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), value));
         auto partValue = jsSubstring(vm, resultString, startIndex, currentIndex - startIndex);
-        JSObject* part = constructEmptyObject(&exec);
+        JSObject* part = constructEmptyObject(globalObject);
         part->putDirect(vm, typePropertyName, partType);
         part->putDirect(vm, vm.propertyNames->value, partValue);
-        parts->putDirectIndex(&exec, index++, part);
+        parts->putDirectIndex(globalObject, index++, part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

@@ -388,7 +388,7 @@ public:
         return DFG::MinifiedID::fromBits(m_source.get().nodeID);
     }
     
-    JSValue recover(ExecState*) const;
+    JSValue recover(CallFrame*) const;
     
 #if ENABLE(JIT)
     template<typename Func>

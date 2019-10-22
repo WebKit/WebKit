@@ -66,19 +66,19 @@ DirectArguments* DirectArguments::create(VM& vm, Structure* structure, unsigned 
     return result;
 }
 
-DirectArguments* DirectArguments::createByCopying(ExecState* exec)
+DirectArguments* DirectArguments::createByCopying(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     
-    unsigned length = exec->argumentCount();
-    unsigned capacity = std::max(length, static_cast<unsigned>(exec->codeBlock()->numParameters() - 1));
+    unsigned length = callFrame->argumentCount();
+    unsigned capacity = std::max(length, static_cast<unsigned>(callFrame->codeBlock()->numParameters() - 1));
     DirectArguments* result = createUninitialized(
-        vm, exec->lexicalGlobalObject()->directArgumentsStructure(), length, capacity);
+        vm, globalObject->directArgumentsStructure(), length, capacity);
     
     for (unsigned i = capacity; i--;)
-        result->storage()[i].set(vm, result, exec->getArgumentUnsafe(i));
+        result->storage()[i].set(vm, result, callFrame->getArgumentUnsafe(i));
     
-    result->setCallee(vm, jsCast<JSFunction*>(exec->jsCallee()));
+    result->setCallee(vm, jsCast<JSFunction*>(callFrame->jsCallee()));
     
     return result;
 }
@@ -137,20 +137,20 @@ void DirectArguments::unmapArgument(VM& vm, unsigned index)
     m_mappedArguments.at(index, internalLength()) = true;
 }
 
-void DirectArguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
+void DirectArguments::copyToArguments(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
     if (!m_mappedArguments) {
         unsigned limit = std::min(length + offset, m_length);
         unsigned i;
         VirtualRegister start = firstElementDest - offset;
         for (i = offset; i < limit; ++i)
-            exec->r(start + i) = storage()[i].get();
+            callFrame->r(start + i) = storage()[i].get();
         for (; i < length; ++i)
-            exec->r(start + i) = get(exec, i);
+            callFrame->r(start + i) = get(globalObject, i);
         return;
     }
 
-    GenericArguments::copyToArguments(exec, firstElementDest, offset, length);
+    GenericArguments::copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
 }
 
 unsigned DirectArguments::mappedArgumentsSize()

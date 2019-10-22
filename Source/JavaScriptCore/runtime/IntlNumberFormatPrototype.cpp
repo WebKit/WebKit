@@ -100,12 +100,12 @@ static EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(JSGlobalObj
 
     // 3. If value is not provided, let value be undefined.
     // 4. Let x be ToNumber(value).
-    double number = callFrame->argument(0).toNumber(callFrame);
+    double number = callFrame->argument(0).toNumber(globalObject);
     // 5. ReturnIfAbrupt(x).
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 6. Return FormatNumber(nf, x).
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*callFrame, number)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(globalObject, number)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -120,13 +120,13 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!nf) {
-        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         nf = jsDynamicCast<IntlNumberFormat*>(vm, value);
     }
 
     if (!nf)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
     
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
@@ -136,7 +136,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeGetterFormat(JSGlobalObjec
         // b. The value of F’s length property is 1.
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, IntlNumberFormatFuncFormatNumber, NoIntrinsic);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, callFrame, globalObject, targetObject, nf, nullptr, 1, "format"_s);
+        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, nf, nullptr, 1, "format"_s);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set nf.[[boundFormat]] to bf.
         nf->setBoundFormat(vm, boundFormat);
@@ -156,12 +156,12 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncFormatToParts(JSGlobal
 
     IntlNumberFormat* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
     if (!numberFormat)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s));
 
-    double value = callFrame->argument(0).toNumber(callFrame);
+    double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(*callFrame, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
 }
 #endif
 
@@ -176,15 +176,15 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatPrototypeFuncResolvedOptions(JSGlob
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!numberFormat) {
-        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, value);
     }
 
     if (!numberFormat)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->resolvedOptions(*callFrame)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->resolvedOptions(globalObject)));
 }
 
 } // namespace JSC

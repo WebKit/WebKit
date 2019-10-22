@@ -48,8 +48,7 @@ InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& er
 {
     ASSERT_UNUSED(executionContextId, !executionContextId);
 
-    JSC::ExecState* scriptState = m_globalObject.globalExec();
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(scriptState);
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
         errorString = "Missing execution context for given executionContextId."_s;
 

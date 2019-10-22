@@ -33,7 +33,6 @@
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -59,23 +58,23 @@ public:
 
     void rollbackInfoForVersionChangeAbort();
 
-    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, RefPtr<IDBKeyRange>&&, IDBCursorDirection);
-    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, IDBCursorDirection);
-    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, RefPtr<IDBKeyRange>&&, IDBCursorDirection);
-    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, JSC::JSValue key, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::JSGlobalObject&, RefPtr<IDBKeyRange>&&, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::JSGlobalObject&, JSC::JSValue key, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::JSGlobalObject&, RefPtr<IDBKeyRange>&&, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::JSGlobalObject&, JSC::JSValue key, IDBCursorDirection);
 
-    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);
-    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::JSGlobalObject&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::JSGlobalObject&, JSC::JSValue key);
 
-    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, IDBKeyRange*);
-    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, JSC::JSValue key);
-    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, IDBKeyRange*);
-    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::JSGlobalObject&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::JSGlobalObject&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::JSGlobalObject&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::JSGlobalObject&, JSC::JSValue key);
 
-    ExceptionOr<Ref<IDBRequest>> getAll(JSC::ExecState&, RefPtr<IDBKeyRange>&&, Optional<uint32_t> count);
-    ExceptionOr<Ref<IDBRequest>> getAll(JSC::ExecState&, JSC::JSValue key, Optional<uint32_t> count);
-    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::ExecState&, RefPtr<IDBKeyRange>&&, Optional<uint32_t> count);
-    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::ExecState&, JSC::JSValue key, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAll(JSC::JSGlobalObject&, RefPtr<IDBKeyRange>&&, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAll(JSC::JSGlobalObject&, JSC::JSValue key, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::JSGlobalObject&, RefPtr<IDBKeyRange>&&, Optional<uint32_t> count);
+    ExceptionOr<Ref<IDBRequest>> getAllKeys(JSC::JSGlobalObject&, JSC::JSValue key, Optional<uint32_t> count);
 
     const IDBIndexInfo& info() const { return m_info; }
 
@@ -90,13 +89,13 @@ public:
     bool hasPendingActivity() const final;
 
 private:
-    ExceptionOr<Ref<IDBRequest>> doCount(JSC::ExecState&, const IDBKeyRangeData&);
-    ExceptionOr<Ref<IDBRequest>> doGet(JSC::ExecState&, ExceptionOr<IDBKeyRangeData>);
-    ExceptionOr<Ref<IDBRequest>> doGetKey(JSC::ExecState&, ExceptionOr<IDBKeyRangeData>);
-    ExceptionOr<Ref<IDBRequest>> doOpenCursor(JSC::ExecState&, IDBCursorDirection, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
-    ExceptionOr<Ref<IDBRequest>> doOpenKeyCursor(JSC::ExecState&, IDBCursorDirection, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
-    ExceptionOr<Ref<IDBRequest>> doGetAll(JSC::ExecState&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
-    ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::ExecState&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
+    ExceptionOr<Ref<IDBRequest>> doCount(JSC::JSGlobalObject&, const IDBKeyRangeData&);
+    ExceptionOr<Ref<IDBRequest>> doGet(JSC::JSGlobalObject&, ExceptionOr<IDBKeyRangeData>);
+    ExceptionOr<Ref<IDBRequest>> doGetKey(JSC::JSGlobalObject&, ExceptionOr<IDBKeyRangeData>);
+    ExceptionOr<Ref<IDBRequest>> doOpenCursor(JSC::JSGlobalObject&, IDBCursorDirection, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
+    ExceptionOr<Ref<IDBRequest>> doOpenKeyCursor(JSC::JSGlobalObject&, IDBCursorDirection, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
+    ExceptionOr<Ref<IDBRequest>> doGetAll(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
+    ExceptionOr<Ref<IDBRequest>> doGetAllKeys(JSC::JSGlobalObject&, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()> &&);
 
     const char* activeDOMObjectName() const final;
 

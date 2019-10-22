@@ -40,7 +40,7 @@ public:
         return scope;
     }
 
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

@@ -53,7 +53,7 @@ private:
     DateConstructor(VM&, Structure*);
 };
 
-JSObject* constructDate(ExecState*, JSGlobalObject*, JSValue newTarget, const ArgList&);
+JSObject* constructDate(JSGlobalObject*, JSValue newTarget, const ArgList&);
 JSValue dateNowImpl();
 
 } // namespace JSC

@@ -108,7 +108,7 @@ private:
     bool isWorkletGlobalScope() const final { return true; }
 
     void logExceptionToConsole(const String& errorMessage, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final;
-    void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState*, unsigned long) final;
+    void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject*, unsigned long) final;
     void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long) final;
 
     EventTarget* errorEventTarget() final { return this; }

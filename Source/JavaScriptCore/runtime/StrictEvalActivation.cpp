@@ -40,7 +40,7 @@ StrictEvalActivation::StrictEvalActivation(VM& vm, Structure* structure, JSScope
 {
 }
 
-bool StrictEvalActivation::deleteProperty(JSCell*, ExecState*, PropertyName)
+bool StrictEvalActivation::deleteProperty(JSCell*, JSGlobalObject*, PropertyName)
 {
     return false;
 }

@@ -31,18 +31,17 @@
 namespace JSC {
 
 class CallFrame;
-using ExecState = CallFrame;
 struct Instruction;
 struct ProtoCallFrame;
 
 namespace LLInt {
 
-extern "C" SlowPathReturnType llint_trace_operand(ExecState*, const Instruction*, int fromWhere, int operand);
-extern "C" SlowPathReturnType llint_trace_value(ExecState*, const Instruction*, int fromWhere, VirtualRegister operand);
-extern "C" void llint_write_barrier_slow(ExecState*, JSCell*) WTF_INTERNAL;
+extern "C" SlowPathReturnType llint_trace_operand(CallFrame*, const Instruction*, int fromWhere, int operand);
+extern "C" SlowPathReturnType llint_trace_value(CallFrame*, const Instruction*, int fromWhere, VirtualRegister operand);
+extern "C" void llint_write_barrier_slow(CallFrame*, JSCell*) WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \
-    extern "C" SlowPathReturnType llint_##name(ExecState* exec, const Instruction* pc)
+    extern "C" SlowPathReturnType llint_##name(CallFrame* callFrame, const Instruction* pc)
 
 #define LLINT_SLOW_PATH_HIDDEN_DECL(name) \
     LLINT_SLOW_PATH_DECL(name) WTF_INTERNAL

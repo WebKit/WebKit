@@ -96,18 +96,18 @@ static Expected<URL, String> computeValidImportSpecifier(const URL& base, const 
     return makeUnexpected(makeString("Could not form valid URL from identifier and base. Tried:"_s, absoluteURL.string()));
 }
 
-Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue referrer, JSValue)
+Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue referrer, JSValue)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT_UNUSED(globalObject, globalObject == exec->lexicalGlobalObject());
+    ASSERT_UNUSED(globalObject, globalObject == globalObject);
     ASSERT(key.isString() || key.isSymbol());
-    String name =  key.toWTFString(exec);
+    String name =  key.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     URL base;
     if (JSString* referrerString = jsDynamicCast<JSString*>(vm, referrer)) {
-        String value = referrerString->value(exec);
+        String value = referrerString->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         URL referrerURL({ }, value);
         RELEASE_ASSERT(referrerURL.isValid());
@@ -118,29 +118,29 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     if (result)
         return Identifier::fromString(vm, result.value());
 
-    throwVMError(exec, scope, createError(exec, result.error()));
+    throwVMError(globalObject, scope, createError(globalObject, result.error()));
     return { };
 }
 
-JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSString* specifierValue, JSValue, const SourceOrigin& sourceOrigin)
+JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* specifierValue, JSValue, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue exception) -> JSInternalPromise* {
         scope.clearException();
-        auto* promise = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+        auto* promise = JSInternalPromiseDeferred::tryCreate(globalObject);
         scope.clearException();
-        return promise->reject(exec, exception);
+        return promise->reject(globalObject, exception);
     };
 
     auto import = [&] (URL& url) {
-        auto result = importModule(exec, Identifier::fromString(vm, url), jsUndefined(), jsUndefined());
+        auto result = importModule(globalObject, Identifier::fromString(vm, url), jsUndefined(), jsUndefined());
         if (UNLIKELY(scope.exception()))
             return reject(scope.exception());
         return result;
     };
 
-    auto specifier = specifierValue->value(exec);
+    auto specifier = specifierValue->value(globalObject);
     if (UNLIKELY(scope.exception())) {
         JSValue exception = scope.exception();
         scope.clearException();
@@ -152,42 +152,42 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
     auto result = computeValidImportSpecifier(baseURL, specifier);
     if (result)
         return import(result.value());
-    return reject(createError(exec, result.error()));
+    return reject(createError(globalObject, result.error()));
 }
 
-JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue, JSValue)
+JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    ASSERT(globalObject == exec->lexicalGlobalObject());
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
+    ASSERT(globalObject == globalObject);
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Identifier moduleKey = key.toPropertyKey(exec);
+    Identifier moduleKey = key.toPropertyKey(globalObject);
     if (UNLIKELY(scope.exception())) {
         JSValue exception = scope.exception();
         scope.clearException();
-        return deferred->reject(exec, exception);
+        return deferred->reject(globalObject, exception);
     }
 
     if (UNLIKELY(![context moduleLoaderDelegate]))
-        return deferred->reject(exec, createError(exec, "No module loader provided."));
+        return deferred->reject(globalObject, createError(globalObject, "No module loader provided."));
 
     auto deferredPromise = Strong<JSInternalPromiseDeferred>(vm, deferred);
     auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (JSGlobalObject* globalObject, CallFrame* callFrame) {
         // This captures the globalObject but that's ok because our structure keeps it alive anyway.
         VM& vm = globalObject->vm();
-        JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
-        id script = valueToObject(context, toRef(callFrame, callFrame->argument(0)));
+        JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
+        id script = valueToObject(context, toRef(globalObject, callFrame->argument(0)));
 
         MarkedArgumentBuffer args;
 
         auto rejectPromise = [&] (String message) {
-            args.append(createTypeError(callFrame, message));
-            call(callFrame, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
+            args.append(createTypeError(globalObject, message));
+            call(globalObject, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
             return encodedJSUndefined();
         };
 
@@ -206,7 +206,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
             return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
 
         args.append(source);
-        call(callFrame, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
+        call(globalObject, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
         return encodedJSUndefined();
     });
 
@@ -214,24 +214,24 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         MarkedArgumentBuffer args;
         args.append(callFrame->argument(0));
 
-        call(callFrame, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
+        call(globalObject, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
         return encodedJSUndefined();
     });
 
-    [[context moduleLoaderDelegate] context:context fetchModuleForIdentifier:[::JSValue valueWithJSValueRef:toRef(exec, key) inContext:context] withResolveHandler:[::JSValue valueWithJSValueRef:toRef(exec, resolve) inContext:context] andRejectHandler:[::JSValue valueWithJSValueRef:toRef(exec, reject) inContext:context]];
+    [[context moduleLoaderDelegate] context:context fetchModuleForIdentifier:[::JSValue valueWithJSValueRef:toRef(globalObject, key) inContext:context] withResolveHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, resolve) inContext:context] andRejectHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, reject) inContext:context]];
     if (context.exception) {
-        deferred->reject(exec, toJS(exec, [context.exception JSValueRef]));
+        deferred->reject(globalObject, toJS(globalObject, [context.exception JSValueRef]));
         context.exception = nil;
     }
     return deferred->promise();
 }
 
-JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSModuleRecord*, JSValue)
+JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSModuleRecord*, JSValue)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* metaProperties = constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
+    JSObject* metaProperties = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"), key);
@@ -240,17 +240,17 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     return metaProperties;
 }
 
-JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
+JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JSModuleLoader* moduleLoader, JSValue key, JSValue moduleRecordValue, JSValue scriptFetcher)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
     id <JSModuleLoaderDelegate> moduleLoaderDelegate = [context moduleLoaderDelegate];
     NSURL *url = nil;
 
     if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)] || [moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)]) {
-        String moduleKey = key.toWTFString(exec);
+        String moduleKey = key.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         url = [NSURL URLWithString:static_cast<NSString *>(moduleKey)];
     }
@@ -259,7 +259,7 @@ JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, Ex
         [moduleLoaderDelegate willEvaluateModule:url];
 
     scope.release();
-    JSValue result = moduleLoader->evaluateNonVirtual(exec, key, moduleRecordValue, scriptFetcher);
+    JSValue result = moduleLoader->evaluateNonVirtual(globalObject, key, moduleRecordValue, scriptFetcher);
 
     if ([moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)])
         [moduleLoaderDelegate didEvaluateModule:url];
@@ -271,15 +271,14 @@ JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JS
 {
     ASSERT(script.type == kJSScriptTypeModule);
     VM& vm = this->vm();
-    ExecState* exec = globalExec();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Identifier key = Identifier::fromString(vm, String { [[script sourceURL] absoluteString] });
-    JSInternalPromise* promise = importModule(exec, key, jsUndefined(), jsUndefined());
+    JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
-    auto result = JSPromiseDeferred::tryCreate(exec, this);
+    auto result = JSPromiseDeferred::tryCreate(this);
     RETURN_IF_EXCEPTION(scope, { });
-    result->resolve(exec, promise);
+    result->resolve(this, promise);
     return result->promise();
 }
 

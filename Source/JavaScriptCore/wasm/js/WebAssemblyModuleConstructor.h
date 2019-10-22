@@ -47,7 +47,7 @@ public:
 
     DECLARE_INFO;
 
-    static JSWebAssemblyModule* createModule(ExecState*, Vector<uint8_t>&& buffer);
+    static JSWebAssemblyModule* createModule(JSGlobalObject*, CallFrame*, Vector<uint8_t>&& buffer);
 
 protected:
     void finishCreation(VM&, WebAssemblyModulePrototype*);

@@ -98,55 +98,55 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplemental
 
 // Attributes
 
-JSC::EncodedJSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-#endif
-#if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceConstructorImplementsStaticAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceConstructorImplementsStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsStr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceImplementsStr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsStr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsStr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceImplementsStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceImplementsStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSC::EncodedJSValue jsTestInterfaceImplementsNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceImplementsNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceImplementsStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceImplementsStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue jsTestInterfaceImplementsNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceImplementsNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceConstructorSupplementalStaticAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceConstructorSupplementalStaticAttr(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSupplementalStr1(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestInterfaceSupplementalStr1(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceSupplementalStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceSupplementalStr2(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceSupplementalStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceSupplementalStr3(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceSupplementalNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceSupplementalNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceSupplementalNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceSupplementalNode(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSC::EncodedJSValue jsTestInterfaceReflectAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestInterfaceReflectAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestInterfaceReflectAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceReflectAttribute(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 
 class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
@@ -245,24 +245,24 @@ static_assert(TestSupplemental::SUPPLEMENTALCONSTANT1 == 1, "SUPPLEMENTALCONSTAN
 static_assert(TestSupplemental::CONST_IMPL == 2, "CONST_IMPL in TestSupplemental does not match value from IDL");
 #endif
 
-template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JSGlobalObject* globalObject, CallFrame* state)
+template<> EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestInterfaceConstructor*>(state->jsCallee());
+    auto* castedThis = jsCast<JSTestInterfaceConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
-    if (UNLIKELY(state->argumentCount() < 1))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     auto* context = castedThis->scriptExecutionContext();
     if (UNLIKELY(!context))
-        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestInterface");
-    auto str1 = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+        return throwConstructorScriptExecutionContextUnavailableError(*lexicalGlobalObject, throwScope, "TestInterface");
+    auto str1 = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto str2 = state->argument(1).isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*state, state->uncheckedArgument(1));
+    auto str2 = callFrame->argument(1).isUndefined() ? "defaultString"_s : convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestInterface::create(*context, WTFMove(str1), WTFMove(str2));
-    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestInterface>>(*state, *castedThis->globalObject(), throwScope, WTFMove(object)));
+    return JSValue::encode(toJSNewlyCreated<IDLInterface<TestInterface>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WTFMove(object)));
 }
 
 template<> JSValue JSTestInterfaceConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -443,33 +443,33 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterface::~JSTestInterface();
 }
 
-template<> inline JSTestInterface* IDLAttribute<JSTestInterface>::cast(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestInterface* IDLAttribute<JSTestInterface>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestInterface*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestInterface*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestInterface* IDLOperation<JSTestInterface>::cast(ExecState& state)
+template<> inline JSTestInterface* IDLOperation<JSTestInterface>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    return jsDynamicCast<JSTestInterface*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestInterface*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestInterface::getConstructor(state->vm(), prototype->globalObject()));
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(JSTestInterface::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestInterfacePrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
-        throwVMTypeError(state, throwScope);
+        throwVMTypeError(lexicalGlobalObject, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
@@ -477,563 +477,563 @@ bool setJSTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, E
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState& state, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(JSGlobalObject& lexicalGlobalObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    JSValue result = toJS<IDLLong>(state, throwScope, TestInterface::implementsStaticReadOnlyAttr());
+    UNUSED_PARAM(lexicalGlobalObject);
+    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, TestInterface::implementsStaticReadOnlyAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter>(*state, thisValue, "implementsStaticReadOnlyAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "implementsStaticReadOnlyAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState& state, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(JSGlobalObject& lexicalGlobalObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    JSValue result = toJS<IDLDOMString>(state, throwScope, TestInterface::implementsStaticAttr());
+    UNUSED_PARAM(lexicalGlobalObject);
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, TestInterface::implementsStaticAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticAttrGetter>(*state, thisValue, "implementsStaticAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorImplementsStaticAttrGetter>(*lexicalGlobalObject, thisValue, "implementsStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(JSGlobalObject& lexicalGlobalObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructorImplementsStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorImplementsStaticAttrSetter>(*state, thisValue, encodedValue, "implementsStaticAttr");
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorImplementsStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceImplementsStr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.implementsStr1());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.implementsStr1());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr1Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr1");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceImplementsStr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.implementsStr2());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.implementsStr2());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr2Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsStr2Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceImplementsStr2Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setImplementsStr2(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceImplementsStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr2Setter>(*state, thisValue, encodedValue, "implementsStr2");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStr2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsStr3Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceImplementsStr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    return thisObject.implementsStr3(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    return thisObject.implementsStr3(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr3Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsStr3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsStr3Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceImplementsStr3Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
-    thisObject.setImplementsStr3(state, value);
+    thisObject.setImplementsStr3(lexicalGlobalObject, value);
     return true;
 }
 
-bool setJSTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceImplementsStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr3Setter>(*state, thisValue, encodedValue, "implementsStr3");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsStr3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSValue jsTestInterfaceImplementsNodeGetter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceImplementsNodeGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, impl.implementsNode());
+    JSValue result = toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.implementsNode());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsNodeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "implementsNode");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline bool setJSTestInterfaceImplementsNodeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceImplementsNodeSetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "implementsNode", "Node"); });
+    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "implementsNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setImplementsNode(*nativeValue);
     });
     return true;
 }
 
-bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceImplementsNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsNodeSetter>(*state, thisValue, encodedValue, "implementsNode");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceImplementsNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "implementsNode");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState& state, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(JSGlobalObject& lexicalGlobalObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    JSValue result = toJS<IDLLong>(state, throwScope, WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
+    UNUSED_PARAM(lexicalGlobalObject);
+    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter>(*state, thisValue, "supplementalStaticReadOnlyAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter>(*lexicalGlobalObject, thisValue, "supplementalStaticReadOnlyAttr");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState& state, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(JSGlobalObject& lexicalGlobalObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStaticAttr());
+    UNUSED_PARAM(lexicalGlobalObject);
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStaticAttr());
     return result;
 }
 
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticAttrGetter>(*state, thisValue, "supplementalStaticAttr");
+    return IDLAttribute<JSTestInterface>::getStatic<jsTestInterfaceConstructorSupplementalStaticAttrGetter>(*lexicalGlobalObject, thisValue, "supplementalStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline bool setJSTestInterfaceConstructorSupplementalStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceConstructorSupplementalStaticAttrSetter(JSGlobalObject& lexicalGlobalObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructorSupplementalStaticAttr(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorSupplementalStaticAttrSetter>(*state, thisValue, encodedValue, "supplementalStaticAttr");
+    return IDLAttribute<JSTestInterface>::setStatic<setJSTestInterfaceConstructorSupplementalStaticAttrSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStaticAttr");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceSupplementalStr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStr1(impl));
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStr1(impl));
     return result;
 }
 
-EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr1Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr1");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceSupplementalStr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStr2(impl));
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, WebCore::TestSupplemental::supplementalStr2(impl));
     return result;
 }
 
-EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr2Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr2Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr2");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline bool setJSTestInterfaceSupplementalStr2Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceSupplementalStr2Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceSupplementalStr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalStr2Setter>(*state, thisValue, encodedValue, "supplementalStr2");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalStr2Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr2");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceSupplementalStr3Getter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceSupplementalStr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    return thisObject.supplementalStr3(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    return thisObject.supplementalStr3(lexicalGlobalObject);
 }
 
-EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr3Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr3Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalStr3");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline bool setJSTestInterfaceSupplementalStr3Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceSupplementalStr3Setter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
-    thisObject.setSupplementalStr3(state, value);
+    thisObject.setSupplementalStr3(lexicalGlobalObject, value);
     return true;
 }
 
-bool setJSTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceSupplementalStr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalStr3Setter>(*state, thisValue, encodedValue, "supplementalStr3");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalStr3Setter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalStr3");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceSupplementalNodeGetter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceSupplementalNodeGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, WebCore::TestSupplemental::supplementalNode(impl));
+    JSValue result = toJS<IDLInterface<Node>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, WebCore::TestSupplemental::supplementalNode(impl));
     return result;
 }
 
-EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalNodeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalNodeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "supplementalNode");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline bool setJSTestInterfaceSupplementalNodeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceSupplementalNodeSetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "supplementalNode", "Node"); });
+    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestInterface", "supplementalNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
     });
     return true;
 }
 
-bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceSupplementalNode(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalNodeSetter>(*state, thisValue, encodedValue, "supplementalNode");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalNodeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "supplementalNode");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSValue jsTestInterfaceReflectAttributeGetter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestInterfaceReflectAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr));
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr));
     return result;
 }
 
-EncodedJSValue jsTestInterfaceReflectAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestInterfaceReflectAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceReflectAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "reflectAttribute");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceReflectAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "reflectAttribute");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline bool setJSTestInterfaceReflectAttributeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestInterfaceReflectAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestInterfaceReflectAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceReflectAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceReflectAttributeSetter>(*state, thisValue, encodedValue, "reflectAttribute");
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceReflectAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "reflectAttribute");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     impl.implementsMethod1();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod1Body>(*state, "implementsMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod1Body>(*lexicalGlobalObject, *callFrame, "implementsMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    if (UNLIKELY(state->argumentCount() < 2))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    if (UNLIKELY(callFrame->argumentCount() < 2))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto objArg = convert<IDLInterface<TestObj>>(*state, state->uncheckedArgument(1), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, callFrame->uncheckedArgument(1), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "implementsMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLInterface<TestObj>>(*state, *castedThis->globalObject(), throwScope, impl.implementsMethod2(*context, WTFMove(strArg), *objArg)));
+    return JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.implementsMethod2(*context, WTFMove(strArg), *objArg)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod2Body>(*state, "implementsMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod2Body>(*lexicalGlobalObject, *callFrame, "implementsMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(castedThis->implementsMethod3(*state));
+    return JSValue::encode(castedThis->implementsMethod3(*lexicalGlobalObject, *callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod3Body>(*state, "implementsMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionImplementsMethod3Body>(*lexicalGlobalObject, *callFrame, "implementsMethod3");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMethod4Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMethod4Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     TestInterface::implementsMethod4();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionImplementsMethod4Body>(*state, "implementsMethod4");
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionImplementsMethod4Body>(*lexicalGlobalObject, *callFrame, "implementsMethod4");
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionTakeNodesBody(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionTakeNodesBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto implResult = impl.takeNodes();
-    return JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*state, *castedThis->globalObject(), WTFMove(implResult.nodes)));
+    return JSValue::encode(toJS<IDLSequence<IDLInterface<Node>>>(*lexicalGlobalObject, *castedThis->globalObject(), WTFMove(implResult.nodes)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionTakeNodes(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionTakeNodesBody>(*state, "takeNodes");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionTakeNodesBody>(*lexicalGlobalObject, *callFrame, "takeNodes");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     WebCore::TestSupplemental::supplementalMethod1(impl);
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod1Body>(*state, "supplementalMethod1");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod1Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod1");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    if (UNLIKELY(state->argumentCount() < 2))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    if (UNLIKELY(callFrame->argumentCount() < 2))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    auto strArg = convert<IDLDOMString>(*state, state->uncheckedArgument(0));
+    auto strArg = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto objArg = convert<IDLInterface<TestObj>>(*state, state->uncheckedArgument(1), [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwArgumentTypeError(state, scope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj"); });
+    auto objArg = convert<IDLInterface<TestObj>>(*lexicalGlobalObject, callFrame->uncheckedArgument(1), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "objArg", "TestInterface", "supplementalMethod2", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    return JSValue::encode(toJS<IDLInterface<TestObj>>(*state, *castedThis->globalObject(), throwScope, WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg)));
+    return JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::TestSupplemental::supplementalMethod2(impl, *context, WTFMove(strArg), *objArg)));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod2Body>(*state, "supplementalMethod2");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod2Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod2");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Body(JSC::ExecState* state, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestInterface>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
-    return JSValue::encode(castedThis->supplementalMethod3(*state));
+    return JSValue::encode(castedThis->supplementalMethod3(*lexicalGlobalObject, *callFrame));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod3Body>(*state, "supplementalMethod3");
+    return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunctionSupplementalMethod3Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod3");
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionSupplementalMethod4Body(JSC::ExecState* state, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionSupplementalMethod4Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     WebCore::TestSupplemental::supplementalMethod4();
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionSupplementalMethod4Body>(*state, "supplementalMethod4");
+    return IDLOperation<JSTestInterface>::callStatic<jsTestInterfaceConstructorFunctionSupplementalMethod4Body>(*lexicalGlobalObject, *callFrame, "supplementalMethod4");
 }
 
 #endif
@@ -1067,7 +1067,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
 }
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
 {
     // If you hit this failure the interface definition has the ImplementationLacksVTable
     // attribute. You should remove that attribute. If the class has subclasses
@@ -1077,9 +1077,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     return createWrapper<TestInterface>(globalObject, WTFMove(impl));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestInterface& impl)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestInterface& impl)
 {
-    return wrap(state, globalObject, impl);
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 TestInterface* JSTestInterface::toWrapped(JSC::VM& vm, JSC::JSValue value)

@@ -69,23 +69,23 @@ void InspectorAuditAgent::setup(ErrorString& errorString, const int* executionCo
     if (injectedScript.hasNoValue())
         return;
 
-    JSC::ExecState* execState = injectedScript.scriptState();
-    if (!execState) {
+    JSC::JSGlobalObject* globalObject = injectedScript.globalObject();
+    if (!globalObject) {
         errorString = "Missing execution state of injected script for given executionContextId"_s;
         return;
     }
 
-    VM& vm = execState->vm();
+    VM& vm = globalObject->vm();
 
-    JSC::JSLockHolder lock(execState);
+    JSC::JSLockHolder lock(globalObject);
 
-    m_injectedWebInspectorAuditValue.set(vm, constructEmptyObject(execState));
+    m_injectedWebInspectorAuditValue.set(vm, constructEmptyObject(globalObject));
     if (!m_injectedWebInspectorAuditValue) {
         errorString = "Unable to construct injected WebInspectorAudit object."_s;
         return;
     }
 
-    populateAuditObject(execState, m_injectedWebInspectorAuditValue);
+    populateAuditObject(globalObject, m_injectedWebInspectorAuditValue);
 }
 
 void InspectorAuditAgent::run(ErrorString& errorString, const String& test, const int* executionContextId, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown)
@@ -132,13 +132,13 @@ bool InspectorAuditAgent::hasActiveAudit() const
     return !!m_injectedWebInspectorAuditValue;
 }
 
-void InspectorAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::Strong<JSC::JSObject>& auditObject)
+void InspectorAuditAgent::populateAuditObject(JSC::JSGlobalObject* globalObject, JSC::Strong<JSC::JSObject>& auditObject)
 {
-    ASSERT(execState);
-    if (!execState)
+    ASSERT(globalObject);
+    if (!globalObject)
         return;
 
-    JSC::VM& vm = execState->vm();
+    JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
     auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Version"), JSC::JSValue(Inspector::Protocol::Audit::VERSION));

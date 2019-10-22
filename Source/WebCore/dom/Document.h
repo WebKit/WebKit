@@ -84,7 +84,6 @@
 namespace JSC {
 class CallFrame;
 class InputCursor;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -1340,7 +1339,7 @@ public:
 
     // The following addMessage function is deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) final;
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) final;
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }

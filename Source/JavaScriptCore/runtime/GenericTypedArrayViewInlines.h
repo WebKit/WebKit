@@ -26,7 +26,7 @@
 #pragma once
 
 #include "GenericTypedArrayView.h"
-#include "JSGlobalObject.h"
+#include "JSGlobalObjectInlines.h"
 
 namespace JSC {
 
@@ -136,11 +136,10 @@ GenericTypedArrayView<Adaptor>::subarray(int start, int end) const
 }
 
 template<typename Adaptor>
-JSArrayBufferView* GenericTypedArrayView<Adaptor>::wrap(
-    ExecState* exec, JSGlobalObject* globalObject)
+JSArrayBufferView* GenericTypedArrayView<Adaptor>::wrap(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
 {
-    return Adaptor::JSViewType::create(
-        exec->vm(), globalObject->typedArrayStructure(Adaptor::typeValue), this);
+    UNUSED_PARAM(lexicalGlobalObject);
+    return Adaptor::JSViewType::create(globalObject->vm(), globalObject->typedArrayStructure(Adaptor::typeValue), this);
 }
 
 } // namespace JSC

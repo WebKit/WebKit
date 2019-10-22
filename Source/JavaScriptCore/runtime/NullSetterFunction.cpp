@@ -63,10 +63,10 @@ private:
     mutable bool m_callerIsStrict;
 };
 
-static bool callerIsStrict(ExecState* exec)
+static bool callerIsStrict(CallFrame* callFrame)
 {
     GetCallerStrictnessFunctor iter;
-    exec->iterate(iter);
+    callFrame->iterate(iter);
     return iter.callerIsStrict();
 }
 
@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(JSGlobalObject* globalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (callerIsStrict(callFrame))
-        return JSValue::encode(throwTypeError(callFrame, scope, "Setting a property that has only a getter"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Setting a property that has only a getter"_s));
     return JSValue::encode(jsUndefined());
 }
 }

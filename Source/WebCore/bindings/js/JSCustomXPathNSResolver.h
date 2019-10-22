@@ -38,7 +38,7 @@ class JSDOMWindow;
 
 class JSCustomXPathNSResolver final : public XPathNSResolver {
 public:
-    static ExceptionOr<Ref<JSCustomXPathNSResolver>> create(JSC::ExecState&, JSC::JSValue);
+    static ExceptionOr<Ref<JSCustomXPathNSResolver>> create(JSC::JSGlobalObject&, JSC::JSValue);
     virtual ~JSCustomXPathNSResolver();
 
 private:

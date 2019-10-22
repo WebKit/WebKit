@@ -128,7 +128,7 @@ void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> 
     addConsoleMessage(WTFMove(message));
 }
 
-void InspectorConsoleAgent::startTiming(JSC::ExecState* exec, const String& label)
+void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const String& label)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
@@ -142,11 +142,11 @@ void InspectorConsoleAgent::startTiming(JSC::ExecState* exec, const String& labe
     if (!result.isNewEntry) {
         // FIXME: Send an enum to the frontend for localization?
         String warning = makeString("Timer \"", label, "\" already exists");
-        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, createScriptCallStackForConsole(exec, 1)));
+        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
     }
 }
 
-void InspectorConsoleAgent::logTiming(JSC::ExecState* exec, const String& label, Ref<ScriptArguments>&& arguments)
+void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
@@ -155,7 +155,7 @@ void InspectorConsoleAgent::logTiming(JSC::ExecState* exec, const String& label,
     if (label.isNull())
         return;
 
-    auto callStack = createScriptCallStackForConsole(exec, 1);
+    auto callStack = createScriptCallStackForConsole(globalObject, 1);
 
     auto it = m_times.find(label);
     if (it == m_times.end()) {
@@ -171,7 +171,7 @@ void InspectorConsoleAgent::logTiming(JSC::ExecState* exec, const String& label,
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(arguments), WTFMove(callStack)));
 }
 
-void InspectorConsoleAgent::stopTiming(JSC::ExecState* exec, const String& label)
+void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const String& label)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
@@ -180,7 +180,7 @@ void InspectorConsoleAgent::stopTiming(JSC::ExecState* exec, const String& label
     if (label.isNull())
         return;
 
-    auto callStack = createScriptCallStackForConsole(exec, 1);
+    auto callStack = createScriptCallStackForConsole(globalObject, 1);
 
     auto it = m_times.find(label);
     if (it == m_times.end()) {
@@ -214,7 +214,7 @@ void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
     m_frontendDispatcher->heapSnapshot(timestamp, snapshotData, title.isEmpty() ? nullptr : &title);
 }
 
-void InspectorConsoleAgent::count(JSC::ExecState* exec, const String& label)
+void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const String& label)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
@@ -226,10 +226,10 @@ void InspectorConsoleAgent::count(JSC::ExecState* exec, const String& label)
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
     String message = makeString(label, ": ", result.iterator->value);
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, createScriptCallStackForConsole(exec, 1)));
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, createScriptCallStackForConsole(globalObject, 1)));
 }
 
-void InspectorConsoleAgent::countReset(JSC::ExecState* exec, const String& label)
+void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const String& label)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
         return;
@@ -238,7 +238,7 @@ void InspectorConsoleAgent::countReset(JSC::ExecState* exec, const String& label
     if (it == m_counts.end()) {
         // FIXME: Send an enum to the frontend for localization?
         String warning = makeString("Counter \"", label, "\" does not exist");
-        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, warning, createScriptCallStackForConsole(exec, 1)));
+        addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
         return;
     }
 

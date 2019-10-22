@@ -42,7 +42,7 @@ public:
         return vm.moduleProgramExecutableSpace<mode>();
     }
 
-    static ModuleProgramExecutable* create(ExecState*, const SourceCode&);
+    static ModuleProgramExecutable* create(JSGlobalObject*, const SourceCode&);
 
     static void destroy(JSCell*);
 
@@ -75,7 +75,7 @@ private:
     friend class ExecutableBase;
     friend class ScriptExecutable;
 
-    ModuleProgramExecutable(ExecState*, const SourceCode&);
+    ModuleProgramExecutable(JSGlobalObject*, const SourceCode&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

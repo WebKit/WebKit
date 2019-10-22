@@ -33,14 +33,14 @@
 
 namespace JSC {
 
-AbstractPC::AbstractPC(VM& vm, ExecState* exec)
+AbstractPC::AbstractPC(VM& vm, CallFrame* callFrame)
 {
     UNUSED_PARAM(vm);
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(callFrame);
     
 #if ENABLE(JIT)
     if (VM::canUseJIT()) {
-        m_pointer = exec->returnPC().value();
+        m_pointer = callFrame->returnPC().value();
         m_mode = JIT;
         return;
     }

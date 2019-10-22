@@ -34,34 +34,34 @@
 
 namespace JSC {
 
-JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& args, const char* errorMessage)
+JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, const ArgList& args, const char* errorMessage)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ConstructData constructData;
     ConstructType constructType = getConstructData(vm, constructorObject, constructData);
     if (UNLIKELY(constructType == ConstructType::None)) {
-        throwTypeError(exec, scope, errorMessage);
+        throwTypeError(globalObject, scope, errorMessage);
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(scope, construct(exec, constructorObject, constructType, constructData, args, constructorObject));
+    RELEASE_AND_RETURN(scope, construct(globalObject, constructorObject, constructType, constructData, args, constructorObject));
 }
 
 
-JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
+JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     ASSERT(constructType == ConstructType::JS || constructType == ConstructType::Host);
-    return vm.interpreter->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, newTarget);
+    return vm.interpreter->executeConstruct(globalObject, asObject(constructorObject), constructType, constructData, args, newTarget);
 }
 
-JSObject* profiledConstruct(ExecState* exec, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
+JSObject* profiledConstruct(JSGlobalObject* globalObject, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
-    VM& vm = exec->vm();
-    ScriptProfilingScope profilingScope(vm.vmEntryGlobalObject(exec), reason);
-    return construct(exec, constructorObject, constructType, constructData, args, newTarget);
+    VM& vm = globalObject->vm();
+    ScriptProfilingScope profilingScope(vm.deprecatedVMEntryGlobalObject(globalObject), reason);
+    return construct(globalObject, constructorObject, constructType, constructData, args, newTarget);
 }
 
 } // namespace JSC

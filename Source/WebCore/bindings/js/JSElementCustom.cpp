@@ -60,14 +60,14 @@ static JSValue createNewElementWrapper(JSDOMGlobalObject* globalObject, Ref<Elem
     return createWrapper<Element>(globalObject, WTFMove(element));
 }
 
-JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, Element& element)
+JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, Element& element)
 {
     if (auto* wrapper = getCachedWrapper(globalObject->world(), element))
         return wrapper;
     return createNewElementWrapper(globalObject, element);
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
     if (element->isDefinedCustomElement())
         return getCachedWrapper(globalObject->world(), element);

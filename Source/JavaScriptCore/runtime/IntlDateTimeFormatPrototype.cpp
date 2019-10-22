@@ -105,13 +105,13 @@ static EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(JSGloba
     double value;
 
     if (date.isUndefined())
-        value = dateNowImpl().toNumber(callFrame);
+        value = dateNowImpl().toNumber(globalObject);
     else {
-        value = WTF::timeClip(date.toNumber(callFrame));
+        value = WTF::timeClip(date.toNumber(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(*callFrame, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -126,14 +126,14 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(JSGlobalObj
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dtf) {
-        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dtf = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     // 2. ReturnIfAbrupt(dtf).
     if (!dtf)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat"_s));
 
     JSBoundFunction* boundFormat = dtf->boundFormat();
     // 3. If the [[boundFormat]] internal slot of this DateTimeFormat object is undefined,
@@ -143,7 +143,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(JSGlobalObj
         // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, IntlDateTimeFormatFuncFormatDateTime, NoIntrinsic);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, callFrame, globalObject, targetObject, dtf, nullptr, 1, "format"_s);
+        boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, nullptr, 1, "format"_s);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
@@ -163,19 +163,19 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncFormatToParts(JSGlob
 
     IntlDateTimeFormat* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
     if (!dateTimeFormat)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
     double value;
 
     if (date.isUndefined())
-        value = dateNowImpl().toNumber(callFrame);
+        value = dateNowImpl().toNumber(globalObject);
     else {
-        value = WTF::timeClip(date.toNumber(callFrame));
+        value = WTF::timeClip(date.toNumber(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(*callFrame, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, value)));
 }
 #endif
 
@@ -190,15 +190,15 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(JSGl
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
     if (!dateTimeFormat) {
-        JSValue value = callFrame->thisValue().get(callFrame, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
+        JSValue value = callFrame->thisValue().get(globalObject, vm.propertyNames->builtinNames().intlSubstituteValuePrivateName());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, value);
     }
 
     if (!dateTimeFormat)
-        return JSValue::encode(throwTypeError(callFrame, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(*callFrame)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(globalObject)));
 }
 
 } // namespace JSC

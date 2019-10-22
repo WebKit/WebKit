@@ -540,7 +540,7 @@ ExceptionOr<void> ApplePaySession::abort()
     return { };
 }
 
-ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::ExecState& state, JSC::JSValue merchantSessionValue)
+ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::JSGlobalObject& state, JSC::JSValue merchantSessionValue)
 {
     if (!canCompleteMerchantValidation())
         return Exception { InvalidAccessError };

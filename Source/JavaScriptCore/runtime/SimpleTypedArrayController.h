@@ -51,7 +51,7 @@ public:
     SimpleTypedArrayController();
     virtual ~SimpleTypedArrayController();
     
-    JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) override;
+    JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer*) override;
     void registerWrapper(JSGlobalObject*, ArrayBuffer*, JSArrayBuffer*) override;
     bool isAtomicsWaitAllowedOnCurrentThread() override;
 

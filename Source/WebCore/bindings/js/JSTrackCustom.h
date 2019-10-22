@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TrackBase&);
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TrackBase&);
 
 inline void* root(TrackBase* track)
 {

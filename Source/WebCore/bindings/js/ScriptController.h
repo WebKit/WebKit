@@ -44,7 +44,6 @@ class CallFrame;
 class JSGlobalObject;
 class JSInternalPromise;
 class JSModuleRecord;
-using ExecState = CallFrame;
 
 namespace Bindings {
 class Instance;
@@ -149,7 +148,7 @@ public:
 
     WEBCORE_EXPORT Ref<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
-    void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>&);
+    void collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObject*, SecurityOrigin*>>&);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT WebScriptObject* windowScriptObject();

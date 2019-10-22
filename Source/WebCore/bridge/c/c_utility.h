@@ -37,7 +37,6 @@ namespace JSC {
 
 class CallFrame;
 class Identifier;
-using ExecState = CallFrame;
 
 namespace Bindings {
 
@@ -46,9 +45,9 @@ class RootObject;
 typedef uint16_t NPUTF16;
 
 WTF::String convertNPStringToUTF16(const NPString *string);
-void convertValueToNPVariant(ExecState*, JSValue, NPVariant* result);
-JSValue convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
-Identifier identifierFromNPIdentifier(ExecState*, const NPUTF8* name);
+void convertValueToNPVariant(JSGlobalObject*, JSValue, NPVariant* result);
+JSValue convertNPVariantToValue(JSGlobalObject*, const NPVariant*, RootObject*);
+Identifier identifierFromNPIdentifier(JSGlobalObject*, const NPUTF8* name);
 
 } }
 

@@ -55,11 +55,11 @@ MapConstructor::MapConstructor(VM& vm, Structure* structure)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callMap(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callMap(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "Map"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "Map"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -67,41 +67,41 @@ static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject* globalObject, C
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* mapStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->mapStructure());
+    Structure* mapStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->mapStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())
-        RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(callFrame, vm, mapStructure)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSMap::create(globalObject, vm, mapStructure)));
 
     if (auto* iterableMap = jsDynamicCast<JSMap*>(vm, iterable)) {
         if (iterableMap->canCloneFastAndNonObservable(mapStructure))
-            RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(callFrame, vm, mapStructure)));
+            RELEASE_AND_RETURN(scope, JSValue::encode(iterableMap->clone(globalObject, vm, mapStructure)));
     }
 
-    JSMap* map = JSMap::create(callFrame, vm, mapStructure);
+    JSMap* map = JSMap::create(globalObject, vm, mapStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = map->JSObject::get(callFrame, vm.propertyNames->set);
+    JSValue adderFunction = map->JSObject::get(globalObject, vm.propertyNames->set);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(callFrame, scope));
+        return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
-    forEachInIterable(callFrame, iterable, [&](VM& vm, ExecState* callFrame, JSValue nextItem) {
+    forEachInIterable(globalObject, iterable, [&](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (!nextItem.isObject()) {
-            throwTypeError(callFrame, scope);
+            throwTypeError(globalObject, scope);
             return;
         }
 
-        JSValue key = nextItem.get(callFrame, static_cast<unsigned>(0));
+        JSValue key = nextItem.get(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue value = nextItem.get(callFrame, static_cast<unsigned>(1));
+        JSValue value = nextItem.get(globalObject, static_cast<unsigned>(1));
         RETURN_IF_EXCEPTION(scope, void());
 
         MarkedArgumentBuffer arguments;
@@ -109,7 +109,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(JSGlobalObject* globalObject, C
         arguments.append(value);
         ASSERT(!arguments.hasOverflowed());
         scope.release();
-        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, map, arguments);
+        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, map, arguments);
     });
 
     return JSValue::encode(map);

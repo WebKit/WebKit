@@ -31,18 +31,18 @@ namespace WebCore {
 using namespace JSC;
 
 // FIXME: This should get passed a global object rather than getting it out of the ExecState.
-JSValue jsDate(ExecState& state, double value)
+JSValue jsDate(JSGlobalObject& lexicalGlobalObject, double value)
 {
-    return DateInstance::create(state.vm(), state.lexicalGlobalObject()->dateStructure(), value);
+    return DateInstance::create(lexicalGlobalObject.vm(), lexicalGlobalObject.dateStructure(), value);
 }
 
-double valueToDate(ExecState& state, JSValue value)
+double valueToDate(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     if (value.isNumber())
         return value.asNumber();
-    if (!value.inherits<DateInstance>(state.vm()))
+    if (!value.inherits<DateInstance>(lexicalGlobalObject.vm()))
         return std::numeric_limits<double>::quiet_NaN();
-    return static_cast<DateInstance*>(value.toObject(&state))->internalNumber();
+    return static_cast<DateInstance*>(value.toObject(&lexicalGlobalObject))->internalNumber();
 }
 
 } // namespace WebCore

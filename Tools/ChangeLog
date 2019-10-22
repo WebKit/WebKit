@@ -1,3 +1,12 @@
+2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Thread JSGlobalObject* instead of ExecState*
+        https://bugs.webkit.org/show_bug.cgi?id=202392
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/TestRunner.cpp:
+
 2019-10-22  Dirk Schulze  <krit@webkit.org>
 
         Restore my committer status.

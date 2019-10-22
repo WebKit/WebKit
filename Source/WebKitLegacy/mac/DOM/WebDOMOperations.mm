@@ -41,6 +41,7 @@
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSCJSValue.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
@@ -72,9 +73,9 @@ using namespace JSC;
     if (!value)
         return 0;
 
-    ExecState* exec = toJS(context);
-    JSLockHolder lock(exec);
-    return kit(JSElement::toWrapped(exec->vm(), toJS(exec, value)));
+    JSGlobalObject* lexicalGlobalObject = toJS(context);
+    JSLockHolder lock(lexicalGlobalObject);
+    return kit(JSElement::toWrapped(lexicalGlobalObject->vm(), toJS(lexicalGlobalObject, value)));
 }
 
 @end

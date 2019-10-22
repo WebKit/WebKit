@@ -52,7 +52,6 @@ class PropertyName;
 class PropertyNameArray;
 class Structure;
 class JSCellLock;
-using ExecState = CallFrame;
 
 enum class GCDeferralContextArgPresense {
     HasArg,
@@ -144,8 +143,8 @@ public:
     const char* className(VM&) const;
 
     // Extracting the value.
-    JS_EXPORT_PRIVATE bool getString(ExecState*, String&) const;
-    JS_EXPORT_PRIVATE String getString(ExecState*) const; // null string if not a string
+    JS_EXPORT_PRIVATE bool getString(JSGlobalObject*, String&) const;
+    JS_EXPORT_PRIVATE String getString(JSGlobalObject*) const; // null string if not a string
     JS_EXPORT_PRIVATE JSObject* getObject(); // NULL if not an object
     const JSObject* getObject() const; // NULL if not an object
         
@@ -159,12 +158,12 @@ public:
     JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
 
     // Basic conversions.
-    JS_EXPORT_PRIVATE JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-    bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
-    bool toBoolean(ExecState*) const;
+    JS_EXPORT_PRIVATE JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
+    bool getPrimitiveNumber(JSGlobalObject*, double& number, JSValue&) const;
+    bool toBoolean(JSGlobalObject*) const;
     TriState pureToBoolean() const;
-    JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
-    JSObject* toObject(ExecState*, JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;
+    JSObject* toObject(JSGlobalObject*) const;
 
     void dump(PrintStream&) const;
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
@@ -180,14 +179,14 @@ public:
     // Object operations, with the toObject operation included.
     const ClassInfo* classInfo(VM&) const;
     const MethodTable* methodTable(VM&) const;
-    static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    bool putInline(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
         
-    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
 
-    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
+    static JSValue toThis(JSCell*, JSGlobalObject*, ECMAMode);
 
     static bool canUseFastGetOwnProperty(const Structure&);
     JSValue fastGetOwnProperty(VM&, Structure&, PropertyName);
@@ -247,32 +246,32 @@ protected:
     void finishCreation(VM&, Structure*, CreatingEarlyCellTag);
 
     // Dummy implementations of override-able static functions for classes to put in their MethodTable
-    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
-    static NO_RETURN_DUE_TO_CRASH void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
+    static NO_RETURN_DUE_TO_CRASH void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
 
-    static uint32_t getEnumerableLength(ExecState*, JSObject*);
-    static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH bool preventExtensions(JSObject*, ExecState*);
-    static NO_RETURN_DUE_TO_CRASH bool isExtensible(JSObject*, ExecState*);
-    static NO_RETURN_DUE_TO_CRASH bool setPrototype(JSObject*, ExecState*, JSValue, bool);
-    static NO_RETURN_DUE_TO_CRASH JSValue getPrototype(JSObject*, ExecState*);
+    static uint32_t getEnumerableLength(JSGlobalObject*, JSObject*);
+    static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static NO_RETURN_DUE_TO_CRASH bool preventExtensions(JSObject*, JSGlobalObject*);
+    static NO_RETURN_DUE_TO_CRASH bool isExtensible(JSObject*, JSGlobalObject*);
+    static NO_RETURN_DUE_TO_CRASH bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool);
+    static NO_RETURN_DUE_TO_CRASH JSValue getPrototype(JSObject*, JSGlobalObject*);
 
     static String className(const JSObject*, VM&);
-    static String toStringName(const JSObject*, ExecState*);
-    JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, ExecState*, JSValue);
-    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
-    static NO_RETURN_DUE_TO_CRASH void doPutPropertySecurityCheck(JSObject*, ExecState*, PropertyName, PutPropertySlot&);
+    static String toStringName(const JSObject*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
+    static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
+    static NO_RETURN_DUE_TO_CRASH void doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&);
 
 private:
     friend class LLIntOffsetsExtractor;
     friend class JSCellLock;
 
-    JS_EXPORT_PRIVATE JSObject* toObjectSlow(ExecState*, JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSObject* toObjectSlow(JSGlobalObject*) const;
 
     StructureID m_structureID;
     IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.

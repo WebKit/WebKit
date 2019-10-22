@@ -36,9 +36,9 @@ public:
     typedef JSDestructibleObject Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;
 
-    static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
+    static JSCallbackConstructor* create(JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         JSCallbackConstructor* constructor = new (NotNull, allocateCell<JSCallbackConstructor>(vm.heap)) JSCallbackConstructor(globalObject, structure, classRef, callback);
         constructor->finishCreation(globalObject, classRef);
         return constructor;

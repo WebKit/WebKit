@@ -39,16 +39,16 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<Blob>&& blob)
+JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<Blob>&& blob)
 {
     if (is<File>(blob))
         return createWrapper<File>(globalObject, WTFMove(blob));
     return createWrapper<Blob>(globalObject, WTFMove(blob));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Blob& blob)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, Blob& blob)
 {
-    return wrap(state, globalObject, blob);
+    return wrap(lexicalGlobalObject, globalObject, blob);
 }
 
 } // namespace WebCore

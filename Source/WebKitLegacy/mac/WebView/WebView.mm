@@ -126,6 +126,7 @@
 #import <JavaScriptCore/Exception.h>
 #import <JavaScriptCore/InitializeThreading.h>
 #import <JavaScriptCore/JSCJSValue.h>
+#import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AlternativeTextUIController.h>
@@ -1159,15 +1160,14 @@ static CFMutableSetRef allWebViewsSet;
     if (!exception || !context)
         return;
 
-    JSC::ExecState* execState = toJS(context);
-    JSC::JSLockHolder lock(execState);
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    JSC::JSGlobalObject* globalObject = execState->lexicalGlobalObject();
     if (!WebCore::toJSDOMWindow(globalObject->vm(), globalObject))
         return;
 
-    WebCore::reportException(execState, toJS(execState, exception));
+    WebCore::reportException(globalObject, toJS(globalObject, exception));
 }
 
 static bool shouldEnableLoadDeferring()
@@ -7830,17 +7830,17 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static NSAppleEventDescriptor* aeDescFromJSValue(JSC::ExecState* exec, JSC::JSValue jsValue)
+static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue jsValue)
 {
     using namespace JSC;
-    VM& vm = exec->vm();
+    VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     NSAppleEventDescriptor* aeDesc = 0;
     if (jsValue.isBoolean())
         return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.asBoolean()];
     if (jsValue.isString())
-        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(exec)];
+        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(lexicalGlobalObject)];
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         int intValue = value;
@@ -7866,17 +7866,17 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::ExecState* exec, JSC::JSVa
                 aeDesc = [NSAppleEventDescriptor listDescriptor];
                 unsigned numItems = array->length();
                 for (unsigned i = 0; i < numItems; ++i)
-                    [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
+                    [aeDesc insertDescriptor:aeDescFromJSValue(lexicalGlobalObject, array->get(lexicalGlobalObject, i)) atIndex:0];
                 visitedElems.get().remove(object);
                 return aeDesc;
             }
         }
-        JSC::JSValue primitive = object->toPrimitive(exec);
+        JSC::JSValue primitive = object->toPrimitive(lexicalGlobalObject);
         if (UNLIKELY(scope.exception())) {
             scope.clearException();
             return [NSAppleEventDescriptor nullDescriptor];
         }
-        return aeDescFromJSValue(exec, primitive);
+        return aeDescFromJSValue(lexicalGlobalObject, primitive);
     }
     if (jsValue.isUndefined())
         return [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
@@ -7894,8 +7894,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::ExecState* exec, JSC::JSVa
     JSC::JSValue result = coreFrame->script().executeScript(script, true);
     if (!result) // FIXME: pass errors
         return 0;
-    JSC::JSLockHolder lock(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec());
-    return aeDescFromJSValue(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec(), result);
+    JSC::JSLockHolder lock(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld()));
+    return aeDescFromJSValue(coreFrame->script().globalObject(WebCore::mainThreadNormalWorld()), result);
 }
 #endif
 

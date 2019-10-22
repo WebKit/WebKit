@@ -47,9 +47,9 @@ public:
         JSFunction* resolve { nullptr };
         JSFunction* reject { nullptr };
     };
-    static DeferredData createDeferredData(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
+    static DeferredData createDeferredData(JSGlobalObject*, JSPromiseConstructor*);
 
-    JS_EXPORT_PRIVATE static JSPromiseDeferred* tryCreate(ExecState*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static JSPromiseDeferred* tryCreate(JSGlobalObject*);
     JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSPromise*, JSFunction* resolve, JSFunction* reject);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -63,9 +63,9 @@ public:
     JSFunction* resolve() const { return m_resolve.get(); }
     JSFunction* reject() const { return m_reject.get(); }
 
-    JS_EXPORT_PRIVATE void resolve(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE void reject(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE void reject(ExecState*, Exception*);
+    JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
 
 #ifndef NDEBUG
     void promiseAsyncPending() { m_promiseIsAsyncPending = true; }

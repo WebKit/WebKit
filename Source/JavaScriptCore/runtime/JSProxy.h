@@ -81,23 +81,23 @@ protected:
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*, VM&);
-    JS_EXPORT_PRIVATE static String toStringName(const JSObject*, ExecState*);
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, ExecState*, unsigned, JSValue, bool shouldThrow);
-    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned);
-    JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static uint32_t getEnumerableLength(ExecState*, JSObject*);
-    JS_EXPORT_PRIVATE static void getStructurePropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
-    JS_EXPORT_PRIVATE static JSValue getPrototype(JSObject*, ExecState*);
-    JS_EXPORT_PRIVATE static bool isExtensible(JSObject*, ExecState*);
-    JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, ExecState*);
+    JS_EXPORT_PRIVATE static String toStringName(const JSObject*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, JSGlobalObject*, unsigned, JSValue, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName);
+    JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned);
+    JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static uint32_t getEnumerableLength(JSGlobalObject*, JSObject*);
+    JS_EXPORT_PRIVATE static void getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool setPrototype(JSObject*, JSGlobalObject*, JSValue, bool shouldThrowIfCantSet);
+    JS_EXPORT_PRIVATE static JSValue getPrototype(JSObject*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static bool isExtensible(JSObject*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, JSGlobalObject*);
 
 private:
     WriteBarrier<JSObject> m_target;

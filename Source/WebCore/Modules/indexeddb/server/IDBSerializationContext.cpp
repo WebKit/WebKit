@@ -87,10 +87,10 @@ JSC::VM& IDBSerializationContext::vm()
     return *m_vm;
 }
 
-JSC::ExecState& IDBSerializationContext::execState()
+JSC::JSGlobalObject& IDBSerializationContext::execState()
 {
     initializeVM();
-    return *m_globalObject.get()->globalExec();
+    return *m_globalObject.get();
 }
 
 IDBSerializationContext::IDBSerializationContext(PAL::SessionID sessionID)

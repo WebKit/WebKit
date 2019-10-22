@@ -59,7 +59,7 @@ public:
     static ScopedArguments* create(VM&, Structure*, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*, unsigned totalLength);
     
     // Creates an arguments object by copying the arguments from the stack.
-    static ScopedArguments* createByCopying(ExecState*, ScopedArgumentsTable*, JSLexicalEnvironment*);
+    static ScopedArguments* createByCopying(JSGlobalObject*, CallFrame*, ScopedArgumentsTable*, JSLexicalEnvironment*);
     
     // Creates an arguments object by copying the arguments from a well-defined stack location.
     static ScopedArguments* createByCopyingFrom(VM&, Structure*, Register* argumentsStart, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);
@@ -71,14 +71,14 @@ public:
         return storageHeader().totalLength;
     }
     
-    uint32_t length(ExecState* exec) const
+    uint32_t length(JSGlobalObject* globalObject) const
     {
-        VM& vm = exec->vm();
+        VM& vm = getVM(globalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (UNLIKELY(storageHeader().overrodeThings)) {
-            auto value = get(exec, vm.propertyNames->length);
+            auto value = get(globalObject, vm.propertyNames->length);
             RETURN_IF_EXCEPTION(scope, 0);
-            RELEASE_AND_RETURN(scope, value.toUInt32(exec));
+            RELEASE_AND_RETURN(scope, value.toUInt32(globalObject));
         }
         return internalLength();
     }
@@ -147,7 +147,7 @@ public:
         return GenericArguments<ScopedArguments>::isModifiedArgumentDescriptor(index, m_table->length());
     }
 
-    void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+    void copyToArguments(JSGlobalObject*, CallFrame*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
     DECLARE_INFO;
     

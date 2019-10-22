@@ -150,7 +150,7 @@ void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyReplace());
 }
 
-V_JITOperation_ESsiJJI JITPutByIdGenerator::slowPathFunction()
+V_JITOperation_GSsiJJI JITPutByIdGenerator::slowPathFunction()
 {
     if (m_ecmaMode == StrictMode) {
         if (m_putKind == Direct)

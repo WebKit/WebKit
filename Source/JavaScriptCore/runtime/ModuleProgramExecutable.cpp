@@ -42,23 +42,22 @@ namespace JSC {
 
 const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ModuleProgramExecutable) };
 
-ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCode& source)
-    : Base(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
+ModuleProgramExecutable::ModuleProgramExecutable(JSGlobalObject* globalObject, const SourceCode& source)
+    : Base(globalObject->vm().moduleProgramExecutableStructure.get(), globalObject->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Module);
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (vm.typeProfiler() || vm.controlFlowProfiler())
         vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(vm), typeProfilingEndOffset(vm));
 }
 
-ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const SourceCode& source)
+ModuleProgramExecutable* ModuleProgramExecutable::create(JSGlobalObject* globalObject, const SourceCode& source)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm.heap)) ModuleProgramExecutable(exec, source);
-    executable->finishCreation(exec->vm());
+    ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm.heap)) ModuleProgramExecutable(globalObject, source);
+    executable->finishCreation(globalObject->vm());
 
     ParserError error;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
@@ -66,16 +65,16 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const 
         vm, executable, executable->source(), codeGenerationMode, error);
 
     if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(exec, executable->source().provider(), error.line(), error.message());
+        globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        throwVMError(exec, scope, error.toErrorObject(globalObject, executable->source()));
+        throwVMError(globalObject, scope, error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
 
-    executable->m_unlinkedModuleProgramCodeBlock.set(exec->vm(), executable, unlinkedModuleProgramCode);
+    executable->m_unlinkedModuleProgramCodeBlock.set(globalObject->vm(), executable, unlinkedModuleProgramCode);
 
-    executable->m_moduleEnvironmentSymbolTable.set(exec->vm(), executable, jsCast<SymbolTable*>(unlinkedModuleProgramCode->constantRegister(unlinkedModuleProgramCode->moduleEnvironmentSymbolTableConstantRegisterOffset()).get())->cloneScopePart(exec->vm()));
+    executable->m_moduleEnvironmentSymbolTable.set(globalObject->vm(), executable, jsCast<SymbolTable*>(unlinkedModuleProgramCode->constantRegister(unlinkedModuleProgramCode->moduleEnvironmentSymbolTableConstantRegisterOffset()).get())->cloneScopePart(globalObject->vm()));
 
     return executable;
 }

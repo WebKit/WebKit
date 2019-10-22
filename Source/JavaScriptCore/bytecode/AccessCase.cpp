@@ -1002,6 +1002,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
 
+            // FIXME: Revisit JSGlobalObject.
+            // https://bugs.webkit.org/show_bug.cgi?id=203204
             slowCase.link(&jit);
             jit.move(loadedValueGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
@@ -1009,6 +1011,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
             jit.move(CCallHelpers::TrustedImmPtr(access.callLinkInfo()), GPRInfo::regT2);
+            jit.move(CCallHelpers::TrustedImmPtr(state.m_globalObject), GPRInfo::regT3);
             slowPathCall = jit.nearCall();
             if (m_type == Getter)
                 jit.setupResults(valueRegs);
@@ -1046,18 +1049,22 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // Check if it is a super access
             GPRReg baseForCustomGetGPR = baseGPR != thisGPR ? thisGPR : baseForGetGPR;
 
-            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue thisValue, PropertyName);
-            // setter: void (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
+            // getter: EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
+            // setter: void (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
             // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
             // FIXME: Remove this differences in custom values and custom accessors.
             // https://bugs.webkit.org/show_bug.cgi?id=158014
             GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
+            // FIXME: Revisit JSGlobalObject.
+            // https://bugs.webkit.org/show_bug.cgi?id=203204
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArguments<PropertySlot::GetValueFunc>(
+                    CCallHelpers::TrustedImmPtr(codeBlock->globalObject()),
                     CCallHelpers::CellValue(baseForCustom),
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
                 jit.setupArguments<PutPropertySlot::PutValueFunc>(
+                    CCallHelpers::TrustedImmPtr(codeBlock->globalObject()),
                     CCallHelpers::CellValue(baseForCustom),
                     valueRegs);
             }
@@ -1189,7 +1196,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.makeSpaceOnStackForCCall();
                 
                 if (!reallocating) {
-                    jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(baseGPR);
+                    jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR);
+                    jit.prepareCallOperation(vm);
                     
                     CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -1200,8 +1208,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 } else {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
                     // already had out-of-line property storage).
-                    jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(
-                        baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
+                    jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
+                    jit.prepareCallOperation(vm);
                     
                     CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {

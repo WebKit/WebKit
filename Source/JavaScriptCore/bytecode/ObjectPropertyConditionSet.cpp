@@ -335,10 +335,10 @@ ObjectPropertyConditionSet generateConditions(
 } // anonymous namespace
 
 ObjectPropertyConditionSet generateConditionsForPropertyMiss(
-    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, UniquedStringImpl* uid)
+    VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
 {
     return generateConditions(
-        vm, exec->lexicalGlobalObject(), headStructure, nullptr,
+        vm, globalObject, headStructure, nullptr,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, uid, PropertyCondition::Absence);
@@ -350,10 +350,10 @@ ObjectPropertyConditionSet generateConditionsForPropertyMiss(
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(
-    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, UniquedStringImpl* uid)
+    VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, UniquedStringImpl* uid)
 {
     return generateConditions(
-        vm, exec->lexicalGlobalObject(), headStructure, nullptr,
+        vm, globalObject, headStructure, nullptr,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, uid, PropertyCondition::AbsenceOfSetEffect);
@@ -365,11 +365,11 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(
 }
 
 ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
-    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, JSObject* prototype,
+    VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype,
     UniquedStringImpl* uid)
 {
     return generateConditions(
-        vm, exec->lexicalGlobalObject(), headStructure, prototype,
+        vm, globalObject, headStructure, prototype,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             PropertyCondition::Kind kind =
                 object == prototype ? PropertyCondition::Presence : PropertyCondition::Absence;
@@ -383,11 +383,11 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
 }
 
 ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
-    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, JSObject* prototype,
+    VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype,
     UniquedStringImpl* uid, unsigned attributes)
 {
     return generateConditions(
-        vm, exec->lexicalGlobalObject(), headStructure, prototype,
+        vm, globalObject, headStructure, prototype,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             auto kind = PropertyCondition::Absence;
             if (object == prototype) {
@@ -425,14 +425,14 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
 }
 
 ObjectPropertyConditionSet generateConditionsForInstanceOf(
-    VM& vm, JSCell* owner, ExecState* exec, Structure* headStructure, JSObject* prototype,
+    VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype,
     bool shouldHit)
 {
     bool didHit = false;
     if (ObjectPropertyConditionSetInternal::verbose)
         dataLog("Searching for prototype ", JSValue(prototype), " starting with structure ", RawPointer(headStructure), " with shouldHit = ", shouldHit, "\n");
     ObjectPropertyConditionSet result = generateConditions(
-        vm, exec->lexicalGlobalObject(), headStructure, shouldHit ? prototype : nullptr,
+        vm, globalObject, headStructure, shouldHit ? prototype : nullptr,
         [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
             if (ObjectPropertyConditionSetInternal::verbose)
                 dataLog("Encountered object: ", RawPointer(object), "\n");

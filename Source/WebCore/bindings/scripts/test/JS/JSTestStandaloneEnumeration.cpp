@@ -44,14 +44,14 @@ String convertEnumerationToString(TestStandaloneEnumeration enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneEnumeration enumerationValue)
+template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestStandaloneEnumeration enumerationValue)
 {
-    return jsStringWithCache(&state, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
 }
 
-template<> Optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEnumeration>(ExecState& state, JSValue value)
+template<> Optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEnumeration>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto stringValue = value.toWTFString(&state);
+    auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue == "enumValue1")
         return TestStandaloneEnumeration::EnumValue1;
     if (stringValue == "enumValue2")

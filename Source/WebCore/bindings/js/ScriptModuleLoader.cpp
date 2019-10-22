@@ -86,9 +86,9 @@ static Expected<URL, ASCIILiteral> resolveModuleSpecifier(Document& document, co
     return result;
 }
 
-JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
+JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleNameValue, JSC::JSValue importerModuleKey, JSC::JSValue)
 {
-    JSC::VM& vm = exec->vm();
+    JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We use a Symbol as a special purpose; It means this module is an inline module.
@@ -98,11 +98,11 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState
         return JSC::Identifier::fromUid(asSymbol(moduleNameValue)->privateName());
 
     if (!moduleNameValue.isString()) {
-        JSC::throwTypeError(exec, scope, "Importer module key is not a Symbol or a String."_s);
+        JSC::throwTypeError(jsGlobalObject, scope, "Importer module key is not a Symbol or a String."_s);
         return { };
     }
 
-    String specifier = asString(moduleNameValue)->value(exec);
+    String specifier = asString(moduleNameValue)->value(jsGlobalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     URL baseURL;
@@ -110,7 +110,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState
         baseURL = m_document.baseURL();
     else {
         ASSERT(importerModuleKey.isString());
-        URL importerModuleRequestURL(URL(), asString(importerModuleKey)->value(exec));
+        URL importerModuleRequestURL(URL(), asString(importerModuleKey)->value(jsGlobalObject));
         ASSERT_WITH_MESSAGE(importerModuleRequestURL.isValid(), "Invalid module referrer never starts importing dependent modules.");
 
         auto iterator = m_requestURLToResponseURLMap.find(importerModuleRequestURL);
@@ -120,7 +120,7 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState
 
     auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
     if (!result) {
-        JSC::throwTypeError(exec, scope, result.error());
+        JSC::throwTypeError(jsGlobalObject, scope, result.error());
         return { };
     }
 
@@ -129,25 +129,25 @@ JSC::Identifier ScriptModuleLoader::resolve(JSC::JSGlobalObject*, JSC::ExecState
 
 static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetchFailureKind failureKind, ASCIILiteral message)
 {
-    deferred.rejectWithCallback([&] (JSC::ExecState& state, JSDOMGlobalObject&) {
+    deferred.rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
         // We annotate exception with special private symbol. It allows us to distinguish these errors from the user thrown ones.
-        JSC::VM& vm = state.vm();
+        JSC::VM& vm = jsGlobalObject.vm();
         // FIXME: Propagate more descriptive error.
         // https://bugs.webkit.org/show_bug.cgi?id=167553
-        auto* error = JSC::createTypeError(&state, message);
+        auto* error = JSC::createTypeError(&jsGlobalObject, message);
         ASSERT(error);
         error->putDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
         return error;
     });
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
 {
-    JSC::VM& vm = exec->vm();
+    JSC::VM& vm = jsGlobalObject->vm();
     ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(vm, scriptFetcher));
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
-    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(exec, &globalObject);
+    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(&globalObject);
     RELEASE_ASSERT(jsPromise);
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
@@ -162,7 +162,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
 
-    URL completedURL(URL(), asString(moduleKeyValue)->value(exec));
+    URL completedURL(URL(), asString(moduleKeyValue)->value(jsGlobalObject));
     if (!completedURL.isValid()) {
         deferred->reject(TypeError, "Module key is a valid URL."_s);
         return jsPromise->promise();
@@ -184,18 +184,18 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     return jsPromise->promise();
 }
 
-URL ScriptModuleLoader::moduleURL(JSC::ExecState& state, JSC::JSValue moduleKeyValue)
+URL ScriptModuleLoader::moduleURL(JSC::JSGlobalObject& jsGlobalObject, JSC::JSValue moduleKeyValue)
 {
     if (moduleKeyValue.isSymbol())
         return m_document.url();
 
     ASSERT(moduleKeyValue.isString());
-    return URL(URL(), asString(moduleKeyValue)->value(&state));
+    return URL(URL(), asString(moduleKeyValue)->value(&jsGlobalObject));
 }
 
-JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
+JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue moduleRecordValue, JSC::JSValue)
 {
-    JSC::VM& vm = exec->vm();
+    JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // FIXME: Currently, we only support JSModuleRecord.
@@ -205,28 +205,27 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* 
     if (!moduleRecord)
         return JSC::jsUndefined();
 
-    URL sourceURL = moduleURL(*exec, moduleKeyValue);
+    URL sourceURL = moduleURL(*jsGlobalObject, moduleKeyValue);
     if (!sourceURL.isValid())
-        return JSC::throwTypeError(exec, scope, "Module key is an invalid URL."_s);
+        return JSC::throwTypeError(jsGlobalObject, scope, "Module key is an invalid URL."_s);
 
     if (auto* frame = m_document.frame())
         return frame->script().evaluateModule(sourceURL, *moduleRecord);
     return JSC::jsUndefined();
 }
 
-static JSC::JSInternalPromise* rejectPromise(JSC::ExecState& state, JSDOMGlobalObject& globalObject, ExceptionCode ec, ASCIILiteral message)
+static JSC::JSInternalPromise* rejectPromise(JSDOMGlobalObject& globalObject, ExceptionCode ec, ASCIILiteral message)
 {
-    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(&state, &globalObject);
+    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(&globalObject);
     RELEASE_ASSERT(jsPromise);
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     deferred->reject(ec, WTFMove(message));
     return jsPromise->promise();
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
+JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)
 {
-    auto& state = *exec;
-    JSC::VM& vm = exec->vm();
+    JSC::VM& vm = jsGlobalObject->vm();
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
 
     // If SourceOrigin and/or CachedScriptFetcher is null, we import the module with the default fetcher.
@@ -244,7 +243,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     } else {
         baseURL = URL(URL(), sourceOrigin.string());
         if (!baseURL.isValid())
-            return rejectPromise(state, globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
+            return rejectPromise(globalObject, TypeError, "Importer module key is not a Symbol or a String."_s);
 
         if (sourceOrigin.fetcher())
             scriptFetcher = sourceOrigin.fetcher();
@@ -254,23 +253,23 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
     ASSERT(baseURL.isValid());
     ASSERT(scriptFetcher);
 
-    auto specifier = moduleName->value(exec);
+    auto specifier = moduleName->value(jsGlobalObject);
     auto result = resolveModuleSpecifier(m_document, specifier, baseURL);
     if (!result)
-        return rejectPromise(state, globalObject, TypeError, result.error());
+        return rejectPromise(globalObject, TypeError, result.error());
 
-    return JSC::importModule(exec, JSC::Identifier::fromString(vm, result->string()), parameters, JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
+    return JSC::importModule(jsGlobalObject, JSC::Identifier::fromString(vm, result->string()), parameters, JSC::JSScriptFetcher::create(vm, WTFMove(scriptFetcher) ));
 }
 
-JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, JSC::JSValue)
+JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, JSC::JSValue)
 {
-    auto& vm = exec->vm();
+    auto& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    URL sourceURL = moduleURL(*exec, moduleKeyValue);
+    URL sourceURL = moduleURL(*jsGlobalObject, moduleKeyValue);
     ASSERT(sourceURL.isValid());
 
-    auto* metaProperties = JSC::constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
+    auto* metaProperties = JSC::constructEmptyObject(vm, jsGlobalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"), JSC::jsString(vm, sourceURL.string()));
@@ -320,8 +319,8 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
     }
 
     m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
-    promise->resolveWithCallback([&] (JSC::ExecState& state, JSDOMGlobalObject&) {
-        return JSC::JSSourceCode::create(state.vm(),
+    promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
+        return JSC::JSSourceCode::create(jsGlobalObject.vm(),
             JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
     });
 }

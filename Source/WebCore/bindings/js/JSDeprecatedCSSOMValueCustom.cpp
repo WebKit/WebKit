@@ -47,7 +47,7 @@ bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Un
     return visitor.containsOpaqueRoot(root(&jsCSSValue->wrapped().owner()));
 }
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<DeprecatedCSSOMValue>&& value)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<DeprecatedCSSOMValue>&& value)
 {
     if (value->isValueList())
         return createWrapper<DeprecatedCSSOMValueList>(globalObject, WTFMove(value));
@@ -56,9 +56,9 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<Deprec
     return createWrapper<DeprecatedCSSOMValue>(globalObject, WTFMove(value));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, DeprecatedCSSOMValue& value)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, DeprecatedCSSOMValue& value)
 {
-    return wrap(state, globalObject, value);
+    return wrap(lexicalGlobalObject, globalObject, value);
 }
 
 } // namespace WebCore

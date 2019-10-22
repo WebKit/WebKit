@@ -79,8 +79,8 @@ public:
 
     const SerializedPlatformRepresentation* platformValue() const { return m_platformValue.get(); }
 
-    JSC::JSValue value(JSC::ExecState&) const;
-    void setValue(JSC::ExecState&, JSC::JSValue);
+    JSC::JSValue value(JSC::JSGlobalObject&) const;
+    void setValue(JSC::JSGlobalObject&, JSC::JSValue);
 
     String type() const { return m_type; }
     void setType(const String& type) { m_type = type; }

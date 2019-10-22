@@ -75,15 +75,15 @@ WEBCORE_EXPORT DOMWrapperWorld& mainThreadNormalWorld();
 inline DOMWrapperWorld& debuggerWorld() { return mainThreadNormalWorld(); }
 inline DOMWrapperWorld& pluginWorld() { return mainThreadNormalWorld(); }
 
-DOMWrapperWorld& currentWorld(JSC::ExecState&);
+DOMWrapperWorld& currentWorld(JSC::JSGlobalObject&);
 DOMWrapperWorld& worldForDOMObject(JSC::JSObject&);
 
 // Helper function for code paths that must not share objects across isolated DOM worlds.
-bool isWorldCompatible(JSC::ExecState&, JSC::JSValue);
+bool isWorldCompatible(JSC::JSGlobalObject&, JSC::JSValue);
 
-inline DOMWrapperWorld& currentWorld(JSC::ExecState& state)
+inline DOMWrapperWorld& currentWorld(JSC::JSGlobalObject& lexicalGlobalObject)
 {
-    return JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->world();
+    return JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world();
 }
 
 inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject& object)
@@ -91,9 +91,9 @@ inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject& object)
     return JSC::jsCast<JSDOMGlobalObject*>(object.globalObject())->world();
 }
 
-inline bool isWorldCompatible(JSC::ExecState& state, JSC::JSValue value)
+inline bool isWorldCompatible(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
 {
-    return !value.isObject() || &worldForDOMObject(*value.getObject()) == &currentWorld(state);
+    return !value.isObject() || &worldForDOMObject(*value.getObject()) == &currentWorld(lexicalGlobalObject);
 }
 
 } // namespace WebCore

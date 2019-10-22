@@ -96,7 +96,7 @@ typedef USVString CSSOMString;
     [EnabledBySetting=requestIdleCallback] unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
     [EnabledBySetting=requestIdleCallback] void cancelIdleCallback(unsigned long handle);
 
-    [CallWith=ExecState&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 
     // Obsolete members, still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
     void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.

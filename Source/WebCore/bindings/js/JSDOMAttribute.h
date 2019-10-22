@@ -31,79 +31,79 @@ namespace WebCore {
 template<typename JSClass>
 class IDLAttribute {
 public:
-    using Setter = bool(JSC::ExecState&, JSClass&, JSC::JSValue, JSC::ThrowScope&);
-    using StaticSetter = bool(JSC::ExecState&, JSC::JSValue, JSC::ThrowScope&);
-    using Getter = JSC::JSValue(JSC::ExecState&, JSClass&, JSC::ThrowScope&);
-    using StaticGetter = JSC::JSValue(JSC::ExecState&, JSC::ThrowScope&);
+    using Setter = bool(JSC::JSGlobalObject&, JSClass&, JSC::JSValue, JSC::ThrowScope&);
+    using StaticSetter = bool(JSC::JSGlobalObject&, JSC::JSValue, JSC::ThrowScope&);
+    using Getter = JSC::JSValue(JSC::JSGlobalObject&, JSClass&, JSC::ThrowScope&);
+    using StaticGetter = JSC::JSValue(JSC::JSGlobalObject&, JSC::ThrowScope&);
     
-    static JSClass* cast(JSC::ExecState&, JSC::EncodedJSValue);
+    static JSClass* cast(JSC::JSGlobalObject&, JSC::EncodedJSValue);
 
     template<Setter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
-    static bool set(JSC::ExecState& state, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, const char* attributeName)
+    static bool set(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, const char* attributeName)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
-        auto* thisObject = cast(state, thisValue);
+        auto* thisObject = cast(lexicalGlobalObject, thisValue);
         if (UNLIKELY(!thisObject))
-            return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(state, throwScope, JSClass::info()->className, attributeName) : false;
+            return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, attributeName) : false;
 
-        return setter(state, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
+        return setter(lexicalGlobalObject, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
     }
     
     template<StaticSetter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
-    static bool setStatic(JSC::ExecState& state, JSC::EncodedJSValue, JSC::EncodedJSValue encodedValue, const char*)
+    static bool setStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, JSC::EncodedJSValue encodedValue, const char*)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
         
-        return setter(state, JSC::JSValue::decode(encodedValue), throwScope);
+        return setter(lexicalGlobalObject, JSC::JSValue::decode(encodedValue), throwScope);
     }
     
     template<Getter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
-    static JSC::EncodedJSValue get(JSC::ExecState& state, JSC::EncodedJSValue thisValue, const char* attributeName)
+    static JSC::EncodedJSValue get(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue thisValue, const char* attributeName)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
         if (shouldThrow == CastedThisErrorBehavior::Assert) {
-            ASSERT(cast(state, thisValue));
+            ASSERT(cast(lexicalGlobalObject, thisValue));
             auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
-            return JSC::JSValue::encode(getter(state, *thisObject, throwScope));
+            return JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, throwScope));
         }
 
-        auto* thisObject = cast(state, thisValue);
+        auto* thisObject = cast(lexicalGlobalObject, thisValue);
         if (UNLIKELY(!thisObject)) {
             if (shouldThrow == CastedThisErrorBehavior::Throw)
-                return throwGetterTypeError(state, throwScope, JSClass::info()->className, attributeName);
+                return throwGetterTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, attributeName);
             if (shouldThrow == CastedThisErrorBehavior::RejectPromise)
-                return rejectPromiseWithGetterTypeError(state, JSClass::info()->className, attributeName);
+                return rejectPromiseWithGetterTypeError(lexicalGlobalObject, JSClass::info()->className, attributeName);
             return JSC::JSValue::encode(JSC::jsUndefined());
         }
 
-        return JSC::JSValue::encode(getter(state, *thisObject, throwScope));
+        return JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, throwScope));
     }
     
     template<StaticGetter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
-    static JSC::EncodedJSValue getStatic(JSC::ExecState& state, JSC::EncodedJSValue, const char*)
+    static JSC::EncodedJSValue getStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, const char*)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
         
-        return JSC::JSValue::encode(getter(state, throwScope));
+        return JSC::JSValue::encode(getter(lexicalGlobalObject, throwScope));
     }
 };
 
 struct AttributeSetter {
     template<typename Functor>
-    static auto call(JSC::ExecState&, JSC::ThrowScope&, Functor&& functor) -> std::enable_if_t<std::is_same<void, decltype(functor())>::value>
+    static auto call(JSC::JSGlobalObject&, JSC::ThrowScope&, Functor&& functor) -> std::enable_if_t<std::is_same<void, decltype(functor())>::value>
     {
         functor();
     }
 
     template<typename Functor>
-    static auto call(JSC::ExecState& state, JSC::ThrowScope& throwScope, Functor&& functor) -> std::enable_if_t<!std::is_same<void, decltype(functor())>::value>
+    static auto call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, Functor&& functor) -> std::enable_if_t<!std::is_same<void, decltype(functor())>::value>
     {
         auto result = functor();
         if (!result.hasException())
             return;
-        propagateException(state, throwScope, result.releaseException());
+        propagateException(lexicalGlobalObject, throwScope, result.releaseException());
     }
 };
 

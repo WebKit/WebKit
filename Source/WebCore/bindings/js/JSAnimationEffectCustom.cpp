@@ -34,16 +34,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationEffect>&& value)
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<AnimationEffect>&& value)
 {
     if (value->isKeyframeEffect())
         return createWrapper<KeyframeEffect>(globalObject, WTFMove(value));
     return createWrapper<AnimationEffect>(globalObject, WTFMove(value));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationEffect& value)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, AnimationEffect& value)
 {
-    return wrap(state, globalObject, value);
+    return wrap(lexicalGlobalObject, globalObject, value);
 }
 
 } // namespace WebCore

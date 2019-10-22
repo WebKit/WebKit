@@ -56,7 +56,7 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         jit->callOperation(
-            operationCreateDirectArguments, m_resultGPR, m_structure, m_lengthGPR, m_minCapacity);
+            operationCreateDirectArguments, m_resultGPR, &jit->vm(), m_structure, m_lengthGPR, m_minCapacity);
         for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();

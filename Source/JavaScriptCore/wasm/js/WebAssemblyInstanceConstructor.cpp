@@ -66,30 +66,30 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(JSGlobalObjec
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
     JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(vm, callFrame->argument(0));
     if (!module)
-        return JSValue::encode(throwException(callFrame, scope, createTypeError(callFrame, "first argument to WebAssembly.Instance must be a WebAssembly.Module"_s, defaultSourceAppender, runtimeTypeForValue(vm, callFrame->argument(0)))));
+        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "first argument to WebAssembly.Instance must be a WebAssembly.Module"_s, defaultSourceAppender, runtimeTypeForValue(vm, callFrame->argument(0)))));
 
     // If the importObject parameter is not undefined and Type(importObject) is not Object, a TypeError is thrown.
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject)
-        return JSValue::encode(throwException(callFrame, scope, createTypeError(callFrame, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
+        return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
     
-    Structure* instanceStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->webAssemblyInstanceStructure());
+    Structure* instanceStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->webAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, callFrame, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, globalObject, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);
     RETURN_IF_EXCEPTION(scope, { });
 
-    instance->finalizeCreation(vm, callFrame, module->module().compileSync(&vm.wasmContext, instance->memoryMode(), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException), importObject, Wasm::CreationMode::FromJS);
+    instance->finalizeCreation(vm, globalObject, module->module().compileSync(&vm.wasmContext, instance->memoryMode(), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException), importObject, Wasm::CreationMode::FromJS);
     RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(instance);
 }
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "WebAssembly.Instance"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WebAssembly.Instance"));
 }
 
 WebAssemblyInstanceConstructor* WebAssemblyInstanceConstructor::create(VM& vm, Structure* structure, WebAssemblyInstancePrototype* thisPrototype)

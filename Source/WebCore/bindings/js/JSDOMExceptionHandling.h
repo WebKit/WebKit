@@ -43,55 +43,55 @@ struct ExceptionDetails {
     String sourceURL;
 };
 
-void throwAttributeTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName, const char* expectedType);
-WEBCORE_EXPORT bool throwSetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+void throwAttributeTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName, const char* expectedType);
+WEBCORE_EXPORT bool throwSetterTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
 
-void throwDataCloneError(JSC::ExecState&, JSC::ThrowScope&);
-void throwDOMSyntaxError(JSC::ExecState&, JSC::ThrowScope&, ASCIILiteral); // Not the same as a JavaScript syntax error.
-void throwInvalidStateError(JSC::ExecState&, JSC::ThrowScope&, ASCIILiteral);
-WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::ExecState&, JSC::ThrowScope&);
-void throwNotSupportedError(JSC::ExecState&, JSC::ThrowScope&, ASCIILiteral);
-void throwSecurityError(JSC::ExecState&, JSC::ThrowScope&, const String& message);
-WEBCORE_EXPORT void throwSequenceTypeError(JSC::ExecState&, JSC::ThrowScope&);
+void throwDataCloneError(JSC::JSGlobalObject&, JSC::ThrowScope&);
+void throwDOMSyntaxError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral); // Not the same as a JavaScript syntax error.
+void throwInvalidStateError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral);
+WEBCORE_EXPORT void throwNonFiniteTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&);
+void throwNotSupportedError(JSC::JSGlobalObject&, JSC::ThrowScope&, ASCIILiteral);
+void throwSecurityError(JSC::JSGlobalObject&, JSC::ThrowScope&, const String& message);
+WEBCORE_EXPORT void throwSequenceTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&);
 
-WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
-WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
-WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::ExecState&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
-WEBCORE_EXPORT JSC::EncodedJSValue throwRequiredMemberTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* memberName, const char* dictionaryName, const char* expectedType);
-JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeEnumError(JSC::JSGlobalObject&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedValues);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentMustBeFunctionError(JSC::JSGlobalObject&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwArgumentTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, unsigned argumentIndex, const char* argumentName, const char* functionInterfaceName, const char* functionName, const char* expectedType);
+WEBCORE_EXPORT JSC::EncodedJSValue throwRequiredMemberTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* memberName, const char* dictionaryName, const char* expectedType);
+JSC::EncodedJSValue throwConstructorScriptExecutionContextUnavailableError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName);
 
 String makeGetterTypeErrorMessage(const char* interfaceName, const char* attributeName);
 String makeThisTypeErrorMessage(const char* interfaceName, const char* attributeName);
 
-WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
-WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
 
-WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::JSGlobalObject&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise&, const char* interfaceName, const char* operationName);
-WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState&, const char* interfaceName, const char* operationName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject&, const char* interfaceName, const char* operationName);
 
-String retrieveErrorMessage(JSC::ExecState&, JSC::VM&, JSC::JSValue exception, JSC::CatchScope&);
-WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::JSValue exception, CachedScript* = nullptr);
-WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::Exception*, CachedScript* = nullptr, ExceptionDetails* = nullptr);
-void reportCurrentException(JSC::ExecState*);
+String retrieveErrorMessage(JSC::JSGlobalObject&, JSC::VM&, JSC::JSValue exception, JSC::CatchScope&);
+WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::JSValue exception, CachedScript* = nullptr);
+WEBCORE_EXPORT void reportException(JSC::JSGlobalObject*, JSC::Exception*, CachedScript* = nullptr, ExceptionDetails* = nullptr);
+void reportCurrentException(JSC::JSGlobalObject*);
 
-JSC::JSValue createDOMException(JSC::ExecState&, Exception&&);
-JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String& = emptyString());
+JSC::JSValue createDOMException(JSC::JSGlobalObject&, Exception&&);
+JSC::JSValue createDOMException(JSC::JSGlobalObject*, ExceptionCode, const String& = emptyString());
 
-// Convert a DOM implementation exception into a JavaScript exception in the execution state.
-WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+// Convert a DOM implementation exception into a JavaScript exception in the execution lexicalGlobalObject.
+WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::JSGlobalObject&, JSC::ThrowScope&, Exception&&);
 
-ALWAYS_INLINE void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
+ALWAYS_INLINE void propagateException(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, Exception&& exception)
 {
     if (throwScope.exception())
         return;
-    propagateExceptionSlowPath(state, throwScope, WTFMove(exception));
+    propagateExceptionSlowPath(lexicalGlobalObject, throwScope, WTFMove(exception));
 }
 
-inline void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<void>&& value)
+inline void propagateException(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, ExceptionOr<void>&& value)
 {
     if (UNLIKELY(value.hasException()))
-        propagateException(state, throwScope, value.releaseException());
+        propagateException(lexicalGlobalObject, throwScope, value.releaseException());
 }
 
 } // namespace WebCore

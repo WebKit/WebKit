@@ -40,7 +40,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     , m_functionForConstruct(functionForConstruct ? functionForConstruct : callHostFunctionAsConstructor)
     , m_globalObject(vm, this, structure->globalObject())
 {
-    // exec->vm() wants callees to not be large allocations.
+    // globalObject->vm() wants callees to not be large allocations.
     RELEASE_ASSERT(!isLargeAllocation());
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
@@ -116,34 +116,34 @@ const String InternalFunction::calculatedDisplayName(VM& vm)
     return name();
 }
 
-Structure* InternalFunction::createSubclassStructureSlow(ExecState* exec, JSValue newTarget, Structure* baseClass)
+Structure* InternalFunction::createSubclassStructureSlow(JSGlobalObject* globalObject, JSValue newTarget, Structure* baseClass)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(baseClass->hasMonoProto());
 
     // newTarget may be an InternalFunction if we were called from Reflect.construct.
     JSFunction* targetFunction = jsDynamicCast<JSFunction*>(vm, newTarget);
-    JSGlobalObject* globalObject = baseClass->globalObject();
+    JSGlobalObject* baseGlobalObject = baseClass->globalObject();
 
     if (LIKELY(targetFunction)) {
         Structure* structure = targetFunction->rareData(vm)->internalFunctionAllocationStructure();
-        if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == globalObject))
+        if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == baseGlobalObject))
             return structure;
 
         // Note, Reflect.construct might cause the profile to churn but we don't care.
-        JSValue prototypeValue = targetFunction->get(exec, vm.propertyNames->prototype);
+        JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
-            return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, globalObject, prototype, baseClass);
+            return targetFunction->rareData(vm)->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
     } else {
-        JSValue prototypeValue = newTarget.get(exec, vm.propertyNames->prototype);
+        JSValue prototypeValue = newTarget.get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue)) {
             // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
             // Thus, we don't care about the cost of looking up the structure from our hash table every time.
-            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(globalObject, prototype, baseClass);
+            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseClass);
         }
     }
     

@@ -35,7 +35,7 @@ class SourceCode;
 class ModuleAnalyzer {
     WTF_MAKE_NONCOPYABLE(ModuleAnalyzer);
 public:
-    ModuleAnalyzer(ExecState*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
+    ModuleAnalyzer(JSGlobalObject*, const Identifier& moduleKey, const SourceCode&, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables);
 
     JSModuleRecord* analyze(ModuleProgramNode&);
 

@@ -55,8 +55,8 @@ private:
     JSONObject(VM&, Structure*);
 };
 
-JS_EXPORT_PRIVATE JSValue JSONParse(ExecState*, const String&);
-JS_EXPORT_PRIVATE String JSONStringify(ExecState*, JSValue, JSValue space);
-JS_EXPORT_PRIVATE String JSONStringify(ExecState*, JSValue, unsigned indent);
+JS_EXPORT_PRIVATE JSValue JSONParse(JSGlobalObject*, const String&);
+JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, JSValue space);
+JS_EXPORT_PRIVATE String JSONStringify(JSGlobalObject*, JSValue, unsigned indent);
     
 } // namespace JSC

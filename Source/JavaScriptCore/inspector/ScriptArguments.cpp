@@ -39,13 +39,13 @@
 
 namespace Inspector {
 
-Ref<ScriptArguments> ScriptArguments::create(JSC::ExecState& state, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+Ref<ScriptArguments> ScriptArguments::create(JSC::JSGlobalObject* globalObject, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    return adoptRef(*new ScriptArguments(state, WTFMove(arguments)));
+    return adoptRef(*new ScriptArguments(globalObject, WTFMove(arguments)));
 }
 
-ScriptArguments::ScriptArguments(JSC::ExecState& state, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
-    : m_globalObject(state.vm(), state.lexicalGlobalObject())
+ScriptArguments::ScriptArguments(JSC::JSGlobalObject* globalObject, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+    : m_globalObject(globalObject->vm(), globalObject)
     , m_arguments(WTFMove(arguments))
 {
 }
@@ -58,12 +58,9 @@ JSC::JSValue ScriptArguments::argumentAt(size_t index) const
     return m_arguments[index].get();
 }
 
-JSC::ExecState* ScriptArguments::globalState() const
+JSC::JSGlobalObject* ScriptArguments::globalObject() const
 {
-    if (m_globalObject)
-        return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();
-
-    return nullptr;
+    return m_globalObject.get();
 }
 
 bool ScriptArguments::getFirstArgumentAsString(String& result) const
@@ -71,20 +68,20 @@ bool ScriptArguments::getFirstArgumentAsString(String& result) const
     if (!argumentCount())
         return false;
 
-    auto* state = globalState();
-    if (!state) {
+    auto* globalObject = this->globalObject();
+    if (!globalObject) {
         ASSERT_NOT_REACHED();
         return false;
     }
 
     auto value = argumentAt(0);
-    if (JSC::jsDynamicCast<JSC::ProxyObject*>(state->vm(), value)) {
+    if (JSC::jsDynamicCast<JSC::ProxyObject*>(globalObject->vm(), value)) {
         result = "[object Proxy]"_s;
         return true;
     }
 
-    auto scope = DECLARE_CATCH_SCOPE(state->vm());
-    result = value.toWTFString(state);
+    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    result = value.toWTFString(globalObject);
     scope.clearException();
     return true;
 }
@@ -99,8 +96,8 @@ bool ScriptArguments::isEqual(const ScriptArguments& other) const
     if (!size)
         return true;
 
-    auto* state = globalState();
-    if (!state)
+    auto* globalObject = this->globalObject();
+    if (!globalObject)
         return false;
 
     for (size_t i = 0; i < size; ++i) {
@@ -110,8 +107,8 @@ bool ScriptArguments::isEqual(const ScriptArguments& other) const
             if (a != b)
                 return false;
         } else {
-            auto scope = DECLARE_CATCH_SCOPE(state->vm());
-            bool result = JSC::JSValue::strictEqual(state, a, b);
+            auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+            bool result = JSC::JSValue::strictEqual(globalObject, a, b);
             scope.clearException();
             if (!result)
                 return false;

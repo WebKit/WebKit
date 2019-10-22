@@ -34,7 +34,6 @@
 namespace JSC {
 class CallFrame;
 class JSValue;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -70,7 +69,7 @@ public:
         int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         short button, EventTarget* relatedTarget);
 
-    void initMouseEventQuirk(JSC::ExecState&, ScriptExecutionContext&, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
+    void initMouseEventQuirk(JSC::JSGlobalObject&, ScriptExecutionContext&, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
         int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         short button, JSC::JSValue relatedTarget);
 

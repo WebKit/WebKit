@@ -120,7 +120,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
     return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
-ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSValue secondValue)
+ExceptionOr<short> IDBFactory::cmp(JSGlobalObject& execState, JSValue firstValue, JSValue secondValue)
 {
     auto first = scriptValueToIDBKey(execState, firstValue);
     if (!first->isValid())

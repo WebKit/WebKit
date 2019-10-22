@@ -210,11 +210,12 @@ void AccessGenerationState::emitExplicitExceptionHandler()
                 linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
             });
     } else {
-        jit->setupArguments<decltype(lookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm), GPRInfo::callFrameRegister);
+        jit->setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm));
+        jit->prepareCallOperation(m_vm);
         CCallHelpers::Call lookupExceptionHandlerCall = jit->call(OperationPtrTag);
         jit->addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(lookupExceptionHandler));
+                linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
             });
         jit->jumpToExceptionHandler(m_vm);
     }

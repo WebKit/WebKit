@@ -49,9 +49,9 @@ public:
 
     DECLARE_INFO;
 
-    void initializePluralRules(ExecState&, JSValue locales, JSValue options);
-    JSValue select(ExecState&, double value);
-    JSObject* resolvedOptions(ExecState&);
+    void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
+    JSValue select(JSGlobalObject*, double value);
+    JSObject* resolvedOptions(JSGlobalObject*);
 
 protected:
     IntlPluralRules(VM&, Structure*);

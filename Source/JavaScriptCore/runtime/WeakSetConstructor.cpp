@@ -53,11 +53,11 @@ WeakSetConstructor::WeakSetConstructor(VM& vm, Structure* structure)
 {
 }
 
-static EncodedJSValue JSC_HOST_CALL callWeakSet(JSGlobalObject* globalObject, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL callWeakSet(JSGlobalObject* globalObject, CallFrame*)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(callFrame, scope, "WeakSet"));
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "WeakSet"));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -65,27 +65,27 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* weakSetStructure = InternalFunction::createSubclassStructure(callFrame, callFrame->newTarget(), globalObject->weakSetStructure());
+    Structure* weakSetStructure = InternalFunction::createSubclassStructure(globalObject, callFrame->jsCallee(), callFrame->newTarget(), globalObject->weakSetStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSWeakSet* weakSet = JSWeakSet::create(vm, weakSetStructure);
     JSValue iterable = callFrame->argument(0);
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(weakSet);
 
-    JSValue adderFunction = weakSet->JSObject::get(callFrame, vm.propertyNames->add);
+    JSValue adderFunction = weakSet->JSObject::get(globalObject, vm.propertyNames->add);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;
     CallType adderFunctionCallType = getCallData(vm, adderFunction, adderFunctionCallData);
     if (adderFunctionCallType == CallType::None)
-        return JSValue::encode(throwTypeError(callFrame, scope));
+        return JSValue::encode(throwTypeError(globalObject, scope));
 
     scope.release();
-    forEachInIterable(callFrame, iterable, [&](VM&, ExecState* callFrame, JSValue nextValue) {
+    forEachInIterable(globalObject, iterable, [&](VM&, JSGlobalObject* globalObject, JSValue nextValue) {
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());
-        call(callFrame, adderFunction, adderFunctionCallType, adderFunctionCallData, weakSet, arguments);
+        call(globalObject, adderFunction, adderFunctionCallType, adderFunctionCallData, weakSet, arguments);
     });
 
     return JSValue::encode(weakSet);

@@ -76,7 +76,7 @@ private:
     bool enumerate(NPIdentifier** identifiers, uint32_t* identifierCount);
     bool construct(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
-    bool invoke(JSC::ExecState*, JSC::JSGlobalObject*, JSC::JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+    bool invoke(JSC::JSGlobalObject*, JSC::JSValue function, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);

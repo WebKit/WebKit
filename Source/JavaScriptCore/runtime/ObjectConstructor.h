@@ -60,43 +60,43 @@ private:
     ObjectConstructor(VM&, Structure*);
 };
 
-inline JSFinalObject* constructEmptyObject(ExecState* exec, Structure* structure)
+inline JSFinalObject* constructEmptyObject(VM& vm, Structure* structure)
 {
-    return JSFinalObject::create(exec, structure);
+    return JSFinalObject::create(vm, structure);
 }
 
-inline JSFinalObject* constructEmptyObject(ExecState* exec, JSObject* prototype, unsigned inlineCapacity)
+inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity)
 {
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    StructureCache& structureCache = globalObject->vm().structureCache;
+    VM& vm = getVM(globalObject);
+    StructureCache& structureCache = vm.structureCache;
     Structure* structure = structureCache.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity);
-    return constructEmptyObject(exec, structure);
+    return constructEmptyObject(vm, structure);
 }
 
-inline JSFinalObject* constructEmptyObject(ExecState* exec, JSObject* prototype)
+inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject, JSObject* prototype)
 {
-    return constructEmptyObject(exec, prototype, JSFinalObject::defaultInlineCapacity());
+    return constructEmptyObject(globalObject, prototype, JSFinalObject::defaultInlineCapacity());
 }
 
-inline JSFinalObject* constructEmptyObject(ExecState* exec)
+inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject)
 {
-    return constructEmptyObject(exec, exec->lexicalGlobalObject()->objectStructureForObjectConstructor());
+    return constructEmptyObject(getVM(globalObject), globalObject->objectStructureForObjectConstructor());
 }
 
-inline JSObject* constructObject(ExecState* exec, JSGlobalObject* globalObject, JSValue arg)
+inline JSObject* constructObject(JSGlobalObject* globalObject, JSValue arg)
 {
     if (arg.isUndefinedOrNull())
-        return constructEmptyObject(exec, globalObject->objectPrototype());
-    return arg.toObject(exec, globalObject);
+        return constructEmptyObject(globalObject, globalObject->objectPrototype());
+    return arg.toObject(globalObject);
 }
 
 // Section 6.2.4.4 of the ES6 specification.
 // https://tc39.github.io/ecma262/#sec-frompropertydescriptor
-inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const PropertyDescriptor& descriptor)
+inline JSObject* constructObjectFromPropertyDescriptor(JSGlobalObject* globalObject, const PropertyDescriptor& descriptor)
 {
-    VM& vm = exec->vm();
+    VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* description = constructEmptyObject(exec);
+    JSObject* description = constructEmptyObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!descriptor.isAccessorDescriptor()) {
@@ -117,11 +117,11 @@ inline JSObject* constructObjectFromPropertyDescriptor(ExecState* exec, const Pr
 }
 
 
-JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(ExecState*, JSObject*);
-JS_EXPORT_PRIVATE JSObject* objectConstructorSeal(ExecState*, JSObject*);
-JSValue objectConstructorGetOwnPropertyDescriptor(ExecState*, JSObject*, const Identifier&);
-JSValue objectConstructorGetOwnPropertyDescriptors(ExecState*, JSObject*);
-JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
-bool toPropertyDescriptor(ExecState*, JSValue, PropertyDescriptor&);
+JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE JSObject* objectConstructorSeal(JSGlobalObject*, JSObject*);
+JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, JSObject*, const Identifier&);
+JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
+JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
+bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 
 } // namespace JSC

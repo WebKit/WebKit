@@ -35,7 +35,7 @@
 namespace WebCore {
 using namespace JSC;
 
-JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<AuthenticatorResponse>&& response)
+JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<AuthenticatorResponse>&& response)
 {
     if (is<AuthenticatorAttestationResponse>(response))
         return createWrapper<AuthenticatorAttestationResponse>(globalObject, WTFMove(response));
@@ -44,9 +44,9 @@ JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<A
     return createWrapper<AuthenticatorResponse>(globalObject, WTFMove(response));
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AuthenticatorResponse& response)
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, AuthenticatorResponse& response)
 {
-    return wrap(state, globalObject, response);
+    return wrap(lexicalGlobalObject, globalObject, response);
 }
 
 } // namespace WebCore

@@ -42,7 +42,6 @@ class CallFrame;
 class ConsoleClient;
 class Exception;
 class JSGlobalObject;
-using ExecState = CallFrame;
 }
 
 namespace Inspector {
@@ -80,12 +79,12 @@ public:
     bool includesNativeCallStackWhenReportingExceptions() const { return m_includeNativeCallStackWithExceptions; }
     void setIncludesNativeCallStackWhenReportingExceptions(bool includesNativeCallStack) { m_includeNativeCallStackWithExceptions = includesNativeCallStack; }
 
-    void reportAPIException(JSC::ExecState*, JSC::Exception*);
+    void reportAPIException(JSC::JSGlobalObject*, JSC::Exception*);
 
     JSC::ConsoleClient* consoleClient() const;
 
     bool developerExtrasEnabled() const override;
-    bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
+    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
     InspectorFunctionCallHandler functionCallHandler() const override;
     InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override;

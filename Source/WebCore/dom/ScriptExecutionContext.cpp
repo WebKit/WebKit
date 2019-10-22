@@ -397,7 +397,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTFMove(exception->m_callStack));
 }
 
-void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack)
+void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
     Page* page = nullptr;
     if (is<Document>(this))
@@ -421,7 +421,7 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::ExecState& sta
     addConsoleMessage(WTFMove(message));
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
     addMessage(source, level, message, sourceURL, lineNumber, columnNumber, 0, state, requestIdentifier);
 }
@@ -536,12 +536,12 @@ bool ScriptExecutionContext::hasPendingActivity() const
     return false;
 }
 
-JSC::ExecState* ScriptExecutionContext::execState()
+JSC::JSGlobalObject* ScriptExecutionContext::execState()
 {
     if (is<Document>(*this)) {
         Document& document = downcast<Document>(*this);
         auto* frame = document.frame();
-        return frame ? frame->script().globalObject(mainThreadNormalWorld())->globalExec() : nullptr;
+        return frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr;
     }
 
     if (is<WorkerGlobalScope>(*this))

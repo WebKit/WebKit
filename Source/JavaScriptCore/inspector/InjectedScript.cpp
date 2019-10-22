@@ -268,7 +268,7 @@ Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames
     if (!callResult || !callResult.value())
         return JSON::ArrayOf<Protocol::Debugger::CallFrame>::create();
 
-    RefPtr<JSON::Value> result = toInspectorValue(*scriptState(), callResult.value());
+    RefPtr<JSON::Value> result = toInspectorValue(globalObject(), callResult.value());
     if (result->type() == JSON::Value::Type::Array)
         return BindingTraits<JSON::ArrayOf<Protocol::Debugger::CallFrame>>::runtimeCast(WTFMove(result)).releaseNonNull();
 
@@ -289,7 +289,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue 
         return nullptr;
 
     RefPtr<JSON::Object> resultObject;
-    bool castSucceeded = toInspectorValue(*scriptState(), callResult.value())->asObject(resultObject);
+    bool castSucceeded = toInspectorValue(globalObject(), callResult.value())->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
@@ -311,7 +311,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(const Str
         return nullptr;
 
     RefPtr<JSON::Object> resultObject;
-    bool castSucceeded = toInspectorValue(*scriptState(), callResult.value())->asObject(resultObject);
+    bool castSucceeded = toInspectorValue(globalObject(), callResult.value())->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
@@ -333,7 +333,7 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC::JSValue t
         return nullptr;
 
     RefPtr<JSON::Object> resultObject;
-    bool castSucceeded = toInspectorValue(*scriptState(), callResult.value())->asObject(resultObject);
+    bool castSucceeded = toInspectorValue(globalObject(), callResult.value())->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
@@ -350,7 +350,7 @@ RefPtr<Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(JSC::JSVal
         return nullptr;
 
     RefPtr<JSON::Object> resultObject;
-    bool castSucceeded = toInspectorValue(*scriptState(), callResult.value())->asObject(resultObject);
+    bool castSucceeded = toInspectorValue(globalObject(), callResult.value())->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     return BindingTraits<Protocol::Runtime::ObjectPreview>::runtimeCast(resultObject);
@@ -426,18 +426,18 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
 
 JSC::JSValue InjectedScript::arrayFromVector(Vector<JSC::JSValue>&& vector)
 {
-    JSC::ExecState* execState = scriptState();
-    if (!execState)
+    JSC::JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject)
         return JSC::jsUndefined();
 
-    JSC::JSLockHolder lock(execState);
+    JSC::JSLockHolder lock(globalObject);
 
-    JSC::JSArray* array = JSC::constructEmptyArray(execState, nullptr);
+    JSC::JSArray* array = JSC::constructEmptyArray(globalObject, nullptr);
     if (!array)
         return JSC::jsUndefined();
 
     for (auto& item : vector)
-        array->putDirectIndex(execState, array->length(), item);
+        array->putDirectIndex(globalObject, array->length(), item);
 
     return array;
 }

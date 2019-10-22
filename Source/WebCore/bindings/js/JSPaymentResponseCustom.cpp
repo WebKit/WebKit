@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-JSC::JSValue JSPaymentResponse::details(JSC::ExecState& state) const
+JSC::JSValue JSPaymentResponse::details(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return cachedPropertyValue(state, *this, wrapped().cachedDetails(), [this, &state] {
-        return wrapped().detailsFunction()(state).get();
+    return cachedPropertyValue(lexicalGlobalObject, *this, wrapped().cachedDetails(), [this, &lexicalGlobalObject] {
+        return wrapped().detailsFunction()(lexicalGlobalObject).get();
     });
 }
 

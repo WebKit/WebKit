@@ -36,7 +36,7 @@ class SerializedPlatformRepresentation : public RefCounted<SerializedPlatformRep
 public:
     virtual ~SerializedPlatformRepresentation() = default;
 
-    virtual JSC::JSValue deserialize(JSC::ExecState*) const = 0;
+    virtual JSC::JSValue deserialize(JSC::JSGlobalObject*) const = 0;
     virtual RefPtr<JSC::ArrayBuffer> data() const = 0;
     virtual bool isEqual(const SerializedPlatformRepresentation&) const = 0;
 

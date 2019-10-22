@@ -39,9 +39,9 @@ JSFunction* InlineCallFrame::calleeConstant() const
     return nullptr;
 }
 
-JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
+JSFunction* InlineCallFrame::calleeForCallFrame(CallFrame* callFrame) const
 {
-    return jsCast<JSFunction*>(calleeRecovery.recover(exec));
+    return jsCast<JSFunction*>(calleeRecovery.recover(callFrame));
 }
 
 CodeBlockHash InlineCallFrame::hash() const

@@ -37,7 +37,6 @@ namespace JSC {
 class JSArrayBufferView;
 class JSGlobalObject;
 class CallFrame;
-using ExecState = CallFrame;
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
 public:
@@ -111,7 +110,7 @@ public:
         return true;
     }
     
-    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) = 0;
+    virtual JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) = 0;
     
 protected:
     JS_EXPORT_PRIVATE ArrayBufferView(RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned byteLength);

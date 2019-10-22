@@ -48,12 +48,12 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionT
 
 // Attributes
 
-JSC::EncodedJSValue jsTestCEReactionsStringifierConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCEReactionsStringifierValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestCEReactionsStringifierValueWithoutReactions(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestCEReactionsStringifierConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestCEReactionsStringifierValue(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestCEReactionsStringifierValueWithoutReactions(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestCEReactionsStringifierPrototype : public JSC::JSNonFinalObject {
 public:
@@ -152,117 +152,117 @@ void JSTestCEReactionsStringifier::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactionsStringifier::~JSTestCEReactionsStringifier();
 }
 
-template<> inline JSTestCEReactionsStringifier* IDLAttribute<JSTestCEReactionsStringifier>::cast(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestCEReactionsStringifier* IDLAttribute<JSTestCEReactionsStringifier>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestCEReactionsStringifier*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestCEReactionsStringifier*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-template<> inline JSTestCEReactionsStringifier* IDLOperation<JSTestCEReactionsStringifier>::cast(ExecState& state)
+template<> inline JSTestCEReactionsStringifier* IDLOperation<JSTestCEReactionsStringifier>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    return jsDynamicCast<JSTestCEReactionsStringifier*>(state.vm(), state.thisValue());
+    return jsDynamicCast<JSTestCEReactionsStringifier*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
 }
 
-EncodedJSValue jsTestCEReactionsStringifierConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(state->vm(), prototype->globalObject()));
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(JSTestCEReactionsStringifier::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestCEReactionsStringifierConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestCEReactionsStringifierConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCEReactionsStringifierPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
-        throwVMTypeError(state, throwScope);
+        throwVMTypeError(lexicalGlobalObject, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestCEReactionsStringifierValueGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.value());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.value());
     return result;
 }
 
-EncodedJSValue jsTestCEReactionsStringifierValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "value");
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "value");
 }
 
-static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestCEReactionsStringifierValueSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
-    CustomElementReactionStack customElementReactionStack(state);
+    CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setValue(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestCEReactionsStringifierValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestCEReactionsStringifierValue(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*state, thisValue, encodedValue, "value");
+    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueSetter>(*lexicalGlobalObject, thisValue, encodedValue, "value");
 }
 
-static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestCEReactionsStringifierValueWithoutReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.valueWithoutReactions());
+    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.valueWithoutReactions());
     return result;
 }
 
-EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "valueWithoutReactions");
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueWithoutReactionsGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "valueWithoutReactions");
 }
 
-static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestCEReactionsStringifierValueWithoutReactionsSetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     UNUSED_PARAM(throwScope);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
+    AttributeSetter::call(lexicalGlobalObject, throwScope, [&] {
         return impl.setValueWithoutReactions(WTFMove(nativeValue));
     });
     return true;
 }
 
-bool setJSTestCEReactionsStringifierValueWithoutReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestCEReactionsStringifierValueWithoutReactions(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueWithoutReactionsSetter>(*state, thisValue, encodedValue, "valueWithoutReactions");
+    return IDLAttribute<JSTestCEReactionsStringifier>::set<setJSTestCEReactionsStringifierValueWithoutReactionsSetter>(*lexicalGlobalObject, thisValue, encodedValue, "valueWithoutReactions");
 }
 
-static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringBody(JSC::ExecState* state, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestCEReactionsStringifier>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    return JSValue::encode(toJS<IDLDOMString>(*state, impl.value()));
+    return JSValue::encode(toJS<IDLDOMString>(*lexicalGlobalObject, impl.value()));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(JSGlobalObject* globalObject, CallFrame* state)
+EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalObject);
-    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringBody>(*state, "toString");
+    return IDLOperation<JSTestCEReactionsStringifier>::call<jsTestCEReactionsStringifierPrototypeFunctionToStringBody>(*lexicalGlobalObject, *callFrame, "toString");
 }
 
 void JSTestCEReactionsStringifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -298,7 +298,7 @@ extern "C" { extern void* _ZTVN7WebCore26TestCEReactionsStringifierE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestCEReactionsStringifier>&& impl)
 {
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -322,9 +322,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     return createWrapper<TestCEReactionsStringifier>(globalObject, WTFMove(impl));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCEReactionsStringifier& impl)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCEReactionsStringifier& impl)
 {
-    return wrap(state, globalObject, impl);
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 TestCEReactionsStringifier* JSTestCEReactionsStringifier::toWrapped(JSC::VM& vm, JSC::JSValue value)

@@ -45,10 +45,10 @@ using namespace JSC;
 
 // Attributes
 
-JSC::EncodedJSValue jsTestEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestEnabledForContextPrototype : public JSC::JSNonFinalObject {
 public:
@@ -146,57 +146,57 @@ void JSTestEnabledForContext::destroy(JSC::JSCell* cell)
     thisObject->JSTestEnabledForContext::~JSTestEnabledForContext();
 }
 
-template<> inline JSTestEnabledForContext* IDLAttribute<JSTestEnabledForContext>::cast(ExecState& state, EncodedJSValue thisValue)
+template<> inline JSTestEnabledForContext* IDLAttribute<JSTestEnabledForContext>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
 {
-    return jsDynamicCast<JSTestEnabledForContext*>(state.vm(), JSValue::decode(thisValue));
+    return jsDynamicCast<JSTestEnabledForContext*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
 }
 
-EncodedJSValue jsTestEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEnabledForContextConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEnabledForContextPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
-        return throwVMTypeError(state, throwScope);
-    return JSValue::encode(JSTestEnabledForContext::getConstructor(state->vm(), prototype->globalObject()));
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(JSTestEnabledForContext::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-bool setJSTestEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestEnabledForContextConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
+    VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEnabledForContextPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype)) {
-        throwVMTypeError(state, throwScope);
+        throwVMTypeError(lexicalGlobalObject, throwScope);
         return false;
     }
     // Shadowing a built-in constructor
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructorGetter(ExecState& state, JSTestEnabledForContext& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledForContext& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    return JSTestSubObj::getConstructor(state.vm(), thisObject.globalObject());
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestSubObj::getConstructor(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());
 }
 
-EncodedJSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEnabledForContextTestSubObjEnabledForContextConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestEnabledForContext>::get<jsTestEnabledForContextTestSubObjEnabledForContextConstructorGetter>(*state, thisValue, "TestSubObjEnabledForContext");
+    return IDLAttribute<JSTestEnabledForContext>::get<jsTestEnabledForContextTestSubObjEnabledForContextConstructorGetter>(*lexicalGlobalObject, thisValue, "TestSubObjEnabledForContext");
 }
 
-static inline bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructorSetter(ExecState& state, JSTestEnabledForContext& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructorSetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledForContext& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
+    UNUSED_PARAM(lexicalGlobalObject);
     VM& vm = throwScope.vm();
     // Shadowing a built-in constructor.
     return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("TestSubObjEnabledForContext"), strlen("TestSubObjEnabledForContext")), value);
 }
 
-bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestEnabledForContextTestSubObjEnabledForContextConstructor(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    return IDLAttribute<JSTestEnabledForContext>::set<setJSTestEnabledForContextTestSubObjEnabledForContextConstructorSetter>(*state, thisValue, encodedValue, "TestSubObjEnabledForContext");
+    return IDLAttribute<JSTestEnabledForContext>::set<setJSTestEnabledForContextTestSubObjEnabledForContextConstructorSetter>(*lexicalGlobalObject, thisValue, encodedValue, "TestSubObjEnabledForContext");
 }
 
 void JSTestEnabledForContext::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -232,7 +232,7 @@ extern "C" { extern void* _ZTVN7WebCore21TestEnabledForContextE[]; }
 #endif
 #endif
 
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestEnabledForContext>&& impl)
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestEnabledForContext>&& impl)
 {
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -256,9 +256,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     return createWrapper<TestEnabledForContext>(globalObject, WTFMove(impl));
 }
 
-JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEnabledForContext& impl)
+JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEnabledForContext& impl)
 {
-    return wrap(state, globalObject, impl);
+    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 TestEnabledForContext* JSTestEnabledForContext::toWrapped(JSC::VM& vm, JSC::JSValue value)

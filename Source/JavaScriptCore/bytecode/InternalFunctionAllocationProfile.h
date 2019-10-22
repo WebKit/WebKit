@@ -45,7 +45,7 @@ private:
     WriteBarrier<Structure> m_structure;
 };
 
-inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFromBase(VM& vm, JSGlobalObject* globalObject, JSCell* owner, JSObject* prototype, Structure* baseStructure)
+inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFromBase(VM& vm, JSGlobalObject* baseGlobalObject, JSCell* owner, JSObject* prototype, Structure* baseStructure)
 {
     ASSERT(!m_structure || m_structure.get()->classInfo() != baseStructure->classInfo());
     ASSERT(baseStructure->hasMonoProto());
@@ -56,7 +56,7 @@ inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFr
     if (prototype == baseStructure->storedPrototype())
         structure = baseStructure;
     else
-        structure = vm.structureCache.emptyStructureForPrototypeFromBaseStructure(globalObject, prototype, baseStructure);
+        structure = vm.structureCache.emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseStructure);
 
     // Ensure that if another thread sees the structure, it will see it properly created.
     WTF::storeStoreFence();

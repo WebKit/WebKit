@@ -108,7 +108,7 @@ void InspectorHeapAgent::snapshot(ErrorString&, double* timestamp, String* snaps
     *snapshotData = snapshotBuilder.json([&] (const HeapSnapshotNode& node) {
         if (Structure* structure = node.cell->structure(vm)) {
             if (JSGlobalObject* globalObject = structure->globalObject()) {
-                if (!m_environment.canAccessInspectedScriptState(globalObject->globalExec()))
+                if (!m_environment.canAccessInspectedScriptState(globalObject))
                     return false;
             }
         }
@@ -206,7 +206,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
         return;
     }
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject->globalExec());
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue()) {
         errorString = "Unable to get object details - InjectedScript"_s;
         return;
@@ -247,7 +247,7 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
         return;
     }
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject->globalExec());
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue()) {
         errorString = "Unable to get object details - InjectedScript"_s;
         return;

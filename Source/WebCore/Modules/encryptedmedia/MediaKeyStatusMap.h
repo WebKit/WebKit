@@ -55,7 +55,7 @@ public:
 
     unsigned long size();
     bool has(const BufferSource&);
-    JSC::JSValue get(JSC::ExecState&, const BufferSource&);
+    JSC::JSValue get(JSC::JSGlobalObject&, const BufferSource&);
 
     class Iterator {
     public:

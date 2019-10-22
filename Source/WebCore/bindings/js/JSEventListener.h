@@ -75,19 +75,19 @@ private:
 
 // For "onxxx" attributes that automatically set up JavaScript event listeners.
 JSC::JSValue eventHandlerAttribute(EventTarget&, const AtomString& eventType, DOMWrapperWorld&);
-void setEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, EventTarget&, const AtomString& eventType, JSC::JSValue);
+void setEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, EventTarget&, const AtomString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
 JSC::JSValue windowEventHandlerAttribute(HTMLElement&, const AtomString& eventType, DOMWrapperWorld&);
-void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomString& eventType, JSC::JSValue);
+void setWindowEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, HTMLElement&, const AtomString& eventType, JSC::JSValue);
 JSC::JSValue windowEventHandlerAttribute(DOMWindow&, const AtomString& eventType, DOMWrapperWorld&);
-void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, DOMWindow&, const AtomString& eventType, JSC::JSValue);
+void setWindowEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, DOMWindow&, const AtomString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the document rather than setting them on the target.
 JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomString& eventType, DOMWrapperWorld&);
-void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomString& eventType, JSC::JSValue);
+void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, HTMLElement&, const AtomString& eventType, JSC::JSValue);
 JSC::JSValue documentEventHandlerAttribute(Document&, const AtomString& eventType, DOMWrapperWorld&);
-void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, Document&, const AtomString& eventType, JSC::JSValue);
+void setDocumentEventHandlerAttribute(JSC::JSGlobalObject&, JSC::JSObject&, Document&, const AtomString& eventType, JSC::JSValue);
 
 inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext& scriptExecutionContext) const
 {

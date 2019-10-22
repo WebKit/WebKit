@@ -37,67 +37,67 @@ struct IterationRecord {
     JSValue nextMethod;
 };
 
-JSValue iteratorNext(ExecState*, IterationRecord, JSValue argument = JSValue());
-JS_EXPORT_PRIVATE JSValue iteratorValue(ExecState*, JSValue iterResult);
-bool iteratorComplete(ExecState*, JSValue iterResult);
-JS_EXPORT_PRIVATE JSValue iteratorStep(ExecState*, IterationRecord);
-JS_EXPORT_PRIVATE void iteratorClose(ExecState*, IterationRecord);
-JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool done);
+JSValue iteratorNext(JSGlobalObject*, IterationRecord, JSValue argument = JSValue());
+JS_EXPORT_PRIVATE JSValue iteratorValue(JSGlobalObject*, JSValue iterResult);
+bool iteratorComplete(JSGlobalObject*, JSValue iterResult);
+JS_EXPORT_PRIVATE JSValue iteratorStep(JSGlobalObject*, IterationRecord);
+JS_EXPORT_PRIVATE void iteratorClose(JSGlobalObject*, IterationRecord);
+JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(JSGlobalObject*, JSValue, bool done);
 
 Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
 
-JS_EXPORT_PRIVATE JSValue iteratorMethod(ExecState&, JSObject*);
-JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(ExecState&, JSObject*, JSValue iteratorMethod);
-JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(ExecState*, JSValue iterable);
+JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSObject*, JSValue iteratorMethod);
+JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSValue iterable);
 
-JS_EXPORT_PRIVATE JSValue iteratorMethod(ExecState&, JSObject*);
-JS_EXPORT_PRIVATE bool hasIteratorMethod(ExecState&, JSValue);
+JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE bool hasIteratorMethod(JSGlobalObject*, JSValue);
 
 template<typename CallBackType>
-void forEachInIterable(ExecState* exec, JSValue iterable, const CallBackType& callback)
+void forEachInIterable(JSGlobalObject* globalObject, JSValue iterable, const CallBackType& callback)
 {
-    auto& vm = exec->vm();
+    auto& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    IterationRecord iterationRecord = iteratorForIterable(exec, iterable);
+    IterationRecord iterationRecord = iteratorForIterable(globalObject, iterable);
     RETURN_IF_EXCEPTION(scope, void());
     while (true) {
-        JSValue next = iteratorStep(exec, iterationRecord);
+        JSValue next = iteratorStep(globalObject, iterationRecord);
         if (UNLIKELY(scope.exception()) || next.isFalse())
             return;
 
-        JSValue nextValue = iteratorValue(exec, next);
+        JSValue nextValue = iteratorValue(globalObject, next);
         RETURN_IF_EXCEPTION(scope, void());
 
-        callback(vm, exec, nextValue);
+        callback(vm, globalObject, nextValue);
         if (UNLIKELY(scope.exception())) {
             scope.release();
-            iteratorClose(exec, iterationRecord);
+            iteratorClose(globalObject, iterationRecord);
             return;
         }
     }
 }
 
 template<typename CallBackType>
-void forEachInIterable(ExecState& state, JSObject* iterable, JSValue iteratorMethod, const CallBackType& callback)
+void forEachInIterable(JSGlobalObject& globalObject, JSObject* iterable, JSValue iteratorMethod, const CallBackType& callback)
 {
-    auto& vm = state.vm();
+    auto& vm = getVM(&globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto iterationRecord = iteratorForIterable(state, iterable, iteratorMethod);
+    auto iterationRecord = iteratorForIterable(&globalObject, iterable, iteratorMethod);
     RETURN_IF_EXCEPTION(scope, void());
     while (true) {
-        JSValue next = iteratorStep(&state, iterationRecord);
+        JSValue next = iteratorStep(&globalObject, iterationRecord);
         if (UNLIKELY(scope.exception()) || next.isFalse())
             return;
 
-        JSValue nextValue = iteratorValue(&state, next);
+        JSValue nextValue = iteratorValue(&globalObject, next);
         RETURN_IF_EXCEPTION(scope, void());
 
-        callback(vm, state, nextValue);
+        callback(vm, globalObject, nextValue);
         if (UNLIKELY(scope.exception())) {
             scope.release();
-            iteratorClose(&state, iterationRecord);
+            iteratorClose(&globalObject, iterationRecord);
             return;
         }
     }

@@ -68,9 +68,9 @@ public:
     // Used to invalidate an NPObject asynchronously.
     NPObject* leakNPObject();
 
-    JSC::JSValue callMethod(JSC::ExecState*, NPIdentifier methodName);
-    JSC::JSValue callObject(JSC::ExecState*);
-    JSC::JSValue callConstructor(JSC::ExecState*);
+    JSC::JSValue callMethod(JSC::JSGlobalObject*, JSC::CallFrame*, NPIdentifier methodName);
+    JSC::JSValue callObject(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue callConstructor(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     DECLARE_INFO;
 
@@ -92,19 +92,19 @@ private:
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 
-    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
-    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
+    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
-    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);
-    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName);
+    static bool deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName);
+    static bool deletePropertyByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName);
 
-    bool deleteProperty(JSC::ExecState*, NPIdentifier propertyName);
+    bool deleteProperty(JSC::JSGlobalObject*, NPIdentifier propertyName);
 
-    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode);
+    static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode);
 
-    static JSC::EncodedJSValue propertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::EncodedJSValue methodGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::Exception* throwInvalidAccessError(JSC::ExecState*, JSC::ThrowScope&);
+    static JSC::EncodedJSValue propertyGetter(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+    static JSC::EncodedJSValue methodGetter(JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName);
+    static JSC::Exception* throwInvalidAccessError(JSC::JSGlobalObject*, JSC::ThrowScope&);
 
     NPRuntimeObjectMap* m_objectMap;
     NPObject* m_npObject;

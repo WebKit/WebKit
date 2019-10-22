@@ -33,6 +33,7 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/Int8Array.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>

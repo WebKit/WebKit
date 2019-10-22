@@ -2619,7 +2619,7 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 {
     // Bypass this policy when the world is known, and it not the normal world.
     auto& callFrame = *commonVM().topCallFrame;
-    return &callFrame != JSC::CallFrame::noCaller() && !currentWorld(callFrame).isNormal();
+    return &callFrame != JSC::CallFrame::noCaller() && !currentWorld(*callFrame.lexicalGlobalObject()).isNormal();
 }
 
 void Document::platformSuspendOrStopActiveDOMObjects()
@@ -6116,7 +6116,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         m_consoleMessageListener->scheduleCallback(*this, message);
 }
 
-void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(source, level, message));

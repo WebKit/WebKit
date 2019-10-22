@@ -30,7 +30,6 @@
 namespace JSC {
 
 class CallFrame;
-using ExecState = CallFrame;
 
 ALWAYS_INLINE bool isIndex(uint32_t index)
 {

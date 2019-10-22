@@ -76,10 +76,10 @@ void WebInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
 
     Vector<long> idsToRemove;
     for (const auto& it : m_idToInjectedScript) {
-        JSC::ExecState* scriptState = it.value.scriptState();
-        if (window != domWindowFromExecState(scriptState))
+        JSC::JSGlobalObject* lexicalGlobalObject = it.value.globalObject();
+        if (window != domWindowFromExecState(lexicalGlobalObject))
             continue;
-        m_scriptStateToId.remove(scriptState);
+        m_scriptStateToId.remove(lexicalGlobalObject);
         idsToRemove.append(it.key);
     }
 
@@ -87,15 +87,15 @@ void WebInjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         m_idToInjectedScript.remove(id);
 
     // Now remove script states that have id but no injected script.
-    Vector<JSC::ExecState*> scriptStatesToRemove;
+    Vector<JSC::JSGlobalObject*> scriptStatesToRemove;
     for (const auto& it : m_scriptStateToId) {
-        JSC::ExecState* scriptState = it.key;
-        if (window == domWindowFromExecState(scriptState))
-            scriptStatesToRemove.append(scriptState);
+        JSC::JSGlobalObject* lexicalGlobalObject = it.key;
+        if (window == domWindowFromExecState(lexicalGlobalObject))
+            scriptStatesToRemove.append(lexicalGlobalObject);
     }
 
-    for (auto& scriptState : scriptStatesToRemove)
-        m_scriptStateToId.remove(scriptState);
+    for (auto& lexicalGlobalObject : scriptStatesToRemove)
+        m_scriptStateToId.remove(lexicalGlobalObject);
 }
 
 } // namespace WebCore

@@ -48,8 +48,8 @@ public:
     JSC::Bindings::Method* methodNamed(JSC::PropertyName);
     JSC::Bindings::Field* fieldNamed(JSC::PropertyName);
 
-    JSC::JSValue fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
-    bool setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValue) const;
+    JSC::JSValue fieldValue(JSC::JSGlobalObject*, const JSC::Bindings::Field*) const;
+    bool setFieldValue(JSC::JSGlobalObject*, const JSC::Bindings::Field*, JSC::JSValue) const;
     
 
     NetscapePluginInstanceProxy* instanceProxy() { return m_instanceProxy; }
@@ -61,29 +61,29 @@ public:
 private:
     ProxyInstance(Ref<JSC::Bindings::RootObject>&&, NetscapePluginInstanceProxy*, uint32_t objectID);
 
-    virtual JSC::Bindings::RuntimeObject* newRuntimeObject(JSC::ExecState*);
+    virtual JSC::Bindings::RuntimeObject* newRuntimeObject(JSC::JSGlobalObject*);
 
     virtual JSC::Bindings::Class* getClass() const;
 
-    virtual JSC::JSValue getMethod(JSC::ExecState*, JSC::PropertyName);
-    virtual JSC::JSValue invokeMethod(JSC::ExecState*, JSC::RuntimeMethod*);
+    virtual JSC::JSValue getMethod(JSC::JSGlobalObject*, JSC::PropertyName);
+    virtual JSC::JSValue invokeMethod(JSC::JSGlobalObject*, JSC::CallFrame*, JSC::RuntimeMethod*);
 
     virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSC::JSValue invokeDefaultMethod(JSC::ExecState*);
+    virtual JSC::JSValue invokeDefaultMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     virtual bool supportsConstruct() const;
-    virtual JSC::JSValue invokeConstruct(JSC::ExecState*, const JSC::ArgList&);
+    virtual JSC::JSValue invokeConstruct(JSC::JSGlobalObject*, JSC::CallFrame*, const JSC::ArgList&);
 
-    virtual JSC::JSValue defaultValue(JSC::ExecState*, JSC::PreferredPrimitiveType) const;
-    virtual JSC::JSValue valueOf(JSC::ExecState*) const;
+    virtual JSC::JSValue defaultValue(JSC::JSGlobalObject*, JSC::PreferredPrimitiveType) const;
+    virtual JSC::JSValue valueOf(JSC::JSGlobalObject*) const;
     
-    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
+    virtual void getPropertyNames(JSC::JSGlobalObject*, JSC::PropertyNameArray&);
 
-    JSC::JSValue stringValue(JSC::ExecState*) const;
-    JSC::JSValue numberValue(JSC::ExecState*) const;
+    JSC::JSValue stringValue(JSC::JSGlobalObject*) const;
+    JSC::JSValue numberValue(JSC::JSGlobalObject*) const;
     JSC::JSValue booleanValue() const;
     
-    JSC::JSValue invoke(JSC::ExecState*, InvokeType, uint64_t identifier, const JSC::ArgList&);
+    JSC::JSValue invoke(JSC::JSGlobalObject*, JSC::CallFrame*, InvokeType, uint64_t identifier, const JSC::ArgList&);
     
     template <typename T>
     std::unique_ptr<T> waitForReply(uint32_t requestID) const

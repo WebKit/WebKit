@@ -41,25 +41,25 @@
 
 namespace WebCore {
 
-static inline JSC::JSValue readableStreamCallFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
+static inline JSC::JSValue readableStreamCallFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
     JSC::CallData callData;
-    auto callType = JSC::getCallData(state.vm(), jsFunction, callData);
-    return call(&state, jsFunction, callType, callData, thisValue, arguments);
+    auto callType = JSC::getCallData(lexicalGlobalObject.vm(), jsFunction, callData);
+    return call(&lexicalGlobalObject, jsFunction, callType, callData, thisValue, arguments);
 }
 
-JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
+JSC::JSValue ReadableStreamDefaultController::invoke(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
 {
-    JSC::VM& vm = state.vm();
+    JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto function = object.get(&state, JSC::Identifier::fromString(vm, propertyName));
+    auto function = object.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, propertyName));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     if (!function.isFunction(vm)) {
         if (!function.isUndefined())
-            throwTypeError(&state, scope, "ReadableStream trying to call a property that is not callable"_s);
+            throwTypeError(&lexicalGlobalObject, scope, "ReadableStream trying to call a property that is not callable"_s);
         return JSC::jsUndefined();
     }
 
@@ -67,7 +67,7 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
     arguments.append(parameter);
     ASSERT(!arguments.hasOverflowed());
 
-    return readableStreamCallFunction(state, function, &object, arguments);
+    return readableStreamCallFunction(lexicalGlobalObject, function, &object, arguments);
 }
 
 } // namespace WebCore

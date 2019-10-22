@@ -59,76 +59,76 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_lastIndex);
 }
 
-bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool RegExpObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = jsCast<RegExpObject*>(object);
         unsigned attributes = regExp->lastIndexIsWritable() ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }
-    return Base::getOwnPropertySlot(object, exec, propertyName, slot);
+    return Base::getOwnPropertySlot(object, globalObject, propertyName, slot);
 }
 
-bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
+bool RegExpObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->lastIndex)
         return false;
-    return Base::deleteProperty(cell, exec, propertyName);
+    return Base::deleteProperty(cell, globalObject, propertyName);
 }
 
-void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (mode.includeDontEnumProperties())
         propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
+    Base::getOwnNonIndexPropertyNames(object, globalObject, propertyNames, mode);
 }
 
-void RegExpObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RegExpObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (mode.includeDontEnumProperties())
         propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getPropertyNames(object, exec, propertyNames, mode);
+    Base::getPropertyNames(object, globalObject, propertyNames, mode);
 }
 
-void RegExpObject::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RegExpObject::getGenericPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     if (mode.includeDontEnumProperties())
         propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getGenericPropertyNames(object, exec, propertyNames, mode);
+    Base::getGenericPropertyNames(object, globalObject, propertyNames, mode);
 }
 
-bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
+bool RegExpObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = jsCast<RegExpObject*>(object);
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeConfigurabilityError);
+            return typeError(globalObject, scope, shouldThrow, UnconfigurablePropertyChangeConfigurabilityError);
         if (descriptor.enumerablePresent() && descriptor.enumerable())
-            return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeEnumerabilityError);
+            return typeError(globalObject, scope, shouldThrow, UnconfigurablePropertyChangeEnumerabilityError);
         if (descriptor.isAccessorDescriptor())
-            return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeAccessMechanismError);
+            return typeError(globalObject, scope, shouldThrow, UnconfigurablePropertyChangeAccessMechanismError);
         if (!regExp->lastIndexIsWritable()) {
             if (descriptor.writablePresent() && descriptor.writable())
-                return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeWritabilityError);
+                return typeError(globalObject, scope, shouldThrow, UnconfigurablePropertyChangeWritabilityError);
             if (descriptor.value()) {
-                bool isSame = sameValue(exec, regExp->getLastIndex(), descriptor.value());
+                bool isSame = sameValue(globalObject, regExp->getLastIndex(), descriptor.value());
                 RETURN_IF_EXCEPTION(scope, false);
                 if (!isSame)
-                    return typeError(exec, scope, shouldThrow, ReadonlyPropertyChangeError);
+                    return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyChangeError);
             }
             return true;
         }
         if (descriptor.value()) {
-            regExp->setLastIndex(exec, descriptor.value(), false);
+            regExp->setLastIndex(globalObject, descriptor.value(), false);
             RETURN_IF_EXCEPTION(scope, false);
         }
         if (descriptor.writablePresent() && !descriptor.writable())
@@ -136,49 +136,49 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow));
+    RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, shouldThrow));
 }
 
-static bool regExpObjectSetLastIndexStrict(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
+static bool regExpObjectSetLastIndexStrict(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), true);
+    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), true);
 }
 
-static bool regExpObjectSetLastIndexNonStrict(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
+static bool regExpObjectSetLastIndexNonStrict(JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value)
 {
-    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(exec, JSValue::decode(value), false);
+    return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), false);
 }
 
-bool RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+bool RegExpObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    VM& vm = exec->vm();
+    VM& vm = globalObject->vm();
     RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+        return ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
     if (propertyName == vm.propertyNames->lastIndex) {
-        bool result = thisObject->setLastIndex(exec, value, slot.isStrictMode());
+        bool result = thisObject->setLastIndex(globalObject, value, slot.isStrictMode());
         slot.setCustomValue(thisObject, slot.isStrictMode()
             ? regExpObjectSetLastIndexStrict
             : regExpObjectSetLastIndexNonStrict);
         return result;
     }
-    return Base::put(cell, exec, propertyName, value, slot);
+    return Base::put(cell, globalObject, propertyName, value, slot);
 }
 
-JSValue RegExpObject::exec(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
+JSValue RegExpObject::exec(JSGlobalObject* globalObject, JSString* string)
 {
-    return execInline(exec, globalObject, string);
+    return execInline(globalObject, string);
 }
 
 // Shared implementation used by test and exec.
-MatchResult RegExpObject::match(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
+MatchResult RegExpObject::match(JSGlobalObject* globalObject, JSString* string)
 {
-    return matchInline(exec, globalObject, string);
+    return matchInline(globalObject, string);
 }
 
-JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
+JSValue RegExpObject::matchGlobal(JSGlobalObject* globalObject, JSString* string)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -186,24 +186,24 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
 
     ASSERT(regExp->global());
 
-    setLastIndex(exec, 0);
+    setLastIndex(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
 
-    String s = string->value(exec);
+    String s = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     ASSERT(!s.isNull());
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
         RELEASE_AND_RETURN(scope, collectMatches(
-            vm, exec, string, s, globalObject, regExp,
+            vm, globalObject, string, s, regExp,
             [&] (size_t end) -> size_t {
                 return advanceStringUnicode(s, stringLength, end);
             }));
     }
 
     RELEASE_AND_RETURN(scope, collectMatches(
-        vm, exec, string, s, globalObject, regExp,
+        vm, globalObject, string, s, regExp,
         [&] (size_t end) -> size_t {
             return end + 1;
         }));

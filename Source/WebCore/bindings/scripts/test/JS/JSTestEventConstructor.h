@@ -60,16 +60,16 @@ protected:
     void finishCreation(JSC::VM&);
 };
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEventConstructor* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<TestEventConstructor>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<TestEventConstructor>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestEventConstructor&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestEventConstructor* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestEventConstructor>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestEventConstructor>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
 template<> struct JSDOMWrapperConverterTraits<TestEventConstructor> {
     using WrapperClass = JSTestEventConstructor;
     using ToWrappedReturnType = TestEventConstructor*;
 };
-template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSC::ExecState&, JSC::JSValue);
+template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSC::JSGlobalObject&, JSC::JSValue);
 
 
 } // namespace WebCore

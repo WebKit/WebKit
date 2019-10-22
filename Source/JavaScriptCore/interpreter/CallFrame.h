@@ -41,8 +41,6 @@ namespace JSC  {
 
     struct Instruction;
 
-    using ExecState = CallFrame;
-
     class CallSiteIndex {
     public:
         CallSiteIndex() = default;
@@ -135,12 +133,8 @@ namespace JSC  {
         JS_EXPORT_PRIVATE bool isAnyWasmCallee();
 
         // Global object in which the currently executing code was defined.
-        // Differs from VM::vmEntryGlobalObject() during function calls across web browser frames.
+        // Differs from VM::deprecatedVMEntryGlobalObject() during function calls across web browser frames.
         JSGlobalObject* lexicalGlobalObject() const;
-
-        // Differs from lexicalGlobalObject because this will have DOM window shell rather than
-        // the actual DOM window, which can't be "this" for security reasons.
-        JSObject* globalThisValue() const;
 
         VM& vm() const;
 
@@ -202,7 +196,7 @@ namespace JSC  {
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
 
-        static void initGlobalExec(CallFrame* globalExec, JSCallee* globalCallee);
+        static void initDeprecatedCallFrameForDebugger(CallFrame* globalExec, JSCallee* globalCallee);
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
@@ -265,7 +259,7 @@ namespace JSC  {
         static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + CallFrameSlot::thisArgument - 1; }
 
         static CallFrame* noCaller() { return nullptr; }
-        bool isGlobalExec() const
+        bool isDeprecatedCallFrameForDebugger() const
         {
             return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().returnPC == nullptr;
         }
@@ -332,5 +326,15 @@ namespace JSC  {
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
         SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
     };
+
+// Helper function to get VM& from JSGlobalObject* if JSGlobalObject.h is not included.
+VM& getVM(JSGlobalObject*);
+
+#if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64)) && (OS(LINUX) || OS(DARWIN))
+#define DECLARE_CALL_FRAME(vm) (bitwise_cast<JSC::CallFrame*>(__builtin_frame_address(1)))
+#else
+#define DECLARE_CALL_FRAME(vm) ((vm).topCallFrame)
+#endif
+
 
 } // namespace JSC

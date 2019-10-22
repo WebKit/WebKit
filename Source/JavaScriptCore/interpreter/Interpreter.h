@@ -104,16 +104,16 @@ namespace JSC {
         static bool isOpcode(Opcode);
 #endif
 
-        JSValue executeProgram(const SourceCode&, CallFrame*, JSObject* thisObj);
-        JSValue executeModuleProgram(ModuleProgramExecutable*, CallFrame*, JSModuleEnvironment*);
-        JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
-        JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
-        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
+        JSValue executeProgram(const SourceCode&, JSGlobalObject*, JSObject* thisObj);
+        JSValue executeModuleProgram(ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*);
+        JSValue executeCall(JSGlobalObject*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
+        JSObject* executeConstruct(JSGlobalObject*, JSObject* function, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
+        JSValue execute(EvalExecutable*, JSGlobalObject*, JSValue thisValue, JSScope*);
 
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
 
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*);
-        void notifyDebuggerOfExceptionToBeThrown(VM&, CallFrame*, Exception*);
+        void notifyDebuggerOfExceptionToBeThrown(VM&, JSGlobalObject*, CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static String stackTraceAsString(VM&, const Vector<StackFrame>&);
 
@@ -150,7 +150,7 @@ namespace JSC {
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(CallFrame*);
+    JSValue eval(JSGlobalObject*, CallFrame*);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
     {
@@ -167,15 +167,15 @@ namespace JSC {
         return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
     }
 
-    unsigned sizeOfVarargs(CallFrame* exec, JSValue arguments, uint32_t firstVarArgOffset);
+    unsigned sizeOfVarargs(JSGlobalObject*, CallFrame*, JSValue arguments, uint32_t firstVarArgOffset);
     static constexpr unsigned maxArguments = 0x10000;
-    unsigned sizeFrameForVarargs(CallFrame* exec, VM&, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
-    unsigned sizeFrameForForwardArguments(CallFrame* exec, VM&, unsigned numUsedStackSlots);
-    void loadVarargs(CallFrame* execCaller, VirtualRegister firstElementDest, JSValue source, uint32_t offset, uint32_t length);
-    void setupVarargsFrame(CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
-    void setupVarargsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
-    void setupForwardArgumentsFrame(CallFrame* execCaller, CallFrame* execCallee, uint32_t length);
-    void setupForwardArgumentsFrameAndSetThis(CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
+    unsigned sizeFrameForVarargs(JSGlobalObject*, CallFrame*, VM&, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
+    unsigned sizeFrameForForwardArguments(JSGlobalObject*, CallFrame*, VM&, unsigned numUsedStackSlots);
+    void loadVarargs(JSGlobalObject*, CallFrame* execCaller, VirtualRegister firstElementDest, JSValue source, uint32_t offset, uint32_t length);
+    void setupVarargsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
+    void setupVarargsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
+    void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, uint32_t length);
+    void setupForwardArgumentsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
     
 } // namespace JSC
 

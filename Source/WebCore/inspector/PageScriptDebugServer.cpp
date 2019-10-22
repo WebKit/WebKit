@@ -123,12 +123,12 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
     m_page.decrementNestedRunLoopCount();
 }
 
-bool PageScriptDebugServer::isContentScript(ExecState* state) const
+bool PageScriptDebugServer::isContentScript(JSGlobalObject* state) const
 {
     return &currentWorld(*state) != &mainThreadNormalWorld();
 }
 
-void PageScriptDebugServer::reportException(ExecState* state, JSC::Exception* exception) const
+void PageScriptDebugServer::reportException(JSGlobalObject* state, JSC::Exception* exception) const
 {
     WebCore::reportException(state, exception);
 }

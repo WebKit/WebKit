@@ -28,8 +28,8 @@
 namespace JSC {
 
 class CallFrame;
+class JSGlobalObject;
 class JSObject;
-using ExecState = CallFrame;
 
 namespace Yarr {
 
@@ -68,6 +68,6 @@ inline bool hasHardError(ErrorCode errorCode)
     // All other errors are due to problems in the expression.
     return hasError(errorCode) && errorCode != ErrorCode::TooManyDisjunctions;
 }
-JS_EXPORT_PRIVATE JSObject* errorToThrow(ExecState*, ErrorCode);
+JS_EXPORT_PRIVATE JSObject* errorToThrow(JSGlobalObject*, ErrorCode);
 
 } } // namespace JSC::Yarr

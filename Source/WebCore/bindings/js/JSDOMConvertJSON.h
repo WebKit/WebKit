@@ -32,9 +32,9 @@
 namespace WebCore {
 
 template<> struct Converter<IDLJSON> : DefaultConverter<IDLJSON> {
-    static String convert(JSC::ExecState& state, JSC::JSValue value)
+    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return JSC::JSONStringify(&state, value, 0);
+        return JSC::JSONStringify(&lexicalGlobalObject, value, 0);
     }
 };
 
@@ -42,9 +42,9 @@ template<> struct JSConverter<IDLJSON> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
     {
-        return JSC::JSONParse(&state, value);
+        return JSC::JSONParse(&lexicalGlobalObject, value);
     }
 };
 

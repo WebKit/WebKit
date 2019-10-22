@@ -52,7 +52,7 @@ public:
     OpcodeID opcodeID() const { return m_opcodeID; }
     const CString& description() const { return m_description; }
     
-    JSValue toJS(ExecState*) const;
+    JSValue toJS(JSGlobalObject*) const;
 private:
     unsigned m_bytecodeIndex;
     OpcodeID m_opcodeID;

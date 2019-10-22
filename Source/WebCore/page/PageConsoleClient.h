@@ -38,7 +38,6 @@ class ConsoleMessage;
 
 namespace JSC {
 class CallFrame;
-using ExecState = CallFrame;
 }
 
 namespace WebCore {
@@ -62,24 +61,24 @@ public:
 
     // The following addMessage function are deprecated.
     // Callers should try to create the ConsoleMessage themselves.
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0);
     void addMessage(MessageSource, MessageLevel, const String& message, Ref<Inspector::ScriptCallStack>&&);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
 
 protected:
-    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void count(JSC::ExecState*, const String& label) override;
-    void countReset(JSC::ExecState*, const String& label) override;
-    void profile(JSC::ExecState*, const String& title) override;
-    void profileEnd(JSC::ExecState*, const String& title) override;
-    void takeHeapSnapshot(JSC::ExecState*, const String& title) override;
-    void time(JSC::ExecState*, const String& label) override;
-    void timeLog(JSC::ExecState*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
-    void timeEnd(JSC::ExecState*, const String& label) override;
-    void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
-    void screenshot(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void count(JSC::JSGlobalObject*, const String& label) override;
+    void countReset(JSC::JSGlobalObject*, const String& label) override;
+    void profile(JSC::JSGlobalObject*, const String& title) override;
+    void profileEnd(JSC::JSGlobalObject*, const String& title) override;
+    void takeHeapSnapshot(JSC::JSGlobalObject*, const String& title) override;
+    void time(JSC::JSGlobalObject*, const String& label) override;
+    void timeLog(JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&) override;
+    void timeEnd(JSC::JSGlobalObject*, const String& label) override;
+    void timeStamp(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void record(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void recordEnd(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
+    void screenshot(JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&) override;
 
 private:
     Page& m_page;

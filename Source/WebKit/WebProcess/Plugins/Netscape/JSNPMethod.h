@@ -47,10 +47,10 @@ public:
         return subspaceForImpl(vm);
     }
 
-    static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const String& name, NPIdentifier npIdent)
+    static JSNPMethod* create(JSC::JSGlobalObject* globalObject, const String& name, NPIdentifier npIdent)
     {
         JSC::VM& vm = globalObject->vm();
-        JSC::Structure* structure = createStructure(exec->vm(), globalObject, globalObject->functionPrototype());
+        JSC::Structure* structure = createStructure(globalObject->vm(), globalObject, globalObject->functionPrototype());
         JSNPMethod* method = new (JSC::allocateCell<JSNPMethod>(vm.heap)) JSNPMethod(globalObject, structure, npIdent);
         method->finishCreation(vm, name);
         return method;

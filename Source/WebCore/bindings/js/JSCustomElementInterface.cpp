@@ -55,7 +55,7 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
 
 JSCustomElementInterface::~JSCustomElementInterface() = default;
 
-static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, ExecState&, JSObject* constructor, const AtomString& localName);
+static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& localName);
 
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const AtomString& localName)
 {
@@ -99,13 +99,13 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
         return nullptr;
 
     ASSERT(&document == scriptExecutionContext());
-    auto& state = *document.execState();
-    auto element = constructCustomElementSynchronously(document, vm, state, m_constructor.get(), localName);
+    auto& lexicalGlobalObject = *document.execState();
+    auto element = constructCustomElementSynchronously(document, vm, lexicalGlobalObject, m_constructor.get(), localName);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
         scope.clearException();
-        reportException(&state, exception);
+        reportException(&lexicalGlobalObject, exception);
         return nullptr;
     }
 
@@ -114,7 +114,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 
 // https://dom.spec.whatwg.org/#concept-create-element
 // 6. 1. If the synchronous custom elements flag is set
-static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, ExecState& state, JSObject* constructor, const AtomString& localName)
+static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     ConstructData constructData;
@@ -127,36 +127,36 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     JSExecState::instrumentFunctionConstruct(&document, constructType, constructData);
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
-    JSValue newElement = construct(&state, constructor, constructType, constructData, args);
+    JSValue newElement = construct(&lexicalGlobalObject, constructor, constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(&document);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     ASSERT(!newElement.isEmpty());
     HTMLElement* wrappedElement = JSHTMLElement::toWrapped(vm, newElement);
     if (!wrappedElement) {
-        throwTypeError(&state, scope, "The result of constructing a custom element must be a HTMLElement"_s);
+        throwTypeError(&lexicalGlobalObject, scope, "The result of constructing a custom element must be a HTMLElement"_s);
         return nullptr;
     }
 
     if (wrappedElement->hasAttributes()) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element must not have attributes"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element must not have attributes"_s);
         return nullptr;
     }
     if (wrappedElement->hasChildNodes()) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element must not have child nodes"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element must not have child nodes"_s);
         return nullptr;
     }
     if (wrappedElement->parentNode()) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element must not have a parent node"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element must not have a parent node"_s);
         return nullptr;
     }
     if (&wrappedElement->document() != &document) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element belongs to a wrong document"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element belongs to a wrong document"_s);
         return nullptr;
     }
     ASSERT(wrappedElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     if (wrappedElement->localName() != localName) {
-        throwNotSupportedError(state, scope, "A newly constructed custom element has incorrect local name"_s);
+        throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element has incorrect local name"_s);
         return nullptr;
     }
 
@@ -184,7 +184,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     auto* globalObject = toJSDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
     if (!globalObject)
         return;
-    ExecState* state = globalObject->globalExec();
+    JSGlobalObject* lexicalGlobalObject = globalObject;
 
     ConstructData constructData;
     ConstructType constructType = m_constructor->methodTable(vm)->getConstructData(m_constructor.get(), constructData);
@@ -200,27 +200,27 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
     JSExecState::instrumentFunctionConstruct(context, constructType, constructData);
-    JSValue returnedElement = construct(state, m_constructor.get(), constructType, constructData, args);
+    JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructType, constructData, args);
     InspectorInstrumentation::didCallFunction(context);
 
     m_constructionStack.removeLast();
 
     if (UNLIKELY(scope.exception())) {
         element.setIsFailedCustomElement(*this);
-        reportException(state, scope.exception());
+        reportException(lexicalGlobalObject, scope.exception());
         return;
     }
 
     Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.setIsFailedCustomElement(*this);
-        reportException(state, createDOMException(state, TypeError, "Custom element constructor returned a wrong element"));
+        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, TypeError, "Custom element constructor returned a wrong element"));
         return;
     }
     element.setIsDefinedCustomElement(*this);
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(ExecState*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const WTF::Function<void(JSGlobalObject*, JSDOMGlobalObject*, MarkedArgumentBuffer&)>& addArguments)
 {
     if (!canInvokeCallback())
         return;
@@ -236,27 +236,27 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     auto* globalObject = toJSDOMWindow(downcast<Document>(*context).frame(), m_isolatedWorld);
     if (!globalObject)
         return;
-    ExecState* state = globalObject->globalExec();
+    JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    JSObject* jsElement = asObject(toJS(state, globalObject, element));
+    JSObject* jsElement = asObject(toJS(lexicalGlobalObject, globalObject, element));
 
     CallData callData;
     CallType callType = callback->methodTable(vm)->getCallData(callback, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer args;
-    addArguments(state, globalObject, args);
+    addArguments(lexicalGlobalObject, globalObject, args);
     RELEASE_ASSERT(!args.hasOverflowed());
 
     JSExecState::instrumentFunctionCall(context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
-    JSExecState::call(state, callback, callType, callData, jsElement, args, exception);
+    JSExecState::call(lexicalGlobalObject, callback, callType, callData, jsElement, args, exception);
 
     InspectorInstrumentation::didCallFunction(context);
 
     if (exception)
-        reportException(state, exception);
+        reportException(lexicalGlobalObject, exception);
 }
 
 void JSCustomElementInterface::setConnectedCallback(JSC::JSObject* callback)
@@ -286,9 +286,9 @@ void JSCustomElementInterface::setAdoptedCallback(JSC::JSObject* callback)
 
 void JSCustomElementInterface::invokeAdoptedCallback(Element& element, Document& oldDocument, Document& newDocument)
 {
-    invokeCallback(element, m_adoptedCallback.get(), [&](ExecState* state, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
-        args.append(toJS(state, globalObject, oldDocument));
-        args.append(toJS(state, globalObject, newDocument));
+    invokeCallback(element, m_adoptedCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
+        args.append(toJS(lexicalGlobalObject, globalObject, oldDocument));
+        args.append(toJS(lexicalGlobalObject, globalObject, newDocument));
     });
 }
 
@@ -302,11 +302,11 @@ void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callba
 
 void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)
 {
-    invokeCallback(element, m_attributeChangedCallback.get(), [&](ExecState* state, JSDOMGlobalObject*, MarkedArgumentBuffer& args) {
-        args.append(toJS<IDLDOMString>(*state, attributeName.localName()));
-        args.append(toJS<IDLNullable<IDLDOMString>>(*state, oldValue));
-        args.append(toJS<IDLNullable<IDLDOMString>>(*state, newValue));
-        args.append(toJS<IDLNullable<IDLDOMString>>(*state, attributeName.namespaceURI()));
+    invokeCallback(element, m_attributeChangedCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*, MarkedArgumentBuffer& args) {
+        args.append(toJS<IDLDOMString>(*lexicalGlobalObject, attributeName.localName()));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, oldValue));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, newValue));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, attributeName.namespaceURI()));
     });
 }
 

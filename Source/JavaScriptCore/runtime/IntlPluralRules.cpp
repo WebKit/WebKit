@@ -103,65 +103,65 @@ static Vector<String> localeData(const String&, size_t)
 }
 }
 
-void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JSValue optionsValue)
+void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValue locales, JSValue optionsValue)
 {
-    VM& vm = exec.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 13.1.1 InitializePluralRules (pluralRules, locales, options)
     // https://tc39.github.io/ecma402/#sec-initializepluralrules
-    Vector<String> requestedLocales = canonicalizeLocaleList(exec, locales);
+    Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
     JSObject* options;
     if (optionsValue.isUndefined())
-        options = constructEmptyObject(&exec, exec.lexicalGlobalObject()->nullPrototypeObjectStructure());
+        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     else {
-        options = optionsValue.toObject(&exec);
+        options = optionsValue.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
     HashMap<String, String> localeOpt;
-    String localeMatcher = intlStringOption(exec, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
+    String localeMatcher = intlStringOption(globalObject, options, vm.propertyNames->localeMatcher, { "lookup", "best fit" }, "localeMatcher must be either \"lookup\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
     localeOpt.add(vm.propertyNames->localeMatcher.string(), localeMatcher);
 
-    const HashSet<String> availableLocales = exec.jsCallee()->globalObject(vm)->intlNumberFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
+    const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
+    HashMap<String, String> resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeOpt, nullptr, 0, IntlPRInternal::localeData);
     m_locale = resolved.get(vm.propertyNames->locale.string());
     if (m_locale.isEmpty()) {
-        throwTypeError(&exec, scope, "failed to initialize PluralRules due to invalid locale"_s);
+        throwTypeError(globalObject, scope, "failed to initialize PluralRules due to invalid locale"_s);
         return;
     }
 
-    String typeString = intlStringOption(exec, options, Identifier::fromString(vm, "type"), { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
+    String typeString = intlStringOption(globalObject, options, Identifier::fromString(vm, "type"), { "cardinal", "ordinal" }, "type must be \"cardinal\" or \"ordinal\"", "cardinal");
     RETURN_IF_EXCEPTION(scope, void());
     m_type = typeString == "ordinal" ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL;
 
-    unsigned minimumIntegerDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
+    unsigned minimumIntegerDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumIntegerDigits"), 1, 21, 1);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumIntegerDigits = minimumIntegerDigits;
 
     unsigned minimumFractionDigitsDefault = 0;
-    unsigned minimumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
+    unsigned minimumFractionDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumFractionDigits"), 0, 20, minimumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_minimumFractionDigits = minimumFractionDigits;
 
     unsigned maximumFractionDigitsDefault = std::max(minimumFractionDigits, 3u);
-    unsigned maximumFractionDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
+    unsigned maximumFractionDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "maximumFractionDigits"), minimumFractionDigits, 20, maximumFractionDigitsDefault);
     RETURN_IF_EXCEPTION(scope, void());
     m_maximumFractionDigits = maximumFractionDigits;
 
-    JSValue minimumSignificantDigitsValue = options->get(&exec, Identifier::fromString(vm, "minimumSignificantDigits"));
+    JSValue minimumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "minimumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue maximumSignificantDigitsValue = options->get(&exec, Identifier::fromString(vm, "maximumSignificantDigits"));
+    JSValue maximumSignificantDigitsValue = options->get(globalObject, Identifier::fromString(vm, "maximumSignificantDigits"));
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!minimumSignificantDigitsValue.isUndefined() || !maximumSignificantDigitsValue.isUndefined()) {
-        unsigned minimumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
+        unsigned minimumSignificantDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "minimumSignificantDigits"), 1, 21, 1);
         RETURN_IF_EXCEPTION(scope, void());
-        unsigned maximumSignificantDigits = intlNumberOption(exec, options, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
+        unsigned maximumSignificantDigits = intlNumberOption(globalObject, options, Identifier::fromString(vm, "maximumSignificantDigits"), minimumSignificantDigits, 21, 21);
         RETURN_IF_EXCEPTION(scope, void());
         m_minimumSignificantDigits = minimumSignificantDigits;
         m_maximumSignificantDigits = maximumSignificantDigits;
@@ -170,7 +170,7 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     UErrorCode status = U_ZERO_ERROR;
     m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(UNUM_DECIMAL, nullptr, 0, m_locale.utf8().data(), nullptr, &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, scope, "failed to initialize PluralRules"_s);
+        throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
     }
 
@@ -187,26 +187,26 @@ void IntlPluralRules::initializePluralRules(ExecState& exec, JSValue locales, JS
     status = U_ZERO_ERROR;
     m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(m_locale.utf8().data(), m_type, &status));
     if (U_FAILURE(status)) {
-        throwTypeError(&exec, scope, "failed to initialize PluralRules"_s);
+        throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
     }
 
     m_initializedPluralRules = true;
 }
 
-JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
+JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject)
 {
-    VM& vm = exec.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
     if (UNLIKELY(!m_initializedPluralRules)) {
-        throwTypeError(&exec, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
+        throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
         return nullptr;
     }
 
-    JSObject* options = constructEmptyObject(&exec);
+    JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
     options->putDirect(vm, Identifier::fromString(vm, "type"), jsNontrivialString(vm, m_type == UPLURAL_TYPE_ORDINAL ? "ordinal"_s : "cardinal"_s));
     options->putDirect(vm, Identifier::fromString(vm, "minimumIntegerDigits"), jsNumber(m_minimumIntegerDigits));
@@ -218,10 +218,9 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     }
 
 #if HAVE(ICU_PLURALRULES_KEYWORDS)
-    JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (UNLIKELY(!categories)) {
-        throwOutOfMemoryError(&exec, scope);
+        throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
@@ -234,7 +233,7 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));
-        categories->putDirectIndex(&exec, index++, jsNontrivialString(vm, String(result, resultLength)));
+        categories->putDirectIndex(globalObject, index++, jsNontrivialString(vm, String(result, resultLength)));
         RETURN_IF_EXCEPTION(scope, { });
     }
     options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"), categories);
@@ -243,15 +242,15 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
     RELEASE_AND_RETURN(scope, options);
 }
 
-JSValue IntlPluralRules::select(ExecState& exec, double value)
+JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value)
 {
-    VM& vm = exec.vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 13.1.4 ResolvePlural (pluralRules, n)
     // https://tc39.github.io/ecma402/#sec-resolveplural
     if (!m_initializedPluralRules)
-        return throwTypeError(&exec, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s);
+        return throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s);
 
     if (!std::isfinite(value))
         return jsNontrivialString(vm, "other"_s);
@@ -261,7 +260,7 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
     Vector<UChar, 8> result(8);
     auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to select plural value"_s);
+        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
 #else
     UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> buffer(32);
@@ -272,18 +271,18 @@ JSValue IntlPluralRules::select(ExecState& exec, double value)
         unum_formatDouble(m_numberFormat.get(), value, buffer.data(), length, nullptr, &status);
     }
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to select plural value"_s);
+        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
 
     double formatted = unum_parseDouble(m_numberFormat.get(), buffer.data(), length, nullptr, &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to select plural value"_s);
+        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
 
     // Can only be 'zero', 'one', 'two', 'few', 'many' or 'other'
     status = U_ZERO_ERROR;
     Vector<UChar, 8> result(8);
     length = uplrules_select(m_pluralRules.get(), formatted, result.data(), result.size(), &status);
     if (U_FAILURE(status))
-        return throwTypeError(&exec, scope, "failed to select plural value"_s);
+        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
 #endif
 
     return jsString(vm, String(result.data(), length));
