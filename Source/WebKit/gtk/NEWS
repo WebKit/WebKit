@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.27.2
+================
+
+What's new in WebKitGTK 2.27.2?
+
+  - Add user messages API for the communication with the web extension.
+  - Enable service workers by default.
+  - Add support for saving data in Web Inspector.
+  - More navigation gesture improvement.
+  - Fix the build with WebDriver disabled.
+  - Show also client EGL extensions in about:gpu.
+  - Disable accelerated compositing when we fail to initialize the EGL dispaly under Wayland.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.27.1
 ================
 
