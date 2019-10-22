@@ -1,5 +1,14 @@
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r251411: Fix is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=203230
+
+        Not reviewed.
+
+        * stress/incorrect-exception-assertion-in-operationRegExpExecNonGlobalOrSticky.js: Removed.
+
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
         Fix incorrect assertion in operationRegExpExecNonGlobalOrSticky().
         https://bugs.webkit.org/show_bug.cgi?id=203230
         <rdar://problem/56460749>
