@@ -1,3 +1,19 @@
+2019-10-22  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=169667
+        URL: protocol setter needs to be more restrictive around file
+
+        Reviewed by Alex Christensen.
+
+        Restrict setting protocol to "file" as indictaed in the spec [1].
+
+        Test: imported/w3c/web-platform-tests/url/url-setters.html
+
+        [1] https://url.spec.whatwg.org/#scheme-state steps 2.1.3 and 2.1.4.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setProtocol):
+
 2019-10-21  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Swipe navigation gestures do not work

@@ -378,6 +378,12 @@ bool URL::setProtocol(const String& s)
         return true;
     }
 
+    if ((m_passwordEnd != m_userStart || port()) && *canonicalized == "file")
+        return true;
+
+    if (isLocalFile() && host().isEmpty())
+        return true;
+
     URLParser parser(makeString(*canonicalized, m_string.substring(m_schemeEnd)));
     *this = parser.result();
     return true;

@@ -1,3 +1,14 @@
+2019-10-22  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=169667
+        URL: protocol setter needs to be more restrictive around file
+
+        Reviewed by Alex Christensen.
+
+        Update test result.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2019-10-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update Web Platform Test css/css-lists/content-property/marker-text-matches-armenian.html
