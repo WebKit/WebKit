@@ -1357,3 +1357,8 @@ webkit.org/b/203218 http/tests/workers/service/registration-clear-redundant-work
 # <rdar://problem/56506063> Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure (203256)
 webkit.org/b/203256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
 
+# <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
+webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-001.html [ Pass Failure ]
+webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-002.html [ Pass Failure ]
+webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
+

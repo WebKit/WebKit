@@ -1,3 +1,13 @@
+2019-10-22  Russell Epstein  <repstein@apple.com>
+
+        [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
+        https://bugs.webkit.org/show_bug.cgi?id=203264
+
+        Unreviewed Test Gardening..
+
+        * platform/ios-wk2/TestExpectations: Marked tests as flaky failures
+        * platform/ipad/TestExpectations: Marked tests as passing on iPad.
+
 2019-10-22  Dirk Schulze  <krit@webkit.org>
 
         SVG2: Add bounding-box keyword to pointer-events
