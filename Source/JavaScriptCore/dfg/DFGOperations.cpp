@@ -1341,12 +1341,10 @@ EncodedJSValue JIT_OPERATION operationRegExpExecNonGlobalOrSticky(JSGlobalObject
     unsigned lastIndex = 0;
     MatchResult result;
     JSArray* array = createRegExpMatchesArray(vm, globalObject, string, input, regExp, lastIndex, result);
-    if (!array) {
-        ASSERT(!scope.exception());
-        return JSValue::encode(jsNull());
-    }
-
     RETURN_IF_EXCEPTION(scope, { });
+    if (!array)
+        return JSValue::encode(jsNull());
+
     globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, string, result);
     return JSValue::encode(array);
 }

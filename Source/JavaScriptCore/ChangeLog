@@ -1,3 +1,23 @@
+2019-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Fix incorrect assertion in operationRegExpExecNonGlobalOrSticky().
+        https://bugs.webkit.org/show_bug.cgi?id=203230
+        <rdar://problem/56460749>
+
+        Reviewed by Robin Morisset.
+
+        operationRegExpExecNonGlobalOrSticky() was asserting no exception when
+        createRegExpMatchesArray() returns null.  createRegExpMatchesArray() only returns
+        null when RegExp::matchInline() returns -1.  RegExp::matchInline() can return -1
+        either when there's an error, or if the match fails.  When there's an error,
+        RegExp::matchInline() also throws an exception via a throwError() helper.
+
+        This patch fixes operationRegExpExecNonGlobalOrSticky() to check for an exception
+        being thrown, or createRegExpMatchesArray() returning a null array due to a failed
+        match.
+
+        * dfg/DFGOperations.cpp:
+
 2019-10-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix non-unified builds after r251326
