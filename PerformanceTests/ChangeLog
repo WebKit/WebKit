@@ -1,3 +1,12 @@
+2019-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Perf test SVG/UnderTheSeeBenchmark.html timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=203229
+
+        Unreviewed gardening.
+
+        * Skipped: Mark 2 new tests timing out in the GTK perf bot.
+
 2019-10-17  Saam Barati  <sbarati@apple.com>
 
         Have a CLI version of JetStream 2 to run on watchOS

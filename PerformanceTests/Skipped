@@ -122,8 +122,12 @@ MediaTime/
 # Bug 167623 - [GTK] Performance test IndexedDB/large-number-of-inserts-responsiveness.html timeouts.
 [GTK] IndexedDB/large-number-of-inserts-responsiveness.html
 
-# Bug 203083 - [GTK] Perf test IndexedDB/basic/index-cursor-delete.html timeouts
+# Bug 203083 - [GTK] Perf tests IndexedDB/basic/index-cursor-delete.html and -update.html timeouts
 [GTK] IndexedDB/basic/index-cursor-delete.html
+[GTK] IndexedDB/basic/index-cursor-update.html
+
+# Bug 203229 - [GTK] Perf test SVG/UnderTheSeeBenchmark.html timeouts
+[GTK] SVG/UnderTheSeeBenchmark.html
 
 # Bug 167616 - Performance test IndexedDB/large-binary-keys.html creates a DB of more than 6GB and takes more than 10 minutes to run.
 [GTK] IndexedDB/stress/large-binary-keys.html
