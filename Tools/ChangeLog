@@ -1,3 +1,34 @@
+2019-10-21  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [results.webkit.org] Change dot and lengend dot use same mechanism to center text and image
+        https://bugs.webkit.org/show_bug.cgi?id=203216
+
+        Reviewed by Jonathan Bedard.
+
+        * resultsdbpy/resultsdbpy/view/static/library/css/docs.yaml:
+        * resultsdbpy/resultsdbpy/view/static/library/css/index.html:
+        * resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.dot *):
+        (.dot img, .dot .text):
+        (.dot>img, .dot>.text):
+        (.dot.small img, .dot.small .text):
+        (.dot.small>img, .dot.small>.text):
+        (.dot.medium img, .dot.medium .text):
+        (.dot.medium>img, .dot.medium>.text):
+        (.dot.large img, .dot.large .text):
+        (.dot.large>img, .dot.large>.text):
+        (.lengend>.item .dot):
+        (.lengend>.item .dot img, .lengend>.item .dot .text):
+        (.lengend>.item .dot>img, .lengend>.item .dot>.text):
+        (.dot.small *): Deleted.
+        (.dot img, .dot.small img): Deleted.
+        (.dot.medium *): Deleted.
+        (.dot.medium img): Deleted.
+        (.dot.large *): Deleted.
+        (.dot.large img): Deleted.
+        (.lengend>.item .dot .text): Deleted.
+        (.lengend>.item .dot img): Deleted.
+
 2019-10-21  youenn fablet  <youenn@apple.com>
 
         Move service worker registration matching for navigation loads to network process

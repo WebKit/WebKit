@@ -754,22 +754,28 @@
                         With string inside
                     html: |-
                         <div class="dot success">
-                            <div>&#10003</div>
+                            <div class="text">&#10003</div>
                         </div>
                         <div class="dot failed">
-                            <div>&#10005</div>
+                            <div class="text">&#120247</div>
                         </div>
                         <div class="dot error">
-                            <div>!</div>
+                            <div class="text">!</div>
                         </div>
                         <div class="dot success large">
-                            <div>&#10003</div>
+                            <div class="text">&#10003</div>
                         </div>
                         <div class="dot failed large">
-                            <div>&#10005</div>
+                            <div class="text">&#120247</div>
                         </div>
                         <div class="dot error large">
-                            <div>!</div>
+                            <div class="text">!</div>
+                        </div>
+                -
+                    description: With image inside
+                    html: |-
+                        <div class="dot error">
+                            <img src="../icons/clock.svg">
                         </div>
                 -
                     description: Blink
@@ -1415,7 +1421,7 @@
                                 <div class="label">Tests Failed</div>
                             </div>
                             <div class="item">
-                                <div class="dot error"></div>
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
                                 <div class="label">Tests have error</div>
                             </div>
                         </div>
@@ -1434,7 +1440,7 @@
                                 <div class="label">Tests Failed</div>
                             </div>
                             <div class="item">
-                                <div class="dot error"></div>
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
                                 <div class="label">Tests have error</div>
                             </div>
                         </div>
@@ -1453,7 +1459,7 @@
                                 <div class="label">Tests Failed</div>
                             </div>
                             <div class="item">
-                                <div class="dot error"></div>
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
                                 <div class="label">Tests have error</div>
                             </div>
                         </div>

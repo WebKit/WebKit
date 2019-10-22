@@ -607,9 +607,30 @@ pre {
 }
 
 .dot * {
-  padding-top: 3px;
   color: var(--greyLightest);
-  line-height: 1.1;
+  line-height: 1;
+}
+
+.dot img, .dot .text {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: default;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 400;
+  width: var(--smallSize);
+  height: var(--smallSize);
+  font-size: var(--smallSize);
+  display: block;
+}
+
+.dot>img, .dot>.text{
+  position: absolute;
+  top: calc((var(--mediumSize) - var(--smallSize)) / 2);
+  left: calc((var(--mediumSize) - var(--smallSize)) / 2);
 }
 
 .dot.tiny {
@@ -626,18 +647,16 @@ pre {
   border-radius: var(--smallSize);
 }
 
-.dot.small * {
-  margin-top: 1px;
-}
+.dot.small img, .dot.small .text {
+  width: var(--tinySize);
+  height: var(--tinySize);
+  font-size: var(--tinySize);
+} 
 
-.dot img, .dot.small img {
-    width: var(--tinySize);
-    height: var(--tinySize);
-    position: absolute;
-    top: calc((var(--smallSize) - var(--tinySize)) / 2);
-    left: calc((var(--smallSize) - var(--tinySize)) / 2);
-    padding: 0;
-    margin: 0;
+ .dot.small>img, .dot.small>.text {
+  position: absolute;
+  top: calc((var(--smallSize) - var(--tinySize)) / 2);
+  left: calc((var(--smallSize) - var(--tinySize)) / 2);
 }
 
 .dot.medium {
@@ -647,18 +666,16 @@ pre {
   border-radius: var(--mediumSize);
 }
 
-.dot.medium * {
-  padding-top: 3px;
+.dot.medium img, .dot.medium .text{
+  width: var(--smallSize);
+  height: var(--smallSize);
+  font-size: var(--smallSize)
 }
 
-.dot.medium img {
-    width: var(--smallSize);
-    height: var(--smallSize);
-    position: absolute;
-    top: calc((var(--mediumSize) - var(--smallSize)) / 2);
-    left: calc((var(--mediumSize) - var(--smallSize)) / 2);
-    padding: 0;
-    margin: 0;
+.dot.medium>img, .dot.medium>.text{
+  position: absolute;
+  top: calc((var(--mediumSize) - var(--smallSize)) / 2);
+  left: calc((var(--mediumSize) - var(--smallSize)) / 2);
 }
 
 .dot.large {
@@ -668,18 +685,16 @@ pre {
   border-radius: var(--largeSize);
 }
 
-.dot.large * {
-  padding-top: 4px;
+.dot.large img, .dot.large .text{
+  width: var(--mediumSize);
+  height: var(--mediumSize);
+  font-size: var(--mediumSize);
 }
 
-.dot.large img {
-    width: var(--mediumSize);
-    height: var(--mediumSize);
-    position: absolute;
-    top: calc((var(--largeSize) - var(--mediumSize)) / 2);
-    left: calc((var(--largeSize) - var(--mediumSize)) / 2);
-    padding: 0;
-    margin: 0;
+.dot.large>img, .dot.large>.text{
+  position: absolute;
+  top: calc((var(--largeSize) - var(--mediumSize)) / 2);
+  left: calc((var(--largeSize) - var(--mediumSize)) / 2);
 }
 
 .dot.success {
@@ -2175,7 +2190,7 @@ a.disabled {
   height: var(--smallSize);
   border-radius: var(--smallSize);
   font-size: calc(var(--tinySize));
-  text-align: middle;
+  text-align: center;
   flex: none;
   vertical-align: middle;
   align-items: center;
@@ -2183,29 +2198,15 @@ a.disabled {
   margin: 0 var(--tinySize);
   position: relative;
 }
-.lengend>.item .dot .text {
-  font-size: calc(var(--tinySize));
-  font-weight: 400;
-  text-align: center;
-  width: var(--smallSize);
-  height: var(--smallSize);
-  line-height: var(--smallSize);
-  padding: 0;
-  margin: 0;
-  display: inline-block;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: default;
-}
-.lengend>.item .dot img {
-    width: var(--tinySize);
-    height: var(--tinySize);
-    position: absolute;
-    top: calc((var(--smallSize) - var(--tinySize)) / 2);
-    left: calc((var(--smallSize) - var(--tinySize)) / 2);
-    padding: 0;
-    margin: 0;
+.lengend>.item .dot img, .lengend>.item .dot .text {
+  width: var(--tinySize);
+  height: var(--tinySize);
+  font-size: var(--tinySize);
+} 
+.lengend>.item .dot>img, .lengend>.item .dot>.text {
+  position: absolute;
+  top: calc((var(--smallSize) - var(--tinySize)) / 2);
+  left: calc((var(--smallSize) - var(--tinySize)) / 2);
 }
 .timeline.lengend>.item .dot::before{
   left: calc(0px - var(--tinySize));
