@@ -296,7 +296,7 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(JSGlobalObject* globalO
 }
 
 #if !ASSERT_DISABLED
-static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject*, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     RELEASE_ASSERT(callFrame->argument(0).isBoolean());
     if (callFrame->argument(0).asBoolean())
@@ -305,7 +305,7 @@ static EncodedJSValue JSC_HOST_CALL assertCall(JSGlobalObject*, CallFrame* callF
     bool iteratedOnce = false;
     CodeBlock* codeBlock = nullptr;
     unsigned line;
-    callFrame->iterate([&] (StackVisitor& visitor) {
+    callFrame->iterate(globalObject->vm(), [&] (StackVisitor& visitor) {
         if (!iteratedOnce) {
             iteratedOnce = true;
             return StackVisitor::Continue;

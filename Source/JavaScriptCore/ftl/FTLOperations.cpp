@@ -609,7 +609,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
 
 extern "C" void* JIT_OPERATION compileFTLLazySlowPath(CallFrame* callFrame, unsigned index)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
 
     // We cannot GC. We've got pointers in evil places.
     DeferGCForAWhile deferGC(vm.heap);

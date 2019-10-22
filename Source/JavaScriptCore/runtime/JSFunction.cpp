@@ -297,20 +297,21 @@ private:
     mutable JSValue m_result;
 };
 
-static JSValue retrieveArguments(CallFrame* callFrame, JSFunction* functionObj)
+static JSValue retrieveArguments(VM& vm, CallFrame* callFrame, JSFunction* functionObj)
 {
     RetrieveArgumentsFunctor functor(functionObj);
     if (callFrame)
-        callFrame->iterate(functor);
+        callFrame->iterate(vm, functor);
     return functor.result();
 }
 
 EncodedJSValue JSFunction::argumentsGetter(JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName)
 {
+    VM& vm = globalObject->vm();
     JSFunction* thisObj = jsCast<JSFunction*>(JSValue::decode(thisValue));
     ASSERT(!thisObj->isHostFunction());
 
-    return JSValue::encode(retrieveArguments(globalObject->vm().topCallFrame, thisObj));
+    return JSValue::encode(retrieveArguments(vm, vm.topCallFrame, thisObj));
 }
 
 class RetrieveCallerFunctionFunctor {
@@ -356,11 +357,11 @@ private:
     mutable JSValue m_result;
 };
 
-static JSValue retrieveCallerFunction(CallFrame* callFrame, JSFunction* functionObj)
+static JSValue retrieveCallerFunction(VM& vm, CallFrame* callFrame, JSFunction* functionObj)
 {
     RetrieveCallerFunctionFunctor functor(functionObj);
     if (callFrame)
-        callFrame->iterate(functor);
+        callFrame->iterate(vm, functor);
     return functor.result();
 }
 
@@ -371,7 +372,7 @@ EncodedJSValue JSFunction::callerGetter(JSGlobalObject* globalObject, EncodedJSV
 
     JSFunction* thisObj = jsCast<JSFunction*>(JSValue::decode(thisValue));
     ASSERT(!thisObj->isHostFunction());
-    JSValue caller = retrieveCallerFunction(vm.topCallFrame, thisObj);
+    JSValue caller = retrieveCallerFunction(vm, vm.topCallFrame, thisObj);
 
     // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
     if (!caller.isObject() || !asObject(caller)->inherits<JSFunction>(vm)) {
@@ -595,7 +596,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
 
         valueCheck = !descriptor.value();
         if (!valueCheck) {
-            valueCheck = sameValue(globalObject, descriptor.value(), retrieveArguments(vm.topCallFrame, thisObject));
+            valueCheck = sameValue(globalObject, descriptor.value(), retrieveArguments(vm, vm.topCallFrame, thisObject));
             RETURN_IF_EXCEPTION(scope, false);
         }
     } else if (propertyName == vm.propertyNames->caller) {
@@ -604,7 +605,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
 
         valueCheck = !descriptor.value();
         if (!valueCheck) {
-            valueCheck = sameValue(globalObject, descriptor.value(), retrieveCallerFunction(vm.topCallFrame, thisObject));
+            valueCheck = sameValue(globalObject, descriptor.value(), retrieveCallerFunction(vm, vm.topCallFrame, thisObject));
             RETURN_IF_EXCEPTION(scope, false);
         }
     } else {

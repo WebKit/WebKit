@@ -507,7 +507,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(JSGlobalObject* globalObject, CallFr
     if (parsedObject)
         return JSValue::encode(parsedObject);
 
-    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin();
+    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
     EvalExecutable* eval = IndirectEvalExecutable::create(globalObject, makeSource(s, sourceOrigin), false, DerivedContextType::None, false, EvalContextType::None);
     EXCEPTION_ASSERT(!!scope.exception() == !eval);
     if (!eval)
@@ -820,7 +820,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(JSGlobalObject* globalObject
         return JSValue::encode(promise->promise());
     };
 
-    auto sourceOrigin = callFrame->callerSourceOrigin();
+    auto sourceOrigin = callFrame->callerSourceOrigin(vm);
     RELEASE_ASSERT(callFrame->argumentCount() == 1);
     auto* specifier = callFrame->uncheckedArgument(0).toString(globalObject);
     if (Exception* exception = catchScope.exception())

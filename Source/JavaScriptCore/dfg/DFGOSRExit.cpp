@@ -335,7 +335,7 @@ void OSRExit::executeOSRExit(Context& context)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallFrame* callFrame = context.fp<CallFrame*>();
-    ASSERT(&callFrame->vm() == &vm);
+    ASSERT(&callFrame->deprecatedVM() == &vm);
     auto& cpu = context.cpu;
 
     if (validateDFGDoesGC) {
@@ -1028,7 +1028,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
 
 void JIT_OPERATION OSRExit::compileOSRExit(CallFrame* callFrame)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (validateDFGDoesGC) {
@@ -1663,7 +1663,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
 void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(CallFrame* callFrame, void* debugInfoRaw, void* scratch)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);

@@ -334,7 +334,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
 
     ASSERT(maxStackSize);
     BacktraceFunctor functor(builder, maxStackSize);
-    frame->iterate(functor);
+    frame->iterate(vm, functor);
 
     return OpaqueJSString::tryCreate(builder.toString()).leakRef();
 }

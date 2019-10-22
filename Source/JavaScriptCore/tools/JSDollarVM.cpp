@@ -119,7 +119,7 @@ public:
 
         unsigned frameIndex = 0;
         bool isValid = false;
-        callFrame->iterate([&] (StackVisitor& visitor) {
+        callFrame->iterate(vm, [&] (StackVisitor& visitor) {
             DollarVMAssertScope assertScope;
 
             if (frameIndex++ != requestedFrameIndex)
@@ -1578,25 +1578,27 @@ static FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
 
 // Returns true if the current frame is a LLInt frame.
 // Usage: isLLInt = $vm.llintTrue()
-static EncodedJSValue JSC_HOST_CALL functionLLintTrue(JSGlobalObject*, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL functionLLintTrue(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
     if (!callFrame)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
-    callFrame->iterate(functor);
+    callFrame->iterate(vm, functor);
     return JSValue::encode(jsBoolean(functor.jitType() == JITType::InterpreterThunk));
 }
 
 // Returns true if the current frame is a baseline JIT frame.
 // Usage: isBaselineJIT = $vm.jitTrue()
-static EncodedJSValue JSC_HOST_CALL functionJITTrue(JSGlobalObject*, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL functionJITTrue(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
     if (!callFrame)
         return JSValue::encode(jsUndefined());
     CallerFrameJITTypeFunctor functor;
-    callFrame->iterate(functor);
+    callFrame->iterate(vm, functor);
     return JSValue::encode(jsBoolean(functor.jitType() == JITType::BaselineJIT));
 }
 
@@ -1837,9 +1839,10 @@ static EncodedJSValue JSC_HOST_CALL functionDumpStack(JSGlobalObject* globalObje
 // Usage: $vm.dumpRegisters() // dump the registers of the current CallFrame.
 // FIXME: Currently, this function dumps the physical frame. We should make
 // it dump the logical frame (i.e. be able to dump inlined frames as well).
-static EncodedJSValue JSC_HOST_CALL functionDumpRegisters(JSGlobalObject*, CallFrame* callFrame)
+static EncodedJSValue JSC_HOST_CALL functionDumpRegisters(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
     unsigned requestedFrameIndex = 1;
     if (callFrame->argumentCount() >= 1) {
         JSValue value = callFrame->uncheckedArgument(0);
@@ -1853,7 +1856,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpRegisters(JSGlobalObject*, CallF
     }
 
     unsigned frameIndex = 0;
-    callFrame->iterate([&] (StackVisitor& visitor) {
+    callFrame->iterate(vm, [&] (StackVisitor& visitor) {
         DollarVMAssertScope assertScope;
         if (frameIndex++ != requestedFrameIndex)
             return StackVisitor::Continue;
@@ -2253,7 +2256,7 @@ static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(JSGlob
 
     JSArray* result = constructEmptyArray(globalObject, 0);
     RETURN_IF_EXCEPTION(scope, { });
-    StackVisitor::visit(callFrame, &vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
         DollarVMAssertScope assertScope;
         if (visitor->isInlinedFrame())
             return StackVisitor::Continue;

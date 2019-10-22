@@ -39,22 +39,21 @@
 
 namespace JSC {
 
-StackVisitor::StackVisitor(CallFrame* startFrame, VM* vm)
+StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm)
 {
     m_frame.m_index = 0;
     m_frame.m_isWasmFrame = false;
     CallFrame* topFrame;
     if (startFrame) {
-        ASSERT(vm);
-        ASSERT(!vm->topCallFrame || reinterpret_cast<void*>(vm->topCallFrame) != vm->topEntryFrame);
+        ASSERT(!vm.topCallFrame || reinterpret_cast<void*>(vm.topCallFrame) != vm.topEntryFrame);
 
-        m_frame.m_entryFrame = vm->topEntryFrame;
-        topFrame = vm->topCallFrame;
+        m_frame.m_entryFrame = vm.topEntryFrame;
+        topFrame = vm.topCallFrame;
 
         if (topFrame && topFrame->isStackOverflowFrame()) {
             topFrame = topFrame->callerFrame(m_frame.m_entryFrame);
-            m_topEntryFrameIsEmpty = (m_frame.m_entryFrame != vm->topEntryFrame);
-            if (startFrame == vm->topCallFrame)
+            m_topEntryFrameIsEmpty = (m_frame.m_entryFrame != vm.topEntryFrame);
+            if (startFrame == vm.topCallFrame)
                 startFrame = topFrame;
         }
 
@@ -303,11 +302,11 @@ String StackVisitor::Frame::functionName() const
     case CodeType::Native: {
         JSCell* callee = this->callee().asCell();
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(callee)).impl();
+            traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsCast<JSObject*>(callee)).impl();
         break;
     }
     case CodeType::Function: 
-        traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(this->callee().asCell())).impl();
+        traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsCast<JSObject*>(this->callee().asCell())).impl();
         break;
     case CodeType::Global:
         traceLine = "global code"_s;

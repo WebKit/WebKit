@@ -273,10 +273,10 @@ DOMWindow& firstDOMWindow(JSGlobalObject& lexicalGlobalObject)
     return asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(&lexicalGlobalObject))->wrapped();
 }
 
-Document* responsibleDocument(CallFrame& callFrame)
+Document* responsibleDocument(VM& vm, CallFrame& callFrame)
 {
     CallerFunctor functor;
-    callFrame.iterate(functor);
+    callFrame.iterate(vm, functor);
     auto* callerFrame = functor.callerFrame();
     if (!callerFrame)
         return nullptr;

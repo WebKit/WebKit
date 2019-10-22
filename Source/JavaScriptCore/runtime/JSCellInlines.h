@@ -138,14 +138,12 @@ inline void JSCell::visitOutputConstraints(JSCell*, SlotVisitor&)
 {
 }
 
-ALWAYS_INLINE VM& CallFrame::vm() const
+ALWAYS_INLINE VM& CallFrame::deprecatedVM() const
 {
     JSCell* callee = this->callee().asCell();
     ASSERT(callee);
     ASSERT(&callee->vm());
-    ASSERT(!callee->isLargeAllocation());
-    // This is an important optimization since we access this so often.
-    return callee->markedBlock().vm();
+    return callee->vm();
 }
 
 template<typename CellType, SubspaceAccess>

@@ -173,7 +173,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
     if (!m_stack.isEmpty()) {
         Vector<Frame> stackRightNow;
         StackVisitor::visit(
-            callFrame, &vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+            callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
                 if (visitor->isInlinedFrame())
                     return StackVisitor::Continue;
                 if (visitor->isWasmFrame()) {
@@ -294,7 +294,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
     
     Vector<Frame> toPush;
     StackVisitor::visit(
-        callFrame, &vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
+        callFrame, vm, [&] (StackVisitor& visitor) -> StackVisitor::Status {
             if (visitor->isInlinedFrame()) {
                 // FIXME: Handle inlining.
                 // https://bugs.webkit.org/show_bug.cgi?id=155686

@@ -136,7 +136,9 @@ namespace JSC  {
         // Differs from VM::deprecatedVMEntryGlobalObject() during function calls across web browser frames.
         JSGlobalObject* lexicalGlobalObject() const;
 
-        VM& vm() const;
+        // FIXME: Remove this function
+        // https://bugs.webkit.org/show_bug.cgi?id=203272
+        VM& deprecatedVM() const;
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }
@@ -151,7 +153,7 @@ namespace JSC  {
         CallFrame* unsafeCallerFrame(EntryFrame*&) const;
         JS_EXPORT_PRIVATE CallFrame* callerFrame(EntryFrame*&) const;
 
-        JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin();
+        JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin(VM&);
 
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
@@ -280,15 +282,11 @@ namespace JSC  {
         // FIXME: This method is improper. We rely on the fact that we can call it with a null
         // receiver. We should always be using StackVisitor directly.
         // It's only valid to call this from a non-wasm top frame.
-        template <StackVisitor::EmptyEntryFrameAction action = StackVisitor::ContinueIfTopEntryFrameIsEmpty, typename Functor> void iterate(const Functor& functor)
+        template <StackVisitor::EmptyEntryFrameAction action = StackVisitor::ContinueIfTopEntryFrameIsEmpty, typename Functor> void iterate(VM& vm, const Functor& functor)
         {
-            VM* vm;
             void* rawThis = this;
-            if (!!rawThis) {
+            if (!!rawThis)
                 RELEASE_ASSERT(callee().isCell());
-                vm = &this->vm();
-            } else
-                vm = nullptr;
             StackVisitor::visit<action, Functor>(this, vm, functor);
         }
 

@@ -1,3 +1,22 @@
+2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove non-LargeAllocation restriction for JSCallee
+        https://bugs.webkit.org/show_bug.cgi?id=203260
+
+        Reviewed by Saam Barati.
+
+        Passing VM& instead of calling CallFrame::vm.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::callerGlobalObject):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::responsibleDocument):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+
 2019-10-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for continuous content/commit boundary check

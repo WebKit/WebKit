@@ -176,9 +176,9 @@ JSValue eval(JSGlobalObject* globalObject, CallFrame* callFrame)
     RELEASE_AND_RETURN(scope, interpreter->execute(eval, globalObject, thisValue, callerScopeChain));
 }
 
-unsigned sizeOfVarargs(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue arguments, uint32_t firstVarArgOffset)
+unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t firstVarArgOffset)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(!arguments.isCell())) {
@@ -241,7 +241,7 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length = sizeOfVarargs(globalObject, callFrame, arguments, firstVarArgOffset);
+    unsigned length = sizeOfVarargs(globalObject, arguments, firstVarArgOffset);
     RETURN_IF_EXCEPTION(scope, 0);
 
     CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
@@ -440,7 +440,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
     size_t framesCount = 0;
     size_t maxFramesCountNeeded = maxStackSize + framesToSkip;
-    StackVisitor::visit(callFrame, &vm, [&] (StackVisitor&) -> StackVisitor::Status {
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor&) -> StackVisitor::Status {
         if (++framesCount < maxFramesCountNeeded)
             return StackVisitor::Continue;
         return StackVisitor::Done;
@@ -452,7 +452,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
     framesCount = std::min(maxStackSize, framesCount);
 
     GetStackTraceFunctor functor(vm, owner, results, framesToSkip, framesCount);
-    StackVisitor::visit(callFrame, &vm, functor);
+    StackVisitor::visit(callFrame, vm, functor);
     ASSERT(results.size() == results.capacity());
 }
 
@@ -627,7 +627,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
     UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
-    StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, &vm, functor);
+    StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
     if (!handler)
         return nullptr;
 
@@ -649,7 +649,7 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
             hasCatchHandler = false;
         else {
             GetCatchHandlerFunctor functor;
-            StackVisitor::visit(callFrame, &vm, functor);
+            StackVisitor::visit(callFrame, vm, functor);
             HandlerInfo* handler = functor.handler();
             ASSERT(!handler || handler->isCatchHandler());
             hasCatchHandler = !!handler;
@@ -1214,7 +1214,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
 
 NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHookType)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     Debugger* debugger = callFrame->lexicalGlobalObject()->debugger();
     if (!debugger)

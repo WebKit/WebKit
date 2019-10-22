@@ -5672,7 +5672,7 @@ sub GenerateCallWith
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ResponsibleDocument")) {
         AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
-        push(@callWithArgs, "responsibleDocument($callFrameReference)");
+        push(@callWithArgs, "responsibleDocument(${globalObject}->vm(), $callFrameReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
         AddToImplIncludes("DOMWindow.h");

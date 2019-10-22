@@ -2229,7 +2229,7 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
 
     // Recursive calls won't be inlined.
     RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-    vm().topCallFrame->iterate(functor);
+    vm().topCallFrame->iterate(vm(), functor);
 
     if (functor.didRecurse()) {
         if (Options::verboseCallLink())

@@ -833,7 +833,7 @@ static JSCell* webAssemblyOwner(JSCell* callee)
 }
 
 void linkFor(
-    CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
+    VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
     JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
 {
     ASSERT(!callLinkInfo.stub());
@@ -843,7 +843,6 @@ void linkFor(
     // this from Wasm, we ensure the callee is a cell.
     ASSERT(callerFrame->callee().isCell());
 
-    VM& vm = callerFrame->vm();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
     // WebAssembly -> JS stubs don't have a valid CodeBlock.
@@ -962,7 +961,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     RELEASE_ASSERT(callLinkInfo.allowStubs());
 
     CallFrame* callerFrame = callFrame->callerFrame();
-    VM& vm = callerFrame->vm();
+    VM& vm = globalObject->vm();
 
     // During execution of linkPolymorphicCall, we strongly assume that we never do GC.
     // GC jettisons CodeBlocks, changes CallLinkInfo etc. and breaks assumption done before and after this call.

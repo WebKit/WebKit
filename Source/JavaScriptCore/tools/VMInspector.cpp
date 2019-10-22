@@ -294,6 +294,7 @@ bool VMInspector::isValidCodeBlock(JSGlobalObject* globalObject, CodeBlock* cand
 
 CodeBlock* VMInspector::codeBlockForFrame(JSGlobalObject* globalObject, CallFrame* topCallFrame, unsigned frameNumber)
 {
+    VM& vm = globalObject->vm();
     if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return nullptr;
 
@@ -323,7 +324,7 @@ CodeBlock* VMInspector::codeBlockForFrame(JSGlobalObject* globalObject, CallFram
     };
 
     FetchCodeBlockFunctor functor(frameNumber);
-    topCallFrame->iterate(functor);
+    topCallFrame->iterate(vm, functor);
     return functor.codeBlock;
 }
 
@@ -364,7 +365,7 @@ void VMInspector::dumpCallFrame(JSGlobalObject* globalObject, CallFrame* callFra
     if (!ensureCurrentThreadOwnsJSLock(globalObject))
         return;
     DumpFrameFunctor functor(DumpFrameFunctor::DumpOne, framesToSkip);
-    callFrame->iterate(functor);
+    callFrame->iterate(globalObject->vm(), functor);
 }
 
 void VMInspector::dumpRegisters(CallFrame* callFrame)
@@ -402,7 +403,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogF("-----------------------------------------------------------------------------\n");
     dataLogF("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
 
-    callFrame->iterate([&] (StackVisitor& visitor) {
+    callFrame->iterate(vm, [&] (StackVisitor& visitor) {
         if (visitor->callFrame() == callFrame) {
             unsigned line = 0;
             unsigned unusedColumn = 0;
@@ -420,7 +421,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogLn(codeBlock);
     --it;
 #if ENABLE(JIT)
-    AbstractPC pc = callFrame->abstractReturnPC(callFrame->vm());
+    AbstractPC pc = callFrame->abstractReturnPC(callFrame->deprecatedVM());
     if (pc.hasJITReturnAddress())
         dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc.jitReturnAddress().value());
     --it;
@@ -465,7 +466,7 @@ void VMInspector::dumpStack(JSGlobalObject* globalObject, CallFrame* topCallFram
     if (!topCallFrame)
         return;
     DumpFrameFunctor functor(DumpFrameFunctor::DumpAll, framesToSkip);
-    topCallFrame->iterate(functor);
+    topCallFrame->iterate(globalObject->vm(), functor);
 }
 
 void VMInspector::dumpValue(JSValue value)

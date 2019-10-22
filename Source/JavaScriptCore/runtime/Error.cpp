@@ -169,7 +169,7 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM& vm, JSObj
 void getBytecodeOffset(VM& vm, CallFrame* startCallFrame, Vector<StackFrame>* stackTrace, CallFrame*& callFrame, unsigned& bytecodeOffset)
 {
     FindFirstCallerFrameWithCodeblockFunctor functor(startCallFrame);
-    StackVisitor::visit(vm.topCallFrame, &vm, functor);
+    StackVisitor::visit(vm.topCallFrame, vm, functor);
     callFrame = functor.foundCallFrame();
     unsigned stackIndex = functor.index();
     bytecodeOffset = 0;

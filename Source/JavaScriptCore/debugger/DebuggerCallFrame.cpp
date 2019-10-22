@@ -124,7 +124,7 @@ JSC::JSGlobalObject* DebuggerCallFrame::deprecatedVMEntryGlobalObject() const
     ASSERT(isValid());
     if (!isValid())
         return nullptr;
-    VM& vm = m_validMachineFrame->vm();
+    VM& vm = m_validMachineFrame->deprecatedVM();
     return vm.deprecatedVMEntryGlobalObject(m_validMachineFrame->wasmAwareLexicalGlobalObject(vm));
 }
 
@@ -144,7 +144,7 @@ String DebuggerCallFrame::functionName() const
     if (!isValid())
         return String();
 
-    VM& vm = m_validMachineFrame->vm();
+    VM& vm = m_validMachineFrame->deprecatedVM();
     if (isTailDeleted()) {
         if (JSFunction* func = jsDynamicCast<JSFunction*>(vm, m_shadowChickenFrame.callee))
             return func->calculatedDisplayName(vm);
@@ -161,7 +161,7 @@ DebuggerScope* DebuggerCallFrame::scope()
         return nullptr;
 
     if (!m_scope) {
-        VM& vm = m_validMachineFrame->vm();
+        VM& vm = m_validMachineFrame->deprecatedVM();
         JSScope* scope;
         CodeBlock* codeBlock = m_validMachineFrame->codeBlock();
         if (isTailDeleted())
@@ -187,7 +187,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
     if (isTailDeleted())
         return FunctionType;
 
-    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->vm(), m_validMachineFrame->jsCallee()))
+    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->deprecatedVM(), m_validMachineFrame->jsCallee()))
         return FunctionType;
 
     return ProgramType;
@@ -226,7 +226,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     if (!callFrame)
         return jsUndefined();
 
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
@@ -253,7 +253,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     VariableEnvironment variablesUnderTDZ;
     JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
 
-    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin()), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
+    auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->isStrictMode(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), evalContextType, &variablesUnderTDZ);
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();
@@ -311,7 +311,7 @@ TextPosition DebuggerCallFrame::currentPosition(VM& vm)
 TextPosition DebuggerCallFrame::positionForCallFrame(VM& vm, CallFrame* callFrame)
 {
     LineAndColumnFunctor functor;
-    StackVisitor::visit(callFrame, &vm, functor);
+    StackVisitor::visit(callFrame, vm, functor);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }
 

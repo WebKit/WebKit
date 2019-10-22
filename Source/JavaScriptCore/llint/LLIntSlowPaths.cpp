@@ -1772,7 +1772,7 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
     genericUnwind(vm, callFrame);
     LLINT_END_IMPL();

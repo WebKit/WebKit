@@ -268,7 +268,7 @@ JSDOMGlobalObject& callerGlobalObject(JSGlobalObject& lexicalGlobalObject, CallF
     };
 
     GetCallerGlobalObjectFunctor iter;
-    callFrame.iterate(iter);
+    callFrame.iterate(lexicalGlobalObject.vm(), iter);
     if (iter.globalObject())
         return *jsCast<JSDOMGlobalObject*>(iter.globalObject());
 

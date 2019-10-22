@@ -233,10 +233,9 @@ SUPPRESS_ASAN CallFrame* CallFrame::unsafeCallerFrame(EntryFrame*& currEntryFram
     return static_cast<CallFrame*>(unsafeCallerFrameOrEntryFrame());
 }
 
-SourceOrigin CallFrame::callerSourceOrigin()
+SourceOrigin CallFrame::callerSourceOrigin(VM& vm)
 {
     RELEASE_ASSERT(callee().isCell());
-    VM* vm = &this->vm();
     SourceOrigin sourceOrigin;
     bool haveSkippedFirstFrame = false;
     StackVisitor::visit(this, vm, [&](StackVisitor& visitor) {
@@ -292,7 +291,7 @@ String CallFrame::friendlyFunctionName()
         return "global code"_s;
     case FunctionCode:
         if (jsCallee())
-            return getCalculatedDisplayName(vm(), jsCallee());
+            return getCalculatedDisplayName(codeBlock->vm(), jsCallee());
         return emptyString();
     }
 

@@ -133,6 +133,6 @@ DOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
 //        (https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps steps 4
 //        and 23 and https://html.spec.whatwg.org/multipage/webappapis.html#responsible-document). It is only
 //        used by JSDocument.
-Document* responsibleDocument(JSC::CallFrame&);
+Document* responsibleDocument(JSC::VM&, JSC::CallFrame&);
 
 } // namespace WebCore

@@ -92,11 +92,12 @@ Ref<ScriptCallStack> createScriptCallStack(JSC::JSGlobalObject* globalObject, si
     JSLockHolder locker(globalObject);
     Vector<ScriptCallFrame> frames;
 
-    CallFrame* frame = globalObject->vm().topCallFrame;
+    VM& vm = globalObject->vm();
+    CallFrame* frame = vm.topCallFrame;
     if (!frame)
         return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
-    frame->iterate(functor);
+    frame->iterate(vm, functor);
 
     return ScriptCallStack::create(frames);
 }
@@ -109,15 +110,16 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::JSGlobalObject* global
     JSLockHolder locker(globalObject);
     Vector<ScriptCallFrame> frames;
 
-    CallFrame* frame = globalObject->vm().topCallFrame;
+    VM& vm = globalObject->vm();
+    CallFrame* frame = vm.topCallFrame;
     if (!frame)
         return ScriptCallStack::create();
     CreateScriptCallStackFunctor functor(true, frames, maxStackSize);
-    frame->iterate(functor);
+    frame->iterate(vm, functor);
 
     if (frames.isEmpty()) {
         CreateScriptCallStackFunctor functor(false, frames, maxStackSize);
-        frame->iterate(functor);
+        frame->iterate(vm, functor);
     }
 
     return ScriptCallStack::create(frames);

@@ -1094,7 +1094,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(CallFrame* calleeFrame, JSGlo
             if (!callLinkInfo->seenOnce())
                 callLinkInfo->setSeen();
             else
-                linkFor(calleeFrame, *callLinkInfo, nullptr, internalFunction, codePtr);
+                linkFor(vm, calleeFrame, *callLinkInfo, nullptr, internalFunction, codePtr);
 
             void* linkedTarget = codePtr.executableAddress();
             return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
@@ -1142,7 +1142,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(CallFrame* calleeFrame, JSGlo
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(calleeFrame, *callLinkInfo, codeBlock, callee, codePtr);
+        linkFor(vm, calleeFrame, *callLinkInfo, codeBlock, callee, codePtr);
 
     return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }

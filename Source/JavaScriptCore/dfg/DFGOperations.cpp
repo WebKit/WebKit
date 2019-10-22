@@ -2847,7 +2847,7 @@ int32_t JIT_OPERATION operationSizeOfVarargs(JSGlobalObject* globalObject, Encod
     NativeCallFrameTracer tracer(vm, callFrame);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    return sizeOfVarargs(globalObject, callFrame, arguments, firstVarArgOffset);
+    return sizeOfVarargs(globalObject, arguments, firstVarArgOffset);
 }
 
 int32_t JIT_OPERATION operationHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisObject, EncodedJSValue encodedKey)

@@ -44,7 +44,7 @@ extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWi
 {
     if (!callFrame)
         return JSValue::encode(JSValue());
-    return JSValue::encode(callFrame->vm().hostCallReturnValue);
+    return JSValue::encode(callFrame->deprecatedVM().hostCallReturnValue);
 }
 
 #if COMPILER(GCC_COMPATIBLE) && CPU(X86_64)

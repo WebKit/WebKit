@@ -1,3 +1,113 @@
+2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove non-LargeAllocation restriction for JSCallee
+        https://bugs.webkit.org/show_bug.cgi?id=203260
+
+        Reviewed by Saam Barati.
+
+        We now pass JSGlobalObject* instead of ExecState*. And we are getting VM& from JSGlobalObject*.
+        Because now accessing ExecState::vm() becomes less frequent, we can remove the restriction that
+        callee is only allocated in non-LargeAllocation, which restriction made ExecState::vm fast.
+
+        This patch renames `CallFrame::vm` to `CallFrame::deprecatedVM`. And we avoid using it as much as possible.
+        And we also remove the restriction that callee needs to be in non-LargeAllocation.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::noticeIncomingCall):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::deprecatedVMEntryGlobalObject const):
+        (JSC::DebuggerCallFrame::functionName const):
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::type const):
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        (JSC::DebuggerCallFrame::positionForCallFrame):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure):
+        * dfg/DFGOperations.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::compileFTLLazySlowPath):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::createScriptCallStackForConsole):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callerSourceOrigin):
+        (JSC::CallFrame::friendlyFunctionName):
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::iterate):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        (JSC::sizeFrameForVarargs):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::Frame::functionName const):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::visit):
+        * jit/HostCallReturnValue.cpp:
+        (JSC::getHostCallReturnValueWithExecState):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * jit/Repatch.h:
+        * jsc.cpp:
+        (functionJSCStack):
+        (functionRunString):
+        (functionLoadString):
+        (functionCallerSourceOrigin):
+        (functionCallerIsOMGCompiled):
+        (functionDollarEvalScript):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Error.cpp:
+        (JSC::getBytecodeOffset):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSCellInlines.h:
+        (JSC::CallFrame::deprecatedVM const):
+        (JSC::CallFrame::vm const): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::retrieveArguments):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::assertCall):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        (JSC::globalFuncImportModule):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::callerIsStrict):
+        (JSC::NullSetterFunctionInternal::callReturnUndefined):
+        * tools/JSDollarVM.cpp:
+        (IGNORE_WARNINGS_BEGIN):
+        (JSC::functionLLintTrue):
+        (JSC::functionJITTrue):
+        (JSC::functionDumpRegisters):
+        (JSC::functionShadowChickenFunctionsOnStack):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::codeBlockForFrame):
+        (JSC::VMInspector::dumpCallFrame):
+        (JSC::VMInspector::dumpRegisters):
+        (JSC::VMInspector::dumpStack):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2019-10-22  Mark Lam  <mark.lam@apple.com>
 
         Clients of JSArray::tryCreateUninitializedRestricted() should invoke the mutatorFence().

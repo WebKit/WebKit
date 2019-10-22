@@ -301,8 +301,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             GPRReg dest = wasmCallInfo.results[0].gpr();
 
             int32_t (*convertToI32)(CallFrame*, JSValue) = [] (CallFrame* callFrame, JSValue v) -> int32_t {
-                // FIXME
-                VM& vm = callFrame->vm();
+                // FIXME: Consider passing JSWebAssemblyInstance* instead.
+                // https://bugs.webkit.org/show_bug.cgi?id=203206
+                VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
                 return v.toInt32(callFrame->lexicalGlobalObject());
             };
@@ -336,7 +337,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             float (*convertToF32)(CallFrame*, JSValue) = [] (CallFrame* callFrame, JSValue v) -> float {
                 // FIXME: Consider passing JSWebAssemblyInstance* instead.
                 // https://bugs.webkit.org/show_bug.cgi?id=203206
-                VM& vm = callFrame->vm();
+                VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
                 return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject()));
             };
@@ -375,7 +376,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             double (*convertToF64)(CallFrame*, JSValue) = [] (CallFrame* callFrame, JSValue v) -> double {
                 // FIXME: Consider passing JSWebAssemblyInstance* instead.
                 // https://bugs.webkit.org/show_bug.cgi?id=203206
-                VM& vm = callFrame->vm();
+                VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
                 return v.toNumber(callFrame->lexicalGlobalObject());
             };
@@ -491,7 +492,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         void (*doUnwinding)(CallFrame*) = [] (CallFrame* callFrame) -> void {
             // FIXME: Consider passing JSWebAssemblyInstance* instead.
             // https://bugs.webkit.org/show_bug.cgi?id=203206
-            VM& vm = callFrame->vm();
+            VM& vm = callFrame->deprecatedVM();
             NativeCallFrameTracer tracer(vm, callFrame);
             genericUnwind(vm, callFrame);
             ASSERT(!!vm.callFrameForCatch);

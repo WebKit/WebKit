@@ -505,7 +505,7 @@ extern "C" void* compileFTLOSRExit(CallFrame* callFrame, unsigned exitID)
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
 
-    VM& vm = callFrame->vm();
+    VM& vm = callFrame->deprecatedVM();
 
     if (validateDFGDoesGC) {
         // We're about to exit optimized code. So, there's no longer any optimized

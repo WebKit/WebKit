@@ -1338,13 +1338,14 @@ private:
     StringBuilder& m_trace;
 };
 
-EncodedJSValue JSC_HOST_CALL functionJSCStack(JSGlobalObject*, CallFrame* callFrame)
+EncodedJSValue JSC_HOST_CALL functionJSCStack(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
+    VM& vm = globalObject->vm();
     StringBuilder trace;
     trace.appendLiteral("--> Stack trace:\n");
 
     FunctionJSCStackFunctor functor(trace);
-    callFrame->iterate(functor);
+    callFrame->iterate(vm, functor);
     fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }
@@ -1514,7 +1515,7 @@ EncodedJSValue JSC_HOST_CALL functionRunString(JSGlobalObject* globalObject, Cal
     realm->putDirect(vm, Identifier::fromString(vm, "arguments"), array);
 
     NakedPtr<Exception> exception;
-    evaluate(realm, jscSource(source, callFrame->callerSourceOrigin()), JSValue(), exception);
+    evaluate(realm, jscSource(source, callFrame->callerSourceOrigin(vm)), JSValue(), exception);
 
     if (exception) {
         scope.throwException(realm, exception);
@@ -1551,7 +1552,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadString(JSGlobalObject* globalObject, Ca
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject, jscSource(sourceCode, callFrame->callerSourceOrigin()), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
     if (evaluationException)
         throwException(globalObject, scope, evaluationException);
     return JSValue::encode(result);
@@ -1660,10 +1661,11 @@ EncodedJSValue JSC_HOST_CALL functionIsRope(JSGlobalObject*, CallFrame* callFram
 
 EncodedJSValue JSC_HOST_CALL functionCallerSourceOrigin(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin();
+    VM& vm = globalObject->vm();
+    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
     if (sourceOrigin.isNull())
         return JSValue::encode(jsNull());
-    return JSValue::encode(jsString(globalObject->vm(), sourceOrigin.string()));
+    return JSValue::encode(jsString(vm, sourceOrigin.string()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionReadline(JSGlobalObject* globalObject, CallFrame*)
@@ -1729,14 +1731,14 @@ EncodedJSValue JSC_HOST_CALL functionCallerIsOMGCompiled(JSGlobalObject* globalO
         return JSValue::encode(jsBoolean(true));
 
     CallerFunctor wasmToJSFrame;
-    StackVisitor::visit(callFrame, &vm, wasmToJSFrame);
+    StackVisitor::visit(callFrame, vm, wasmToJSFrame);
     if (!wasmToJSFrame.callerFrame()->isAnyWasmCallee())
         return throwVMError(globalObject, scope, "caller is not a wasm->js import function");
 
     // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
     ASSERT(!wasmToJSFrame.callerFrame()->callee().isWasm());
     CallerFunctor wasmFrame;
-    StackVisitor::visit(wasmToJSFrame.callerFrame(), &vm, wasmFrame);
+    StackVisitor::visit(wasmToJSFrame.callerFrame(), vm, wasmFrame);
     ASSERT(wasmFrame.callerFrame()->callee().isWasm());
 #if ENABLE(WEBASSEMBLY)
     auto mode = wasmFrame.callerFrame()->callee().asWasmCallee()->compilationMode();
@@ -1878,7 +1880,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarEvalScript(JSGlobalObject* globalObje
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
     
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(realm, jscSource(sourceCode, callFrame->callerSourceOrigin()), JSValue(), evaluationException);
+    JSValue result = evaluate(realm, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
     if (evaluationException)
         throwException(globalObject, scope, evaluationException);
     return JSValue::encode(result);
