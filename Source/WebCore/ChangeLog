@@ -1,3 +1,31 @@
+2019-10-22  Dirk Schulze  <krit@webkit.org>
+
+        SVG2: Add bounding-box keyword to pointer-events
+        https://bugs.webkit.org/show_bug.cgi?id=191382
+
+        Reviewed by Dean Jackson.
+
+        SVG 2 added the bounding-box keyword to the pointer-events CSS
+        property. It takes the bounding box of an element as hit area.
+
+        Implemented it so that it is as if "fill" was specified for HTML.
+
+        Extended existing tests.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator PointerEvents const):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * rendering/PointerEventsHitRules.cpp:
+        (WebCore::PointerEventsHitRules::PointerEventsHitRules):
+        * rendering/PointerEventsHitRules.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+
 2019-10-22  youenn fablet  <youenn@apple.com>
 
         Carriage return character sometimes missing in SDP c-line

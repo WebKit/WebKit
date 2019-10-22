@@ -1,3 +1,22 @@
+2019-10-22  Dirk Schulze  <krit@webkit.org>
+
+        SVG2: Add bounding-box keyword to pointer-events
+        https://bugs.webkit.org/show_bug.cgi?id=191382
+
+        Reviewed by Dean Jackson.
+
+        Test pointer-events: bounding-box with different SVG elements.
+
+        * platform/mac/svg/custom/pointer-events-image-css-transform-expected.txt:
+        * platform/mac/svg/custom/pointer-events-image-expected.txt:
+        * platform/mac/svg/custom/pointer-events-path-expected.txt:
+        * platform/mac/svg/custom/pointer-events-text-expected.txt:
+        * svg/custom/pointer-events-image-css-transform.svg:
+        * svg/custom/pointer-events-image.svg:
+        * svg/custom/pointer-events-path.svg:
+        * svg/custom/pointer-events-text-css-transform.svg:
+        * svg/custom/pointer-events-text.svg:
+
 2019-10-22  youenn fablet  <youenn@apple.com>
 
         Carriage return character sometimes missing in SDP c-line

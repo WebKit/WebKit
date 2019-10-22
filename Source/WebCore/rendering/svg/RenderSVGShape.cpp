@@ -381,7 +381,8 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
         if (request.svgClipContent())
             fillRule = svgStyle.clipRule();
         if ((hitRules.canHitStroke && (svgStyle.hasStroke() || !hitRules.requireStroke) && strokeContains(localPoint, hitRules.requireStroke))
-            || (hitRules.canHitFill && (svgStyle.hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill, fillRule))) {
+            || (hitRules.canHitFill && (svgStyle.hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill, fillRule))
+            || (hitRules.canHitBoundingBox && objectBoundingBox().contains(localPoint))) {
             updateHitTestResult(result, LayoutPoint(localPoint));
             if (result.addNodeToListBasedTestResult(&graphicsElement(), request, localPoint) == HitTestProgress::Stop)
                 return true;

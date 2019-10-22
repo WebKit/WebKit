@@ -906,6 +906,7 @@ enum class PointerEvents : uint8_t {
     VisibleStroke,
     VisibleFill,
     VisiblePainted,
+    BoundingBox,
     All
 };
 

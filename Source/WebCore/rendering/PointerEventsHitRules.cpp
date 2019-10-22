@@ -28,6 +28,7 @@ PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTe
     , requireStroke(false)
     , canHitStroke(false)
     , canHitFill(false)
+    , canHitBoundingBox(false)
 {
     if (request.svgClipContent())
         pointerEvents = PointerEvents::Fill;
@@ -67,6 +68,10 @@ PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTe
             case PointerEvents::Stroke:
                 canHitStroke = true;
                 break;
+            case PointerEvents::BoundingBox:
+                canHitFill = true;
+                canHitBoundingBox = true;
+                break;
             case PointerEvents::None:
                 // nothing to do here, defaults are all false.
                 break;
@@ -100,6 +105,10 @@ PointerEventsHitRules::PointerEventsHitRules(EHitTesting hitTesting, const HitTe
             case PointerEvents::All:
                 canHitFill = true;
                 canHitStroke = true;
+                break;
+            case PointerEvents::BoundingBox:
+                canHitFill = true;
+                canHitBoundingBox = true;
                 break;
             case PointerEvents::None:
                 // nothing to do here, defaults are all false.

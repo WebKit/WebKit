@@ -3494,6 +3494,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(PointerEvents e)
     case PointerEvents::VisiblePainted:
         m_value.valueID = CSSValueVisiblePainted;
         break;
+    case PointerEvents::BoundingBox:
+        m_value.valueID = CSSValueBoundingBox;
+        break;
     case PointerEvents::Auto:
         m_value.valueID = CSSValueAuto;
         break;
@@ -3528,6 +3531,8 @@ template<> inline CSSPrimitiveValue::operator PointerEvents() const
         return PointerEvents::Fill;
     case CSSValueStroke:
         return PointerEvents::Stroke;
+    case CSSValueBoundingBox:
+        return PointerEvents::BoundingBox;
     default:
         break;
     }

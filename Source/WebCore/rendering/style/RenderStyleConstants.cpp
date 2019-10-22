@@ -892,6 +892,7 @@ TextStream& operator<<(TextStream& ts, PointerEvents pointerEvents)
     case PointerEvents::Fill: ts << "fill"; break;
     case PointerEvents::Painted: ts << "painted"; break;
     case PointerEvents::Visible: ts << "visible"; break;
+    case PointerEvents::BoundingBox: ts << "bounding-box"; break;
     case PointerEvents::VisibleStroke: ts << "visible-stroke"; break;
     case PointerEvents::VisibleFill: ts << "visible-fill"; break;
     case PointerEvents::VisiblePainted: ts << "visible-painted"; break;

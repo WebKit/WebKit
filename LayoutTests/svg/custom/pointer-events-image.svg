@@ -11,7 +11,7 @@
     var fillValues = ['none', 'orange' ];
     var strokeValues = ['none', 'blue' ];
   
-    var pointerEventsValues = ['auto', 'visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'none'];
+    var pointerEventsValues = ['auto', 'visiblePainted', 'visibleFill', 'visibleStroke', 'visible', 'painted', 'fill', 'stroke', 'all', 'bounding-box', 'none'];
   
     var leftEdge = 100;
     var topEdge = 30;

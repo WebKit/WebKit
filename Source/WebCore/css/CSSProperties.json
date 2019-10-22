@@ -3469,7 +3469,8 @@
                 "visiblestroke",
                 "painted",
                 "fill",
-                "stroke"
+                "stroke",
+                "bounding-box"
             ],
             "specification": {
                 "category": "svg",
