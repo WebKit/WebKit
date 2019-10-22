@@ -156,9 +156,9 @@ Vector<String> WebPlatformStrategies::allStringsForType(const String& pasteboard
     return values;
 }
 
-long WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
+int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
 {
-    uint64_t changeCount { 0 };
+    int64_t changeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), Messages::WebPasteboardProxy::GetPasteboardChangeCount::Reply(changeCount), 0);
     return changeCount;
 }
@@ -184,21 +184,21 @@ URL WebPlatformStrategies::url(const String& pasteboardName)
     return URL({ }, urlString);
 }
 
-long WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+int64_t WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::AddPasteboardTypes(pasteboardName, pasteboardTypes), Messages::WebPasteboardProxy::AddPasteboardTypes::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypes(pasteboardName, pasteboardTypes), Messages::WebPasteboardProxy::SetPasteboardTypes::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName)
+int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName)
 {
     SharedMemory::Handle handle;
     if (buffer && buffer->size()) {
@@ -210,28 +210,28 @@ long WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String&
             sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         }
     }
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, pasteboardType, handle, buffer ? buffer->size() : 0), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName)
+int64_t WebPlatformStrategies::setURL(const PasteboardURL& pasteboardURL, const String& pasteboardName)
 {
-    uint64_t newChangeCount;
+    int64_t newChangeCount;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardURL(pasteboardURL, pasteboardName), Messages::WebPasteboardProxy::SetPasteboardURL::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName)
+int64_t WebPlatformStrategies::setColor(const Color& color, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardColor(pasteboardName, color), Messages::WebPasteboardProxy::SetPasteboardColor::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
-long WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
+int64_t WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, pasteboardType, string), Messages::WebPasteboardProxy::SetPasteboardStringForType::Reply(newChangeCount), 0);
     return newChangeCount;
 }
@@ -318,9 +318,9 @@ Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String
     return types;
 }
 
-long WebPlatformStrategies::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName)
+int64_t WebPlatformStrategies::writeCustomData(const Vector<PasteboardCustomData>& data, const String& pasteboardName)
 {
-    uint64_t newChangeCount { 0 };
+    int64_t newChangeCount { 0 };
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::WriteCustomData(data, pasteboardName), Messages::WebPasteboardProxy::WriteCustomData::Reply(newChangeCount), 0);
     return newChangeCount;
 }
@@ -332,17 +332,17 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName)
     return itemsCount;
 }
 
-Vector<PasteboardItemInfo> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName)
+Optional<Vector<PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount)
 {
-    Vector<PasteboardItemInfo> allInfo;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::AllPasteboardItemInfo(pasteboardName), Messages::WebPasteboardProxy::AllPasteboardItemInfo::Reply(allInfo), 0);
+    Optional<Vector<PasteboardItemInfo>> allInfo;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::AllPasteboardItemInfo(pasteboardName, changeCount), Messages::WebPasteboardProxy::AllPasteboardItemInfo::Reply(allInfo), 0);
     return allInfo;
 }
 
-PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName)
+Optional<PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount)
 {
-    PasteboardItemInfo info;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::InformationForItemAtIndex(index, pasteboardName), Messages::WebPasteboardProxy::InformationForItemAtIndex::Reply(info), 0);
+    Optional<PasteboardItemInfo> info;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::InformationForItemAtIndex(index, pasteboardName, changeCount), Messages::WebPasteboardProxy::InformationForItemAtIndex::Reply(info), 0);
     return info;
 }
 

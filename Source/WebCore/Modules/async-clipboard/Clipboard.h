@@ -67,7 +67,7 @@ private:
     struct Session {
         std::unique_ptr<Pasteboard> pasteboard;
         Vector<Ref<ClipboardItem>> items;
-        int changeCount;
+        int64_t changeCount;
     };
 
     void refEventTarget() final { ref(); }

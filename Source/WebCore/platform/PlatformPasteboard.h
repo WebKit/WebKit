@@ -62,8 +62,8 @@ public:
     WEBCORE_EXPORT PlatformPasteboard();
     WEBCORE_EXPORT void updateSupportedTypeIdentifiers(const Vector<String>& types);
 #endif
-    WEBCORE_EXPORT PasteboardItemInfo informationForItemAtIndex(size_t index);
-    WEBCORE_EXPORT Vector<PasteboardItemInfo> allPasteboardItemInfo();
+    WEBCORE_EXPORT Optional<PasteboardItemInfo> informationForItemAtIndex(size_t index, int64_t changeCount);
+    WEBCORE_EXPORT Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo(int64_t changeCount);
     WEBCORE_EXPORT static String uniqueName();
 
     WEBCORE_EXPORT static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType);
@@ -73,20 +73,20 @@ public:
     WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const;
     WEBCORE_EXPORT String stringForType(const String& pasteboardType) const;
     WEBCORE_EXPORT Vector<String> allStringsForType(const String& pasteboardType) const;
-    WEBCORE_EXPORT long changeCount() const;
+    WEBCORE_EXPORT int64_t changeCount() const;
     WEBCORE_EXPORT Color color();
     WEBCORE_EXPORT URL url();
 
     // Take ownership of the pasteboard, and return new change count.
-    WEBCORE_EXPORT long addTypes(const Vector<String>& pasteboardTypes);
-    WEBCORE_EXPORT long setTypes(const Vector<String>& pasteboardTypes);
+    WEBCORE_EXPORT int64_t addTypes(const Vector<String>& pasteboardTypes);
+    WEBCORE_EXPORT int64_t setTypes(const Vector<String>& pasteboardTypes);
 
     // These methods will return 0 if pasteboard ownership has been taken from us.
-    WEBCORE_EXPORT long copy(const String& fromPasteboard);
-    WEBCORE_EXPORT long setBufferForType(SharedBuffer*, const String& pasteboardType);
-    WEBCORE_EXPORT long setURL(const PasteboardURL&);
-    WEBCORE_EXPORT long setColor(const Color&);
-    WEBCORE_EXPORT long setStringForType(const String&, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t copy(const String& fromPasteboard);
+    WEBCORE_EXPORT int64_t setBufferForType(SharedBuffer*, const String& pasteboardType);
+    WEBCORE_EXPORT int64_t setURL(const PasteboardURL&);
+    WEBCORE_EXPORT int64_t setColor(const Color&);
+    WEBCORE_EXPORT int64_t setStringForType(const String&, const String& pasteboardType);
     WEBCORE_EXPORT void write(const PasteboardWebContent&);
     WEBCORE_EXPORT void write(const PasteboardImage&);
     WEBCORE_EXPORT void write(const String& pasteboardType, const String&);
@@ -96,8 +96,8 @@ public:
     WEBCORE_EXPORT URL readURL(size_t index, String& title) const;
     WEBCORE_EXPORT int count() const;
     WEBCORE_EXPORT int numberOfFiles() const;
-    WEBCORE_EXPORT long write(const Vector<PasteboardCustomData>&);
-    WEBCORE_EXPORT long write(const PasteboardCustomData&);
+    WEBCORE_EXPORT int64_t write(const Vector<PasteboardCustomData>&);
+    WEBCORE_EXPORT int64_t write(const PasteboardCustomData&);
     WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite(const String& origin) const;
 
 #if PLATFORM(GTK)

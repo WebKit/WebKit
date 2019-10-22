@@ -164,10 +164,13 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
-PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
+Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
 {
     if (index >= static_cast<NSUInteger>([m_pasteboard numberOfItems]))
-        return { };
+        return WTF::nullopt;
+
+    if (this->changeCount() != changeCount)
+        return WTF::nullopt;
 
     PasteboardItemInfo info;
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
@@ -230,7 +233,6 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
         info.isNonTextType = true;
     }
 
-    info.changeCount = changeCount();
     info.webSafeTypesByFidelity = webSafeTypes(registeredTypeIdentifiers, [&] {
         return shouldTreatAtLeastOneTypeAsFile(registeredTypeIdentifiers) && !Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(readString(index, kUTTypeURL));
     });
@@ -240,9 +242,9 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t index)
 
 #else
 
-PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(size_t)
+Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t, int64_t)
 {
-    return { };
+    return WTF::nullopt;
 }
 
 #endif
@@ -280,37 +282,37 @@ URL PlatformPasteboard::url()
     return URL();
 }
 
-long PlatformPasteboard::copy(const String&)
+int64_t PlatformPasteboard::copy(const String&)
 {
     return 0;
 }
 
-long PlatformPasteboard::addTypes(const Vector<String>&)
+int64_t PlatformPasteboard::addTypes(const Vector<String>&)
 {
     return 0;
 }
 
-long PlatformPasteboard::setTypes(const Vector<String>&)
+int64_t PlatformPasteboard::setTypes(const Vector<String>&)
 {
     return 0;
 }
 
-long PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
+int64_t PlatformPasteboard::setBufferForType(SharedBuffer*, const String&)
 {
     return 0;
 }
 
-long PlatformPasteboard::setURL(const PasteboardURL&)
+int64_t PlatformPasteboard::setURL(const PasteboardURL&)
 {
     return 0;
 }
 
-long PlatformPasteboard::setStringForType(const String&, const String&)
+int64_t PlatformPasteboard::setStringForType(const String&, const String&)
 {
     return 0;
 }
 
-long PlatformPasteboard::changeCount() const
+int64_t PlatformPasteboard::changeCount() const
 {
     return [m_pasteboard changeCount];
 }
@@ -375,7 +377,7 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
     registerItemsToPasteboard(@[ representationsToRegister ], pasteboard);
 }
 
-long PlatformPasteboard::setColor(const Color& color)
+int64_t PlatformPasteboard::setColor(const Color& color)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
     UIColor *uiColor = [PAL::getUIColorClass() colorWithCGColor:cachedCGColor(color)];
@@ -613,7 +615,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
     return representationsToRegister;
 }
 
-long PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 {
     auto registrationLists = adoptNS([[NSMutableArray alloc] initWithCapacity:itemData.size()]);
     for (auto& data : itemData) {
@@ -626,7 +628,7 @@ long PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 
 #else
 
-long PlatformPasteboard::setColor(const Color&)
+int64_t PlatformPasteboard::setColor(const Color&)
 {
     return 0;
 }
@@ -657,7 +659,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-long PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
 {
     return 0;
 }
@@ -758,7 +760,7 @@ void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& ty
     [m_pasteboard updateSupportedTypeIdentifiers:typesArray];
 }
 
-long PlatformPasteboard::write(const PasteboardCustomData& data)
+int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 {
     return write(Vector<PasteboardCustomData> { data });
 }

@@ -73,7 +73,6 @@ struct PasteboardItemInfo {
     bool isNonTextType { false };
     bool containsFileURLAndFileUploadContent { false };
     Vector<String> webSafeTypesByFidelity;
-    int changeCount { 0 };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
 
     String pathForContentType(const String& type) const
@@ -127,7 +126,7 @@ struct PasteboardItemInfo {
 template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
-    encoder << pathsForFileUpload << platformTypesForFileUpload << platformTypesByFidelity << suggestedFileName << preferredPresentationSize << isNonTextType << containsFileURLAndFileUploadContent << webSafeTypesByFidelity << changeCount;
+    encoder << pathsForFileUpload << platformTypesForFileUpload << platformTypesByFidelity << suggestedFileName << preferredPresentationSize << isNonTextType << containsFileURLAndFileUploadContent << webSafeTypesByFidelity;
     encoder.encodeEnum(preferredPresentationStyle);
 }
 
@@ -157,9 +156,6 @@ Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
         return WTF::nullopt;
 
     if (!decoder.decode(result.webSafeTypesByFidelity))
-        return WTF::nullopt;
-
-    if (!decoder.decode(result.changeCount))
         return WTF::nullopt;
 
     if (!decoder.decodeEnum(result.preferredPresentationStyle))

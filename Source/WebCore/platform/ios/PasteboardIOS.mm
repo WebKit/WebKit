@@ -76,7 +76,7 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dra
 
 #endif
 
-static long changeCountForPasteboard(const String& pasteboardName = { })
+static int64_t changeCountForPasteboard(const String& pasteboardName = { })
 {
     return platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName);
 }
@@ -90,7 +90,7 @@ Pasteboard::Pasteboard()
 {
 }
 
-Pasteboard::Pasteboard(long changeCount)
+Pasteboard::Pasteboard(int64_t changeCount)
     : m_changeCount(changeCount)
 {
 }
@@ -313,13 +313,16 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         if (itemIndex && i != *itemIndex)
             continue;
 
-        auto info = strategy.informationForItemAtIndex(i, m_pasteboardName);
+        auto info = strategy.informationForItemAtIndex(i, m_pasteboardName, m_changeCount);
+        if (!info)
+            return;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
-        if (canReadAttachment && prefersAttachmentRepresentation(info)) {
-            auto typeForFileUpload = info.contentTypeForHighestFidelityItem();
+        if (canReadAttachment && prefersAttachmentRepresentation(*info)) {
+            auto typeForFileUpload = info->contentTypeForHighestFidelityItem();
             if (auto buffer = strategy.readBufferFromPasteboard(i, typeForFileUpload, m_pasteboardName)) {
                 readURLAlongsideAttachmentIfNecessary(reader, strategy, typeForFileUpload, m_pasteboardName, i);
-                reader.readDataBuffer(*buffer, typeForFileUpload, info.suggestedFileName, info.preferredPresentationSize);
+                reader.readDataBuffer(*buffer, typeForFileUpload, info->suggestedFileName, info->preferredPresentationSize);
                 continue;
             }
         }
@@ -330,7 +333,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
-            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, info, i);
+            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, *info, i);
             if (itemResult == ReaderResult::PasteboardWasChangedExternally)
                 return;
 
@@ -357,24 +360,27 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
             continue;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        auto info = strategy.informationForItemAtIndex(index, m_pasteboardName);
-        auto attachmentFilePath = info.pathForHighestFidelityItem();
+        auto info = strategy.informationForItemAtIndex(index, m_pasteboardName, m_changeCount);
+        if (!info)
+            return;
+
+        auto attachmentFilePath = info->pathForHighestFidelityItem();
         bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && !attachmentFilePath.isEmpty();
-        auto contentType = info.contentTypeForHighestFidelityItem();
-        if (canReadAttachment && prefersAttachmentRepresentation(info)) {
+        auto contentType = info->contentTypeForHighestFidelityItem();
+        if (canReadAttachment && prefersAttachmentRepresentation(*info)) {
             readURLAlongsideAttachmentIfNecessary(reader, strategy, contentType, m_pasteboardName, index);
-            reader.readFilePath(WTFMove(attachmentFilePath), info.preferredPresentationSize, contentType);
+            reader.readFilePath(WTFMove(attachmentFilePath), info->preferredPresentationSize, contentType);
             continue;
         }
 #endif
         // Try to read data from each type identifier that this pasteboard item supports, and WebKit also recognizes. Type identifiers are
         // read in order of fidelity, as specified by each pasteboard item.
         ReaderResult result = ReaderResult::DidNotReadType;
-        for (auto& type : info.platformTypesByFidelity) {
+        for (auto& type : info->platformTypesByFidelity) {
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
-            result = readPasteboardWebContentDataForType(reader, strategy, type, info, index);
+            result = readPasteboardWebContentDataForType(reader, strategy, type, *info, index);
             if (result == ReaderResult::PasteboardWasChangedExternally)
                 return;
             if (result == ReaderResult::ReadType)
@@ -382,7 +388,7 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
         }
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (canReadAttachment && result == ReaderResult::DidNotReadType)
-            reader.readFilePath(WTFMove(attachmentFilePath), info.preferredPresentationSize, contentType);
+            reader.readFilePath(WTFMove(attachmentFilePath), info->preferredPresentationSize, contentType);
 #endif
     }
 }
@@ -457,7 +463,7 @@ void Pasteboard::clear()
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String(), m_pasteboardName);
 }
 
-Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName)
+Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, int64_t changeCount, const String& pasteboardName)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 
@@ -524,7 +530,11 @@ Vector<String> Pasteboard::readFilePaths()
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
         // Currently, drag and drop is the only case on iOS where the "pasteboard" may contain file paths.
-        auto filePath = strategy.informationForItemAtIndex(index, m_pasteboardName).pathForHighestFidelityItem();
+        auto info = strategy.informationForItemAtIndex(index, m_pasteboardName, m_changeCount);
+        if (!info)
+            return { };
+
+        auto filePath = info->pathForHighestFidelityItem();
         if (!filePath.isEmpty())
             filePaths.append(WTFMove(filePath));
     }

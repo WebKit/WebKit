@@ -188,7 +188,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 
 static long writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const PasteboardURL& pasteboardURL)
 {
-    long newChangeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, pasteboardName);
+    auto newChangeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, pasteboardName);
     
     ASSERT(!pasteboardURL.url.isEmpty());
     
@@ -242,7 +242,7 @@ static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
     return wrapper;
 }
 
-static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, long& newChangeCount)
+static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, int64_t& newChangeCount)
 {
     NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
@@ -323,9 +323,10 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
-    if (itemIndex)
-        types = strategy.informationForItemAtIndex(*itemIndex , m_pasteboardName).platformTypesByFidelity;
-    else
+    if (itemIndex) {
+        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount))
+            types = itemInfo->platformTypesByFidelity;
+    } else
         strategy.getTypes(types, m_pasteboardName);
 
     if (types.contains(String(NSPasteboardTypeString))) {
@@ -406,9 +407,10 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 
     Vector<String> types;
-    if (itemIndex)
-        types = strategy.informationForItemAtIndex(*itemIndex , m_pasteboardName).platformTypesByFidelity;
-    else
+    if (itemIndex) {
+        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount))
+            types = itemInfo->platformTypesByFidelity;
+    } else
         strategy.getTypes(types, m_pasteboardName);
 
     reader.contentOrigin = readOrigin();
@@ -580,7 +582,7 @@ void Pasteboard::clear(const String& type)
     m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(emptyString(), cocoaType, m_pasteboardName);
 }
 
-Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName)
+Vector<String> Pasteboard::readPlatformValuesAsStrings(const String& domType, int64_t changeCount, const String& pasteboardName)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     auto cocoaType = cocoaTypeFromHTMLClipboardType(domType);

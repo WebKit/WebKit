@@ -122,12 +122,12 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String&) 
     return { };
 }
 
-long PlatformPasteboard::write(const PasteboardCustomData&)
+int64_t PlatformPasteboard::write(const PasteboardCustomData&)
 {
     return 0;
 }
 
-long PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
+int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>&)
 {
     return 0;
 }

@@ -1736,7 +1736,7 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
     for (NSString *type in types)
         pasteboardTypes.append(type);
 
-    uint64_t newChangeCount;
+    int64_t newChangeCount;
     auto& webProcess = WebProcess::singleton();
     webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypes(pasteboardName, pasteboardTypes),
         Messages::WebPasteboardProxy::SetPasteboardTypes::Reply(newChangeCount), 0);

@@ -59,17 +59,17 @@ private:
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) override;
     String stringForType(const String& pasteboardType, const String& pasteboardName) override;
     Vector<String> allStringsForType(const String& pasteboardType, const String& pasteboardName) override;
-    long changeCount(const String& pasteboardName) override;
+    int64_t changeCount(const String& pasteboardName) override;
     String uniqueName() override;
     WebCore::Color color(const String& pasteboardName) override;
     URL url(const String& pasteboardName) override;
 
-    long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
-    long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
-    long setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName) override;
-    long setURL(const WebCore::PasteboardURL&, const String& pasteboardName) override;
-    long setColor(const WebCore::Color&, const String& pasteboardName) override;
-    long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
+    int64_t addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
+    int64_t setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) override;
+    int64_t setBufferForType(WebCore::SharedBuffer*, const String& pasteboardType, const String& pasteboardName) override;
+    int64_t setURL(const WebCore::PasteboardURL&, const String& pasteboardName) override;
+    int64_t setColor(const WebCore::Color&, const String& pasteboardName) override;
+    int64_t setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
 #endif
 #if PLATFORM(GTK)
     void writeToClipboard(const String& pasteboardName, const WebCore::SelectionData&) override;
@@ -85,10 +85,10 @@ private:
     RefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName) override;
     URL readURLFromPasteboard(size_t index, const String& pasteboardName, String& title) override;
     int getPasteboardItemsCount(const String& pasteboardName) override;
-    WebCore::PasteboardItemInfo informationForItemAtIndex(size_t index, const String& pasteboardName) override;
-    Vector<WebCore::PasteboardItemInfo> allPasteboardItemInfo(const String& pasteboardName) override;
+    Optional<WebCore::PasteboardItemInfo> informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount) override;
+    Optional<Vector<WebCore::PasteboardItemInfo>> allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount) override;
     Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin) override;
-    long writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String&) override;
+    int64_t writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String&) override;
 };
 
 } // namespace WebKit

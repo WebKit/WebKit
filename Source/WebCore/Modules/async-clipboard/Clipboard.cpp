@@ -94,7 +94,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
     }
 
     auto pasteboard = Pasteboard::createForCopyAndPaste();
-    int changeCountAtStart = pasteboard->changeCount();
+    auto changeCountAtStart = pasteboard->changeCount();
 
     if (!frame->requestDOMPasteAccess()) {
         rejectPromiseAndClearActiveSession();
@@ -103,23 +103,15 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
 
     if (!m_activeSession || m_activeSession->changeCount != changeCountAtStart) {
         auto allInfo = pasteboard->allPasteboardItemInfo();
-        if (allInfo.isEmpty()) {
+        if (!allInfo) {
             rejectPromiseAndClearActiveSession();
             return;
         }
 
         Vector<Ref<ClipboardItem>> clipboardItems;
-        clipboardItems.reserveInitialCapacity(allInfo.size());
-        for (auto& itemInfo : allInfo) {
-            // FIXME: This should be refactored such that the initial changeCount is delivered to the client, where it is then checked
-            // against the current changeCount of the platform pasteboard. For instance, in WebKit2, this would relocate the changeCount
-            // check to the UI process instead of the web content process.
-            if (itemInfo.changeCount != changeCountAtStart) {
-                rejectPromiseAndClearActiveSession();
-                return;
-            }
+        clipboardItems.reserveInitialCapacity(allInfo->size());
+        for (auto& itemInfo : *allInfo)
             clipboardItems.uncheckedAppend(ClipboardItem::create(*this, itemInfo));
-        }
         m_activeSession = {{ WTFMove(pasteboard), WTFMove(clipboardItems), changeCountAtStart }};
     }
 

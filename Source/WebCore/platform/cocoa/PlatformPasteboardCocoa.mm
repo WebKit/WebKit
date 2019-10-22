@@ -28,15 +28,27 @@
 
 #import "PasteboardItemInfo.h"
 
+#if PLATFORM(IOS_FAMILY)
+#import "AbstractPasteboard.h"
+#endif
+
 namespace WebCore {
 
-Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
+Optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemInfo(int64_t changeCount)
 {
+    if (changeCount != [m_pasteboard changeCount])
+        return WTF::nullopt;
+
     Vector<PasteboardItemInfo> itemInfo;
     int numberOfItems = count();
     itemInfo.reserveInitialCapacity(numberOfItems);
-    for (NSInteger itemIndex = 0; itemIndex < numberOfItems; ++itemIndex)
-        itemInfo.uncheckedAppend(informationForItemAtIndex(itemIndex));
+    for (NSInteger itemIndex = 0; itemIndex < numberOfItems; ++itemIndex) {
+        auto item = informationForItemAtIndex(itemIndex, changeCount);
+        if (!item)
+            return WTF::nullopt;
+
+        itemInfo.uncheckedAppend(WTFMove(*item));
+    }
     return itemInfo;
 }
 

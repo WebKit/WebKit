@@ -1,3 +1,103 @@
+2019-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203181
+
+        Reviewed by Ryosuke Niwa.
+
+        This test is flaky because its results currently vary depending on whether content already exists on the
+        platform pasteboard. In this test, the page is able to read items from the clipboard since DOM paste and
+        programmatic clipboard access are enabled when running layout tests. However, in the case where the pasteboard
+        is empty, we end up rejecting the promise due to an early return in Clipboard::read(). In contrast, when the
+        pasteboard has at least one item, we'll end up resolving the promise with a sequence of ClipboardItems, which
+        then causes the test to fail because it expects this result to be a DataTransfer instead (which, at time of
+        writing, is incorrect w.r.t. the async clipboard spec).
+
+        To fix this, we remove this early return that rejects the promise when there are no pasteboard items, and
+        instead allow the promise to resolve with no items. However, simply removing this check would mean that if the
+        pasteboard change count changes between the start of the call to Clipboard.read() and retrieval of item
+        information from the platform pasteboard, we'll no longer reject the promimse as expected. This is because we
+        currently iterate through each of the items and check that the item's change count matches, so if there are no
+        items, we simply avoid checking the change count.
+
+        We address this by instead sending the expected change count along with the request for allPasteboardItemInfo(),
+        and refactoring the implementation of allPasteboardItemInfo (and informationForItemAtIndex) to instead check
+        this expected change count against the current change count of the pasteboard.
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::read):
+
+        Remove the `allInfo.isEmpty()` early return, and also remove a FIXME that is addressed by this refactoring.
+
+        * Modules/async-clipboard/Clipboard.h:
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::allPasteboardItemInfo const):
+        (WebCore::Pasteboard::pasteboardItemInfo const):
+
+        Make these methods require a changeCount; also, make these return optional results.
+
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::changeCount const):
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Remove PasteboardItemInfo's changeCount, now that the check occurs in the client layer.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+        (WebCore::Pasteboard::changeCount const):
+        * platform/cocoa/PlatformPasteboardCocoa.mm:
+        (WebCore::PlatformPasteboard::allPasteboardItemInfo):
+        * platform/gtk/PlatformPasteboardGtk.cpp:
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::changeCountForPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        (WebCore::Pasteboard::readPlatformValuesAsStrings):
+
+        Normalize changeCount to be a `int64_t`, which matches iOS and macOS platforms. Before this patch, the notion of
+        changeCount is very ill-defined, with some call sites expecting `long` types, other call sites expecting
+        `int`, and yet others expecting `uint64_t`. This changes all of these to expect `int64_t`.
+
+        (WebCore::Pasteboard::readFilePaths):
+
+        Refactor these methods to bail when the resulting item information has no value (i.e. WTF::nullopt).
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        (WebCore::PlatformPasteboard::copy):
+        (WebCore::PlatformPasteboard::addTypes):
+        (WebCore::PlatformPasteboard::setTypes):
+        (WebCore::PlatformPasteboard::setBufferForType):
+        (WebCore::PlatformPasteboard::setURL):
+        (WebCore::PlatformPasteboard::setStringForType):
+        (WebCore::PlatformPasteboard::changeCount const):
+        (WebCore::PlatformPasteboard::setColor):
+        (WebCore::PlatformPasteboard::write):
+        * platform/libwpe/PlatformPasteboardLibWPE.cpp:
+        (WebCore::PlatformPasteboard::write):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeURLForTypes):
+        (WebCore::writeFileWrapperAsRTFDAttachment):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readPlatformValuesAsStrings):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::changeCount const):
+        (WebCore::PlatformPasteboard::copy):
+        (WebCore::PlatformPasteboard::addTypes):
+        (WebCore::PlatformPasteboard::setTypes):
+        (WebCore::PlatformPasteboard::setBufferForType):
+        (WebCore::PlatformPasteboard::setURL):
+        (WebCore::PlatformPasteboard::setColor):
+        (WebCore::PlatformPasteboard::setStringForType):
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
 2019-10-21  Chris Dumez  <cdumez@apple.com>
 
         Suspend dedicated worker threads while in the back/forward cache

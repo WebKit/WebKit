@@ -29,10 +29,10 @@ messages -> WebPasteboardProxy {
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
 #endif
 
-    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName) -> (uint64_t changeCount) Synchronous
+    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName) -> (int64_t changeCount) Synchronous
     TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous
-    AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo) Synchronous
-    InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info) Synchronous
+    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount) -> (Optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount) -> (Optional<WebCore::PasteboardItemInfo> info) Synchronous
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous
     ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous
     ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous
@@ -46,17 +46,17 @@ messages -> WebPasteboardProxy {
     GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string) Synchronous
     GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings) Synchronous
     GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
-    PasteboardCopy(String fromPasteboard, String toPasteboard) -> (uint64_t changeCount) Synchronous
-    GetPasteboardChangeCount(String pasteboardName) -> (uint64_t changeCount) Synchronous
+    PasteboardCopy(String fromPasteboard, String toPasteboard) -> (int64_t changeCount) Synchronous
+    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
     GetPasteboardUniqueName() -> (String pasteboardName) Synchronous
     GetPasteboardColor(String pasteboardName) -> (WebCore::Color color) Synchronous
     GetPasteboardURL(String pasteboardName) -> (String urlString) Synchronous
-    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount) Synchronous
-    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount) Synchronous
-    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (uint64_t changeCount) Synchronous WantsConnection
-    SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (uint64_t changeCount) Synchronous
-    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (uint64_t changeCount) Synchronous
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount) Synchronous
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous
+    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (int64_t changeCount) Synchronous
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (int64_t changeCount) Synchronous
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (int64_t changeCount) Synchronous
 #endif
 
 #if PLATFORM(GTK)

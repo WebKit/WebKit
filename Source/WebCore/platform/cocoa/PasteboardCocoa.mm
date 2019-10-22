@@ -144,7 +144,10 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         // an inline piece of text, with no files in the pasteboard (and therefore, no risk of leaking file paths
         // to web content). In cases such as these, we should not suppress DataTransfer access.
         auto items = allPasteboardItemInfo();
-        mayContainFilePaths = items.size() != 1 || notFound != items.findMatching([] (auto& item) {
+        if (!items)
+            return FileContentState::NoFileOrImageData;
+
+        mayContainFilePaths = items->size() != 1 || notFound != items->findMatching([] (auto& item) {
             return item.canBeTreatedAsAttachmentOrFile() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });
     }
@@ -280,7 +283,7 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
     m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, name());
 }
 
-long Pasteboard::changeCount() const
+int64_t Pasteboard::changeCount() const
 {
     return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
 }

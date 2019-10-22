@@ -83,27 +83,27 @@ private:
     void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&&);
     void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&&);
-    void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, CompletionHandler<void(uint64_t)>&&);
-    void getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
+    void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, CompletionHandler<void(int64_t)>&&);
+    void getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void getPasteboardUniqueName(CompletionHandler<void(String&&)>&&);
     void getPasteboardColor(const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&&);
     void getPasteboardURL(const String& pasteboardName, CompletionHandler<void(const String&)>&&);
-    void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(uint64_t)>&&);
-    void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(uint64_t)>&&);
-    void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
-    void setPasteboardColor(const String&, const WebCore::Color&, CompletionHandler<void(uint64_t)>&&);
-    void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, CompletionHandler<void(uint64_t)>&&);
-    void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, CompletionHandler<void(uint64_t)>&&);
+    void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardColor(const String&, const WebCore::Color&, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, CompletionHandler<void(int64_t)>&&);
 #endif
 
     void readStringFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&&);
     void readURLFromPasteboard(size_t index, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&&);
     void readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&&);
     void getPasteboardItemsCount(const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
-    void informationForItemAtIndex(size_t index, const String& pasteboardName, CompletionHandler<void(WebCore::PasteboardItemInfo&&)>&&);
-    void allPasteboardItemInfo(const String& pasteboardName, CompletionHandler<void(Vector<WebCore::PasteboardItemInfo>&&)>&&);
+    void informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<WebCore::PasteboardItemInfo>&&)>&&);
+    void allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<Vector<WebCore::PasteboardItemInfo>>&&)>&&);
 
-    void writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
+    void writeCustomData(const Vector<WebCore::PasteboardCustomData>&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&&);
 
 #if PLATFORM(GTK)

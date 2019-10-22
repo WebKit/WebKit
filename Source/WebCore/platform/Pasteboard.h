@@ -238,7 +238,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    explicit Pasteboard(long changeCount);
+    explicit Pasteboard(int64_t changeCount);
     explicit Pasteboard(const String& pasteboardName);
 
     static NSArray *supportedWebContentPasteboardTypes();
@@ -252,10 +252,10 @@ public:
 #if PLATFORM(COCOA)
     static bool shouldTreatCocoaTypeAsFile(const String&);
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
-    long changeCount() const;
+    int64_t changeCount() const;
     const PasteboardCustomData& readCustomData();
 #else
-    long changeCount() const { return 0; }
+    int64_t changeCount() const { return 0; }
 #endif
 
 #if PLATFORM(COCOA)
@@ -273,8 +273,8 @@ public:
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.
 #endif
 
-    Vector<PasteboardItemInfo> allPasteboardItemInfo() const;
-    PasteboardItemInfo pasteboardItemInfo(size_t index) const;
+    Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo() const;
+    Optional<PasteboardItemInfo> pasteboardItemInfo(size_t index) const;
 
     String readString(size_t index, const String& type);
     RefPtr<WebCore::SharedBuffer> readBuffer(size_t index, const String& type);
@@ -302,7 +302,7 @@ private:
 
 #if PLATFORM(COCOA)
     Vector<String> readFilePaths();
-    Vector<String> readPlatformValuesAsStrings(const String& domType, long changeCount, const String& pasteboardName);
+    Vector<String> readPlatformValuesAsStrings(const String& domType, int64_t changeCount, const String& pasteboardName);
     static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType);
     String readStringForPlatformType(const String&);
     Vector<String> readTypesWithSecurityCheck();
@@ -318,7 +318,7 @@ private:
 
 #if PLATFORM(COCOA)
     String m_pasteboardName;
-    long m_changeCount;
+    int64_t m_changeCount;
     Optional<PasteboardCustomData> m_customDataCache;
 #endif
 
