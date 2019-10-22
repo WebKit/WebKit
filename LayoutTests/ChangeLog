@@ -1,3 +1,21 @@
+2019-10-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=202852
+        <rdar://problem/56195888>
+
+        Reviewed by Alex Christensen.
+
+        Fixed test flakiness caused by the resource remaining in the cache
+        between tests, therefore not creating a new isolated session and
+        failing the text diff. This patch adds a php header to each file to
+        prevent the resource from being stored in the cache.
+
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database.php: Renamed from LayoutTests/http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction-database.html.
+        * http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.php: Renamed from LayoutTests/http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.html.
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.php: Renamed from LayoutTests/http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction-database.html.
+        * http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.php: Renamed from LayoutTests/http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.html.
+
 2019-10-21  Truitt Savell  <tsavell@apple.com>
 
         [ Mac ] Layout Test legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html is flaky
