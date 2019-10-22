@@ -372,7 +372,7 @@ PASS SVGSVGElement interface: operation createSVGPoint()
 PASS SVGSVGElement interface: operation createSVGMatrix() 
 PASS SVGSVGElement interface: operation createSVGRect() 
 PASS SVGSVGElement interface: operation createSVGTransform() 
-FAIL SVGSVGElement interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) assert_equals: property has wrong .length expected 0 but got 1
+PASS SVGSVGElement interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) 
 PASS SVGSVGElement interface: operation getElementById(DOMString) 
 FAIL SVGSVGElement interface: operation suspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL SVGSVGElement interface: operation unsuspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
@@ -648,7 +648,7 @@ PASS SVGTransform interface: constant SVG_TRANSFORM_SKEWY on interface prototype
 PASS SVGTransform interface: attribute type 
 PASS SVGTransform interface: attribute matrix 
 PASS SVGTransform interface: attribute angle 
-FAIL SVGTransform interface: operation setMatrix(DOMMatrix2DInit) assert_equals: property has wrong .length expected 0 but got 1
+PASS SVGTransform interface: operation setMatrix(DOMMatrix2DInit) 
 PASS SVGTransform interface: operation setTranslate(float, float) 
 PASS SVGTransform interface: operation setScale(float, float) 
 PASS SVGTransform interface: operation setRotate(float, float, float) 
@@ -693,7 +693,7 @@ PASS SVGTransformList interface: operation insertItemBefore(SVGTransform, unsign
 PASS SVGTransformList interface: operation replaceItem(SVGTransform, unsigned long) 
 PASS SVGTransformList interface: operation removeItem(unsigned long) 
 PASS SVGTransformList interface: operation appendItem(SVGTransform) 
-FAIL SVGTransformList interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) assert_equals: property has wrong .length expected 0 but got 1
+PASS SVGTransformList interface: operation createSVGTransformFromMatrix(DOMMatrix2DInit) 
 PASS SVGTransformList interface: operation consolidate() 
 PASS SVGTransformList must be primary interface of objects.pattern.patternTransform.baseVal 
 PASS Stringification of objects.pattern.patternTransform.baseVal 

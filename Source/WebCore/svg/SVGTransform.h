@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DOMMatrix2DInit.h"
 #include "SVGMatrix.h"
 #include "SVGTransformValue.h"
 #include "SVGValueProperty.h"
@@ -70,12 +71,25 @@ public:
     float angle() { return m_value.angle(); }
     const Ref<SVGMatrix>& matrix() { return m_value.matrix(); }
 
-    ExceptionOr<void> setMatrix(SVGMatrix& matrix)
+    ExceptionOr<void> setMatrix(DOMMatrix2DInit&& matrixInit)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        m_value.setMatrix(matrix.value());
+        AffineTransform transform;
+        if (matrixInit.a.hasValue())
+            transform.setA(matrixInit.a.value());
+        if (matrixInit.b.hasValue())
+            transform.setB(matrixInit.b.value());
+        if (matrixInit.c.hasValue())
+            transform.setC(matrixInit.c.value());
+        if (matrixInit.d.hasValue())
+            transform.setD(matrixInit.d.value());
+        if (matrixInit.e.hasValue())
+            transform.setE(matrixInit.e.value());
+        if (matrixInit.f.hasValue())
+            transform.setF(matrixInit.f.value());
+        m_value.setMatrix(transform);
         commitChange();
         return { };
     }

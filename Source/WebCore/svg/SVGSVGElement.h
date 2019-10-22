@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+struct DOMMatrix2DInit;
 class SMILTimeContainer;
 class SVGAngle;
 class SVGLength;
@@ -89,7 +90,7 @@ public: // DOM
     static Ref<SVGMatrix> createSVGMatrix();
     static Ref<SVGRect> createSVGRect();
     static Ref<SVGTransform> createSVGTransform();
-    static Ref<SVGTransform> createSVGTransformFromMatrix(SVGMatrix&);
+    static Ref<SVGTransform> createSVGTransformFromMatrix(DOMMatrix2DInit&&);
 
     Element* getElementById(const AtomString&);
 

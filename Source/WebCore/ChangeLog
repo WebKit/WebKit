@@ -1,3 +1,29 @@
+2019-10-22  Dirk Schulze  <krit@webkit.org>
+
+        SVG2: Use DOMMatrix2DInit for setMatrix and createSVGTransformFromMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=191417
+
+        Reviewed by Dean Jackson.
+
+        setMatrix and createSVGTransformFromMatrix used to use SVGMatrix as argument.
+        With SVG 2.0, any DOMPoint2DInit type is supported which inlcudes dictionaries,
+        DOMMatrix, DOMMatrixReadOnly and SVGMatrix (alias of DOMMatrix).
+
+        Extended existing tests.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGTransform.h:
+        (WebCore::SVGTransform::setMatrix):
+        * svg/SVGTransform.idl:
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformList.idl:
+        * svg/SVGTransformListValues.cpp:
+        (WebCore::SVGTransformListValues::createSVGTransformFromMatrix const):
+        * svg/SVGTransformListValues.h:
+
 2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Thread JSGlobalObject* instead of ExecState*

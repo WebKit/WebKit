@@ -49,12 +49,26 @@ PASS transform.matrix.e is 0
 PASS transform.matrix.f is 0
 
 Check passing invalid arguments to 'setMatrix'
-PASS transform.setMatrix() threw exception TypeError: Not enough arguments.
-PASS transform.setMatrix(transform) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
-PASS transform.setMatrix(svgElement) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
-PASS transform.setMatrix('aString') threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
-PASS transform.setMatrix(1) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
-PASS transform.setMatrix(false) threw exception TypeError: Argument 1 ('matrix') to SVGTransform.setMatrix must be an instance of SVGMatrix.
+PASS transform.setMatrix('aString') threw exception TypeError: Type error.
+PASS transform.setMatrix(1) threw exception TypeError: Type error.
+PASS transform.setMatrix(false) threw exception TypeError: Type error.
+Check passing abritary objects, nothing or dictionaries
+PASS transform.setMatrix(transform) is undefined.
+PASS transform.setMatrix(svgElement) is undefined.
+PASS transform.setMatrix({a: 2, b: 0, c: 0, d: 2, e: 10, f: 10}) is undefined.
+PASS transform.matrix.a is 2
+PASS transform.matrix.b is 0
+PASS transform.matrix.c is 0
+PASS transform.matrix.d is 2
+PASS transform.matrix.e is 10
+PASS transform.matrix.f is 10
+PASS transform.setMatrix() is undefined.
+PASS transform.matrix.a is 1
+PASS transform.matrix.b is 0
+PASS transform.matrix.c is 0
+PASS transform.matrix.d is 1
+PASS transform.matrix.e is 0
+PASS transform.matrix.f is 0
 
 Check passing invalid arguments to 'setTranslate'
 PASS transform.setTranslate() threw exception TypeError: Not enough arguments.

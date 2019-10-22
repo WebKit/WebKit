@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "DOMMatrix2DInit.h"
 #include "SVGTransform.h"
 #include "SVGTransformable.h"
 #include "SVGValuePropertyList.h"
@@ -48,9 +49,11 @@ public:
         return adoptRef(*new SVGTransformList(other, access));
     }
 
-    ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(const Ref<SVGMatrix>& matrix)
+    ExceptionOr<Ref<SVGTransform>> createSVGTransformFromMatrix(DOMMatrix2DInit&& matrixInit)
     {
-        return SVGTransform::create(matrix->value());
+        auto svgTransform =  SVGTransform::create();
+        svgTransform->setMatrix(WTFMove(matrixInit));
+        return svgTransform;
     }
 
     ExceptionOr<RefPtr<SVGTransform>> consolidate()

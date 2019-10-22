@@ -1,3 +1,18 @@
+2019-10-22  Dirk Schulze  <krit@webkit.org>
+
+        SVG2: Use DOMMatrix2DInit for setMatrix and createSVGTransformFromMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=191417
+
+        Reviewed by Dean Jackson.
+
+        Extended existing tests to cover change to new argument
+        DOMMatrix2DInit.
+
+        * svg/dom/SVGTransform-expected.txt:
+        * svg/dom/SVGTransform.html:
+        * svg/dom/SVGTransformList-expected.txt:
+        * svg/dom/SVGTransformList.html:
+
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         Multiple fast/scrolling/ios tests failing with unexpected scrollbars appearing in result
