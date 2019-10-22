@@ -1,3 +1,15 @@
+2019-10-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Add a script to run ImageDiff manually
+        https://bugs.webkit.org/show_bug.cgi?id=203226
+
+        Reviewed by Adrian Perez de Castro.
+
+        This allows to manually run the ImageDiff tool more easily, that
+        is sometimes useful when debugging problems with it.
+
+        * Scripts/run-imagediff: Added.
+
 2019-10-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Thread JSGlobalObject* instead of ExecState*
