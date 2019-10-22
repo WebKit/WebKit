@@ -42,6 +42,7 @@
   <body>
     <p>This test passes if you see a green square.</p>
     <iframe id="maxScrollXY" scrolling="yes" srcdoc="
+        <style>::-webkit-scrollbar { display: none; }</style>
         <body style='margin: 0; width: 200px; height: 200px'>
             <div style='left: 100px; top: 100px; position: absolute; width: 100px; height: 100px; background: green;'></div>
         </body>" onload="runTest()">

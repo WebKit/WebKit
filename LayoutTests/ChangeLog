@@ -1,3 +1,22 @@
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Multiple fast/scrolling/ios tests failing with unexpected scrollbars appearing in result
+        https://bugs.webkit.org/show_bug.cgi?id=203223
+
+        Reviewed by Wenson Hsieh.
+        
+        Hide scrollbars in iOS iframe scrolling ref tests.
+
+        * fast/scrolling/ios/hit-testing-iframe-006.html:
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-002.html:
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-003.html:
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-006.html:
+        * fast/scrolling/ios/scroll-iframe-001.html:
+        * fast/scrolling/ios/scroll-iframe-002.html:
+        * fast/scrolling/ios/scroll-iframe-003.html:
+        * fast/scrolling/ios/scroll-iframe-004.html:
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-21  Chris Dumez  <cdumez@apple.com>
 
         Suspend dedicated worker threads while in the back/forward cache
