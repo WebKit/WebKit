@@ -30,6 +30,7 @@
 
 #include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManagerMessages.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CARingBuffer.h>

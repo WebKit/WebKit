@@ -31,6 +31,7 @@
 #include "APIDictionary.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
 #include "ResourceLoadStatisticsDatabaseStore.h"
 #include "ResourceLoadStatisticsMemoryStore.h"

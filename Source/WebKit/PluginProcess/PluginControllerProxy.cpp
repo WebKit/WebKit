@@ -40,6 +40,7 @@
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessConnection.h"
+#include "WebProcessConnectionMessages.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IdentifierRep.h>

@@ -32,7 +32,7 @@ SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 ASYNC_ATTRIBUTE = 'Async'
 
 _license_header = """/*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,9 +113,29 @@ def reply_arguments_type(message):
     return 'std::tuple<%s>' % (', '.join(parameter.type for parameter in message.reply_parameters))
 
 
+def message_to_reply_forward_declaration(message):
+    result = []
+
+    if message.reply_parameters != None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+        send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
+        completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
+
+        if message.has_attribute(ASYNC_ATTRIBUTE):
+            result.append('using %sAsyncReply' % message.name)
+        else:
+            result.append('using %sDelayedReply' % message.name)
+        result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
+
+    if not result:
+        return None
+
+    return surround_in_condition(''.join(result), message.condition)
+
+
 def message_to_struct_declaration(message):
     result = []
     function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
+
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
     result.append('    typedef %s Arguments;\n' % arguments_type(message))
@@ -132,11 +152,10 @@ def message_to_struct_declaration(message):
             result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static IPC::StringReference asyncMessageReplyName() { return { "%sReply" }; }\n' % message.name)
-            result.append('    using AsyncReply')
+            result.append('    using AsyncReply = %sAsyncReply;\n' % message.name)
         elif message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('    using DelayedReply')
+            result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
         if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE):
-            result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
             result.append('    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):
                 result.append(', %s' % completion_handler_parameters)
@@ -180,27 +199,8 @@ def forward_declarations_for_namespace(namespace, kind_and_types):
     return ''.join(result)
 
 
-def forward_declarations_and_headers(receiver):
-    types_by_namespace = collections.defaultdict(set)
-
-    headers = set([
-        '"ArgumentCoders.h"',
-        '<wtf/Forward.h>',
-    ])
-
-    header_conditions = {
-        '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
-    }
-
-    non_template_wtf_types = frozenset([
-        'MachSendRight',
-        'String',
-    ])
-
-    headers.add('"Connection.h"')
-    headers.add('<wtf/ThreadSafeRefCounted.h>')
-
-    no_forward_declaration_types = frozenset([
+def types_that_cannot_be_forward_declared():
+    return frozenset([
         'MachSendRight',
         'String',
         'WebCore::DocumentIdentifier',
@@ -226,6 +226,33 @@ def forward_declarations_and_headers(receiver):
         'WebKit::WebPageProxyIdentifier',
     ])
 
+
+def conditions_for_header(header):
+    conditions = {
+        '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
+    }
+    if not header in conditions:
+        return None
+    return conditions[header]
+
+
+def forward_declarations_and_headers(receiver):
+    types_by_namespace = collections.defaultdict(set)
+
+    headers = set([
+        '"ArgumentCoders.h"',
+        '<wtf/Forward.h>',
+        '"Connection.h"',
+        '<wtf/ThreadSafeRefCounted.h>',
+        '"%sMessagesReplies.h"' % receiver.name,
+    ])
+
+    non_template_wtf_types = frozenset([
+        'MachSendRight',
+        'String',
+    ])
+
+    no_forward_declaration_types = types_that_cannot_be_forward_declared()
     for parameter in receiver.iterparameters():
         kind = parameter.kind
         type = parameter.type
@@ -254,8 +281,9 @@ def forward_declarations_and_headers(receiver):
 
     header_includes = []
     for header in sorted(headers):
-        if header in header_conditions and not None in header_conditions[header]:
-            header_include = '#if %s\n' % ' || '.join(set(header_conditions[header]))
+        conditions = conditions_for_header(header)
+        if conditions and not None in conditions:
+            header_include = '#if %s\n' % ' || '.join(set(conditions))
             header_include += '#include %s\n' % header
             header_include += '#endif\n'
             header_includes.append(header_include)
@@ -265,9 +293,95 @@ def forward_declarations_and_headers(receiver):
     return (forward_declarations, header_includes)
 
 
-def generate_messages_header(file):
-    receiver = parser.parse(file)
+def forward_declarations_and_headers_for_replies(receiver):
+    types_by_namespace = collections.defaultdict(set)
 
+    headers = set([
+        '<wtf/Forward.h>',
+    ])
+
+    non_template_wtf_types = frozenset([
+        'MachSendRight',
+        'String',
+    ])
+
+    no_forward_declaration_types = types_that_cannot_be_forward_declared()
+    for message in receiver.messages:
+        if message.reply_parameters == None or not (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+            continue
+
+        for parameter in message.reply_parameters:
+            kind = parameter.kind
+            type = parameter.type
+
+            if type.find('<') != -1 or type in no_forward_declaration_types:
+                # Don't forward declare class templates.
+                headers.update(headers_for_type(type))
+                continue
+
+            split = type.split('::')
+
+            # Handle WTF types even if the WTF:: prefix is not given
+            if split[0] in non_template_wtf_types:
+                split.insert(0, 'WTF')
+
+            if len(split) == 2:
+                namespace = split[0]
+                inner_type = split[1]
+                types_by_namespace[namespace].add((kind, inner_type))
+            elif len(split) > 2:
+                # We probably have a nested struct, which means we can't forward declare it.
+                # Include its header instead.
+                headers.update(headers_for_type(type))
+
+    forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.items())])
+
+    header_includes = []
+    for header in sorted(headers):
+        conditions = conditions_for_header(header)
+        if conditions and not None in conditions:
+            header_include = '#if %s\n' % ' || '.join(set(conditions))
+            header_include += '#include %s\n' % header
+            header_include += '#endif\n'
+            header_includes.append(header_include)
+        else:
+            header_includes.append('#include %s\n' % header)
+
+    return (forward_declarations, header_includes)
+
+
+def generate_messages_reply_header(receiver):
+    result = []
+
+    result.append(_license_header)
+
+    result.append('#pragma once\n')
+    result.append('\n')
+
+    if receiver.condition:
+        result.append('#if %s\n\n' % receiver.condition)
+
+    forward_declarations, headers = forward_declarations_and_headers_for_replies(receiver)
+
+    result += headers
+    result.append('\n')
+
+    result.append(forward_declarations)
+    result.append('\n')
+
+    result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
+    result.append('\n')
+    result.append('\n'.join(filter(None, [message_to_reply_forward_declaration(x) for x in receiver.messages])))
+    result.append('\n')
+    result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
+
+    if receiver.condition:
+        result.append('\n#endif // %s\n' % receiver.condition)
+
+    return ''.join(result)
+
+
+def generate_messages_header(receiver):
     result = []
 
     result.append(_license_header)
@@ -515,8 +629,7 @@ def headers_for_type(type):
     return headers
 
 
-def generate_message_handler(file):
-    receiver = parser.parse(file)
+def generate_message_handler(receiver):
     header_conditions = {
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],

@@ -309,21 +309,20 @@ set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-# Helper macro which wraps generate-message-receiver.py and generate-message-header.py scripts
+# Helper macro which wraps the generate-message-receiver.py script
 #   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
 #   _input_files are messages.in files to generate.
 macro(GENERATE_MESSAGE_SOURCES _output_source _input_files)
     foreach (_file ${_input_files})
         get_filename_component(_name ${_file} NAME_WE)
         add_custom_command(
-            OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
+            OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
             MAIN_DEPENDENCY ${_file}
             DEPENDS ${WEBKIT_DIR}/Scripts/webkit/__init__.py
                     ${WEBKIT_DIR}/Scripts/webkit/messages.py
                     ${WEBKIT_DIR}/Scripts/webkit/model.py
                     ${WEBKIT_DIR}/Scripts/webkit/parser.py
-            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py ${_file} > ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp
-            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-messages-header.py ${_file} > ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py ${_file} --implementation ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp --header ${WebKit_DERIVED_SOURCES_DIR}/${_name}Messages.h --reply-header ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessagesReplies.h
             WORKING_DIRECTORY ${WEBKIT_DIR}
             VERBATIM)
 

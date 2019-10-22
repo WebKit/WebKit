@@ -28,7 +28,7 @@
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
-#include "WebPageProxyMessages.h"
+#include "WebPageProxyMessagesReplies.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
@@ -112,7 +112,7 @@ private:
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(SandboxExtension::Handle&&)>&&);
     void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, Optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
-        WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&&);
+        WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
 #if USE(QUICK_LOOK)
     void didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName);
 #endif

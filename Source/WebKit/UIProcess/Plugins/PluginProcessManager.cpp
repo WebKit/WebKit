@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcessProxy.h"
+#include "WebProcessProxyMessages.h"
 #include "WebsiteDataFetchOption.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/NeverDestroyed.h>

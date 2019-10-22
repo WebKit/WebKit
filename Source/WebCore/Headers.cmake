@@ -187,6 +187,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/CachedScriptFetcher.h
     bindings/js/CommonVM.h
     bindings/js/DOMWrapperWorld.h
+    bindings/js/ExceptionDetails.h
     bindings/js/GCController.h
     bindings/js/IDBBindingUtilities.h
     bindings/js/JSCSSRuleCustom.h

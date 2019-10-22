@@ -49,6 +49,7 @@
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"
+#import "WebPageProxyMessages.h"
 #import "WebProcessPool.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"

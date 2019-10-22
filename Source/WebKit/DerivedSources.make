@@ -189,7 +189,6 @@ MESSAGE_RECEIVERS = \
 
 SCRIPTS = \
     $(WebKit2)/Scripts/generate-message-receiver.py \
-    $(WebKit2)/Scripts/generate-messages-header.py \
     $(WebKit2)/Scripts/webkit/__init__.py \
     $(WebKit2)/Scripts/webkit/messages.py \
     $(WebKit2)/Scripts/webkit/model.py \
@@ -206,15 +205,12 @@ HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTE
 all : \
     $(MESSAGE_RECEIVERS:%=%MessageReceiver.cpp) \
     $(MESSAGE_RECEIVERS:%=%Messages.h) \
+    $(MESSAGE_RECEIVERS:%=%MessagesReplies.h) \
 #
 
-%MessageReceiver.cpp : %.messages.in $(SCRIPTS)
+%MessageReceiver.cpp %Messages.h %MessagesReplies.h : %.messages.in $(SCRIPTS)
 	@echo Generating message receiver for $*...
-	@python $(WebKit2)/Scripts/generate-message-receiver.py $< > $@
-
-%Messages.h : %.messages.in $(SCRIPTS)
-	@echo Generating messages header for $*...
-	@python $(WebKit2)/Scripts/generate-messages-header.py $< > $@
+	@python $(WebKit2)/Scripts/generate-message-receiver.py $< --implementation $*MessageReceiver.cpp --header $*Messages.h --reply-header $*MessagesReplies.h
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
 

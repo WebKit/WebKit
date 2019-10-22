@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkCache.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"

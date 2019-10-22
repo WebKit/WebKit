@@ -48,9 +48,10 @@
 #include "ShareSheetCallbackID.h"
 #include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
+#include "TransactionID.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
-#include "WebPageMessages.h"
+#include "WebPageMessagesReplies.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUndoStepID.h"
 #include "WebUserContentController.h"
@@ -100,7 +101,6 @@ typedef struct _AtkObject AtkObject;
 
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
-#include "WebPageMessages.h"
 #include <WebCore/IntPointHash.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WKContentObservation.h>
@@ -175,7 +175,6 @@ class ResourceResponse;
 class SelectionRect;
 class SharedBuffer;
 class SubstituteData;
-class SyntheticEditingCommandType;
 class TextCheckingRequest;
 class VisiblePosition;
 
@@ -258,10 +257,13 @@ class RemoteLayerTreeTransaction;
 
 enum FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
+enum class SyntheticEditingCommandType : uint8_t;
 
 struct AttributedString;
 struct BackForwardListItemState;
 struct DataDetectionResult;
+struct DocumentEditingContext;
+struct DocumentEditingContextRequest;
 struct EditorState;
 struct FontInfo;
 struct InsertTextOptions;
@@ -879,7 +881,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&&);
+    void computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier, const PrintInfo&, CallbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDFDelayedReply&&);
 #endif
 
     void drawToPDF(WebCore::FrameIdentifier, const Optional<WebCore::FloatRect>&, CallbackID);
@@ -1307,7 +1309,7 @@ private:
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
 #endif
 
-    void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply::DelayedReply&&);
+    void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(Messages::WebPage::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
     bool markLayersVolatileImmediatelyIfPossible();

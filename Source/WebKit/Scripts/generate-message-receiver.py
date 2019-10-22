@@ -23,18 +23,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import with_statement
+import argparse
 import sys
 
 import webkit.messages
+import webkit.parser
 
 
 def main(argv=None):
-    if not argv:
-        argv = sys.argv
-    input_path = argv[1]
-    with open(input_path) as input_file:
-        # Python 3, change to:  print(webkit.messages.generate_message_handler(input_file), end='')
-        sys.stdout.write(webkit.messages.generate_message_handler(input_file))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('source')
+    parser.add_argument('--implementation', required=True)
+    parser.add_argument('--header', required=True)
+    parser.add_argument('--reply-header', required=True)
+
+    args = parser.parse_args()
+
+    with open(args.source) as source_file:
+        receiver = webkit.parser.parse(source_file)
+
+    with open(args.implementation, "w+") as implementation_output:
+        implementation_output.write(webkit.messages.generate_message_handler(receiver))
+
+    with open(args.header, "w+") as header_output:
+        header_output.write(webkit.messages.generate_messages_header(receiver))
+
+    with open(args.reply_header, "w+") as reply_header_output:
+        reply_header_output.write(webkit.messages.generate_messages_reply_header(receiver))
+
     return 0
 
 if __name__ == '__main__':

@@ -39,6 +39,7 @@
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
+#include "NetworkProcessProxyMessages.h"
 #include "SandboxExtension.h"
 #if HAVE(SEC_KEY_PROXY)
 #include "SecKeyProxyStore.h"
@@ -51,6 +52,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebProcessProxyMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"

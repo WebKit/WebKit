@@ -1,3 +1,82 @@
+2019-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to not include IPC Messages headers in other headers
+        https://bugs.webkit.org/show_bug.cgi?id=203074
+
+        Reviewed by Geoffrey Garen.
+
+        Make the Messages generator generate a new -MessagesReplies.h file, which
+        only includes headers for and definitions of DelayedReply/AsyncReply types,
+        which need to be mentioned as arguments to message hander methods, and
+        thus must be available in various headers throughout the project.
+
+        In order to do this, we have to de-nest them from the primary message
+        class, but we then 'using' them back into place inside the message class
+        so that most of the code doesn't need to change.
+
+        This helps to wildly decrease the header load of WebPage.h and WebPageProxy.h,
+        especially, because the number of headers needed for types in their replies
+        is much smaller than the number needed for all message receivers.
+
+        Also, only invoke the Messages generator once per source file, and
+        only parse the source file once, generating all three output files
+        in one invocation.
+
+        And then clean up all the missing indirect includes that we lost by doing this.
+
+        All-in-all this is worth roughly 8% on the WebKit2 Build Time Benchmark.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/WebProcessConnection.h:
+        * Scripts/Makefile:
+        * Scripts/generate-message-receiver.py:
+        (main):
+        * Scripts/generate-messages-header.py: Removed.
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        * Scripts/webkit/LegacyMessages-expected.h:
+        * Scripts/webkit/LegacyMessagesReplies-expected.h: Added.
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        * Scripts/webkit/Messages-expected.h:
+        * Scripts/webkit/MessagesReplies-expected.h: Added.
+        * Scripts/webkit/MessagesRepliesSuperclassReplies-expected.h: Added.
+        * Scripts/webkit/MessagesSuperclass-expected.h:
+        * Scripts/webkit/messages.py:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+
 2019-10-22  Chris Dumez  <cdumez@apple.com>
 
         Simplify "Unexpectedly Resumed" assertion handling

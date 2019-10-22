@@ -46,7 +46,6 @@ $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
 $(PROJECT_DIR)/Scripts/generate-https-upgrade-database.sh
 $(PROJECT_DIR)/Scripts/generate-message-receiver.py
-$(PROJECT_DIR)/Scripts/generate-messages-header.py
 $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py

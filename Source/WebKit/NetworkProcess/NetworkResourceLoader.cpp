@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcess.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"

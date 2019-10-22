@@ -30,7 +30,6 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "UserMediaCaptureManager.h"
-#include "UserMediaCaptureManagerProxyMessages.h"
 #include <WebCore/RealtimeMediaSource.h>
 
 namespace WebKit {

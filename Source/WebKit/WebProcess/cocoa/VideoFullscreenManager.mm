@@ -31,6 +31,7 @@
 #import "LayerHostingContext.h"
 #import "Logging.h"
 #import "PlaybackSessionManager.h"
+#import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"

@@ -28,6 +28,7 @@
 
 #include "WebKitWebPageAccessibilityObject.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyMessages.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/NotImplemented.h>

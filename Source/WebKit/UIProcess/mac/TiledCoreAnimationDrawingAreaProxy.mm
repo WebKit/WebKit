@@ -33,6 +33,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "LayerTreeContext.h"
 #import "WebPageProxy.h"
+#import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>

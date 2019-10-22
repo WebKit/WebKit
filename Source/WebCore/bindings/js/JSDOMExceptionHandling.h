@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ExceptionDetails.h"
 #include "ExceptionOr.h"
 #include <JavaScriptCore/ThrowScope.h>
 
@@ -35,13 +36,6 @@ namespace WebCore {
 class CachedScript;
 class DeferredPromise;
 class JSDOMGlobalObject;
-
-struct ExceptionDetails {
-    String message;
-    int lineNumber { 0 };
-    int columnNumber { 0 };
-    String sourceURL;
-};
 
 void throwAttributeTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName, const char* expectedType);
 WEBCORE_EXPORT bool throwSetterTypeError(JSC::JSGlobalObject&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);

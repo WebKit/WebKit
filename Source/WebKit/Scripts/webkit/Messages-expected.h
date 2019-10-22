@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "Plugin.h"
+#include "WebPageMessagesReplies.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
@@ -360,7 +361,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("GetPluginProcessConnection"); }
     static const bool isSync = true;
 
-    using DelayedReply = CompletionHandler<void(const IPC::Connection::Handle& connectionHandle)>;
+    using DelayedReply = GetPluginProcessConnectionDelayedReply;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const IPC::Connection::Handle& connectionHandle);
     using Reply = std::tuple<IPC::Connection::Handle&>;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
@@ -386,7 +387,7 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("TestMultipleAttributes"); }
     static const bool isSync = true;
 
-    using DelayedReply = CompletionHandler<void()>;
+    using DelayedReply = TestMultipleAttributesDelayedReply;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
     using Reply = std::tuple<>;
     using ReplyArguments = std::tuple<>;

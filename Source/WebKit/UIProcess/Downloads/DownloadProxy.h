@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include "DownloadID.h"
-#include "DownloadProxyMessages.h"
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>

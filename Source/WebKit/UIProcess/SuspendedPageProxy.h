@@ -28,10 +28,14 @@
 #include "Connection.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
-#include "WebPageProxyMessages.h"
+#include "WebPageProxyMessagesReplies.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class RegistrableDomain;
+}
 
 namespace WebKit {
 
