@@ -1,3 +1,20 @@
+2019-10-22  Charlie Turner  <cturner@igalia.com>
+
+        media/W3C/video/networkState/networkState_during_progress.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=76280
+
+        Reviewed by Eric Carlson.
+
+        The onprogress event must be received when networkState is
+        NETWORK_LOADING, make sure in the transition from loading to idle
+        that the progress event is fired synchronously, so that it is
+        received before the networkState changes to NETWORK_IDLE.
+
+        Tested by media/W3C/video/networkState/networkState_during_progress.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::changeNetworkStateFromLoadingToIdle):
+
 2019-10-22  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] The implementation needs runtime logging

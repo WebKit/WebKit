@@ -897,8 +897,6 @@ media/encrypted-media/encrypted-media-events.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ Skip ] # [ WontFix ]
 
-webkit.org/b/103442 media/W3C/video/networkState/networkState_during_progress.html [ Skip ]
-
 # No CORS support for media elements is implemented yet.
 webkit.org/b/176626 http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Crash Failure ]
 webkit.org/b/176653 http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Crash Failure ]
