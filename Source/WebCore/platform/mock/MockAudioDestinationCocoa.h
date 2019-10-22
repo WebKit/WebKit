@@ -40,6 +40,7 @@ class MockAudioDestinationCocoa final : public AudioDestinationCocoa {
 public:
     static std::unique_ptr<AudioDestination> create(AudioIOCallback& callback, float sampleRate) { return makeUnique<MockAudioDestinationCocoa>(callback, sampleRate); }
     WEBCORE_EXPORT MockAudioDestinationCocoa(AudioIOCallback&, float sampleRate);
+    WEBCORE_EXPORT virtual ~MockAudioDestinationCocoa();
 
 private:
     void start() final;

@@ -1,3 +1,10 @@
+2019-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * platform/mock/MockAudioDestinationCocoa.cpp:
+        * platform/mock/MockAudioDestinationCocoa.h:
+
 2019-10-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Move ui-serif, ui-monospaced, and ui-rounded out from behind SPI

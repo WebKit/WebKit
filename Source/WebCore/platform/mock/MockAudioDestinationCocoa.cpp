@@ -43,6 +43,8 @@ MockAudioDestinationCocoa::MockAudioDestinationCocoa(AudioIOCallback& callback, 
 {
 }
 
+MockAudioDestinationCocoa::~MockAudioDestinationCocoa() = default;
+
 void MockAudioDestinationCocoa::start()
 {
     m_timer.startRepeating(Seconds { m_numberOfFramesToProcess / sampleRate() });
