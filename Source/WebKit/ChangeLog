@@ -1,3 +1,17 @@
+2019-10-21  Daniel Bates  <dabates@apple.com>
+
+        Add some PencilKit extension points
+        https://bugs.webkit.org/show_bug.cgi?id=202962
+        <rdar://problem/56269759>
+
+        Reviewed by Andy Estes.
+
+        This is the WebKit part corresponding to <rdar://problem/56261392>.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]): Call extension point.
+        (-[WKContentView cleanupInteraction]): Ditto.
+
 2019-10-21  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r251381.
