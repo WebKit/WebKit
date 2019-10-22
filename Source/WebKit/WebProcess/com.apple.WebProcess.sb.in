@@ -686,8 +686,12 @@
 
 ;; Network Extensions / VPN helper.
 (allow mach-lookup
-    (global-name "com.apple.nehelper")
-    (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500 || PLATFORM(MACCATALYST)
+    (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/48442387>
+#else
+    (global-name "com.apple.nesessionmanager") ;; <rdar://problem/55570995>
+#endif
+    (global-name "com.apple.nehelper"))
 
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
