@@ -3877,7 +3877,6 @@ webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.
 webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
 
 # wpt css-images failures
-webkit.org/b/200206 imported/w3c/web-platform-tests/css/css-images/gradient/color-stops-parsing.html [ Crash ]
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html [ ImageOnlyFailure ]
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004.html [ ImageOnlyFailure ]

@@ -679,6 +679,18 @@ static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradient
     }
 }
 
+void CSSGradientValue::writeColorStop(StringBuilder& builder, const CSSGradientColorStop& stop) const
+{
+    if (!stop.isMidpoint && stop.m_color)
+        builder.append(stop.m_color->cssText());
+
+    if (stop.m_position) {
+        if (!stop.isMidpoint)
+            builder.append(' ');
+        builder.append(stop.m_position->cssText());
+    }
+}
+
 String CSSLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
@@ -703,9 +715,8 @@ String CSSLinearGradientValue::customCSSText() const
         }
 
         for (auto& stop : m_stops) {
-            result.append(", ", stop.m_color->cssText());
-            if (stop.m_position)
-                result.append(' ', stop.m_position->cssText());
+            result.appendLiteral(", ");
+            writeColorStop(result, stop);
         }
     } else {
         if (m_repeating)
@@ -737,13 +748,7 @@ String CSSLinearGradientValue::customCSSText() const
             if (wroteFirstStop)
                 result.appendLiteral(", ");
             wroteFirstStop = true;
-            if (!stop.isMidpoint)
-                result.append(stop.m_color->cssText());
-            if (stop.m_position) {
-                if (!stop.isMidpoint)
-                    result.append(' ');
-                result.append(stop.m_position->cssText());
-            }
+            writeColorStop(result, stop);
         }
     }
 
@@ -954,9 +959,8 @@ String CSSRadialGradientValue::customCSSText() const
             result.append(", ", m_endHorizontalSize->cssText(), ' ', m_endVerticalSize->cssText());
 
         for (auto& stop : m_stops) {
-            result.append(", ", stop.m_color->cssText());
-            if (stop.m_position)
-                result.append(' ', stop.m_position->cssText());
+            result.appendLiteral(", ");
+            writeColorStop(result, stop);
         }
     } else {
         if (m_repeating)
@@ -1003,19 +1007,13 @@ String CSSRadialGradientValue::customCSSText() const
         if (wroteSomething)
             result.appendLiteral(", ");
 
-        for (unsigned i = 0; i < m_stops.size(); i++) {
-            const CSSGradientColorStop& stop = m_stops[i];
-            if (i)
+        bool wroteFirstStop = false;
+        for (auto& stop : m_stops) {
+            if (wroteFirstStop)
                 result.appendLiteral(", ");
-            if (!stop.isMidpoint)
-                result.append(stop.m_color->cssText());
-            if (stop.m_position) {
-                if (!stop.isMidpoint)
-                    result.append(' ');
-                result.append(stop.m_position->cssText());
-            }
+            wroteFirstStop = true;
+            writeColorStop(result, stop);
         }
-
     }
 
     result.append(')');
@@ -1332,15 +1330,9 @@ String CSSConicGradientValue::customCSSText() const
         if (wroteFirstStop)
             result.appendLiteral(", ");
         wroteFirstStop = true;
-        if (!stop.isMidpoint)
-            result.append(stop.m_color->cssText());
-        if (stop.m_position) {
-            if (!stop.isMidpoint)
-                result.append(' ');
-            result.append(stop.m_position->cssText());
-        }
+        writeColorStop(result, stop);
     }
-    
+
     result.append(')');
     return result.toString();
 }

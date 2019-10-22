@@ -110,25 +110,25 @@ PASS conic-gradient(black, 25%) [ unparsable ]
 PASS conic-gradient(black, invalid) [ unparsable ] 
 PASS conic-gradient(black, , white) [ unparsable ] 
 PASS conic-gradient(black, white, 75%) [ unparsable ] 
-FAIL conic-gradient(black, 25% 50%, white) [ unparsable ] assert_equals: expected false but got true
+PASS conic-gradient(black, 25% 50%, white) [ unparsable ] 
 PASS conic-gradient(black, 25%, 50%, white) [ unparsable ] 
 PASS conic-gradient(black 10% 25% 50%, white) [ unparsable ] 
 PASS conic-gradient(,black, white) [ unparsable ] 
 PASS conic-gradient(0%, black, white) [ unparsable ] 
-PASS conic-gradient(black, white) [ parsable ] 
-PASS conic-gradient(black 0, white) [ parsable ] 
-PASS conic-gradient(black 0%, white) [ parsable ] 
-PASS conic-gradient(black 0%, white 100%) [ parsable ] 
-PASS conic-gradient(black, green, white) [ parsable ] 
-PASS conic-gradient(black 0%, green 50%, white 100%) [ parsable ] 
-PASS conic-gradient(black 50%, green 10%, white 100%) [ parsable ] 
-PASS conic-gradient(black, 25%, white) [ parsable ] 
-PASS conic-gradient(black 0%, 25%, white 100%) [ parsable ] 
-PASS conic-gradient(black 0%, 15%, green 50%, 60%, white 100%) [ parsable ] 
-PASS conic-gradient(black 0% 50%, white) [ parsable ] 
-PASS conic-gradient(black 0% 50%, white 50% 100%) [ parsable ] 
-PASS conic-gradient(black 0% 50%, green 25% 75%, white 50% 100%) [ parsable ] 
-PASS conic-gradient(black 0% calc(100% / 5), 25%, green 30% 60%, calc(100% * 3 / 4), white calc(100% - 20%) 100%) [ parsable ] 
+FAIL conic-gradient(black, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0%, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black, green, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0%, green 50%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 50%, green 10%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black, 25%, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0%, 25%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0%, 15%, green 50%, 60%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0% 50%, white) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0% 50%, white 50% 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0% 50%, green 25% 75%, white 50% 100%) [ parsable ] assert_equals: expected true but got false
+FAIL conic-gradient(black 0% calc(100% / 5), 25%, green 30% 60%, calc(100% * 3 / 4), white calc(100% - 20%) 100%) [ parsable ] assert_equals: expected true but got false
 PASS repeating-conic-gradient() [ unparsable ] 
 PASS repeating-conic-gradient(black) [ unparsable ] 
 PASS repeating-conic-gradient(black 0%) [ unparsable ] 
@@ -136,23 +136,23 @@ PASS repeating-conic-gradient(black, 25%) [ unparsable ]
 PASS repeating-conic-gradient(black, invalid) [ unparsable ] 
 PASS repeating-conic-gradient(black, , white) [ unparsable ] 
 PASS repeating-conic-gradient(black, white, 75%) [ unparsable ] 
-FAIL repeating-conic-gradient(black, 25% 50%, white) [ unparsable ] assert_equals: expected false but got true
+PASS repeating-conic-gradient(black, 25% 50%, white) [ unparsable ] 
 PASS repeating-conic-gradient(black, 25%, 50%, white) [ unparsable ] 
 PASS repeating-conic-gradient(black 10% 25% 50%, white) [ unparsable ] 
 PASS repeating-conic-gradient(,black, white) [ unparsable ] 
 PASS repeating-conic-gradient(0%, black, white) [ unparsable ] 
-PASS repeating-conic-gradient(black, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0%, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0%, white 100%) [ parsable ] 
-PASS repeating-conic-gradient(black, green, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0%, green 50%, white 100%) [ parsable ] 
-PASS repeating-conic-gradient(black 50%, green 10%, white 100%) [ parsable ] 
-PASS repeating-conic-gradient(black, 25%, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0%, 25%, white 100%) [ parsable ] 
-PASS repeating-conic-gradient(black 0%, 15%, green 50%, 60%, white 100%) [ parsable ] 
-PASS repeating-conic-gradient(black 0% 50%, white) [ parsable ] 
-PASS repeating-conic-gradient(black 0% 50%, white 50% 100%) [ parsable ] 
-PASS repeating-conic-gradient(black 0% 50%, green 25% 75%, white 50% 100%) [ parsable ] 
-PASS repeating-conic-gradient(black 0% calc(100% / 5), 25%, green 30% 60%, calc(100% * 3 / 4), white calc(100% - 20%) 100%) [ parsable ] 
+FAIL repeating-conic-gradient(black, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0%, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black, green, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0%, green 50%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 50%, green 10%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black, 25%, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0%, 25%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0%, 15%, green 50%, 60%, white 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0% 50%, white) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0% 50%, white 50% 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0% 50%, green 25% 75%, white 50% 100%) [ parsable ] assert_equals: expected true but got false
+FAIL repeating-conic-gradient(black 0% calc(100% / 5), 25%, green 30% 60%, calc(100% * 3 / 4), white calc(100% - 20%) 100%) [ parsable ] assert_equals: expected true but got false
 
