@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineLine.h"
-#include "InlineLineBreaker.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -71,22 +70,26 @@ public:
         const LineBox lineBox;
     };
 
+    struct Run {
+        const InlineItem& inlineItem;
+        LayoutUnit logicalWidth;
+    };
+
 private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     enum class IsEndOfLine { No, Yes };
     IsEndOfLine placeInlineItem(const InlineItem&);
     void commitPendingContent();
     LineContent close();
+    bool shouldProcessUncommittedContent(const InlineItem&) const;
+    IsEndOfLine processUncommittedContent();
     
     struct UncommittedContent {
-        struct Run {
-            const InlineItem& inlineItem;
-            LayoutUnit logicalWidth;
-        };
         void add(const InlineItem&, LayoutUnit logicalWidth);
         void reset();
 
-        Vector<Run> runs() { return m_uncommittedRuns; }
+        Vector<Run>& runs() { return m_uncommittedRuns; }
+        const Vector<Run>& runs() const { return m_uncommittedRuns; }
         bool isEmpty() const { return m_uncommittedRuns.isEmpty(); }
         unsigned size() const { return m_uncommittedRuns.size(); }
         LayoutUnit width() const { return m_width; }
@@ -99,7 +102,6 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const LineInput& m_lineInput;
     Line m_line;
-    LineBreaker m_lineBreaker;
     bool m_lineHasIntrusiveFloat { false };
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };

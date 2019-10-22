@@ -35,27 +35,31 @@
 namespace WebCore {
 namespace Layout {
 
-LineBreaker::BreakingContext LineBreaker::breakingContext(const InlineItem& inlineItem, LayoutUnit logicalWidth, const LineContext& lineContext)
+LineBreaker::BreakingBehavior LineBreaker::breakingContext(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     // First content always stays on line.
-    if (lineContext.isEmpty || logicalWidth <= lineContext.availableWidth)
-        return { BreakingBehavior::Keep, isAtBreakingOpportunity(inlineItem) };
+    if (lineIsEmpty || logicalWidth <= availableWidth)
+        return BreakingBehavior::Keep;
 
-    if (inlineItem.isHardLineBreak())
-        return { BreakingBehavior::Keep, isAtBreakingOpportunity(inlineItem) };
-
+    // FIXME: Look inside the list to find out whether it requires text content related line breaking (e.g <span>text</span> <- the first inline item here is a 'container start' but the content is text only).
+    auto& inlineItem = runs.first().inlineItem;
     if (is<InlineTextItem>(inlineItem))
-        return { wordBreakingBehavior(downcast<InlineTextItem>(inlineItem), lineContext.isEmpty), isAtBreakingOpportunity(inlineItem) };
+        return wordBreakingBehavior(runs, lineIsEmpty);
 
-    // Wrap non-text boxes to the next line unless we can trim trailing whitespace.
-    auto availableWidth = lineContext.availableWidth + lineContext.trimmableWidth;
-    if (logicalWidth <= availableWidth)
-        return { BreakingBehavior::Keep, isAtBreakingOpportunity(inlineItem) };
-    return { BreakingBehavior::Wrap, isAtBreakingOpportunity(inlineItem) };
+    return BreakingBehavior::Wrap;
 }
 
-LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const InlineTextItem& inlineItem, bool lineIsEmpty) const
+LineBreaker::BreakingBehavior LineBreaker::breakingContextForFloat(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
+    return (lineIsEmpty || floatLogicalWidth <= availableWidth) ? BreakingBehavior::Keep : BreakingBehavior::Wrap;
+}
+
+LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, bool lineIsEmpty) const
+{
+    // FIXME: Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
+    // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
+    auto& inlineItem = downcast<InlineTextItem>(runs.first().inlineItem);
+
     // Word breaking behaviour:
     // 1. Whitesapce collapse on -> push whitespace to next line.
     // 2. Whitespace collapse off -> whitespace is split where possible.
@@ -84,16 +88,6 @@ LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const InlineText
 
     // Non-breakable non-whitespace run.
     return lineIsEmpty ? BreakingBehavior::Keep : BreakingBehavior::Wrap;
-}
-
-bool LineBreaker::isAtBreakingOpportunity(const InlineItem& inlineItem)
-{
-    if (inlineItem.isHardLineBreak())
-        return true;
-
-    if (is<InlineTextItem>(inlineItem))
-        return downcast<InlineTextItem>(inlineItem).isWhitespace();
-    return !inlineItem.isFloat() && !inlineItem.isContainerStart() && !inlineItem.isContainerEnd();
 }
 
 }

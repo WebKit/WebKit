@@ -1,3 +1,57 @@
+2019-10-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for continuous content/commit boundary check
+        https://bugs.webkit.org/show_bug.cgi?id=203255
+        <rdar://problem/56503598>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for continuous content and commit boundary check.
+        
+        <span style="padding-right: 10px;">textcontent</span>
+
+        The content above forms a continuous, unbreakable run of ([container start][textcontent][container end with horizontal padding of 10px]).
+        However at this point we don't know yet whether we are at the end of the run and we need to keep checking for the trailing content.
+        In general, we can't submit the run to the line breaking unless we managed to find the commit boundary for the current run.
+
+        <span style="padding-right: 10px;">textcontent</span><img src="broken.jpg">
+            This content produces two separate runs as follows:
+            1. ([container start][textcontent][container end with horizontal padding of 10px])
+            2. ([img])
+        vs.
+        <span style="padding-right: 10px;">textcontent</span>moretextcontent
+            This content produces only one run
+            1. ([container start][textcontent][container end with horizontal padding of 10px][moretextcontent])
+
+        The idea here is that we don't commit the content on the line unless we identified the run boundary. In practice it means that we hardly commit the current inline item on the line
+        but instead we use it to decide whether the uncommitted content is ready to be committed.
+
+        Using the following example:        
+        <span style="padding-right: 10px;">textcontent<img src="broken.jpg"></span>
+        
+        Incoming inline items are:
+         [container start] -> we can't identify the run boundary -> add inline item to pending content
+         [textcontent] -> we still can't identify the run boundary sine we don't know what the next inline item is -> add inline item to pending content
+         [img] -> now we know that the [container start][textcontent] is on a commit boundary -> commit pending content -> however the current [img] item's boundary is unknown.
+         [container end with horizontal padding of 10px] -> Now the [img] and [container end] form an unbreakable run but we don't yet know if this is a run boundary
+         - End of content -> always a commit boundary -> commit pending items -> ([img][container end])  
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContext):
+        (WebCore::Layout::LineBreaker::breakingContextForFloat):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::isAtBreakingOpportunity): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::LineLayout::layout):
+        (WebCore::Layout::LineLayout::close):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::LineLayout::processUncommittedContent):
+        (WebCore::Layout::LineLayout::shouldProcessUncommittedContent const):
+        * layout/inlineformatting/InlineLineLayout.h:
+        (WebCore::Layout::LineLayout::UncommittedContent::runs):
+        (WebCore::Layout::LineLayout::UncommittedContent::runs const):
+
 2019-10-22  Dean Jackson  <dino@apple.com>
 
         WebCoreDecompressionSession needs padding on all platforms to avoid link warnings

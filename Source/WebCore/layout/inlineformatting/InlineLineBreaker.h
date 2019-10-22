@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineLineLayout.h"
 #include "LayoutUnit.h"
 
 namespace WebCore {
@@ -38,23 +39,12 @@ class InlineTextItem;
 class LineBreaker {
 public:
     enum class BreakingBehavior { Keep, Split, Wrap };
-    struct BreakingContext {
-        BreakingBehavior breakingBehavior;
-        bool isAtBreakingOpportunity { false };
-    };
-    struct LineContext {
-        LayoutUnit availableWidth;
-        LayoutUnit logicalLeft;
-        LayoutUnit trimmableWidth;
-        bool isEmpty { false };
-    };
-    BreakingContext breakingContext(const InlineItem&, LayoutUnit logicalWidth, const LineContext&);
+    BreakingBehavior breakingContext(const Vector<LineLayout::Run>&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    BreakingBehavior breakingContextForFloat(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
 
-    BreakingBehavior wordBreakingBehavior(const InlineTextItem&, bool lineIsEmpty) const;
-    bool isAtBreakingOpportunity(const InlineItem&);
-
+    BreakingBehavior wordBreakingBehavior(const Vector<LineLayout::Run>&, bool lineIsEmpty) const;
     bool m_hyphenationIsDisabled { true };
 };
 
