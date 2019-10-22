@@ -934,8 +934,9 @@ webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Pass F
 webkit.org/b/154390 http/tests/media/video-redirect.html [ Timeout Pass ]
 webkit.org/b/154390 http/tests/media/hls/video-controller-getStartDate.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Timeout Failure ]
-webkit.org/b/154390 [ Release ] http/tests/media/hls/hls-video-resize.html [ Timeout Failure ]
 webkit.org/b/154390 http/tests/security/local-video-source-from-remote.html [ Timeout Pass ]
+
+webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 
 webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]

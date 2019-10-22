@@ -1,3 +1,46 @@
+2019-10-22  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Skip http/tests/media/hls/hls-video-resize.html
+        https://bugs.webkit.org/show_bug.cgi?id=199617
+
+        Unreviewed gardening.
+
+        Generally speaking, the HTML spec says that HAVE_METADATA => video
+        dimensions are available. Only when the state is < HAVE_METADATA
+        is it specified that "If the element's readyState attribute is
+        HAVE_NOTHING, then the [width, height] attributes must return 0."
+
+        However, there is a provision mentioned implicitly that the UA can
+        be in HAVE_METADATA and have received no video data. "When no
+        video data is available (the element's readyState attribute is
+        either HAVE_NOTHING, or HAVE_METADATA but no video data has yet
+        been obtained at all..."
+
+        The two definitions of the HAVE_METADATA both state that
+        dimensions should be available though,
+
+        Defn 1.  "Enough of the resource has been obtained that the
+        duration of the resource is available. In the case of a video
+        element, the dimensions of the video are also available. No media
+        data is available for the immediate current playback position."
+
+        Defn 2.  "The user agent has just determined the duration and
+        dimensions of the media resource and the text tracks are ready."
+
+        And yet there's one more mention of transitioning to this state
+        that suggests the UA only needs to know the duration of the media:
+        "The user agent must determine the duration of the media resource
+        before playing any part of the media data and before setting
+        readyState to a value equal to or greater than HAVE_METADATA, even
+        if doing so requires fetching multiple parts of the resource."
+
+        So, it seems more like the spec itself it unclear, and the test
+        was added to check the Apple ports' specific HLS behaviour.
+
+        * platform/gtk/TestExpectations: Skip this test, since it relies
+        on behaviour that does not seem to be standard, but rather quite
+        specific to how the Apple HLS player works.
+
 2019-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] Remove the 'viewTarget' property of SVGViewElement
