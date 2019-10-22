@@ -1,5 +1,18 @@
 2019-10-22  youenn fablet  <youenn@apple.com>
 
+        Carriage return character sometimes missing in SDP c-line
+        https://bugs.webkit.org/show_bug.cgi?id=203190
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::filterSDP const):
+        Add missing\r when filterig the c line.
+
+2019-10-22  youenn fablet  <youenn@apple.com>
+
         Remove mayHaveServiceWorkerRegisteredForOrigin
         https://bugs.webkit.org/show_bug.cgi?id=203055
 

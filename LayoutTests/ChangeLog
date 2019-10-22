@@ -1,3 +1,12 @@
+2019-10-22  youenn fablet  <youenn@apple.com>
+
+        Carriage return character sometimes missing in SDP c-line
+        https://bugs.webkit.org/show_bug.cgi?id=203190
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/filter-ice-candidate.html:
+
 2019-10-22  Russell Epstein  <repstein@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure
