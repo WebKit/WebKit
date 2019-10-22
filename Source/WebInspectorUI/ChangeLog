@@ -1,5 +1,15 @@
 2019-10-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: content of function definition popover sometimes cut off
+        https://bugs.webkit.org/show_bug.cgi?id=203258
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+
+2019-10-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: Sources: when editing style sheets, the content is sometimes suddenly replaced with the original content of the resource
         https://bugs.webkit.org/show_bug.cgi?id=203235
 

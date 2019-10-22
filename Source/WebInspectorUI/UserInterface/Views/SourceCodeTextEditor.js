@@ -1906,6 +1906,11 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 this._showPopover(content);
                 codeMirror.setValue(formattedText || data.description);
                 this._popover.update();
+
+                // CodeMirror needs a refresh after the popover displays, to layout, otherwise it may appear with the wrong size.
+                setTimeout(() => {
+                    codeMirror.refresh();
+                });
             });
         }
 
