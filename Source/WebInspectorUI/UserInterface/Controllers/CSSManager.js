@@ -465,7 +465,9 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (styleSheet.isInlineStyleAttributeStyleSheet())
             return;
 
-        styleSheet.noteContentDidChange();
+        if (!styleSheet.noteContentDidChange())
+            return;
+
         this._updateResourceContent(styleSheet);
     }
 

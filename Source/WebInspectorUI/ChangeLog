@@ -1,3 +1,25 @@
+2019-10-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: Sources: when editing style sheets, the content is sometimes suddenly replaced with the original content of the resource
+        https://bugs.webkit.org/show_bug.cgi?id=203235
+
+        Reviewed by Timothy Hatcher.
+
+        Each `WI.CSSStyleSheet` manages it's own state about when it should ignore events from the
+        backend telling it that it was modified, such as if the frontend caused the update. In these
+        cases, the `WI.CSSStyleSheet` itself was early-returning, but the `WI.CSSManager` wasn't,
+        meaning that the `WI.CSSManager` would then override the content even though the specific
+        `WI.CSSStyleSheet` knows that its content shouldn't update. To compound this issue, the
+        `WI.CSSManager` updates any `WI.CSSStyleSheet` using a `Throttler`, so any updates would be
+        further delayed (first by the protocol travel time) by this, leading to the timing based
+        intermittent issue. `WI.CSSStyleSheet` already exposes when it should be updated or not via
+        `WI.CSSStyleSheet.prototype.noteContentDidChange`. Rather than have `WI.CSSManager` just
+        call that function, it should examine the returned boolean to see if it should continue to
+        process the update, or if the `WI.CSSStyleSheet` knows that it should be ignored.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.styleSheetChanged):
+
 2019-10-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r251227): Uncaught Exception: undefined is not an object (evaluating 'agent.enable')
