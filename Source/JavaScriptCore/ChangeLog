@@ -1,5 +1,62 @@
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r251226: Causes a build speed regression.
+        https://bugs.webkit.org/show_bug.cgi?id=203219
+
+        Not reviewed.
+
+        Apparently, compilers aren't very fast at compiling constexpr function invocations.
+        Rolling this out while I rework the patch to not have this build speed regression.
+
+        * API/glib/JSCOptions.cpp:
+        (jscOptionsSetValue):
+        (jscOptionsGetValue):
+        (jsc_options_foreach):
+        (jsc_options_get_option_group):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSCConfig.h:
+        * runtime/OptionEntry.h: Copied from Source/JavaScriptCore/runtime/OptionEntry.h.
+        * runtime/Options.cpp:
+        (JSC::Options::isAvailable):
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::scaleJITPolicy):
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpOption):
+        (JSC::Option::dump const):
+        (JSC::Option::operator== const):
+        (JSC::optionTypeSpecificIndex): Deleted.
+        (JSC::Option::Option): Deleted.
+        (JSC::Option::defaultOption const): Deleted.
+        * runtime/Options.h:
+        (JSC::Option::Option):
+        (JSC::Option::id const):
+        (JSC::Option::name const):
+        (JSC::Option::description const):
+        (JSC::Option::type const):
+        (JSC::Option::availability const):
+        (JSC::Option::isOverridden const):
+        (JSC::Option::defaultOption const):
+        (JSC::Option::boolVal):
+        (JSC::Option::unsignedVal):
+        (JSC::Option::doubleVal):
+        (JSC::Option::int32Val):
+        (JSC::Option::optionRangeVal):
+        (JSC::Option::optionStringVal):
+        (JSC::Option::gcLogLevelVal):
+        (JSC::Option::idIndex const): Deleted.
+        (JSC::optionTypeSpecificIndex): Deleted.
+        * runtime/OptionsList.h:
+        (JSC::OptionRange::operator= ): Deleted.
+        (JSC::OptionRange::rangeString const): Deleted.
+        (JSC::countNumberOfJSCOptionsOfType): Deleted.
+
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
         Fix issues when setting public length on ArrayWithContiguous type butterflies.
         https://bugs.webkit.org/show_bug.cgi?id=203211
         <rdar://problem/56476097>
