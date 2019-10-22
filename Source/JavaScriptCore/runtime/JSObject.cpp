@@ -891,9 +891,10 @@ bool JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
         Butterfly* butterfly = thisObject->butterfly();
         if (propertyName >= butterfly->vectorLength())
             break;
-        butterfly->contiguous().at(thisObject, propertyName).set(vm, thisObject, value);
+        butterfly->contiguous().at(thisObject, propertyName).setWithoutWriteBarrier(value);
         if (propertyName >= butterfly->publicLength())
             butterfly->setPublicLength(propertyName + 1);
+        vm.heap.writeBarrier(thisObject, value);
         return true;
     }
         
@@ -3429,6 +3430,7 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
     ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
     ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
     ASSERT(m_butterfly->vectorLength() > length);
+    ASSERT(m_butterfly->publicLength() >= length);
     ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure(vm)));
 
     DeferGC deferGC(vm.heap);

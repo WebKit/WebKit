@@ -894,7 +894,8 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startInde
 
     Butterfly* butterfly = this->butterfly();
     
-    switch (indexingType()) {
+    auto indexingType = this->indexingType();
+    switch (indexingType) {
     case ArrayClass:
         return true;
         
@@ -934,13 +935,14 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startInde
 
         for (unsigned i = end; i < oldLength; ++i)
             butterfly->contiguous().at(this, i).clear();
-        
+
         butterfly->setPublicLength(oldLength - count);
 
         // Our memmoving of values around in the array could have concealed some of them from
         // the collector. Let's make sure that the collector scans this object again.
-        vm.heap.writeBarrier(this);
-        
+        if (indexingType == ArrayWithContiguous)
+            vm.heap.writeBarrier(this);
+
         return true;
     }
         

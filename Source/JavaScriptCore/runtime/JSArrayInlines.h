@@ -157,8 +157,9 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguous().at(this, length).set(vm, this, value);
+            butterfly->contiguous().at(this, length).setWithoutWriteBarrier(value);
             butterfly->setPublicLength(length + 1);
+            vm.heap.writeBarrier(this, value);
             return;
         }
 

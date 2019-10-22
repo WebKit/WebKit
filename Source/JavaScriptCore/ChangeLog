@@ -1,3 +1,33 @@
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix issues when setting public length on ArrayWithContiguous type butterflies.
+        https://bugs.webkit.org/show_bug.cgi?id=203211
+        <rdar://problem/56476097>
+
+        Reviewed by Keith Miller and Saam Barati.
+
+        For ArrayWithContiguous type butterflies, SlotVisitor scans up to the public
+        length of the butterfly.  When setting a new public length, if the new public
+        length is greater than the current, we should always writeBarrier after the
+        setting of the new public length.  Otherwise, there can be a race where the GC
+        scans the butterfly after new values have been written to it but before the
+        public length as been updated.  As a result, the new values never get scanned.
+
+        For the DFG and FTL, the StoreBarrierInsertionPhase is responsible for inserting
+        the writeBarriers after the node.  Hence, the writeBarrier is guaranteed to be
+        after the publicLength has been updated.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setIndexQuickly):
+
 2019-10-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: make ObjC protocol dispatcher commands optional and add `respondsToSelector` checks to allow other inspector clients to choose what they implement
