@@ -1,5 +1,20 @@
 2019-10-22  youenn fablet  <youenn@apple.com>
 
+        ServiceWorkerFetchTask can use the NetworkConnectionToWebProcess sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=202208
+
+        Reviewed by Alex Christensen.
+
+        No need to store the sessionID in ServiceWorkerFetchTask since we can get it from its loader.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+
+2019-10-22  youenn fablet  <youenn@apple.com>
+
         Remove the ability to fallback to custom scheme handlers after a service worker did not handle the load
         https://bugs.webkit.org/show_bug.cgi?id=203239
 
