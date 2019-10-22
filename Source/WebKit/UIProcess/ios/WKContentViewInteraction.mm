@@ -146,10 +146,6 @@
 #import <WebKitAdditions/WKPlatformFileUploadPanel.mm>
 #endif
 
-#if HAVE(PENCILKIT_ADDITIONS)
-#import <WebKitAdditions/WebKitPencilAdditions.h>
-#endif
-
 #if ENABLE(POINTER_EVENTS)
 #import "RemoteScrollingCoordinatorProxy.h"
 #import <WebCore/TouchAction.h>
@@ -800,10 +796,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self setupDragAndDropInteractions];
 #endif
 
-#if HAVE(PENCILKIT_ADDITIONS)
-    [self setupPencilInteraction];
-#endif
-
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
     [_twoFingerSingleTapGestureRecognizer setAllowableMovement:60];
     [_twoFingerSingleTapGestureRecognizer _setAllowableSeparation:150];
@@ -955,10 +947,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(DATA_INTERACTION)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
-#endif
-
-#if HAVE(PENCILKIT_ADDITIONS)
-    [self cleanupPencilInteraction];
 #endif
 
     _inspectorNodeSearchEnabled = NO;
