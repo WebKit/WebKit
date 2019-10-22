@@ -1,5 +1,16 @@
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
+        Fix missing exception check in JSON Stringifier.
+        https://bugs.webkit.org/show_bug.cgi?id=203227
+        <rdar://problem/56459854>
+
+        Reviewed by Keith Miller.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+
+2019-10-21  Mark Lam  <mark.lam@apple.com>
+
         Rolling out r251226: Causes a build speed regression.
         https://bugs.webkit.org/show_bug.cgi?id=203219
 

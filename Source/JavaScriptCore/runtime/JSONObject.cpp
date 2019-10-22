@@ -237,7 +237,9 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
             RETURN_IF_EXCEPTION(scope, );
             if (isArrayReplacer) {
                 m_usingArrayReplacer = true;
-                unsigned length = replacerObject->get(exec, vm.propertyNames->length).toUInt32(exec);
+                JSValue lengthValue = replacerObject->get(exec, vm.propertyNames->length);
+                RETURN_IF_EXCEPTION(scope, );
+                unsigned length = lengthValue.toUInt32(exec);
                 RETURN_IF_EXCEPTION(scope, );
                 for (unsigned i = 0; i < length; ++i) {
                     JSValue name = replacerObject->get(exec, i);
