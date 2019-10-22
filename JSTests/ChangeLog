@@ -1,3 +1,14 @@
+2019-10-21  Saam Barati  <sbarati@apple.com>
+
+        ValuePow's constant folding rule differs from what the runtime does
+        https://bugs.webkit.org/show_bug.cgi?id=203220
+        <rdar://problem/56181441>
+
+        Reviewed by Yusuke Suzuki.
+
+        * value-pow-ai-rule-should-box-the-same-way-as-the-runtime.js: Added.
+        (foo):
+
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in JSON Stringifier.

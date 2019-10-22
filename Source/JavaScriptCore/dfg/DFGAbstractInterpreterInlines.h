@@ -939,7 +939,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // when node->useKind is UntypedUse. In the case of BigIntUse, children will be
             // cleared by `AbstractInterpreter::executeEffects`.
             didFoldClobberWorld();
-            setConstant(node, jsDoubleNumber(operationMathPow(childX.asNumber(), childY.asNumber())));
+            // Our boxing scheme here matches what we do in operationValuePow.
+            setConstant(node, jsNumber(operationMathPow(childX.asNumber(), childY.asNumber())));
             break;
         }
 

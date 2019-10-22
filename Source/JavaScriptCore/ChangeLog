@@ -1,3 +1,18 @@
+2019-10-21  Saam Barati  <sbarati@apple.com>
+
+        ValuePow's constant folding rule differs from what the runtime does
+        https://bugs.webkit.org/show_bug.cgi?id=203220
+        <rdar://problem/56181441>
+
+        Reviewed by Yusuke Suzuki.
+
+        The constant folding rule for ValuePow was boxing the result using jsDoubleNumber,
+        where the runtime function was boxing the result using jsNumber. This patch makes
+        it so that constant folding agrees with what the runtime is doing.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-10-21  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in JSON Stringifier.
