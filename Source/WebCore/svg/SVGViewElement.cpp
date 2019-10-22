@@ -37,11 +37,6 @@ inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& do
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
-    
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        PropertyRegistry::registerProperty<SVGNames::viewTargetAttr, &SVGViewElement::m_viewTarget>();
-    });
 }
 
 Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
@@ -51,11 +46,6 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
 
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == SVGNames::viewTargetAttr) {
-        m_viewTarget->reset(value);
-        return;
-    }
-
     SVGElement::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
     SVGZoomAndPan::parseAttribute(name, value);

@@ -1,3 +1,13 @@
+2019-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Remove the 'viewTarget' property of SVGViewElement
+        https://bugs.webkit.org/show_bug.cgi?id=203217
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGViewElement-viewTarget-expected.txt: Removed.
+        * svg/dom/SVGViewElement-viewTarget.html: Removed.
+
 2019-10-22  Charlie Turner  <cturner@igalia.com>
 
         media/W3C/video/networkState/networkState_during_progress.html is flaky

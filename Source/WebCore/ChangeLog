@@ -1,3 +1,19 @@
+2019-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Remove the 'viewTarget' property of SVGViewElement
+        https://bugs.webkit.org/show_bug.cgi?id=203217
+
+        Reviewed by Simon Fraser.
+
+        The interface of SVGViewElement is defined here:
+            https://www.w3.org/TR/SVG2/linking.html#InterfaceSVGViewElement.
+
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        * svg/SVGViewElement.idl:
+
 2019-10-22  Charlie Turner  <cturner@igalia.com>
 
         media/W3C/video/networkState/networkState_during_progress.html is flaky

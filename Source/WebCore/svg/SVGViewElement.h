@@ -37,8 +37,6 @@ public:
     using SVGElement::ref;
     using SVGElement::deref;
 
-    Ref<SVGStringList> viewTarget() { return m_viewTarget.copyRef(); }
-
     const SVGSVGElement* targetElement() const { return m_targetElement.get(); }
     void setTargetElement(const SVGSVGElement& targetElement) { m_targetElement = makeWeakPtr(targetElement); }
     void resetTargetElement() { m_targetElement = nullptr; }
@@ -55,7 +53,6 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     PropertyRegistry m_propertyRegistry { *this };
-    Ref<SVGStringList> m_viewTarget { SVGStringList::create(this) };
     WeakPtr<SVGSVGElement> m_targetElement { nullptr };
 };
 

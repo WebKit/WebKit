@@ -35,7 +35,7 @@ FAIL SVGSVGElement.prototype.screenPixelToMillimeterX must be removed assert_fal
 FAIL SVGSVGElement.prototype.screenPixelToMillimeterY must be removed assert_false: expected false got true
 FAIL SVGSVGElement.prototype.useCurrentView must be removed assert_false: expected false got true
 FAIL SVGSVGElement.prototype.viewport must be removed assert_false: expected false got true
-FAIL SVGViewElement.prototype.viewTarget must be removed assert_false: expected false got true
+PASS SVGViewElement.prototype.viewTarget must be removed 
 PASS SVGPathElement.prototype.getPointAtLength must be moved to SVGGeometryElement.prototype 
 PASS SVGPathElement.prototype.getTotalLength must be moved to SVGGeometryElement.prototype 
 PASS SVGPathElement.prototype.pathLength must be moved to SVGGeometryElement.prototype 

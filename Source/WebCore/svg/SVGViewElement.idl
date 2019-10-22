@@ -24,7 +24,6 @@
  */
 
 interface SVGViewElement : SVGElement {
-    [SameObject] readonly attribute SVGStringList viewTarget;
 };
 
 SVGViewElement implements SVGFitToViewBox;
