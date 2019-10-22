@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // This program attempts to relatively rare OSR exits due to mispredictions
 // on the value of a local variable, where the basic block in which the local
 // is assigned the offending value is different than the basic block in which

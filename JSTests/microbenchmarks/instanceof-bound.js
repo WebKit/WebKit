@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // This tests that we do not constantly OSR on instanceof where the RHS is a bound function.
 // While this bound functions are unlikely to be passed to instanceof often C-API users use
 // the same method of overriding instanceof expressions.

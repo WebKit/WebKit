@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 //@ runNoFTL
 
 // Tests the performance of completely polymorphic strict equality.

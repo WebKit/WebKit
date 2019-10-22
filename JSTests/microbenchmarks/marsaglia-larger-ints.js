@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function uint(x) {
     if (x < 0)
         return x + 4294967296;

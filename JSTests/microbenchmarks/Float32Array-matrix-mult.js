@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function makeEmptyMatrix(rows, columns)
 {
     var result = new Array(rows);

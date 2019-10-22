@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 var thing0 = 0;
 var thing1 = 1;
 var thing2 = 2;

@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function foo(a, b) {
     var c = (a + b) / 2;
     var d = a - b;

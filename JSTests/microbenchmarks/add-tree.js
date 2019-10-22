@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 for (var i = 0; i < 20000000; ++i) {
     var result = i + 1;
     result += i + 2;

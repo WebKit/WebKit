@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function foo() {
     // If the structure check hoister is overzealous, it will hoist the structure check of
     // S3 up to the assignment of o, where the structure is actually S1. Doing so will cause

@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 const run = new Function("init", "num", `
 const calc = val => {
     let c = 0;

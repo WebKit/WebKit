@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" or $model == "Apple Watch Series 4" # added by mark-jsc-stress-test.py
 let glob = 0
 
 function doTest(number) {

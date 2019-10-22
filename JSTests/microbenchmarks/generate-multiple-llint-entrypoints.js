@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function assert(a, e) {
     if (a !== e)
         throw new Error("Expected: " + e + " but got: " + a);

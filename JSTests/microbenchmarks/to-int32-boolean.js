@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Tests that toInt32 conversion on a boolean does not trigger us to take
 // an unconditional OSR exit.
 

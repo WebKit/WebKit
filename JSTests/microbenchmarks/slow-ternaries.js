@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 var asmMod = function test (glob, env, b) {
   'use asm';
   const i8 = new glob.Int8Array(b);

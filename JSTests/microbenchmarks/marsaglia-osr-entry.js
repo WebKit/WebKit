@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // This is a great test for checking if OSR entry works at all. It's great for debugging
 // fundamental OSR entry bugs.
 

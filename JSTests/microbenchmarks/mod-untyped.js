@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 let assert = {
     sameValue: function(i, e, m) {
         if (i !== e)

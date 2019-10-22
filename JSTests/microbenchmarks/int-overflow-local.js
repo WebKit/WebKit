@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // This tests that we can correctly infer that a local variable is only
 // used as an integer even if its uses are not in the same basic block as
 // where it is defined.

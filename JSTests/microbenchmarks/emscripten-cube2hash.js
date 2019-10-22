@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Note: For maximum-speed code, see "Optimizing Code" on the Emscripten wiki, https://github.com/kripken/emscripten/wiki/Optimizing-Code
 // Note: Some Emscripten settings may limit the speed of the generated code.
 // The Module object: Our interface to the outside world. We import
@@ -3525,13 +3526,13 @@ function copyTempDouble(ptr) {
           }
           // check if SDL is available
           if (typeof SDL != "undefined") {
-          	Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
-          	Browser.mouseY = SDL.mouseY + Browser.mouseMovementY;
+            Browser.mouseX = SDL.mouseX + Browser.mouseMovementX;
+            Browser.mouseY = SDL.mouseY + Browser.mouseMovementY;
           } else {
-          	// just add the mouse delta to the current absolut mouse position
-          	// FIXME: ideally this should be clamped against the canvas size and zero
-          	Browser.mouseX += Browser.mouseMovementX;
-          	Browser.mouseY += Browser.mouseMovementY;
+            // just add the mouse delta to the current absolut mouse position
+            // FIXME: ideally this should be clamped against the canvas size and zero
+            Browser.mouseX += Browser.mouseMovementX;
+            Browser.mouseY += Browser.mouseMovementY;
           }        
         } else {
           // Otherwise, calculate the movement based on the changes
@@ -3595,9 +3596,9 @@ function copyTempDouble(ptr) {
         canvas.height = screen.height;
         // check if SDL is available   
         if (typeof SDL != "undefined") {
-        	var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
-        	flags = flags | 0x00800000; // set SDL_FULLSCREEN flag
-        	HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
+            var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
+            flags = flags | 0x00800000; // set SDL_FULLSCREEN flag
+            HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
         }
         Browser.updateResizeListeners();
       },setWindowedCanvasSize:function () {
@@ -3606,9 +3607,9 @@ function copyTempDouble(ptr) {
         canvas.height = this.windowedHeight;
         // check if SDL is available       
         if (typeof SDL != "undefined") {
-        	var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
-        	flags = flags & ~0x00800000; // clear SDL_FULLSCREEN flag
-        	HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
+            var flags = HEAPU32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)];
+            flags = flags & ~0x00800000; // clear SDL_FULLSCREEN flag
+            HEAP32[((SDL.screen+Runtime.QUANTUM_SIZE*0)>>2)]=flags
         }
         Browser.updateResizeListeners();
       }};
@@ -8112,7 +8113,7 @@ var i64Math = (function() { // Emscripten wrapper
     }
     if(r == null) r = nbi();
     var y = nbi(), ts = this.s, ms = m.s;
-    var nsh = this.DB-nbits(pm[pm.t-1]);	// normalize modulus
+    var nsh = this.DB-nbits(pm[pm.t-1]);    // normalize modulus
     if(nsh > 0) { pm.lShiftTo(nsh,y); pt.lShiftTo(nsh,r); }
     else { pm.copyTo(y); pt.copyTo(r); }
     var ys = y.t;
@@ -8127,12 +8128,12 @@ var i64Math = (function() { // Emscripten wrapper
       r.subTo(t,r);
     }
     BigInteger.ONE.dlShiftTo(ys,t);
-    t.subTo(y,y);	// "negative" y so we can replace sub with am later
+    t.subTo(y,y);    // "negative" y so we can replace sub with am later
     while(y.t < ys) y[y.t++] = 0;
     while(--j >= 0) {
       // Estimate quotient digit
       var qd = (r[--i]==y0)?this.DM:Math.floor(r[i]*d1+(r[i-1]+e)*d2);
-      if((r[i]+=y.am(0,qd,r,j,0,ys)) < qd) {	// Try it out
+      if((r[i]+=y.am(0,qd,r,j,0,ys)) < qd) {    // Try it out
         y.dlShiftTo(j,t);
         r.subTo(t,r);
         while(r[i] < --qd) r.subTo(t,r);
@@ -8144,7 +8145,7 @@ var i64Math = (function() { // Emscripten wrapper
     }
     r.t = ys;
     r.clamp();
-    if(nsh > 0) r.rShiftTo(nsh,r);	// Denormalize remainder
+    if(nsh > 0) r.rShiftTo(nsh,r);    // Denormalize remainder
     if(ts < 0) BigInteger.ZERO.subTo(r,r);
   }
   // (public) this mod a
@@ -8183,13 +8184,13 @@ var i64Math = (function() { // Emscripten wrapper
     if(this.t < 1) return 0;
     var x = this[0];
     if((x&1) == 0) return 0;
-    var y = x&3;		// y == 1/x mod 2^2
-    y = (y*(2-(x&0xf)*y))&0xf;	// y == 1/x mod 2^4
-    y = (y*(2-(x&0xff)*y))&0xff;	// y == 1/x mod 2^8
-    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff;	// y == 1/x mod 2^16
+    var y = x&3;        // y == 1/x mod 2^2
+    y = (y*(2-(x&0xf)*y))&0xf;    // y == 1/x mod 2^4
+    y = (y*(2-(x&0xff)*y))&0xff;    // y == 1/x mod 2^8
+    y = (y*(2-(((x&0xffff)*y)&0xffff)))&0xffff;    // y == 1/x mod 2^16
     // last step - calculate inverse mod DV directly;
     // assumes 16 < DB <= 32 and assumes ability to handle 48-bit ints
-    y = (y*(2-x*y%this.DV))%this.DV;		// y == 1/x mod 2^dbits
+    y = (y*(2-x*y%this.DV))%this.DV;        // y == 1/x mod 2^dbits
     // we really want the negative inverse, and -DV < y < DV
     return (y>0)?this.DV-y:-y;
   }
@@ -8219,7 +8220,7 @@ var i64Math = (function() { // Emscripten wrapper
   }
   // x = x/R mod m (HAC 14.32)
   function montReduce(x) {
-    while(x.t <= this.mt2)	// pad x so am has enough room later
+    while(x.t <= this.mt2)    // pad x so am has enough room later
       x[x.t++] = 0;
     for(var i = 0; i < this.m.t; ++i) {
       // faster way of calculating u0 = x[i]*mp mod DV

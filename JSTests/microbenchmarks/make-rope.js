@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function makeRope(str1, str2, str3)
 {
     return str1 + str2 + str3;

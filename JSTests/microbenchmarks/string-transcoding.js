@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function decodeUTF8(array) {
     var string = "";
     for (var i = 0; i < array.length; ++i)

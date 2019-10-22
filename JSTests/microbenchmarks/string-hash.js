@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Test the performance of integer multiplication by implementing a 16-bit
 // string hash.
 

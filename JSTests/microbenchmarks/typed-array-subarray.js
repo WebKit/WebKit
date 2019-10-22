@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 noInline(Float32Array.prototype.subarray);
 function createManySubs(howMany, a, b, c, d) {
     var storage = new Float32Array(howMany * 4);

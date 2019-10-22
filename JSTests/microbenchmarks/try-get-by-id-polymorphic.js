@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Test tryGetById's value profiling feedback after it's too polymorphic.
 
 var createBuiltin = $vm.createBuiltin;

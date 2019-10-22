@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Test the performance of Int8Array by implementing Adler32.
 
 function adler32(array)

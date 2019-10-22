@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright (C) 2013 Apple Inc. All rights reserved.
 //

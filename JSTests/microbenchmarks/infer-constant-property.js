@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 var o = {f:{f:{f:{f:{f:{f:{f:42}}}}}}};
 (function() {
     var n = 1000000;

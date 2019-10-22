@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 function bar(a, b, c, d, e, f) { }
 noInline(bar);
 function foo(a, b, ...args) {

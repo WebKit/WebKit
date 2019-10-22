@@ -1,9 +1,10 @@
+//@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 //@ runNoFTL
 var result = 0;
 function func() {
     function C() { 
         this.m = function () {
-        	result ^= result * 3 + 5 + (result << 3);
+            result ^= result * 3 + 5 + (result << 3);
         };
     };
     var a=[];
@@ -15,9 +16,9 @@ function func() {
         a[i].m();
 }
 try {
-	func();
+    func();
 } catch(e) {
 
 }
 if (result != 1561806289)
-	throw "Expected 1561806289 but got " + result
+    throw "Expected 1561806289 but got " + result
