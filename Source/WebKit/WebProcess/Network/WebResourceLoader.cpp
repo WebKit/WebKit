@@ -242,22 +242,7 @@ void WebResourceLoader::serviceWorkerDidNotHandle()
 #if ENABLE(SERVICE_WORKER)
     RELEASE_LOG_IF_ALLOWED("serviceWorkerDidNotHandle: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
 
-    if (m_coreLoader->options().serviceWorkersMode != ServiceWorkersMode::Only) {
-        auto* webFrameLoaderClient = toWebFrameLoaderClient(m_coreLoader->frameLoader()->client());
-        auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-        auto* webPage = webFrame ? webFrame->page() : nullptr;
-
-        if (auto* handler = webPage->urlSchemeHandlerForScheme(m_coreLoader->request().url().protocol().toStringWithoutCopying())) {
-            RELEASE_LOG_IF_ALLOWED("resource loaded by URL scheme handler: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);
-
-            auto loader = m_coreLoader;
-            WebProcess::singleton().webLoaderStrategy().remove(m_coreLoader.get());
-
-            handler->startNewTask(*loader);
-            return;
-        }
-    }
-
+    ASSERT(m_coreLoader->options().serviceWorkersMode == ServiceWorkersMode::Only);
     auto error = internalError(m_coreLoader->request().url());
     error.setType(ResourceError::Type::Cancellation);
     m_coreLoader->didFail(error);

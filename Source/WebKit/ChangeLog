@@ -1,3 +1,19 @@
+2019-10-22  youenn fablet  <youenn@apple.com>
+
+        Remove the ability to fallback to custom scheme handlers after a service worker did not handle the load
+        https://bugs.webkit.org/show_bug.cgi?id=203239
+
+        Reviewed by Alex Christensen.
+
+        We remove the ability for service workers to intercept custom scheme handlers.
+        We can then remove the ability for loads that are not handled by service workers to go through custom scheme handlers.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::serviceWorkerDidNotHandle):
+
 2019-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.27.2 release

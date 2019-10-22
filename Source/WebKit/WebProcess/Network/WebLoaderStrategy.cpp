@@ -214,17 +214,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-    auto url = resourceLoader.request().url();
-    auto* data = url.string().utf8().data();
-    if (data)
-        url.string();
-
-    bool canbeLoadedThroughServiceWorkers = resourceLoader.options().serviceWorkersMode != ServiceWorkersMode::None && (resourceLoader.options().serviceWorkerRegistrationIdentifier || resourceLoader.options().mode == FetchOptions::Mode::Navigate);
-    if (canbeLoadedThroughServiceWorkers || !tryLoadingUsingURLSchemeHandler(resourceLoader)) {
-#else
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader)) {
-#endif
         RELEASE_LOG_IF_ALLOWED("scheduleLoad: URL will be scheduled with the NetworkProcess (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), trackingParameters.pageID.toUInt64(), trackingParameters.frameID.toUInt64(), identifier);
         scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
         return;
@@ -251,10 +241,6 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
 {
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
-    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    auto* webPage = webFrame ? webFrame->page() : nullptr;
-
     ResourceLoadIdentifier identifier = resourceLoader.identifier();
     ASSERT(identifier);
 
@@ -287,12 +273,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.isHTTPSUpgradeEnabled = resourceLoader.frame() ? resourceLoader.frame()->settings().HTTPSUpgradeEnabled() : false;
 
 #if ENABLE(SERVICE_WORKER)
-    // In case of URL scheme handler, we will try to load on service workers and if unhandled, fallback to URL scheme handler.
-    if (webPage && webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying()))
-        loadParameters.serviceWorkersMode = ServiceWorkersMode::Only;
-    else
-        loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
-
+    loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;
     loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
 #endif
