@@ -265,6 +265,21 @@ void WorkerThread::runEventLoop()
     m_runLoop.run(m_workerGlobalScope.get());
 }
 
+void WorkerThread::suspend()
+{
+    m_isSuspended = true;
+    runLoop().postTask([&](ScriptExecutionContext&) {
+        m_suspensionSemaphore.wait();
+    });
+}
+
+void WorkerThread::resume()
+{
+    ASSERT(m_isSuspended);
+    m_isSuspended = false;
+    m_suspensionSemaphore.signal();
+}
+
 void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
 {
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
@@ -279,6 +294,10 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
         });
         return;
     }
+
+    // If the thread is suspended, resume it now so that we can dispatch the cleanup tasks below.
+    if (m_isSuspended)
+        resume();
 
     ASSERT(!m_stoppedCallback);
     m_stoppedCallback = WTFMove(stoppedCallback);

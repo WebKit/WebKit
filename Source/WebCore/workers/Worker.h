@@ -84,6 +84,8 @@ private:
     void notifyFinished() final;
 
     void stop() final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
     const char* activeDOMObjectName() const final;
 
     static void networkStateChanged(bool isOnLine);
@@ -95,6 +97,7 @@ private:
     Optional<ContentSecurityPolicyResponseHeaders> m_contentSecurityPolicyResponseHeaders;
     MonotonicTime m_workerCreationTime;
     bool m_shouldBypassMainWorldContentSecurityPolicy { false };
+    bool m_isSuspendedForBackForwardCache { false };
     JSC::RuntimeFlags m_runtimeFlags;
     UniqueRef<GenericEventQueue> m_eventQueue;
 };

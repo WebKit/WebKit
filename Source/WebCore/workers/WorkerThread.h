@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -62,6 +63,9 @@ public:
     static Lock& workerThreadsMutex();
 
     void stop(WTF::Function<void()>&& terminatedCallback);
+
+    void suspend();
+    void resume();
 
     Thread* thread() const { return m_thread.get(); }
     WorkerRunLoop& runLoop() { return m_runLoop; }
@@ -133,6 +137,8 @@ private:
     RefPtr<SocketProvider> m_socketProvider;
 
     WTF::Function<void()> m_stoppedCallback;
+    BinarySemaphore m_suspensionSemaphore;
+    bool m_isSuspended { false };
 };
 
 } // namespace WebCore

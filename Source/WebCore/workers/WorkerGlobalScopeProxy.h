@@ -52,6 +52,9 @@ public:
     virtual void workerObjectDestroyed() = 0;
     virtual void notifyNetworkStateChange(bool isOnline) = 0;
 
+    virtual void suspendForBackForwardCache() = 0;
+    virtual void resumeForBackForwardCache() = 0;
+
 protected:
     virtual ~WorkerGlobalScopeProxy() = default;
 };

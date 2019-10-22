@@ -160,6 +160,22 @@ void Worker::stop()
     terminate();
 }
 
+void Worker::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::BackForwardCache) {
+        m_contextProxy.suspendForBackForwardCache();
+        m_isSuspendedForBackForwardCache = true;
+    }
+}
+
+void Worker::resume()
+{
+    if (m_isSuspendedForBackForwardCache) {
+        m_contextProxy.resumeForBackForwardCache();
+        m_isSuspendedForBackForwardCache = false;
+    }
+}
+
 bool Worker::hasPendingActivity() const
 {
     return m_contextProxy.hasPendingActivity() || ActiveDOMObject::hasPendingActivity() || m_eventQueue->hasPendingEvents();

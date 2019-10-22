@@ -128,6 +128,22 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
         m_queuedEarlyTasks.append(makeUnique<ScriptExecutionContext::Task>(WTFMove(task)));
 }
 
+void WorkerMessagingProxy::suspendForBackForwardCache()
+{
+    if (m_workerThread)
+        m_workerThread->suspend();
+    else
+        m_askedToSuspend = true;
+}
+
+void WorkerMessagingProxy::resumeForBackForwardCache()
+{
+    if (m_workerThread)
+        m_workerThread->resume();
+    else
+        m_askedToSuspend = false;
+}
+
 void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     // FIXME: In case of nested workers, this should go directly to the root Document context.
@@ -190,6 +206,11 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
         // Worker.terminate() could be called from JS before the thread was created.
         m_workerThread->stop(nullptr);
     } else {
+        if (m_askedToSuspend) {
+            m_askedToSuspend = false;
+            m_workerThread->suspend();
+        }
+
         ASSERT(!m_unconfirmedMessageCount);
         m_unconfirmedMessageCount = m_queuedEarlyTasks.size();
         m_workerThreadHadPendingActivity = true; // Worker initialization means a pending activity.

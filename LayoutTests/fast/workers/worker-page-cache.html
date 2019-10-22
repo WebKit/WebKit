@@ -26,11 +26,10 @@ window.addEventListener("pagehide", function(event) {
 });
 
 let firstMessage = true;
+let messageCountAfterResume = 0;
 onload = () => {
-    worker = new Worker('resources/worker-event-listener.js');
-    setInterval(() => {
-        worker.postMessage("");
-    }, 1);
+    worker = new Worker('resources/worker-setInterval.js');
+    worker.postMessage("");
 
     worker.onmessage = function(evt) {
         if (firstMessage) {
@@ -40,9 +39,12 @@ onload = () => {
             return;
         }
         if (restoredFromPageCache) {
-            restoredFromPageCache = false;
-            testPassed("Received message after restoring from page cache.");
-            finishJSTest();
+            messageCountAfterResume++;
+            if (messageCountAfterResume == 10) {
+                restoredFromPageCache = false;
+                testPassed("Received message after restoring from page cache.");
+                finishJSTest();
+            }
         }
     };
 }

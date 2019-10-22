@@ -56,6 +56,8 @@ private:
     bool hasPendingActivity() const final;
     void workerObjectDestroyed() final;
     void notifyNetworkStateChange(bool isOnline) final;
+    void suspendForBackForwardCache() final;
+    void resumeForBackForwardCache() final;
 
     // Implementation of WorkerObjectProxy.
     // (Only use these functions in the worker context thread.)
@@ -96,6 +98,7 @@ private:
     unsigned m_unconfirmedMessageCount { 0 }; // Unconfirmed messages from worker object to worker thread.
     bool m_workerThreadHadPendingActivity { false }; // The latest confirmation from worker thread reported that it was still active.
 
+    bool m_askedToSuspend { false };
     bool m_askedToTerminate { false };
 
     Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
