@@ -79,7 +79,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection()
     EstablishSWContextConnection(WebCore::RegistrableDomain domain)
     CloseSWContextConnection()
 #endif

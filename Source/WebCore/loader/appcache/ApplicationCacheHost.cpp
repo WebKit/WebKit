@@ -80,6 +80,13 @@ void ApplicationCacheHost::selectCacheWithManifest(const URL& manifestURL)
     ApplicationCacheGroup::selectCache(*m_documentLoader.frame(), manifestURL);
 }
 
+bool ApplicationCacheHost::canLoadMainResource(const ResourceRequest& request)
+{
+    if (!isApplicationCacheEnabled() || isApplicationCacheBlockedForRequest(request))
+        return false;
+    return !!ApplicationCacheGroup::cacheForMainRequest(request, &m_documentLoader);
+}
+
 void ApplicationCacheHost::maybeLoadMainResource(const ResourceRequest& request, SubstituteData& substituteData)
 {
     // Check if this request should be loaded from the application cache

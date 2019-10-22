@@ -157,6 +157,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void serverToContextConnectionNoLongerNeeded();
+    WebSWServerConnection& swConnection();
 #endif
 
 private:

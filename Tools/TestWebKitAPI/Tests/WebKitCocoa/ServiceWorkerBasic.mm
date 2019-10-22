@@ -864,13 +864,6 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
 }
 @end
 
-static const char* regularPageWithoutConnectionBytes = R"SWRESOURCE(
-<script>
-var result = window.internals.hasServiceWorkerConnection() ? "FAIL" : "PASS";
-window.webkit.messageHandlers.regularPage.postMessage(result);
-</script>
-)SWRESOURCE";
-
 static const char* regularPageWithConnectionBytes = R"SWRESOURCE(
 <script>
 var result = window.internals.hasServiceWorkerConnection() ? "PASS" : "FAIL";
@@ -907,7 +900,7 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
 
     ServiceWorkerTCPServer server({
-        { "text/html", regularPageWithoutConnectionBytes },
+        { "text/html", regularPageWithConnectionBytes },
         { "text/html", mainBytes },
         { "application/javascript", scriptBytes },
         { "text/html", regularPageWithConnectionBytes },
@@ -1090,7 +1083,7 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
         { "text/html", mainBytesWithScope },
         { "application/javascript", scriptBytes },
     }, {
-        { "text/html", regularPageWithoutConnectionBytes },
+        { "text/html", regularPageWithConnectionBytes },
     }, {
         { "text/html", regularPageWithConnectionBytes }
     });

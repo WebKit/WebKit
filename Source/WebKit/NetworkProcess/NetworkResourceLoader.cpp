@@ -761,11 +761,21 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
 #if ENABLE(SERVICE_WORKER)
+    if (parameters().options.mode == FetchOptions::Mode::Navigate) {
+        if (auto serviceWorkerFetchTask = m_connection->swConnection().createFetchTask(*this, newRequest)) {
+            m_networkLoad = nullptr;
+            m_serviceWorkerFetchTask = WTFMove(serviceWorkerFetchTask);
+            return;
+        }
+        m_shouldRestartLoad = !!m_serviceWorkerFetchTask;
+        m_serviceWorkerFetchTask = nullptr;
+    }
     if (m_serviceWorkerFetchTask) {
         m_serviceWorkerFetchTask->continueFetchTaskWith(WTFMove(newRequest));
         return;
     }
 #endif
+
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
 
@@ -1223,10 +1233,10 @@ bool NetworkResourceLoader::isCrossOriginPrefetch() const
 }
 
 #if ENABLE(SERVICE_WORKER)
-void NetworkResourceLoader::startWithServiceWorker(WebSWServerConnection* swConnection)
+void NetworkResourceLoader::startWithServiceWorker()
 {
     ASSERT(!m_serviceWorkerFetchTask);
-    m_serviceWorkerFetchTask = swConnection ? swConnection->createFetchTask(*this) : nullptr;
+    m_serviceWorkerFetchTask = m_connection->swConnection().createFetchTask(*this, originalRequest());
     if (m_serviceWorkerFetchTask)
         return;
 
@@ -1241,7 +1251,15 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle()
         return;
     }
 
-    m_serviceWorkerFetchTask = nullptr;
+    if (m_serviceWorkerFetchTask) {
+        auto newRequest = m_serviceWorkerFetchTask->takeRequest();
+        m_serviceWorkerFetchTask = nullptr;
+
+        if (m_networkLoad)
+            m_networkLoad->updateRequestAfterRedirection(newRequest);
+        restartNetworkLoad(WTFMove(newRequest));
+        return;
+    }
     start();
 }
 #endif

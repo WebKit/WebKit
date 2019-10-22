@@ -149,6 +149,9 @@ public:
     {
         return adoptRef(*new DocumentLoader(request, data));
     }
+
+    WEBCORE_EXPORT static DocumentLoader* fromTemporaryDocumentIdentifier(DocumentIdentifier);
+
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
     void attachToFrame(Frame&);
@@ -392,6 +395,10 @@ public:
     void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
     bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
 
+#if ENABLE(SERVICE_WORKER)
+    WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
+#endif
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -405,7 +412,6 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void matchRegistration(const URL&, CompletionHandler<void(Optional<ServiceWorkerRegistrationData>&&)>&&);
 #endif
-    void registerTemporaryServiceWorkerClient(const URL&);
     void unregisterTemporaryServiceWorkerClient();
 
     void loadMainResource(ResourceRequest&&);
@@ -447,9 +453,6 @@ private:
     bool tryLoadingRequestFromApplicationCache();
     bool tryLoadingSubstituteData();
     bool tryLoadingRedirectRequestFromApplicationCache(const ResourceRequest&);
-#if ENABLE(SERVICE_WORKER)
-    void restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&&, Optional<ServiceWorkerRegistrationData>&&);
-#endif
     void continueAfterContentPolicy(PolicyAction);
 
     void stopLoadingForPolicyChange();

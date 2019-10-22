@@ -1,3 +1,16 @@
+2019-10-21  youenn fablet  <youenn@apple.com>
+
+        Move service worker registration matching for navigation loads to network process
+        https://bugs.webkit.org/show_bug.cgi?id=203144
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        We are now creating a WebSWClientConnection whenever receiving a WebSWClientConnection message
+        from NetworkProcess. It is free to do so given it no longer requires sending some IPC.
+        Update the tests accordingly.
+        A future patch will remove the service worker registration bit feature and corresponding test.
+
 2019-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         TestWebKitAPI.ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndInputView is failing on iPad simulator

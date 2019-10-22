@@ -125,6 +125,17 @@ static void setAllDefersLoading(const ResourceLoaderMap& loaders, bool defers)
         loader->setDefersLoading(defers);
 }
 
+static HashMap<DocumentIdentifier, DocumentLoader*>& temporaryIdentifierToLoaderMap()
+{
+    static NeverDestroyed<HashMap<DocumentIdentifier, DocumentLoader*>> map;
+    return map.get();
+}
+
+DocumentLoader* DocumentLoader::fromTemporaryDocumentIdentifier(DocumentIdentifier identifier)
+{
+    return temporaryIdentifierToLoaderMap().get(identifier);
+}
+
 DocumentLoader::DocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : FrameDestructionObserver(nullptr)
     , m_cachedResourceLoader(CachedResourceLoader::create(this))
@@ -161,6 +172,13 @@ DocumentLoader::~DocumentLoader()
 
     m_cachedResourceLoader->clearDocumentLoader();
     clearMainResource();
+
+#if ENABLE(SERVICE_WORKER)
+    if (m_temporaryServiceWorkerClient) {
+        ASSERT(temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
+        temporaryIdentifierToLoaderMap().remove(*m_temporaryServiceWorkerClient);
+    }
+#endif
 }
 
 RefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
@@ -468,6 +486,16 @@ void DocumentLoader::startDataLoadTimer()
 }
 
 #if ENABLE(SERVICE_WORKER)
+bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&& data)
+{
+    if (!m_loadingMainResource)
+        return false;
+
+    ASSERT(!m_gotFirstByte);
+    m_serviceWorkerRegistrationData = WTFMove(data);
+    return true;
+}
+
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
     auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && LegacySchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
@@ -501,38 +529,34 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
 #if ENABLE(SERVICE_WORKER)
-    bool isRedirectionFromServiceWorker = redirectResponse.source() == ResourceResponse::Source::ServiceWorker;
-    willSendRequest(WTFMove(request), redirectResponse, [isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
+    if (m_serviceWorkerRegistrationData) {
+        m_serviceWorkerRegistrationData = { };
+        unregisterTemporaryServiceWorkerClient();
+    }
+    willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
         ASSERT(!m_substituteData.isValid());
         if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
             completionHandler({ });
             return;
         }
 
-        auto url = request.url();
-        this->matchRegistration(url, [request = WTFMove(request), isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
-            if (!m_mainDocumentError.isNull() || !m_frame) {
-                completionHandler({ });
-                return;
-            }
-
-            if (!registrationData && this->tryLoadingRedirectRequestFromApplicationCache(request)) {
-                completionHandler({ });
-                return;
-            }
-
-            bool shouldContinueLoad = areRegistrationsEqual(m_serviceWorkerRegistrationData, registrationData)
-                && isRedirectionFromServiceWorker == !!registrationData;
-
-            if (shouldContinueLoad) {
+        if (m_applicationCacheHost->canLoadMainResource(request)) {
+            auto url = request.url();
+            // Let's check service worker registration to see whether loading from network or not.
+            this->matchRegistration(url, [request = WTFMove(request), completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this](auto&& registrationData) mutable {
+                if (!m_mainDocumentError.isNull() || !m_frame) {
+                    completionHandler({ });
+                    return;
+                }
+                if (!registrationData && this->tryLoadingRedirectRequestFromApplicationCache(request)) {
+                    completionHandler({ });
+                    return;
+                }
                 completionHandler(WTFMove(request));
-                return;
-            }
-
-            this->restartLoadingDueToServiceWorkerRegistrationChange(WTFMove(request), WTFMove(registrationData));
-            completionHandler({ });
+            });
             return;
-        });
+        }
+        completionHandler(WTFMove(request));
     });
 #else
     willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
@@ -695,20 +719,6 @@ bool DocumentLoader::tryLoadingRedirectRequestFromApplicationCache(const Resourc
     return true;
 }
 
-#if ENABLE(SERVICE_WORKER)
-void DocumentLoader::restartLoadingDueToServiceWorkerRegistrationChange(ResourceRequest&& request, Optional<ServiceWorkerRegistrationData>&& registrationData)
-{
-    clearMainResource();
-
-    ASSERT(!isCommitted());
-    m_serviceWorkerRegistrationData = WTFMove(registrationData);
-    loadMainResource(WTFMove(request));
-
-    if (m_mainResource)
-        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
-}
-#endif
-
 void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse& response)
 {
     Ref<DocumentLoader> protectedThis { *this };
@@ -725,6 +735,19 @@ void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(
 void DocumentLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
+#if ENABLE(SERVICE_WORKER)
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && response.source() == ResourceResponse::Source::MemoryCache) {
+        matchRegistration(response.url(), [this, protectedThis = makeRef(*this), response, completionHandler = WTFMove(completionHandler)](auto&& registrationData) mutable {
+            if (!m_mainDocumentError.isNull() || !m_frame) {
+                completionHandler();
+                return;
+            }
+            m_serviceWorkerRegistrationData = WTFMove(registrationData);
+            responseReceived(response, WTFMove(completionHandler));
+        });
+        return;
+    }
+#endif
     responseReceived(response, WTFMove(completionHandler));
 }
 
@@ -1754,6 +1777,7 @@ void DocumentLoader::startLoadingMainResource()
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
         m_request = request;
+        // FIXME: Implement local URL interception by getting the service worker of the parent.
 
         // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.
         if (!m_frame || m_request.isNull()) {
@@ -1768,79 +1792,53 @@ void DocumentLoader::startLoadingMainResource()
         RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Starting load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
 #if ENABLE(SERVICE_WORKER)
-        // FIXME: Implement local URL interception by getting the service worker of the parent.
-        auto url = request.url();
-        matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
-            if (!m_mainDocumentError.isNull() || !m_frame) {
-                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of main document error (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
-                return;
-            }
+        if (m_applicationCacheHost->canLoadMainResource(request) || m_substituteData.isValid()) {
+            auto url = request.url();
+            matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+                if (!m_mainDocumentError.isNull() || !m_frame) {
+                    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of main document error (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
+                    return;
+                }
 
-            m_serviceWorkerRegistrationData = WTFMove(registrationData);
+                m_serviceWorkerRegistrationData = WTFMove(registrationData);
+                // Prefer existing substitute data (from WKWebView.loadData etc) over service worker fetch.
+                if (this->tryLoadingSubstituteData()) {
+                    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of substitute data (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
+                    return;
+                }
 
-            // Prefer existing substitute data (from WKWebView.loadData etc) over service worker fetch.
-            if (this->tryLoadingSubstituteData()) {
-                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Load canceled because of substitute data (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
-                return;
-            }
-            // Try app cache only if there is no service worker.
-            if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache()) {
-                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Loaded from Application Cache (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
-                return;
-            }
-            this->loadMainResource(WTFMove(request));
-        });
+                if (!m_serviceWorkerRegistrationData && this->tryLoadingRequestFromApplicationCache()) {
+                    RELEASE_LOG_IF_ALLOWED("startLoadingMainResource callback: Loaded from Application Cache (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+                    return;
+                }
+                this->loadMainResource(WTFMove(request));
+            });
+            return;
+        }
 #else
         if (tryLoadingRequestFromApplicationCache()) {
             RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Loaded from Application Cache (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
             return;
         }
+#endif
         loadMainResource(WTFMove(request));
-#endif
     });
-}
-
-void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
-{
-#if ENABLE(SERVICE_WORKER)
-    ASSERT(!m_temporaryServiceWorkerClient);
-
-    if (!m_serviceWorkerRegistrationData)
-        return;
-
-    m_temporaryServiceWorkerClient = DocumentIdentifier::generate();
-
-    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-
-    // FIXME: Compute ServiceWorkerClientFrameType appropriately.
-    ServiceWorkerClientData data { { serviceWorkerConnection.serverConnectionIdentifier(), *m_temporaryServiceWorkerClient }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
-
-    RefPtr<SecurityOrigin> topOrigin;
-    if (m_frame->isMainFrame())
-        topOrigin = SecurityOrigin::create(url);
-    else
-        topOrigin = &m_frame->mainFrame().document()->topOrigin();
-    serviceWorkerConnection.registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier, m_frame->loader().userAgent(url));
-#else
-    UNUSED_PARAM(url);
-#endif
 }
 
 void DocumentLoader::unregisterTemporaryServiceWorkerClient()
 {
 #if ENABLE(SERVICE_WORKER)
-    if (!m_temporaryServiceWorkerClient)
+    if (!m_temporaryServiceWorkerClient || !RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled())
         return;
 
     auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
     serviceWorkerConnection.unregisterServiceWorkerClient(*m_temporaryServiceWorkerClient);
-    m_temporaryServiceWorkerClient = WTF::nullopt;
 #endif
 }
 
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
-    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(
+    ResourceLoaderOptions mainResourceLoadOptions(
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::SniffContent,
         DataBufferingPolicy::BufferData,
@@ -1853,6 +1851,15 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         ContentSecurityPolicyImposition::SkipPolicyCheck,
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching);
+#if ENABLE(SERVICE_WORKER)
+    if (!m_temporaryServiceWorkerClient) {
+        // The main navigation load will trigger the registration of the temp client.
+        m_temporaryServiceWorkerClient = DocumentIdentifier::generate();
+        ASSERT(!temporaryIdentifierToLoaderMap().contains(*m_temporaryServiceWorkerClient));
+        temporaryIdentifierToLoaderMap().add(*m_temporaryServiceWorkerClient, this);
+    }
+    mainResourceLoadOptions.clientIdentifier = m_temporaryServiceWorkerClient;
+#endif
     CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);
     if (!m_frame->isMainFrame() && m_frame->document()) {
         // If we are loading the main resource of a subframe, use the cache partition of the main document.
@@ -1862,15 +1869,6 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         origin->setStorageBlockingPolicy(frameLoader()->frame().settings().storageBlockingPolicy());
         mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
     }
-
-#if ENABLE(SERVICE_WORKER)
-    mainResourceRequest.setNavigationServiceWorkerRegistrationData(m_serviceWorkerRegistrationData);
-    if (mainResourceRequest.options().serviceWorkersMode != ServiceWorkersMode::None) {
-        // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
-        // Since we did not yet create the document, we register a temporary service worker client instead.
-        registerTemporaryServiceWorkerClient(mainResourceRequest.resourceRequest().url());
-    }
-#endif
 
     m_mainResource = m_cachedResourceLoader->requestMainResource(WTFMove(mainResourceRequest)).value_or(nullptr);
 

@@ -126,7 +126,7 @@ public:
     bool isKeptAlive() const { return m_isKeptAlive; }
 
 #if ENABLE(SERVICE_WORKER)
-    void startWithServiceWorker(WebSWServerConnection*);
+    void startWithServiceWorker();
     void serviceWorkerDidNotHandle();
 #endif
 

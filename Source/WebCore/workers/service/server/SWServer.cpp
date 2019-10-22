@@ -69,6 +69,9 @@ SWServer::~SWServer()
     auto connections = WTFMove(m_connections);
     connections.clear();
 
+    for (auto& callback : std::exchange(m_importCompletedCallbacks, { }))
+        callback();
+
     Vector<SWServerWorker*> runningWorkers;
     for (auto& worker : m_runningOrTerminatingWorkers.values()) {
         if (worker->isRunning())
@@ -131,7 +134,17 @@ void SWServer::registrationStoreImportComplete()
         callback();
 
     performGetOriginsWithRegistrationsCallbacks();
+
+    for (auto& callback : std::exchange(m_importCompletedCallbacks, { }))
+        callback();
 }
+
+void SWServer::whenImportIsCompleted(CompletionHandler<void()>&& callback)
+{
+    ASSERT(!m_importCompleted);
+    m_importCompletedCallbacks.append(WTFMove(callback));
+}
+
 
 void SWServer::registrationStoreDatabaseFailedToOpen()
 {
@@ -757,6 +770,7 @@ void SWServer::removeConnection(SWServerConnectionIdentifier connectionIdentifie
 
 SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
 {
+    ASSERT(isImportCompleted());
     SWServerRegistration* selectedRegistration = nullptr;
     for (auto& pair : m_scopeToRegistrationMap) {
         if (!pair.key.isMatching(topOrigin, clientURL))

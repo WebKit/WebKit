@@ -68,7 +68,7 @@ public:
     
     PAL::SessionID sessionID() const;
 
-    std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&);
+    std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
@@ -85,8 +85,6 @@ private:
     void registrationReady(uint64_t registrationReadyRequestIdentifier, WebCore::ServiceWorkerRegistrationData&&) final;
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
-
-    bool handleFetch(NetworkResourceLoader&);
 
     void startFetch(ServiceWorkerFetchTask&, WebCore::SWServerWorker&);
 
@@ -108,6 +106,7 @@ private:
     void updateThrottleState();
 
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
+    void controlClient(WebCore::ServiceWorkerClientIdentifier, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return 0; }

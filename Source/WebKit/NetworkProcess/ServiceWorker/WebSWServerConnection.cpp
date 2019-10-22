@@ -128,23 +128,51 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader)
+void WebSWServerConnection::controlClient(ServiceWorkerClientIdentifier clientIdentifier, SWServerRegistration& registration, const ResourceRequest& request)
 {
-    if (!loader.parameters().serviceWorkerRegistrationIdentifier)
-        return nullptr;
+    // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
+    // We register a temporary service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
+    // If notification is successful, DocumentLoader will unregister the temporary service worker client just after the document is created and registered as a client.
+    sendWithAsyncReply(Messages::WebSWClientConnection::SetDocumentIsControlled { clientIdentifier.contextIdentifier, registration.data() }, [weakThis = makeWeakPtr(this), this, clientIdentifier](bool isSuccess) {
+        if (!weakThis || isSuccess)
+            return;
+        unregisterServiceWorkerClient(clientIdentifier);
+    });
 
+    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url() };
+    registerServiceWorkerClient(SecurityOriginData { registration.key().topOrigin() }, WTFMove(data), registration.identifier(), request.httpUserAgent());
+}
+
+std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
+{
     if (loader.parameters().serviceWorkersMode == ServiceWorkersMode::None)
-        return nullptr;
-
-    if (isPotentialNavigationOrSubresourceRequest(loader.parameters().options.destination))
         return nullptr;
 
     if (!server().canHandleScheme(loader.originalRequest().url().protocol()))
         return nullptr;
 
-    auto* worker = server().activeWorkerFromRegistrationID(*loader.parameters().serviceWorkerRegistrationIdentifier);
+    Optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    if (loader.parameters().options.mode == FetchOptions::Mode::Navigate) {
+        auto topOrigin = loader.parameters().isMainFrameNavigation ? SecurityOriginData::fromURL(request.url()) : loader.parameters().topOrigin->data();
+        auto* registration = doRegistrationMatching(topOrigin, request.url());
+        if (!registration)
+            return nullptr;
+
+        serviceWorkerRegistrationIdentifier = registration->identifier();
+        controlClient(ServiceWorkerClientIdentifier { loader.connectionToWebProcess().webProcessIdentifier(), *loader.parameters().options.clientIdentifier }, *registration, request);
+    } else {
+        if (!loader.parameters().serviceWorkerRegistrationIdentifier)
+            return nullptr;
+
+        if (isPotentialNavigationOrSubresourceRequest(loader.parameters().options.destination))
+            return nullptr;
+
+        serviceWorkerRegistrationIdentifier = *loader.parameters().serviceWorkerRegistrationIdentifier;
+    }
+
+    auto* worker = server().activeWorkerFromRegistrationID(*serviceWorkerRegistrationIdentifier);
     if (!worker) {
-        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: DidNotHandle because no active worker %s", loader.parameters().serviceWorkerRegistrationIdentifier->loggingString().utf8().data());
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: DidNotHandle because no active worker %s", serviceWorkerRegistrationIdentifier->loggingString().utf8().data());
         return nullptr;
     }
 
@@ -155,7 +183,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         return nullptr;
     }
 
-    auto task = makeUnique<ServiceWorkerFetchTask>(sessionID(), loader, identifier(), worker->identifier());
+    auto task = makeUnique<ServiceWorkerFetchTask>(sessionID(), loader, ResourceRequest { request }, identifier(), worker->identifier(), *serviceWorkerRegistrationIdentifier);
     startFetch(*task, *worker);
     return task;
 }

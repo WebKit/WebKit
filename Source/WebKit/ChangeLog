@@ -1,3 +1,56 @@
+2019-10-21  youenn fablet  <youenn@apple.com>
+
+        Move service worker registration matching for navigation loads to network process
+        https://bugs.webkit.org/show_bug.cgi?id=203144
+
+        Reviewed by Chris Dumez.
+
+        Create a WebSWServerConnection whenever receiving a load request in NetworkProcess.
+        This connection is used to check for service worker registration in case of navigation loads.
+        Similarly, we create a WebSWClientConnection whenever WebProcess needs it, including when receiving WebSWClientConnection messages from NetworkProcess.
+        This for instance happens when service worker registration import is complete to fill the shared registration origin store.
+
+        Delay loads until SWServer has finished importing its registrations.
+        This is needed since we might otherwise not intercept loads that could be intercepted.
+        Waiting for importing registrations was previously ensured by WebProcess getting a matching registration in DocumentLoader.
+
+        NetworkResourceLoader is now checking for service worker interception in case of redirections for navigations.
+        This is needed as redirections could end up using a new registration.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::establishSWServerConnection):
+        (WebKit::NetworkConnectionToWebProcess::swConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::startWithServiceWorker):
+        (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::ServiceWorkerFetchTask::start):
+        (WebKit::ServiceWorkerFetchTask::startFetch):
+        (WebKit::ServiceWorkerFetchTask::continueFetchTaskWith):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        (WebKit::ServiceWorkerFetchTask::takeRequest):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::controlClient):
+        (WebKit::WebSWServerConnection::createFetchTask):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        (WebKit::WebSWClientConnection::registrationReady):
+        (WebKit::WebSWClientConnection::documentIsControlled):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2019-10-21  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDBBackingStoreTemporaryFileHandler

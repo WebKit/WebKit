@@ -42,6 +42,8 @@ messages -> WebSWClientConnection {
     DidMatchRegistration(uint64_t matchRequestIdentifier, Optional<WebCore::ServiceWorkerRegistrationData> data)
     DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)
     RegistrationReady(uint64_t registrationReadyRequestIdentifier, struct WebCore::ServiceWorkerRegistrationData data)
+
+    SetDocumentIsControlled(WebCore::DocumentIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess) Async
 }
 
 #endif // ENABLE(SERVICE_WORKER)

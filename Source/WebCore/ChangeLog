@@ -1,3 +1,50 @@
+2019-10-21  youenn fablet  <youenn@apple.com>
+
+        Move service worker registration matching for navigation loads to network process
+        https://bugs.webkit.org/show_bug.cgi?id=203144
+
+        Reviewed by Chris Dumez.
+
+        For regular loads, we no longer match service worker registration explicitly.
+        This is now done by NetworkResourceLoader explicitly.
+        We still need to explicitely match registrations in those two cases:
+        - There is an app cache resource that can be used. We will use it only if there is no registration.
+        - There is a resource from the meory cache that can be used. We will match the registration to make sure 
+        the document is controlled by the right service worker. The load will still be served from the memory cache.
+
+        Since DocumentLoader is no longer matching registration, we need a way from NetworkProcess to inform that there is 
+        a matching registration and that the document is controlled.
+        For that purpose, DocumentLoader is adding itself in a global map with the temporary document identifier as the key.
+        Adding to the map happens when loading the main resource and removal from the map happens when destroying the DocumentLoader.
+        For this to happen properly, the temporary document identifier is kept the same for the lifetime of the DocumentLoader.
+
+        Registration matching was postponed until service worker registration is done.
+        Since we no longer do registration matching in WebProcess, we need to wait in NetworkProcess for that to happen.
+        We introduce a way for SWServer to notify when import is completed for that purpose.
+
+        Covered by existing tests.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::fromTemporaryDocumentIdentifier):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::setControllingServiceWorkerRegistration):
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        (WebCore::DocumentLoader::unregisterTemporaryServiceWorkerClient):
+        (WebCore::DocumentLoader::loadMainResource):
+        * loader/DocumentLoader.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::canLoadMainResource):
+        * loader/appcache/ApplicationCacheHost.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+        (WebCore::SWServer::registrationStoreImportComplete):
+        (WebCore::SWServer::whenImportIsCompleted):
+        (WebCore::SWServer::doRegistrationMatching):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::isImportCompleted const):
+
 2019-10-21  Sihui Liu  <sihui_liu@apple.com>
 
         Remove IDBBackingStoreTemporaryFileHandler

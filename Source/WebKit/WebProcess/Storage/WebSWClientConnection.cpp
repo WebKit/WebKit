@@ -40,6 +40,7 @@
 #include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -58,7 +59,6 @@ WebSWClientConnection::WebSWClientConnection()
     : m_identifier(Process::identifier())
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
-    send(Messages::NetworkConnectionToWebProcess::EstablishSWServerConnection { });
 }
 
 WebSWClientConnection::~WebSWClientConnection()
@@ -181,11 +181,18 @@ void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topO
     send(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, topOrigin, clientURL));
 }
 
-void WebSWClientConnection::registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&& registrationData)
+void WebSWClientConnection::registrationReady(uint64_t callbackID, ServiceWorkerRegistrationData&& registrationData)
 {
     ASSERT(registrationData.activeWorker);
     if (auto callback = m_ongoingRegistrationReadyTasks.take(callbackID))
         callback(WTFMove(registrationData));
+}
+
+void WebSWClientConnection::setDocumentIsControlled(DocumentIdentifier documentIdentifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* documentLoader = DocumentLoader::fromTemporaryDocumentIdentifier(documentIdentifier);
+    bool result = documentLoader ? documentLoader->setControllingServiceWorkerRegistration(WTFMove(data)) : false;
+    completionHandler(result);
 }
 
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)

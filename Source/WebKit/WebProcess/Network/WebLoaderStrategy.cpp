@@ -220,7 +220,8 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     if (data)
         url.string();
 
-    if ((resourceLoader.options().serviceWorkerRegistrationIdentifier && resourceLoader.options().serviceWorkersMode != ServiceWorkersMode::None) || !tryLoadingUsingURLSchemeHandler(resourceLoader)) {
+    bool canbeLoadedThroughServiceWorkers = resourceLoader.options().serviceWorkersMode != ServiceWorkersMode::None && (resourceLoader.options().serviceWorkerRegistrationIdentifier || resourceLoader.options().mode == FetchOptions::Mode::Navigate);
+    if (canbeLoadedThroughServiceWorkers || !tryLoadingUsingURLSchemeHandler(resourceLoader)) {
 #else
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader)) {
 #endif
@@ -287,7 +288,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
 #if ENABLE(SERVICE_WORKER)
     // In case of URL scheme handler, we will try to load on service workers and if unhandled, fallback to URL scheme handler.
-    if (resourceLoader.options().serviceWorkersMode == ServiceWorkersMode::All && webPage &&  webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying()))
+    if (webPage && webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying()))
         loadParameters.serviceWorkersMode = ServiceWorkersMode::Only;
     else
         loadParameters.serviceWorkersMode = resourceLoader.options().serviceWorkersMode;

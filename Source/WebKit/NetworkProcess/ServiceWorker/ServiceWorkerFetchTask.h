@@ -29,6 +29,7 @@
 
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
@@ -52,13 +53,10 @@ namespace WebKit {
 class NetworkResourceLoader;
 class WebSWServerToContextConnection;
 
-class NetworkResourceLoader;
-class WebSWServerToContextConnection;
-
 class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ServiceWorkerFetchTask(PAL::SessionID, NetworkResourceLoader&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier);
+    ServiceWorkerFetchTask(PAL::SessionID, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier);
     ~ServiceWorkerFetchTask();
 
     void start(WebSWServerToContextConnection&);
@@ -74,6 +72,7 @@ public:
 
     void didNotHandle();
 
+    WebCore::ResourceRequest takeRequest() { return WTFMove(m_currentRequest); }
     bool wasHandled() const { return m_wasHandled; }
 
 private:
@@ -84,7 +83,7 @@ private:
     void didFinish();
     void didFail(const WebCore::ResourceError&);
 
-    void startFetch(WebCore::ResourceRequest&&, WebSWServerToContextConnection&);
+    void startFetch();
 
     void timeoutTimerFired();
 
