@@ -1,3 +1,15 @@
+2019-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        TestWebKitAPI.ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndInputView is failing on iPad simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203053
+
+        Reviewed by Wenson Hsieh.
+        
+        Make ScrollableWithOverflowHiddenAndInputView only test the results on iPhones. Test is not designed for ipad.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewScrollabilityTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-10-21  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Add ability to display time on bubbles
