@@ -297,43 +297,41 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
 {
     // NOTE: This will be called from a background thread.
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateDidChange() - taskState(%d)", this, taskState);
-    if (taskState == ProcessTaskStateObserver::None)
+    if (taskState != ProcessTaskStateObserver::Running)
         return;
 
-    if (taskState == ProcessTaskStateObserver::Suspended) {
-        if (m_processIsSuspended)
-            return;
-
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() - unexpectedly entered Suspended state", this);
-        return;
-    }
-
-    if (!m_processIsSuspended)
-        return;
-
-    LockHolder holder(m_unexpectedlyResumedUIAssertionLock);
-    if (m_unexpectedlyResumedUIAssertion)
+    LockHolder holder(m_processWasResumedUIAssertionLock);
+    if (m_processWasResumedUIAssertion)
         return;
 
     // We were awakened from suspension unexpectedly. Notify the WebProcessProxy, but take a process assertion on our parent PID
     // to ensure that it too is awakened.
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Taking 'Unexpectedly resumed' assertion", this);
-    m_unexpectedlyResumedUIAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:parentProcessConnection()->remoteProcessID() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"Unexpectedly resumed" withHandler:nil]);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Taking 'WebProcess was resumed' assertion on behalf on UIProcess", this);
+    m_processWasResumedUIAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:parentProcessConnection()->remoteProcessID() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"WebProcess was resumed" withHandler:nil]);
 
-    auto releaseAssertion = [this] {
-        LockHolder holder(m_unexpectedlyResumedUIAssertionLock);
-        if (!m_unexpectedlyResumedUIAssertion)
-            return;
-
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Releasing 'Unexpectedly resumed' assertion due to time out", this);
-        [m_unexpectedlyResumedUIAssertion invalidate];
-        m_unexpectedlyResumedUIAssertion = nullptr;
+    m_processWasResumedUIAssertion.get().invalidationHandler = [this] {
+        LockHolder holder(m_processWasResumedUIAssertionLock);
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Releasing 'WebProcess was resumed' assertion on behalf on UIProcess due invalidation", this);
+        [m_processWasResumedUIAssertion invalidate];
+        m_processWasResumedUIAssertion = nullptr;
     };
 
-    m_unexpectedlyResumedUIAssertion.get().invalidationHandler = releaseAssertion;
-    parentProcessConnection()->send(Messages::WebProcessProxy::ProcessWasUnexpectedlyUnsuspended(), 0);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), releaseAssertion);
+    // This will cause the parent process to send a ParentProcessDidHandleProcessWasResumed IPC back, so that we can release our assertion on its behalf.
+    // We are not using sendWithAsyncReply() because it would not be thread-safe.
+    parentProcessConnection()->send(Messages::WebProcessProxy::ProcessWasResumed(), 0);
 }
+
+void WebProcess::parentProcessDidHandleProcessWasResumed()
+{
+    LockHolder holder(m_processWasResumedUIAssertionLock);
+    ASSERT(m_processWasResumedUIAssertion);
+
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::parentProcessDidHandleProcessWasResumed() Releasing 'WebProcess was resumed' assertion on behalf on UIProcess", this);
+
+    [m_processWasResumedUIAssertion invalidate];
+    m_processWasResumedUIAssertion = nullptr;
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -37,6 +37,7 @@
 #import "WebProcessPool.h"
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Scope.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 namespace WebKit {
@@ -190,19 +191,22 @@ void WebProcessProxy::releaseHighPerformanceGPU()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcessProxy::processWasUnexpectedlyUnsuspended()
+void WebProcessProxy::processWasResumed()
 {
+    auto exitScope = makeScopeExit([this] {
+        send(Messages::WebProcess::ParentProcessDidHandleProcessWasResumed(), 0);
+    });
+
     if (m_throttler.shouldBeRunnable()) {
-        // The process becoming unsuspended was not unexpected; it likely was notified of its running state
-        // before receiving a processDidResume() message from the UIProcess.
+        // The process becoming unsuspended was not unexpected.
         return;
     }
 
     // The WebProcess was awakened by something other than the UIProcess. Take out an assertion for a
     // limited duration to allow whatever task needs to be accomplished time to complete.
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended()", this);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasResumed() Process was unexpectedly resumed, starting background activity", this);
     auto backgroundActivityTimeoutHandler = [activityToken = m_throttler.backgroundActivityToken(), weakThis = makeWeakPtr(this)] {
-        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended() - lambda, background activity timed out", weakThis.get());
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasResumed() - lambda, background activity timed out", weakThis.get());
     };
     m_unexpectedActivityTimer = makeUnique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);
 }

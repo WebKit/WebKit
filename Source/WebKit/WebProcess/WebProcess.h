@@ -455,6 +455,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     void processTaskStateDidChange(ProcessTaskStateObserver::TaskState) final;
+    void parentProcessDidHandleProcessWasResumed();
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif
@@ -535,8 +536,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
     Ref<ProcessTaskStateObserver> m_taskStateObserver;
-    Lock m_unexpectedlyResumedUIAssertionLock;
-    RetainPtr<BKSProcessAssertion> m_unexpectedlyResumedUIAssertion;
+    Lock m_processWasResumedUIAssertionLock;
+    RetainPtr<BKSProcessAssertion> m_processWasResumedUIAssertion;
 #endif
 
     enum PageMarkingLayersAsVolatileCounterType { };

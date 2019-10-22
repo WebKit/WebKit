@@ -1539,13 +1539,6 @@ void WebProcess::processDidResume()
     m_webSQLiteDatabaseTracker.setIsSuspended(false);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
-    {
-        LockHolder holder(m_unexpectedlyResumedUIAssertionLock);
-        if (m_unexpectedlyResumedUIAssertion) {
-            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume() Releasing 'Unexpectedly resumed' assertion", this);
-            m_unexpectedlyResumedUIAssertion = nullptr;
-        }
-    }
 #endif
 
 #if ENABLE(VIDEO)

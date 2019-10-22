@@ -1,3 +1,35 @@
+2019-10-22  Chris Dumez  <cdumez@apple.com>
+
+        Simplify "Unexpectedly Resumed" assertion handling
+        https://bugs.webkit.org/show_bug.cgi?id=203254
+
+        Reviewed by Geoffrey Garen.
+
+        When the WebContent process gets resumed from suspension, it now unconditionally takes a
+        process assertion on behalf on the UIProcess and sends a ProcessDidResume IPC to the
+        UIProcess. The UIProcess then sends a DidHandleProcessWasResumed IPC back after handing
+        the ProcessDidResume IPC allowing the WebContent process to release its assertion on
+        behalf on the UIProcess.
+
+        The previous code was racy because it relied on the m_processIsSuspended flag, which was
+        queried and set from different threads. Also, the 'unexpectedly resumed' naming was
+        confusing since we'd often take this assertion whenever the WebProcess got resumed,
+        wether unexpected or not, simply because the processTaskStateDidChange IPC won the race
+        with the ProcessDidResume IPC from the UIProcess.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasResumed):
+        (WebKit::WebProcessProxy::processWasUnexpectedlyUnsuspended): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processDidResume):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+        (WebKit::WebProcess::didHandleProcessWasResumed):
+
 2019-10-22  youenn fablet  <youenn@apple.com>
 
         Remove mayHaveServiceWorkerRegisteredForOrigin

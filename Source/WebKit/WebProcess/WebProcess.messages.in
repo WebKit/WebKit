@@ -156,6 +156,7 @@ messages -> WebProcess LegacyReceiver {
 
 #if PLATFORM(IOS_FAMILY)
     UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
+    ParentProcessDidHandleProcessWasResumed();
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
