@@ -1,3 +1,19 @@
+2019-10-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/ios/click-should-not-suppress-misspelling.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203283
+        <rdar://problem/52701047>
+
+        Reviewed by Tim Horton.
+
+        This layout test frequently fails on iOS 13, because it assumes that the `selectionchange` event due to tapping
+        a misspelled word must occur within one zero-delay timeout after detecting a click event. However, this is not
+        guaranteed; to fix the test, we simply wait until both `click` and `selectionchange` events have occured, and
+        then check that the entire contents of the text field are selected.
+
+        * fast/forms/ios/click-should-not-suppress-misspelling-expected.txt:
+        * fast/forms/ios/click-should-not-suppress-misspelling.html:
+
 2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: frontend tests should clear output before resending results
