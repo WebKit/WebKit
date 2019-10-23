@@ -277,6 +277,12 @@ EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject* globalObject, Ca
     return JSValue::encode(regExpCreate(globalObject, jsUndefined(), patternArg, flagsArg));
 }
 
+EncodedJSValue JSC_HOST_CALL esSpecIsRegExp(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    return JSValue::encode(jsBoolean(isRegExp(vm, globalObject, callFrame->argument(0))));
+}
+
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     ArgList args(callFrame);

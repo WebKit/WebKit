@@ -76,5 +76,6 @@ ALWAYS_INLINE bool isRegExp(VM& vm, JSGlobalObject* globalObject, JSValue value)
 }
 
 EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL esSpecIsRegExp(JSGlobalObject*, CallFrame*);
 
 } // namespace JSC

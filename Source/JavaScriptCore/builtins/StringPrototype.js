@@ -51,6 +51,9 @@ function matchAll(arg)
         @throwTypeError("String.prototype.matchAll requires |this| not to be null nor undefined");
 
     if (!@isUndefinedOrNull(arg)) {
+        if (@isRegExp(arg) && !@stringIncludesInternal.@call(@toString(arg.flags), "g"))
+            @throwTypeError("String.prototype.matchAll argument must not be a non-global regular expression");
+
         let matcher = arg.@matchAllSymbol;
         if (!@isUndefinedOrNull(matcher))
             return matcher.@call(arg, this);

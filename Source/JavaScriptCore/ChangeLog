@@ -1,3 +1,22 @@
+2019-10-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        String.prototype.matchAll should throw on non-global regex
+        https://bugs.webkit.org/show_bug.cgi?id=202838
+
+        Reviewed by Keith Miller.
+
+        * builtins/StringPrototype.js:
+        (matchAll):
+        Implement normative change from https://github.com/tc39/ecma262/pull/1716.
+
+        * builtins/BuiltinNames.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::esSpecIsRegExp): Added.
+        * runtime/RegExpConstructor.h:
+        Expose isRegExp to builtins. (This differs from @isRegExpObject by first checking for Symbol.match.)
+
 2019-10-23  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mac WK1 ] REGRESSION (r251261): Layout Test inspector/console/webcore-logging.html is consistently Failing

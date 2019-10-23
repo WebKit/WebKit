@@ -1804,12 +1804,6 @@ test/built-ins/Set/proto-from-ctor-realm.js:
 test/built-ins/String/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«Â») to be true'
-test/built-ins/String/prototype/matchAll/flags-nonglobal-throws.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/String/prototype/matchAll/flags-undefined-throws.js:
-  default: 'Test262Error: Expected a TypeError but got a SyntaxError'
-  strict mode: 'Test262Error: Expected a TypeError but got a SyntaxError'
 test/built-ins/ThrowTypeError/extensible.js:
   default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
