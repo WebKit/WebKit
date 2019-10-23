@@ -1,3 +1,10 @@
+2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, WinCairo build fix after r251468
+        https://bugs.webkit.org/show_bug.cgi?id=203276
+
+        * jit/JIT.h:
+
 2019-10-22  Keith Miller  <keith_miller@apple.com>
 
         BytecodeIndex should be a proper C++ class

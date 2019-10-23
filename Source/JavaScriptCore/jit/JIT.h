@@ -285,7 +285,7 @@ namespace JSC {
         Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
-            m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.retagged<OperationPtrTag>()));
+            m_calls.append(CallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 #endif
