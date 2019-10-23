@@ -241,6 +241,18 @@
         * svg/custom/pointer-events-text-css-transform.svg:
         * svg/custom/pointer-events-text.svg:
 
+2019-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        wpt/css/css-images/gradient/color-stops-parsing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=200211
+
+        Reviewed by Dean Jackson.
+
+        Mark the conic gradient test as skipped, then passing on Mojave+.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-10-22  youenn fablet  <youenn@apple.com>
 
         Carriage return character sometimes missing in SDP c-line

@@ -347,6 +347,25 @@
         * rendering/svg/RenderSVGShape.cpp:
         (WebCore::RenderSVGShape::nodeAtFloatPoint):
 
+2019-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        wpt/css/css-images/gradient/color-stops-parsing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=200211
+
+        Reviewed by Dean Jackson.
+
+        CSS gradients allow a single color stop to have multiple positions. In this case
+        we need to copy the color from the first to subsequent stops.
+
+        Tested by web-platform-tests/css/css-images/gradient/color-stops-parsing.html
+        and imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::gradientWithStylesResolved): Copy colors to subsequent stops.
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops): Fix the parsing of
+        stops with multiple positions.
+
 2019-10-22  youenn fablet  <youenn@apple.com>
 
         Carriage return character sometimes missing in SDP c-line
