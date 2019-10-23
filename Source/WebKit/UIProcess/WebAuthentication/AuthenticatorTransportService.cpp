@@ -75,11 +75,19 @@ AuthenticatorTransportService::AuthenticatorTransportService(Observer& observer)
 
 void AuthenticatorTransportService::startDiscovery()
 {
-    // Enforce asynchronous execution of makeCredential.
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
         weakThis->startDiscoveryInternal();
+    });
+}
+
+void AuthenticatorTransportService::restartDiscovery()
+{
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+        weakThis->restartDiscoveryInternal();
     });
 }
 

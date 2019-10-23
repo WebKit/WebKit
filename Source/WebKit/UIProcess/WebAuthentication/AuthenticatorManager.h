@@ -75,6 +75,7 @@ protected:
 private:
     // AuthenticatorTransportService::Observer
     void authenticatorAdded(Ref<Authenticator>&&) final;
+    void serviceStatusUpdated(WebAuthenticationStatus) final;
 
     // Authenticator::Observer
     void respondReceived(Respond&&) final;
@@ -93,6 +94,7 @@ private:
     void runPanel();
     void resetState();
     TransportSet getTransports() const;
+    void restartDiscovery();
 
     // Request: We only allow one request per time. A new request will cancel any pending ones.
     WebAuthenticationRequestData m_pendingRequestData;

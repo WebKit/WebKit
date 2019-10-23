@@ -41,6 +41,7 @@ namespace WebKit {
 
 NfcService::NfcService(Observer& observer)
     : FidoService(observer)
+    , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
 {
 }
 
@@ -60,20 +61,37 @@ bool NfcService::isAvailable()
 void NfcService::didConnectTag()
 {
 #if HAVE(NEAR_FIELD)
-    getInfo(WTFMove(m_driver));
+    auto connection = m_connection;
+    ASSERT(connection);
+    getInfo(WTF::makeUnique<CtapNfcDriver>(connection.releaseNonNull()));
 #endif
 }
 
-#if HAVE(NEAR_FIELD)
-void NfcService::setDriver(std::unique_ptr<CtapNfcDriver>&& driver)
+void NfcService::didDetectMultipleTags() const
 {
-    m_driver = WTFMove(driver);
+    if (auto* observer = this->observer())
+        observer->serviceStatusUpdated(WebAuthenticationStatus::MultipleNFCTagsPresent);
+}
+
+#if HAVE(NEAR_FIELD)
+void NfcService::setConnection(Ref<NfcConnection>&& connection)
+{
+    m_connection = WTFMove(connection);
 }
 #endif
 
 void NfcService::startDiscoveryInternal()
 {
     platformStartDiscovery();
+}
+
+void NfcService::restartDiscoveryInternal()
+{
+#if HAVE(NEAR_FIELD)
+    if (m_connection)
+        m_connection->stop();
+#endif
+    m_restartTimer.startOneShot(1_s); // Magic number to give users enough time for reactions.
 }
 
 void NfcService::platformStartDiscovery()
@@ -96,8 +114,8 @@ void NfcService::platformStartDiscovery()
                 return;
             }
 
-            // CtapNfcDriver and NfcConnection will take care of polling tags and connecting to them.
-            m_driver = WTF::makeUnique<CtapNfcDriver>(makeUniqueRef<NfcConnection>(WTFMove(session), *this));
+            // NfcConnection will take care of polling tags and connecting to them.
+            m_connection = NfcConnection::create(WTFMove(session), *this);
         });
     });
     [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSession:callback.get()];

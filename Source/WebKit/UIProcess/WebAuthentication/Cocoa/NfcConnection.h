@@ -27,9 +27,9 @@
 
 #if ENABLE(WEB_AUTHN) && HAVE(NEAR_FIELD)
 
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NFReaderSession;
@@ -40,22 +40,27 @@ namespace WebKit {
 
 class NfcService;
 
-class NfcConnection : public CanMakeWeakPtr<NfcConnection> {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(NfcConnection);
+class NfcConnection : public RefCounted<NfcConnection>, public CanMakeWeakPtr<NfcConnection> {
 public:
-    NfcConnection(RetainPtr<NFReaderSession>&&, NfcService&);
+    static Ref<NfcConnection> create(RetainPtr<NFReaderSession>&&, NfcService&);
     ~NfcConnection();
 
     Vector<uint8_t> transact(Vector<uint8_t>&& data) const;
+    void stop() const;
 
     // For WKNFReaderSessionDelegate
-    void didDetectTags(NSArray *) const;
+    void didDetectTags(NSArray *);
 
 private:
+    NfcConnection(RetainPtr<NFReaderSession>&&, NfcService&);
+
+    void restartPolling();
+    void startPolling();
+
     RetainPtr<NFReaderSession> m_session;
     RetainPtr<WKNFReaderSessionDelegate> m_delegate;
     WeakPtr<NfcService> m_service;
+    RunLoop::Timer<NfcConnection> m_retryTimer;
 };
 
 } // namespace WebKit

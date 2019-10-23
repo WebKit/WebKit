@@ -224,6 +224,12 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
+void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
+{
+    if (auto *panel = m_pendingRequestData.panel.get())
+        panel->client().updatePanel(status);
+}
+
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
@@ -241,6 +247,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
         return;
     }
     respondReceivedInternal(WTFMove(respond));
+    restartDiscovery();
 }
 
 void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
@@ -366,6 +373,12 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
         transports.remove(AuthenticatorTransport::Internal);
     filterTransports(transports);
     return transports;
+}
+
+void AuthenticatorManager::restartDiscovery()
+{
+    for (auto& service : m_services)
+        service->restartDiscovery();
 }
 
 } // namespace WebKit

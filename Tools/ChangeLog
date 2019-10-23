@@ -1,3 +1,18 @@
+2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when multiple NFC tags present
+        https://bugs.webkit.org/show_bug.cgi?id=200932
+        <rdar://problem/54890736>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (TestWebKitAPI::TEST):
+        Adds a new test for -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:].
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc-multiple-tags.html: Added.
+
 2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add more information to _WKWebAuthenticationPanel
