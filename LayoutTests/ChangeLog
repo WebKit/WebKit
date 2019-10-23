@@ -1,5 +1,22 @@
 2019-10-23  Kate Cheney  <katherine_cheney@apple.com>
 
+        [macOS WK2] Layout Test http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html is a flaky timeout (198670)
+        https://bugs.webkit.org/show_bug.cgi?id=198670
+        <rdar://problem/51529251>
+
+        Reviewed by John Wilander.
+
+        Was able to reproduce flaky timeouts extremely rarely accompanied by
+        the error 'JS ERROR TypeError: null is not an object (evaluating
+        'document.body.appendChild’)'. Since the frame was being created in
+        head, the document body was sometimes not finished loading by the time
+        the appendChild call was being made. Moving the frame load to the body should fix this flakiness.
+
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html:
+        * platform/mac-wk2/TestExpectations:
+
+2019-10-23  Kate Cheney  <katherine_cheney@apple.com>
+
         Implement dumpResourceLoadStatistics in SQLite ITP Database
         https://bugs.webkit.org/show_bug.cgi?id=203224
         <rdar://problem/56482165>
