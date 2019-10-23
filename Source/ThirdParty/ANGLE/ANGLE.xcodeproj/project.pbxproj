@@ -625,17 +625,10 @@
 		A30307052305F636002DA972 /* ReplaceShadowingVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307002305F636002DA972 /* ReplaceShadowingVariables.cpp */; };
 		A30307062305F636002DA972 /* BuiltIn_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307012305F636002DA972 /* BuiltIn_autogen.h */; };
 		A30307072305F636002DA972 /* ReplaceShadowingVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307022305F636002DA972 /* ReplaceShadowingVariables.h */; };
-		A30307092305F663002DA972 /* Color.inc in Sources */ = {isa = PBXBuildFile; fileRef = A30307082305F662002DA972 /* Color.inc */; };
 		A303070B2305F6B5002DA972 /* no_destructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A303070A2305F6B5002DA972 /* no_destructor.h */; };
-		A303070F2305F705002DA972 /* generatemip.inc in Sources */ = {isa = PBXBuildFile; fileRef = A303070C2305F705002DA972 /* generatemip.inc */; };
-		A30307102305F705002DA972 /* copyimage.inc in Sources */ = {isa = PBXBuildFile; fileRef = A303070D2305F705002DA972 /* copyimage.inc */; };
-		A30307112305F705002DA972 /* loadimage.inc in Sources */ = {isa = PBXBuildFile; fileRef = A303070E2305F705002DA972 /* loadimage.inc */; };
-		A303071E2305F7C4002DA972 /* Error.inc in Sources */ = {isa = PBXBuildFile; fileRef = A30307122305F7C3002DA972 /* Error.inc */; };
 		A303071F2305F7C4002DA972 /* format_map_desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307132305F7C3002DA972 /* format_map_desktop.cpp */; };
 		A30307202305F7C4002DA972 /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307142305F7C3002DA972 /* trace.h */; };
-		A30307212305F7C4002DA972 /* VertexAttribute.inc in Sources */ = {isa = PBXBuildFile; fileRef = A30307152305F7C3002DA972 /* VertexAttribute.inc */; };
 		A30307222305F7C4002DA972 /* entry_points_enum_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307162305F7C3002DA972 /* entry_points_enum_autogen.cpp */; };
-		A30307232305F7C4002DA972 /* angletypes.inc in Sources */ = {isa = PBXBuildFile; fileRef = A30307172305F7C3002DA972 /* angletypes.inc */; };
 		A30307242305F7C4002DA972 /* Context_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307182305F7C3002DA972 /* Context_gl.cpp */; };
 		A30307252305F7C4002DA972 /* entry_points_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307192305F7C4002DA972 /* entry_points_utils.h */; };
 		A30307262305F7C4002DA972 /* entry_points_enum_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303071A2305F7C4002DA972 /* entry_points_enum_autogen.h */; };
@@ -2972,7 +2965,6 @@
 				5C55D7212282747700B5BA2C /* aligned_memory.cpp in Sources */,
 				A30307A0230625C6002DA972 /* android_util.cpp in Sources */,
 				5C1DBDD31B0438D300235552 /* angletypes.cpp in Sources */,
-				A30307232305F7C4002DA972 /* angletypes.inc in Sources */,
 				5C1DBBF01B0436EC00235552 /* angleutils.cpp in Sources */,
 				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 				5C55D6AA22826BC800B5BA2C /* ArrayReturnValueToOutParameter.cpp in Sources */,
@@ -2996,7 +2988,6 @@
 				315EBDBD1FCE44BF00AC7A89 /* ClearMultiviewGL.cpp in Sources */,
 				31012E1518B97B9B0039062F /* CodeGen.cpp in Sources */,
 				315EBD8C1FCE443600AC7A89 /* CollectVariables.cpp in Sources */,
-				A30307092305F663002DA972 /* Color.inc in Sources */,
 				31012E1718B97B9B0039062F /* Compiler.cpp in Sources */,
 				5C1DBDDC1B0438D300235552 /* Compiler.cpp in Sources */,
 				5CB3011A1DE39F1A00D2C405 /* CompilerGL.cpp in Sources */,
@@ -3009,7 +3000,6 @@
 				5CB3011C1DE39F1A00D2C405 /* ContextGL.cpp in Sources */,
 				5CB304DD1DE4164800D2C405 /* ContextImpl.cpp in Sources */,
 				5CCD598F2284FC400018F2D8 /* copyimage.cpp in Sources */,
-				A30307102305F705002DA972 /* copyimage.inc in Sources */,
 				5CCD81721DBFE999006066B8 /* Debug.cpp in Sources */,
 				5CC7D46E19102621000B8C1F /* debug.cpp in Sources */,
 				5C55D733228274DE00B5BA2C /* Declarator.cpp in Sources */,
@@ -3044,7 +3034,6 @@
 				315EBE091FCE456200AC7A89 /* entry_points_gles_3_1_autogen.cpp in Sources */,
 				6E344AB322BC35C3001DDB2C /* entry_points_gles_ext_autogen.cpp in Sources */,
 				5C1DBDEA1B0438D300235552 /* Error.cpp in Sources */,
-				A303071E2305F7C4002DA972 /* Error.inc in Sources */,
 				315EBDEF1FCE452D00AC7A89 /* es3_copy_conversion_table_autogen.cpp in Sources */,
 				5CC7D47019102621000B8C1F /* event_tracer.cpp in Sources */,
 				5C55D6B322826BC800B5BA2C /* ExpandIntegerPowExpressions.cpp in Sources */,
@@ -3070,7 +3059,6 @@
 				6EA0D69323515A5C00B8651F /* FrameCapture_mock.cpp in Sources */,
 				5C55D6E422826C7900B5BA2C /* FunctionLookup.cpp in Sources */,
 				5CB3012B1DE39F1A00D2C405 /* FunctionsGL.cpp in Sources */,
-				A303070F2305F705002DA972 /* generatemip.inc in Sources */,
 				5CCD596B2284F7960018F2D8 /* GLES1Renderer.cpp in Sources */,
 				5CCD59632284F7960018F2D8 /* GLES1State.cpp in Sources */,
 				5C1BAAB11DFB6F33002906BB /* global_state.cpp in Sources */,
@@ -3101,7 +3089,6 @@
 				A264F8B616974DED006FAA5A /* Lexer.cpp in Sources */,
 				5CB304EF1DE4164800D2C405 /* load_functions_table_autogen.cpp in Sources */,
 				5CCD59952284FC400018F2D8 /* loadimage.cpp in Sources */,
-				A30307112305F705002DA972 /* loadimage.inc in Sources */,
 				5CCD59922284FC400018F2D8 /* loadimage_etc.cpp in Sources */,
 				315EBDE81FCE452D00AC7A89 /* LoggingAnnotator.cpp in Sources */,
 				A264F8B816974DED006FAA5A /* Macro.cpp in Sources */,
@@ -3277,7 +3264,6 @@
 				5C1DBF3F1B0438D300235552 /* VertexArray.cpp in Sources */,
 				5CB301451DE39F1A00D2C405 /* VertexArrayGL.cpp in Sources */,
 				5C1DBF411B0438D300235552 /* VertexAttribute.cpp in Sources */,
-				A30307212305F7C4002DA972 /* VertexAttribute.inc in Sources */,
 				A31B6184230B747F001610D7 /* WindowSurfaceCGL.mm in Sources */,
 				315EBDE71FCE452D00AC7A89 /* WorkerThread.cpp in Sources */,
 				5C55D6D522826BC800B5BA2C /* WrapSwitchStatementsInBlocks.cpp in Sources */,
