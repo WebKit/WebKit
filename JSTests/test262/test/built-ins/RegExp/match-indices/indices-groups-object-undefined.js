@@ -5,7 +5,7 @@
 description: The groups object of indices is created unconditionally.
 includes: [propertyHelper.js]
 esid: sec-makeindicesarray
-features: [regexp-named-groups]
+features: [regexp-named-groups, regexp-match-indices]
 info: |
   MakeIndicesArray ( S, indices, groupNames )
     8. If _groupNames_ is not *undefined*, then

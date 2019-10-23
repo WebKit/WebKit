@@ -10,6 +10,7 @@ function CustomError() {}
 
 const options = [
   "localeMatcher",
+  "numberingSystem",
   "style",
   "currency",
   "currencyDisplay",

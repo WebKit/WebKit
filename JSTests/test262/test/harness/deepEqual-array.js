@@ -3,10 +3,9 @@
 
 /*---
 description: >
-    array values compare correctly.
+  array values compare correctly.
 includes: [deepEqual.js]
 ---*/
-
 
 assert.deepEqual([], []);
 assert.deepEqual([1, "a", true], [1, "a", true]);

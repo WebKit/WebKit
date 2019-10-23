@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.format
-description: Verifies the branding check for the "format" function of the ListFormat prototype object.
+description: >
+    Verifies the branding check for the "format" function of the ListFormat prototype object.
 info: |
     Intl.ListFormat.prototype.format ([ list ])
 

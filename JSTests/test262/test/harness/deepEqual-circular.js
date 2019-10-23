@@ -3,10 +3,9 @@
 
 /*---
 description: >
-    values compare correctly with circular references.
+  values compare correctly with circular references.
 includes: [deepEqual.js]
 ---*/
-
 
 var a = { x: 1 };
 var b = { x: 1 };

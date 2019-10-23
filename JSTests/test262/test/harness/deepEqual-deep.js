@@ -3,10 +3,9 @@
 
 /*---
 description: >
-    values compare correctly.
+  values compare correctly.
 includes: [deepEqual.js]
 ---*/
-
 
 assert.deepEqual({ a: { x: 1 }, b: [true] }, { a: { x: 1 }, b: [true] });
 

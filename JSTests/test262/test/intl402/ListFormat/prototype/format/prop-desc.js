@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.format
-description: Checks the "format" property of the ListFormat prototype object.
+description: >
+    Checks the "format" property of the ListFormat prototype object.
 info: |
     Intl.ListFormat.prototype.format ([ list ])
 

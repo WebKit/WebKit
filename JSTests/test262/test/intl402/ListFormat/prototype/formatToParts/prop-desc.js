@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.formatToParts
-description: Checks the "formatToParts" property of the ListFormat prototype object.
+description: >
+    Checks the "formatToParts" property of the ListFormat prototype object.
 info: |
     Intl.ListFormat.prototype.formatToParts ()
 

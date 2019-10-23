@@ -13,7 +13,7 @@ info: |
 features: [Symbol.matchAll, String.prototype.matchAll]
 ---*/
 
-var regexp = /./;
+var regexp = /./g;
 Object.defineProperty(regexp, Symbol.matchAll, {
   get() {
     throw new Test262Error();

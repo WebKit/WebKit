@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.format
-description: Checks the behavior of Intl.ListFormat.prototype.format() in English.
+description: >
+    Checks the behavior of Intl.ListFormat.prototype.format() in English.
 features: [Intl.ListFormat]
 locale: [en-US]
 ---*/

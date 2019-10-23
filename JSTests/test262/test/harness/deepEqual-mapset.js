@@ -3,10 +3,9 @@
 
 /*---
 description: >
-    map/set values compare correctly.
+  map/set values compare correctly.
 includes: [deepEqual.js]
 ---*/
-
 
 assert.deepEqual(new Set(), new Set());
 assert.deepEqual(new Set([1, "a", true]), new Set([1, "a", true]));

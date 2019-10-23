@@ -28,6 +28,6 @@ Object.defineProperty(RegExp.prototype, 'flags', {
   }
 });
 
-assert.throws(Test262Error, function () {
+assert.throws(TypeError, function () {
   ''.matchAll(/a/g);
 });

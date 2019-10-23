@@ -8,7 +8,6 @@ esid: sec-makeindicesarray
 features: [regexp-match-indices]
 ---*/
 
-
 assert.compareArray([1, 2], /(?<π>a)/u.exec("bab").indices.groups.π);
 assert.compareArray([1, 2], /(?<\u{03C0}>a)/u.exec("bab").indices.groups.π);
 assert.compareArray([1, 2], /(?<π>a)/u.exec("bab").indices.groups.\u03C0);

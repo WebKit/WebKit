@@ -12,7 +12,6 @@ info: |
       d. Perform ! CreateDataProperty(_A_, ! ToString(_n_), _matchIndicesArray_).
 ---*/
 
-
 let input = "abcd";
 let match = /b(c)/.exec(input);
 let indices = match.indices;

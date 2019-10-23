@@ -25,12 +25,13 @@ info: |
   8. Let booleanTrapResult be ! ToBoolean(? Call(trap, handler, « target, P, V, Receiver »)).
   ...
   12. Return true.
+includes: [proxyTrapsHelper.js]
 features: [Proxy]
 ---*/
 
 var _handler, _target, _prop, _value, _receiver;
 var target = {};
-var handler = {
+var handler = allowProxyTraps({
   set: function(target, prop, value, receiver) {
     _handler = this;
     _target = target;
@@ -39,7 +40,7 @@ var handler = {
     _receiver = receiver;
     return true;
   },
-};
+});
 
 var proxy = new Proxy(target, handler);
 var receiver = Object.create(proxy);

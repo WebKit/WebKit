@@ -5,7 +5,7 @@
 description: Test the groups object of indices with matched and unmatched named captures.
 includes: [compareArray.js]
 esid: sec-makeindicesarray
-features: [regexp-named-groups]
+features: [regexp-named-groups, regexp-match-indices]
 info: |
   MakeIndicesArray ( S, indices, groupNames )
     11. For each integer _i_ such that _i_ >= 0 and _i_ < _n_, do

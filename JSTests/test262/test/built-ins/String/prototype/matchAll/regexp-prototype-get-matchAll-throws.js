@@ -18,5 +18,5 @@ Object.defineProperty(RegExp.prototype, Symbol.matchAll, {
 });
 
 assert.throws(Test262Error, function() {
-  ''.matchAll(/./);
+  ''.matchAll(/./g);
 });

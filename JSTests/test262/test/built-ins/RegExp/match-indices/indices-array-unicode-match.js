@@ -36,7 +36,6 @@ info: |
     5. Return _eUTF_.
 ---*/
 
-
 assert.deepEqual([[1, 2], [1, 2]], "bab".match(/(a)/u).indices);
 assert.deepEqual([[0, 3], [1, 2]], "bab".match(/.(a)./u).indices);
 assert.deepEqual([[0, 3], [1, 2], [2, 3]], "bab".match(/.(a)(.)/u).indices);

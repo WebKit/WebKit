@@ -12,7 +12,6 @@ info: |
     35. Perform ! DefinePropertyOrThrow(_A_, `"indices"`, PropertyDescriptor { [[Value]]: _indicesArray_, [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *true* }).
 ---*/
 
-
 // `indices` is created with Define, not Set.
 let counter = 0;
 Object.defineProperty(Array.prototype, "indices", {

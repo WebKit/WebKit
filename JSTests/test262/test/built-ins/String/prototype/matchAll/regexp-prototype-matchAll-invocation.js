@@ -25,7 +25,7 @@ RegExp.prototype[Symbol.matchAll] = function() {
   return returnVal;
 };
 
-var regexp = /./;
+var regexp = /./g;
 var str = '';
 
 assert.sameValue(str.matchAll(regexp), returnVal);

@@ -13,6 +13,8 @@ info: |
     8. If ClassBodyopt is present, then
         a. For each element dn of the PrivateBoundIdentifiers of ClassBodyopt,
           i. Perform classPrivateEnvRec.CreateImmutableBinding(dn, true).
+          ii. Let privateName be NewPrivateName(dn).
+          iii. Perform ! classPrivateEnvRec.InitializeBinding(dn, dn).
     ...
     15. Set the running execution context's LexicalEnvironment to classScope.
     16. Set the running execution context's PrivateEnvironment to classPrivateEnvironment.
@@ -22,35 +24,26 @@ info: |
         i. Let field be the result of ClassElementEvaluation for e with arguments proto and false.
     ...
 
-  MemberExpression : MemberExpression . PrivateIdentifier
+  GetValue ( V )
     ...
-    5. Return MakePrivateReference(bv, fieldNameString).
+    5. If IsPropertyReference(V), then
+      ...
+      b. If IsPrivateReference(V), then
+        i. Return ? PrivateFieldGet(GetReferencedName(V), base).
 
-  MakePrivateReference ( baseValue, privateIdentifier )
+  PrivateFieldGet ( P, O )
     ...
-    2. Let privateNameBinding be ? ResolveBinding(privateIdentifier, env).
-    3. Let privateName be GetValue(privateNameBinding).
-    ...
-
-  GetValue (V)
-    ...
-    6. Else,
-      a. Assert: base is an Environment Record.
-      b. Return ? base.GetBindingValue(GetReferencedName(V), IsStrictReference(V)).
-
-  GetBindingValue ( N, S )
-    ...
-    3. If the binding for N in envRec is an uninitialized binding, throw a ReferenceError exception.
+    4. If entry is empty, throw a TypeError exception.
     ...
 
 features: [class-fields-private, class-fields-public, class]
 ---*/
 
 const self = this;
-assert.throws(ReferenceError, function() {
+assert.throws(TypeError, function() {
   class C {
     [self.#f] = 'Test262';
     #f = 'foo';
   }
-}, 'access to a not defined private field in object should throw a ReferenceError');
+}, 'access to a not defined private field in object should throw a TypeError');
 

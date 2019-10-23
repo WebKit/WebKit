@@ -633,9 +633,6 @@ test/built-ins/Array/proto-from-ctor-realm-zero.js:
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/flatMap/array-like-objects-nested.js:
-  default: 'Exception: should not even consider the length property'
-  strict mode: 'Exception: should not even consider the length property'
 test/built-ins/Array/prototype/indexOf/calls-only-has-on-prototype-after-length-zeroed.js:
   default: 'Test262Error: [[GetPrototypeOf]] trap called'
   strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
@@ -670,11 +667,11 @@ test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-proxy
   default: 'Test262Error: Expected a StopReverse but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopReverse but got a Test262Error'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-array.js:
-  default: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
-  strict mode: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
+  default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
+  strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit.js:
-  default: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
-  strict mode: 'Test262Error: Expected [] and ["9007199254740989", "9007199254740990"] to have the same contents. slice(9007199254740989)'
+  default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
+  strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
 test/built-ins/Array/prototype/slice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -691,14 +688,14 @@ test/built-ins/Array/prototype/splice/create-species-length-exceeding-integer-li
   default: 'Test262Error: Expected a StopSplice but got a Test262Error'
   strict mode: 'Test262Error: Expected a StopSplice but got a Test262Error'
 test/built-ins/Array/prototype/splice/length-and-deleteCount-exceeding-integer-limit.js:
-  default: "Test262Error: Expected [] and [\"9007199254740989\", \"9007199254740990\"] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
-  strict mode: "Test262Error: Expected [] and [\"9007199254740989\", \"9007199254740990\"] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
+  default: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
+  strict mode: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
 test/built-ins/Array/prototype/splice/length-exceeding-integer-limit-shrink-array.js:
-  default: "Test262Error: Expected [] and [\"9007199254740987\"] to have the same contents. arrayLike['9007199254740987'] is removed"
-  strict mode: "Test262Error: Expected [] and [\"9007199254740987\"] to have the same contents. arrayLike['9007199254740987'] is removed"
+  default: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
+  strict mode: "Test262Error: Expected [] and [9007199254740987] to have the same contents. arrayLike['9007199254740987'] is removed"
 test/built-ins/Array/prototype/splice/property-traps-order-with-species.js:
-  default: 'Test262Error: Expected ["defineProperty", "defineProperty", "set", "getOwnPropertyDescriptor", "defineProperty"] and ["defineProperty", "defineProperty"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["defineProperty", "defineProperty", "set", "getOwnPropertyDescriptor", "defineProperty"] and ["defineProperty", "defineProperty"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
+  strict mode: 'Test262Error: Expected [defineProperty, defineProperty, set, getOwnPropertyDescriptor, defineProperty] and [defineProperty, defineProperty] to have the same contents. '
 test/built-ins/Array/prototype/splice/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -1238,8 +1235,14 @@ test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar
   default: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«Â», Â«xÂ») to be true'
 test/built-ins/Object/keys/property-traps-order-with-proxied-array.js:
-  default: 'Test262Error: Expected ["ownKeys", "getOwnPropertyDescriptor"] and ["ownKeys"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["ownKeys", "getOwnPropertyDescriptor"] and ["ownKeys"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [ownKeys, getOwnPropertyDescriptor] and [ownKeys] to have the same contents. '
+  strict mode: 'Test262Error: Expected [ownKeys, getOwnPropertyDescriptor] and [ownKeys] to have the same contents. '
+test/built-ins/Object/keys/proxy-non-enumerable-prop-invariant-1.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Object/keys/proxy-non-enumerable-prop-invariant-2.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Object/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Object]Â», Â«[object Object]Â») to be true'
@@ -1279,6 +1282,9 @@ test/built-ins/Promise/allSettled/resolve-element-function-nonconstructor.js:
 test/built-ins/Promise/executor-function-name.js:
   default: 'Test262Error: obj should have an own property name'
   strict mode: 'Test262Error: obj should have an own property name'
+test/built-ins/Promise/executor-function-nonconstructor.js:
+  default: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
 test/built-ins/Promise/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object Promise]Â», Â«[object Promise]Â») to be true'
@@ -1333,6 +1339,9 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
+test/built-ins/Proxy/has/call-in-prototype.js:
+  default: 'Test262Error: [[GetPrototypeOf]] trap called'
+  strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
 test/built-ins/Proxy/revocable/revocation-function-name.js:
   default: 'Test262Error: obj should have an own property name'
   strict mode: 'Test262Error: obj should have an own property name'
@@ -2107,8 +2116,11 @@ test/intl402/Collator/prototype/compare/compare-function-name.js:
   default: 'Test262Error: descriptor value should be '
   strict mode: 'Test262Error: descriptor value should be '
 test/intl402/Collator/usage-de.js:
-  default: 'Test262Error: Expected ["Ã", "AE"] and ["AE", "Ã"] to have the same contents. search'
-  strict mode: 'Test262Error: Expected ["Ã", "AE"] and ["AE", "Ã"] to have the same contents. search'
+  default: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
+  strict mode: 'Test262Error: Expected [Ã, AE] and [AE, Ã] to have the same contents. search'
+test/intl402/DateTimeFormat/constructor-calendar-numberingSystem-order.js:
+  default: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
+  strict mode: 'Test262Error: Expected [localeMatcher, hour12] and [localeMatcher, calendar, numberingSystem, hour12] to have the same contents. '
 test/intl402/DateTimeFormat/constructor-options-dayPeriod-invalid.js:
   default: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: new Intl.DateTimeFormat("en", { dayPeriod: "" }) throws RangeError Expected a RangeError to be thrown but no exception was thrown at all'
@@ -2122,11 +2134,11 @@ test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
   default: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«undefinedÂ», Â«0Â») to be true'
 test/intl402/DateTimeFormat/constructor-options-order-dayPeriod.js:
-  default: 'Test262Error: Expected ["day", "hour", "day", "hour"] and ["day", "dayPeriod", "hour", "day", "dayPeriod", "hour"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["day", "hour", "day", "hour"] and ["day", "dayPeriod", "hour", "day", "dayPeriod", "hour"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. '
+  strict mode: 'Test262Error: Expected [day, hour, day, hour] and [day, dayPeriod, hour, day, dayPeriod, hour] to have the same contents. '
 test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected ["second", "localeMatcher", "second", "timeZoneName", "formatMatcher"] and ["second", "fractionalSecondDigits", "localeMatcher", "second", "timeZoneName", "fractionalSecondDigits", "formatMatcher"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["second", "localeMatcher", "second", "timeZoneName", "formatMatcher"] and ["second", "fractionalSecondDigits", "localeMatcher", "second", "timeZoneName", "fractionalSecondDigits", "formatMatcher"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
+  strict mode: 'Test262Error: Expected [second, localeMatcher, second, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
 test/intl402/DateTimeFormat/constructor-options-throwing-getters-dayPeriod.js:
   default: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Exception from dayPeriod getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
@@ -2166,15 +2178,21 @@ test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
 test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js:
   default: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
   strict mode: 'Test262Error: length should be 5, 1 fractionalSecondDigits round down Expected SameValue(Â«3Â», Â«5Â») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/pattern-on-calendar.js:
+  default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/related-year.js:
+  default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+  strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
-  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "hour", "hourCycle", "hour12", "minute"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "dayPeriod", "hour", "minute"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "hour", "hourCycle", "hour12", "minute"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "dayPeriod", "hour", "minute"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
-  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second"] and ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second", "fractionalSecondDigits"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second"] and ["locale", "calendar", "numberingSystem", "timeZone", "minute", "second", "fractionalSecondDigits"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
-  default: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "weekday", "era", "year", "month", "day", "hour", "hourCycle", "hour12", "minute", "second", "timeZoneName"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "weekday", "era", "year", "month", "day", "hour", "minute", "second", "timeZoneName"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["locale", "calendar", "numberingSystem", "timeZone", "weekday", "era", "year", "month", "day", "hour", "hourCycle", "hour12", "minute", "second", "timeZoneName"] and ["locale", "calendar", "numberingSystem", "timeZone", "hourCycle", "hour12", "weekday", "era", "year", "month", "day", "hour", "minute", "second", "timeZoneName"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. '
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. '
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
@@ -2193,6 +2211,12 @@ test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
 test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
   default: 'Test262Error: Expected SameValue(Â«ja-Latn-alalc97Â», Â«ja-Latn-hepburn-heplocÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ja-Latn-alalc97Â», Â«ja-Latn-hepburn-heplocÂ») to be true'
+test/intl402/NumberFormat/constructor-numberingSystem-order.js:
+  default: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
+  strict mode: 'Test262Error: Expected [localeMatcher, style] and [localeMatcher, numberingSystem, style] to have the same contents. '
+test/intl402/NumberFormat/constructor-options-throwing-getters.js:
+  default: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Exception from numberingSystem getter should be propagated Expected a CustomError to be thrown but no exception was thrown at all'
 test/intl402/NumberFormat/numbering-system-options.js:
   default: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
   strict mode: "Test262Error: Options value for property numberingSystem doesn't override locale extension key nu. Expected SameValue(Â«arabÂ», Â«latnÂ») to be true"
@@ -2379,11 +2403,11 @@ test/language/expressions/assignment/S11.13.1_A7_T3.js:
   default: 'Test262Error: Expected a DummyError but got a Test262Error'
   strict mode: 'Test262Error: Expected a DummyError but got a Test262Error'
 test/language/expressions/assignment/destructuring/iterator-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected ["source", "iterator", "iterator-step", "iterator-done", "target", "target-key", "target-key-tostring", "set"] and ["source", "iterator", "target", "target-key", "target-key-tostring", "iterator-step", "iterator-done", "set"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["source", "iterator", "iterator-step", "iterator-done", "target", "target-key", "target-key-tostring", "set"] and ["source", "iterator", "target", "target-key", "target-key-tostring", "iterator-step", "iterator-done", "set"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
+  strict mode: 'Test262Error: Expected [source, iterator, iterator-step, iterator-done, target, target-key, target-key-tostring, set] and [source, iterator, target, target-key, target-key-tostring, iterator-step, iterator-done, set] to have the same contents. '
 test/language/expressions/assignment/destructuring/keyed-destructuring-property-reference-target-evaluation-order.js:
-  default: 'Test262Error: Expected ["source", "source-key", "source-key-tostring", "get", "target", "target-key", "target-key-tostring", "set"] and ["source", "source-key", "source-key-tostring", "target", "target-key", "target-key-tostring", "get", "set"] to have the same contents. undefined'
-  strict mode: 'Test262Error: Expected ["source", "source-key", "source-key-tostring", "get", "target", "target-key", "target-key-tostring", "set"] and ["source", "source-key", "source-key-tostring", "target", "target-key", "target-key-tostring", "get", "set"] to have the same contents. undefined'
+  default: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. '
+  strict mode: 'Test262Error: Expected [source, source-key, source-key-tostring, get, target, target-key, target-key-tostring, set] and [source, source-key, source-key-tostring, target, target-key, target-key-tostring, get, set] to have the same contents. '
 test/language/expressions/assignment/destructuring/obj-prop-__proto__dup.js:
   default: 'SyntaxError: Attempted to redefine __proto__ property.'
   strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'

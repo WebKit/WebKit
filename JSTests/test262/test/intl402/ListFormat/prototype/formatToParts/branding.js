@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.formatToParts
-description: Verifies the branding check for the "formatToParts" function of the ListFormat prototype object.
+description: >
+    Verifies the branding check for the "formatToParts" function of the ListFormat prototype object.
 info: |
     Intl.ListFormat.prototype.formatToParts([ list ])
 

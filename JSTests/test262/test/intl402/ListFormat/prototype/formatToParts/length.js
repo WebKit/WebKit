@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.formatToParts
-description: Checks the "length" property of Intl.ListFormat.prototype.formatToParts().
+description: >
+    Checks the "length" property of Intl.ListFormat.prototype.formatToParts().
 info: |
     Unless specified otherwise in this document, the objects, functions, and constructors described in this standard are subject to the generic requirements and restrictions specified for standard built-in ECMAScript objects in the ECMAScript 2019 Language Specification, 10th edition, clause 17, or successor.
     The ListFormat constructor is a standard built-in property of the Intl object.

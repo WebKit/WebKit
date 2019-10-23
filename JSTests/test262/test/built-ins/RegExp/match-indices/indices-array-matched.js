@@ -22,7 +22,6 @@ info: |
         ...
 ---*/
 
-
 let input = "abcd";
 let match = /b(c)/.exec(input);
 let indices = match.indices;

@@ -5,7 +5,7 @@
 description: Properties of the groups object of indices are created with CreateDataProperty
 includes: [compareArray.js, propertyHelper.js]
 esid: sec-makeindicesarray
-features: [regexp-named-groups]
+features: [regexp-named-groups, regexp-match-indices]
 info: |
   MakeIndicesArray ( S, indices, groupNames )
     11. For each integer _i_ such that _i_ >= 0 and _i_ < _n_, do

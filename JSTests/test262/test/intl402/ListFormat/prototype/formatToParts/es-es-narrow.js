@@ -3,7 +3,8 @@
 
 /*---
 esid: sec-Intl.ListFormat.prototype.formatToParts
-description: Checks the behavior of Intl.ListFormat.prototype.formatToParts() in English.
+description: >
+    Checks the behavior of Intl.ListFormat.prototype.formatToParts() in English.
 features: [Intl.ListFormat]
 locale: [en-US]
 ---*/

@@ -27,7 +27,6 @@ info: |
     34. Let _indicesArray_ be MakeIndicesArray( _S_, _indices_, _groupNames_).
 ---*/
 
-
 assert.deepEqual([[1, 2], [1, 2]], "bab".match(/(a)/).indices);
 assert.deepEqual([[0, 3], [1, 2]], "bab".match(/.(a)./).indices);
 assert.deepEqual([[0, 3], [1, 2], [2, 3]], "bab".match(/.(a)(.)/).indices);

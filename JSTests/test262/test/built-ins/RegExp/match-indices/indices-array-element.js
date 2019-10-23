@@ -10,7 +10,6 @@ info: |
     5. Return CreateArrayFromList(« _match_.[[StartIndex]], _match_.[[EndIndex]] »).
 ---*/
 
-
 let input = "abcd";
 let match = /b(c)/.exec(input);
 let indices = match.indices;
