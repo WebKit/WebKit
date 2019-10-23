@@ -17,6 +17,7 @@ function test()
         name: "TemplateLiteralPlaceholders",
         description: "Evaluate breakpoint with logging actions that include placeholders.",
         test(resolve, reject) {
+            let breakpointPromise = new WI.WrappedPromise;
             WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let scriptObject = event.data.script;
                 if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
@@ -42,11 +43,19 @@ function test()
                 addLogAction("${a} and ${JSON.stringify(b)}");
 
                 WI.debuggerManager.addBreakpoint(breakpoint);
-
-                InspectorTest.evaluateInPage("runBreakpointActions()", resolve);
+                breakpointPromise.resolve();
             });
 
+            let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
             InspectorTest.reloadPage();
+            Promise.all([
+                reloadPromise,
+                breakpointPromise.promise
+            ])
+            .then(() => {
+                return InspectorTest.evaluateInPage("runBreakpointActions()");
+            })
+            .then(resolve);;
         }
     });
 

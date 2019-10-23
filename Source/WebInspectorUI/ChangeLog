@@ -1,3 +1,24 @@
+2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: frontend tests should clear output before resending results
+        https://bugs.webkit.org/show_bug.cgi?id=203262
+
+        Reviewed by Devin Rousso.
+
+        Inspector front-end tests will clear output log before resending teset results. This avoids
+        race between InspectorTest.testPageDidLoad event and TestPage.addResult calls that may have
+        already be sent to the new page after navigation. The latter events otherwise would be added
+        twice.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness):
+        (FrontendTestHarness.prototype.testPageDidLoad):
+        (FrontendTestHarness.prototype.reloadPage):
+        (FrontendTestHarness.prototype.reportUnhandledRejection):
+        (FrontendTestHarness.prototype.reportUncaughtException):
+        (FrontendTestHarness.prototype._resendResults): Don't resend the results when the page is loaded
+        first time.
+
 2019-10-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: keep the function/object name sticky in the object preview popover

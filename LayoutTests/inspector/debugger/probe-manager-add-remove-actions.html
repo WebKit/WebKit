@@ -7,6 +7,7 @@
 <script>
 function test()
 {
+    let breakpointPromise = new WI.WrappedPromise;
     WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
         InspectorTest.startTracingBreakpoints();
         InspectorTest.startTracingProbes();
@@ -44,11 +45,19 @@ function test()
             });
 
 
-            InspectorTest.evaluateInPage("breakpointActions(12, {x:1,y:2})");
+            breakpointPromise.resolve();
           });
     });
 
+    let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
     InspectorTest.reloadPage();
+    Promise.all([
+        reloadPromise,
+        breakpointPromise.promise
+    ])
+    .then(() => {
+        InspectorTest.evaluateInPage("breakpointActions(12, {x:1,y:2})");
+    });
 }
 </script>
 </head>

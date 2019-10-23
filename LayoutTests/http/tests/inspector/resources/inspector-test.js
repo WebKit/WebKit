@@ -173,6 +173,16 @@ TestPage.addResult = function(text)
 
 TestPage.log = TestPage.addResult;
 
+TestPage.clearOutput = function()
+{
+    if (!this._resultElement)
+        return;
+
+    let output = this._resultElement;
+    while (output.firstChild)
+        output.removeChild(output.firstChild);
+}
+
 TestPage.dispatchEventToFrontend = function(eventName, data)
 {
     let dispatchEventCodeString = `InspectorTest.dispatchEventToListeners(${JSON.stringify(eventName)}, ${JSON.stringify(data)});`;

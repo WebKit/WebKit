@@ -1,3 +1,23 @@
+2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: frontend tests should clear output before resending results
+        https://bugs.webkit.org/show_bug.cgi?id=203262
+
+        Reviewed by Devin Rousso.
+
+        Unflake some of the tests that reload inspected page. This is achieved by waiting for
+        explicit TestPageDidLoad event. At that point it's known that accumulated so far test
+        output has been resent to the inspected page and the log lines will not change their
+        order / appear twice.
+
+        * http/tests/inspector/resources/inspector-test.js:
+        (TestPage.clearOutput):
+        * inspector/debugger/breakpoint-action-eval.html:
+        * inspector/debugger/breakpoint-action-log-expected.txt:
+        * inspector/debugger/breakpoint-action-log.html:
+        * inspector/debugger/probe-manager-add-remove-actions-expected.txt:
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+
 2019-10-23  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mac WK1 ] REGRESSION (r251261): Layout Test inspector/console/webcore-logging.html is consistently Failing

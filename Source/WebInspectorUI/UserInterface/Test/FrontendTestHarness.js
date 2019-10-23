@@ -30,7 +30,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         super();
 
         this._results = [];
-        this._shouldResendResults = true;
+        this._testPageHasLoaded = false;
 
         // Options that are set per-test for debugging purposes.
         this.dumpActivityToSystemConsole = false;
@@ -133,7 +133,10 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
             InspectorFrontendHost.unbufferedLog("testPageDidLoad()");
 
         this._testPageIsReloading = false;
-        this._resendResults();
+        if (this._testPageHasLoaded)
+            this._resendResults();
+        else
+            this._testPageHasLoaded = true;
 
         this.dispatchEventToListeners(FrontendTestHarness.Event.TestPageDidLoad);
 
@@ -155,7 +158,6 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         let target = WI.assumingMainTarget();
         return target.PageAgent.reload.invoke({ignoreCache, revalidateAllResources})
             .then(() => {
-                this._shouldResendResults = true;
                 this._testPageReloadedOnce = true;
 
                 return Promise.resolve(null);
@@ -252,7 +254,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
         // If the connection to the test page is not set up, then just dump to console and give up.
         // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
-        if (this._originalConsole && !this._testPageHasLoaded())
+        if (this._originalConsole && !this._testPageHasLoaded)
             this._originalConsole["error"](result);
 
         this.addResult(result);
@@ -288,7 +290,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
         // If the connection to the test page is not set up, then just dump to console and give up.
         // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
-        if (this._originalConsole && !this._testPageHasLoaded())
+        if (this._originalConsole && !this._testPageHasLoaded)
             this._originalConsole["error"](result);
 
         this.addResult(result);
@@ -299,19 +301,14 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
     // Private
 
-    _testPageHasLoaded()
-    {
-        return self._shouldResendResults;
-    }
-
     _resendResults()
     {
-        console.assert(this._shouldResendResults);
-        this._shouldResendResults = false;
+        console.assert(this._testPageHasLoaded);
 
         if (this.dumpActivityToSystemConsole)
             InspectorFrontendHost.unbufferedLog("_resendResults()");
 
+        this.evaluateInPage("TestPage.clearOutput()");
         for (let result of this._results)
             this.evaluateInPage(`TestPage.addResult(unescape("${escape(result)}"))`);
     }
