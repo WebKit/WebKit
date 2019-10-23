@@ -1768,12 +1768,12 @@ LazyImageLoadingEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
 
-IsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled:
+IsThirdPartyCookieBlockingEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Block 3rd-Party Cookies On Sites Without Interaction (ITP)"
-  humanReadableDescription: "Block all third-party cookies on websites without user interaction"
-  category: internal
+  humanReadableName: "Block All 3rd-Party Cookies (ITP)"
+  humanReadableDescription: "Block all third-party cookies when Intelligent Tracking Prevention is enabled"
+  category: experimental
 
 IsLoggedInAPIEnabled:
     type: bool

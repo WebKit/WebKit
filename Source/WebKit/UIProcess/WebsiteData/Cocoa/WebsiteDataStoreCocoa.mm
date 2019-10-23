@@ -69,14 +69,14 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     bool shouldLogCookieInformation = false;
     bool enableResourceLoadStatisticsDebugMode = false;
-    bool enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = false;
+    bool enableThirdPartyCookieBlocking = false;
     bool enableLegacyTLS = true;
     if (id value = [defaults objectForKey:@"WebKitEnableLegacyTLS"])
         enableLegacyTLS = [value boolValue];
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
-    enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabledKey().createCFString().get()]];
+    enableThirdPartyCookieBlocking = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingEnabledKey().createCFString().get()]];
     auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
     if (manualPrevalentResource) {
         URL url { URL(), manualPrevalentResource };
@@ -140,7 +140,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         hasStatisticsTestingCallback(),
         shouldIncludeLocalhostInResourceLoadStatistics,
         enableResourceLoadStatisticsDebugMode,
-        enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction,
+        enableThirdPartyCookieBlocking,
         m_configuration->deviceManagementRestrictionsEnabled(),
         m_configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting(),
         WTFMove(resourceLoadStatisticsManualPrevalentResource),

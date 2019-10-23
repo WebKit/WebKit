@@ -869,7 +869,7 @@ webRTCEncryptionEnabled:
   initial: true
   inspectorOverride: true
 
-isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled:
+isThirdPartyCookieBlockingEnabled:
   initial: false
 
 isLoggedInAPIEnabled:

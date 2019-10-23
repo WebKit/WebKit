@@ -68,7 +68,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldIncludeLocalhostInResourceLoadStatistics;
     encoder << enableResourceLoadStatisticsDebugMode;
     encoder << resourceLoadStatisticsManualPrevalentResource;
-    encoder << enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
+    encoder << enableThirdPartyCookieBlocking;
 
     encoder << networkCacheDirectory << networkCacheDirectoryExtensionHandle;
 
@@ -199,9 +199,9 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!resourceLoadStatisticsManualPrevalentResource)
         return WTF::nullopt;
 
-    Optional<bool> enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
-    decoder >> enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction;
-    if (!enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction)
+    Optional<bool> enableThirdPartyCookieBlocking;
+    decoder >> enableThirdPartyCookieBlocking;
+    if (!enableThirdPartyCookieBlocking)
         return WTF::nullopt;
 
     Optional<String> networkCacheDirectory;
@@ -282,7 +282,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*enableResourceLoadStatisticsLogTestingEvent)
         , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
         , WTFMove(*enableResourceLoadStatisticsDebugMode)
-        , WTFMove(*enableThirdPartyCookieBlockingOnSitesWithoutUserInteraction)
+        , WTFMove(*enableThirdPartyCookieBlocking)
         , WTFMove(*deviceManagementRestrictionsEnabled)
         , WTFMove(*allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         , WTFMove(*resourceLoadStatisticsManualPrevalentResource)

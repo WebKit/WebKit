@@ -1,3 +1,21 @@
+2019-10-22  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Block all third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=203266
+        <rdar://problem/56512858>
+
+        Reviewed by Alex Christensen.
+
+        This change updates the experimental change in
+        <https://trac.webkit.org/changeset/251213> to block all
+        third-party cookies, regardless of user interaction with
+        the first-party website.
+
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-database-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-expected.txt.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-database.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database-expected.txt.
+        * http/tests/resourceLoadStatistics/third-party-cookie-blocking.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction-database.html.
+
 2019-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         editing/pasteboard/paste-and-sanitize.html is a flaky failure

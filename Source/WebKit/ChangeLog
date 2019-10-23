@@ -1,3 +1,30 @@
+2019-10-22  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Block all third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=203266
+        <rdar://problem/56512858>
+
+        Reviewed by Alex Christensen.
+
+        This change updates the experimental change in
+        <https://trac.webkit.org/changeset/251213> to block all
+        third-party cookies, regardless of user interaction with
+        the first-party website.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setShouldBlockThirdPartyCookiesForTesting):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2019-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to not include IPC Messages headers in other headers

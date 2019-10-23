@@ -7,7 +7,7 @@
 </head>
 <body>
 <script>
-    description("Tests that all third-party cookies are blocked under websites that have not received user interaction.");
+    description("Tests that all third-party cookies are blocked.");
     jsTestIsAsync = true;
 
     const partitionHost = "127.0.0.1:8000";
@@ -19,7 +19,7 @@
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
     const partitionedCookieName = "partitionedCookie";
     const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
-    const returnUrl = partitionOrigin + "/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html";
+    const returnUrl = partitionOrigin + "/resourceLoadStatistics/third-party-cookie-blocking.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
 
     function openIframe(url, onLoadHandler) {
@@ -44,14 +44,13 @@
                 break;
             case "#step3":
                 document.location.hash = "step4";
-                // Produce user interaction for the first-party to allow third-party cookie access.
+                // Produce user interaction for the first-party.
                 testRunner.setStatisticsHasHadUserInteraction(partitionOrigin, true, function() {
-                    // Check that the cookie is no longer blocked for localhost under 127.0.0.1.
-                    openIframe(thirdPartyBaseUrl + subPathToGetCookies +  "&message=After user interaction, should receive first-party cookie.", runTest);
+                    // Check that the cookie is still blocked for localhost under 127.0.0.1.
+                    openIframe(thirdPartyBaseUrl + subPathToGetCookies +  "&message=After user interaction, should receive no cookies.", runTest);
                 });
                 break;
             case "#step4":
-                testRunner.setUseITPDatabase(false);
                 testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
                     setEnableFeature(false, finishJSTest);
                 });
@@ -60,7 +59,6 @@
     }
 
     if (document.location.hash === "") {
-        testRunner.setUseITPDatabase(true);
         setEnableFeature(true, function () {
             if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                 testFailed("Localhost was classified as prevalent resource before the test starts.");

@@ -107,7 +107,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     if (pageID && hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID.value()))
         return false;
 
-    if (m_isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled && !hasHadUserInteractionAsFirstParty(firstPartyDomain))
+    if (m_isThirdPartyCookieBlockingEnabled)
         return true;
 
     return shouldBlockThirdPartyCookies(resourceDomain);

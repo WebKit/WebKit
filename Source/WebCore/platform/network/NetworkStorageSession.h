@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT Optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
     WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
-    void setIsThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled(bool enabled) { m_isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled = enabled; }
+    void setIsThirdPartyCookieBlockingEnabled(bool enabled) { m_isThirdPartyCookieBlockingEnabled = enabled; }
 #endif
 
 private:
@@ -199,7 +199,7 @@ private:
     Optional<Seconds> m_ageCapForClientSideCookiesShort { };
     HashMap<WebCore::PageIdentifier, RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
-    bool m_isThirdPartyCookieBlockingOnSitesWithoutUserInteractionEnabled = false;
+    bool m_isThirdPartyCookieBlockingEnabled = false;
 #endif
 
 #if PLATFORM(COCOA)
