@@ -4,25 +4,28 @@
 // found in the LICENSE file.
 //
 
-// DisplayCGL.mm: CGL implementation of egl::Display
+// DisplayCGL.cpp: CGL implementation of egl::Display
 
-#if __has_include(<Cocoa/Cocoa.h>)
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
 
-#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#import "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#    import <Cocoa/Cocoa.h>
-#    include <EGL/eglext.h>
-#    include <dlfcn.h>
+#import "common/debug.h"
+#import "gpu_info_util/SystemInfo.h"
+#import "libANGLE/Display.h"
+#import "libANGLE/renderer/gl/cgl/ContextCGL.h"
+#import "libANGLE/renderer/gl/cgl/DeviceCGL.h"
+#import "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#import "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
+#import "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
-#    include "common/debug.h"
-#    include "gpu_info_util/SystemInfo.h"
-#    include "libANGLE/Display.h"
-#    include "libANGLE/renderer/gl/cgl/ContextCGL.h"
-#    include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
-#    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+#import <Foundation/Foundation.h>
+#import <OpenGL/OpenGL.h>
+#import <QuartzCore/QuartzCore.h>
+#import <dlfcn.h>
 
 namespace
 {
@@ -446,4 +449,5 @@ void DisplayCGL::populateFeatureList(angle::FeatureList *features)
 }
 }
 
-#endif  // __has_include(<Cocoa/Cocoa.h>)
+#endif  // TARGET_OS_OSX
+#endif  // __APPLE__

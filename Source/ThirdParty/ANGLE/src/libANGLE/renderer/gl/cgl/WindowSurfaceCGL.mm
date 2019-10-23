@@ -6,20 +6,21 @@
 
 // WindowSurfaceCGL.cpp: CGL implementation of egl::Surface for windows
 
-#if __has_include(<Cocoa/Cocoa.h>)
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
 
-#    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
-#    import <Cocoa/Cocoa.h>
-#    include <OpenGL/OpenGL.h>
-#    import <QuartzCore/QuartzCore.h>
+#import "common/debug.h"
+#import "libANGLE/Context.h"
+#import "libANGLE/renderer/gl/FramebufferGL.h"
+#import "libANGLE/renderer/gl/RendererGL.h"
+#import "libANGLE/renderer/gl/StateManagerGL.h"
+#import "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#    include "common/debug.h"
-#    include "libANGLE/Context.h"
-#    include "libANGLE/renderer/gl/FramebufferGL.h"
-#    include "libANGLE/renderer/gl/RendererGL.h"
-#    include "libANGLE/renderer/gl/StateManagerGL.h"
-#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#import <OpenGL/OpenGL.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface WebSwapLayer : CAOpenGLLayer {
     CGLContextObj mDisplayContext;
@@ -337,4 +338,5 @@ FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Context *c
 
 }  // namespace rx
 
-#endif  // __has_include(<Cocoa/Cocoa.h>)
+#endif  // TARGET_OS_OSX
+#endif  // __APPLE__

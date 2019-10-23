@@ -6,12 +6,15 @@
 
 // SystemInfo_mac.cpp: implementation of the Mac-specific parts of SystemInfo.h
 
-#if __has_include(<Cocoa/Cocoa.h>)
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
 
-#    include "gpu_info_util/SystemInfo_internal.h"
+#include "gpu_info_util/SystemInfo_internal.h"
 
-#    import <Cocoa/Cocoa.h>
-#    import <IOKit/IOKitLib.h>
+#include <CoreGraphics/CGDirectDisplay.h>
+#include <IOKit/IOKitLib.h>
+#include <OpenGL/OpenGL.h>
 
 namespace angle
 {
@@ -219,10 +222,9 @@ bool GetSystemInfo(SystemInfo *info)
 
     // Then override the activeGPUIndex field of info to reflect the current
     // GPU instead of the non-intel GPU
-    if (@available(macOS 10.13, *))
-    {
-        SetActiveGPUIndex(info);
-    }
+    // TODO(dino): Use sysctl to detect OS version.
+    //    if (@available(macOS 10.13, *))
+    SetActiveGPUIndex(info);
 
     // Figure out whether this is a dual-GPU system.
     //
@@ -242,4 +244,5 @@ bool GetSystemInfo(SystemInfo *info)
 
 }  // namespace angle
 
-#endif  // __has_include(<Cocoa/Cocoa.h>)
+#endif  // TARGET_OS_OSX
+#endif  // __APPLE__

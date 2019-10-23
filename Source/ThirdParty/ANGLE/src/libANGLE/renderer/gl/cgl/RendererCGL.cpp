@@ -6,9 +6,12 @@
 
 // RendererCGL.mm: Implements the class methods for RendererCGL.
 
-#include "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
 
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#include "libANGLE/renderer/gl/cgl/RendererCGL.h"
 
 namespace rx
 {
@@ -27,3 +30,6 @@ WorkerContext *RendererCGL::createWorkerContext(std::string *infoLog)
 }
 
 }  // namespace rx
+
+#endif  // TARGET_OS_OSX
+#endif  // __APPLE__

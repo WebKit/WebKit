@@ -1,5 +1,26 @@
 2019-10-23  Dean Jackson  <dino@apple.com>
 
+        [ANGLE] Improve compile-time macOS guards and avoid ObjC if possible
+        https://bugs.webkit.org/show_bug.cgi?id=203343
+
+        Reviewed by Simon Fraser.
+
+        Use the more official compile-time detection of Apple platforms, so that
+        it will be easier to differentiate between macOS and iOS. Also move some
+        .mm files to .cpp where possible.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/gpu_info_util/SystemInfo_mac.cpp: Renamed from Source/ThirdParty/ANGLE/src/gpu_info_util/SystemInfo_mac.mm.
+        (angle::GetSystemInfo):
+        * src/libANGLE/renderer/gl/cgl/DeviceCGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm:
+        * src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp: Renamed from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.mm.
+        * src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp: Renamed from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.mm.
+        * src/libANGLE/renderer/gl/cgl/RendererCGL.cpp: Renamed from Source/ThirdParty/ANGLE/src/libANGLE/renderer/gl/cgl/RendererCGL.mm.
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+
+2019-10-23  Dean Jackson  <dino@apple.com>
+
         Don't try to compile .inc files in ANGLE
         https://bugs.webkit.org/show_bug.cgi?id=203315
 
