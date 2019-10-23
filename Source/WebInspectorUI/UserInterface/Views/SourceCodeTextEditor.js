@@ -1963,8 +1963,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
     _showPopoverWithFormattedValue(remoteObject)
     {
-        var content = WI.FormattedValue.createElementForRemoteObject(remoteObject);
-        this._showPopover(content);
+        let wrapper = document.createElement("div");
+        wrapper.className = "formatted";
+        wrapper.appendChild(WI.FormattedValue.createElementForRemoteObject(remoteObject));
+        this._showPopover(wrapper);
     }
 
     willDismissPopover(popover)

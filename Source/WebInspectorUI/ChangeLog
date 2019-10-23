@@ -1,5 +1,26 @@
 2019-10-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: keep the function/object name sticky in the object preview popover
+        https://bugs.webkit.org/show_bug.cgi?id=203259
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content):
+        (.popover .debugger-popover-content.expandable): Added.
+        (.popover .debugger-popover-content > .title):
+        (.popover .debugger-popover-content > .body):
+        (.popover .debugger-popover-content.formatted): Added.
+        (.popover .expandable): Deleted.
+        Use flexbox to ensure that only the function/object body is scrollable.
+        Adjust the min/max width/height to take less space for smaller objects.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._showPopoverWithFormattedValue):
+        Wrap formatted values in a `<div>` so we can apply special styling to them.
+
+2019-10-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: content of function definition popover sometimes cut off
         https://bugs.webkit.org/show_bug.cgi?id=203258
 
