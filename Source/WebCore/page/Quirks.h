@@ -59,7 +59,6 @@ public:
     bool shouldDisablePointerEventsQuirk() const;
     bool needsInputModeNoneImplicitly(const HTMLElement&) const;
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
-    bool shouldLightenJapaneseBoldSansSerif() const;
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;

@@ -46,7 +46,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
-#include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -322,14 +321,8 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     Optional<FontDescription> overrideFontDescription;
     const FontDescription* fontDescriptionForLookup = &fontDescription;
     auto resolveGenericFamily = [&]() {
-        if (auto genericFamilyOptional = WebCore::resolveGenericFamily(m_document.get(), fontDescription, familyName)) {
-            if (m_document && m_document->quirks().shouldLightenJapaneseBoldSansSerif() && familyForLookup == sansSerifFamily && fontDescription.weight() == boldWeightValue() && fontDescription.script() == USCRIPT_KATAKANA_OR_HIRAGANA) {
-                overrideFontDescription = fontDescription;
-                overrideFontDescription->setWeight(FontSelectionValue(600));
-                fontDescriptionForLookup = &*overrideFontDescription;
-            }
+        if (auto genericFamilyOptional = WebCore::resolveGenericFamily(m_document.get(), fontDescription, familyName))
             familyForLookup = *genericFamilyOptional;
-        }
     };
 
     if (resolveGenericFamilyFirst)
