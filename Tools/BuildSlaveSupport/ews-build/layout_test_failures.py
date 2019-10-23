@@ -58,7 +58,7 @@ class LayoutTestFailures(object):
         failing_tests = []
 
         def get_failing_tests(test, result):
-            if result['report'] in ['REGRESSION', 'MISSING']:
+            if result.get('report') in ['REGRESSION', 'MISSING']:
                 failing_tests.append(test)
 
         cls.parse_full_results_json(json_dict['tests'], get_failing_tests)
