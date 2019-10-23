@@ -42,7 +42,7 @@ public:
     bool isFixedSize() const { return false; }
     bool isPending() const { return false; }
 
-    RefPtr<Image> image(RenderElement*, const FloatSize&);
+    RefPtr<Image> image(RenderElement&, const FloatSize&);
 
     bool equals(const CSSNamedImageValue&) const;
 

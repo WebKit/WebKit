@@ -53,9 +53,9 @@ public:
 
     String customCSSText() const;
 
-    RefPtr<Image> image(RenderElement*, const FloatSize&);
+    RefPtr<Image> image(RenderElement&, const FloatSize&);
     bool isFixedSize() const { return true; }
-    FloatSize fixedSize(const RenderElement*);
+    FloatSize fixedSize(const RenderElement&);
 
     bool isPending() const;
     bool knownToBeOpaque(const RenderElement&) const;

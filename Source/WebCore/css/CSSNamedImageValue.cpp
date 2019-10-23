@@ -35,7 +35,7 @@ String CSSNamedImageValue::customCSSText() const
     return makeString("-webkit-named-image(", m_name, ')');
 }
 
-RefPtr<Image> CSSNamedImageValue::image(RenderElement*, const FloatSize& size)
+RefPtr<Image> CSSNamedImageValue::image(RenderElement&, const FloatSize& size)
 {
     if (size.isEmpty())
         return nullptr;

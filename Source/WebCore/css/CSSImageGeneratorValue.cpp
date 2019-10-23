@@ -138,13 +138,13 @@ RefPtr<Image> CSSImageGeneratorValue::image(RenderElement& renderer, const Float
 {
     switch (classType()) {
     case CanvasClass:
-        return downcast<CSSCanvasValue>(*this).image(&renderer, size);
+        return downcast<CSSCanvasValue>(*this).image(renderer, size);
     case NamedImageClass:
-        return downcast<CSSNamedImageValue>(*this).image(&renderer, size);
+        return downcast<CSSNamedImageValue>(*this).image(renderer, size);
     case CrossfadeClass:
         return downcast<CSSCrossfadeValue>(*this).image(renderer, size);
     case FilterImageClass:
-        return downcast<CSSFilterImageValue>(*this).image(&renderer, size);
+        return downcast<CSSFilterImageValue>(*this).image(renderer, size);
     case LinearGradientClass:
         return downcast<CSSLinearGradientValue>(*this).image(renderer, size);
     case RadialGradientClass:
@@ -192,11 +192,11 @@ FloatSize CSSImageGeneratorValue::fixedSize(const RenderElement& renderer)
 {
     switch (classType()) {
     case CanvasClass:
-        return downcast<CSSCanvasValue>(*this).fixedSize(&renderer);
+        return downcast<CSSCanvasValue>(*this).fixedSize(renderer);
     case CrossfadeClass:
         return downcast<CSSCrossfadeValue>(*this).fixedSize(renderer);
     case FilterImageClass:
-        return downcast<CSSFilterImageValue>(*this).fixedSize(&renderer);
+        return downcast<CSSFilterImageValue>(*this).fixedSize(renderer);
     case LinearGradientClass:
         return downcast<CSSLinearGradientValue>(*this).fixedSize(renderer);
     case RadialGradientClass:
