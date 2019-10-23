@@ -3335,9 +3335,6 @@ fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 # <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
 storage/websql/test-authorizer.html [ Failure ]
 
-# rdar://53551736 (Layout Test editing/pasteboard/paste-and-sanitize.html is a Flaky Failure on iOS 13)
-editing/pasteboard/paste-and-sanitize.html [ Pass Failure ]
-
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
 
