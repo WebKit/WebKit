@@ -9,7 +9,8 @@
             "description": "Description of a target.",
             "properties": [
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
-                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] }
+                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] },
+                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "True value indicates that this is a provisional page target i.e. Such target may be created when current page starts cross-origin navigation. Eventually each provisional target is either committed and swaps with the current target or gets destroyed, e.g. in case of load request failure." }
             ]
         }
     ],
@@ -34,6 +35,14 @@
             "name": "targetDestroyed",
             "parameters": [
                 { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "didCommitProvisionalTarget",
+            "description": "This event is fired when provisional load is committed. Provisional target swaps with the current target.",
+            "parameters": [
+                { "name": "oldTargetId", "type": "string", "description": "ID of the old target that is swapped with the committed one." },
+                { "name": "newTargetId", "type": "string", "description": "ID of the committed target." }
             ]
         },
         {

@@ -32,6 +32,11 @@ WI.TargetObserver = class TargetObserver extends InspectorBackend.Dispatcher
         WI.targetManager.targetCreated(this._target, targetInfo);
     }
 
+    didCommitProvisionalTarget(oldTargetId, newTargetId)
+    {
+        WI.targetManager.didCommitProvisionalTarget(this._target, oldTargetId, newTargetId);
+    }
+
     targetDestroyed(targetId)
     {
         WI.targetManager.targetDestroyed(targetId);

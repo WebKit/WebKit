@@ -27,6 +27,7 @@
 #include "WebPageInspectorTarget.h"
 
 #include "WebPage.h"
+#include "WebPageInspectorTargetFrontendChannel.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 
@@ -41,19 +42,25 @@ WebPageInspectorTarget::WebPageInspectorTarget(WebPage& page)
 
 String WebPageInspectorTarget::identifier() const
 {
-    return makeString("page-", m_page.identifier().toUInt64());
+    return toTargetID(m_page.identifier());
 }
 
-void WebPageInspectorTarget::connect(Inspector::FrontendChannel& channel)
+void WebPageInspectorTarget::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
+    if (m_channel)
+        return;
+    m_channel = makeUnique<WebPageInspectorTargetFrontendChannel>(m_page, identifier(), connectionType);
     if (m_page.corePage())
-        m_page.corePage()->inspectorController().connectFrontend(channel);
+        m_page.corePage()->inspectorController().connectFrontend(*m_channel);
 }
 
-void WebPageInspectorTarget::disconnect(Inspector::FrontendChannel& channel)
+void WebPageInspectorTarget::disconnect()
 {
+    if (!m_channel)
+        return;
     if (m_page.corePage())
-        m_page.corePage()->inspectorController().disconnectFrontend(channel);
+        m_page.corePage()->inspectorController().disconnectFrontend(*m_channel);
+    m_channel.reset();
 }
 
 void WebPageInspectorTarget::sendMessageToTargetBackend(const String& message)
@@ -61,5 +68,11 @@ void WebPageInspectorTarget::sendMessageToTargetBackend(const String& message)
     if (m_page.corePage())
         m_page.corePage()->inspectorController().dispatchMessageFromFrontend(message);
 }
+
+String WebPageInspectorTarget::toTargetID(WebCore::PageIdentifier pageID)
+{
+    return makeString("page-", pageID.toUInt64());
+}
+
 
 } // namespace WebKit

@@ -26,29 +26,34 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorTarget.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
 class WebPage;
+class WebPageInspectorTargetFrontendChannel;
 
 class WebPageInspectorTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebPageInspectorTarget);
 public:
-    WebPageInspectorTarget(WebPage&);
+    explicit WebPageInspectorTarget(WebPage&);
     ~WebPageInspectorTarget() = default;
 
     Inspector::InspectorTargetType type() const final { return Inspector::InspectorTargetType::Page; }
 
     String identifier() const final;
 
-    void connect(Inspector::FrontendChannel&);
-    void disconnect(Inspector::FrontendChannel&);
-    void sendMessageToTargetBackend(const String&);
+    void connect(Inspector::FrontendChannel::ConnectionType) override;
+    void disconnect() override;
+    void sendMessageToTargetBackend(const String&) override;
+
+    static String toTargetID(WebCore::PageIdentifier);
 
 private:
     WebPage& m_page;
+    std::unique_ptr<WebPageInspectorTargetFrontendChannel> m_channel;
 };
 
 } // namespace WebKit

@@ -58,7 +58,6 @@ void WebPageInspectorTargetController::removeTarget(Inspector::InspectorTarget& 
     m_page.send(Messages::WebPageProxy::DestroyInspectorTarget(target.identifier()));
 
     m_targets.remove(target.identifier());
-    m_targetFrontendChannels.remove(target.identifier());
 }
 
 void WebPageInspectorTargetController::connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
@@ -67,13 +66,7 @@ void WebPageInspectorTargetController::connectInspector(const String& targetId, 
     if (!target)
         return;
 
-    RefPtr<WebPageInspectorTargetFrontendChannel> channel = m_targetFrontendChannels.get(targetId);
-    if (!channel) {
-        channel = WebPageInspectorTargetFrontendChannel::create(*this, targetId, connectionType);
-        m_targetFrontendChannels.set(target->identifier(), channel);
-    }
-
-    target->connect(*channel.get());
+    target->connect(connectionType);
 }
 
 void WebPageInspectorTargetController::disconnectInspector(const String& targetId)
@@ -82,11 +75,7 @@ void WebPageInspectorTargetController::disconnectInspector(const String& targetI
     if (!target)
         return;
 
-    RefPtr<WebPageInspectorTargetFrontendChannel> channel = m_targetFrontendChannels.take(targetId);
-    if (!channel)
-        return;
-
-    target->disconnect(*channel.get());
+    target->disconnect();
 }
 
 void WebPageInspectorTargetController::sendMessageToTargetBackend(const String& targetId, const String& message)
@@ -96,11 +85,6 @@ void WebPageInspectorTargetController::sendMessageToTargetBackend(const String& 
         return;
 
     target->sendMessageToTargetBackend(message);
-}
-
-void WebPageInspectorTargetController::sendMessageToTargetFrontend(const String& targetId, const String& message)
-{
-    m_page.send(Messages::WebPageProxy::SendMessageToInspectorFrontend(targetId, message));
 }
 
 } // namespace WebKit

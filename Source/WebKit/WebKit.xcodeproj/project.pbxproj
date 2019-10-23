@@ -1367,7 +1367,6 @@
 		A543E307215AD13700279CD9 /* WebPageInspectorTargetFrontendChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A543E305215AD12D00279CD9 /* WebPageInspectorTargetFrontendChannel.h */; };
 		A543E30C215C8A8D00279CD9 /* WebPageInspectorTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A543E308215C8A8300279CD9 /* WebPageInspectorTarget.h */; };
 		A543E30D215C8A9000279CD9 /* WebPageInspectorTargetController.h in Headers */ = {isa = PBXBuildFile; fileRef = A543E30B215C8A8400279CD9 /* WebPageInspectorTargetController.h */; };
-		A543E310215D8CE600279CD9 /* WebPageInspectorTargetAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A543E30E215D8CE200279CD9 /* WebPageInspectorTargetAgent.h */; };
 		A55BA8101BA1317E007CD33D /* _WKRemoteWebInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55BA8171BA23E12007CD33D /* RemoteWebInspectorUI.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8131BA23E05007CD33D /* RemoteWebInspectorUI.h */; };
 		A55BA81F1BA25B27007CD33D /* RemoteWebInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA8191BA25B1E007CD33D /* RemoteWebInspectorProxy.h */; };
@@ -4115,8 +4114,6 @@
 		A543E309215C8A8300279CD9 /* WebPageInspectorTargetController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorTargetController.cpp; sourceTree = "<group>"; };
 		A543E30A215C8A8400279CD9 /* WebPageInspectorTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorTarget.cpp; sourceTree = "<group>"; };
 		A543E30B215C8A8400279CD9 /* WebPageInspectorTargetController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorTargetController.h; sourceTree = "<group>"; };
-		A543E30E215D8CE200279CD9 /* WebPageInspectorTargetAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorTargetAgent.h; sourceTree = "<group>"; };
-		A543E30F215D8CE200279CD9 /* WebPageInspectorTargetAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorTargetAgent.cpp; sourceTree = "<group>"; };
 		A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteWebInspectorViewController.h; sourceTree = "<group>"; };
 		A55BA80D1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKRemoteWebInspectorViewController.mm; sourceTree = "<group>"; };
 		A55BA8121BA23E05007CD33D /* RemoteWebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebInspectorUI.cpp; sourceTree = "<group>"; };
@@ -7899,8 +7896,6 @@
 				2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */,
 				A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */,
 				A513F53E2154A5CC00662841 /* WebPageInspectorController.h */,
-				A543E30F215D8CE200279CD9 /* WebPageInspectorTargetAgent.cpp */,
-				A543E30E215D8CE200279CD9 /* WebPageInspectorTargetAgent.h */,
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
@@ -9984,7 +9979,6 @@
 				2D9EA30F1A96CBFF002D2807 /* WebPageInjectedBundleClient.h in Headers */,
 				A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */,
 				A543E30C215C8A8D00279CD9 /* WebPageInspectorTarget.h in Headers */,
-				A543E310215D8CE600279CD9 /* WebPageInspectorTargetAgent.h in Headers */,
 				A543E30D215C8A9000279CD9 /* WebPageInspectorTargetController.h in Headers */,
 				A543E307215AD13700279CD9 /* WebPageInspectorTargetFrontendChannel.h in Headers */,
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,

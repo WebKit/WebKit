@@ -32,6 +32,7 @@ namespace Inspector {
 
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
     : InspectorAgentBase("Target"_s)
+    , m_router(frontendRouter)
     , m_frontendDispatcher(makeUnique<TargetFrontendDispatcher>(frontendRouter))
     , m_backendDispatcher(TargetBackendDispatcher::create(backendDispatcher, this))
 {
@@ -88,10 +89,13 @@ static Protocol::Target::TargetInfo::Type targetTypeToProtocolType(InspectorTarg
 
 static Ref<Protocol::Target::TargetInfo> buildTargetInfoObject(const InspectorTarget& target)
 {
-    return Protocol::Target::TargetInfo::create()
+    auto result = Protocol::Target::TargetInfo::create()
         .setTargetId(target.identifier())
         .setType(targetTypeToProtocolType(target.type()))
         .release();
+    if (target.isProvisional())
+        result->setIsProvisional(true);
+    return result;
 }
 
 void InspectorTargetAgent::targetCreated(InspectorTarget& target)
@@ -102,7 +106,7 @@ void InspectorTargetAgent::targetCreated(InspectorTarget& target)
     if (!m_isConnected)
         return;
 
-    target.connect(frontendChannel());
+    target.connect(connectionType());
 
     m_frontendDispatcher->targetCreated(buildTargetInfoObject(target));
 }
@@ -114,27 +118,40 @@ void InspectorTargetAgent::targetDestroyed(InspectorTarget& target)
     if (!m_isConnected)
         return;
 
-    target.disconnect(frontendChannel());
+    target.disconnect();
 
     m_frontendDispatcher->targetDestroyed(target.identifier());
 }
 
+void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID)
+{
+    if (!m_isConnected)
+        return;
+
+    auto* target = m_targets.get(committedTargetID);
+    if (!target)
+        return;
+
+    m_frontendDispatcher->didCommitProvisionalTarget(oldTargetID, committedTargetID);
+}
+
+FrontendChannel::ConnectionType InspectorTargetAgent::connectionType() const
+{
+    return m_router.hasLocalFrontend() ? Inspector::FrontendChannel::ConnectionType::Local : Inspector::FrontendChannel::ConnectionType::Remote;
+}
+
 void InspectorTargetAgent::connectToTargets()
 {
-    auto& channel = frontendChannel();
-
     for (InspectorTarget* target : m_targets.values()) {
-        target->connect(channel);
+        target->connect(connectionType());
         m_frontendDispatcher->targetCreated(buildTargetInfoObject(*target));
     }
 }
 
 void InspectorTargetAgent::disconnectFromTargets()
 {
-    auto& channel = frontendChannel();
-
     for (InspectorTarget* target : m_targets.values())
-        target->disconnect(channel);
+        target->disconnect();
 }
 
 } // namespace Inspector

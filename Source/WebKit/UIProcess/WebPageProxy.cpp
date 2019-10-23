@@ -492,8 +492,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
     m_inspectorDebuggable->init();
 #endif
-
-    createInspectorTargets();
+    m_inspectorController->init();
 }
 
 WebPageProxy::~WebPageProxy()
@@ -861,9 +860,6 @@ void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
 #if ENABLE(REMOTE_INSPECTOR)
     remoteInspectorInformationDidChange();
 #endif
-
-    clearInspectorTargets();
-    createInspectorTargets();
 
     pageClient().didRelaunchProcess();
     m_pageLoadState.didSwapWebProcesses();
@@ -1666,17 +1662,6 @@ void WebPageProxy::remoteInspectorInformationDidChange()
     m_inspectorDebuggable->update();
 }
 #endif
-
-void WebPageProxy::clearInspectorTargets()
-{
-    m_inspectorController->clearTargets();
-}
-
-void WebPageProxy::createInspectorTargets()
-{
-    String pageTargetId = makeString("page-", m_webPageID.toUInt64());
-    m_inspectorController->createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
-}
 
 void WebPageProxy::setBackgroundColor(const Optional<Color>& color)
 {
@@ -3041,6 +3026,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
     if (!didSuspendPreviousPage)
         m_process->send(Messages::WebPage::Close(), m_webPageID);
 
+    const auto oldWebPageID = m_webPageID;
     swapToWebProcess(m_provisionalPage->process(), m_provisionalPage->webPageID(), m_provisionalPage->takeDrawingArea(), m_provisionalPage->mainFrame());
 
 #if PLATFORM(COCOA)
@@ -3051,6 +3037,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
 
     didCommitLoadForFrame(frameID, navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, containsPluginDocument, forcedHasInsecureContent, userData);
 
+    m_inspectorController->didCommitProvisionalPage(oldWebPageID, m_webPageID);
     m_provisionalPage = nullptr;
 }
 

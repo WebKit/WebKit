@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/InspectorTarget.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
@@ -35,25 +36,30 @@ class WebPageProxy;
 // NOTE: This UIProcess side InspectorTarget doesn't care about the frontend channel, since
 // any target -> frontend messages will be routed to the WebPageProxy with a targetId.
 
-class InspectorTargetProxy final : public Inspector::InspectorTarget, public RefCounted<InspectorTargetProxy> {
+class InspectorTargetProxy final : public Inspector::InspectorTarget {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(InspectorTargetProxy);
 public:
-    static Ref<InspectorTargetProxy> create(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
+    static std::unique_ptr<InspectorTargetProxy> create(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
+    static std::unique_ptr<InspectorTargetProxy> create(ProvisionalPageProxy&, const String& targetId, Inspector::InspectorTargetType);
     InspectorTargetProxy(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
     ~InspectorTargetProxy() = default;
 
     Inspector::InspectorTargetType type() const final { return m_type; }
     String identifier() const final { return m_identifier; }
 
-    void connect(Inspector::FrontendChannel&);
-    void disconnect(Inspector::FrontendChannel&);
-    void sendMessageToTargetBackend(const String&);
+    void didCommitProvisionalTarget();
+    bool isProvisional() const override;
+
+    void connect(Inspector::FrontendChannel::ConnectionType) override;
+    void disconnect() override;
+    void sendMessageToTargetBackend(const String&) override;
 
 private:
     WebPageProxy& m_page;
     String m_identifier;
     Inspector::InspectorTargetType m_type;
+    WeakPtr<ProvisionalPageProxy> m_provisionalPage;
 };
 
 } // namespace WebKit

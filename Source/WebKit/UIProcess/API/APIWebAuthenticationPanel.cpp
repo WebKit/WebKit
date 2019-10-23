@@ -34,12 +34,12 @@
 namespace API {
 using namespace WebKit;
 
-Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, const String& rpId)
+Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, const WTF::String& rpId)
 {
     return adoptRef(*new WebAuthenticationPanel(manager, rpId));
 }
 
-WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const String& rpId)
+WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId)
     : m_manager(makeWeakPtr(manager))
     , m_rpId(rpId)
     , m_client(WTF::makeUniqueRef<WebAuthenticationPanelClient>())

@@ -85,41 +85,6 @@ WI.loaded = function()
         WI.targetManager.createDirectBackendTarget();
 };
 
-WI.initializeBackendTarget = function(target)
-{
-    WI.backendTarget = target;
-
-    WI.resetMainExecutionContext();
-
-    WI._targetsAvailablePromise.resolve();
-};
-
-WI.initializePageTarget = function(target)
-{
-    WI.pageTarget = target;
-
-    WI.resetMainExecutionContext();
-};
-
-WI.transitionPageTarget = function(target)
-{
-    console.error("WI.transitionPageTarget should not be reached in tests.");
-};
-
-WI.terminatePageTarget = function(target)
-{
-    console.error("WI.terminatePageTarget should not be reached in tests.");
-};
-
-WI.resetMainExecutionContext = function()
-{
-    if (WI.mainTarget instanceof WI.MultiplexingBackendTarget)
-        return;
-
-    if (WI.mainTarget.executionContext)
-        WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
-};
-
 WI.contentLoaded = function()
 {
     // Things that would normally get called by the UI, that we still want to do in tests.

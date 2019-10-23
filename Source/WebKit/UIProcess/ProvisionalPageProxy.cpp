@@ -38,6 +38,7 @@
 #include "WebErrors.h"
 #include "WebNavigationDataStore.h"
 #include "WebNavigationState.h"
+#include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -85,11 +86,15 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     }
 
     initializeWebPage();
+
+    m_page.inspectorController().didCreateProvisionalPage(*this);
 }
 
 ProvisionalPageProxy::~ProvisionalPageProxy()
 {
     if (!m_wasCommitted) {
+        m_page.inspectorController().willDestroyProvisionalPage(*this);
+
         if (&m_process->websiteDataStore() != &m_page.websiteDataStore())
             m_process->processPool().pageEndUsingWebsiteDataStore(m_page.identifier(), m_process->websiteDataStore());
 
@@ -387,6 +392,9 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame::name()
         || decoder.messageName() == Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame::name()
 #endif
+        || decoder.messageName() == Messages::WebPageProxy::CreateInspectorTarget::name()
+        || decoder.messageName() == Messages::WebPageProxy::DestroyInspectorTarget::name()
+        || decoder.messageName() == Messages::WebPageProxy::SendMessageToInspectorFrontend::name()
         )
     {
         m_page.didReceiveMessage(connection, decoder);

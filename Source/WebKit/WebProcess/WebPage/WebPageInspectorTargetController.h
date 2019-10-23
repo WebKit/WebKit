@@ -26,7 +26,6 @@
 #pragma once
 
 #include "WebPageInspectorTarget.h"
-#include "WebPageInspectorTargetFrontendChannel.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,13 +49,11 @@ public:
     void connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector(const String& targetId);
     void sendMessageToTargetBackend(const String& targetId, const String& message);
-    void sendMessageToTargetFrontend(const String& targetId, const String& message);
 
 private:
     WebPage& m_page;
     WebPageInspectorTarget m_pageTarget;
     HashMap<String, Inspector::InspectorTarget*> m_targets;
-    HashMap<String, RefPtr<WebPageInspectorTargetFrontendChannel>> m_targetFrontendChannels;
 };
 
 } // namespace WebKit

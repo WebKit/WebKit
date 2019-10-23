@@ -31,22 +31,20 @@
 
 namespace WebKit {
 
-class WebPageInspectorTargetController;
+class WebPage;
 
-class WebPageInspectorTargetFrontendChannel final : public RefCounted<WebPageInspectorTargetFrontendChannel>, public Inspector::FrontendChannel {
+class WebPageInspectorTargetFrontendChannel final : public Inspector::FrontendChannel {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(WebPageInspectorTargetFrontendChannel);
 public:
-    static Ref<WebPageInspectorTargetFrontendChannel> create(WebPageInspectorTargetController&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
+    WebPageInspectorTargetFrontendChannel(WebPage&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
     virtual ~WebPageInspectorTargetFrontendChannel() = default;
 
 private:
-    WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
-
     ConnectionType connectionType() const override { return m_connectionType; }
     void sendMessageToFrontend(const String& message) override;
 
-private:
-    WebPageInspectorTargetController& m_targetController;
+    WebPage& m_page;
     String m_targetId;
     Inspector::FrontendChannel::ConnectionType m_connectionType { Inspector::FrontendChannel::ConnectionType::Remote };
 };

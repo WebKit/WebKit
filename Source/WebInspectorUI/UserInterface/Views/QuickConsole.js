@@ -69,7 +69,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._executionContextSelectorDivider = new WI.DividerNavigationItem;
         this._navigationBar.addNavigationItem(this._executionContextSelectorDivider);
 
-        this.initializeMainExecutionContextPathComponent();
+        this._initializeMainExecutionContextPathComponent();
 
         WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, this._updateAutomaticExecutionContextPathComponentTooltip, this);
 
@@ -82,6 +82,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._debuggerActiveCallFrameDidChange, this);
 
         WI.runtimeManager.addEventListener(WI.RuntimeManager.Event.ActiveExecutionContextChanged, this._activeExecutionContextChanged, this);
+        WI.notifications.addEventListener(WI.Notification.TransitionPageTarget, this._pageTargetTransitioned, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._targetAdded, this);
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
@@ -111,7 +112,14 @@ WI.QuickConsole = class QuickConsole extends WI.View
         super.closed();
     }
 
-    initializeMainExecutionContextPathComponent()
+    _pageTargetTransitioned()
+    {
+        if (WI.mainTarget instanceof WI.MultiplexingBackendTarget)
+            return;
+        this._initializeMainExecutionContextPathComponent();
+    }
+
+    _initializeMainExecutionContextPathComponent()
     {
         if (!WI.mainTarget || WI.mainTarget instanceof WI.MultiplexingBackendTarget)
             return;

@@ -46,6 +46,7 @@ class WebPageInspectorController {
 public:
     WebPageInspectorController(WebPageProxy&);
 
+    void init();
     void pageClosed();
 
     bool hasLocalFrontend() const;
@@ -60,18 +61,23 @@ public:
     void setIndicating(bool);
 #endif
 
-    void clearTargets();
     void createInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
     void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
+    void didCreateProvisionalPage(ProvisionalPageProxy&);
+    void willDestroyProvisionalPage(const ProvisionalPageProxy&);
+    void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
+
 private:
+    void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
+
     WebPageProxy& m_page;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::AgentRegistry m_agents;
     Inspector::InspectorTargetAgent* m_targetAgent;
-    Vector<RefPtr<InspectorTargetProxy>> m_targets;
+    HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 };
 
 } // namespace WebKit

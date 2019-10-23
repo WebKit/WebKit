@@ -1,3 +1,28 @@
+2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: notify inspector when provisional page is created, committed and destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=202704
+
+        Reviewed by Devin Rousso.
+
+        * inspector/InspectorTarget.h: changed InspectorTarget to not require FrontendChannel as
+        all messages are routed by means of the owning InspectorTargetAgent.
+        * inspector/agents/InspectorTargetAgent.cpp:
+        (Inspector::InspectorTargetAgent::InspectorTargetAgent):
+        (Inspector::buildTargetInfoObject):
+        (Inspector::InspectorTargetAgent::targetCreated):
+        (Inspector::InspectorTargetAgent::targetDestroyed):
+        (Inspector::InspectorTargetAgent::didCommitProvisionalTarget): this method is used to
+        notify frontend that corresponding provisional target has committed and replaced previous
+        target.
+        (Inspector::InspectorTargetAgent::connectionType const):
+        (Inspector::InspectorTargetAgent::connectToTargets):
+        (Inspector::InspectorTargetAgent::disconnectFromTargets):
+        * inspector/agents/InspectorTargetAgent.h:
+        * inspector/protocol/Target.json: extended TargetInfo with provisional page details and
+        added event which is fired when provisional page gets committed. If provisional
+        load fails there will be targetDestroyed event without corresponding commit.
+
 2019-10-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         String.prototype.matchAll should throw on non-global regex

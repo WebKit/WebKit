@@ -26,7 +26,9 @@
 #include "config.h"
 #include "InspectorTargetProxy.h"
 
+#include "ProvisionalPageProxy.h"
 #include "WebFrameProxy.h"
+#include "WebPageInspectorTarget.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -35,9 +37,16 @@ namespace WebKit {
 
 using namespace Inspector;
 
-Ref<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
+std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
 {
-    return adoptRef(*new InspectorTargetProxy(page, targetId, type));
+    return makeUnique<InspectorTargetProxy>(page, targetId, type);
+}
+
+std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
+{
+    auto target = InspectorTargetProxy::create(provisionalPage.page(), targetId, type);
+    target->m_provisionalPage = makeWeakPtr(provisionalPage);
+    return target;
 }
 
 InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
@@ -47,22 +56,48 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 {
 }
 
-void InspectorTargetProxy::connect(Inspector::FrontendChannel& channel)
+void InspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
+    if (m_provisionalPage) {
+        m_provisionalPage->process().send(Messages::WebPage::ConnectInspector(identifier(), connectionType), m_provisionalPage->webPageID());
+        return;
+    }
+
     if (m_page.hasRunningProcess())
-        m_page.process().send(Messages::WebPage::ConnectInspector(identifier(), channel.connectionType()), m_page.webPageID());
+        m_page.process().send(Messages::WebPage::ConnectInspector(identifier(), connectionType), m_page.webPageID());
 }
 
-void InspectorTargetProxy::disconnect(Inspector::FrontendChannel&)
+void InspectorTargetProxy::disconnect()
 {
+    if (m_provisionalPage) {
+        m_provisionalPage->process().send(Messages::WebPage::DisconnectInspector(identifier()), m_provisionalPage->webPageID());
+        return;
+    }
+
     if (m_page.hasRunningProcess())
         m_page.process().send(Messages::WebPage::DisconnectInspector(identifier()), m_page.webPageID());
 }
 
 void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
+    if (m_provisionalPage) {
+        m_provisionalPage->process().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_provisionalPage->webPageID());
+        return;
+    }
+
     if (m_page.hasRunningProcess())
         m_page.process().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_page.webPageID());
+}
+
+void InspectorTargetProxy::didCommitProvisionalTarget()
+{
+    ASSERT(isProvisional());
+    m_provisionalPage = nullptr;
+}
+
+bool InspectorTargetProxy::isProvisional() const
+{
+    return !!m_provisionalPage;
 }
 
 } // namespace WebKit

@@ -296,8 +296,12 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
 
     sendMessageToBackend(message)
     {
-        // Ignore errors if a worker went away quickly.
-        this._parentTarget.WorkerAgent.sendMessageToWorker(this._workerId, message).catch(function(){});
+        this._parentTarget.WorkerAgent.sendMessageToWorker(this._workerId, message).catch((error) => {
+            // Ignore errors if a worker went away quickly.
+            if (this.target.isDestroyed)
+                return;
+            WI.reportInternalError(error);
+        });
     }
 };
 
@@ -315,7 +319,12 @@ InspectorBackend.TargetConnection = class InspectorBackendTargetConnection exten
 
     sendMessageToBackend(message)
     {
-        this._parentTarget.TargetAgent.sendMessageToTarget(this._targetId, message);
+        this._parentTarget.TargetAgent.sendMessageToTarget(this._targetId, message).catch((error) => {
+            // Ignore errors if the target was destroyed after the command was dispatched.
+            if (this.target.isDestroyed)
+                return;
+            WI.reportInternalError(error);
+        });
     }
 };
 

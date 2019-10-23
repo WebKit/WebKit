@@ -162,6 +162,8 @@ WI.Target = class Target extends WI.Object
     get resourceCollection() { return this._resourceCollection; }
     get extraScriptCollection() { return this._extraScriptCollection; }
 
+    get isDestroyed() { return this._isDestroyed; }
+
     get displayName() { return this._name; }
 
     get mainResource()
@@ -199,10 +201,14 @@ WI.Target = class Target extends WI.Object
         this.dispatchEventToListeners(WI.Target.Event.ScriptAdded, {script});
     }
 
+    destroy()
+    {
+        this._isDestroyed = true;
+    }
+
     hasDomain(domainName)
     {
         console.assert(!domainName.includes(".") && !domainName.endsWith("Agent"));
-
         return domainName in this._agents;
     }
 

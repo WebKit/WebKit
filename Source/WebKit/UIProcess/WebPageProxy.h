@@ -2092,9 +2092,6 @@ private:
 
     void stopAllURLSchemeTasks(WebProcessProxy* = nullptr);
 
-    void clearInspectorTargets();
-    void createInspectorTargets();
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifierFromData(const String&, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
     void registerAttachmentIdentifierFromFilePath(const String&, const String& contentType, const String& filePath);

@@ -26,17 +26,13 @@
 #include "config.h"
 #include "WebPageInspectorTargetFrontendChannel.h"
 
-#include "WebPageInspectorTargetController.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
 
 namespace WebKit {
 
-Ref<WebPageInspectorTargetFrontendChannel> WebPageInspectorTargetFrontendChannel::create(WebPageInspectorTargetController& targetController, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
-{
-    return adoptRef(*new WebPageInspectorTargetFrontendChannel(targetController, targetId, connectionType));
-}
-
-WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController& targetController, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
-    : m_targetController(targetController)
+WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(WebPage& page, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
+    : m_page(page)
     , m_targetId(targetId)
     , m_connectionType(connectionType)
 {
@@ -44,7 +40,7 @@ WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(Web
 
 void WebPageInspectorTargetFrontendChannel::sendMessageToFrontend(const String& message)
 {
-    m_targetController.sendMessageToTargetFrontend(m_targetId, message);
+    m_page.send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
 }
 
 } // namespace WebKit

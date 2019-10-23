@@ -1,3 +1,82 @@
+2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: notify inspector when provisional page is created, committed and destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=202704
+
+        Reviewed by Devin Rousso.
+
+        Target.targetCreated event is now generated for provisional pages as well as for regular
+        ones. This is the first step toward reattaching inspector earlier during PSON. In the future
+        if debugging is in progress the provisional target (page) will be paused until a signal from
+        inspector frontend. This will enable the frontend configure all agents before navigation starts.
+
+        * Sources.txt:
+        * UIProcess/API/APIWebAuthenticationPanel.cpp:
+        (API::WebAuthenticationPanel::WebAuthenticationPanel): Added explicit namespace specifier
+        to the constructor's argument as otherwise compilation fails due to conflict between API::String
+        and WTF::String.
+
+        * UIProcess/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::create):
+        (WebKit::InspectorTargetProxy::connect):
+        (WebKit::InspectorTargetProxy::disconnect):
+        (WebKit::InspectorTargetProxy::sendMessageToTargetBackend):
+        (WebKit::InspectorTargetProxy::didCommitProvisionalTarget):
+        (WebKit::InspectorTargetProxy::isProvisional const):
+        (WebKit::InspectorTargetProxy::previousTargetID const):
+        * UIProcess/InspectorTargetProxy.h: Target proxy can start as a provisional target (with a pointer to
+        ProvisionalPageProxy) and later either be committed or destroyed.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage): Forward inspector messages to parent page's WebPageInspectorController.
+        Since each WebPage has a unique identifier the target ids will be globally unique and there is no risk of collisions.
+
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::page const):
+        * UIProcess/WebPageInspectorController.cpp:
+        (WebKit::getTargetID):
+        (WebKit::WebPageInspectorController::WebPageInspectorController):
+        (WebKit::WebPageInspectorController::clearTargets):
+        (WebKit::WebPageInspectorController::createInspectorTarget):
+        (WebKit::WebPageInspectorController::destroyInspectorTarget):
+        (WebKit::WebPageInspectorController::didCreateProvisionalPage):
+        (WebKit::WebPageInspectorController::didDestroyProvisionalPage):
+        (WebKit::WebPageInspectorController::didCommitProvisionalPage):
+        (WebKit::WebPageInspectorController::addTarget):
+        * UIProcess/WebPageInspectorController.h:
+        * UIProcess/WebPageInspectorTargetAgent.cpp: Removed. Merged this agent into InspectorTargetAgent.
+        * UIProcess/WebPageInspectorTargetAgent.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        * UIProcess/WebPageProxy.h: Moved the target management logic into WebPageInspectorController.
+        WebPageProxy/ProvisionalPageProxy are expected to notifiy it about key lifecycle events and also
+        forward to it messages from inspector in the inspected WebProcess. How it translates to Target
+        events is inspector's business.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPageInspectorTarget.cpp:
+        (WebKit::WebPageInspectorTarget::identifier const):
+        (WebKit::WebPageInspectorTarget::connect):
+        (WebKit::WebPageInspectorTarget::disconnect):
+        (WebKit::WebPageInspectorTarget::toTargetID):
+        * WebProcess/WebPage/WebPageInspectorTarget.h: Made the target own frontend channel instance as it's the
+        only place where the page specific channel is used.
+
+        * WebProcess/WebPage/WebPageInspectorTargetController.cpp:
+        (WebKit::WebPageInspectorTargetController::removeTarget):
+        (WebKit::WebPageInspectorTargetController::connectInspector):
+        (WebKit::WebPageInspectorTargetController::disconnectInspector):
+        * WebProcess/WebPage/WebPageInspectorTargetController.h:
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp:
+        (WebKit::WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel):
+        (WebKit::WebPageInspectorTargetFrontendChannel::sendMessageToFrontend):
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.h: The channel's lifetime is managed by owning
+        target. No need to reference count it.
+
 2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Supply FrameInfo in -[WKUIDelegatePrivate _webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]

@@ -1,3 +1,61 @@
+2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: notify inspector when provisional page is created, committed and destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=202704
+
+        Reviewed by Devin Rousso.
+
+        Updated frontend code to understand provisional targets. For now there are
+        no changes frontend behavior, it will wait for the provisional target to commit
+        and will not send any commands to it before that.
+
+        * UserInterface/Base/Main.js: Moved a bunch of methods shared between Main.js and Test.js
+        to TargetManager.js to keep them in sync.
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager):
+        (WI.TargetManager.prototype.removeTarget):
+        (WI.TargetManager.prototype.createMultiplexingBackendTarget):
+        (WI.TargetManager.prototype.createDirectBackendTarget):
+        (WI.TargetManager.prototype.targetCreated):
+        (WI.TargetManager.prototype.didCommitProvisionalTarget):
+        (WI.TargetManager.prototype.targetDestroyed):
+        (WI.TargetManager.prototype.dispatchMessageFromTarget):
+        (WI.TargetManager.prototype._checkAndHandlePageTargetTransition):
+        (WI.TargetManager.prototype._checkAndHandlePageTargetTermination):
+        (WI.TargetManager.prototype._initializeBackendTarget):
+        (WI.TargetManager.prototype._initializePageTarget):
+        (WI.TargetManager.prototype._transitionPageTarget):
+        (WI.TargetManager.prototype._terminatePageTarget):
+        (WI.TargetManager.prototype._resetMainExecutionContext):
+        (WI.TargetManager.prototype._redirectGlobalAgentsToConnection):
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection.sendMessageToBackend):
+        (InspectorBackend.WorkerConnection):
+        (InspectorBackend.TargetConnection.sendMessageToBackend):
+        (InspectorBackend.TargetConnection):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.destroy): Mark target as destroyed to distinguish expected command errors from
+        genuine failures.
+
+        (WI.Target.prototype.isDestroyed):
+        * UserInterface/Protocol/TargetObserver.js: Since the front-end doesn't
+        send commands to the provisional targets yet, it has to ignore all activities
+        related to provisional pages. For that reason we need two sets to keep track of
+        - provisional pages that were destroyed and never committed
+        - old pages which were replaced by committed page and for which following targetDestroyed
+        event should be ignored
+        Better support for provisional targets will be added to frontend in a separate change.
+        (WI.TargetObserver):
+        (WI.TargetObserver.prototype.targetCreated):
+        (WI.TargetObserver.prototype.didCommitProvisionalTarget): For now convert the event into a subsequence
+        of targetDestroyed/targetCreated events which matches previous behavior.
+
+        (WI.TargetObserver.prototype.targetDestroyed):
+        (WI.TargetObserver.prototype.dispatchMessageFromTarget):
+        * UserInterface/Test/Test.js:
+        (WI.transitionPageTarget):
+        (WI.terminatePageTarget):
+
 2019-10-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Replace color wheel with square HSB color picker

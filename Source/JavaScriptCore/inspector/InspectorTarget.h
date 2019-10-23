@@ -46,9 +46,11 @@ public:
     virtual String identifier() const = 0;
     virtual InspectorTargetType type() const = 0;
 
+    virtual bool isProvisional() const { return false; }
+
     // Connection management.
-    virtual void connect(FrontendChannel&) = 0;
-    virtual void disconnect(FrontendChannel&) = 0;
+    virtual void connect(FrontendChannel::ConnectionType) = 0;
+    virtual void disconnect() = 0;
     virtual void sendMessageToTargetBackend(const String&) = 0;
 };
 

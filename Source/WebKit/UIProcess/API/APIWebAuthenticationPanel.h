@@ -42,7 +42,7 @@ class WebAuthenticationPanelClient;
 
 class WebAuthenticationPanel final : public ObjectImpl<Object::Type::WebAuthenticationPanel>, public CanMakeWeakPtr<WebAuthenticationPanel> {
 public:
-    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const String& rpId);
+    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId);
     ~WebAuthenticationPanel();
 
     WTF::String rpId() const { return m_rpId; }
@@ -52,7 +52,7 @@ public:
     void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
 
 private:
-    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const String& rpId);
+    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId);
 
     WeakPtr<WebKit::AuthenticatorManager> m_manager;
     WTF::String m_rpId;

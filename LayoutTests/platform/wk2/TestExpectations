@@ -764,6 +764,9 @@ http/tests/adClickAttribution [ Pass ]
 inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Pass ]
 inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Pass ]
 
+# Target domain is only present in WebKit2.
+http/tests/inspector/target [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 
