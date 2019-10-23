@@ -2893,7 +2893,7 @@
 		A104F24414C71F7A009E2C23 /* CachedSVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5831484E3A700B2E87A /* RenderSVGRect.h */; };
 		A10BB58B1484E3B300B2E87A /* RenderSVGShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5891484E3B300B2E87A /* RenderSVGShape.h */; };
-		A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A10DBF4718F92317000D70C6 /* LegacyPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DBF4618F92317000D70C6 /* LegacyPreviewLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DC76914747BAB005E2471 /* StyleGridData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A113E02823318293009C33A0 /* PaymentSessionError.h in Headers */ = {isa = PBXBuildFile; fileRef = A113E02723318293009C33A0 /* PaymentSessionError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2973,7 +2973,7 @@
 		A17D275E1EAC579800BF01E7 /* MediaSelectionOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A17FEE641F8893220021E811 /* PaymentSessionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A17FEE631F8893220021E811 /* PaymentSessionBase.h */; };
 		A180AD5B219F81B000DC039A /* WebCoreAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17E4F26219BC01600E1C7EE /* WebCoreAdditions.mm */; };
-		A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* PreviewLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A185B42A1E8211A100DC9118 /* LegacyPreviewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A185B4281E8211A100DC9118 /* LegacyPreviewLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */; };
 		A1956F1C2331A6770057E9D2 /* JSApplePayCancelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1956F1B2331A6460057E9D2 /* JSApplePayCancelEvent.h */; };
 		A1956F202331A8C70057E9D2 /* ApplePaySessionError.h in Headers */ = {isa = PBXBuildFile; fileRef = A1956F1D2331A8C70057E9D2 /* ApplePaySessionError.h */; };
@@ -11187,7 +11187,7 @@
 		A10BB5881484E3B300B2E87A /* RenderSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShape.cpp; sourceTree = "<group>"; };
 		A10BB5891484E3B300B2E87A /* RenderSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShape.h; sourceTree = "<group>"; };
 		A10D6E942144C99800FDD14D /* JSPaymentResponseCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentResponseCustom.cpp; sourceTree = "<group>"; };
-		A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoaderClient.h; sourceTree = "<group>"; };
+		A10DBF4618F92317000D70C6 /* LegacyPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyPreviewLoaderClient.h; sourceTree = "<group>"; };
 		A10DC76814747BAB005E2471 /* StyleGridData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridData.cpp; sourceTree = "<group>"; };
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridData.h; sourceTree = "<group>"; };
 		A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridItemData.h; sourceTree = "<group>"; };
@@ -11293,8 +11293,8 @@
 		A17E4F26219BC01600E1C7EE /* WebCoreAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreAdditions.mm; sourceTree = "<group>"; };
 		A17FEE631F8893220021E811 /* PaymentSessionBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentSessionBase.h; sourceTree = "<group>"; };
 		A182D5B61BE722620087A7CC /* SettingsBaseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsBaseCocoa.mm; sourceTree = "<group>"; };
-		A185B4271E8211A100DC9118 /* PreviewLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewLoader.mm; sourceTree = "<group>"; };
-		A185B4281E8211A100DC9118 /* PreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewLoader.h; sourceTree = "<group>"; };
+		A185B4271E8211A100DC9118 /* LegacyPreviewLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyPreviewLoader.mm; sourceTree = "<group>"; };
+		A185B4281E8211A100DC9118 /* LegacyPreviewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyPreviewLoader.h; sourceTree = "<group>"; };
 		A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParentalControlsContentFilter.mm; sourceTree = "<group>"; };
 		A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentalControlsContentFilter.h; sourceTree = "<group>"; };
 		A18F7A351ECA73640059E1E1 /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
@@ -18263,10 +18263,10 @@
 		4497D58C0EBA854F00A10552 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A10DBF4618F92317000D70C6 /* LegacyPreviewLoaderClient.h */,
 				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */,
 				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
 				A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */,
-				A10DBF4618F92317000D70C6 /* PreviewLoaderClient.h */,
 				44A20DB80F84166C00B3E1FE /* WebCoreURLResponseIOS.h */,
 				444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */,
 			);
@@ -22488,8 +22488,8 @@
 		A15E31F01E0CB075004B371C /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				A185B4281E8211A100DC9118 /* PreviewLoader.h */,
-				A185B4271E8211A100DC9118 /* PreviewLoader.mm */,
+				A185B4281E8211A100DC9118 /* LegacyPreviewLoader.h */,
+				A185B4271E8211A100DC9118 /* LegacyPreviewLoader.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -30982,6 +30982,8 @@
 				CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */,
 				CDE8B5F11A69778B00B4B66A /* LegacyCDMSessionClearKey.h in Headers */,
 				F44A5F591FED38F2007F5944 /* LegacyNSPasteboardTypes.h in Headers */,
+				A185B42A1E8211A100DC9118 /* LegacyPreviewLoader.h in Headers */,
+				A10DBF4718F92317000D70C6 /* LegacyPreviewLoaderClient.h in Headers */,
 				5162C7F511F77EFB00612EFE /* LegacySchemeRegistry.h in Headers */,
 				E4C3B1FA0F0E4161009693F6 /* LegacyTileCache.h in Headers */,
 				E4B65A58132FA8E70070E7BE /* LegacyTileGrid.h in Headers */,
@@ -31471,8 +31473,6 @@
 				46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */,
 				C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */,
 				A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */,
-				A185B42A1E8211A100DC9118 /* PreviewLoader.h in Headers */,
-				A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */,
 				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				51F645D51FECDBCE00B54DED /* ProcessIdentifier.h in Headers */,

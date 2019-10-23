@@ -51,8 +51,8 @@ class AuthenticationChallenge;
 class DocumentLoader;
 class Frame;
 class FrameLoader;
+class LegacyPreviewLoader;
 class NetworkLoadMetrics;
-class PreviewLoader;
 
 class ResourceLoader : public CanMakeWeakPtr<ResourceLoader>, public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:
@@ -178,7 +178,7 @@ protected:
     ResourceResponse m_response;
     LoadTiming m_loadTiming;
 #if USE(QUICK_LOOK)
-    std::unique_ptr<PreviewLoader> m_previewLoader;
+    std::unique_ptr<LegacyPreviewLoader> m_previewLoader;
 #endif
     bool m_canCrossOriginRequestsAskUserForCredentials { true };
 

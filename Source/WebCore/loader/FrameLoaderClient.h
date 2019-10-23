@@ -84,11 +84,11 @@ class HTMLFrameOwnerElement;
 class HTMLPlugInElement;
 class HistoryItem;
 class IntSize;
+class LegacyPreviewLoaderClient;
 class MessageEvent;
 class NavigationAction;
 class Page;
 class PluginViewBase;
-class PreviewLoaderClient;
 class ProtectionSpace;
 class RTCPeerConnectionHandler;
 class ResourceError;
@@ -351,7 +351,7 @@ public:
     virtual bool isServiceWorkerFrameLoaderClient() const { return false; }
 
 #if USE(QUICK_LOOK)
-    virtual RefPtr<PreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;
+    virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

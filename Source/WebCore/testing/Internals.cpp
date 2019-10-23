@@ -283,8 +283,8 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#include "LegacyPreviewLoader.h"
 #include "MockPreviewLoaderClient.h"
-#include "PreviewLoader.h"
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -514,7 +514,7 @@ void Internals::resetToConsistentState(Page& page)
 
 #if USE(QUICK_LOOK)
     MockPreviewLoaderClient::singleton().setPassword("");
-    PreviewLoader::setClientForTesting(nullptr);
+    LegacyPreviewLoader::setClientForTesting(nullptr);
 #endif
 
     printContextForTesting() = nullptr;
@@ -4700,7 +4700,7 @@ void Internals::setQuickLookPassword(const String& password)
 {
 #if PLATFORM(IOS_FAMILY) && USE(QUICK_LOOK)
     auto& quickLookHandleClient = MockPreviewLoaderClient::singleton();
-    PreviewLoader::setClientForTesting(&quickLookHandleClient);
+    LegacyPreviewLoader::setClientForTesting(&quickLookHandleClient);
     quickLookHandleClient.setPassword(password);
 #else
     UNUSED_PARAM(password);

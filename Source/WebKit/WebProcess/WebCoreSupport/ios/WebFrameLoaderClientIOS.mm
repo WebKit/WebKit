@@ -65,7 +65,7 @@ RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLo
 }
 
 #if USE(QUICK_LOOK)
-RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
+RefPtr<LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
 {
     if (!m_frame->isMainFrame())
         return nullptr;

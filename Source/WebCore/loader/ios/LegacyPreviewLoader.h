@@ -33,17 +33,17 @@ OBJC_CLASS WebPreviewLoader;
 
 namespace WebCore {
 
-class PreviewLoaderClient;
+class LegacyPreviewLoaderClient;
 class ResourceLoader;
 class ResourceResponse;
 class SharedBuffer;
 
-class PreviewLoader {
+class LegacyPreviewLoader {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(PreviewLoader);
+    WTF_MAKE_NONCOPYABLE(LegacyPreviewLoader);
 public:
-    static std::unique_ptr<PreviewLoader> create(ResourceLoader&, const ResourceResponse&);
-    ~PreviewLoader();
+    static std::unique_ptr<LegacyPreviewLoader> create(ResourceLoader&, const ResourceResponse&);
+    ~LegacyPreviewLoader();
 
     bool didReceiveResponse(const ResourceResponse&);
     bool didReceiveData(const char* data, unsigned length);
@@ -51,11 +51,11 @@ public:
     bool didFinishLoading();
     void didFail();
 
-    WEBCORE_EXPORT static void setClientForTesting(RefPtr<PreviewLoaderClient>&&);
+    WEBCORE_EXPORT static void setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&&);
 
 private:
-    friend std::unique_ptr<PreviewLoader> std::make_unique<PreviewLoader>(ResourceLoader&, const ResourceResponse&);
-    PreviewLoader(ResourceLoader&, const ResourceResponse&);
+    friend std::unique_ptr<LegacyPreviewLoader> std::make_unique<LegacyPreviewLoader>(ResourceLoader&, const ResourceResponse&);
+    LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);
 
     RetainPtr<WebPreviewLoader> m_previewLoader;
     bool m_finishedLoadingDataIntoConverter { false };

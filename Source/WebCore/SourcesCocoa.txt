@@ -116,7 +116,7 @@ loader/archive/cf/LegacyWebArchiveMac.mm
 loader/cocoa/DiskCacheMonitorCocoa.mm
 loader/cocoa/SubresourceLoaderCocoa.mm
 
-loader/ios/PreviewLoader.mm
+loader/ios/LegacyPreviewLoader.mm
 
 loader/mac/DocumentLoaderMac.cpp
 loader/mac/LoaderNSURLExtras.mm

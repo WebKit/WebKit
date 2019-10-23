@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-class PreviewLoaderClient : public RefCounted<PreviewLoaderClient> {
+class LegacyPreviewLoaderClient : public RefCounted<LegacyPreviewLoaderClient> {
 public:
-    virtual ~PreviewLoaderClient() = default;
+    virtual ~LegacyPreviewLoaderClient() = default;
     virtual void didReceiveDataArray(CFArrayRef) { }
     virtual void didFinishLoading() { }
     virtual void didFail() { }

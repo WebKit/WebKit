@@ -31,7 +31,7 @@
 
 namespace WebCore {
 class DocumentLoader;
-class PreviewLoaderClient;
+class LegacyPreviewLoaderClient;
 }
 
 class WebDocumentLoaderMac;
@@ -60,6 +60,6 @@ class WebDocumentLoaderMac;
 - (WebCore::DocumentLoader*)_documentLoader;
 #if USE(QUICK_LOOK)
 @property (nonatomic, copy, setter=_setQuickLookContent:) NSDictionary *_quickLookContent;
-@property (nonatomic, setter=_setQuickLookPreviewLoaderClient:) WebCore::PreviewLoaderClient* _quickLookPreviewLoaderClient;
+@property (nonatomic, setter=_setQuickLookPreviewLoaderClient:) WebCore::LegacyPreviewLoaderClient* _quickLookPreviewLoaderClient;
 #endif
 @end

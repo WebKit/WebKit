@@ -59,8 +59,8 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#include "LegacyPreviewLoader.h"
 #include "PreviewConverter.h"
-#include "PreviewLoader.h"
 #endif
 
 #undef RELEASE_LOG_IF_ALLOWED

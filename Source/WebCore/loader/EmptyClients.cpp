@@ -78,7 +78,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#include "PreviewLoaderClient.h"
+#include "LegacyPreviewLoaderClient.h"
 #endif
 
 namespace WebCore {

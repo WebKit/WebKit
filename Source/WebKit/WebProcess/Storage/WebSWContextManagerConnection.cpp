@@ -62,7 +62,7 @@
 #include <wtf/ProcessID.h>
 
 #if USE(QUICK_LOOK)
-#include <WebCore/PreviewLoaderClient.h>
+#include <WebCore/LegacyPreviewLoaderClient.h>
 #endif
 
 namespace WebKit {

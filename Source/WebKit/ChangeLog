@@ -1,3 +1,16 @@
+2019-10-23  Andy Estes  <aestes@apple.com>
+
+        [Quick Look] Rename PreviewLoader{,Client} to LegacyPreviewLoader{,Client}
+        https://bugs.webkit.org/show_bug.cgi?id=203306
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm:
+        (WebKit::WebFrameLoaderClient::createPreviewLoaderClient):
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h:
+
 2019-10-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for non-unified source builds

@@ -29,7 +29,7 @@
 #include "ResourceError.h"
 
 #if USE(QUICK_LOOK)
-#include "PreviewLoaderClient.h"
+#include "LegacyPreviewLoaderClient.h"
 #endif
 
 namespace WebCore {
@@ -201,7 +201,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void prefetchDNS(const String&) final { }
 
 #if USE(QUICK_LOOK)
-    RefPtr<PreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final { return nullptr; }
+    RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final { return nullptr; }
 #endif
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool hasFrameSpecificStorageAccess() final { return false; }

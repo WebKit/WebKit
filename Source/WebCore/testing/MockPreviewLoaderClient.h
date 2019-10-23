@@ -27,11 +27,11 @@
 
 #if USE(QUICK_LOOK)
 
-#include "PreviewLoaderClient.h"
+#include "LegacyPreviewLoaderClient.h"
 
 namespace WebCore {
 
-class MockPreviewLoaderClient final : public PreviewLoaderClient {
+class MockPreviewLoaderClient final : public LegacyPreviewLoaderClient {
 public:
     static MockPreviewLoaderClient& singleton();
 

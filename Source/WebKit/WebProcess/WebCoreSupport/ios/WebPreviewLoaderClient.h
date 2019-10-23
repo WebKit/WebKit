@@ -28,15 +28,15 @@
 #if USE(QUICK_LOOK)
 
 #include "QuickLookDocumentData.h"
+#include <WebCore/LegacyPreviewLoaderClient.h>
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/PreviewLoaderClient.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class WebFrame;
 
-class WebPreviewLoaderClient final : public WebCore::PreviewLoaderClient {
+class WebPreviewLoaderClient final : public WebCore::LegacyPreviewLoaderClient {
 public:
     static Ref<WebPreviewLoaderClient> create(const String& fileName, const String& uti, WebCore::PageIdentifier pageID)
     {

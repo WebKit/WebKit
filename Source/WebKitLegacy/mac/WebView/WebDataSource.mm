@@ -71,7 +71,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#import <WebCore/PreviewLoaderClient.h>
+#import <WebCore/LegacyPreviewLoaderClient.h>
 #import <WebCore/QuickLook.h>
 #endif
 
@@ -107,7 +107,7 @@ public:
 #endif
 #if USE(QUICK_LOOK)
     RetainPtr<NSDictionary> _quickLookContent;
-    RefPtr<WebCore::PreviewLoaderClient> _quickLookPreviewLoaderClient;
+    RefPtr<WebCore::LegacyPreviewLoaderClient> _quickLookPreviewLoaderClient;
 #endif
 };
 
@@ -416,7 +416,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 }
 
 #if USE(QUICK_LOOK)
-- (WebCore::PreviewLoaderClient*)_quickLookPreviewLoaderClient
+- (WebCore::LegacyPreviewLoaderClient*)_quickLookPreviewLoaderClient
 {
     return toPrivate(_private)->_quickLookPreviewLoaderClient.get();
 }
@@ -426,7 +426,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
     toPrivate(_private)->_quickLookContent = adoptNS([quickLookContent copy]);
 }
 
-- (void)_setQuickLookPreviewLoaderClient:(WebCore::PreviewLoaderClient*)quickLookPreviewLoaderClient
+- (void)_setQuickLookPreviewLoaderClient:(WebCore::LegacyPreviewLoaderClient*)quickLookPreviewLoaderClient
 {
     toPrivate(_private)->_quickLookPreviewLoaderClient = quickLookPreviewLoaderClient;
 }

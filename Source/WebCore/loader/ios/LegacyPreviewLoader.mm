@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PreviewLoader.h"
+#import "LegacyPreviewLoader.h"
 
 #if USE(QUICK_LOOK)
 
@@ -32,9 +32,9 @@
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
+#import "LegacyPreviewLoaderClient.h"
 #import "Logging.h"
 #import "PreviewConverter.h"
-#import "PreviewLoaderClient.h"
 #import "QuickLook.h"
 #import "ResourceLoader.h"
 #import "Settings.h"
@@ -46,7 +46,7 @@ using namespace WebCore;
 @interface WebPreviewLoader : NSObject {
     WeakPtr<ResourceLoader> _resourceLoader;
     ResourceResponse _response;
-    RefPtr<PreviewLoaderClient> _client;
+    RefPtr<LegacyPreviewLoaderClient> _client;
     std::unique_ptr<PreviewConverter> _converter;
     RetainPtr<NSMutableArray> _bufferedDataArray;
     BOOL _hasLoadedPreview;
@@ -67,15 +67,15 @@ using namespace WebCore;
 
 @implementation WebPreviewLoader
 
-static RefPtr<PreviewLoaderClient>& testingClient()
+static RefPtr<LegacyPreviewLoaderClient>& testingClient()
 {
-    static NeverDestroyed<RefPtr<PreviewLoaderClient>> testingClient;
+    static NeverDestroyed<RefPtr<LegacyPreviewLoaderClient>> testingClient;
     return testingClient.get();
 }
 
-static PreviewLoaderClient& emptyClient()
+static LegacyPreviewLoaderClient& emptyClient()
 {
-    static NeverDestroyed<PreviewLoaderClient> emptyClient;
+    static NeverDestroyed<LegacyPreviewLoaderClient> emptyClient;
     return emptyClient.get();
 }
 
@@ -256,27 +256,27 @@ static inline bool isQuickLookPasswordError(NSError *error)
 
 namespace WebCore {
 
-PreviewLoader::PreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
+LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
     : m_previewLoader { adoptNS([[WebPreviewLoader alloc] initWithResourceLoader:loader resourceResponse:response]) }
 {
 }
 
-PreviewLoader::~PreviewLoader()
+LegacyPreviewLoader::~LegacyPreviewLoader()
 {
 }
 
-std::unique_ptr<PreviewLoader> PreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
+std::unique_ptr<LegacyPreviewLoader> LegacyPreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
 {
     ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
-    return makeUnique<PreviewLoader>(loader, response);
+    return makeUnique<LegacyPreviewLoader>(loader, response);
 }
 
-bool PreviewLoader::didReceiveResponse(const ResourceResponse&)
+bool LegacyPreviewLoader::didReceiveResponse(const ResourceResponse&)
 {
     return ![m_previewLoader shouldDecidePolicyBeforeLoading];
 }
 
-bool PreviewLoader::didReceiveData(const char* data, unsigned length)
+bool LegacyPreviewLoader::didReceiveData(const char* data, unsigned length)
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
@@ -285,7 +285,7 @@ bool PreviewLoader::didReceiveData(const char* data, unsigned length)
     return true;
 }
 
-bool PreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
+bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
@@ -294,7 +294,7 @@ bool PreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
     return true;
 }
 
-bool PreviewLoader::didFinishLoading()
+bool LegacyPreviewLoader::didFinishLoading()
 {
     if (m_finishedLoadingDataIntoConverter)
         return false;
@@ -304,7 +304,7 @@ bool PreviewLoader::didFinishLoading()
     return true;
 }
 
-void PreviewLoader::didFail()
+void LegacyPreviewLoader::didFail()
 {
     if (m_finishedLoadingDataIntoConverter)
         return;
@@ -314,7 +314,7 @@ void PreviewLoader::didFail()
     m_previewLoader = nullptr;
 }
 
-void PreviewLoader::setClientForTesting(RefPtr<PreviewLoaderClient>&& client)
+void LegacyPreviewLoader::setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&& client)
 {
     testingClient() = WTFMove(client);
 }
