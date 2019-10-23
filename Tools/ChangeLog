@@ -1,3 +1,20 @@
+2019-10-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.results
+        https://bugs.webkit.org/show_bug.cgi?id=202478
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.results.
+        * Scripts/webkitpy/results/upload.py:
+        (Upload.Encoder.default): Use range instead of xrange.
+        (Upload.create_configuration): Support items iteration for Python 3.
+        (Upload.create_run_stats): Change iteritems to items.
+        (Upload.create_test_result): Ditto.
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.Options.__init__): Change iteritems to items.
+        (UploadTest.normalize): Ditto.
+
 2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Supply FrameInfo in -[WKUIDelegatePrivate _webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]

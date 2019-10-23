@@ -25,18 +25,22 @@ import webkitpy.thirdparty.autoinstalled.requests
 import collections
 import json
 import requests
+import sys
 import time
 import unittest
 
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock
 
+if sys.version_info > (3, 0):
+    basestring = str
+
 
 class UploadTest(unittest.TestCase):
 
     class Options(object):
         def __init__(self, **kwargs):
-            for key, value in kwargs.iteritems():
+            for key, value in kwargs.items():
                 setattr(self, key, value)
 
     class MockResponse(object):
@@ -52,7 +56,7 @@ class UploadTest(unittest.TestCase):
         if isinstance(data, basestring):
             return str(data)
         elif isinstance(data, collections.Mapping):
-            return dict(map(UploadTest.normalize, data.iteritems()))
+            return dict(map(UploadTest.normalize, data.items()))
         elif isinstance(data, collections.Iterable):
             return type(data)(map(UploadTest.normalize, data))
         return data

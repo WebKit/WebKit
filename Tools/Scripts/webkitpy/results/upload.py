@@ -69,7 +69,7 @@ class Upload(object):
             buildbot_args = [details.get(arg, None) is None for arg in obj.BUILDBOT_DETAILS]
             if any(buildbot_args) and not all(buildbot_args):
                 raise ValueError('All buildbot details must be defined for upload, details missing: {}'.format(', '.join(
-                    [obj.BUILDBOT_DETAILS[i] for i in xrange(len(obj.BUILDBOT_DETAILS)) if buildbot_args[i]],
+                    [obj.BUILDBOT_DETAILS[i] for i in range(len(obj.BUILDBOT_DETAILS)) if buildbot_args[i]],
                 )))
 
             def unpack_test(current, path_to_test, data):
@@ -81,8 +81,14 @@ class Upload(object):
                 unpack_test(current[path_to_test[0]], path_to_test[1:], data)
 
             results = {}
-            for test, data in obj.results.iteritems():
-                unpack_test(results, test.split('/'), data)
+
+            # FIXME: Python 2 removal, this dictionary is large enough that Python 2 can't just use items
+            if sys.version_info > (3, 0):
+                for test, data in obj.results.items():
+                    unpack_test(results, test.split('/'), data)
+            else:
+                for test, data in obj.results.iteritems():
+                    unpack_test(results, test.split('/'), data)
 
             result = dict(
                 version=obj.VERSION,
@@ -129,7 +135,7 @@ class Upload(object):
             architecture=architecture or host_platform.machine(),
         )
         optional_data = dict(version_name=version_name, model=model, style=style, flavor=flavor, sdk=sdk)
-        config.update({key: value for key, value in optional_data.iteritems() if value is not None})
+        config.update({key: value for key, value in optional_data.items() if value is not None})
         return config
 
     @staticmethod
@@ -157,7 +163,7 @@ class Upload(object):
     def create_run_stats(start_time=None, end_time=None, tests_skipped=None, **kwargs):
         stats = dict(**kwargs)
         optional_data = dict(start_time=start_time, end_time=end_time, tests_skipped=tests_skipped)
-        stats.update({key: value for key, value in optional_data.iteritems() if value is not None})
+        stats.update({key: value for key, value in optional_data.items() if value is not None})
         return stats
 
     @staticmethod
@@ -166,7 +172,7 @@ class Upload(object):
 
         # Tests which don't declare expectations or results are assumed to have passed.
         optional_data = dict(expected=expected, actual=actual, log=log)
-        result.update({key: value for key, value in optional_data.iteritems() if value is not None})
+        result.update({key: value for key, value in optional_data.items() if value is not None})
         return result
 
     def upload(self, hostname, log_line_func=lambda val: sys.stdout.write(val + '\n')):
