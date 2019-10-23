@@ -33,6 +33,7 @@
 #include "FileSystemEntryCallback.h"
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
+#include "WindowEventLoop.h"
 
 namespace WebCore {
 
@@ -51,20 +52,30 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     if (!successCallback && !errorCallback)
         return;
 
-    filesystem().getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
+    filesystem().getEntry(context, *this, path, flags, [this, pendingActivity = makePendingActivity(*this), matches = WTFMove(matches), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
+        auto* document = this->document();
         if (result.hasException()) {
-            if (errorCallback)
-                errorCallback->handleEvent(DOMException::create(result.releaseException()));
+            if (errorCallback && document) {
+                document->eventLoop().queueTask(TaskSource::Networking, *document, [errorCallback = WTFMove(errorCallback), exception = result.releaseException(), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                    errorCallback->handleEvent(DOMException::create(WTFMove(exception)));
+                });
+            }
             return;
         }
         auto entry = result.releaseReturnValue();
         if (!matches(entry)) {
-            if (errorCallback)
-                errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, "Entry at given path does not match expected type"_s }));
+            if (errorCallback && document) {
+                document->eventLoop().queueTask(TaskSource::Networking, *document, [errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                    errorCallback->handleEvent(DOMException::create(Exception { TypeMismatchError, "Entry at given path does not match expected type"_s }));
+                });
+            }
             return;
         }
-        if (successCallback)
-            successCallback->handleEvent(WTFMove(entry));
+        if (successCallback && document) {
+            document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), entry = WTFMove(entry), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                successCallback->handleEvent(WTFMove(entry));
+            });
+        }
     });
 }
 

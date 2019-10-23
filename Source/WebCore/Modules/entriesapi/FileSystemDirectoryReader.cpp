@@ -28,10 +28,12 @@
 
 #include "DOMException.h"
 #include "DOMFileSystem.h"
+#include "Document.h"
 #include "ErrorCallback.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemEntriesCallback.h"
 #include "ScriptExecutionContext.h"
+#include "WindowEventLoop.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
@@ -53,10 +55,9 @@ const char* FileSystemDirectoryReader::activeDOMObjectName() const
     return "FileSystemDirectoryReader";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool FileSystemDirectoryReader::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+Document* FileSystemDirectoryReader::document() const
 {
-    return hasPendingActivity();
+    return downcast<Document>(scriptExecutionContext());
 }
 
 // https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-readentries
@@ -83,15 +84,23 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
     auto pendingActivity = makePendingActivity(*this);
     callOnMainThread([this, context = makeRef(context), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
         m_isReading = false;
-        m_directory->filesystem().listDirectory(context, m_directory, [this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)](ExceptionOr<Vector<Ref<FileSystemEntry>>>&& result) {
+        m_directory->filesystem().listDirectory(context, m_directory, [this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)](ExceptionOr<Vector<Ref<FileSystemEntry>>>&& result) mutable {
+            auto* document = this->document();
             if (result.hasException()) {
                 m_error = result.releaseException();
-                if (errorCallback)
-                    errorCallback->handleEvent(DOMException::create(*m_error));
+                if (errorCallback && document) {
+                    document->eventLoop().queueTask(TaskSource::Networking, *document, [this, errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+                        errorCallback->handleEvent(DOMException::create(*m_error));
+                    });
+                }
                 return;
             }
             m_isDone = true;
-            successCallback->handleEvent(result.releaseReturnValue());
+            if (document) {
+                document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), pendingActivity = WTFMove(pendingActivity), result = result.releaseReturnValue()]() mutable {
+                    successCallback->handleEvent(WTFMove(result));
+                });
+            }
         });
     });
 }

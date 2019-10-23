@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../editing.js"></script>
+</head>
+<body>
+<div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
+<script>
+description("Basic test coverage for fileSystemDirectoryReader.readEntries()");
+jsTestIsAsync = true;
+restoredFromPageCache = false;
+
+function getEntriesAsPromise(dirEntry) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        reader = dirEntry.createReader();
+        let doBatch = () => {
+            reader.readEntries(entries => {
+            if (entries.length > 0) {
+                entries.forEach(e => result.push(e));
+                doBatch();
+            } else {
+                resolve(result.sort(function (a, b) {
+                    if (a.name > b.name)
+                        return 1;
+                    else if (a.name < b.name)
+                        return -1;
+                    return 0;
+                }));
+            }
+        }, reject);
+    };
+    doBatch();
+  });
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    } else {
+        getEntriesAsPromise(entry).then(function(entries) {
+            testPassed("Success callback was called");
+            shouldBeTrue("restoredFromPageCache");
+            finishJSTest();
+        }, function(e) {
+            testFailed("Error callback was called");
+            finishJSTest();
+        });
+    }
+}, false);
+
+var dropzone = document.getElementById('dropzone');
+dropzone.ondrop = function(e) {
+    e.preventDefault();
+    dataTransfer = e.dataTransfer;
+
+    entry = dataTransfer.items[0].webkitGetAsEntry();
+    window.location.href = "../../../fast/history/resources/page-cache-helper.html";
+};
+
+dropzone.ondragover = function(ev) {
+    ev.preventDefault();
+}
+
+onload = function() {
+    setTimeout(() => {
+        dragFilesOntoElement(dropzone, ['../../../fast/forms/file/entries-api/resources/testFiles']);
+    }, 0);
+}
+</script>
+</body>
+</html>

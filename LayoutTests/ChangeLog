@@ -1,3 +1,18 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        FileSystemDirectoryReader / FileSystemEntry should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203090
+        <rdar://problem/56550805>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * editing/pasteboard/entries-api/DirectoryEntry-getFile-back-forward-cache-expected.txt: Added.
+        * editing/pasteboard/entries-api/DirectoryEntry-getFile-back-forward-cache.html: Added.
+        * editing/pasteboard/entries-api/DirectoryReader-readEntries-back-forward-cache-expected.txt: Added.
+        * editing/pasteboard/entries-api/DirectoryReader-readEntries-back-forward-cache.html: Added.
+
 2019-10-23  Truitt Savell  <tsavell@apple.com>
 
         update expectations for inspector/heap/getRemoteObject.html

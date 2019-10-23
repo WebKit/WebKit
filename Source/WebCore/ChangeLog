@@ -1,3 +1,31 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        FileSystemDirectoryReader / FileSystemEntry should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203090
+        <rdar://problem/56550805>
+
+        Reviewed by Geoffrey Garen.
+
+        FileSystemDirectoryReader / FileSystemEntry no longer prevent entering the back/forward cache.
+        We now dispatch tasks to the window event loop whenever we need to call a JS callback since the
+        window event loop takes care of suspending tasks while in the back/forward cache.
+
+        Tests: editing/pasteboard/entries-api/DirectoryEntry-getFile-back-forward-cache.html
+               editing/pasteboard/entries-api/DirectoryReader-readEntries-back-forward-cache.html
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::getEntry):
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::document const):
+        (WebCore::FileSystemDirectoryReader::readEntries):
+        * Modules/entriesapi/FileSystemDirectoryReader.h:
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::document const):
+        (WebCore::FileSystemEntry::getParent):
+        * Modules/entriesapi/FileSystemEntry.h:
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::file):
+
 2019-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Remove Hiragino Sans site-specific quirk for Yahoo Japan

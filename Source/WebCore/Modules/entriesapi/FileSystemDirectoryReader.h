@@ -54,7 +54,7 @@ private:
     FileSystemDirectoryReader(ScriptExecutionContext&, FileSystemDirectoryEntry&);
 
     const char* activeDOMObjectName() const final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
+    Document* document() const;
 
     Ref<FileSystemDirectoryEntry> m_directory;
     Optional<Exception> m_error;

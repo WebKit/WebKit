@@ -28,8 +28,10 @@
 
 #include "DOMException.h"
 #include "DOMFileSystem.h"
+#include "Document.h"
 #include "ErrorCallback.h"
 #include "FileCallback.h"
+#include "WindowEventLoop.h"
 
 namespace WebCore {
 
@@ -40,13 +42,19 @@ FileSystemFileEntry::FileSystemFileEntry(ScriptExecutionContext& context, DOMFil
 
 void FileSystemFileEntry::file(Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    filesystem().getFile(*this, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
-        if (result.hasException()) {
-            if (errorCallback)
-                errorCallback->handleEvent(DOMException::create(result.releaseException()));
+    filesystem().getFile(*this, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
+        auto* document = this->document();
+        if (!document)
             return;
-        }
-        successCallback->handleEvent(result.releaseReturnValue());
+
+        document->eventLoop().queueTask(TaskSource::Networking, *document, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), result = WTFMove(result), pendingActivity = WTFMove(pendingActivity)]() mutable {
+            if (result.hasException()) {
+                if (errorCallback)
+                    errorCallback->handleEvent(DOMException::create(result.releaseException()));
+                return;
+            }
+            successCallback->handleEvent(result.releaseReturnValue());
+        });
     });
 }
 
