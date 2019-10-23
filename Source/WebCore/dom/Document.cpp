@@ -2732,6 +2732,9 @@ ExceptionOr<void> Document::open(Document* responsibleDocument)
     if (m_ignoreOpensDuringUnloadCount)
         return { };
 
+    if (m_activeParserWasAborted)
+        return { };
+
     if (m_frame) {
         if (ScriptableDocumentParser* parser = scriptableDocumentParser()) {
             if (parser->isParsing()) {
@@ -2801,6 +2804,9 @@ void Document::cancelParsing()
     if (!m_parser)
         return;
 
+    if (m_parser->processingData())
+        m_activeParserWasAborted = true;
+
     // We have to clear the parser to avoid possibly triggering
     // the onload handler when closing as a side effect of a cancel-style
     // change, such as opening a new document or closing the window while
@@ -2815,7 +2821,7 @@ void Document::implicitOpen()
 
     setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
 
-    cancelParsing();
+    detachParser();
     m_parser = createParser();
 
     if (hasActiveParserYieldToken())
@@ -3085,6 +3091,9 @@ Seconds Document::timeSinceDocumentCreation() const
 
 ExceptionOr<void> Document::write(Document* responsibleDocument, SegmentedString&& text)
 {
+    if (m_activeParserWasAborted)
+        return { };
+
     NestingLevelIncrementer nestingLevelIncrementer(m_writeRecursionDepth);
 
     m_writeRecursionIsTooDeep = (m_writeRecursionDepth > 1) && m_writeRecursionIsTooDeep;

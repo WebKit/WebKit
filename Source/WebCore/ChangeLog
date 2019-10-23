@@ -1,3 +1,22 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Ignore document.open/write after the active parser has been aborted
+        https://bugs.webkit.org/show_bug.cgi?id=203028
+
+        Reviewed by Geoffrey Garen.
+
+        Ignore document.open/write after the active parser has been aborted, as per:
+        - https://github.com/whatwg/html/pull/4907
+
+        Test: imported/blink/fast/loader/document-write-after-location-change.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        (WebCore::Document::cancelParsing):
+        (WebCore::Document::implicitOpen):
+        (WebCore::Document::write):
+        * dom/Document.h:
+
 2019-10-23  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Move PreviewConverter from platform/network/ to platform/

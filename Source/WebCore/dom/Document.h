@@ -1962,6 +1962,7 @@ private:
 
     MutationObserverOptions m_mutationObserverTypes { 0 };
 
+    bool m_activeParserWasAborted { false };
     bool m_writeRecursionIsTooDeep { false };
     bool m_wellFormed { false };
     bool m_createRenderers { true };
