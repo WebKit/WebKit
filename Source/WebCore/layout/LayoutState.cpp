@@ -45,6 +45,8 @@ LayoutState::LayoutState(const Container& root)
     ASSERT(root.establishesFormattingContext());
 }
 
+LayoutState::~LayoutState() = default;
+
 Display::Box& LayoutState::displayBoxForLayoutBox(const Box& layoutBox)
 {
     return *m_layoutToDisplayBox.ensure(&layoutBox, [] {

@@ -81,7 +81,7 @@ std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& rende
     style.setLogicalWidth(Length(renderView.width(), Fixed));
     style.setLogicalHeight(Length(renderView.height(), Fixed));
 
-    std::unique_ptr<Container> initialContainingBlock(new Container(WTF::nullopt, WTFMove(style)));
+    auto initialContainingBlock = makeUnique<Container>(WTF::nullopt, WTFMove(style));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
     return initialContainingBlock;
 }

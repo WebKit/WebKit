@@ -49,6 +49,7 @@ class LayoutState {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
     LayoutState(const Container& root);
+    ~LayoutState();
 
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot);
     FormattingState& establishedFormattingState(const Container& formattingRoot) const;
