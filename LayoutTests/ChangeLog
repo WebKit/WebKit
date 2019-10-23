@@ -1,3 +1,22 @@
+2019-10-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement dumpResourceLoadStatistics in SQLite ITP Database
+        https://bugs.webkit.org/show_bug.cgi?id=203224
+        <rdar://problem/56482165>
+
+        Reviewed by John Wilander. 
+
+        Migrated tests from the memory store to be used to test dumping
+        for database store. Both tests are almost identical to the memory
+        store tests except they set the useITPDatabase flag to true and 
+        log-cross-site-load-with-link-decoration-database.html tests one additional domain
+        to be sure that listing multiple domains in a category works in the database store.
+
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database.html: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html: Added.
+
 2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when multiple NFC tags present

@@ -75,13 +75,13 @@ constexpr auto countPrevalentResourcesWithoutUserInteractionQuery = "SELECT COUN
 // INSERT Queries
 constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
     "mostRecentUserInteractionTime, grandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, timesAccessedAsFirstPartyDueToUserInteraction,"
-    "timesAccessedAsFirstPartyDueToStorageAccessAPI) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+    "timesAccessedAsFirstPartyDueToStorageAccessAPI, isScheduledForAllButCookieDataRemoval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertTopLevelDomainQuery = "INSERT INTO TopLevelDomains VALUES (?)"_s;
 constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsToQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT OR IGNORE into SubframeUnderTopFrameDomains (subFrameDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO TopFrameUniqueRedirectsFrom (targetDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
-constexpr auto topFrameLinkDecorationsFromQuery = "INSERT OR IGNORE INTO TopFrameLinkDecorationsFrom (fromDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
+constexpr auto topFrameLinkDecorationsFromQuery = "INSERT OR IGNORE INTO TopFrameLinkDecorationsFrom (toDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto subresourceUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO SubresourceUnderTopFrameDomains (subresourceDomainID, topFrameDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto subresourceUniqueRedirectsToQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsTo (subresourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto subresourceUniqueRedirectsFromQuery = "INSERT OR IGNORE INTO SubresourceUniqueRedirectsFrom (subresourceDomainID, fromDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
@@ -93,8 +93,8 @@ constexpr auto subresourceUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELEC
     "WHERE subresourceDomainID = ? AND topFrameDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
 constexpr auto subresourceUniqueRedirectsToExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? "
     "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
-constexpr auto topFrameLinkDecorationsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameLinkDecorationsFrom WHERE fromDomainID = ? "
-"AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
+constexpr auto topFrameLinkDecorationsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameLinkDecorationsFrom WHERE toDomainID = ? "
+"AND fromDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
 
 // UPDATE Queries
 constexpr auto mostRecentUserInteractionQuery = "UPDATE ObservedDomains SET hadUserInteraction = ?, mostRecentUserInteractionTime = ? "
@@ -105,22 +105,26 @@ constexpr auto updatePrevalentResourceQuery = "UPDATE ObservedDomains SET isPrev
 constexpr auto updateVeryPrevalentResourceQuery = "UPDATE ObservedDomains SET isVeryPrevalent = ? WHERE registrableDomain = ?"_s;
 constexpr auto clearPrevalentResourceQuery = "UPDATE ObservedDomains SET isPrevalent = 0, isVeryPrevalent = 0 WHERE registrableDomain = ?"_s;
 constexpr auto updateGrandfatheredQuery = "UPDATE ObservedDomains SET grandfathered = ? WHERE registrableDomain = ?"_s;
-
+constexpr auto updateIsScheduledForAllButCookieDataRemovalQuery = "UPDATE ObservedDomains SET isScheduledForAllButCookieDataRemoval = ? WHERE registrableDomain = ?"_s;
 
 // SELECT Queries
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM ObservedDomains WHERE domainID = ?"_s;
 constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentUserInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isGrandfatheredQuery = "SELECT grandfathered FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto findExpiredUserInteractionQuery = "SELECT domainID FROM ObservedDomains WHERE hadUserInteraction = 1 AND mostRecentUserInteractionTime < ?"_s;
+constexpr auto getResourceDataByDomainNameQuery = "SELECT * FROM ObservedDomains WHERE registrableDomain = ?";
+constexpr auto getAllDomainsQuery = "SELECT registrableDomain FROM ObservedDomains"_s;
 
 // CREATE TABLE Queries
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
     "hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, "
     "isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,"
-    "timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL);"_s;
+    "timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,"
+    "isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)"_s;
 
 enum {
     DomainIDIndex,
@@ -133,7 +137,8 @@ enum {
     IsVeryPrevalentIndex,
     DataRecordsRemovedIndex,
     TimesAccessedAsFirstPartyDueToUserInteractionIndex,
-    TimesAccessedAsFirstPartyDueToStorageAccessAPIIndex
+    TimesAccessedAsFirstPartyDueToStorageAccessAPIIndex,
+    IsScheduledForAllButCookieDataRemovalIndex
 };
 
 constexpr auto createTopLevelDomains = "CREATE TABLE TopLevelDomains ("
@@ -156,9 +161,9 @@ constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueR
     "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createTopFrameLinkDecorationsFrom = "CREATE TABLE TopFrameLinkDecorationsFrom ("
-    "fromDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
-    "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
-    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+    "toDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
+    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
 
 constexpr auto createSubframeUnderTopFrameDomains = "CREATE TABLE SubframeUnderTopFrameDomains ("
     "subFrameDomainID INTEGER NOT NULL, topFrameDomainID INTEGER NOT NULL, "
@@ -184,13 +189,23 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexTopFrameUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsFrom_targetDomainID_fromDomainID on TopFrameUniqueRedirectsFrom ( targetDomainID, fromDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_fromDomainID_toDomainID on TopFrameLinkDecorationsFrom ( fromDomainID, toDomainID );"_s;
+constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_toDomainID_fromDomainID on TopFrameLinkDecorationsFrom ( toDomainID, fromDomainID );"_s;
 constexpr auto createUniqueIndexSubframeUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubframeUnderTopFrameDomains_subFrameDomainID_topFrameDomainID on SubframeUnderTopFrameDomains ( subFrameDomainID, topFrameDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUnderTopFrameDomains_subresourceDomainID_topFrameDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, topFrameDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
 constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
 
 const unsigned minimumPrevalentResourcesForTelemetry = 3;
+
+static const String ObservedDomainsTableSchemaV1()
+{
+    return createObservedDomain;
+}
+
+static const String ObservedDomainsTableSchemaV1Alternate()
+{
+    return "CREATE TABLE \"ObservedDomains\" (domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)";
+}
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
@@ -213,20 +228,20 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_clearPrevalentResourceStatement(m_database, clearPrevalentResourceQuery)
     , m_hadUserInteractionStatement(m_database, hadUserInteractionQuery)
     , m_updateGrandfatheredStatement(m_database, updateGrandfatheredQuery)
+    , m_updateIsScheduledForAllButCookieDataRemovalStatement(m_database, updateIsScheduledForAllButCookieDataRemovalQuery)
     , m_isGrandfatheredStatement(m_database, isGrandfatheredQuery)
     , m_findExpiredUserInteractionStatement(m_database, findExpiredUserInteractionQuery)
     , m_countPrevalentResourcesStatement(m_database, countPrevalentResourcesQuery)
     , m_countPrevalentResourcesWithUserInteractionStatement(m_database, countPrevalentResourcesWithUserInteractionQuery)
     , m_countPrevalentResourcesWithoutUserInteractionStatement(m_database, countPrevalentResourcesWithoutUserInteractionQuery)
+    , m_getResourceDataByDomainNameStatement(m_database, getResourceDataByDomainNameQuery)
+    , m_getAllDomainsStatement(m_database, getAllDomainsQuery)
+    , m_domainStringFromDomainIDStatement(m_database, domainStringFromDomainIDQuery)
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (!m_database.open(m_storageDirectoryPath)) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    openAndDropOldDatabaseIfNecessary();
     
     // Since we are using a workerQueue, the sequential dispatch blocks may be called by different threads.
     m_database.disableThreadingChecks();
@@ -252,6 +267,50 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
         if (weakThis)
             weakThis->calculateAndSubmitTelemetry();
     });
+}
+
+void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
+{
+    if (!m_database.open(m_storageDirectoryPath)) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
+        ASSERT_NOT_REACHED();
+    }
+}
+
+void ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary()
+{
+    openITPDatabase();
+
+    String currentSchema;
+    {
+        // Fetch the schema for an existing Observed Domains table.
+        SQLiteStatement statement(m_database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='ObservedDomains'");
+        if (statement.prepare() != SQLITE_OK) {
+            LOG_ERROR("Unable to prepare statement to fetch schema for the ObservedDomains table.");
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        // If there is no ObservedDomains table at all, or there is an error executing the fetch, delete the file.
+        if (statement.step() != SQLITE_ROW) {
+            LOG_ERROR("Error executing statement to fetch schema for the Observed Domains table.");
+            m_database.close();
+            FileSystem::deleteFile(m_storageDirectoryPath);
+            openITPDatabase();
+            return;
+        }
+
+        currentSchema = statement.getColumnText(1);
+    }
+
+    ASSERT(!currentSchema.isEmpty());
+
+    // If the schema in the ResourceLoadStatistics directory is not the current schema, delete the database file.
+    if (currentSchema != ObservedDomainsTableSchemaV1() && currentSchema != ObservedDomainsTableSchemaV1Alternate()) {
+        m_database.close();
+        FileSystem::deleteFile(m_storageDirectoryPath);
+        openITPDatabase();
+    }
 }
 
 static void resetStatement(SQLiteStatement& statement)
@@ -371,12 +430,16 @@ bool ResourceLoadStatisticsDatabaseStore::prepareStatements()
         || m_clearPrevalentResourceStatement.prepare() != SQLITE_OK
         || m_hadUserInteractionStatement.prepare() != SQLITE_OK
         || m_updateGrandfatheredStatement.prepare() != SQLITE_OK
+        || m_updateIsScheduledForAllButCookieDataRemovalStatement.prepare() != SQLITE_OK
         || m_isGrandfatheredStatement.prepare() != SQLITE_OK
         || m_findExpiredUserInteractionStatement.prepare() != SQLITE_OK
         || m_topFrameLinkDecorationsFromExists.prepare() != SQLITE_OK
         || m_countPrevalentResourcesStatement.prepare() != SQLITE_OK
         || m_countPrevalentResourcesWithUserInteractionStatement.prepare() != SQLITE_OK
         || m_countPrevalentResourcesWithoutUserInteractionStatement.prepare() != SQLITE_OK
+        || m_getResourceDataByDomainNameStatement.prepare() != SQLITE_OK
+        || m_getAllDomainsStatement.prepare() != SQLITE_OK
+        || m_domainStringFromDomainIDStatement.prepare() != SQLITE_OK
         ) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::prepareStatements failed to prepare, error message: %{public}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -405,7 +468,8 @@ bool ResourceLoadStatisticsDatabaseStore::insertObservedDomain(const ResourceLoa
         || m_insertObservedDomainStatement.bindInt(IsVeryPrevalentIndex, loadStatistics.isVeryPrevalentResource) != SQLITE_OK
         || m_insertObservedDomainStatement.bindInt(DataRecordsRemovedIndex, loadStatistics.dataRecordsRemoved) != SQLITE_OK
         || m_insertObservedDomainStatement.bindInt(TimesAccessedAsFirstPartyDueToUserInteractionIndex, loadStatistics.timesAccessedAsFirstPartyDueToUserInteraction) != SQLITE_OK
-        || m_insertObservedDomainStatement.bindInt(TimesAccessedAsFirstPartyDueToStorageAccessAPIIndex, loadStatistics.timesAccessedAsFirstPartyDueToStorageAccessAPI) != SQLITE_OK) {
+        || m_insertObservedDomainStatement.bindInt(TimesAccessedAsFirstPartyDueToStorageAccessAPIIndex, loadStatistics.timesAccessedAsFirstPartyDueToStorageAccessAPI) != SQLITE_OK
+        || m_insertObservedDomainStatement.bindInt(IsScheduledForAllButCookieDataRemovalIndex, loadStatistics.gotLinkDecorationFromPrevalentResource) != SQLITE_OK) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertObservedDomain failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return false;
@@ -488,11 +552,11 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     return domainID;
 }
 
-String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& subframeUnderTopFrameDomains)
+String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& domainList)
 {
     StringBuilder builder;
     
-    for (auto& topFrameResource : subframeUnderTopFrameDomains) {
+    for (auto& topFrameResource : domainList) {
         
         // Insert query will fail if top frame domain is not already in the database
         ensureResourceStatisticsForRegistrableDomain(topFrameResource);
@@ -507,9 +571,9 @@ String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSe
     return builder.toString();
 }
 
-void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& subframeUnderTopFrameDomains, unsigned domainID)
+void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
 {
-    SQLiteStatement insertRelationshipStatement(m_database, makeString(statement, ensureAndMakeDomainList(subframeUnderTopFrameDomains), " );"));
+    SQLiteStatement insertRelationshipStatement(m_database, makeString(statement, ensureAndMakeDomainList(domainList), " );"));
     
     if (insertRelationshipStatement.prepare() != SQLITE_OK
         || insertRelationshipStatement.bindInt(1, domainID) != SQLITE_OK
@@ -534,6 +598,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const Resour
     insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
     insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
     insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
 }
 
 void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore& memoryStore)
@@ -564,6 +629,7 @@ void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement& curren
     bool currentIsPrevalent = current.getColumnInt(IsPrevalentIndex);
     bool currentIsVeryPrevalent = current.getColumnInt(IsVeryPrevalentIndex);
     unsigned currentDataRecordsRemoved = current.getColumnInt(DataRecordsRemovedIndex);
+    bool currentIsScheduledForAllButCookieDataRemoval = current.getColumnInt(IsScheduledForAllButCookieDataRemovalIndex);
 
     ASSERT(currentRegistrableDomain == other.registrableDomain.string());
 
@@ -585,22 +651,23 @@ void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement& curren
         setVeryPrevalentResource(other.registrableDomain);
     if (other.dataRecordsRemoved > currentDataRecordsRemoved)
         updateDataRecordsRemoved(other.registrableDomain, other.dataRecordsRemoved);
+    if (other.gotLinkDecorationFromPrevalentResource && !currentIsScheduledForAllButCookieDataRemoval)
+        setIsScheduledForAllButCookieDataRemoval(other.registrableDomain, true);
 }
 
 void ResourceLoadStatisticsDatabaseStore::mergeStatistic(const ResourceLoadStatistics& statistic)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteStatement fetchOldStatisticData(m_database, "SELECT * FROM ObservedDomains where registrableDomain = ?");
-    if (fetchOldStatisticData.prepare() != SQLITE_OK
-        || fetchOldStatisticData.bindText(1, statistic.registrableDomain.string()) != SQLITE_OK
-        || fetchOldStatisticData.step() != SQLITE_ROW) {
+    if (m_getResourceDataByDomainNameStatement.bindText(1, statistic.registrableDomain.string()) != SQLITE_OK
+        || m_getResourceDataByDomainNameStatement.step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::mergeStatistic. Statement failed to bind or domain was not found, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return;
     }
 
-    merge(fetchOldStatisticData, statistic);
+    merge(m_getResourceDataByDomainNameStatement, statistic);
+    resetStatement(m_getResourceDataByDomainNameStatement);
 }
 
 void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
@@ -1328,8 +1395,12 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     ASSERT(!RunLoop::isMain());
     ASSERT(fromDomain != toDomain);
 
-    auto fromDomainResult = ensureResourceStatisticsForRegistrableDomain(fromDomain);
-    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ toDomain }), fromDomainResult.second);
+    auto toDomainResult = ensureResourceStatisticsForRegistrableDomain(toDomain);
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), toDomainResult.second);
+    
+    if (isPrevalentResource(fromDomain))
+        setIsScheduledForAllButCookieDataRemoval(toDomain, true);
+    
     scheduleStatisticsProcessingRequestIfNecessary();
 }
 
@@ -1467,10 +1538,20 @@ void ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent(StdSet<unsigned>
 void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
+    if (dataRecordsBeingRemoved()) {
+        m_dataRecordRemovalCompletionHandlers.append([this, completionHandler = WTFMove(completionHandler)]() mutable {
+            dumpResourceLoadStatistics(WTFMove(completionHandler));
+        });
+        return;
+    }
 
-    // FIXME(195088): Implement SQLite-based dumping routines.
-    ASSERT_NOT_REACHED();
-    completionHandler({ });
+    StringBuilder result;
+    result.appendLiteral("Resource load statistics:\n\n");
+    while (m_getAllDomainsStatement.step() == SQLITE_ROW)
+        resourceToString(result, m_getAllDomainsStatement.getColumnText(0));
+    
+    resetStatement(m_getAllDomainsStatement);
+    completionHandler(result.toString());
 }
 
 bool ResourceLoadStatisticsDatabaseStore::predicateValueForDomain(WebCore::SQLiteStatement& predicateStatement, const RegistrableDomain& domain) const
@@ -1567,6 +1648,23 @@ void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const RegistrableDoma
     
     int resetResult = m_updateGrandfatheredStatement.reset();
     ASSERT_UNUSED(resetResult, resetResult == SQLITE_OK);
+}
+
+void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval(const RegistrableDomain& domain, bool value)
+{
+    ASSERT(!RunLoop::isMain());
+
+    ensureResourceStatisticsForRegistrableDomain(domain);
+    
+    if (m_updateIsScheduledForAllButCookieDataRemovalStatement.bindInt(1, value) != SQLITE_OK
+        || m_updateIsScheduledForAllButCookieDataRemovalStatement.bindText(2, domain.string()) != SQLITE_OK
+        || m_updateIsScheduledForAllButCookieDataRemovalStatement.step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    resetStatement(m_updateIsScheduledForAllButCookieDataRemovalStatement);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isGrandfathered(const RegistrableDomain& domain) const
@@ -1803,12 +1901,12 @@ void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler
     });
 }
 
-Vector<ResourceLoadStatisticsDatabaseStore::PrevalentDomainData> ResourceLoadStatisticsDatabaseStore::prevalentDomains() const
+Vector<ResourceLoadStatisticsDatabaseStore::DomainData> ResourceLoadStatisticsDatabaseStore::domains() const
 {
     ASSERT(!RunLoop::isMain());
     
-    Vector<PrevalentDomainData> results;
-    SQLiteStatement statement(m_database, "SELECT domainID, registrableDomain, mostRecentUserInteractionTime, hadUserInteraction, grandfathered FROM ObservedDomains WHERE isPrevalent = 1"_s);
+    Vector<DomainData> results;
+    SQLiteStatement statement(m_database, "SELECT domainID, registrableDomain, mostRecentUserInteractionTime, hadUserInteraction, grandfathered, isScheduledForAllButCookieDataRemoval FROM ObservedDomains"_s);
     if (statement.prepare() != SQLITE_OK)
         return results;
     
@@ -1818,6 +1916,7 @@ Vector<ResourceLoadStatisticsDatabaseStore::PrevalentDomainData> ResourceLoadSta
             , WallTime::fromRawSeconds(statement.getColumnDouble(2))
             , statement.getColumnInt(3) ? true : false
             , statement.getColumnInt(4) ? true : false
+            , statement.getColumnInt(5) ? true : false
         });
     }
     
@@ -1889,7 +1988,7 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
     }
 }
 
-bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(const PrevalentDomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
+bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(const DomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
 {
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow)) {
         clearUserInteraction(resourceStatistic.registrableDomain);
@@ -1899,16 +1998,14 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction(c
     return resourceStatistic.hadUserInteraction;
 }
 
-bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor(const PrevalentDomainData& resourceStatistic, bool shouldCheckForGrandfathering)
+bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    return !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+    return isPrevalentResource(resourceStatistic.registrableDomain) && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
 }
 
-bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const PrevalentDomainData& resourceStatistic, bool shouldCheckForGrandfathering) const
+bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    UNUSED_PARAM(resourceStatistic);
-    UNUSED_PARAM(shouldCheckForGrandfathering);
-    return false;
+    return resourceStatistic.isScheduledForAllButCookieDataRemoval && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
 }
 
 Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
@@ -1925,14 +2022,15 @@ Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> ResourceLoadStatistics
     
     Vector<std::pair<RegistrableDomain, WebsiteDataToRemove>> domainsToRemoveWebsiteDataFor;
 
-    Vector<PrevalentDomainData> prevalentDomains = this->prevalentDomains();
+    Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
-    for (auto& statistic : prevalentDomains) {
+    for (auto& statistic : domains) {
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
             domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::All));
-        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering))
+        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
             domainsToRemoveWebsiteDataFor.append(std::make_pair(statistic.registrableDomain, WebsiteDataToRemove::AllButCookies));
-
+            setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
+        }
         if (shouldClearGrandfathering && statistic.grandfathered)
             domainIDsToClearGrandfathering.append(statistic.domainID);
     }
@@ -2077,6 +2175,147 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
         return false;
     
     return (subFrameUnderTopFrameCount.getColumnInt(0) == 1 && subresourceUnderTopFrameCount.getColumnInt(0) == 1 && subresourceUniqueRedirectsTo.getColumnInt(0) == 1);
+}
+
+static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
+{
+    builder.appendLiteral("    ");
+    builder.append(label);
+    builder.appendLiteral(": ");
+    builder.append(flag ? "Yes" : "No");
+}
+
+static void appendNextEntry(StringBuilder& builder, String entry)
+{
+    builder.appendLiteral("        ");
+    builder.append(entry);
+    builder.append('\n');
+}
+
+String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned domainID) const
+{
+    auto result = emptyString();
+    
+    if (m_domainStringFromDomainIDStatement.bindInt(1, domainID) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID. Statement failed to prepare or bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return result;
+    }
+    
+    if (m_domainStringFromDomainIDStatement.step() == SQLITE_ROW)
+        result = m_domainStringFromDomainIDStatement.getColumnText(0);
+    
+    resetStatement(m_domainStringFromDomainIDStatement);
+    return result;
+}
+
+String ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(const String& tableName) const
+{
+    if (tableName == "StorageAccessUnderTopFrameDomains")
+        return "SELECT topLevelDomainID from StorageAccessUnderTopFrameDomains WHERE domainID = ?";
+    if (tableName == "TopFrameUniqueRedirectsTo")
+        return "SELECT toDomainID from TopFrameUniqueRedirectsTo WHERE sourceDomainID = ?";
+    if (tableName == "TopFrameUniqueRedirectsFrom")
+        return "SELECT fromDomainID from TopFrameUniqueRedirectsFrom WHERE targetDomainID = ?";
+    if (tableName == "TopFrameLinkDecorationsFrom")
+        return "SELECT fromDomainID from TopFrameLinkDecorationsFrom WHERE toDomainID = ?";
+    if (tableName == "SubframeUnderTopFrameDomains")
+        return "SELECT topFrameDomainID from SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?";
+    if (tableName == "SubresourceUnderTopFrameDomains")
+        return "SELECT topFrameDomainID from SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?";
+    if (tableName == "SubresourceUniqueRedirectsTo")
+        return "SELECT toDomainID from SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?";
+    if (tableName == "SubresourceUniqueRedirectsFrom")
+        return "SELECT fromDomainID from SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ?";
+    
+    return emptyString();
+}
+
+void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, const String& tableName, const String& domain) const
+{
+    auto query = getSubStatisticStatement(tableName);
+    
+    if (query.isEmpty())
+        return;
+    
+    SQLiteStatement data(m_database, query);
+    
+    if (data.prepare() != SQLITE_OK
+        || data.bindInt(1, domainID(RegistrableDomain::uncheckedCreateFromHost(domain)).value()) != SQLITE_OK) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::appendSubStatisticList. Statement failed to prepare or bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    if (data.step() != SQLITE_ROW)
+        return;
+    
+    builder.appendLiteral("    ");
+    builder.append(tableName);
+    builder.appendLiteral(":\n");
+    
+    auto result = getDomainStringFromDomainID(data.getColumnInt(0));
+    appendNextEntry(builder, result);
+    
+    while (data.step() == SQLITE_ROW) {
+        result = getDomainStringFromDomainID(data.getColumnInt(0));
+        appendNextEntry(builder, result);
+    }
+}
+
+void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builder, const String& domain) const
+{
+    if (m_getResourceDataByDomainNameStatement.bindText(1, domain) != SQLITE_OK
+        || m_getResourceDataByDomainNameStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::resourceToString. Statement failed to bind or domain was not found, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    builder.appendLiteral("Registrable domain: ");
+    builder.append(domain);
+    builder.append('\n');
+    builder.appendLiteral("    lastSeen: ");
+    builder.appendFixedPrecisionNumber(m_getResourceDataByDomainNameStatement.getColumnDouble(LastSeenIndex));
+    builder.append('\n');
+    
+    // User interaction
+    appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement.getColumnInt(HadUserInteractionIndex));
+    builder.append('\n');
+    builder.appendLiteral("    mostRecentUserInteraction: ");
+    builder.appendFixedPrecisionNumber(m_getResourceDataByDomainNameStatement.getColumnDouble(MostRecentUserInteractionTimeIndex));
+    builder.append('\n');
+    appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement.getColumnInt(GrandfatheredIndex));
+    builder.append('\n');
+
+    // Storage access
+    appendSubStatisticList(builder, "StorageAccessUnderTopFrameDomains", domain);
+
+    // Top frame stats
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo", domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom", domain);
+    appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom", domain);
+
+    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval", m_getResourceDataByDomainNameStatement.getColumnInt(IsScheduledForAllButCookieDataRemovalIndex));
+
+    // Subframe stats
+    appendSubStatisticList(builder, "SubframeUnderTopFrameDomains", domain);
+
+    // Subresource stats
+    appendSubStatisticList(builder, "SubresourceUnderTopFrameDomains", domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsTo", domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom", domain);
+
+    // Prevalent Resource
+    appendBoolean(builder, "isPrevalentResource", m_getResourceDataByDomainNameStatement.getColumnInt(IsPrevalentIndex));
+    builder.append('\n');
+    appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement.getColumnInt(IsVeryPrevalentIndex));
+    builder.append('\n');
+    builder.appendLiteral("    dataRecordsRemoved: ");
+    builder.appendNumber(m_getResourceDataByDomainNameStatement.getColumnInt(DataRecordsRemovedIndex));
+    builder.append('\n');
+
+    resetStatement(m_getResourceDataByDomainNameStatement);
 }
 
 

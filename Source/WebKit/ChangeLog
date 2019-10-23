@@ -1,3 +1,83 @@
+2019-10-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Implement dumpResourceLoadStatistics in SQLite ITP Database
+        https://bugs.webkit.org/show_bug.cgi?id=203224
+        <rdar://problem/56482165>
+
+        Reviewed by John Wilander. 
+
+        This patch implements dumpResourceLoadStatistics() in the ITP database
+        store. This function required a boolean flag isScheduledForWebsiteDataRemoval that
+        now must be stored in the database, resulting in a small schema change.
+
+        Because of the schema change, this patch also compares any existing 
+        database file against the new schema, and deletes the existing file if the schema is 
+        not current. 
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        The logic for topFrameLinkDecorationsFromQuery was the opposite
+        of all other "xyzFrom" queries. When merging data from the memory 
+        store, the load statistic being inserted holds a list of topFrames 
+        which it has been redirected to from. I think it makes more sense
+        to also organize the table this way.
+
+        (WebKit::ObservedDomainsTableSchemaV1):
+        (WebKit::ObservedDomainsTableSchemaV1Alternate):
+        For support on both iOS and MacOS, there are two CREATE TABLE queries
+        to compare to, depending on whether the query result contains quotes
+        around the table name.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndDropOldDatabaseIfNecessary):
+        The code to check for the current schema was adapted from SQLiteIDBBackingStore.cpp
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertObservedDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList):
+        The previous naming of the list parameter in this function was
+        confusing because it is used by many different relationships not just
+        subframes under top frames.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        topFrameLinkDecorationsFrom were never inserted into the database.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::merge):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistic):
+        Since the statement to get all data for a given domain is now used in
+        multiple places, I stored the query as a constexpr auto.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration):
+        Matched the memory store functionality, which calls the boolean
+        "gotLinkDecorationFromPrevalentResource." I thought isScheduledForWebsiteDataRemoval 
+        would be more clear of a name, because this flag gets cleared even when
+        prevalent top frame link decorations for this domain still exist in the table.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setIsScheduledForWebsiteDataRemoval):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prevalentDomains): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domains):
+        To match memory store functionality, the check for website data to
+        delete should check all domains, not just prevalent ones.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUnexpiredRecentUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor):
+        This now needs to check if the resource is prevalent, because it is
+        no longer guaranteed.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString):
+        This functionality matches the toString function in
+        ResourceLoadStatistics.cpp.
+
+        (WebKit::CompletionHandler<void):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when multiple NFC tags present
