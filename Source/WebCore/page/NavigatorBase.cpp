@@ -140,11 +140,6 @@ Vector<String> NavigatorBase::languages()
 }
 
 #if ENABLE(SERVICE_WORKER)
-ServiceWorkerContainer* NavigatorBase::serviceWorkerIfExists()
-{
-    return m_serviceWorkerContainer.get();
-}
-
 ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled());

@@ -63,7 +63,6 @@ protected:
 
 #if ENABLE(SERVICE_WORKER)
 public:
-    ServiceWorkerContainer* serviceWorkerIfExists();
     ServiceWorkerContainer& serviceWorker();
     ExceptionOr<ServiceWorkerContainer&> serviceWorker(ScriptExecutionContext&);
 
