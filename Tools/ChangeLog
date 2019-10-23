@@ -1,3 +1,18 @@
+2019-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        prepare-ChangeLog should whine about not having tests in WebKit-only patches
+        https://bugs.webkit.org/show_bug.cgi?id=203027
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/prepare-ChangeLog:
+        (generateNewChangeLogs):
+        Put the "No new tests" or list of newly added tests in the deeper
+        of the WebCore or WebKit ChangeLogs, depending on which directories
+        the patch touches.
+
+        This is mostly intended to encourage tests for WebKit-only changes.
+
 2019-10-22  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Status bubble should show previous failures if any in case patch is skipped

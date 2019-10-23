@@ -642,6 +642,13 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
 {
     my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
 
+    my $hasWebCoreChange = 0;
+    foreach my $prefix (@$prefixes) {
+        if (unixPath($prefix) =~ m|/WebCore/$|) {
+            $hasWebCoreChange = 1;
+        }
+    }
+
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
         my $endl = "\n";
@@ -688,7 +695,11 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
         print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
-        if (unixPath($prefix) =~ m|/WebCore/$| || @$requiresTests) {
+        my $shouldMentionTests = @$requiresTests;
+        $shouldMentionTests |= !$hasWebCoreChange && unixPath($prefix) =~ m|/WebKit/$|;
+        $shouldMentionTests |= unixPath($prefix) =~ m|/WebCore/$|;
+
+        if ($shouldMentionTests) {
             if (@$addedRegressionTests) {
                 print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
             } else {
