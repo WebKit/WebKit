@@ -42,7 +42,6 @@ from collections import namedtuple
 from distutils import spawn
 from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.executive import Executive
 
 _THIRDPARTY_DIR = os.path.dirname(__file__)
 _AUTOINSTALLED_DIR = os.path.join(_THIRDPARTY_DIR, "autoinstalled")
@@ -78,9 +77,8 @@ if not fs.exists(readme_path):
 
 
 class AutoinstallImportHook(object):
-    def __init__(self, filesystem=None, executive=None):
+    def __init__(self, filesystem=None):
         self._fs = filesystem or FileSystem()
-        self._executive = executive or Executive()
 
     def _ensure_autoinstalled_dir_is_in_sys_path(self):
         # Some packages require that the are being put somewhere under a directory in sys.path.
@@ -218,7 +216,16 @@ class AutoinstallImportHook(object):
         did_download_bs4 = self._install("https://files.pythonhosted.org/packages/86/cd/495c68f0536dcd25f016e006731ba7be72e072280305ec52590012c1e6f2/beautifulsoup4-4.8.1.tar.gz",
                                          "beautifulsoup4-4.8.1/bs4")
         if did_download_bs4:
-            self._executive.run_command(['2to3', '-w', self._fs.join(_AUTOINSTALLED_DIR, 'bs4')])
+            from multiprocessing import Process
+            from lib2to3.main import main
+
+            try:
+                sys.stdout = open(os.devnull, 'w')
+                process = Process(target=main, args=('lib2to3.fixes', ['-w', self._fs.join(_AUTOINSTALLED_DIR, 'bs4')]))
+                process.start()
+                process.join()
+            finally:
+                sys.stdout = sys.__stdout__
 
 
     def _install_pylint(self):

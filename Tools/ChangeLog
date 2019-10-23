@@ -1,3 +1,15 @@
+2019-10-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: 2to3 script may not be in a user's path
+        https://bugs.webkit.org/show_bug.cgi?id=203213
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.__init__): Remove executive dependencies.
+        (AutoinstallImportHook._install_beautifulsoup): Use multiprocess because 2to3 sets
+        Some undesirable global logging state.
+
 2019-10-23  Tim Horton  <timothy_horton@apple.com>
 
         prepare-ChangeLog should whine about not having tests in WebKit-only patches
