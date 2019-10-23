@@ -43,7 +43,6 @@ static bool webAuthenticationPanelRan = false;
 static bool webAuthenticationPanelFailed = false;
 static bool webAuthenticationPanelSucceded = false;
 static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
-static RetainPtr<_WKWebAuthenticationPanel> gPanel;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -90,6 +89,7 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
     RetainPtr<NSObject<_WKWebAuthenticationPanelDelegate>> _delegate;
     BlockPtr<void(_WKWebAuthenticationPanelResult)> _callback;
     RetainPtr<WKFrameInfo> _frameInfo;
+    RetainPtr<_WKWebAuthenticationPanel> _panel;
 }
 
 - (instancetype)init
@@ -114,10 +114,8 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
             _delegate = adoptNS([[TestWebAuthenticationPanelFakeDelegate alloc] init]);
     }
     ASSERT_NE(panel, nil);
-    gPanel = panel;
-    [gPanel setDelegate:_delegate.get()];
-
-    EXPECT_TRUE([[gPanel relyingPartyID] isEqual:@""] || [[gPanel relyingPartyID] isEqual:@"localhost"]);
+    _panel = panel;
+    [_panel setDelegate:_delegate.get()];
 
     if (_isRacy) {
         if (!_callback) {
@@ -132,6 +130,11 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
 - (WKFrameInfo *)frame
 {
     return _frameInfo.get();
+}
+
+- (_WKWebAuthenticationPanel *)panel
+{
+    return _panel.get();
 }
 
 @end
@@ -179,7 +182,27 @@ static void reset()
     webAuthenticationPanelRan = false;
     webAuthenticationPanelFailed = false;
     webAuthenticationPanelSucceded = false;
-    gPanel = nullptr;
+}
+
+static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
+{
+    EXPECT_WK_STREQ(panel.relyingPartyID, relyingPartyID);
+
+    // Brute force given the maximum size of the array is 4.
+    auto *theTransports = panel.transports;
+    EXPECT_EQ(theTransports.count, transports.count);
+    size_t count = 0;
+    for (NSNumber *transport : transports) {
+        for (NSNumber *theTransport : theTransports) {
+            if (transport == theTransport) {
+                count++;
+                break;
+            }
+        }
+    }
+    EXPECT_EQ(count, transports.count);
+
+    EXPECT_EQ(panel.type, type);
 }
 
 static void checkFrameInfo(WKFrameInfo *frame, bool isMainFrame, NSString *url, NSString *protocol, NSString *host, int port, WKWebView *webView)
@@ -237,7 +260,7 @@ TEST(WebAuthenticationPanel, PanelTimeout)
     Util::run(&webAuthenticationPanelFailed);
 }
 
-TEST(WebAuthenticationPanel, PanelHidSuccess)
+TEST(WebAuthenticationPanel, PanelHidSuccess1)
 {
     reset();
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -255,6 +278,27 @@ TEST(WebAuthenticationPanel, PanelHidSuccess)
 
     // A bit of extra checks.
     checkFrameInfo([delegate frame], true, [testURL absoluteString], @"file", @"", 0, webView.get());
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeGet);
+}
+
+TEST(WebAuthenticationPanel, PanelHidSuccess2)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelRan);
+    Util::run(&webAuthenticationPanelSucceded);
+
+    // A bit of extra checks.
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeCreate);
 }
 
 #if HAVE(NEAR_FIELD)
@@ -279,6 +323,9 @@ TEST(WebAuthenticationPanel, PanelRacy1)
     Util::run(&webAuthenticationPanelRan);
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
+
+    // A bit of extra checks.
+    checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportNFC]).get()], _WKWebAuthenticationTypeGet);
 }
 
 // Unlike the previous one, this one focuses on the order of the delegate callbacks.
@@ -441,6 +488,7 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
 
     // A bit of extra checks.
     checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"), @"http", @"localhost", port, webView.get());
+    checkPanel([delegate panel], @"localhost", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeGet);
 }
 
 TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)
@@ -494,7 +542,7 @@ TEST(WebAuthenticationPanel, PanelHidCancel)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
-    [gPanel cancel];
+    [[delegate panel] cancel];
     [webView waitForMessage:@"Operation timed out."];
     EXPECT_FALSE(webAuthenticationPanelFailed);
     EXPECT_FALSE(webAuthenticationPanelSucceded);

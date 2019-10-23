@@ -48,6 +48,15 @@ NfcService::~NfcService()
 {
 }
 
+bool NfcService::isAvailable()
+{
+#if HAVE(NEAR_FIELD)
+    return [[getNFHardwareManagerClass() sharedHardwareManager] areFeaturesSupported:NFFeatureReaderMode outError:nil];
+#else
+    return false;
+#endif
+}
+
 void NfcService::didConnectTag()
 {
 #if HAVE(NEAR_FIELD)
@@ -70,7 +79,7 @@ void NfcService::startDiscoveryInternal()
 void NfcService::platformStartDiscovery()
 {
 #if HAVE(NEAR_FIELD)
-    if (![[getNFHardwareManagerClass() sharedHardwareManager] areFeaturesSupported:NFFeatureReaderMode outError:nil])
+    if (!isAvailable())
         return;
 
     // Will be executed in a different thread.

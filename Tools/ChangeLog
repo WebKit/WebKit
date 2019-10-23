@@ -1,3 +1,20 @@
+2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Add more information to _WKWebAuthenticationPanel
+        https://bugs.webkit.org/show_bug.cgi?id=202561
+        <rdar://problem/55973910>
+
+        Reviewed by Youenn Fablet.
+
+        Adds new API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelUIDelegate _webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]):
+        (-[TestWebAuthenticationPanelUIDelegate panel]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html: Added.
+
 2019-10-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] iOS-13-Simulator-WK2-Tests-EWS is failing with an KeyError exception

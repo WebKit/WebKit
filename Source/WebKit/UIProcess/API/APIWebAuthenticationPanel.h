@@ -28,9 +28,14 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "APIObject.h"
+#include <WebCore/AuthenticatorTransport.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+enum class ClientDataType : bool;
+}
 
 namespace WebKit {
 class AuthenticatorManager;
@@ -42,21 +47,27 @@ class WebAuthenticationPanelClient;
 
 class WebAuthenticationPanel final : public ObjectImpl<Object::Type::WebAuthenticationPanel>, public CanMakeWeakPtr<WebAuthenticationPanel> {
 public:
-    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId);
+    using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+
+    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
     ~WebAuthenticationPanel();
 
     WTF::String rpId() const { return m_rpId; }
+    const Vector<WebCore::AuthenticatorTransport>& transports() const { return m_transports; }
+    WebCore::ClientDataType clientDataType() const { return m_clientDataType; }
     void cancel() const;
 
     const WebAuthenticationPanelClient& client() const { return m_client.get(); }
     void setClient(UniqueRef<WebAuthenticationPanelClient>&&);
 
 private:
-    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId);
+    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
 
     WeakPtr<WebKit::AuthenticatorManager> m_manager;
     WTF::String m_rpId;
     UniqueRef<WebAuthenticationPanelClient> m_client;
+    Vector<WebCore::AuthenticatorTransport> m_transports;
+    WebCore::ClientDataType m_clientDataType;
 };
 
 } // namespace API

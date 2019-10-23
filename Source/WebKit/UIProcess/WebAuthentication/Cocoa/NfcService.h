@@ -40,6 +40,8 @@ public:
     explicit NfcService(Observer&);
     ~NfcService();
 
+    static bool isAvailable();
+
     // For NfcConnection.
     void didConnectTag();
 
