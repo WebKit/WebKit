@@ -1,3 +1,14 @@
+2019-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        wpt/css/css-images/gradient/color-stops-parsing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=200211
+
+        Reviewed by Dean Jackson.
+        
+        New result.
+
+        * web-platform-tests/css/css-images/gradient/color-stops-parsing-expected.txt:
+
 2019-10-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] Remove the 'viewTarget' property of SVGViewElement

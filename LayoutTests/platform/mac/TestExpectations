@@ -1729,6 +1729,7 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/gradients/conic-gradient-extended-stops.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-gradient.html [ Pass ]
 [ Mojave+ ] fast/gradients/conic-two-hints.html [ Pass ]
+[ Mojave+ ] imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
 
 # Dark Mode is Mojave and later.
 [ Mojave+ ] css-dark-mode [ Pass ]

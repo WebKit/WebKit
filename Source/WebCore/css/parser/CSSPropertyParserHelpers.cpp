@@ -1072,19 +1072,20 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         
         if (!stop.m_color && !stop.m_position)
             return false;
+
         gradient.addStop(stop);
-        
-        // See if there is a second color hint, which is optional.
+
+        if (!stop.m_color || !stop.m_position)
+            continue;
+
         CSSGradientColorStop secondStop;
         if (isConicGradient)
             secondStop.m_position = consumeAngleOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
         else
             secondStop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
         
-        if (secondStop.m_position) {
-            secondStop.m_color = stop.m_color;
+        if (secondStop.m_position)
             gradient.addStop(secondStop);
-        }
         
     } while (consumeCommaIncludingWhitespace(range));
 

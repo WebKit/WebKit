@@ -107,16 +107,25 @@ Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleRe
 {
     bool colorIsDerivedFromElement = false;
     for (auto& stop : m_stops) {
-        if (!stop.isMidpoint && styleResolver.colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
+        if (!stop.isMidpoint && stop.m_color && styleResolver.colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
             stop.m_colorIsDerivedFromElement = true;
             colorIsDerivedFromElement = true;
             break;
         }
     }
     auto result = colorIsDerivedFromElement ? clone(*this) : makeRef(*this);
-    for (auto& stop : result->m_stops) {
-        if (!stop.isMidpoint)
+    for (size_t i = 0; i < result->m_stops.size(); ++i) {
+        auto& stop = result->m_stops[i];
+        if (stop.isMidpoint)
+            continue;
+        if (stop.m_color)
             stop.m_resolvedColor = styleResolver.colorFromPrimitiveValue(*stop.m_color);
+        else if (i) {
+            auto& previousStop = result->m_stops[i - 1];
+            ASSERT(previousStop.m_color);
+            stop.m_color = previousStop.m_color;
+            stop.m_resolvedColor = previousStop.m_resolvedColor;
+        }
     }
     return result;
 }
