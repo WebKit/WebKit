@@ -29,11 +29,11 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         super();
 
-        this._colorWheel = new WI.ColorWheel(this, 200);
+        this._colorSquare = new WI.ColorSquare(this, 200);
 
-        this._brightnessSlider = new WI.Slider;
-        this._brightnessSlider.delegate = this;
-        this._brightnessSlider.element.classList.add("brightness");
+        this._hueSlider = new WI.Slider;
+        this._hueSlider.delegate = this;
+        this._hueSlider.element.classList.add("hue");
 
         this._opacitySlider = new WI.Slider;
         this._opacitySlider.delegate = this;
@@ -73,8 +73,9 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._element = document.createElement("div");
         this._element.classList.add("color-picker");
 
-        this._element.appendChild(this._colorWheel.element);
-        this._element.appendChild(this._brightnessSlider.element);
+        this._element.append(this._colorSquare.element);
+        this._element.append(this._hueSlider.element);
+
         this._element.appendChild(this._opacitySlider.element);
         this._element.appendChild(colorInputsContainerElement);
 
@@ -90,21 +91,8 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
-    set brightness(brightness)
-    {
-        if (brightness === this._brightness)
-            return;
-
-        this._colorWheel.brightness = brightness;
-
-        this._updateColor();
-        this._updateSliders(this._colorWheel.rawColor, this._colorWheel.tintedColor);
-    }
+    get element() { return this._element; }
+    get colorSquare() { return this._colorSquare; }
 
     set opacity(opacity)
     {
@@ -113,11 +101,6 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._opacity = opacity;
         this._updateColor();
-    }
-
-    get colorWheel()
-    {
-        return this._colorWheel;
     }
 
     get color()
@@ -135,11 +118,12 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._color = color;
 
-        this._colorWheel.tintedColor = this._color;
-        this._brightnessSlider.value = this._colorWheel.brightness / 100;
+        this._colorSquare.tintedColor = this._color;
+
+        this._hueSlider.value = this._color.hsl[0] / 360;
 
         this._opacitySlider.value = this._color.alpha;
-        this._updateSliders(this._colorWheel.rawColor, this._color);
+        this._updateSliders(this._colorSquare.rawColor, this._color);
 
         this._showColorComponentInputs();
 
@@ -156,18 +140,20 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._showColorComponentInputs();
     }
 
-    colorWheelColorDidChange(colorWheel)
+    colorSquareColorDidChange(colorSquare)
     {
         this._updateColor();
-        this._updateSliders(this._colorWheel.rawColor, this._colorWheel.tintedColor);
+        this._updateSliders(this._colorSquare.rawColor, this._colorSquare.tintedColor);
     }
 
     sliderValueDidChange(slider, value)
     {
         if (slider === this._opacitySlider)
             this.opacity = value;
-        else if (slider === this._brightnessSlider)
-            this.brightness = value * 100;
+        else if (slider === this._hueSlider) {
+            this._colorSquare.hue = value * 360;
+            this._updateColor();
+        }
     }
 
     // Private
@@ -182,11 +168,11 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         let format = this._color.format;
         let components = null;
         if (format === WI.Color.Format.HSL || format === WI.Color.Format.HSLA) {
-            components = this._colorWheel.tintedColor.hsl.concat(opacity);
+            components = this._colorSquare.tintedColor.hsl.concat(opacity);
             if (opacity !== 1)
                 format = WI.Color.Format.HSLA;
         } else {
-            components = this._colorWheel.tintedColor.rgb.concat(opacity);
+            components = this._colorSquare.tintedColor.rgb.concat(opacity);
             if (opacity !== 1 && format === WI.Color.Format.RGB)
                 format = WI.Color.Format.RGBA;
         }
@@ -205,12 +191,9 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
     _updateSliders(rawColor, tintedColor)
     {
-        var rgb = this._colorWheel.tintedColor.rgb;
+        var rgb = this._colorSquare.tintedColor.rgb;
         var opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
         var transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
-
-        this._brightnessSlider.element.style.setProperty("background-image", `linear-gradient(90deg, black, ${rawColor}, white)`);
-
         this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
 

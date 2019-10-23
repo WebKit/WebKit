@@ -1,3 +1,61 @@
+2019-10-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Replace color wheel with square HSB color picker
+        https://bugs.webkit.org/show_bug.cgi?id=203169
+        <rdar://problem/56449832>
+
+        Reviewed by Devin Rousso.
+
+        Replace the color wheel with a square HSB color picker.
+
+        The square HSB color picker provides more precision for choosing saturation,
+        and it's more familiar to most web developers.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker):
+        (.color-picker > .hue):
+        (body[dir=ltr] .color-picker > .hue):
+        (body[dir=rtl] .color-picker > .hue):
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker):
+        (WI.ColorPicker.prototype.get colorSquare):
+        (WI.ColorPicker.prototype.set color):
+        (WI.ColorPicker.prototype.colorSquareColorDidChange):
+        (WI.ColorPicker.prototype.sliderValueDidChange):
+        (WI.ColorPicker.prototype._updateColor):
+        (WI.ColorPicker.prototype._updateSliders):
+        Add a hue slider. The new color picker has the hue slider instead of the brightness slider.
+
+        * UserInterface/Views/ColorSquare.css: Renamed from Source/WebInspectorUI/UserInterface/Views/ColorWheel.css.
+        (.color-square):
+        (.color-square > .saturation-gradient):
+        (.color-square > .lightness-gradient):
+        (.color-square > .fill):
+        (.color-square > .crosshair):
+        * UserInterface/Views/ColorSquare.js: Added.
+        (WI.ColorSquare):
+        (WI.ColorSquare.prototype.get element):
+        (WI.ColorSquare.prototype.set dimension):
+        (WI.ColorSquare.prototype.get hue):
+        (WI.ColorSquare.prototype.set hue):
+        (WI.ColorSquare.prototype.get tintedColor):
+        (WI.ColorSquare.prototype.set tintedColor):
+        (WI.ColorSquare.prototype.get rawColor):
+        (WI.ColorSquare.prototype.handleEvent):
+        (WI.ColorSquare.prototype.get _saturation):
+        (WI.ColorSquare.prototype.get _brightness):
+        (WI.ColorSquare.prototype.get _lightness):
+        (WI.ColorSquare.prototype._handleMousedown):
+        (WI.ColorSquare.prototype._handleMousemove):
+        (WI.ColorSquare.prototype._handleMouseup):
+        (WI.ColorSquare.prototype._updateColorForMouseEvent):
+        (WI.ColorSquare.prototype._setCrosshairPosition):
+        (WI.ColorSquare.prototype._updateBaseColor):
+        * UserInterface/Views/ColorWheel.js: Removed.
+        * UserInterface/Views/GradientEditor.js:
+        (WI.GradientEditor):
+
 2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: frontend tests should clear output before resending results
