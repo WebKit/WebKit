@@ -1,3 +1,12 @@
+2019-10-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix tvOS and watchOS engineering builds after r251377
+
+        -[UIPasteboard itemProviders] is only available on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+        (writeMultipleObjectsToPlatformPasteboard):
+
 2019-10-23  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: 2to3 script may not be in a user's path

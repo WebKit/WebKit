@@ -97,7 +97,7 @@ static void writeMultipleObjectsToPlatformPasteboard()
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard clearContents];
     [pasteboard writeObjects:@[firstItem.get(), secondItem.get(), thirdItem.get(), fourthItem.get()]];
-#else
+#elif PLATFORM(IOS)
     auto firstItem = adoptNS([[NSItemProvider alloc] initWithObject:@"Hello"]);
     auto secondItem = adoptNS([[NSItemProvider alloc] initWithObject:[NSURL URLWithString:@"https://apple.com/"]]);
     auto thirdItem = adoptNS([[NSItemProvider alloc] init]);
