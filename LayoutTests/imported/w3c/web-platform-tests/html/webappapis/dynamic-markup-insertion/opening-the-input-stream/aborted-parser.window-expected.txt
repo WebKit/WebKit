@@ -1,4 +1,4 @@
 
-PASS document.open() after parser is aborted 
-PASS async document.open() after parser is aborted 
+FAIL document.open() after parser is aborted assert_false: child document should not be empty expected false got true
+FAIL async document.open() after parser is aborted assert_false: child document should not be empty expected false got true
 

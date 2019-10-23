@@ -1,3 +1,25 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Resync imported/w3c/web-platform-tests/html/webappapis WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=203298
+
+        Reviewed by Youenn Fablet.
+
+        Resync imported/w3c/web-platform-tests/html/webappapis WPT tests from upstream 32ffb13f7f7fce355bf.
+
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window-expected.txt:
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/aborted-parser.window.js:
+        (async_test.t.window.handlers.afterOpen.t.step_func_done):
+        (async_test.t.window.handlers.afterOpenAsync.t.step_func_done):
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/location-set-and-document-open-expected.txt: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/location-set-and-document-open.html: Added.
+        * web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/w3c-import.log:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/disallow-crossorigin.html:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/support/promise-access-control.py:
+        (main):
+
 2019-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         wpt/css/css-images/gradient/color-stops-parsing.html fails

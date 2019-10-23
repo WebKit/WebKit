@@ -1,0 +1,3 @@
+
+FAIL [[CanBlock]] in a ServiceWorkerGlobalScope Can't find variable: SharedArrayBuffer
+
