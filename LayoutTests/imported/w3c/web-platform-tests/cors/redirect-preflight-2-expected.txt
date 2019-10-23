@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&ident=fail_1505770043965 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=custom-header&origin=*&token=bb20ebf3-f3f0-4195-971d-46ed5a82c80b due to access control checks.
+CONSOLE MESSAGE: Request header field custom-header is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?origin=*&ident=fail_1560002681190 due to access control checks.
 Preflight after redirect
 
 
 PASS Same-origin custom-header request, redirect to cross-origin fails after doing a non-successful preflight 
-FAIL Same-origin custom-header request, redirect to cross-origin succeeds after doing a preflight assert_unreached: Error during request Reached unreachable code
+PASS Same-origin custom-header request, redirect to cross-origin succeeds after doing a preflight 
 

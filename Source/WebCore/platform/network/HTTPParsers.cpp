@@ -35,6 +35,7 @@
 
 #include "HTTPHeaderField.h"
 #include "HTTPHeaderNames.h"
+#include "ParsedContentType.h"
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -154,6 +155,19 @@ bool isValidAcceptHeaderValue(const String& value)
     }
     
     return true;
+}
+
+static bool containsCORSUnsafeRequestHeaderBytes(const String& value)
+{
+    for (unsigned i = 0; i < value.length(); ++i) {
+        UChar c = value[i];
+        // https://fetch.spec.whatwg.org/#cors-unsafe-request-header-byte
+        if ((c < 0x20 && c != '\t') || (c == '"' || c == '(' || c == ')' || c == ':' || c == '<' || c == '>' || c == '?'
+            || c == '@' || c == '[' || c == '\\' || c == ']' || c == 0x7B || c == '{' || c == '}' || c == 0x7F))
+            return true;
+    }
+
+    return false;
 }
 
 // See RFC 7231, Section 5.3.5 and 3.1.3.2.
@@ -913,7 +927,12 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
         break;
     case HTTPHeaderName::ContentType: {
         // Preflight is required for MIME types that can not be sent via form submission.
-        String mimeType = extractMIMETypeFromMediaType(value);
+        if (containsCORSUnsafeRequestHeaderBytes(value))
+            return false;
+        auto parsedContentType = ParsedContentType::create(value);
+        if (!parsedContentType)
+            return false;
+        String mimeType = parsedContentType->mimeType();
         if (!(equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain")))
             return false;
         break;

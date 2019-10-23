@@ -1,3 +1,39 @@
+2019-10-23  Rob Buis  <rbuis@igalia.com>
+
+        Be strict on request's Content-Type
+        https://bugs.webkit.org/show_bug.cgi?id=191356
+
+        Reviewed by Alex Christensen.
+
+        Import some tests and update improved test results.
+
+        * web-platform-tests/cors/304-expected.txt:
+        * web-platform-tests/cors/basic-expected.txt:
+        * web-platform-tests/cors/client-hint-request-headers-expected.txt:
+        * web-platform-tests/cors/cors-safelisted-request-header.any-expected.txt: Added.
+        * web-platform-tests/cors/cors-safelisted-request-header.any.html: Added.
+        * web-platform-tests/cors/cors-safelisted-request-header.any.js: Added.
+        (safelist):
+        (true.forEach):
+        * web-platform-tests/cors/cors-safelisted-request-header.any.worker-expected.txt: Added.
+        * web-platform-tests/cors/cors-safelisted-request-header.any.worker.html: Added.
+        * web-platform-tests/cors/credentials-flag-expected.txt:
+        * web-platform-tests/cors/late-upload-events-expected.txt:
+        * web-platform-tests/cors/origin-expected.txt:
+        * web-platform-tests/cors/preflight-cache-expected.txt:
+        * web-platform-tests/cors/preflight-failure-expected.txt:
+        * web-platform-tests/cors/redirect-origin-expected.txt:
+        * web-platform-tests/cors/redirect-preflight-2-expected.txt:
+        * web-platform-tests/cors/redirect-preflight-expected.txt:
+        * web-platform-tests/cors/redirect-userinfo-expected.txt:
+        * web-platform-tests/cors/request-headers-expected.txt:
+        * web-platform-tests/cors/response-headers-expected.txt:
+        * web-platform-tests/cors/simple-requests-expected.txt:
+        * web-platform-tests/cors/status-async-expected.txt:
+        * web-platform-tests/cors/status-expected.txt:
+        * web-platform-tests/cors/status-preflight-expected.txt:
+        * web-platform-tests/cors/support.js:
+
 2019-10-23  Chris Dumez  <cdumez@apple.com>
 
         Resync imported/w3c/web-platform-tests/html/webappapis WPT tests from upstream

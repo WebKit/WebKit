@@ -1,9 +1,15 @@
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print,
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 26: Request header field save-data is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print, due to access control checks.
+CONSOLE MESSAGE: line 46: Request header field y-print is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 46: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 53: Request header field device-memory is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 53: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 60: Request header field dpr is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 60: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 67: Request header field width is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 67: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 74: Request header field viewport-width is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 74: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
 Request headers
 
 

@@ -224,9 +224,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/performance-timel
 # The tests prints out a UUID that is different every time.
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
 
-# This test is timing out because it relies on http://www1.localhost:8800 host for cross origin checks.
-imported/w3c/web-platform-tests/cors/remote-origin.htm [ Skip ]
-
 # Skip service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
@@ -1067,15 +1064,14 @@ webkit.org/b/175588 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/sc
 # Tests that are flaky due to console log / error messages
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-cache.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-origin.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight-2.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/simple-requests.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/cors-safelisted-request-header.any.html [ Failure ]
 
 # These tests used to have deterministic load delegate callback order before webkit.org/b/160677
 http/tests/svg/svg-use-external.html [ Pass Failure ]

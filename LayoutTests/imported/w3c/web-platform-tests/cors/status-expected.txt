@@ -1,10 +1,9 @@
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?1&origin=none&code=400
-CONSOLE MESSAGE: line 55: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?1&origin=none&code=400 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?3&headers=x-custom&code=400
-CONSOLE MESSAGE: line 55: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?3&headers=x-custom&code=400 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?2&origin=none&preflight=200 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?4&headers=x-custom&code=400&preflight=200 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?5&headers=x-custom&preflight=400 due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?1&origin=none&code=400 due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?5&headers=x-custom&preflight=400 due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?2&origin=none&preflight=200 due to access control checks.
 The returned status code in different scenarios
 
    allowed  preflight  response  | status |
@@ -17,7 +16,7 @@ The returned status code in different scenarios
 
 PASS 1. CORS disallowed, response status 400. 
 PASS 2. CORS disallowed, preflight status 200. 
-FAIL 3. CORS allowed, response status 400. assert_unreached: error event Reached unreachable code
-FAIL 4. CORS allowed, preflight status 200, response status 400. assert_unreached: error event Reached unreachable code
+PASS 3. CORS allowed, response status 400. 
+PASS 4. CORS allowed, preflight status 200, response status 400. 
 PASS 5. CORS allowed, preflight status 400. 
 

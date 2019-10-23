@@ -11,9 +11,9 @@ CONSOLE MESSAGE: line 47: XMLHttpRequest cannot load http://www1.localhost:8801/
 Blocked access to external URL https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&4
 CONSOLE MESSAGE: line 47: XMLHttpRequest cannot load https://www1.localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&4 due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&5 due to access control checks.
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8801/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&2 due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/cors/resources/cors-makeheader.py?get_value=hest_er_best&origin=none&5 due to access control checks.
 
 PASS Same domain basic usage 
 FAIL Cross domain basic usage assert_true: Got CORS-allowed response expected true got false

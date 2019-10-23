@@ -1,18 +1,9 @@
-Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=87666980-1588-4fa2-ae90-a6d19e50f615
-CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=87666980-1588-4fa2-ae90-a6d19e50f615 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=e0ca9df8-9951-4229-b327-81f073d9009b
-CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=e0ca9df8-9951-4229-b327-81f073d9009b due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=ba556a32-6b01-4942-b651-246746a37ea7&max_age=0
-CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=ba556a32-6b01-4942-b651-246746a37ea7&max_age=0 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/preflight.py?token=e5f505cc-09d6-4aa5-a159-780206447d72&max_age=-1
-CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?token=e5f505cc-09d6-4aa5-a159-780206447d72&max_age=-1 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/preflight.py?max_age=1&token=907fa135-7778-44cf-9927-bc220a0c8dd3 due to access control checks.
 Preflight cache
 
 
-FAIL Test preflight  A network error occurred.
-FAIL preflight for x-print should be cached  A network error occurred.
-FAIL age = 0, should not be cached  A network error occurred.
-FAIL age = -1, should not be cached  A network error occurred.
-FAIL preflight first request, second from cache, wait, third should preflight again assert_unreached: Got unexpected error event on the XHR object Reached unreachable code
+PASS Test preflight 
+PASS preflight for x-print should be cached 
+PASS age = 0, should not be cached 
+FAIL age = -1, should not be cached assert_equals: did preflight expected "1" but got "0"
+PASS preflight first request, second from cache, wait, third should preflight again 
 
