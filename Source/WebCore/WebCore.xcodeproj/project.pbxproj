@@ -11327,7 +11327,7 @@
 		A1BB85B52159B38A0067E07D /* JSMockPaymentError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockPaymentError.h; sourceTree = "<group>"; };
 		A1BF6B801AA96C7D00AF4A8A /* MockContentFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilter.cpp; sourceTree = "<group>"; };
 		A1BF6B811AA96C7D00AF4A8A /* MockContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilter.h; sourceTree = "<group>"; };
-		A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewConverter.mm; sourceTree = "<group>"; };
+		A1C150771E3F2B3E0032C98C /* PreviewConverterIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreviewConverterIOS.mm; sourceTree = "<group>"; };
 		A1C150781E3F2B3E0032C98C /* PreviewConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverter.h; sourceTree = "<group>"; };
 		A1C2C5751FA2851600BA46FA /* PaymentSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentSession.cpp; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
@@ -18262,8 +18262,6 @@
 			children = (
 				A10DBF4618F92317000D70C6 /* LegacyPreviewLoaderClient.h */,
 				443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */,
-				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
-				A1C150771E3F2B3E0032C98C /* PreviewConverter.mm */,
 				44A20DB80F84166C00B3E1FE /* WebCoreURLResponseIOS.h */,
 				444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */,
 			);
@@ -22668,6 +22666,7 @@
 				AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerIOS.mm */,
 				CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.h */,
 				CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.mm */,
+				A1C150771E3F2B3E0032C98C /* PreviewConverterIOS.mm */,
 				A15E31F11E0CB0AA004B371C /* QuickLook.h */,
 				A15E31F21E0CB0AA004B371C /* QuickLook.mm */,
 				CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */,
@@ -25707,6 +25706,7 @@
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
+				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
 				51F645D21FECDBC800B54DED /* ProcessIdentifier.cpp */,
 				51F645D31FECDBC800B54DED /* ProcessIdentifier.h */,
 				F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */,

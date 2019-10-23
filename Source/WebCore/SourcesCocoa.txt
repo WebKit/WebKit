@@ -402,6 +402,7 @@ platform/ios/PlatformPasteboardIOS.mm
 platform/ios/PlatformScreenIOS.mm
 platform/ios/PlatformSpeechSynthesizerIOS.mm @no-unify
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
+platform/ios/PreviewConverterIOS.mm
 platform/ios/QuickLook.mm
 platform/ios/RemoteCommandListenerIOS.mm
 platform/ios/ScrollAnimatorIOS.mm
@@ -516,7 +517,6 @@ platform/network/cocoa/ResourceResponseCocoa.mm @no-unify // Unsafe to unify unt
 platform/network/cocoa/WebCoreNSURLSession.mm @no-unify
 
 platform/network/ios/NetworkStateNotifierIOS.mm
-platform/network/ios/PreviewConverter.mm
 platform/network/ios/WebCoreURLResponseIOS.mm
 
 platform/network/mac/AuthenticationMac.mm
