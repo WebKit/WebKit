@@ -1281,7 +1281,7 @@ static WebAuthenticationPanelResult webAuthenticationPanelResult(_WKWebAuthentic
     return WebAuthenticationPanelResult::Unavailable;
 }
 
-void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel& panel, CompletionHandler<void(WebAuthenticationPanelResult)>&& completionHandler)
+void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel& panel, WebFrameProxy& webFrameProxy, const WebCore::SecurityOriginData& origin, CompletionHandler<void(WebAuthenticationPanelResult)>&& completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler) {
         completionHandler(WebAuthenticationPanelResult::Unavailable);
@@ -1295,7 +1295,7 @@ void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy&, API::WebAuth
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView runWebAuthenticationPanel:wrapper(panel) initiatedByFrame:nil completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (_WKWebAuthenticationPanelResult result) mutable {
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView runWebAuthenticationPanel:wrapper(panel) initiatedByFrame:wrapper(API::FrameInfo::create(webFrameProxy, origin.securityOrigin())) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (_WKWebAuthenticationPanelResult result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

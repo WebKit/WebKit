@@ -39,8 +39,8 @@ public:
 
 private:
     // WebCore::AuthenticatorCoordinatorClient
-    void makeCredential(const WebCore::Frame&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
-    void getAssertion(const WebCore::Frame&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
+    void makeCredential(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
+    void getAssertion(const WebCore::Frame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&&) final;
 
     WebPage& m_webPage;

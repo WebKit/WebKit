@@ -89,18 +89,23 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
 @implementation TestWebAuthenticationPanelUIDelegate {
     RetainPtr<NSObject<_WKWebAuthenticationPanelDelegate>> _delegate;
     BlockPtr<void(_WKWebAuthenticationPanelResult)> _callback;
+    RetainPtr<WKFrameInfo> _frameInfo;
 }
 
 - (instancetype)init
 {
-    if (self = [super init])
+    if (self = [super init]) {
         self.isRacy = false;
+        self.isFake = false;
+        self.isNull = false;
+    }
     return self;
 }
 
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
 {
     webAuthenticationPanelRan = true;
+    _frameInfo = frame;
 
     if (!_isNull) {
         if (!_isFake)
@@ -122,6 +127,11 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
         _callback(_WKWebAuthenticationPanelResultUnavailable);
     }
     completionHandler(_WKWebAuthenticationPanelResultPresented);
+}
+
+- (WKFrameInfo *)frame
+{
+    return _frameInfo.get();
 }
 
 @end
@@ -170,6 +180,16 @@ static void reset()
     webAuthenticationPanelFailed = false;
     webAuthenticationPanelSucceded = false;
     gPanel = nullptr;
+}
+
+static void checkFrameInfo(WKFrameInfo *frame, bool isMainFrame, NSString *url, NSString *protocol, NSString *host, int port, WKWebView *webView)
+{
+    EXPECT_EQ(frame.mainFrame, isMainFrame);
+    EXPECT_TRUE([frame.request.URL.absoluteString isEqual:url]);
+    EXPECT_WK_STREQ(frame.securityOrigin.protocol, protocol);
+    EXPECT_WK_STREQ(frame.securityOrigin.host, host);
+    EXPECT_EQ(frame.securityOrigin.port, port);
+    EXPECT_EQ(frame.webView, webView);
 }
 
 } // namesapce;
@@ -232,6 +252,9 @@ TEST(WebAuthenticationPanel, PanelHidSuccess)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelRan);
     Util::run(&webAuthenticationPanelSucceded);
+
+    // A bit of extra checks.
+    checkFrameInfo([delegate frame], true, [testURL absoluteString], @"file", @"", 0, webView.get());
 }
 
 #if HAVE(NEAR_FIELD)
@@ -409,10 +432,15 @@ TEST(WebAuthenticationPanel, SubFrameChangeLocationHidCancel)
     auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)makeString("http://localhost:", static_cast<unsigned>(server.port()))]]];
+    auto port = static_cast<unsigned>(server.port());
+    auto url = makeString("http://localhost:", port);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:(id)url]]];
     Util::run(&webAuthenticationPanelRan);
     [webView evaluateJavaScript:@"theFrame.src = 'simple.html'" completionHandler:nil];
     Util::run(&webAuthenticationPanelFailed);
+
+    // A bit of extra checks.
+    checkFrameInfo([delegate frame], false, (id)makeString(url, "/iFrame.html"), @"http", @"localhost", port, webView.get());
 }
 
 TEST(WebAuthenticationPanel, SubFrameDestructionHidCancel)

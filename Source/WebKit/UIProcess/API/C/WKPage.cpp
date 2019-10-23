@@ -2076,7 +2076,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
 #if ENABLE(WEB_AUTHN)
         // The current method is specialized for WebKitTestRunner.
-        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
+        void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) final
         {
             if (!m_client.runWebAuthenticationPanel) {
                 completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable);

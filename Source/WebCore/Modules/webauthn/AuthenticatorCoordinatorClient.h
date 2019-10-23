@@ -36,6 +36,7 @@ namespace WebCore {
 
 class DeferredPromise;
 class Frame;
+class SecurityOrigin;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialData;
@@ -51,8 +52,8 @@ public:
     AuthenticatorCoordinatorClient() = default;
     virtual ~AuthenticatorCoordinatorClient() = default;
 
-    virtual void makeCredential(const Frame&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
-    virtual void getAssertion(const Frame&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
+    virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
+    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) { };
 };
 

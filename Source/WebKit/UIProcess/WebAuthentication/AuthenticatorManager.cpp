@@ -291,10 +291,14 @@ void AuthenticatorManager::runPanel()
     auto* page = m_pendingRequestData.page.get();
     if (!page)
         return;
+    ASSERT(m_pendingRequestData.frameID && page->webPageID() == m_pendingRequestData.frameID->pageID);
+    auto* frame = page->process().webFrame(m_pendingRequestData.frameID->frameID);
+    if (!frame)
+        return;
 
     m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(m_pendingRequestData.options));
     auto& panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, [weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, m_pendingRequestData.origin, [weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         if (!weakThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)

@@ -32,6 +32,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -47,6 +48,7 @@ struct WebAuthenticationRequestData {
     WebAuthenticationPanelResult panelResult { WebAuthenticationPanelResult::Unavailable };
     RefPtr<API::WebAuthenticationPanel> panel;
     WTF::Optional<WebCore::GlobalFrameIdentifier> frameID;
+    WebCore::SecurityOriginData origin;
 };
 
 } // namespace WebKit
