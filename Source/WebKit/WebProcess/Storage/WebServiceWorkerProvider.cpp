@@ -36,6 +36,7 @@
 #include <WebCore/Exception.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ServiceWorkerJob.h>
 #include <wtf/text/WTFString.h>
 
