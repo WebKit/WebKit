@@ -115,9 +115,9 @@ div
       AXRoleDescription: group
       
 em
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXEmphasisStyleGroup
+      AXRoleDescription: group
       
 fieldset
       AXRole: AXGroup
@@ -645,9 +645,9 @@ span[onclick]
       AXRoleDescription: 
       
 strong
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXStrongStyleGroup
+      AXRoleDescription: group
       
 sub
       AXRole: AXGroup
@@ -858,6 +858,11 @@ div[role=checkbox]
       AXRole: AXCheckBox
       AXSubrole: 
       AXRoleDescription: checkbox
+      
+div[role=code]
+      AXRole: AXGroup
+      AXSubrole: AXCodeStyleGroup
+      AXRoleDescription: group
       
 div[role=combobox]
       AXRole: AXComboBox
@@ -1094,12 +1099,22 @@ div[role=document]
       AXSubrole: AXDocument
       AXRoleDescription: document
       
+div[role=emphasis]
+      AXRole: AXGroup
+      AXSubrole: AXEmphasisStyleGroup
+      AXRoleDescription: group
+      
 div[role=figure]
       AXRole: AXGroup
       AXSubrole: 
       AXRoleDescription: figure
       
 div[role=form]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=generic]
       AXRole: AXGroup
       AXSubrole: 
       AXRoleDescription: group
@@ -1348,6 +1363,11 @@ div[role=status]
       AXRole: AXGroup
       AXSubrole: AXApplicationStatus
       AXRoleDescription: application status
+      
+div[role=strong]
+      AXRole: AXGroup
+      AXSubrole: AXStrongStyleGroup
+      AXRoleDescription: group
       
 div[role=subscript]
       AXRole: AXGroup

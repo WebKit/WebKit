@@ -945,6 +945,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
+    case AccessibilityRole::Code:
     case AccessibilityRole::Column:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::Definition:
@@ -960,11 +961,13 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::DocumentNote:
     case AccessibilityRole::Drawer:
     case AccessibilityRole::EditableText:
+    case AccessibilityRole::Emphasis:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Figure:
     case AccessibilityRole::Footer:
     case AccessibilityRole::Footnote:
     case AccessibilityRole::Form:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::GraphicsDocument:
     case AccessibilityRole::GraphicsObject:
     case AccessibilityRole::GraphicsSymbol:
@@ -1015,6 +1018,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::SpinButtonPart:
     case AccessibilityRole::SplitGroup:
     case AccessibilityRole::Splitter:
+    case AccessibilityRole::Strong:
     case AccessibilityRole::Subscript:
     case AccessibilityRole::Superscript:
     case AccessibilityRole::Summary:

@@ -1,3 +1,23 @@
+2019-10-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for new ARIA roles: code, strong, emphasis, generic
+        https://bugs.webkit.org/show_bug.cgi?id=203257
+
+        Reviewed by Chris Fleizach.
+
+        Add new roles to existing role-related tests and update expectations.
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/gtk/xml-roles-exposed-expected.txt:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2019-10-22  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Block all third-party cookies
