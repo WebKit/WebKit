@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests that a page with an active fetch request is able to enter the back/forward cache.');
+window.jsTestIsAsync = true;
+let restoredFromCache = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the back/forward cache");
+        restoredFromCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the back/forward cache.");
+        finishJSTest();
+    }
+}, false);
+
+var textData = JSON.stringify("This is the body");
+
+function tryGetRequestBlob()
+{
+    blob = new Blob([textData], { "type" : "text/plain" });
+    request = new Request("", {"method": "POST", "body": blob });
+    request.blob().then(() => {
+        if (restoredFromCache) {
+            testPassed("Promise resolved after restoring from the back/forward cache.");
+            finishJSTest();
+            return;
+        }
+        setTimeout(tryGetRequestBlob, 0);
+    }, (e) => {
+        setTimeout(tryGetRequestBlob, 0);
+    });
+}
+
+window.addEventListener('load', function() {
+    setTimeout(() => {
+      tryGetRequestBlob();
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+</body>
+</html>

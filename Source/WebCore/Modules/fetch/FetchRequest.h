@@ -92,7 +92,6 @@ private:
     ExceptionOr<void> setBody(FetchRequest&);
 
     const char* activeDOMObjectName() const final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
 
     ResourceRequest m_request;
     FetchOptions m_options;

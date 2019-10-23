@@ -329,11 +329,5 @@ const char* FetchRequest::activeDOMObjectName() const
     return "Request";
 }
 
-bool FetchRequest::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    // FIXME: This should never prevent entering the back/forward cache.
-    return isActive();
-}
-
 } // namespace WebCore
 

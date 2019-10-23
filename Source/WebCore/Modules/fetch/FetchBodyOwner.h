@@ -125,6 +125,8 @@ protected:
     Ref<FetchHeaders> m_headers;
 
 private:
+    void runNetworkTaskWhenPossible(Function<void()>&&);
+
     Optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 

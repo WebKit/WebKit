@@ -1,3 +1,21 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        FetchRequest should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203091
+        <rdar://problem/56525333>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/history/page-cache-active-fetch-request-blobReadAsBlob-expected.txt: Added.
+        * fast/history/page-cache-active-fetch-request-blobReadAsBlob.html: Added.
+        * fast/history/page-cache-active-fetch-request-blobReadAsReadableStream-expected.txt: Added.
+        * fast/history/page-cache-active-fetch-request-blobReadAsReadableStream.html: Added.
+        * fast/history/page-cache-active-fetch-request-blobReadAsText-expected.txt: Added.
+        * fast/history/page-cache-active-fetch-request-blobReadAsText.html: Added.
+
 2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: notify inspector when provisional page is created, committed and destroyed
