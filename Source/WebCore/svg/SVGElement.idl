@@ -23,17 +23,11 @@
 [
     JSGenerateToNativeObject,
 ] interface SVGElement : Element {
-    readonly attribute SVGSVGElement ownerSVGElement;
-    readonly attribute SVGElement viewportElement;
-
-    attribute DOMString xmllang;
-    attribute DOMString xmlspace;
 
     readonly attribute SVGAnimatedString className;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    // This method is deprecated, and we'd like to remove it someday.
-    DeprecatedCSSOMValue getPresentationAttribute(optional DOMString name = "undefined");
+    readonly attribute SVGSVGElement? ownerSVGElement;
+    readonly attribute SVGElement? viewportElement;
 };
 
 SVGElement implements ElementCSSInlineStyle;

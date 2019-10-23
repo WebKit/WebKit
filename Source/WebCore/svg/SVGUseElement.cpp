@@ -174,9 +174,6 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGLangSpace::isKnownAttribute(attrName))
-        invalidateShadowTree();
-
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 

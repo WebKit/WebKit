@@ -90,7 +90,7 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
 
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateFilterPrimitiveParent(this);
         return;

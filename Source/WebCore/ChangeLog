@@ -1,3 +1,41 @@
+2019-10-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Fix SVGElement to conform with SVG2
+        https://bugs.webkit.org/show_bug.cgi?id=203280
+
+        Reviewed by Simon Fraser.
+
+        The interface of SVGElement is defined here:
+            https://www.w3.org/TR/SVG2/types.html#InterfaceSVGElement.
+
+        -- Remove SVGElement.getPresentationAttribute.
+        -- Remove the SVGElement attributes xmllang and xmlspace.
+        -- Remove the class SVGLangSpace
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged):
+        Fix a bug. This function was calling SVGLangSpace::isKnownAttribute()
+        instead of calling PropertyRegistry::isKnownAttribute().
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::parseAttribute):
+        (WebCore::SVGElement::svgAttributeChanged):
+        (WebCore::SVGElement::getPresentationAttribute): Deleted.
+        * svg/SVGElement.h:
+        * svg/SVGElement.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        Fix a bug. This function was calling SVGLangSpace::isKnownAttribute()
+        instead of calling PropertyRegistry::isKnownAttribute().
+
+        * svg/SVGLangSpace.cpp: Removed.
+        * svg/SVGLangSpace.h: Removed.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add more information to _WKWebAuthenticationPanel

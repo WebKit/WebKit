@@ -160,7 +160,6 @@ static NEVER_INLINE HashMap<AtomStringImpl*, CSSPropertyID> createAttributeNameT
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
     : StyledElement(tagName, document, CreateSVGElement)
-    , SVGLangSpace(this)
     , m_propertyAnimatorFactory(makeUnique<SVGPropertyAnimatorFactory>())
 {
     static std::once_flag onceFlag;
@@ -354,8 +353,6 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& val
         setAttributeEventListener(eventName, name, value);
         return;
     }
-
-    SVGLangSpace::parseAttribute(name, value);
 }
 
 bool SVGElement::haveLoadedRequiredResources()
@@ -834,8 +831,6 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateInstances();
         return;
     }
-
-    SVGLangSpace::svgAttributeChanged(attrName);
 }
 
 Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -876,25 +871,6 @@ void SVGElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChangeSource::Parser)
         return;
     invalidateInstances();
-}
-
-RefPtr<DeprecatedCSSOMValue> SVGElement::getPresentationAttribute(const String& name)
-{
-    if (!hasAttributesWithoutUpdate())
-        return 0;
-
-    QualifiedName attributeName(nullAtom(), name, nullAtom());
-    const Attribute* attribute = findAttributeByName(attributeName);
-    if (!attribute)
-        return 0;
-
-    auto style = MutableStyleProperties::create(SVGAttributeMode);
-    CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attribute->name());
-    style->setProperty(propertyID, attribute->value());
-    auto cssValue = style->getPropertyCSSValue(propertyID);
-    if (!cssValue)
-        return nullptr;
-    return cssValue->createDeprecatedCSSOMWrapper(style->ensureCSSStyleDeclaration());
 }
 
 bool SVGElement::instanceUpdatesBlocked() const

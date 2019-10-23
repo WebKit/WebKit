@@ -75,7 +75,7 @@ bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect
 
 void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
