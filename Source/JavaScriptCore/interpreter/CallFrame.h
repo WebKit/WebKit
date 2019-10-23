@@ -324,9 +324,14 @@ namespace JSC  {
 
 // Helper function to get VM& from JSGlobalObject* if JSGlobalObject.h is not included.
 VM& getVM(JSGlobalObject*);
+JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
-#if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64)) && (OS(LINUX) || OS(DARWIN))
-#define DECLARE_CALL_FRAME(vm) (bitwise_cast<JSC::CallFrame*>(__builtin_frame_address(1)))
+#if USE(BUILTIN_FRAME_ADDRESS)
+#define DECLARE_CALL_FRAME(vm) \
+    ({ \
+        ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \
+        bitwise_cast<JSC::CallFrame*>(__builtin_frame_address(1)); \
+    })
 #else
 #define DECLARE_CALL_FRAME(vm) ((vm).topCallFrame)
 #endif

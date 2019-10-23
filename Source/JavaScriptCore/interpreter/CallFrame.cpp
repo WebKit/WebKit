@@ -27,10 +27,12 @@
 #include "CallFrame.h"
 
 #include "CodeBlock.h"
+#include "ExecutableAllocator.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
+#include "LLIntPCRanges.h"
 #include "VMEntryScope.h"
 #include "WasmContextInlines.h"
 #include "WasmInstance.h"
@@ -353,6 +355,20 @@ void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAl
     setCodeBlock(codeBlockToKeepAliveUntilFrameIsUnwound);
     setCallee(stackOverflowCallee);
     setArgumentCountIncludingThis(0);
+}
+
+bool isFromJSCode(void* returnAddress)
+{
+    UNUSED_PARAM(returnAddress);
+#if ENABLE(JIT)
+    if (isJITPC(returnAddress))
+        return true;
+#endif
+#if ENABLE(C_LOOP)
+    return true;
+#else
+    return LLInt::isLLIntPC(returnAddress);
+#endif
 }
 
 } // namespace JSC

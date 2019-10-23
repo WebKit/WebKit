@@ -143,6 +143,7 @@ public:
     void promiseUnhandledRejection();
     void promiseUnhandledRejectionFromUnhandledRejectionCallback();
     void promiseEarlyHandledRejections();
+    void topCallFrameAccess();
 
     int failed() const { return m_failed; }
 
@@ -591,6 +592,34 @@ void TestAPI::promiseEarlyHandledRejections()
     check(!callbackCalled, "unhandled rejection callback should not be called for asynchronous early-handled rejection");
 }
 
+void TestAPI::topCallFrameAccess()
+{
+    {
+        JSObjectRef function = JSValueToObject(context, evaluateScript("(function () { })").value(), nullptr);
+        APIString argumentsString("arguments");
+        auto arguments = JSObjectGetProperty(context, function, argumentsString, nullptr);
+        check(JSValueIsNull(context, arguments), "vm.topCallFrame access from C++ world should use nullptr internally for arguments");
+    }
+    {
+        JSObjectRef arguments = JSValueToObject(context, evaluateScript("(function ok(v) { return ok.arguments; })(42)").value(), nullptr);
+        check(!JSValueIsNull(context, arguments), "vm.topCallFrame is materialized and we found the caller function's arguments");
+    }
+    {
+        JSObjectRef function = JSValueToObject(context, evaluateScript("(function () { })").value(), nullptr);
+        APIString callerString("caller");
+        auto caller = JSObjectGetProperty(context, function, callerString, nullptr);
+        check(JSValueIsNull(context, caller), "vm.topCallFrame access from C++ world should use nullptr internally for caller");
+    }
+    {
+        JSObjectRef caller = JSValueToObject(context, evaluateScript("(function () { return (function ok(v) { return ok.caller; })(42); })()").value(), nullptr);
+        check(!JSValueIsNull(context, caller), "vm.topCallFrame is materialized and we found the caller function's caller");
+    }
+    {
+        JSObjectRef caller = JSValueToObject(context, evaluateScript("(function ok(v) { return ok.caller; })(42)").value(), nullptr);
+        check(JSValueIsNull(context, caller), "vm.topCallFrame is materialized and we found the caller function's caller, but the caller is global code");
+    }
+}
+
 void configureJSCForTesting()
 {
     JSC::Config::configureForTesting();
@@ -617,6 +646,7 @@ int testCAPIViaCpp(const char* filter)
         return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
     };
 
+    RUN(topCallFrameAccess());
     RUN(basicSymbol());
     RUN(symbolsTypeof());
     RUN(symbolsDescription());

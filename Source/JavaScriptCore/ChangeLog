@@ -1,5 +1,30 @@
 2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Make `JSGlobalObject*` threading change more stabilized by adding tests and assertions
+        https://bugs.webkit.org/show_bug.cgi?id=203274
+
+        Reviewed by Saam Barati.
+
+        This patch does some follow-up changes after r251425.
+
+        1. Add tests that tests vm.topCallFrame from C++ world to ensure that `vm.topCallFrame` is kept nullptr if it is accessed from C++ world even after executing some scripts.
+        2. Add assertion to ensure that `DECLARE_CALL_FRAME` is only called in JIT operation's prologue.
+        3. Remove some of ExecState::deprecatedVM call.
+        4. Define `USE(BUILTIN_FRAME_ADDRESS)` when using __builtin_frame_address to get CallFrame.
+
+        * API/tests/testapi.cpp:
+        (TestAPI::topCallFrameAccess):
+        (testCAPIViaCpp):
+        * interpreter/CallFrame.cpp:
+        (JSC::isFromJSCode):
+        * interpreter/CallFrame.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareCallOperation):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+
+2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, WinCairo build fix after r251468
         https://bugs.webkit.org/show_bug.cgi?id=203276
 

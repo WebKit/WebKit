@@ -1000,6 +1000,11 @@
 #define USE_LLINT_EMBEDDED_OPCODE_ID 1
 #endif
 
+/* Use __builtin_frame_address(1) to get CallFrame* */
+#if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64)) && (OS(LINUX) || OS(DARWIN))
+#define USE_BUILTIN_FRAME_ADDRESS 1
+#endif
+
 /* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
 #define ENABLE_REGEXP_TRACING 0
 

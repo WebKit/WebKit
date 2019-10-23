@@ -421,7 +421,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     dataLogLn(codeBlock);
     --it;
 #if ENABLE(JIT)
-    AbstractPC pc = callFrame->abstractReturnPC(callFrame->deprecatedVM());
+    AbstractPC pc = callFrame->abstractReturnPC(vm);
     if (pc.hasJITReturnAddress())
         dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc.jitReturnAddress().value());
     --it;

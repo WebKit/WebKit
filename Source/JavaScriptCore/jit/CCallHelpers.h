@@ -86,7 +86,7 @@ public:
 
     void prepareCallOperation(VM& vm)
     {
-#if COMPILER(GCC_COMPATIBLE) && (CPU(ARM64) || CPU(X86_64)) && (OS(LINUX) || OS(DARWIN))
+#if USE(BUILTIN_FRAME_ADDRESS)
         UNUSED_PARAM(vm);
 #else
         storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
