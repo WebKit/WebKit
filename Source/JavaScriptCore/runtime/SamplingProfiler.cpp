@@ -446,29 +446,23 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
     }
 }
 
-static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock, bool& isValid)
+static ALWAYS_INLINE BytecodeIndex tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock)
 {
 #if ENABLE(DFG_JIT)
     RELEASE_ASSERT(!codeBlock->hasCodeOrigins());
 #endif
 
 #if USE(JSVALUE64)
-    unsigned bytecodeIndex = llintPC;
-    if (bytecodeIndex < codeBlock->instructionsSize()) {
-        isValid = true;
-        return bytecodeIndex;
-    }
-    isValid = false;
-    return 0;
+    unsigned bytecodeOffset = llintPC;
+    if (bytecodeOffset < codeBlock->instructionsSize())
+        return BytecodeIndex(bytecodeOffset);
+    return BytecodeIndex();
 #else
     Instruction* instruction = bitwise_cast<Instruction*>(llintPC);
 
-    if (codeBlock->instructions().contains(instruction)) {
-        isValid = true;
-        return codeBlock->bytecodeOffset(instruction);
-    }
-    isValid = false;
-    return 0;
+    if (codeBlock->instructions().contains(instruction))
+        return BytecodeIndex(codeBlock->bytecodeOffset(instruction));
+    return BytecodeIndex();
 #endif
 }
 
@@ -484,12 +478,12 @@ void SamplingProfiler::processUnverifiedStackTraces()
         StackTrace& stackTrace = m_stackTraces.last();
         stackTrace.timestamp = unprocessedStackTrace.timestamp;
 
-        auto populateCodeLocation = [] (CodeBlock* codeBlock, unsigned bytecodeIndex, StackFrame::CodeLocation& location) {
-            if (bytecodeIndex < codeBlock->instructionsSize()) {
+        auto populateCodeLocation = [] (CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
+            if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
                 int divot;
                 int startOffset;
                 int endOffset;
-                codeBlock->expressionRangeForBytecodeOffset(bytecodeIndex, divot, startOffset, endOffset,
+                codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset,
                     location.lineNumber, location.columnNumber);
                 location.bytecodeIndex = bytecodeIndex;
             }
@@ -499,7 +493,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             }
         };
 
-        auto appendCodeBlock = [&] (CodeBlock* codeBlock, unsigned bytecodeIndex) {
+        auto appendCodeBlock = [&] (CodeBlock* codeBlock, BytecodeIndex bytecodeIndex) {
             stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
             m_liveCellPointers.add(codeBlock->ownerExecutable());
             populateCodeLocation(codeBlock, bytecodeIndex, stackTrace.frames.last().semanticLocation);
@@ -614,18 +608,17 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 // and we end up having to unwind past an EntryFrame, we will end up executing
                 // inside the LLInt's handleUncaughtException. So we just protect against this
                 // by ignoring it.
-                unsigned bytecodeIndex = 0;
+                BytecodeIndex bytecodeIndex = BytecodeIndex(0);
                 if (topCodeBlock->jitType() == JITType::InterpreterThunk || topCodeBlock->jitType() == JITType::BaselineJIT) {
-                    bool isValidPC;
                     unsigned bits;
 #if USE(JSVALUE64)
                     bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
 #else
                     bits = bitwise_cast<unsigned>(unprocessedStackTrace.llintPC);
 #endif
-                    bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock, isValidPC);
+                    bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock);
 
-                    UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
+                    UNUSED_PARAM(bytecodeIndex); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
                     appendCodeBlock(topCodeBlock, bytecodeIndex);
                     storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0]);
@@ -649,8 +642,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 CallSiteIndex callSiteIndex = unprocessedStackFrame.callSiteIndex;
 
                 auto appendCodeBlockNoInlining = [&] {
-                    bool isValidPC;
-                    appendCodeBlock(codeBlock, tryGetBytecodeIndex(callSiteIndex.bits(), codeBlock, isValidPC));
+                    appendCodeBlock(codeBlock, tryGetBytecodeIndex(callSiteIndex.bits(), codeBlock));
                 };
 
 #if ENABLE(DFG_JIT)
@@ -658,7 +650,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                     if (codeBlock->canGetCodeOrigin(callSiteIndex))
                         appendCodeOrigin(codeBlock, codeBlock->codeOrigin(callSiteIndex));
                     else
-                        appendCodeBlock(codeBlock, std::numeric_limits<unsigned>::max());
+                        appendCodeBlock(codeBlock, BytecodeIndex());
                 } else
                     appendCodeBlockNoInlining();
 #else
@@ -1115,7 +1107,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
             String codeBlockHash;
             String jitType;
             if (location.hasBytecodeIndex())
-                bytecodeIndex = String::number(location.bytecodeIndex);
+                bytecodeIndex = toString(location.bytecodeIndex);
             else
                 bytecodeIndex = "<nil>";
 

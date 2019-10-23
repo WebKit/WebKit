@@ -368,7 +368,7 @@ inline bool shouldJIT(CodeBlock* codeBlock)
 }
 
 // Returns true if we should try to OSR.
-inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset = 0)
+inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0))
 {
     DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(VM::canUseJIT());
@@ -392,7 +392,7 @@ inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, unsigned lo
         return true;
     }
     case JITType::InterpreterThunk: {
-        JITWorklist::ensureGlobalWorklist().compileLater(codeBlock, loopOSREntryBytecodeOffset);
+        JITWorklist::ensureGlobalWorklist().compileLater(codeBlock, loopOSREntryBytecodeIndex);
         return codeBlock->jitType() == JITType::BaselineJIT;
     }
     default:
@@ -476,22 +476,22 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    unsigned loopOSREntryBytecodeOffset = codeBlock->bytecodeOffset(pc);
+    auto loopOSREntryBytecodeIndex = BytecodeIndex(codeBlock->bytecodeOffset(pc));
 
     if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
     
-    if (!jitCompileAndSetHeuristics(vm, codeBlock, loopOSREntryBytecodeOffset))
+    if (!jitCompileAndSetHeuristics(vm, codeBlock, loopOSREntryBytecodeIndex))
         LLINT_RETURN_TWO(0, 0);
     
-    CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", loopOSREntryBytecodeOffset));
+    CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at ", loopOSREntryBytecodeIndex));
 
     ASSERT(codeBlock->jitType() == JITType::BaselineJIT);
 
     const JITCodeMap& codeMap = codeBlock->jitCodeMap();
-    CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeOffset);
+    CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeIndex);
     ASSERT(codeLocation);
 
     void* jumpTarget = codeLocation.executableAddress();
@@ -1888,11 +1888,8 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
     JSValue thisValue = getNonConstantOperand(callFrame, bytecode.m_thisValue);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     
-#if USE(JSVALUE64)
-    CallSiteIndex callSiteIndex(codeBlock->bytecodeOffset(pc));
-#else
-    CallSiteIndex callSiteIndex(pc);
-#endif
+    CallSiteIndex callSiteIndex(BytecodeIndex(codeBlock->bytecodeOffset(pc)));
+
     ShadowChicken* shadowChicken = vm.shadowChicken();
     RELEASE_ASSERT(shadowChicken);
     shadowChicken->log(vm, callFrame, ShadowChicken::Packet::tail(callFrame, thisValue, scope, codeBlock, callSiteIndex));
@@ -1904,7 +1901,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
 {
     LLINT_BEGIN();
 
-    codeBlock->ensureCatchLivenessIsComputedForBytecodeOffset(callFrame->bytecodeOffset());
+    codeBlock->ensureCatchLivenessIsComputedForBytecodeIndex(callFrame->bytecodeIndex());
 
     auto bytecode = pc->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);

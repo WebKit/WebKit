@@ -38,10 +38,10 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee)
 {
 }
 
-StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlock, unsigned bytecodeOffset)
+StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
     : m_callee(vm, owner, callee)
     , m_codeBlock(vm, owner, codeBlock)
-    , m_bytecodeOffset(bytecodeOffset)
+    , m_bytecodeIndex(bytecodeIndex)
 {
 }
 
@@ -111,7 +111,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     int divot = 0;
     int unusedStartOffset = 0;
     int unusedEndOffset = 0;
-    m_codeBlock->expressionRangeForBytecodeOffset(m_bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
+    m_codeBlock->expressionRangeForBytecodeIndex(m_bytecodeIndex, divot, unusedStartOffset, unusedEndOffset, line, column);
 
     ScriptExecutable* executable = m_codeBlock->ownerExecutable();
     if (Optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))

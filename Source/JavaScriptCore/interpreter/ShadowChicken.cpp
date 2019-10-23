@@ -329,7 +329,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
             CodeBlock* codeBlock = callFrame->codeBlock();
-            JSValue scopeValue = callFrame->bytecodeOffset() && codeBlock && codeBlock->scopeRegister().isValid()
+            JSValue scopeValue = callFrame->bytecodeIndex() && codeBlock && codeBlock->scopeRegister().isValid()
                 ? callFrame->registers()[codeBlock->scopeRegister().offset()].jsValue()
                 : jsUndefined();
             if (!scopeValue.isUndefined() && codeBlock->wasCompiledWithDebuggingOpcodes()) {

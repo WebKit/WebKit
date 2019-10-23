@@ -80,8 +80,8 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
-    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag);
+    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid);
+    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag);
     static InByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
 
 #if ENABLE(DFG_JIT)

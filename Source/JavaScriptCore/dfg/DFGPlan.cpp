@@ -134,7 +134,7 @@ Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
 } // anonymous namespace
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
-    CompilationMode mode, unsigned osrEntryBytecodeIndex,
+    CompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
     const Operands<Optional<JSValue>>& mustHandleValues)
     : m_mode(mode)
     , m_vm(&passedCodeBlock->vm())
@@ -240,9 +240,9 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 {
     cleanMustHandleValuesIfNecessary();
 
-    if (verboseCompilationEnabled(m_mode) && m_osrEntryBytecodeIndex != UINT_MAX) {
+    if (verboseCompilationEnabled(m_mode) && m_osrEntryBytecodeIndex) {
         dataLog("\n");
-        dataLog("Compiler must handle OSR entry from bc#", m_osrEntryBytecodeIndex, " with values: ", m_mustHandleValues, "\n");
+        dataLog("Compiler must handle OSR entry from ", m_osrEntryBytecodeIndex, " with values: ", m_mustHandleValues, "\n");
         dataLog("\n");
     }
 
@@ -725,7 +725,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
         return;
 
     CodeBlock* alternative = m_codeBlock->alternative();
-    FastBitVector liveness = alternative->livenessAnalysis().getLivenessInfoAtBytecodeOffset(alternative, m_osrEntryBytecodeIndex);
+    FastBitVector liveness = alternative->livenessAnalysis().getLivenessInfoAtBytecodeIndex(alternative, m_osrEntryBytecodeIndex);
 
     for (unsigned local = m_mustHandleValues.numberOfLocals(); local--;) {
         if (!liveness[local])

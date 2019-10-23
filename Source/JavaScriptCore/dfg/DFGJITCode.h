@@ -54,7 +54,7 @@ public:
     CommonData* dfgCommon() override;
     JITCode* dfg() override;
     
-    OSREntryData* appendOSREntryData(unsigned bytecodeIndex, CodeLocationLabel<OSREntryPtrTag> machineCode)
+    OSREntryData* appendOSREntryData(BytecodeIndex bytecodeIndex, CodeLocationLabel<OSREntryPtrTag> machineCode)
     {
         DFG::OSREntryData entry;
         entry.m_bytecodeIndex = bytecodeIndex;
@@ -63,9 +63,9 @@ public:
         return &osrEntry.last();
     }
     
-    OSREntryData* osrEntryDataForBytecodeIndex(unsigned bytecodeIndex)
+    OSREntryData* osrEntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)
     {
-        return tryBinarySearch<OSREntryData, unsigned>(
+        return tryBinarySearch<OSREntryData, BytecodeIndex>(
             osrEntry, osrEntry.size(), bytecodeIndex,
             getOSREntryDataBytecodeIndex);
     }
@@ -151,10 +151,10 @@ public:
     //
     // The key may not always be a target for OSR Entry but the list in the value is guaranteed
     // to be usable for OSR Entry.
-    HashMap<unsigned, Vector<unsigned>> tierUpInLoopHierarchy;
+    HashMap<BytecodeIndex, Vector<BytecodeIndex>> tierUpInLoopHierarchy;
 
     // Map each bytecode of CheckTierUpAndOSREnter to its stream index.
-    HashMap<unsigned, unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> bytecodeIndexToStreamIndex;
+    HashMap<BytecodeIndex, unsigned> bytecodeIndexToStreamIndex;
 
     enum class TriggerReason : uint8_t {
         DontTrigger,
@@ -165,7 +165,7 @@ public:
     // Map each bytecode of CheckTierUpAndOSREnter to its trigger forcing OSR Entry.
     // This can never be modified after it has been initialized since the addresses of the triggers
     // are used by the JIT.
-    HashMap<unsigned, TriggerReason> tierUpEntryTriggers;
+    HashMap<BytecodeIndex, TriggerReason> tierUpEntryTriggers;
 
     WriteBarrier<CodeBlock> m_osrEntryBlock;
     unsigned osrEntryRetry;

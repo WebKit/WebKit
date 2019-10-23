@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 class FrequentExitSite {
 public:
     FrequentExitSite()
-        : m_bytecodeOffset(0) // 0 = empty value
+        : m_bytecodeIndex(BytecodeIndex(0))
         , m_kind(ExitKindUnset)
         , m_jitType(ExitFromAnything)
         , m_inlineKind(ExitFromAnyInlineKind)
@@ -47,15 +47,15 @@ public:
     }
     
     FrequentExitSite(WTF::HashTableDeletedValueType)
-        : m_bytecodeOffset(1) // 1 = deleted value
+        : m_bytecodeIndex(WTF::HashTableDeletedValue)
         , m_kind(ExitKindUnset)
         , m_jitType(ExitFromAnything)
         , m_inlineKind(ExitFromAnyInlineKind)
     {
     }
     
-    explicit FrequentExitSite(unsigned bytecodeOffset, ExitKind kind, ExitingJITType jitType = ExitFromAnything, ExitingInlineKind inlineKind = ExitFromAnyInlineKind)
-        : m_bytecodeOffset(bytecodeOffset)
+    explicit FrequentExitSite(BytecodeIndex bytecodeIndex, ExitKind kind, ExitingJITType jitType = ExitFromAnything, ExitingInlineKind inlineKind = ExitFromAnyInlineKind)
+        : m_bytecodeIndex(bytecodeIndex)
         , m_kind(kind)
         , m_jitType(jitType)
         , m_inlineKind(inlineKind)
@@ -63,14 +63,14 @@ public:
         if (m_kind == ArgumentsEscaped) {
             // Count this one globally. It doesn't matter where in the code block the arguments excaped;
             // the fact that they did is not associated with any particular instruction.
-            m_bytecodeOffset = 0;
+            m_bytecodeIndex = BytecodeIndex(0);
         }
     }
     
     // Use this constructor if you wish for the exit site to be counted globally within its
     // code block.
     explicit FrequentExitSite(ExitKind kind, ExitingJITType jitType = ExitFromAnything, ExitingInlineKind inlineKind = ExitFromAnyInlineKind)
-        : m_bytecodeOffset(0)
+        : m_bytecodeIndex(BytecodeIndex(0))
         , m_kind(kind)
         , m_jitType(jitType)
         , m_inlineKind(inlineKind)
@@ -84,7 +84,7 @@ public:
     
     bool operator==(const FrequentExitSite& other) const
     {
-        return m_bytecodeOffset == other.m_bytecodeOffset
+        return m_bytecodeIndex == other.m_bytecodeIndex
             && m_kind == other.m_kind
             && m_jitType == other.m_jitType
             && m_inlineKind == other.m_inlineKind;
@@ -92,7 +92,7 @@ public:
     
     bool subsumes(const FrequentExitSite& other) const
     {
-        if (m_bytecodeOffset != other.m_bytecodeOffset)
+        if (m_bytecodeIndex != other.m_bytecodeIndex)
             return false;
         if (m_kind != other.m_kind)
             return false;
@@ -107,10 +107,10 @@ public:
     
     unsigned hash() const
     {
-        return WTF::intHash(m_bytecodeOffset) + m_kind + static_cast<unsigned>(m_jitType) * 7 + static_cast<unsigned>(m_inlineKind) * 11;
+        return m_bytecodeIndex.hash() + m_kind + static_cast<unsigned>(m_jitType) * 7 + static_cast<unsigned>(m_inlineKind) * 11;
     }
     
-    unsigned bytecodeOffset() const { return m_bytecodeOffset; }
+    BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
     ExitKind kind() const { return m_kind; }
     ExitingJITType jitType() const { return m_jitType; }
     ExitingInlineKind inlineKind() const { return m_inlineKind; }
@@ -131,13 +131,13 @@ public:
 
     bool isHashTableDeletedValue() const
     {
-        return m_kind == ExitKindUnset && m_bytecodeOffset;
+        return m_kind == ExitKindUnset && m_bytecodeIndex.isHashTableDeletedValue();
     }
     
     void dump(PrintStream& out) const;
 
 private:
-    unsigned m_bytecodeOffset;
+    BytecodeIndex m_bytecodeIndex;
     ExitKind m_kind;
     ExitingJITType m_jitType;
     ExitingInlineKind m_inlineKind;
@@ -183,7 +183,7 @@ public:
     
     // Get the frequent exit sites for a bytecode index. This is O(n), and is
     // meant to only be used from debugging/profiling code.
-    Vector<FrequentExitSite> exitSitesFor(unsigned bytecodeIndex);
+    Vector<FrequentExitSite> exitSitesFor(BytecodeIndex);
     
     // This is O(n) and should be called on less-frequently executed code paths
     // in the compiler. It should be strictly cheaper than building a
@@ -222,7 +222,7 @@ public:
         return hasExitSite(FrequentExitSite(kind));
     }
     
-    bool hasExitSite(unsigned bytecodeIndex, ExitKind kind) const
+    bool hasExitSite(BytecodeIndex bytecodeIndex, ExitKind kind) const
     {
         return hasExitSite(FrequentExitSite(bytecodeIndex, kind));
     }

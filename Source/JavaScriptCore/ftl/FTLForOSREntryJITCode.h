@@ -48,8 +48,8 @@ public:
     void initializeEntryBuffer(VM&, unsigned numCalleeLocals);
     ScratchBuffer* entryBuffer() const { return m_entryBuffer; }
     
-    void setBytecodeIndex(unsigned value) { m_bytecodeIndex = value; }
-    unsigned bytecodeIndex() const { return m_bytecodeIndex; }
+    void setBytecodeIndex(BytecodeIndex value) { m_bytecodeIndex = value; }
+    BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
     
     void countEntryFailure() { m_entryFailureCount++; }
     unsigned entryFailureCount() const { return m_entryFailureCount; }
@@ -58,7 +58,7 @@ public:
     
 private:
     ScratchBuffer* m_entryBuffer; // Only for OSR entry code blocks.
-    unsigned m_bytecodeIndex;
+    BytecodeIndex m_bytecodeIndex;
     unsigned m_entryFailureCount;
 };
 

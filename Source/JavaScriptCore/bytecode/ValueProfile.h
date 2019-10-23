@@ -161,19 +161,19 @@ struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
 // This is a mini value profile to catch pathologies. It is a counter that gets
 // incremented when we take the slow path on any instruction.
 struct RareCaseProfile {
-    RareCaseProfile(int bytecodeOffset)
-        : m_bytecodeOffset(bytecodeOffset)
+    RareCaseProfile(BytecodeIndex bytecodeIndex)
+        : m_bytecodeIndex(bytecodeIndex)
         , m_counter(0)
     {
     }
     
-    int m_bytecodeOffset;
+    BytecodeIndex m_bytecodeIndex;
     uint32_t m_counter;
 };
 
-inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
+inline BytecodeIndex getRareCaseProfileBytecodeIndex(RareCaseProfile* rareCaseProfile)
 {
-    return rareCaseProfile->m_bytecodeOffset;
+    return rareCaseProfile->m_bytecodeIndex;
 }
 
 struct ValueProfileAndOperand : public ValueProfile {

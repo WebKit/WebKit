@@ -31,17 +31,18 @@ namespace JSC {
 
 class BytecodeLivenessAnalysis;
 
-typedef HashMap<unsigned, FastBitVector, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BytecodeToBitmapMap;
+typedef HashMap<BytecodeIndex, FastBitVector> BytecodeToBitmapMap;
 
 class FullBytecodeLiveness {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    const FastBitVector& getLiveness(unsigned bytecodeIndex) const
+    const FastBitVector& getLiveness(BytecodeIndex bytecodeIndex) const
     {
-        return m_map[bytecodeIndex];
+        // FIXME: What should this do when we have checkpoints?
+        return m_map[bytecodeIndex.offset()];
     }
     
-    bool operandIsLive(int operand, unsigned bytecodeIndex) const
+    bool operandIsLive(int operand, BytecodeIndex bytecodeIndex) const
     {
         return operandIsAlwaysLive(operand) || operandThatIsNotAlwaysLiveIsLive(getLiveness(bytecodeIndex), operand);
     }

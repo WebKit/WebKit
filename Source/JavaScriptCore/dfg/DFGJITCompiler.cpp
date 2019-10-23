@@ -60,7 +60,7 @@ JITCompiler::JITCompiler(Graph& dfg)
         m_disassembler = makeUnique<Disassembler>(dfg);
 #if ENABLE(FTL_JIT)
     m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy());
-    for (unsigned tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes())
+    for (BytecodeIndex tierUpBytecode : m_graph.m_plan.tierUpAndOSREnterBytecodes())
         m_jitCode->tierUpEntryTriggers.add(tierUpBytecode, JITCode::TriggerReason::DontTrigger);
 #endif
 }
@@ -374,7 +374,7 @@ void JITCompiler::compile()
     // we need to call out to a helper function to throw the StackOverflowError.
     stackOverflow.link(this);
 
-    emitStoreCodeOrigin(CodeOrigin(0));
+    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
 
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
@@ -450,7 +450,7 @@ void JITCompiler::compileFunction()
     // we need to call out to a helper function to throw the StackOverflowError.
     stackOverflow.link(this);
 
-    emitStoreCodeOrigin(CodeOrigin(0));
+    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
 
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
@@ -471,14 +471,14 @@ void JITCompiler::compileFunction()
 
         load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
         branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
-        emitStoreCodeOrigin(CodeOrigin(0));
+        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
         m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0, m_codeBlock->globalObject());
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
-        emitStoreCodeOrigin(CodeOrigin(0));
+        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
         move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
         callArityFixup = nearCall();
         jump(fromArityCheck);

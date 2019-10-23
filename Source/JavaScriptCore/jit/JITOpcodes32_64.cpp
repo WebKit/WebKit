@@ -159,7 +159,7 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(proto);
     
     JITInstanceOfGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
         regT0, // result
         regT2, // value
@@ -912,9 +912,9 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndOperandBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
-        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
     else
-        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, NoPtrTag);
@@ -952,7 +952,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
     jumpTable->ensureCTITable();
 
     emitLoad(scrutinee, regT1, regT0);
@@ -969,7 +969,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
     jumpTable->ensureCTITable();
 
     emitLoad(scrutinee, regT1, regT0);
@@ -986,7 +986,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset));
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), tableIndex);
@@ -1174,7 +1174,7 @@ void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
 
     Label nextHotPath = label();
     
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, PatchableJump(), badType, mode, profile, done, nextHotPath));
+    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, PatchableJump(), badType, mode, profile, done, nextHotPath));
 }
 
 void JIT::emitSlow_op_has_indexed_property(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

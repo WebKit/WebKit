@@ -43,7 +43,7 @@ bool InByIdStatus::appendVariant(const InByIdVariant& variant)
 }
 
 #if ENABLE(JIT)
-InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
+InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
@@ -64,7 +64,7 @@ InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map
     return result;
 }
 
-InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
+InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid)
 {
     return computeFor(profiledBlock, map, bytecodeIndex, uid, hasBadCacheExitSite(profiledBlock, bytecodeIndex));
 }
@@ -73,7 +73,7 @@ InByIdStatus InByIdStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
     ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     ExitFlag didExit = hasBadCacheExitSite(profiledBlock, bytecodeIndex);
     
     for (ICStatusContext* context : contextStack) {

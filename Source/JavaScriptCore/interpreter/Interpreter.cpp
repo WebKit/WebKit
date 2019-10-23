@@ -410,7 +410,7 @@ public:
                 m_results.append(StackFrame(visitor->wasmFunctionIndexOrName()));
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.append(
-                    StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
+                    StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
             } else {
                 m_results.append(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell()));
@@ -480,7 +480,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
     if (JITCode::isOptimizingJIT(codeBlock->jitType()))
         exceptionHandlerIndex = callFrame->callSiteIndex().bits();
     else
-        exceptionHandlerIndex = callFrame->bytecodeOffset();
+        exceptionHandlerIndex = callFrame->bytecodeIndex().offset();
 
     return codeBlock->handlerForIndex(exceptionHandlerIndex, requiredHandler);
 }

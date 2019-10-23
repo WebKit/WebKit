@@ -1,3 +1,461 @@
+2019-10-22  Keith Miller  <keith_miller@apple.com>
+
+        BytecodeIndex should be a proper C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=203276
+
+        Reviewed by Mark Lam.
+
+        This patch makes a change to how we refer to the bytecode index in
+        a bytecode stream. Previously we just used an unsigned number to
+        represent the index, this patch changes most of the code to use a
+        BytecodeIndex class instead. The only places where this patch does
+        not change this is for jump and switch targets / deltas.
+
+        Additionally, this patch attempts to canonicalize the terminology
+        around how we refer to bytecode indices. Now we use the word index
+        to refer to the bytecode index class and offset to refer to the
+        unsigned byte offset into the instruction stream.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        (JSC::getByValInfoBytecodeIndex):
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::BytecodeBasicBlock::computeImpl):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::GeneratorLivenessAnalysis::run):
+        * bytecode/BytecodeIndex.cpp: Added.
+        (JSC::BytecodeIndex::dump const):
+        * bytecode/BytecodeIndex.h: Added.
+        (JSC::BytecodeIndex::BytecodeIndex):
+        (JSC::BytecodeIndex::offset const):
+        (JSC::BytecodeIndex::asBits const):
+        (JSC::BytecodeIndex::hash const):
+        (JSC::BytecodeIndex::deletedValue):
+        (JSC::BytecodeIndex::isHashTableDeletedValue const):
+        (JSC::BytecodeIndex::operator bool const):
+        (JSC::BytecodeIndex::operator == const):
+        (JSC::BytecodeIndex::operator != const):
+        (JSC::BytecodeIndex::operator < const):
+        (JSC::BytecodeIndex::operator > const):
+        (JSC::BytecodeIndex::operator <= const):
+        (JSC::BytecodeIndex::operator >= const):
+        (JSC::BytecodeIndex::fromBits):
+        (JSC::BytecodeIndexHash::hash):
+        (JSC::BytecodeIndexHash::equal):
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeIndex):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeIndex):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeOffset): Deleted.
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeOffset): Deleted.
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeIndex):
+        (JSC::computeDefsForBytecodeIndex):
+        (JSC::computeUsesForBytecodeOffset): Deleted.
+        (JSC::computeDefsForBytecodeOffset): Deleted.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::addRareCaseProfile):
+        (JSC::CodeBlock::rareCaseProfileForBytecodeIndex):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeIndex):
+        (JSC::CodeBlock::handlerForBytecodeIndex):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        (JSC::CodeBlock::lineNumberForBytecodeIndex):
+        (JSC::CodeBlock::columnNumberForBytecodeIndex):
+        (JSC::CodeBlock::expressionRangeForBytecodeIndex const):
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeIndex):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeIndex):
+        (JSC::CodeBlock::valueProfileForBytecodeIndex):
+        (JSC::CodeBlock::validate):
+        (JSC::CodeBlock::arithProfileForBytecodeIndex):
+        (JSC::CodeBlock::couldTakeSpecialArithFastCase):
+        (JSC::CodeBlock::bytecodeIndexFromCallSiteIndex):
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::handlerForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow): Deleted.
+        (JSC::CodeBlock::lineNumberForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::columnNumberForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset const): Deleted.
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::valueProfileForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::arithProfileForBytecodeOffset): Deleted.
+        (JSC::CodeBlock::couldTakeSpecialFastCase): Deleted.
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::bytecodeIndex):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::approximateHash const):
+        (JSC::CodeOrigin::dump const):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isSet const):
+        (JSC::CodeOrigin::isHashTableDeletedValue const):
+        (JSC::CodeOrigin::bytecodeIndex const):
+        (JSC::CodeOrigin::OutOfLineCodeOrigin::OutOfLineCodeOrigin):
+        (JSC::CodeOrigin::buildCompositeValue):
+        (JSC::CodeOrigin::hash const):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::FrequentExitSite::dump const):
+        (JSC::DFG::ExitProfile::exitSitesFor):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::FrequentExitSite::FrequentExitSite):
+        (JSC::DFG::FrequentExitSite::operator== const):
+        (JSC::DFG::FrequentExitSite::subsumes const):
+        (JSC::DFG::FrequentExitSite::hash const):
+        (JSC::DFG::FrequentExitSite::bytecodeIndex const):
+        (JSC::DFG::FrequentExitSite::isHashTableDeletedValue const):
+        (JSC::DFG::QueryableExitProfile::hasExitSite const):
+        (JSC::DFG::FrequentExitSite::bytecodeOffset const): Deleted.
+        * bytecode/DeferredSourceDump.cpp:
+        (JSC::DeferredSourceDump::DeferredSourceDump):
+        (JSC::DeferredSourceDump::dump):
+        * bytecode/DeferredSourceDump.h:
+        (): Deleted.
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::getLiveness const):
+        (JSC::FullBytecodeLiveness::operandIsLive const):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/ICStatusUtils.cpp:
+        (JSC::hasBadCacheExitSite):
+        * bytecode/ICStatusUtils.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeFor):
+        * bytecode/InByIdStatus.h:
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::computeFor):
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStream::BaseRef::offset const):
+        (JSC::InstructionStream::BaseRef::index const):
+        (JSC::InstructionStream::at const):
+        * bytecode/LazyOperandValueProfile.h:
+        (JSC::LazyOperandValueProfileKey::LazyOperandValueProfileKey):
+        (JSC::LazyOperandValueProfileKey::operator== const):
+        (JSC::LazyOperandValueProfileKey::hash const):
+        (JSC::LazyOperandValueProfileKey::bytecodeIndex const):
+        (JSC::LazyOperandValueProfileKey::isHashTableDeletedValue const):
+        (JSC::LazyOperandValueProfileKey::bytecodeOffset const): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::fromLazyOperand):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeIndex):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeIndex const):
+        (JSC::UnlinkedCodeBlock::handlerForBytecodeIndex):
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset): Deleted.
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset const): Deleted.
+        (JSC::UnlinkedCodeBlock::handlerForBytecodeOffset): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/ValueProfile.h:
+        (JSC::RareCaseProfile::RareCaseProfile):
+        (JSC::getRareCaseProfileBytecodeIndex):
+        (JSC::getRareCaseProfileBytecodeOffset): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ForInContext::finalize):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::currentPosition):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::getBytecodeBeginForBlock):
+        (JSC::DFG::blockForBytecodeIndex):
+        (JSC::DFG::blockForBytecodeOffset): Deleted.
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::insert):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        (JSC::DFG::ByteCodeParser::flushIfTerminal):
+        (JSC::DFG::ByteCodeParser::branchData):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::allocateTargetableBlock):
+        (JSC::DFG::ByteCodeParser::allocateUntargetableBlock):
+        (JSC::DFG::ByteCodeParser::makeBlockTargetable):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleCallVariant):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::addUniqueCallSiteIndex):
+        (JSC::DFG::CommonData::lastCallSite const):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::catchOSREntryDataForBytecodeIndex):
+        (JSC::DFG::CommonData::appendCatchEntrypoint):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        (JSC::DFG::Graph::willCatchExceptionInMachineFrame):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::clearOSREntryBlockAndResetThresholds):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::appendOSREntryData):
+        (JSC::DFG::JITCode::osrEntryDataForBytecodeIndex):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::setStartOfCode):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlockForTryCatch):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::OSREntryData::dumpInContext const):
+        (JSC::DFG::prepareOSREntry):
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::getOSREntryDataBytecodeIndex):
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::printOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::osrEntryBytecodeIndex const):
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        (JSC::DFG::Plan::tierUpAndOSREnterBytecodes):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::buildNaturalLoopToLoopHintMap):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLForOSREntryJITCode.h:
+        (JSC::FTL::ForOSREntryJITCode::setBytecodeIndex):
+        (JSC::FTL::ForOSREntryJITCode::bytecodeIndex const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOSREntry.h:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callSiteIndex const):
+        (JSC::CallFrame::unsafeCallSiteIndex const):
+        (JSC::CallFrame::setCurrentVPC):
+        (JSC::CallFrame::bytecodeIndex):
+        (JSC::CallFrame::codeOrigin):
+        (JSC::CallFrame::dump):
+        (JSC::CallFrame::bytecodeOffset): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::CallSiteIndex::operator bool const):
+        (JSC::CallSiteIndex::operator== const):
+        (JSC::CallSiteIndex::bits const):
+        (JSC::CallSiteIndex::bytecodeIndex const):
+        (JSC::DisposableCallSiteIndex::DisposableCallSiteIndex):
+        (): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator() const):
+        (JSC::findExceptionHandler):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::retrieveExpressionInfo const):
+        (JSC::StackVisitor::Frame::dump const):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::bytecodeIndex const):
+        (JSC::StackVisitor::Frame::bytecodeOffset const): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::SlowCaseEntry::SlowCaseEntry):
+        (JSC::SwitchRecord::SwitchRecord):
+        (JSC::ByValCompilationInfo::ByValCompilationInfo):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCodeMap.h:
+        (JSC::JITCodeMap::Entry::Entry):
+        (JSC::JITCodeMap::Entry::bytecodeIndex const):
+        (JSC::JITCodeMap::append):
+        (JSC::JITCodeMap::find const):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpVectorForInstructions):
+        (JSC::JITDisassembler::reportInstructions):
+        * jit/JITDisassembler.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedTailCall):
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::linkAllSlowCasesForBytecodeIndex):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::linkAllSlowCasesForBytecodeOffset): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_has_indexed_property):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::Plan):
+        (JSC::JITWorklist::Plan::compileNow):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        * jit/JITWorklist.h:
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+        (JSC::PCToCodeOriginMap::findPC const):
+        * jit/PCToCodeOriginMap.h:
+        (JSC::PCToCodeOriginMapBuilder::defaultCodeOrigin):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/ProfilerOrigin.cpp:
+        (JSC::Profiler::Origin::Origin):
+        (JSC::Profiler::Origin::dump const):
+        (JSC::Profiler::Origin::toJS const):
+        * profiler/ProfilerOrigin.h:
+        (JSC::Profiler::Origin::Origin):
+        (JSC::Profiler::Origin::operator! const):
+        (JSC::Profiler::Origin::bytecodeIndex const):
+        (JSC::Profiler::Origin::hash const):
+        (JSC::Profiler::Origin::isHashTableDeletedValue const):
+        * runtime/Error.cpp:
+        (JSC::getBytecodeIndex):
+        (JSC::getBytecodeOffset): Deleted.
+        * runtime/Error.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::tryGetBytecodeIndex):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::CodeLocation::hasBytecodeIndex const):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::StackFrame):
+        (JSC::StackFrame::computeLineAndColumn const):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::hasBytecodeIndex const):
+        (JSC::StackFrame::bytecodeIndex):
+        (JSC::StackFrame::hasBytecodeOffset const): Deleted.
+        (JSC::StackFrame::bytecodeOffset): Deleted.
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+
 2019-10-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, make 32bit JIT built

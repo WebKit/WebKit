@@ -127,7 +127,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
     Label nextHotPath = label();
 
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, notIndex, badType, mode, profile, done, nextHotPath));
+    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, notIndex, badType, mode, profile, done, nextHotPath));
 }
 
 JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, OpGetByVal bytecode, const Identifier& propertyName, Jump& fastDoneCase, Jump& slowDoneCase, JumpList& slowCases)
@@ -142,7 +142,7 @@ JITGetByIdGenerator JIT::emitGetByValWithCachedId(ByValInfo* byValInfo, OpGetByV
     emitByValIdentifierCheck(byValInfo, regT1, regT3, propertyName, slowCases);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         propertyName.impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::Get);
     gen.generateFastPath(*this);
 
@@ -260,7 +260,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     
     Label done = label();
     
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, notIndex, badType, mode, profile, done, done));
+    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, notIndex, badType, mode, profile, done, done));
 }
 
 template<typename Op>
@@ -375,7 +375,7 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Op bytec
     emitGetVirtualRegisters(base, regT0, value, regT1);
 
     JITPutByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(), putKind);
     gen.generateFastPath(*this);
     emitWriteBarrier(base, value, ShouldFilterBase);
@@ -505,7 +505,7 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::TryGet);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -544,7 +544,7 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::GetDirect);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -590,7 +590,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     }
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), AccessType::Get);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -614,7 +614,7 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT1, thisVReg);
 
     JITGetByIdWithThisGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0), JSValueRegs(regT1), AccessType::GetWithThis);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -674,7 +674,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     JITPutByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(),
         direct ? Direct : NotDirect);
     
@@ -714,7 +714,7 @@ void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     JITInByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         ident->impl(), JSValueRegs(regT0), JSValueRegs(regT0));
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());

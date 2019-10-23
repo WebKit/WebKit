@@ -36,7 +36,7 @@ class VM;
 namespace FTL {
 
 void* prepareOSREntry(
-    VM&, CallFrame*, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock, unsigned bytecodeIndex,
+    VM&, CallFrame*, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock, BytecodeIndex,
     unsigned streamIndex);
 
 } } // namespace JSC::FTL

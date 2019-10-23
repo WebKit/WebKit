@@ -46,7 +46,7 @@ typedef Vector<Node*, 8> BlockNodeList;
 
 struct BasicBlock : RefCounted<BasicBlock> {
     BasicBlock(
-        unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals,
+        BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals,
         float executionCount);
     ~BasicBlock();
     
@@ -178,7 +178,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.
-    unsigned bytecodeBegin;
+    BytecodeIndex bytecodeBegin;
     
     BlockIndex index;
 
@@ -259,14 +259,14 @@ private:
 
 typedef Vector<BasicBlock*> BlockList;
     
-static inline unsigned getBytecodeBeginForBlock(BasicBlock** basicBlock)
+static inline BytecodeIndex getBytecodeBeginForBlock(BasicBlock** basicBlock)
 {
     return (*basicBlock)->bytecodeBegin;
 }
 
-static inline BasicBlock* blockForBytecodeOffset(Vector<BasicBlock*>& linkingTargets, unsigned bytecodeBegin)
+static inline BasicBlock* blockForBytecodeIndex(Vector<BasicBlock*>& linkingTargets, BytecodeIndex bytecodeBegin)
 {
-    return *binarySearch<BasicBlock*, unsigned>(linkingTargets, linkingTargets.size(), bytecodeBegin, getBytecodeBeginForBlock);
+    return *binarySearch<BasicBlock*, BytecodeIndex>(linkingTargets, linkingTargets.size(), bytecodeBegin, getBytecodeBeginForBlock);
 }
 
 } } // namespace JSC::DFG

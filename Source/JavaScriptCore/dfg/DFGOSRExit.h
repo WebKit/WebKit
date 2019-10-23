@@ -176,7 +176,7 @@ struct SpeculationFailureDebugInfo {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeBlock* codeBlock;
     ExitKind kind;
-    unsigned bytecodeOffset;
+    BytecodeIndex bytecodeIndex;
 };
 
 } } // namespace JSC::DFG

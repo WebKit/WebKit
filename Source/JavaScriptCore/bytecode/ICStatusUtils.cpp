@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
+ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex)
 {
 #if ENABLE(DFG_JIT)
     UnlinkedCodeBlock* unlinkedCodeBlock = profiledBlock->unlinkedCodeBlock();

@@ -37,15 +37,15 @@ class FullBytecodeLiveness;
 
 class BytecodeLivenessPropagation {
 protected:
-    template<typename CodeBlockType, typename UseFunctor, typename DefFunctor> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, InstructionStream::Offset bytecodeOffset, const UseFunctor&, const DefFunctor&);
+    template<typename CodeBlockType, typename UseFunctor, typename DefFunctor> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&, const DefFunctor&);
 
-    template<typename CodeBlockType> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, InstructionStream::Offset bytecodeOffset, FastBitVector& out);
+    template<typename CodeBlockType> void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, FastBitVector& out);
 
-    template<typename CodeBlockType, typename Instructions> bool computeLocalLivenessForBytecodeOffset(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*, unsigned targetOffset, FastBitVector& result);
+    template<typename CodeBlockType, typename Instructions> bool computeLocalLivenessForBytecodeIndex(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*, BytecodeIndex, FastBitVector& result);
 
     template<typename CodeBlockType, typename Instructions> bool computeLocalLivenessForBlock(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock*);
 
-    template<typename CodeBlockType, typename Instructions> FastBitVector getLivenessInfoAtBytecodeOffset(CodeBlockType*, const Instructions&, BytecodeGraph&, unsigned bytecodeOffset);
+    template<typename CodeBlockType, typename Instructions> FastBitVector getLivenessInfoAtBytecodeIndex(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeIndex);
 
     template<typename CodeBlockType, typename Instructions> void runLivenessFixpoint(CodeBlockType*, const Instructions&, BytecodeGraph&);
 };
@@ -57,7 +57,7 @@ public:
     friend class BytecodeLivenessPropagation;
     BytecodeLivenessAnalysis(CodeBlock*);
     
-    FastBitVector getLivenessInfoAtBytecodeOffset(CodeBlock*, unsigned bytecodeOffset);
+    FastBitVector getLivenessInfoAtBytecodeIndex(CodeBlock*, BytecodeIndex);
     
     void computeFullLiveness(CodeBlock*, FullBytecodeLiveness& result);
     void computeKills(CodeBlock*, BytecodeKills& result);
@@ -65,7 +65,7 @@ public:
 private:
     void dumpResults(CodeBlock*);
 
-    void getLivenessInfoAtBytecodeOffset(CodeBlock*, unsigned bytecodeOffset, FastBitVector&);
+    void getLivenessInfoAtBytecodeIndex(CodeBlock*, BytecodeIndex, FastBitVector&);
 
     BytecodeGraph m_graph;
 };

@@ -45,22 +45,19 @@ namespace JSC  {
     public:
         CallSiteIndex() = default;
         
-        explicit CallSiteIndex(uint32_t bits)
-            : m_bits(bits)
+        explicit CallSiteIndex(BytecodeIndex bytecodeIndex)
+            : m_bytecodeIndex(bytecodeIndex)
         { }
-#if USE(JSVALUE32_64)
-        explicit CallSiteIndex(const Instruction* instruction)
-            : m_bits(bitwise_cast<uint32_t>(instruction))
-        { }
-#endif
 
-        explicit operator bool() const { return m_bits != UINT_MAX; }
-        bool operator==(const CallSiteIndex& other) const { return m_bits == other.m_bits; }
-        
-        inline uint32_t bits() const { return m_bits; }
+        explicit operator bool() const { return !!m_bytecodeIndex; }
+        bool operator==(const CallSiteIndex& other) const { return m_bytecodeIndex == other.m_bytecodeIndex; }
+
+        uint32_t bits() const { return m_bytecodeIndex.asBits(); }
+
+        BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
 
     private:
-        uint32_t m_bits { UINT_MAX };
+        BytecodeIndex m_bytecodeIndex;
     };
 
     class DisposableCallSiteIndex : public CallSiteIndex {
@@ -68,7 +65,7 @@ namespace JSC  {
         DisposableCallSiteIndex() = default;
 
         explicit DisposableCallSiteIndex(uint32_t bits)
-            : CallSiteIndex(bits)
+            : CallSiteIndex(BytecodeIndex::fromBits(bits))
         {
         }
 
@@ -179,10 +176,10 @@ namespace JSC  {
         // also return 0 if the call frame has no notion of bytecode offsets (for
         // example if it's native code).
         // https://bugs.webkit.org/show_bug.cgi?id=121754
-        unsigned bytecodeOffset();
+        BytecodeIndex bytecodeIndex();
         
         // This will get you a CodeOrigin. It will always succeed. May return
-        // CodeOrigin(0) if we're in native code.
+        // CodeOrigin(BytecodeIndex(0)) if we're in native code.
         JS_EXPORT_PRIVATE CodeOrigin codeOrigin();
 
         Register* topOfFrame()

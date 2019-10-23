@@ -118,7 +118,7 @@ Vector<JITDisassembler::DumpedOp> JITDisassembler::dumpVectorForInstructions(Lin
         }
         out.reset();
         result.append(DumpedOp());
-        result.last().index = i;
+        result.last().bytecodeIndex = BytecodeIndex(i);
         out.print(prefix);
         m_codeBlock->dumpBytecode(out, i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
@@ -154,7 +154,7 @@ void JITDisassembler::reportInstructions(Profiler::Compilation* compilation, Lin
     for (unsigned i = 0; i < dumpedOps.size(); ++i) {
         compilation->addDescription(
             Profiler::CompiledBytecode(
-                Profiler::OriginStack(Profiler::Origin(compilation->bytecodes(), dumpedOps[i].index)),
+                Profiler::OriginStack(Profiler::Origin(compilation->bytecodes(), dumpedOps[i].bytecodeIndex)),
                 dumpedOps[i].disassembly));
     }
 }

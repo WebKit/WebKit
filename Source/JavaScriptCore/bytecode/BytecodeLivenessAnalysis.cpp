@@ -46,20 +46,20 @@ BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
         dumpResults(codeBlock);
 }
 
-void BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, FastBitVector& result)
+void BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeIndex(CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, FastBitVector& result)
 {
-    BytecodeBasicBlock* block = m_graph.findBasicBlockForBytecodeOffset(bytecodeOffset);
+    BytecodeBasicBlock* block = m_graph.findBasicBlockForBytecodeOffset(bytecodeIndex.offset());
     ASSERT(block);
     ASSERT(!block->isEntryBlock());
     ASSERT(!block->isExitBlock());
     result.resize(block->out().numBits());
-    computeLocalLivenessForBytecodeOffset(codeBlock, codeBlock->instructions(), m_graph, block, bytecodeOffset, result);
+    computeLocalLivenessForBytecodeIndex(codeBlock, codeBlock->instructions(), m_graph, block, bytecodeIndex, result);
 }
 
-FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset)
+FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeIndex(CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
 {
     FastBitVector out;
-    getLivenessInfoAtBytecodeOffset(codeBlock, bytecodeOffset, out);
+    getLivenessInfoAtBytecodeIndex(codeBlock, bytecodeIndex, out);
     return out;
 }
 
@@ -77,7 +77,7 @@ void BytecodeLivenessAnalysis::computeFullLiveness(CodeBlock* codeBlock, FullByt
         
         for (unsigned i = block->offsets().size(); i--;) {
             unsigned bytecodeOffset = block->offsets()[i];
-            stepOverInstruction(codeBlock, codeBlock->instructions(), m_graph, bytecodeOffset, out);
+            stepOverInstruction(codeBlock, codeBlock->instructions(), m_graph, BytecodeIndex(bytecodeOffset), out);
             result.m_map[bytecodeOffset] = out;
         }
     }
@@ -100,7 +100,7 @@ void BytecodeLivenessAnalysis::computeKills(CodeBlock* codeBlock, BytecodeKills&
         for (unsigned i = block->offsets().size(); i--;) {
             unsigned bytecodeOffset = block->offsets()[i];
             stepOverInstruction(
-                codeBlock, codeBlock->instructions(), m_graph, bytecodeOffset,
+                codeBlock, codeBlock->instructions(), m_graph, BytecodeIndex(bytecodeOffset),
                 [&] (unsigned index) {
                     // This is for uses.
                     if (out[index])
@@ -170,7 +170,7 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
             const auto currentInstruction = instructions.at(bytecodeOffset);
 
             dataLogF("Live variables:");
-            FastBitVector liveBefore = getLivenessInfoAtBytecodeOffset(codeBlock, bytecodeOffset);
+            FastBitVector liveBefore = getLivenessInfoAtBytecodeIndex(codeBlock, BytecodeIndex(bytecodeOffset));
             dumpBitVector(liveBefore);
             dataLogF("\n");
             codeBlock->dumpBytecode(WTF::dataFile(), currentInstruction);

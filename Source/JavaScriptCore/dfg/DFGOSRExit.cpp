@@ -405,7 +405,7 @@ void OSRExit::executeOSRExit(Context& context)
         bool exitToLLInt = Options::forceOSRExitToLLInt() || codeBlockForExit->jitType() == JITType::InterpreterThunk;
         void* jumpTarget;
         if (exitToLLInt) {
-            unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
+            BytecodeIndex bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
             const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeOffset).ptr();
             MacroAssemblerCodePtr<JSEntryPtrTag> destination = LLInt::getCodePtr<JSEntryPtrTag>(currentInstruction);
             jumpTarget = destination.executableAddress();    
@@ -786,7 +786,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
             callerFrame = frame.get<void*>(CallFrame::callerFrameOffset());
         } else {
             CodeBlock* baselineCodeBlockForCaller = baselineCodeBlockForOriginAndBaselineCodeBlock(*trueCaller, outermostBaselineCodeBlock);
-            unsigned callBytecodeIndex = trueCaller->bytecodeIndex();
+            BytecodeIndex callBytecodeIndex = trueCaller->bytecodeIndex();
             void* jumpTarget = callerReturnPC(baselineCodeBlockForCaller, callBytecodeIndex, trueCallerCallKind, callerIsLLInt);
 
             if (trueCaller->inlineCallFrame())
@@ -881,13 +881,13 @@ static void adjustAndJumpToTarget(Context& context, VM& vm, CodeBlock* codeBlock
 
     if (exitState->isJumpToLLInt) {
         CodeBlock* codeBlockForExit = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOrigin, baselineCodeBlock);
-        unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
-        const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeOffset).ptr();
+        BytecodeIndex bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
+        const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeIndex).ptr();
 
         context.gpr(LLInt::Registers::metadataTableGPR) = bitwise_cast<uintptr_t>(codeBlockForExit->metadataTable());
 #if USE(JSVALUE64)
         context.gpr(LLInt::Registers::pbGPR) = bitwise_cast<uintptr_t>(codeBlockForExit->instructionsRawPointer());
-        context.gpr(LLInt::Registers::pcGPR) = static_cast<uintptr_t>(exit.m_codeOrigin.bytecodeIndex());
+        context.gpr(LLInt::Registers::pcGPR) = static_cast<uintptr_t>(exit.m_codeOrigin.bytecodeIndex().offset());
 #else
         context.gpr(LLInt::Registers::pcGPR) = bitwise_cast<uintptr_t>(&currentInstruction);
 #endif
@@ -905,10 +905,10 @@ static void printOSRExit(Context& context, uint32_t osrExitIndex, const OSRExit&
     CodeBlock* codeBlock = callFrame->codeBlock();
     CodeBlock* alternative = codeBlock->alternative();
     ExitKind kind = exit.m_kind;
-    unsigned bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
 
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", osrExitIndex, " (bc#", bytecodeOffset, ", ", exitKindToString(kind), ") with ");
+    dataLog(" @ exit #", osrExitIndex, " (", bytecodeOffset, ", ", exitKindToString(kind), ") with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),
@@ -1113,7 +1113,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;
-        debugInfo->bytecodeOffset = exit.m_codeOrigin.bytecodeIndex();
+        debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
 
         jit.debugCall(vm, debugOperationPrintSpeculationFailure, debugInfo);
     }
@@ -1670,7 +1670,7 @@ void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(CallFrame* cal
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
     dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", vm.osrExitIndex, " (bc#", debugInfo->bytecodeOffset, ", ", exitKindToString(debugInfo->kind), ") with ");
+    dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
     if (alternative) {
         dataLog(
             "executeCounter = ", alternative->jitExecuteCounter(),

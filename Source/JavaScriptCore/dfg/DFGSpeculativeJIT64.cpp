@@ -5079,13 +5079,13 @@ void SpeculativeJIT::compile(Node* node)
 
         Vector<SilentRegisterSavePlan> savePlans;
         silentSpillAllRegistersImpl(false, savePlans, InvalidGPRReg);
-        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+        BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
 
         addSlowPathGeneratorLambda([=]() {
             callTierUp.link(&m_jit);
 
             silentSpill(savePlans);
-            callOperation(triggerTierUpNowInLoop, &vm(), TrustedImm32(bytecodeIndex));
+            callOperation(triggerTierUpNowInLoop, &vm(), TrustedImm32(bytecodeIndex.asBits()));
             silentFill(savePlans);
 
             m_jit.jump().linkTo(toNextOperation, &m_jit);
@@ -5113,7 +5113,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
 
-        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+        BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
         DFG_ASSERT(m_jit.graph(), node, triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
         JITCode::TriggerReason* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);
@@ -5138,7 +5138,7 @@ void SpeculativeJIT::compile(Node* node)
             overflowedCounter.link(&m_jit);
 
             silentSpill(savePlans);
-            callOperation(triggerOSREntryNow, tempGPR, &vm(), TrustedImm32(bytecodeIndex));
+            callOperation(triggerOSREntryNow, tempGPR, &vm(), TrustedImm32(bytecodeIndex.asBits()));
 
             if (savePlans.isEmpty())
                 m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR).linkTo(toNextOperation, &m_jit);

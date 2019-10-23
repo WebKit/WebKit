@@ -94,14 +94,14 @@ public:
     void installVMTrapBreakpoints(CodeBlock* owner);
     bool isVMTrapBreakpoint(void* address);
 
-    CatchEntrypointData* catchOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
+    CatchEntrypointData* catchOSREntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)
     {
-        return tryBinarySearch<CatchEntrypointData, unsigned>(
+        return tryBinarySearch<CatchEntrypointData, BytecodeIndex>(
             catchEntrypoints, catchEntrypoints.size(), bytecodeIndex,
             [] (const CatchEntrypointData* item) { return item->bytecodeIndex; });
     }
 
-    void appendCatchEntrypoint(unsigned bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
+    void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
     {
         catchEntrypoints.append(CatchEntrypointData { machineCode,  WTFMove(argumentFormats), bytecodeIndex });
     }

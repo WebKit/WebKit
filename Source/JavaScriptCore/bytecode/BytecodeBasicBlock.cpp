@@ -127,7 +127,7 @@ void BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
             // block because the finally block will create its own catch, which will generate a HandlerInfo.
             if (isThrow(opcodeID)) {
                 ASSERT(bytecodeOffset + instruction->size() == block->leaderOffset() + block->totalLength());
-                auto* handler = codeBlock->handlerForBytecodeOffset(instruction.offset());
+                auto* handler = codeBlock->handlerForBytecodeIndex(BytecodeIndex(instruction.offset()));
                 fallsThrough = false;
                 if (!handler) {
                     linkBlocks(block, exit.get());

@@ -148,10 +148,10 @@ private:
     // This is used most notably when doing polyvariant inlining (it requires a fair bit of control-flow with no bytecode analog).
     // It is also used when doing an early return from an inlined callee: it is easier to fix the bytecode index later on if needed
     // than to move the right index all the way to the treatment of op_ret.
-    BasicBlock* allocateTargetableBlock(unsigned bytecodeIndex);
+    BasicBlock* allocateTargetableBlock(BytecodeIndex);
     BasicBlock* allocateUntargetableBlock();
     // An untargetable block can be given a bytecodeIndex to be later managed by linkBlock, but only once, and it can never go in the other direction
-    void makeBlockTargetable(BasicBlock*, unsigned bytecodeIndex);
+    void makeBlockTargetable(BasicBlock*, BytecodeIndex);
     void addJumpTo(BasicBlock*);
     void addJumpTo(unsigned bytecodeIndex);
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
@@ -174,8 +174,8 @@ private:
     bool handleVarargsInlining(Node* callTargetNode, VirtualRegister result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
     unsigned getInliningBalance(const CallLinkStatus&, CodeSpecializationKind);
     enum class CallOptimizationResult { OptimizedToJump, Inlined, DidNothing };
-    CallOptimizationResult handleCallVariant(Node* callTargetNode, VirtualRegister result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
-    CallOptimizationResult handleInlining(Node* callTargetNode, VirtualRegister result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
+    CallOptimizationResult handleCallVariant(Node* callTargetNode, VirtualRegister result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
+    CallOptimizationResult handleInlining(Node* callTargetNode, VirtualRegister result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
     template<typename ChecksFunctor>
     void inlineCall(Node* callTargetNode, VirtualRegister result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -567,7 +567,7 @@ private:
     {
         origin.walkUpInlineStack(
             [&] (CodeOrigin origin) {
-                unsigned bytecodeIndex = origin.bytecodeIndex();
+                BytecodeIndex bytecodeIndex = origin.bytecodeIndex();
                 InlineCallFrame* inlineCallFrame = origin.inlineCallFrame();
                 flushImpl(inlineCallFrame, addFlushDirect);
 
@@ -642,11 +642,11 @@ private:
     
     void flushIfTerminal(SwitchData& data)
     {
-        if (data.fallThrough.bytecodeIndex() > m_currentIndex)
+        if (data.fallThrough.bytecodeIndex() > m_currentIndex.offset())
             return;
         
         for (unsigned i = data.cases.size(); i--;) {
-            if (data.cases[i].target.bytecodeIndex() > m_currentIndex)
+            if (data.cases[i].target.bytecodeIndex() > m_currentIndex.offset())
                 return;
         }
         
@@ -709,7 +709,7 @@ private:
     {
         // We assume that branches originating from bytecode always have a fall-through. We
         // use this assumption to avoid checking for the creation of terminal blocks.
-        ASSERT((taken > m_currentIndex) || (notTaken > m_currentIndex));
+        ASSERT((taken > m_currentIndex.offset()) || (notTaken > m_currentIndex.offset()));
         BranchData* data = m_graph.m_branchData.add();
         *data = BranchData::withBytecodeIndices(taken, notTaken);
         return data;
@@ -834,14 +834,14 @@ private:
         return objectNode;
     }
     
-    SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
+    SpeculatedType getPredictionWithoutOSRExit(BytecodeIndex bytecodeIndex)
     {
         auto getValueProfilePredictionFromForCodeBlockAndBytecodeOffset = [&] (CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
         {
             SpeculatedType prediction;
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                prediction = codeBlock->valueProfilePredictionForBytecodeOffset(locker, codeOrigin.bytecodeIndex());
+                prediction = codeBlock->valueProfilePredictionForBytecodeIndex(locker, codeOrigin.bytecodeIndex());
             }
             auto* fuzzerAgent = m_vm->fuzzerAgent();
             if (UNLIKELY(fuzzerAgent))
@@ -860,7 +860,7 @@ private:
         // chain and use its prediction. If we only have
         // inlined tail call frames, we use SpecFullTop
         // to avoid a spurious OSR exit.
-        auto instruction = m_inlineStackTop->m_profiledBlock->instructions().at(bytecodeIndex);
+        auto instruction = m_inlineStackTop->m_profiledBlock->instructions().at(bytecodeIndex.offset());
         OpcodeID opcodeID = instruction->opcodeID();
 
         switch (opcodeID) {
@@ -894,7 +894,7 @@ private:
         return SpecNone;
     }
 
-    SpeculatedType getPrediction(unsigned bytecodeIndex)
+    SpeculatedType getPrediction(BytecodeIndex bytecodeIndex)
     {
         SpeculatedType prediction = getPredictionWithoutOSRExit(bytecodeIndex);
 
@@ -920,7 +920,7 @@ private:
     ArrayMode getArrayMode(Array::Action action)
     {
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
-        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeOffset(m_currentInstruction));
+        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeIndex(m_currentInstruction));
         return getArrayMode(*profile, action);
     }
 
@@ -943,7 +943,7 @@ private:
             return node;
 
         {
-            ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeOffset(m_currentIndex);
+            ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeIndex(m_currentIndex);
             if (arithProfile) {
                 switch (node->op()) {
                 case ArithAdd:
@@ -956,7 +956,7 @@ private:
                     if (arithProfile->didObserveBigInt())
                         node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
-                
+
                 case ValueMul:
                 case ArithMul: {
                     if (arithProfile->didObserveInt52Overflow())
@@ -987,7 +987,7 @@ private:
                         node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
                 }
-                
+
                 default:
                     break;
                 }
@@ -1028,13 +1028,13 @@ private:
         // care about when the outcome of the division is not an integer, which
         // is what the special fast case counter tells us.
         
-        if (!m_inlineStackTop->m_profiledBlock->couldTakeSpecialFastCase(m_currentIndex))
+        if (!m_inlineStackTop->m_profiledBlock->couldTakeSpecialArithFastCase(m_currentIndex))
             return node;
         
         // FIXME: It might be possible to make this more granular.
         node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
         
-        ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeOffset(m_currentIndex);
+        ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeIndex(m_currentIndex);
         if (arithProfile->didObserveBigInt())
             node->mergeFlags(NodeMayHaveBigIntResult);
 
@@ -1061,7 +1061,7 @@ private:
     // The current block being generated.
     BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
-    unsigned m_currentIndex;
+    BytecodeIndex m_currentIndex;
     // The semantic origin of the current node if different from the current Index.
     CodeOrigin m_currentSemanticOrigin;
     // True if it's OK to OSR exit right now.
@@ -1191,14 +1191,14 @@ private:
     bool m_hasAnyForceOSRExits { false };
 };
 
-BasicBlock* ByteCodeParser::allocateTargetableBlock(unsigned bytecodeIndex)
+BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
-    ASSERT(bytecodeIndex != UINT_MAX);
+    ASSERT(bytecodeIndex);
     Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, 1));
     BasicBlock* blockPtr = block.ptr();
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
-        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin < bytecodeIndex);
+        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin.offset() < bytecodeIndex.offset());
     m_inlineStackTop->m_blockLinkingTargets.append(blockPtr);
     m_graph.appendBlock(WTFMove(block));
     return blockPtr;
@@ -1206,19 +1206,19 @@ BasicBlock* ByteCodeParser::allocateTargetableBlock(unsigned bytecodeIndex)
 
 BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 {
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, 1));
+    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_numArguments, m_numLocals, 1));
     BasicBlock* blockPtr = block.ptr();
     m_graph.appendBlock(WTFMove(block));
     return blockPtr;
 }
 
-void ByteCodeParser::makeBlockTargetable(BasicBlock* block, unsigned bytecodeIndex)
+void ByteCodeParser::makeBlockTargetable(BasicBlock* block, BytecodeIndex bytecodeIndex)
 {
-    RELEASE_ASSERT(block->bytecodeBegin == UINT_MAX);
+    RELEASE_ASSERT(!block->bytecodeBegin);
     block->bytecodeBegin = bytecodeIndex;
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
-        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin < bytecodeIndex);
+        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin.offset() < bytecodeIndex.offset());
     m_inlineStackTop->m_blockLinkingTargets.append(block);
 }
 
@@ -1278,7 +1278,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
 
         VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
         auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
-            argumentCountIncludingThis, m_currentIndex + instructionSize, op, kind, prediction);
+            argumentCountIncludingThis, BytecodeIndex(m_currentIndex.offset() + instructionSize), op, kind, prediction);
         if (optimizationResult == CallOptimizationResult::OptimizedToJump)
             return Terminal;
         if (optimizationResult == CallOptimizationResult::Inlined) {
@@ -1457,17 +1457,17 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
             setDirect(stackEntry->remapOperand(virtualRegisterForLocal(i)), undefined, NormalSet);
 
         // We want to emit the SetLocals with an exit origin that points to the place we are jumping to.
-        unsigned oldIndex = m_currentIndex;
+        BytecodeIndex oldIndex = m_currentIndex;
         auto oldStackTop = m_inlineStackTop;
         m_inlineStackTop = stackEntry;
-        m_currentIndex = opcodeLengths[op_enter];
+        m_currentIndex = BytecodeIndex(opcodeLengths[op_enter]);
         m_exitOK = true;
         processSetLocalQueue();
         m_currentIndex = oldIndex;
         m_inlineStackTop = oldStackTop;
         m_exitOK = false;
 
-        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, unsigned>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), opcodeLengths[op_enter], getBytecodeBeginForBlock);
+        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, BytecodeIndex>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), BytecodeIndex(opcodeLengths[op_enter]), getBytecodeBeginForBlock);
         RELEASE_ASSERT(entryBlockPtr);
         addJumpTo(*entryBlockPtr);
         return true;
@@ -1625,8 +1625,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind, continuationBlock);
 
     // This is where the actual inlining really happens.
-    unsigned oldIndex = m_currentIndex;
-    m_currentIndex = 0;
+    BytecodeIndex oldIndex = m_currentIndex;
+    m_currentIndex = BytecodeIndex(0);
 
     switch (kind) {
     case InlineCallFrame::GetterCall:
@@ -1761,7 +1761,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, VirtualRegister result, Ca
     m_currentInstruction = savedCurrentInstruction;
 }
 
-ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* callTargetNode, VirtualRegister result, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee)
+ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* callTargetNode, VirtualRegister result, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex nextIndex, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee)
 {
     VERBOSE_LOG("    Considering callee ", callee, "\n");
 
@@ -1789,7 +1789,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
         emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
         inliningBalance--;
         if (continuationBlock) {
-            m_currentIndex = nextOffset;
+            m_currentIndex = nextIndex;
             m_exitOK = true;
             processSetLocalQueue();
             addJumpTo(continuationBlock);
@@ -1972,7 +1972,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     Node* callTargetNode, VirtualRegister result, const CallLinkStatus& callLinkStatus,
     int registerOffset, VirtualRegister thisArgument,
     int argumentCountIncludingThis,
-    unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
+    BytecodeIndex nextIndex, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
 {
     VERBOSE_LOG("Handling inlining...\nStack: ", currentCodeOrigin(), "\n");
     
@@ -1985,7 +1985,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     if (!callLinkStatus.couldTakeSlowPath() && callLinkStatus.size() == 1) {
         return handleCallVariant(
             callTargetNode, result, callLinkStatus[0], registerOffset, thisArgument,
-            argumentCountIncludingThis, nextOffset, kind, prediction, inliningBalance, nullptr, true);
+            argumentCountIncludingThis, nextIndex, kind, prediction, inliningBalance, nullptr, true);
     }
 
     // We need to create some kind of switch over callee. For now we only do this if we believe that
@@ -2061,9 +2061,9 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
     
     VERBOSE_LOG("About to loop over functions at ", currentCodeOrigin(), ".\n");
 
-    unsigned oldOffset = m_currentIndex;
+    BytecodeIndex oldIndex = m_currentIndex;
     for (unsigned i = 0; i < callLinkStatus.size(); ++i) {
-        m_currentIndex = oldOffset;
+        m_currentIndex = oldIndex;
         BasicBlock* calleeEntryBlock = allocateUntargetableBlock();
         m_currentBlock = calleeEntryBlock;
         prepareToParseBlock();
@@ -2075,7 +2075,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         
         auto inliningResult = handleCallVariant(
             myCallTargetNode, result, callLinkStatus[i], registerOffset,
-            thisArgument, argumentCountIncludingThis, nextOffset, kind, prediction,
+            thisArgument, argumentCountIncludingThis, nextIndex, kind, prediction,
             inliningBalance, continuationBlock, false);
         
         if (inliningResult == CallOptimizationResult::DidNothing) {
@@ -2104,7 +2104,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
 
     // Slow path block
     m_currentBlock = allocateUntargetableBlock();
-    m_currentIndex = oldOffset;
+    m_currentIndex = oldIndex;
     m_exitOK = true;
     data.fallThrough = BranchTarget(m_currentBlock);
     prepareToParseBlock();
@@ -2124,7 +2124,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         VERBOSE_LOG("couldTakeSlowPath was false\n");
     }
 
-    m_currentIndex = nextOffset;
+    m_currentIndex = nextIndex;
     m_exitOK = true; // Origin changed, so it's fine to exit again.
     processSetLocalQueue();
 
@@ -2136,7 +2136,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
 
     prepareToParseBlock();
     
-    m_currentIndex = oldOffset;
+    m_currentIndex = oldIndex;
     m_currentBlock = continuationBlock;
     m_exitOK = true;
     
@@ -4693,14 +4693,14 @@ static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutI
 // Doesn't allow using `continue`.
 #define NEXT_OPCODE(name) \
     if (true) { \
-        m_currentIndex += currentInstruction->size(); \
+        m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size()); \
         goto WTF_CONCAT(NEXT_OPCODE_, __LINE__); /* Need a unique label: usable more than once per function. */ \
     } else \
         WTF_CONCAT(NEXT_OPCODE_, __LINE__): \
     continue
 
 #define LAST_OPCODE_LINKED(name) do { \
-        m_currentIndex += currentInstruction->size(); \
+        m_currentIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size()); \
         m_exitOK = false; \
         return; \
     } while (false)
@@ -4724,7 +4724,7 @@ static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutI
 void ByteCodeParser::parseBlock(unsigned limit)
 {
     auto& instructions = m_inlineStackTop->m_codeBlock->instructions();
-    unsigned blockBegin = m_currentIndex;
+    BytecodeIndex blockBegin = m_currentIndex;
 
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
@@ -4768,7 +4768,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         processSetLocalQueue();
         
         // Don't extend over jump destinations.
-        if (m_currentIndex == limit) {
+        if (m_currentIndex.offset() == limit) {
             // Ordinarily we want to plant a jump. But refuse to do this if the block is
             // empty. This is a special case for inlining, which might otherwise create
             // some empty blocks in some cases. When parseBlock() returns with an empty
@@ -4778,7 +4778,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // to be true.
 
             if (!m_currentBlock->isEmpty())
-                addJumpTo(m_currentIndex);
+                addJumpTo(m_currentIndex.offset());
             return;
         }
         
@@ -5803,7 +5803,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             ASSERT(!m_currentBlock->terminal());
             auto bytecode = currentInstruction->as<OpJmp>();
             int relativeOffset = jumpTarget(bytecode.m_targetLabel);
-            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
+            addToGraph(Jump, OpInfo(m_currentIndex.offset() + relativeOffset));
             if (relativeOffset <= 0)
                 flushForTerminal();
             LAST_OPCODE(op_jmp);
@@ -5813,7 +5813,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpJtrue>();
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* condition = get(bytecode.m_condition);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jtrue);
         }
 
@@ -5821,7 +5821,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpJfalse>();
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* condition = get(bytecode.m_condition);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jfalse);
         }
 
@@ -5831,7 +5831,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jeq_null);
         }
 
@@ -5841,7 +5841,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_value);
             Node* nullConstant = addToGraph(JSConstant, OpInfo(m_constantNull));
             Node* condition = addToGraph(CompareEq, value, nullConstant);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jneq_null);
         }
 
@@ -5850,7 +5850,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* value = get(bytecode.m_value);
             Node* condition = addToGraph(IsUndefinedOrNull, value);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jundefined_or_null);
         }
 
@@ -5859,7 +5859,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* value = get(bytecode.m_value);
             Node* condition = addToGraph(IsUndefinedOrNull, value);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jnundefined_or_null);
         }
 
@@ -5869,7 +5869,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jless);
         }
 
@@ -5879,7 +5879,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jlesseq);
         }
 
@@ -5889,7 +5889,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jgreater);
         }
 
@@ -5899,7 +5899,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jgreatereq);
         }
 
@@ -5909,7 +5909,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jeq);
         }
 
@@ -5919,7 +5919,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jstricteq);
         }
 
@@ -5929,7 +5929,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jnless);
         }
 
@@ -5939,7 +5939,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jnlesseq);
         }
 
@@ -5949,7 +5949,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreater, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jngreater);
         }
 
@@ -5959,7 +5959,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jngreatereq);
         }
 
@@ -5969,7 +5969,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jneq);
         }
 
@@ -5979,7 +5979,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareStrictEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
             LAST_OPCODE(op_jnstricteq);
         }
 
@@ -5989,7 +5989,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelow, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jbelow);
         }
 
@@ -5999,7 +5999,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             Node* condition = addToGraph(CompareBelowEq, op1, op2);
-            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + currentInstruction->size())), condition);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
             LAST_OPCODE(op_jbeloweq);
         }
 
@@ -6008,12 +6008,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
@@ -6028,12 +6028,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
@@ -6049,12 +6049,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
             data.switchTableIndex = bytecode.m_tableIndex;
-            data.fallThrough.setBytecodeIndex(m_currentIndex + jumpTarget(bytecode.m_defaultOffset));
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
             StringJumpTable::StringOffsetTable::iterator iter;
             StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
             for (iter = table.offsetTable.begin(); iter != end; ++iter) {
-                unsigned target = m_currentIndex + iter->value.branchOffset;
+                unsigned target = m_currentIndex.offset() + iter->value.branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
@@ -6079,7 +6079,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (m_inlineStackTop->m_returnValue.isValid())
                 setDirect(m_inlineStackTop->m_returnValue, get(bytecode.m_value), ImmediateSetWithFlush);
 
-            if (!m_inlineStackTop->m_continuationBlock && m_currentIndex + currentInstruction->size() != m_inlineStackTop->m_codeBlock->instructions().size()) {
+            if (!m_inlineStackTop->m_continuationBlock && m_currentIndex.offset() + currentInstruction->size() != m_inlineStackTop->m_codeBlock->instructions().size()) {
                 // This is an early return from an inlined function and we do not have a continuation block, so we must allocate one.
                 // It is untargetable, because we do not know the appropriate index.
                 // If this block turns out to be a jump target, parseCodeBlock will fix its bytecodeIndex before putting it in m_blockLinkingTargets
@@ -6207,7 +6207,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 ArgumentsVector& entrypointArguments = addResult.iterator->value;
                 entrypointArguments.resize(m_numArguments);
 
-                unsigned exitBytecodeIndex = m_currentIndex + currentInstruction->size();
+                BytecodeIndex exitBytecodeIndex = BytecodeIndex(m_currentIndex.offset() + currentInstruction->size());
 
                 for (unsigned argument = 0; argument < argumentPredictions.size(); ++argument) {
                     VariableAccessData* variable = newVariableAccessData(virtualRegisterForArgument(argument));
@@ -6316,7 +6316,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* child = get(bytecode.m_value);
             if (bytecode.metadata(codeBlock).m_hasJumped) {
                 Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);
-                addToGraph(Branch, OpInfo(branchData(m_currentIndex + currentInstruction->size(), m_currentIndex + relativeOffset)), condition);
+                addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + currentInstruction->size(), m_currentIndex.offset() + relativeOffset)), condition);
                 LAST_OPCODE(op_jneq_ptr);
             }
             addToGraph(CheckCell, OpInfo(frozenPointer), child);
@@ -7135,21 +7135,21 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleT
     
     switch (node->op()) {
     case Jump:
-        node->targetBlock() = blockForBytecodeOffset(possibleTargets, node->targetBytecodeOffsetDuringParsing());
+        node->targetBlock() = blockForBytecodeIndex(possibleTargets, BytecodeIndex(node->targetBytecodeOffsetDuringParsing()));
         break;
         
     case Branch: {
         BranchData* data = node->branchData();
-        data->taken.block = blockForBytecodeOffset(possibleTargets, data->takenBytecodeIndex());
-        data->notTaken.block = blockForBytecodeOffset(possibleTargets, data->notTakenBytecodeIndex());
+        data->taken.block = blockForBytecodeIndex(possibleTargets, BytecodeIndex(data->takenBytecodeIndex()));
+        data->notTaken.block = blockForBytecodeIndex(possibleTargets, BytecodeIndex(data->notTakenBytecodeIndex()));
         break;
     }
         
     case Switch: {
         SwitchData* data = node->switchData();
         for (unsigned i = node->switchData()->cases.size(); i--;)
-            data->cases[i].target.block = blockForBytecodeOffset(possibleTargets, data->cases[i].target.bytecodeIndex());
-        data->fallThrough.block = blockForBytecodeOffset(possibleTargets, data->fallThrough.bytecodeIndex());
+            data->cases[i].target.block = blockForBytecodeIndex(possibleTargets, BytecodeIndex(data->cases[i].target.bytecodeIndex()));
+        data->fallThrough.block = blockForBytecodeIndex(possibleTargets, BytecodeIndex(data->fallThrough.bytecodeIndex()));
         break;
     }
         
@@ -7323,7 +7323,7 @@ void ByteCodeParser::parseCodeBlock()
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= jumpTargets.size(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < jumpTargets.size() ? jumpTargets[jumpTargetIndex] : codeBlock->instructions().size();
-        ASSERT(m_currentIndex < limit);
+        ASSERT(m_currentIndex.offset() < limit);
 
         // Loop until we reach the current limit (i.e. next jump target).
         do {
@@ -7346,23 +7346,23 @@ void ByteCodeParser::parseCodeBlock()
             parseBlock(limit);
 
             // We should not have gone beyond the limit.
-            ASSERT(m_currentIndex <= limit);
+            ASSERT(m_currentIndex.offset() <= limit);
 
             if (m_currentBlock->isEmpty()) {
                 // This case only happens if the last instruction was an inlined call with early returns
                 // or polymorphic (creating an empty continuation block),
                 // and then we hit the limit before putting anything in the continuation block.
-                ASSERT(m_currentIndex == limit);
+                ASSERT(m_currentIndex.offset() == limit);
                 makeBlockTargetable(m_currentBlock, m_currentIndex);
             } else {
-                ASSERT(m_currentBlock->terminal() || (m_currentIndex == codeBlock->instructions().size() && inlineCallFrame()));
+                ASSERT(m_currentBlock->terminal() || (m_currentIndex.offset() == codeBlock->instructions().size() && inlineCallFrame()));
                 m_currentBlock = nullptr;
             }
-        } while (m_currentIndex < limit);
+        } while (m_currentIndex.offset() < limit);
     }
 
     // Should have reached the end of the instructions.
-    ASSERT(m_currentIndex == codeBlock->instructions().size());
+    ASSERT(m_currentIndex.offset() == codeBlock->instructions().size());
     
     VERBOSE_LOG("Done parsing ", *codeBlock, " (fell off end)\n");
 }
@@ -7525,7 +7525,7 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
 void ByteCodeParser::parse()
 {
     // Set during construction.
-    ASSERT(!m_currentIndex);
+    ASSERT(!m_currentIndex.offset());
     
     VERBOSE_LOG("Parsing ", *m_codeBlock, "\n");
     

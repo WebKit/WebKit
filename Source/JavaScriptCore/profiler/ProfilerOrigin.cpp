@@ -34,7 +34,7 @@
 
 namespace JSC { namespace Profiler {
 
-Origin::Origin(Database& database, CodeBlock* codeBlock, unsigned bytecodeIndex)
+Origin::Origin(Database& database, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
     : m_bytecodes(database.ensureBytecodesFor(codeBlock))
     , m_bytecodeIndex(bytecodeIndex)
 {
@@ -42,7 +42,7 @@ Origin::Origin(Database& database, CodeBlock* codeBlock, unsigned bytecodeIndex)
 
 void Origin::dump(PrintStream& out) const
 {
-    out.print(*m_bytecodes, ":bc#", m_bytecodeIndex);
+    out.print(*m_bytecodes, " ", m_bytecodeIndex);
 }
 
 JSValue Origin::toJS(JSGlobalObject* globalObject) const
@@ -50,7 +50,7 @@ JSValue Origin::toJS(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(vm, vm.propertyNames->bytecodeIndex, jsNumber(m_bytecodeIndex));
+    result->putDirect(vm, vm.propertyNames->bytecodeIndex, jsNumber(m_bytecodeIndex.offset()));
     return result;
 }
 

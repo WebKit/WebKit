@@ -41,7 +41,7 @@ namespace JSC { namespace FTL {
 SUPPRESS_ASAN
 void* prepareOSREntry(
     VM& vm, CallFrame* callFrame, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock,
-    unsigned bytecodeIndex, unsigned streamIndex)
+    BytecodeIndex bytecodeIndex, unsigned streamIndex)
 {
     CodeBlock* baseline = dfgCodeBlock->baselineVersion();
     ExecutableBase* executable = dfgCodeBlock->ownerExecutable();
@@ -55,7 +55,7 @@ void* prepareOSREntry(
     
     if (Options::verboseOSR()) {
         dataLog(
-            "FTL OSR from ", *dfgCodeBlock, " to ", *entryCodeBlock, " at bc#",
+            "FTL OSR from ", *dfgCodeBlock, " to ", *entryCodeBlock, " at ",
             bytecodeIndex, ".\n");
     }
     
@@ -64,7 +64,7 @@ void* prepareOSREntry(
 
     if (bytecodeIndex != entryCode->bytecodeIndex()) {
         if (Options::verboseOSR())
-            dataLog("    OSR failed because we don't have an entrypoint for bc#", bytecodeIndex, "; ours is for bc#", entryCode->bytecodeIndex(), "\n");
+            dataLog("    OSR failed because we don't have an entrypoint for ", bytecodeIndex, "; ours is for ", entryCode->bytecodeIndex(), "\n");
         return 0;
     }
     
@@ -79,7 +79,7 @@ void* prepareOSREntry(
         Optional<JSValue> reconstructedValue = values.argument(argument);
         if ((reconstructedValue && valueOnStack == reconstructedValue.value()) || !argument)
             continue;
-        dataLog("Mismatch between reconstructed values and the value on the stack for argument arg", argument, " for ", *entryCodeBlock, " at bc#", bytecodeIndex, ":\n");
+        dataLog("Mismatch between reconstructed values and the value on the stack for argument arg", argument, " for ", *entryCodeBlock, " at ", bytecodeIndex, ":\n");
         dataLog("    Value on stack: ", valueOnStack, "\n");
         dataLog("    Reconstructed value: ", reconstructedValue, "\n");
         RELEASE_ASSERT_NOT_REACHED();

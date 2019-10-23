@@ -797,7 +797,7 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
     if (baseValue.isObject() && subscript.isInt32()) {
         JSObject* object = asObject(baseValue);
 
-        ASSERT(callFrame->bytecodeOffset());
+        ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
         ASSERT(!byValInfo->stubRoutine);
 
         Structure* structure = object->structure(vm);
@@ -821,7 +821,7 @@ static OptimizationResult tryPutByValOptimize(JSGlobalObject* globalObject, Call
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, OptimizationResult::GiveUp);
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
-            ASSERT(callFrame->bytecodeOffset());
+            ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -887,7 +887,7 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (subscript.isInt32()) {
-        ASSERT(callFrame->bytecodeOffset());
+        ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
         ASSERT(!byValInfo->stubRoutine);
 
         Structure* structure = object->structure(vm);
@@ -910,7 +910,7 @@ static OptimizationResult tryDirectPutByValOptimize(JSGlobalObject* globalObject
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, OptimizationResult::GiveUp);
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
-            ASSERT(callFrame->bytecodeOffset());
+            ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -1478,11 +1478,12 @@ static void updateAllPredictionsAndOptimizeAfterWarmUp(CodeBlock* codeBlock)
     codeBlock->optimizeAfterWarmUp();
 }
 
-SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytecodeIndex)
+SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytecodeIndexBits)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     NativeCallFrameTracer tracer(vm, callFrame);
+    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
     // Defer GC for a while so that it doesn't run between when we enter into this
     // slow path and when we figure out the state of our code block. This prevents
@@ -1724,11 +1725,12 @@ SlowPathReturnType JIT_OPERATION operationOptimize(VM* vmPointer, uint32_t bytec
     return encodeResult(0, 0);
 }
 
-char* JIT_OPERATION operationTryOSREnterAtCatch(VM* vmPointer, uint32_t bytecodeIndex)
+char* JIT_OPERATION operationTryOSREnterAtCatch(VM* vmPointer, uint32_t bytecodeIndexBits)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     NativeCallFrameTracer tracer(vm, callFrame);
+    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
     CodeBlock* optimizedReplacement = callFrame->codeBlock()->replacement();
     if (UNLIKELY(!optimizedReplacement))
@@ -1746,11 +1748,12 @@ char* JIT_OPERATION operationTryOSREnterAtCatch(VM* vmPointer, uint32_t bytecode
     return nullptr;
 }
 
-char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(VM* vmPointer, uint32_t bytecodeIndex)
+char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(VM* vmPointer, uint32_t bytecodeIndexBits)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     NativeCallFrameTracer tracer(vm, callFrame);
+    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     CodeBlock* optimizedReplacement = codeBlock->replacement();
@@ -1767,7 +1770,7 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(VM* vmPointer, ui
         break;
     }
 
-    codeBlock->ensureCatchLivenessIsComputedForBytecodeOffset(bytecodeIndex);
+    codeBlock->ensureCatchLivenessIsComputedForBytecodeIndex(bytecodeIndex);
     auto bytecode = codeBlock->instructions().at(bytecodeIndex)->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
     metadata.m_buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -1927,7 +1930,7 @@ static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, JSVa
             RETURN_IF_EXCEPTION(scope, JSValue());
             if (existingAtomString) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomString.get())) {
-                    ASSERT(callFrame->bytecodeOffset());
+                    ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
                     if (byValInfo->stubInfo && byValInfo->cachedId.impl() != existingAtomString)
                         byValInfo->tookSlowPath = true;
                     return result;
@@ -1937,7 +1940,7 @@ static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, JSVa
     }
 
     if (subscript.isInt32()) {
-        ASSERT(callFrame->bytecodeOffset());
+        ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
         byValInfo->tookSlowPath = true;
 
         int32_t i = subscript.asInt32();
@@ -1978,7 +1981,7 @@ static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, JSVa
     auto property = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ASSERT(callFrame->bytecodeOffset());
+    ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
     if (byValInfo->stubInfo && (!isStringOrSymbol(subscript) || byValInfo->cachedId != property))
         byValInfo->tookSlowPath = true;
 
@@ -1996,7 +1999,7 @@ static OptimizationResult tryGetByValOptimize(JSGlobalObject* globalObject, Call
     if (baseValue.isObject() && subscript.isInt32()) {
         JSObject* object = asObject(baseValue);
 
-        ASSERT(callFrame->bytecodeOffset());
+        ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
         ASSERT(!byValInfo->stubRoutine);
 
         if (hasOptimizableIndexing(object->structure(vm))) {
@@ -2024,7 +2027,7 @@ static OptimizationResult tryGetByValOptimize(JSGlobalObject* globalObject, Call
         const Identifier propertyName = subscript.toPropertyKey(globalObject);
         RETURN_IF_EXCEPTION(scope, OptimizationResult::GiveUp);
         if (subscript.isSymbol() || !parseIndex(propertyName)) {
-            ASSERT(callFrame->bytecodeOffset());
+            ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             ASSERT(!byValInfo->stubRoutine);
             if (byValInfo->seen) {
                 if (byValInfo->cachedId == propertyName) {
@@ -2108,7 +2111,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(JSGlobalObject* 
     JSObject* object = asObject(baseValue);
     bool didOptimize = false;
 
-    ASSERT(callFrame->bytecodeOffset());
+    ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
     ASSERT(!byValInfo->stubRoutine);
     
     if (hasOptimizableIndexing(object->structure(vm))) {
@@ -2181,7 +2184,7 @@ EncodedJSValue JIT_OPERATION operationGetByValString(JSGlobalObject* globalObjec
         result = baseValue.get(globalObject, i);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!isJSString(baseValue)) {
-            ASSERT(callFrame->bytecodeOffset());
+            ASSERT(callFrame->bytecodeIndex() != BytecodeIndex(0));
             auto getByValFunction = byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize;
             ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), getByValFunction);
         }

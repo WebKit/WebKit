@@ -299,9 +299,9 @@ TextPosition DebuggerCallFrame::currentPosition(VM& vm)
 
     if (isTailDeleted()) {
         CodeBlock* codeBlock = m_shadowChickenFrame.codeBlock;
-        if (Optional<unsigned> bytecodeOffset = codeBlock->bytecodeOffsetFromCallSiteIndex(m_shadowChickenFrame.callSiteIndex)) {
-            return TextPosition(OrdinalNumber::fromOneBasedInt(codeBlock->lineNumberForBytecodeOffset(*bytecodeOffset)),
-                OrdinalNumber::fromOneBasedInt(codeBlock->columnNumberForBytecodeOffset(*bytecodeOffset)));
+        if (Optional<BytecodeIndex> bytecodeIndex = codeBlock->bytecodeIndexFromCallSiteIndex(m_shadowChickenFrame.callSiteIndex)) {
+            return TextPosition(OrdinalNumber::fromOneBasedInt(codeBlock->lineNumberForBytecodeIndex(*bytecodeIndex)),
+                OrdinalNumber::fromOneBasedInt(codeBlock->columnNumberForBytecodeIndex(*bytecodeIndex)));
         }
     }
 

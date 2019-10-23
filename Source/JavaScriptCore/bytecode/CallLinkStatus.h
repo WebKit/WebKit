@@ -66,10 +66,10 @@ public:
         ExitFlag takesSlowPath;
         ExitFlag badFunction;
     };
-    static ExitSiteData computeExitSiteData(CodeBlock*, unsigned bytecodeIndex);
+    static ExitSiteData computeExitSiteData(CodeBlock*, BytecodeIndex);
     
-    static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex, const ICStatusMap&, ExitSiteData);
-    static CallLinkStatus computeFor(CodeBlock*, unsigned bytecodeIndex, const ICStatusMap&);
+    static CallLinkStatus computeFor(CodeBlock*, BytecodeIndex, const ICStatusMap&, ExitSiteData);
+    static CallLinkStatus computeFor(CodeBlock*, BytecodeIndex, const ICStatusMap&);
 
 #if ENABLE(JIT)
     // Computes the status assuming that we never took slow path and never previously
@@ -117,7 +117,7 @@ public:
 private:
     void makeClosureCall();
     
-    static CallLinkStatus computeFromLLInt(const ConcurrentJSLocker&, CodeBlock*, unsigned bytecodeIndex);
+    static CallLinkStatus computeFromLLInt(const ConcurrentJSLocker&, CodeBlock*, BytecodeIndex);
 #if ENABLE(JIT)
     static CallLinkStatus computeFromCallLinkInfo(
         const ConcurrentJSLocker&, CallLinkInfo&);

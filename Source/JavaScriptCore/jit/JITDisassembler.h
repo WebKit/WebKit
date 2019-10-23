@@ -67,7 +67,7 @@ private:
     MacroAssembler::Label firstSlowLabel();
     
     struct DumpedOp {
-        unsigned index;
+        BytecodeIndex bytecodeIndex;
         CString disassembly;
     };
     Vector<DumpedOp> dumpVectorForInstructions(LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);

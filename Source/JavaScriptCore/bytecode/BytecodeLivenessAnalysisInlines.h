@@ -61,7 +61,7 @@ inline bool isValidRegisterForLiveness(VirtualRegister operand)
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
 template<typename CodeBlockType, typename UseFunctor, typename DefFunctor>
-inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, InstructionStream::Offset bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
+inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, const UseFunctor& use, const DefFunctor& def)
 {
     // This abstractly execute the instruction in reverse. Instructions logically first use operands and
     // then define operands. This logical ordering is necessary for operations that use and def the same
@@ -78,17 +78,17 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
     // uses before defs, then the add operation above would appear to not have loc1 live, since we'd
     // first add it to the out set (the use), and then we'd remove it (the def).
 
-    auto* instruction = instructions.at(bytecodeOffset).ptr();
+    auto* instruction = instructions.at(bytecodeIndex).ptr();
     OpcodeID opcodeID = instruction->opcodeID();
 
-    computeDefsForBytecodeOffset(
+    computeDefsForBytecodeIndex(
         codeBlock, opcodeID, instruction,
         [&] (VirtualRegister operand) {
             if (isValidRegisterForLiveness(operand))
                 def(operand.toLocal());
         });
 
-    computeUsesForBytecodeOffset(
+    computeUsesForBytecodeIndex(
         codeBlock, opcodeID, instruction,
         [&] (VirtualRegister operand) {
             if (isValidRegisterForLiveness(operand))
@@ -97,7 +97,7 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
 
     // If we have an exception handler, we want the live-in variables of the 
     // exception handler block to be included in the live-in of this particular bytecode.
-    if (auto* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset)) {
+    if (auto* handler = codeBlock->handlerForBytecodeIndex(bytecodeIndex)) {
         BytecodeBasicBlock* handlerBlock = graph.findBasicBlockWithLeaderOffset(handler->target);
         ASSERT(handlerBlock);
         handlerBlock->in().forEachSetBit(use);
@@ -105,10 +105,10 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
 }
 
 template<typename CodeBlockType>
-inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, InstructionStream::Offset bytecodeOffset, FastBitVector& out)
+inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* codeBlock, const InstructionStream& instructions, BytecodeGraph& graph, BytecodeIndex bytecodeIndex, FastBitVector& out)
 {
     stepOverInstruction(
-        codeBlock, instructions, graph, bytecodeOffset,
+        codeBlock, instructions, graph, bytecodeIndex,
         [&] (unsigned bitIndex) {
             // This is the use functor, so we set the bit.
             out[bitIndex] = true;
@@ -120,7 +120,7 @@ inline void BytecodeLivenessPropagation::stepOverInstruction(CodeBlockType* code
 }
 
 template<typename CodeBlockType, typename Instructions>
-inline bool BytecodeLivenessPropagation::computeLocalLivenessForBytecodeOffset(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock* block, unsigned targetOffset, FastBitVector& result)
+inline bool BytecodeLivenessPropagation::computeLocalLivenessForBytecodeIndex(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeBasicBlock* block, BytecodeIndex targetIndex, FastBitVector& result)
 {
     ASSERT(!block->isExitBlock());
     ASSERT(!block->isEntryBlock());
@@ -129,9 +129,9 @@ inline bool BytecodeLivenessPropagation::computeLocalLivenessForBytecodeOffset(C
 
     for (int i = block->offsets().size() - 1; i >= 0; i--) {
         unsigned bytecodeOffset = block->offsets()[i];
-        if (targetOffset > bytecodeOffset)
+        if (targetIndex.offset() > bytecodeOffset)
             break;
-        stepOverInstruction(codeBlock, instructions, graph, bytecodeOffset, out);
+        stepOverInstruction(codeBlock, instructions, graph, BytecodeIndex(bytecodeOffset), out);
     }
 
     return result.setAndCheck(out);
@@ -142,19 +142,19 @@ inline bool BytecodeLivenessPropagation::computeLocalLivenessForBlock(CodeBlockT
 {
     if (block->isExitBlock() || block->isEntryBlock())
         return false;
-    return computeLocalLivenessForBytecodeOffset(codeBlock, instructions, graph, block, block->leaderOffset(), block->in());
+    return computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, block, BytecodeIndex(block->leaderOffset()), block->in());
 }
 
 template<typename CodeBlockType, typename Instructions>
-inline FastBitVector BytecodeLivenessPropagation::getLivenessInfoAtBytecodeOffset(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, unsigned bytecodeOffset)
+inline FastBitVector BytecodeLivenessPropagation::getLivenessInfoAtBytecodeIndex(CodeBlockType* codeBlock, const Instructions& instructions, BytecodeGraph& graph, BytecodeIndex bytecodeIndex)
 {
-    BytecodeBasicBlock* block = graph.findBasicBlockForBytecodeOffset(bytecodeOffset);
+    BytecodeBasicBlock* block = graph.findBasicBlockForBytecodeOffset(bytecodeIndex.offset());
     ASSERT(block);
     ASSERT(!block->isEntryBlock());
     ASSERT(!block->isExitBlock());
     FastBitVector out;
     out.resize(block->out().numBits());
-    computeLocalLivenessForBytecodeOffset(codeBlock, instructions, graph, block, bytecodeOffset, out);
+    computeLocalLivenessForBytecodeIndex(codeBlock, instructions, graph, block, bytecodeIndex, out);
     return out;
 }
 

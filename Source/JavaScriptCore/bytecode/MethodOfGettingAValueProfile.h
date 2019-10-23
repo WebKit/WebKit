@@ -31,6 +31,7 @@
 // these #if's will disappear...
 #if ENABLE(DFG_JIT)
 
+#include "BytecodeIndex.h"
 #include "GPRInfo.h"
 
 namespace JSC {
@@ -83,12 +84,16 @@ private:
     };
     
     Kind m_kind;
-    union {
+    union Data {
+        Data()
+            : profile(nullptr)
+        { }
+
         ValueProfile* profile;
         ArithProfile* arithProfile;
         struct {
             CodeBlock* codeBlock;
-            unsigned bytecodeOffset;
+            BytecodeIndex bytecodeOffset;
             int operand;
         } lazyOperand;
     } u;

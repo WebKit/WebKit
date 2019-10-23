@@ -166,15 +166,15 @@ std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM& vm, JSObj
     return stackTrace;
 }
 
-void getBytecodeOffset(VM& vm, CallFrame* startCallFrame, Vector<StackFrame>* stackTrace, CallFrame*& callFrame, unsigned& bytecodeOffset)
+void getBytecodeIndex(VM& vm, CallFrame* startCallFrame, Vector<StackFrame>* stackTrace, CallFrame*& callFrame, BytecodeIndex& bytecodeIndex)
 {
     FindFirstCallerFrameWithCodeblockFunctor functor(startCallFrame);
     StackVisitor::visit(vm.topCallFrame, vm, functor);
     callFrame = functor.foundCallFrame();
     unsigned stackIndex = functor.index();
-    bytecodeOffset = 0;
-    if (stackTrace && stackIndex < stackTrace->size() && stackTrace->at(stackIndex).hasBytecodeOffset())
-        bytecodeOffset = stackTrace->at(stackIndex).bytecodeOffset();
+    bytecodeIndex = BytecodeIndex();
+    if (stackTrace && stackIndex < stackTrace->size() && stackTrace->at(stackIndex).hasBytecodeIndex())
+        bytecodeIndex = stackTrace->at(stackIndex).bytecodeIndex();
 }
 
 bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)

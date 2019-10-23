@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeIndex.h"
 #include "CalleeBits.h"
 #include "WasmIndexOrName.h"
 #include <wtf/Function.h>
@@ -64,7 +65,7 @@ public:
         CallFrame* callerFrame() const { return m_callerFrame; }
         CalleeBits callee() const { return m_callee; }
         CodeBlock* codeBlock() const { return m_codeBlock; }
-        unsigned bytecodeOffset() const { return m_bytecodeOffset; }
+        BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
         InlineCallFrame* inlineCallFrame() const {
 #if ENABLE(DFG_JIT)
             return m_inlineCallFrame;
@@ -120,7 +121,7 @@ public:
         CodeBlock* m_codeBlock;
         size_t m_index;
         size_t m_argumentCountIncludingThis;
-        unsigned m_bytecodeOffset;
+        BytecodeIndex m_bytecodeIndex;
         bool m_callerIsEntryFrame : 1;
         bool m_isWasmFrame : 1;
         Wasm::IndexOrName m_wasmFunctionIndexOrName;

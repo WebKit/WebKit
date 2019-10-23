@@ -53,7 +53,7 @@ struct OSREntryReshuffling {
 };
 
 struct OSREntryData {
-    unsigned m_bytecodeIndex;
+    BytecodeIndex m_bytecodeIndex;
     CodeLocationLabel<OSREntryPtrTag> m_machineCode;
     Operands<AbstractValue> m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
@@ -66,7 +66,7 @@ struct OSREntryData {
     void dump(PrintStream&) const;
 };
 
-inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
+inline BytecodeIndex getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
 {
     return osrEntryData->m_bytecodeIndex;
 }
@@ -76,17 +76,17 @@ struct CatchEntrypointData {
     // are of the expected type before entering at a catch block.
     MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode;
     Vector<FlushFormat> argumentFormats;
-    unsigned bytecodeIndex;
+    BytecodeIndex bytecodeIndex;
 };
 
 // Returns a pointer to a data buffer that the OSR entry thunk will recognize and
 // parse. If this returns null, it means 
-void* prepareOSREntry(VM&, CallFrame*, CodeBlock*, unsigned bytecodeIndex);
+void* prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex);
 
 // If null is returned, we can't OSR enter. If it's not null, it's the PC to jump to.
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock*, unsigned bytecodeIndex);
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex);
 #else
-inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, unsigned) { return nullptr; }
+inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex) { return nullptr; }
 #endif
 
 } } // namespace JSC::DFG

@@ -780,7 +780,7 @@ private:
 
         auto& dominators = m_graph.ensureSSADominators();
 
-        for (unsigned entrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeOffset.keys())
+        for (unsigned entrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeIndex.keys())
             VALIDATE((), entrypointIndex > 0); // By convention, 0 is the entrypoint index for the op_enter entrypoint, which can not be in a catch.
 
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

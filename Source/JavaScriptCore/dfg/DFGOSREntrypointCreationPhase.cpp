@@ -50,10 +50,10 @@ public:
         RELEASE_ASSERT(m_graph.m_plan.mode() == FTLForOSREntryMode);
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
 
-        unsigned bytecodeIndex = m_graph.m_plan.osrEntryBytecodeIndex();
+        BytecodeIndex bytecodeIndex = m_graph.m_plan.osrEntryBytecodeIndex();
         RELEASE_ASSERT(bytecodeIndex);
-        RELEASE_ASSERT(bytecodeIndex != UINT_MAX);
-        
+        RELEASE_ASSERT(bytecodeIndex.offset());
+
         // Needed by createPreHeader().
         m_graph.ensureCPSDominators();
         
@@ -92,7 +92,7 @@ public:
         BasicBlock* newRoot = insertionSet.insert(0, 1);
 
         // We'd really like to use an unset origin, but ThreadedCPS won't allow that.
-        NodeOrigin origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), false);
+        NodeOrigin origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), false);
         
         Vector<Node*> locals(baseline->numCalleeLocals());
         for (int local = 0; local < baseline->numCalleeLocals(); ++local) {

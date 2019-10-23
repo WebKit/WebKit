@@ -39,19 +39,18 @@ class ScriptExecutable;
 class LazyOperandValueProfileKey {
 public:
     LazyOperandValueProfileKey()
-        : m_bytecodeOffset(0) // 0 = empty value
-        , m_operand(VirtualRegister()) // not a valid operand index in our current scheme
+        : m_operand(VirtualRegister()) // not a valid operand index in our current scheme
     {
     }
     
     LazyOperandValueProfileKey(WTF::HashTableDeletedValueType)
-        : m_bytecodeOffset(1) // 1 = deleted value
+        : m_bytecodeIndex(WTF::HashTableDeletedValue)
         , m_operand(VirtualRegister()) // not a valid operand index in our current scheme
     {
     }
     
-    LazyOperandValueProfileKey(unsigned bytecodeOffset, VirtualRegister operand)
-        : m_bytecodeOffset(bytecodeOffset)
+    LazyOperandValueProfileKey(BytecodeIndex bytecodeIndex, VirtualRegister operand)
+        : m_bytecodeIndex(bytecodeIndex)
         , m_operand(operand)
     {
         ASSERT(m_operand.isValid());
@@ -64,19 +63,19 @@ public:
     
     bool operator==(const LazyOperandValueProfileKey& other) const
     {
-        return m_bytecodeOffset == other.m_bytecodeOffset
+        return m_bytecodeIndex == other.m_bytecodeIndex
             && m_operand == other.m_operand;
     }
     
     unsigned hash() const
     {
-        return WTF::intHash(m_bytecodeOffset) + m_operand.offset();
+        return m_bytecodeIndex.hash() + m_operand.offset();
     }
     
-    unsigned bytecodeOffset() const
+    BytecodeIndex bytecodeIndex() const
     {
         ASSERT(!!*this);
-        return m_bytecodeOffset;
+        return m_bytecodeIndex;
     }
 
     VirtualRegister operand() const
@@ -87,10 +86,10 @@ public:
     
     bool isHashTableDeletedValue() const
     {
-        return !m_operand.isValid() && m_bytecodeOffset;
+        return !m_operand.isValid() && m_bytecodeIndex.isHashTableDeletedValue();
     }
 private: 
-    unsigned m_bytecodeOffset;
+    BytecodeIndex m_bytecodeIndex;
     VirtualRegister m_operand;
 };
 

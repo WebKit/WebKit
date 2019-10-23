@@ -98,7 +98,7 @@ public:
     // Methods to set labels for the disassembler.
     void setStartOfCode()
     {
-        m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), CodeOrigin(0, nullptr));
+        m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), CodeOrigin(BytecodeIndex(0)));
         if (LIKELY(!m_disassembler))
             return;
         m_disassembler->setStartOfCode(labelIgnoringWatchpoints());

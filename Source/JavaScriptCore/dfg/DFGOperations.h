@@ -304,8 +304,8 @@ double JIT_OPERATION operationRandom(JSGlobalObject*);
 
 #if ENABLE(FTL_JIT)
 void JIT_OPERATION triggerTierUpNow(VM*) WTF_INTERNAL;
-void JIT_OPERATION triggerTierUpNowInLoop(VM*, unsigned bytecodeIndex) WTF_INTERNAL;
-char* JIT_OPERATION triggerOSREntryNow(VM*, unsigned bytecodeIndex) WTF_INTERNAL;
+void JIT_OPERATION triggerTierUpNowInLoop(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
+char* JIT_OPERATION triggerOSREntryNow(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
 #endif // ENABLE(FTL_JIT)
 
 } // extern "C"

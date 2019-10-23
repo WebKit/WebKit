@@ -217,7 +217,7 @@ public:
     unsigned jumpTarget(int index) const { return m_jumpTargets[index]; }
     unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
 
-    UnlinkedHandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler = RequiredHandler::AnyHandler);
+    UnlinkedHandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
     UnlinkedHandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
@@ -279,9 +279,9 @@ public:
 
     bool hasRareData() const { return m_rareData.get(); }
 
-    int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
+    int lineNumberForBytecodeIndex(BytecodeIndex);
 
-    void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
+    void expressionRangeForBytecodeIndex(BytecodeIndex, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);

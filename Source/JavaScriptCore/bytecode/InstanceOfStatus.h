@@ -79,7 +79,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    static InstanceOfStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex);
+    static InstanceOfStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex);
     
 #if ENABLE(DFG_JIT)
     static InstanceOfStatus computeForStubInfo(const ConcurrentJSLocker&, StructureStubInfo*);

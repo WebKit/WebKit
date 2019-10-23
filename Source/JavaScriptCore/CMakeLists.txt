@@ -474,6 +474,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ArrayProfile.h
     bytecode/ByValInfo.h
     bytecode/BytecodeConventions.h
+    bytecode/BytecodeIndex.h
     bytecode/BytecodeIntrinsicRegistry.h
     bytecode/CallEdge.h
     bytecode/CallLinkInfo.h

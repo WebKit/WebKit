@@ -125,17 +125,17 @@ public:
             if (origin == cachedCodeOrigin)
                 return cachedHandlerResult;
 
-            unsigned bytecodeIndexToCheck = origin.bytecodeIndex();
+            BytecodeIndex bytecodeIndexToCheck = origin.bytecodeIndex();
 
             cachedCodeOrigin = origin;
 
             while (1) {
                 InlineCallFrame* inlineCallFrame = origin.inlineCallFrame();
                 CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
-                if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
+                if (HandlerInfo* handler = codeBlock->handlerForBytecodeIndex(bytecodeIndexToCheck)) {
                     liveAtCatchHead.clearAll();
 
-                    unsigned catchBytecodeIndex = handler->target;
+                    BytecodeIndex catchBytecodeIndex = BytecodeIndex(handler->target);
                     m_graph.forAllLocalsLiveInBytecode(CodeOrigin(catchBytecodeIndex, inlineCallFrame), [&] (VirtualRegister operand) {
                         liveAtCatchHead[operand.toLocal()] = true;
                     });

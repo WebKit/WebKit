@@ -5049,7 +5049,7 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlock* cod
         OpcodeID opcodeID = instruction->opcodeID();
 
         ASSERT(opcodeID != op_enter);
-        computeDefsForBytecodeOffset(codeBlock, opcodeID, instruction.ptr(), [&] (VirtualRegister operand) {
+        computeDefsForBytecodeIndex(codeBlock, opcodeID, instruction.ptr(), [&] (VirtualRegister operand) {
             if (local()->virtualRegister() == operand)
                 invalidate();
         });

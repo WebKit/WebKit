@@ -97,14 +97,14 @@ public:
 
                 if (oldRoot->isCatchEntrypoint) {
                     ASSERT(!!entrypointIndex);
-                    m_graph.m_entrypointIndexToCatchBytecodeOffset.add(entrypointIndex, oldRoot->bytecodeBegin);
+                    m_graph.m_entrypointIndexToCatchBytecodeIndex.add(entrypointIndex, oldRoot->bytecodeBegin);
                 }
             }
 
             RELEASE_ASSERT(entrySwitchData->cases[0] == m_graph.block(0)); // We strongly assume the normal call entrypoint is the first item in the list.
 
             const bool exitOK = false;
-            NodeOrigin origin { CodeOrigin(0), CodeOrigin(0), exitOK };
+            NodeOrigin origin { CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), exitOK };
             newRoot->appendNode(
                 m_graph, SpecNone, EntrySwitch, origin, OpInfo(entrySwitchData));
 

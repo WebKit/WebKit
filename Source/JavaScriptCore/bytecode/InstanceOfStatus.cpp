@@ -40,7 +40,7 @@ void InstanceOfStatus::appendVariant(const InstanceOfVariant& variant)
 }
 
 InstanceOfStatus InstanceOfStatus::computeFor(
-    CodeBlock* codeBlock, ICStatusMap& infoMap, unsigned bytecodeIndex)
+    CodeBlock* codeBlock, ICStatusMap& infoMap, BytecodeIndex bytecodeIndex)
 {
     ConcurrentJSLocker locker(codeBlock->m_lock);
     

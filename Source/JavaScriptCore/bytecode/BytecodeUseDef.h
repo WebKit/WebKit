@@ -46,7 +46,7 @@ namespace JSC {
 #define DEFS USES_OR_DEFS
 
 template<typename Block, typename Functor>
-void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+void computeUsesForBytecodeIndex(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
 {
     if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
         functor(codeBlock->scopeRegister());
@@ -297,7 +297,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
 }
 
 template<typename Block, typename Functor>
-void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
+void computeDefsForBytecodeIndex(Block* codeBlock, OpcodeID opcodeID, const Instruction* instruction, const Functor& functor)
 {
     switch (opcodeID) {
     case op_wide16:

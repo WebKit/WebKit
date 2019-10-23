@@ -85,9 +85,9 @@ public:
         
         m_graph.ensureCPSNaturalLoops();
         CPSNaturalLoops& naturalLoops = *m_graph.m_cpsNaturalLoops;
-        HashMap<const NaturalLoop*, unsigned> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);
+        HashMap<const NaturalLoop*, BytecodeIndex> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);
 
-        HashMap<unsigned, LoopHintDescriptor> tierUpHierarchy;
+        HashMap<BytecodeIndex, LoopHintDescriptor> tierUpHierarchy;
 
         InsertionSet insertionSet(m_graph);
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -108,7 +108,7 @@ public:
                     tierUpType = CheckTierUpInLoop;
                 insertionSet.insertNode(nodeIndex + 1, SpecNone, tierUpType, origin);
 
-                unsigned bytecodeIndex = origin.semantic.bytecodeIndex();
+                auto bytecodeIndex = origin.semantic.bytecodeIndex();
                 if (canOSREnter)
                     m_graph.m_plan.tierUpAndOSREnterBytecodes().append(bytecodeIndex);
 
@@ -138,8 +138,8 @@ public:
 
         // Add all the candidates that can be OSR Entered.
         for (auto entry : tierUpHierarchy) {
-            Vector<unsigned> tierUpCandidates;
-            for (unsigned bytecodeIndex : entry.value.osrEntryCandidates) {
+            Vector<BytecodeIndex> tierUpCandidates;
+            for (BytecodeIndex bytecodeIndex : entry.value.osrEntryCandidates) {
                 auto descriptorIt = tierUpHierarchy.find(bytecodeIndex);
                 if (descriptorIt != tierUpHierarchy.end()
                     && descriptorIt->value.canOSREnter)
@@ -160,7 +160,7 @@ public:
 private:
 #if ENABLE(FTL_JIT)
     struct LoopHintDescriptor {
-        Vector<unsigned> osrEntryCandidates;
+        Vector<BytecodeIndex> osrEntryCandidates;
         bool canOSREnter;
     };
 
@@ -183,9 +183,9 @@ private:
         return true;
     }
 
-    HashMap<const NaturalLoop*, unsigned> buildNaturalLoopToLoopHintMap(const CPSNaturalLoops& naturalLoops)
+    HashMap<const NaturalLoop*, BytecodeIndex> buildNaturalLoopToLoopHintMap(const CPSNaturalLoops& naturalLoops)
     {
-        HashMap<const NaturalLoop*, unsigned> naturalLoopsToLoopHint;
+        HashMap<const NaturalLoop*, BytecodeIndex> naturalLoopsToLoopHint;
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -194,7 +194,7 @@ private:
                     continue;
 
                 if (const NaturalLoop* loop = naturalLoops.innerMostLoopOf(block)) {
-                    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+                    BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
                     naturalLoopsToLoopHint.add(loop, bytecodeIndex);
                 }
                 break;

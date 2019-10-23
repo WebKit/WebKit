@@ -408,7 +408,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
             unsigned line = 0;
             unsigned unusedColumn = 0;
             visitor->computeLineAndColumn(line, unusedColumn);
-            dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, visitor->bytecodeOffset(), line);
+            dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, visitor->bytecodeIndex().offset(), line);
             return StackVisitor::Done;
         }
         return StackVisitor::Continue;

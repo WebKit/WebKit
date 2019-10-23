@@ -1094,7 +1094,7 @@ public:
 
     // This maps an entrypoint index to a particular op_catch bytecode offset. By convention,
     // it'll never have zero as a key because we use zero to mean the op_enter entrypoint.
-    HashMap<unsigned, unsigned> m_entrypointIndexToCatchBytecodeOffset;
+    HashMap<unsigned, BytecodeIndex> m_entrypointIndexToCatchBytecodeIndex;
 
     HashSet<String> m_localStrings;
     HashMap<const StringImpl*, String> m_copiedStrings;

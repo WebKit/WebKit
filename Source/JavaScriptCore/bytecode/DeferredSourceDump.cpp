@@ -38,7 +38,7 @@ DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock)
 {
 }
 
-DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITType rootJITType, unsigned callerBytecodeIndex)
+DeferredSourceDump::DeferredSourceDump(CodeBlock* codeBlock, CodeBlock* rootCodeBlock, JITType rootJITType, BytecodeIndex callerBytecodeIndex)
     : m_codeBlock(codeBlock->vm(), codeBlock)
     , m_rootCodeBlock(codeBlock->vm(), rootCodeBlock)
     , m_rootJITType(rootJITType)
@@ -56,7 +56,7 @@ void DeferredSourceDump::dump()
     dataLog(*m_codeBlock);
 
     if (isInlinedFrame)
-        dataLog(" at ", CodeBlockWithJITType(*m_rootCodeBlock, m_rootJITType), " ", "bc#", m_callerBytecodeIndex);
+        dataLog(" at ", CodeBlockWithJITType(*m_rootCodeBlock, m_rootJITType), " ", m_callerBytecodeIndex);
 
     dataLog("\n'''");
     m_codeBlock->dumpSource();

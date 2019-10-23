@@ -53,9 +53,8 @@ public:
     bool completeAllForVM(VM&); // Return true if any JIT work happened.
     void poll(VM&);
     
-    void compileLater(CodeBlock*, unsigned loopOSREntryBytecodeOffset = 0);
-    
-    void compileNow(CodeBlock*, unsigned loopOSREntryBytecodeOffset = 0);
+    void compileLater(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0));
+    void compileNow(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0));
     
     static JITWorklist& ensureGlobalWorklist();
     static JITWorklist* existingGlobalWorklistOrNull();

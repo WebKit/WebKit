@@ -56,7 +56,7 @@ class Plan : public ThreadSafeRefCounted<Plan> {
 public:
     Plan(
         CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
-        CompilationMode, unsigned osrEntryBytecodeIndex,
+        CompilationMode, BytecodeIndex osrEntryBytecodeIndex,
         const Operands<Optional<JSValue>>& mustHandleValues);
     ~Plan();
 
@@ -87,7 +87,7 @@ public:
 
     bool isFTL() const { return DFG::isFTL(m_mode); }
     CompilationMode mode() const { return m_mode; }
-    unsigned osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
+    BytecodeIndex osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
     const Operands<Optional<JSValue>>& mustHandleValues() const { return m_mustHandleValues; }
     ThreadData* threadData() const { return m_threadData; }
     Profiler::Compilation* compilation() const { return m_compilation.get(); }
@@ -106,8 +106,8 @@ public:
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
 
-    HashMap<unsigned, Vector<unsigned>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
-    Vector<unsigned>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
+    HashMap<BytecodeIndex, Vector<BytecodeIndex>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
+    Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
 
     enum Stage { Preparing, Compiling, Ready, Cancelled };
     Stage stage() const { return m_stage; }
@@ -143,7 +143,7 @@ private:
 
     bool m_willTryToTierUp { false };
 
-    const unsigned m_osrEntryBytecodeIndex;
+    const BytecodeIndex m_osrEntryBytecodeIndex;
 
     ThreadData* m_threadData;
 
@@ -159,8 +159,8 @@ private:
     DesiredGlobalProperties m_globalProperties;
     RecordedStatuses m_recordedStatuses;
 
-    HashMap<unsigned, Vector<unsigned>> m_tierUpInLoopHierarchy;
-    Vector<unsigned> m_tierUpAndOSREnterBytecodes;
+    HashMap<BytecodeIndex, Vector<BytecodeIndex>> m_tierUpInLoopHierarchy;
+    Vector<BytecodeIndex> m_tierUpAndOSREnterBytecodes;
 
     Stage m_stage;
 

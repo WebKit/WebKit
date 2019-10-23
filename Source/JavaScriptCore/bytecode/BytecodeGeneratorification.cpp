@@ -200,7 +200,7 @@ public:
         runLivenessFixpoint(codeBlock, instructions, m_generatorification.graph());
 
         for (YieldData& data : m_generatorification.yields())
-            data.liveness = getLivenessInfoAtBytecodeOffset(codeBlock, instructions, m_generatorification.graph(), m_generatorification.instructions().at(data.point).next().offset());
+            data.liveness = getLivenessInfoAtBytecodeIndex(codeBlock, instructions, m_generatorification.graph(), BytecodeIndex(m_generatorification.instructions().at(data.point).next().offset()));
     }
 
 private:

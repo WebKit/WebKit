@@ -57,7 +57,7 @@ public:
 #endif
 
     void appendItem(MacroAssembler::Label, const CodeOrigin&);
-    static CodeOrigin defaultCodeOrigin() { return CodeOrigin(0, nullptr); }
+    static CodeOrigin defaultCodeOrigin() { return CodeOrigin(BytecodeIndex(0)); }
 
     bool didBuildMapping() const { return m_shouldBuildMapping; }
 

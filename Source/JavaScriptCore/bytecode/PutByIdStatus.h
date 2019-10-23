@@ -93,7 +93,7 @@ public:
         m_variants.append(variant);
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, ICStatusMap&, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
+    static PutByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
     static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect);
     
     static PutByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
@@ -131,7 +131,7 @@ private:
         const ConcurrentJSLocker&, CodeBlock*, StructureStubInfo*, UniquedStringImpl* uid,
         CallLinkStatus::ExitSiteData);
 #endif
-    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, UniquedStringImpl* uid);
+    static PutByIdStatus computeFromLLInt(CodeBlock*, BytecodeIndex, UniquedStringImpl* uid);
     
     bool appendVariant(const PutByIdVariant&);
     

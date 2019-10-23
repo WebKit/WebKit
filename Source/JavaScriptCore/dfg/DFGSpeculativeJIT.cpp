@@ -1862,13 +1862,8 @@ void SpeculativeJIT::compileCurrentBlock()
         
         ASSERT(m_currentNode->shouldGenerate());
         
-        if (verboseCompilationEnabled()) {
-            dataLogF(
-                "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x",
-                (int)m_currentNode->index(),
-                m_currentNode->origin.semantic.bytecodeIndex(), m_jit.debugOffset());
-            dataLog("\n");
-        }
+        if (verboseCompilationEnabled())
+            dataLogLn("SpeculativeJIT generating Node @", (int)m_currentNode->index(), " (", m_currentNode->origin.semantic.bytecodeIndex().offset(), ") at JIT offset 0x", m_jit.debugOffset());
 
         if (Options::validateDFGExceptionHandling() && (mayExit(m_jit.graph(), m_currentNode) != DoesNotExit || m_currentNode->isTerminal()))
             m_jit.jitReleaseAssertNoException(m_jit.vm());
@@ -1905,7 +1900,7 @@ void SpeculativeJIT::compileCurrentBlock()
 void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_currentNode);
-    m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
+    m_origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), true);
 
     auto& arguments = m_jit.graph().m_rootToArguments.find(m_jit.graph().block(0))->value;
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
@@ -3998,8 +3993,8 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 #endif
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
     JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
@@ -4022,8 +4017,8 @@ void SpeculativeJIT::compileValueSub(Node* node)
 #endif
 
         CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
         JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
@@ -4616,8 +4611,8 @@ void SpeculativeJIT::compileArithSub(Node* node)
 void SpeculativeJIT::compileValueNegate(Node* node)
 {
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
     JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile);
     auto repatchingFunction = operationArithNegateOptimize;
     auto nonRepatchingFunction = operationArithNegate;
@@ -4839,8 +4834,8 @@ void SpeculativeJIT::compileValueMul(Node* node)
 #endif
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
     JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile);
     auto repatchingFunction = operationValueMulOptimize;
     auto nonRepatchingFunction = operationValueMul;
@@ -10731,7 +10726,7 @@ void SpeculativeJIT::emitSwitchCharStringJump(Node* node, SwitchData* data, GPRR
             MacroAssembler::Address(scratch, StringImpl::lengthMemoryOffset()),
             TrustedImm32(1)),
         data->fallThrough.block);
-
+    
     m_jit.loadPtr(MacroAssembler::Address(scratch, StringImpl::dataOffset()), value);
     
     JITCompiler::Jump is8Bit = m_jit.branchTest32(

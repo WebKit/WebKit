@@ -77,10 +77,8 @@ private:
             return BaseRef { m_instructions, m_index + ptr()->size() };
         }
 
-        inline Offset offset() const
-        {
-            return m_index;
-        }
+        inline Offset offset() const { return m_index; }
+        inline BytecodeIndex index() const { return BytecodeIndex(offset()); }
 
         bool isValid() const
         {
@@ -152,6 +150,7 @@ public:
         return iterator { m_instructions, m_instructions.size() };
     }
 
+    inline const Ref at(BytecodeIndex index) const { return at(index.offset()); }
     inline const Ref at(Offset offset) const
     {
         ASSERT(offset < m_instructions.size());

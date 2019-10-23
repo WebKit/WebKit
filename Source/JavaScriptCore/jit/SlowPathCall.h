@@ -59,7 +59,7 @@ public:
         m_jit->move(JIT::TrustedImmPtr(m_pc), JIT::argumentGPR1);
 #endif
         JIT::Call call = m_jit->call(OperationPtrTag);
-        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, FunctionPtr<OperationPtrTag>(m_slowPathFunction)));
+        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeIndex, FunctionPtr<OperationPtrTag>(m_slowPathFunction)));
 
 #if CPU(X86_64) && OS(WINDOWS)
         m_jit->pop(JIT::regT0); // vPC

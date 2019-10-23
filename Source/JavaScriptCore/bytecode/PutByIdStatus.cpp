@@ -47,11 +47,11 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid)
 {
     VM& vm = profiledBlock->vm();
     
-    auto instruction = profiledBlock->instructions().at(bytecodeIndex);
+    auto instruction = profiledBlock->instructions().at(bytecodeIndex.offset());
     auto bytecode = instruction->as<OpPutById>();
     auto& metadata = bytecode.metadata(profiledBlock);
 
@@ -92,7 +92,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 }
 
 #if ENABLE(JIT)
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
     
@@ -237,7 +237,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(baselineBlock, bytecodeIndex);
     ExitFlag didExit = hasBadCacheExitSite(baselineBlock, bytecodeIndex);
 

@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 void FrequentExitSite::dump(PrintStream& out) const
 {
-    out.print("bc#", m_bytecodeOffset, ": ", m_kind, "/", m_jitType, "/", m_inlineKind);
+    out.print(m_bytecodeIndex, ": ", m_kind, "/", m_jitType, "/", m_inlineKind);
 }
 
 ExitProfile::ExitProfile() { }
@@ -75,7 +75,7 @@ bool ExitProfile::add(CodeBlock* owner, const FrequentExitSite& site)
     return true;
 }
 
-Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
+Vector<FrequentExitSite> ExitProfile::exitSitesFor(BytecodeIndex bytecodeIndex)
 {
     Vector<FrequentExitSite> result;
     
@@ -83,7 +83,7 @@ Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
         return result;
     
     for (unsigned i = 0; i < m_frequentExitSites->size(); ++i) {
-        if (m_frequentExitSites->at(i).bytecodeOffset() == bytecodeIndex)
+        if (m_frequentExitSites->at(i).bytecodeIndex() == bytecodeIndex)
             result.append(m_frequentExitSites->at(i));
     }
     

@@ -111,15 +111,15 @@ size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
     return Base::estimatedSize(cell, vm) + extraSize;
 }
 
-int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
+int UnlinkedCodeBlock::lineNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    ASSERT(bytecodeIndex.offset() < instructions().size());
     int divot { 0 };
     int startOffset { 0 };
     int endOffset { 0 };
     unsigned line { 0 };
     unsigned column { 0 };
-    expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
+    expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
     return line;
 }
 
@@ -179,10 +179,10 @@ void UnlinkedCodeBlock::dumpExpressionRangeInfo()
 }
 #endif
 
-void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset,
+void UnlinkedCodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex,
     int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    ASSERT(bytecodeIndex.offset() < instructions().size());
 
     if (!m_expressionInfo.size()) {
         startOffset = 0;
@@ -199,7 +199,7 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
     int high = expressionInfo.size();
     while (low < high) {
         int mid = low + (high - low) / 2;
-        if (expressionInfo[mid].instructionOffset <= bytecodeOffset)
+        if (expressionInfo[mid].instructionOffset <= bytecodeIndex.offset())
             low = mid + 1;
         else
             high = mid;
@@ -325,9 +325,9 @@ const InstructionStream& UnlinkedCodeBlock::instructions() const
     return *m_instructions;
 }
 
-UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler requiredHandler)
+UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForBytecodeIndex(BytecodeIndex bytecodeIndex, RequiredHandler requiredHandler)
 {
-    return handlerForIndex(bytecodeOffset, requiredHandler);
+    return handlerForIndex(bytecodeIndex.offset(), requiredHandler);
 }
 
 UnlinkedHandlerInfo* UnlinkedCodeBlock::handlerForIndex(unsigned index, RequiredHandler requiredHandler)

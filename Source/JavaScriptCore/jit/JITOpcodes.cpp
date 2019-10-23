@@ -169,7 +169,7 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
     JITInstanceOfGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset),
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
         regT0, // result
         regT2, // value
@@ -720,9 +720,9 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndOperandBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
-        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
     else
-        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeOffset);
+        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, ExceptionHandlerPtrTag);
@@ -760,7 +760,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
     jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
@@ -777,7 +777,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
     jumpTable->ensureCTITable();
 
     emitGetVirtualRegister(scrutinee, regT0);
@@ -794,7 +794,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
 
     // create jump table for switch destinations, track this switch statement.
     StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset));
+    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset));
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);
@@ -1036,7 +1036,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
 
         copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-        callOperation(operationOptimize, &vm(), m_bytecodeOffset);
+        callOperation(operationOptimize, &vm(), m_bytecodeIndex.asBits());
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
         if (!ASSERT_DISABLED) {
             Jump ok = branchPtr(MacroAssembler::Above, returnValueGPR, TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
@@ -1301,7 +1301,7 @@ void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
 
     Label nextHotPath = label();
     
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeOffset, PatchableJump(), badType, mode, profile, done, nextHotPath));
+    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, PatchableJump(), badType, mode, profile, done, nextHotPath));
 }
 
 void JIT::emitSlow_op_has_indexed_property(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1504,7 +1504,7 @@ void JIT::emit_op_log_shadow_chicken_tail(const Instruction* currentInstruction)
     ensureShadowChickenPacket(vm(), shadowPacketReg, scratch1Reg, scratch2Reg);
     emitGetVirtualRegister(bytecode.m_thisValue.offset(), regT2);
     emitGetVirtualRegister(bytecode.m_scope.offset(), regT3);
-    logShadowChickenTailPacket(shadowPacketReg, JSValueRegs(regT2), regT3, m_codeBlock, CallSiteIndex(m_bytecodeOffset));
+    logShadowChickenTailPacket(shadowPacketReg, JSValueRegs(regT2), regT3, m_codeBlock, CallSiteIndex(m_bytecodeIndex));
 }
 
 #endif // USE(JSVALUE64)

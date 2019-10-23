@@ -189,9 +189,9 @@ PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuf
     };
 
     DeltaCompressionBuilder codeOriginCompressor((sizeof(intptr_t) + sizeof(int8_t) + sizeof(int8_t) + sizeof(InlineCallFrame*)) * builder.m_codeRanges.size());
-    CodeOrigin lastCodeOrigin(0, nullptr);
+    CodeOrigin lastCodeOrigin(BytecodeIndex(0));
     auto buildCodeOriginTable = [&] (const CodeOrigin& codeOrigin) {
-        intptr_t delta = static_cast<intptr_t>(codeOrigin.bytecodeIndex()) - static_cast<intptr_t>(lastCodeOrigin.bytecodeIndex());
+        intptr_t delta = static_cast<intptr_t>(codeOrigin.bytecodeIndex().offset()) - static_cast<intptr_t>(lastCodeOrigin.bytecodeIndex().offset());
         lastCodeOrigin = codeOrigin;
         if (delta > std::numeric_limits<int8_t>::max() || delta < std::numeric_limits<int8_t>::min() || delta == sentinelBytecodeDelta) {
             codeOriginCompressor.write<int8_t>(sentinelBytecodeDelta);
@@ -254,7 +254,7 @@ Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
         return WTF::nullopt;
 
     uintptr_t currentPC = 0;
-    unsigned currentBytecodeIndex = 0;
+    BytecodeIndex currentBytecodeIndex = BytecodeIndex(0);
     InlineCallFrame* currentInlineCallFrame = nullptr;
 
     DeltaCompresseionReader pcReader(m_compressedPCs, m_compressedPCBufferSize);
@@ -280,7 +280,7 @@ Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
             else
                 delta = static_cast<intptr_t>(value);
 
-            currentBytecodeIndex = static_cast<unsigned>(static_cast<intptr_t>(currentBytecodeIndex) + delta);
+            currentBytecodeIndex = BytecodeIndex(static_cast<intptr_t>(currentBytecodeIndex.offset()) + delta);
 
             int8_t hasInlineFrame = codeOriginReader.read<int8_t>();
             ASSERT(hasInlineFrame == 0 || hasInlineFrame == 1);

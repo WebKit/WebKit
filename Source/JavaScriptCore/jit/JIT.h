@@ -70,16 +70,16 @@ namespace JSC {
 
     struct CallRecord {
         MacroAssembler::Call from;
-        unsigned bytecodeOffset;
+        BytecodeIndex bytecodeIndex;
         FunctionPtr<OperationPtrTag> callee;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, unsigned bytecodeOffset, FunctionPtr<OperationPtrTag> callee)
+        CallRecord(MacroAssembler::Call from, BytecodeIndex bytecodeIndex, FunctionPtr<OperationPtrTag> callee)
             : from(from)
-            , bytecodeOffset(bytecodeOffset)
+            , bytecodeIndex(bytecodeIndex)
             , callee(callee)
         {
         }
@@ -98,9 +98,9 @@ namespace JSC {
 
     struct SlowCaseEntry {
         MacroAssembler::Jump from;
-        unsigned to;
+        BytecodeIndex to;
         
-        SlowCaseEntry(MacroAssembler::Jump f, unsigned t)
+        SlowCaseEntry(MacroAssembler::Jump f, BytecodeIndex t)
             : from(f)
             , to(t)
         {
@@ -121,20 +121,20 @@ namespace JSC {
             StringJumpTable* stringJumpTable;
         } jumpTable;
 
-        unsigned bytecodeOffset;
+        BytecodeIndex bytecodeIndex;
         unsigned defaultOffset;
 
-        SwitchRecord(SimpleJumpTable* jumpTable, unsigned bytecodeOffset, unsigned defaultOffset, Type type)
+        SwitchRecord(SimpleJumpTable* jumpTable, BytecodeIndex bytecodeIndex, unsigned defaultOffset, Type type)
             : type(type)
-            , bytecodeOffset(bytecodeOffset)
+            , bytecodeIndex(bytecodeIndex)
             , defaultOffset(defaultOffset)
         {
             this->jumpTable.simpleJumpTable = jumpTable;
         }
 
-        SwitchRecord(StringJumpTable* jumpTable, unsigned bytecodeOffset, unsigned defaultOffset)
+        SwitchRecord(StringJumpTable* jumpTable, BytecodeIndex bytecodeIndex, unsigned defaultOffset)
             : type(String)
-            , bytecodeOffset(bytecodeOffset)
+            , bytecodeIndex(bytecodeIndex)
             , defaultOffset(defaultOffset)
         {
             this->jumpTable.stringJumpTable = jumpTable;
@@ -144,7 +144,7 @@ namespace JSC {
     struct ByValCompilationInfo {
         ByValCompilationInfo() { }
         
-        ByValCompilationInfo(ByValInfo* byValInfo, unsigned bytecodeIndex, MacroAssembler::PatchableJump notIndexJump, MacroAssembler::PatchableJump badTypeJump, JITArrayMode arrayMode, ArrayProfile* arrayProfile, MacroAssembler::Label doneTarget, MacroAssembler::Label nextHotPathTarget)
+        ByValCompilationInfo(ByValInfo* byValInfo, BytecodeIndex bytecodeIndex, MacroAssembler::PatchableJump notIndexJump, MacroAssembler::PatchableJump badTypeJump, JITArrayMode arrayMode, ArrayProfile* arrayProfile, MacroAssembler::Label doneTarget, MacroAssembler::Label nextHotPathTarget)
             : byValInfo(byValInfo)
             , bytecodeIndex(bytecodeIndex)
             , notIndexJump(notIndexJump)
@@ -157,7 +157,7 @@ namespace JSC {
         }
 
         ByValInfo* byValInfo;
-        unsigned bytecodeIndex;
+        BytecodeIndex bytecodeIndex;
         MacroAssembler::PatchableJump notIndexJump;
         MacroAssembler::PatchableJump badTypeJump;
         JITArrayMode arrayMode;
@@ -192,7 +192,7 @@ namespace JSC {
         static constexpr int patchPutByIdDefaultOffset = 256;
 
     public:
-        JIT(VM&, CodeBlock* = 0, unsigned loopOSREntryBytecodeOffset = 0);
+        JIT(VM&, CodeBlock* = nullptr, BytecodeIndex loopOSREntryBytecodeOffset = BytecodeIndex(0));
         ~JIT();
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
@@ -202,7 +202,7 @@ namespace JSC {
 
         void doMainThreadPreparationBeforeCompile();
         
-        static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort, unsigned bytecodeOffset = 0)
+        static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort, BytecodeIndex bytecodeOffset = BytecodeIndex(0))
         {
             return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
@@ -210,28 +210,28 @@ namespace JSC {
         static void compileGetByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompileGetByVal(locker, byValInfo, returnAddress, arrayMode);
         }
 
         static void compileGetByValWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, const Identifier& propertyName)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompileGetByValWithCachedId(byValInfo, returnAddress, propertyName);
         }
 
         static void compilePutByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompilePutByVal<OpPutByVal>(locker, byValInfo, returnAddress, arrayMode);
         }
         
         static void compileDirectPutByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompilePutByVal<OpPutByValDirect>(locker, byValInfo, returnAddress, arrayMode);
         }
 
@@ -239,14 +239,14 @@ namespace JSC {
         static void compilePutByValWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, PutKind putKind, const Identifier& propertyName)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompilePutByValWithCachedId<Op>(byValInfo, returnAddress, putKind, propertyName);
         }
 
         static void compileHasIndexedProperty(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
             jit.privateCompileHasIndexedProperty(byValInfo, returnAddress, arrayMode);
         }
 
@@ -277,7 +277,7 @@ namespace JSC {
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = call(OperationPtrTag);
-            m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.retagged<OperationPtrTag>()));
+            m_calls.append(CallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 
@@ -754,12 +754,12 @@ namespace JSC {
             ++iter;
         }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
-        void linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases,
-            Vector<SlowCaseEntry>::iterator&, unsigned bytecodeOffset);
+        void linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases,
+            Vector<SlowCaseEntry>::iterator&, BytecodeIndex bytecodeOffset);
 
         void linkAllSlowCases(Vector<SlowCaseEntry>::iterator& iter)
         {
-            linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+            linkAllSlowCasesForBytecodeIndex(m_slowCases, iter, m_bytecodeIndex);
         }
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr<CFunctionPtrTag>);
@@ -934,7 +934,7 @@ namespace JSC {
         Vector<CallCompilationInfo> m_callCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
-        unsigned m_bytecodeOffset;
+        BytecodeIndex m_bytecodeIndex;
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
 
@@ -968,7 +968,7 @@ namespace JSC {
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
         bool m_shouldUseIndexMasking;
-        unsigned m_loopOSREntryBytecodeOffset { 0 };
+        BytecodeIndex m_loopOSREntryBytecodeIndex;
     };
 
 } // namespace JSC

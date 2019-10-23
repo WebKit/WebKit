@@ -41,7 +41,7 @@ MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
     MethodOfGettingAValueProfile result;
     result.m_kind = LazyOperand;
     result.u.lazyOperand.codeBlock = codeBlock;
-    result.u.lazyOperand.bytecodeOffset = key.bytecodeOffset();
+    result.u.lazyOperand.bytecodeOffset = key.bytecodeIndex();
     result.u.lazyOperand.operand = key.operand().offset();
     return result;
 }

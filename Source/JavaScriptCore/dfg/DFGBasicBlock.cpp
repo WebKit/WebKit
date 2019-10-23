@@ -32,8 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-BasicBlock::BasicBlock(
-    unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals, float executionCount)
+BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, float executionCount)
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)
     , cfaStructureClobberStateAtHead(StructuresAreWatched)

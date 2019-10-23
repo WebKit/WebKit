@@ -211,7 +211,7 @@ public:
                     jit.emitPutToCallFrameHeader(codeBlock, CallFrameSlot::codeBlock);
                 });
 
-            for (unsigned catchEntrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeOffset.keys()) {
+            for (unsigned catchEntrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeIndex.keys()) {
                 RELEASE_ASSERT(catchEntrypointIndex != 0);
                 m_proc.code().setPrologueForEntrypoint(catchEntrypointIndex, catchPrologueGenerator.copyRef());
             }
@@ -280,7 +280,7 @@ public:
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
         MacroAssembler::AbsoluteAddress addressOfStackLimit(vm->addressOfSoftStackLimit());
         PatchpointValue* stackOverflowHandler = m_out.patchpoint(Void);
-        CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(0));
+        CallSiteIndex callSiteIndex = callSiteIndexForCodeOrigin(m_ftlState, CodeOrigin(BytecodeIndex(0)));
         stackOverflowHandler->appendSomeRegister(m_callFrame);
         stackOverflowHandler->clobber(RegisterSet::macroScratchRegisters());
         stackOverflowHandler->numGPScratchRegisters = 1;
@@ -351,7 +351,7 @@ public:
             }
 
             m_node = nullptr;
-            m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
+            m_origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), true);
 
             // Check Arguments.
             availabilityMap().clear();
@@ -2110,8 +2110,8 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
         auto repatchingFunction = operationValueAddOptimize;
         auto nonRepatchingFunction = operationValueAdd;
         compileBinaryMathIC<JITAddGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2131,8 +2131,8 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
         compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2152,8 +2152,8 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
         auto repatchingFunction = operationValueMulOptimize;
         auto nonRepatchingFunction = operationValueMul;
         compileBinaryMathIC<JITMulGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -2415,8 +2415,8 @@ private:
             }
 
             CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-            unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+            BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
             auto repatchingFunction = operationValueSubOptimize;
             auto nonRepatchingFunction = operationValueSub;
             compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
@@ -3093,8 +3093,8 @@ private:
     {
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        BytecodeIndex bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeIndex(bytecodeIndex);
         auto repatchingFunction = operationArithNegateOptimize;
         auto nonRepatchingFunction = operationArithNegate;
         compileUnaryMathIC<JITNegGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);

@@ -404,7 +404,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (clobbersExitState(*this, node))
         out.print(comma, "ClobbersExit");
     if (node->origin.isSet()) {
-        out.print(comma, "bc#", node->origin.semantic.bytecodeIndex());
+        out.print(comma, node->origin.semantic.bytecodeIndex());
         if (node->origin.semantic != node->origin.forExit && node->origin.forExit.isSet())
             out.print(comma, "exit: ", node->origin.forExit);
     }
@@ -1649,10 +1649,10 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
             }
 
             if (node->hasHeapPrediction())
-                return &profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex());
+                return &profiledBlock->valueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
 
             if (profiledBlock->hasBaselineJITProfiling()) {
-                if (ArithProfile* result = profiledBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex()))
+                if (ArithProfile* result = profiledBlock->arithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
                     return result;
             }
         }
@@ -1750,12 +1750,12 @@ bool Graph::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& 
     if (!m_hasExceptionHandlers)
         return false;
 
-    unsigned bytecodeIndexToCheck = codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeIndexToCheck = codeOrigin.bytecodeIndex();
     while (1) {
         InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
         CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
-        if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
-            opCatchOriginOut = CodeOrigin(handler->target, inlineCallFrame);
+        if (HandlerInfo* handler = codeBlock->handlerForBytecodeIndex(bytecodeIndexToCheck)) {
+            opCatchOriginOut = CodeOrigin(BytecodeIndex(handler->target), inlineCallFrame);
             catchHandlerOut = handler;
             return true;
         }

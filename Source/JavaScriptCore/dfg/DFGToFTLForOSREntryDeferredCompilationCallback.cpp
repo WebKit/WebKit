@@ -75,7 +75,7 @@ void ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete(
     switch (result) {
     case CompilationSuccessful: {
         jitCode->setOSREntryBlock(codeBlock->vm(), profiledDFGCodeBlock, codeBlock);
-        unsigned osrEntryBytecode = codeBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
+        BytecodeIndex osrEntryBytecode = codeBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
         jitCode->tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::CompilationDone);
         break;
     }

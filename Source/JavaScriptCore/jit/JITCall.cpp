@@ -155,7 +155,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
 
     auto bytecode = instruction->as<OpCallEval>();
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
-    info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeIndex), regT0);
 
     int registerOffset = -bytecode.m_argv;
 
@@ -226,8 +226,8 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     compileSetupFrame(bytecode, info);
 
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
-    uint32_t bytecodeOffset = m_codeBlock->bytecodeOffset(instruction);
-    uint32_t locationBits = CallSiteIndex(bytecodeOffset).bits();
+    auto bytecodeIndex = m_codeBlock->bytecodeIndex(instruction);
+    uint32_t locationBits = CallSiteIndex(bytecodeIndex).bits();
     store32(TrustedImm32(locationBits), Address(callFrameRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + TagOffset));
 
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
@@ -242,7 +242,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeIndex), regT0);
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;

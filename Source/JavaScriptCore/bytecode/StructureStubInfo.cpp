@@ -40,8 +40,7 @@ static constexpr bool verbose = false;
 }
 
 StructureStubInfo::StructureStubInfo(AccessType accessType)
-    : callSiteIndex(UINT_MAX)
-    , accessType(accessType)
+    : accessType(accessType)
     , cacheType(CacheType::Unset)
     , countdown(1) // For a totally clear stub, we'll patch it after the first execution.
     , repatchCount(0)

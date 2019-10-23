@@ -48,7 +48,7 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
     return create(globalObject, vm, structure, messageString, appender, type, useCurrentFrame);
 }
 
-static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
+static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex)
 {
     ErrorInstance::SourceAppender appender = exception->sourceAppender();
     exception->clearSourceAppender();
@@ -71,7 +71,7 @@ static void appendSourceToError(JSGlobalObject* globalObject, CallFrame* callFra
     else
         codeBlock = callFrame->codeBlock();
 
-    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset, line, column);
+    codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, line, column);
     
     int expressionStart = divotPoint - startOffset;
     int expressionStop = divotPoint + endOffset;
@@ -124,12 +124,12 @@ void ErrorInstance::finishCreation(JSGlobalObject* globalObject, VM& vm, const S
     vm.heap.writeBarrier(this);
 
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
-        unsigned bytecodeOffset;
+        BytecodeIndex bytecodeIndex;
         CallFrame* callFrame;
-        getBytecodeOffset(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeOffset);
+        getBytecodeIndex(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeIndex);
         if (callFrame && callFrame->codeBlock()) {
             ASSERT(!callFrame->callee().isWasm());
-            appendSourceToError(globalObject, callFrame, this, bytecodeOffset);
+            appendSourceToError(globalObject, callFrame, this, bytecodeIndex);
         }
     }
 }

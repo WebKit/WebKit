@@ -98,12 +98,12 @@ SUPPRESS_ASAN unsigned CallFrame::unsafeCallSiteAsRawBits() const
 
 CallSiteIndex CallFrame::callSiteIndex() const
 {
-    return CallSiteIndex(callSiteAsRawBits());
+    return CallSiteIndex(BytecodeIndex(callSiteAsRawBits()));
 }
 
 SUPPRESS_ASAN CallSiteIndex CallFrame::unsafeCallSiteIndex() const
 {
-    return CallSiteIndex(unsafeCallSiteAsRawBits());
+    return CallSiteIndex(BytecodeIndex(unsafeCallSiteAsRawBits()));
 }
 
 #if USE(JSVALUE32_64)
@@ -114,7 +114,7 @@ const Instruction* CallFrame::currentVPC() const
 
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
-    CallSiteIndex callSite(vpc);
+    CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
     this[CallFrameSlot::argumentCount].tag() = callSite.bits();
 }
 
@@ -134,7 +134,7 @@ const Instruction* CallFrame::currentVPC() const
 
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
-    CallSiteIndex callSite(codeBlock()->bytecodeOffset(vpc));
+    CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
     this[CallFrameSlot::argumentCount].tag() = static_cast<int32_t>(callSite.bits());
 }
 
@@ -147,11 +147,11 @@ unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
 
 #endif
     
-unsigned CallFrame::bytecodeOffset()
+BytecodeIndex CallFrame::bytecodeIndex()
 {
     ASSERT(!callee().isWasm());
     if (!codeBlock())
-        return 0;
+        return BytecodeIndex(0);
 #if ENABLE(DFG_JIT)
     if (callSiteBitsAreCodeOriginIndex()) {
         ASSERT(codeBlock());
@@ -164,13 +164,13 @@ unsigned CallFrame::bytecodeOffset()
     }
 #endif
     ASSERT(callSiteBitsAreBytecodeOffset());
-    return callSiteBitsAsBytecodeOffset();
+    return BytecodeIndex(callSiteBitsAsBytecodeOffset());
 }
 
 CodeOrigin CallFrame::codeOrigin()
 {
     if (!codeBlock())
-        return CodeOrigin(0);
+        return CodeOrigin(BytecodeIndex(0));
 #if ENABLE(DFG_JIT)
     if (callSiteBitsAreCodeOriginIndex()) {
         CallSiteIndex index = callSiteIndex();
@@ -178,7 +178,7 @@ CodeOrigin CallFrame::codeOrigin()
         return codeBlock()->codeOrigin(index);
     }
 #endif
-    return CodeOrigin(callSiteBitsAsBytecodeOffset());
+    return CodeOrigin(BytecodeIndex(callSiteBitsAsBytecodeOffset()));
 }
 
 Register* CallFrame::topOfFrameInternal()
@@ -302,7 +302,7 @@ String CallFrame::friendlyFunctionName()
 void CallFrame::dump(PrintStream& out)
 {
     if (CodeBlock* codeBlock = this->codeBlock()) {
-        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " bc#", bytecodeOffset(), "]");
+        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
 
         out.print("(");
         thisValue().dumpForBacktrace(out);

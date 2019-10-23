@@ -169,7 +169,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     if (callFrame->isAnyWasmCallee()) {
         m_frame.m_isWasmFrame = true;
         m_frame.m_codeBlock = nullptr;
-        m_frame.m_bytecodeOffset = 0;
+        m_frame.m_bytecodeIndex = BytecodeIndex();
 #if ENABLE(WEBASSEMBLY)
         CalleeBits bits = callFrame->callee();
         if (bits.isWasm())
@@ -177,9 +177,9 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 #endif
     } else {
         m_frame.m_codeBlock = callFrame->codeBlock();
-        m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
+        m_frame.m_bytecodeIndex = !m_frame.codeBlock() ? BytecodeIndex(0)
             : codeOrigin ? codeOrigin->bytecodeIndex()
-            : callFrame->bytecodeOffset();
+            : callFrame->bytecodeIndex();
 
     }
 
@@ -213,7 +213,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
         else
             m_frame.m_argumentCountIncludingThis = inlineCallFrame->argumentCountIncludingThis;
         m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock.get();
-        m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex();
+        m_frame.m_bytecodeIndex = codeOrigin->bytecodeIndex();
 
         JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
         m_frame.m_callee = callee;
@@ -423,7 +423,7 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
 void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
 {
     CodeBlock* codeBlock = this->codeBlock();
-    codeBlock->unlinkedCodeBlock()->expressionRangeForBytecodeOffset(bytecodeOffset(), divot, startOffset, endOffset, line, column);
+    codeBlock->unlinkedCodeBlock()->expressionRangeForBytecodeIndex(bytecodeIndex(), divot, startOffset, endOffset, line, column);
     divot += codeBlock->sourceOffset();
 }
 
@@ -485,8 +485,8 @@ void StackVisitor::Frame::dump(PrintStream& out, Indenter indent, WTF::Function<
             indent++;
 
             if (callFrame->callSiteBitsAreBytecodeOffset()) {
-                unsigned bytecodeOffset = callFrame->bytecodeOffset();
-                out.print(indent, "bytecodeOffset: ", bytecodeOffset, " of ", codeBlock->instructions().size(), "\n");
+                BytecodeIndex bytecodeIndex = callFrame->bytecodeIndex();
+                out.print(indent, bytecodeIndex, " of ", codeBlock->instructions().size(), "\n");
 #if ENABLE(DFG_JIT)
             } else {
                 out.print(indent, "hasCodeOrigins: ", codeBlock->hasCodeOrigins(), "\n");

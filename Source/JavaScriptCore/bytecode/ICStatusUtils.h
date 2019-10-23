@@ -71,7 +71,7 @@ void filterICStatusVariants(VariantVectorType& variants, const StructureSet& set
         });
 }
 
-ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex);
+ExitFlag hasBadCacheExitSite(CodeBlock* profiledBlock, BytecodeIndex);
 
 } // namespace JSC
 

@@ -3583,7 +3583,7 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLReplacement", ());
     // We need to compile the code.
     compile(
-        vm, codeBlock->newReplacement(), codeBlock, FTLMode, UINT_MAX,
+        vm, codeBlock->newReplacement(), codeBlock, FTLMode, BytecodeIndex(),
         Operands<Optional<JSValue>>(), ToFTLDeferredCompilationCallback::create());
 
     // If we reached here, the counter has not be reset. Do that now.
@@ -3637,7 +3637,7 @@ void JIT_OPERATION triggerTierUpNow(VM* vmPointer)
     }
 }
 
-static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeIndex, bool canOSREnterHere)
+static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originBytecodeIndex, bool canOSREnterHere)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
 
@@ -3690,7 +3690,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeI
                 if (Options::verboseOSR())
                     dataLog("OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock), "\n");
                 if (void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
-                    CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
+                    CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at ", originBytecodeIndex));
                     return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(callFrame));
                 }
             }
@@ -3775,7 +3775,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeI
             // executing to compile. We start with trying to compile outer loops since we believe outer loop
             // compilations reveal the best opportunities for optimizing code.
             for (auto iter = tierUpHierarchyEntry->value.rbegin(), end = tierUpHierarchyEntry->value.rend(); iter != end; ++iter) {
-                unsigned osrEntryCandidate = *iter;
+                BytecodeIndex osrEntryCandidate = *iter;
 
                 if (jitCode->tierUpEntryTriggers.get(osrEntryCandidate) == JITCode::TriggerReason::StartCompilation) {
                     // This means that we already asked this loop to compile. If we've reached here, it
@@ -3787,7 +3787,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeI
                 // This is where we ask the outer to loop to immediately compile itself if program
                 // control reaches it.
                 if (Options::verboseOSR())
-                    dataLog("Inner-loop bc#", originBytecodeIndex, " in ", *codeBlock, " setting parent loop bc#", osrEntryCandidate, "'s trigger and backing off.\n");
+                    dataLog("Inner-loop ", originBytecodeIndex, " in ", *codeBlock, " setting parent loop ", osrEntryCandidate, "'s trigger and backing off.\n");
                 jitCode->tierUpEntryTriggers.set(osrEntryCandidate, JITCode::TriggerReason::StartCompilation);
                 return true;
             }
@@ -3837,7 +3837,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeI
         return nullptr;
     }
     
-    CODEBLOCK_LOG_EVENT(jitCode->osrEntryBlock(), "osrEntry", ("at bc#", originBytecodeIndex));
+    CODEBLOCK_LOG_EVENT(jitCode->osrEntryBlock(), "osrEntry", ("at ", originBytecodeIndex));
     // It's possible that the for-entry compile already succeeded. In that case OSR
     // entry will succeed unless we ran out of stack. It's not clear what we should do.
     // We signal to try again after a while if that happens.
@@ -3850,13 +3850,14 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, unsigned originBytecodeI
     return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(callFrame));
 }
 
-void JIT_OPERATION triggerTierUpNowInLoop(VM* vmPointer, unsigned bytecodeIndex)
+void JIT_OPERATION triggerTierUpNowInLoop(VM* vmPointer, unsigned bytecodeIndexBits)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     NativeCallFrameTracer tracer(vm, callFrame);
     DeferGCForAWhile deferGC(vm.heap);
     CodeBlock* codeBlock = callFrame->codeBlock();
+    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
     sanitizeStackForVM(vm);
 
@@ -3885,13 +3886,14 @@ void JIT_OPERATION triggerTierUpNowInLoop(VM* vmPointer, unsigned bytecodeIndex)
     }
 }
 
-char* JIT_OPERATION triggerOSREntryNow(VM* vmPointer, unsigned bytecodeIndex)
+char* JIT_OPERATION triggerOSREntryNow(VM* vmPointer, unsigned bytecodeIndexBits)
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     NativeCallFrameTracer tracer(vm, callFrame);
     DeferGCForAWhile deferGC(vm.heap);
     CodeBlock* codeBlock = callFrame->codeBlock();
+    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
     sanitizeStackForVM(vm);
 

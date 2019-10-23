@@ -109,29 +109,23 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
 
 ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr<NoPtrTag> target)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
     return nakedCall;
 }
 
 ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr<NoPtrTag> target)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearTailCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
     return nakedCall;
 }
 
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
-    ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
-#if USE(JSVALUE32_64)
-    const Instruction* instruction = m_codeBlock->instructions().at(m_bytecodeOffset).ptr();
-    uint32_t locationBits = CallSiteIndex(instruction).bits();
-#else
-    uint32_t locationBits = CallSiteIndex(m_bytecodeOffset).bits();
-#endif
+    uint32_t locationBits = CallSiteIndex(m_bytecodeIndex).bits();
     store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCount));
     
     // FIXME: It's not clear that this is needed. JITOperations tend to update the top call frame on
@@ -196,45 +190,45 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
         linkSlowCase(iter);
 }
 
-ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, unsigned bytecodeOffset)
+ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
 {
-    while (iter != slowCases.end() && iter->to == bytecodeOffset)
+    while (iter != slowCases.end() && iter->to == bytecodeIndex)
         linkSlowCase(iter);
 }
 
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
-    m_slowCases.append(SlowCaseEntry(jump, m_bytecodeOffset));
+    m_slowCases.append(SlowCaseEntry(jump, m_bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::addSlowCase(const JumpList& jumpList)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
     for (const Jump& jump : jumpList.jumps())
-        m_slowCases.append(SlowCaseEntry(jump, m_bytecodeOffset));
+        m_slowCases.append(SlowCaseEntry(jump, m_bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::addSlowCase()
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     
     Jump emptyJump; // Doing it this way to make Windows happy.
-    m_slowCases.append(SlowCaseEntry(emptyJump, m_bytecodeOffset));
+    m_slowCases.append(SlowCaseEntry(emptyJump, m_bytecodeIndex));
 }
 
 ALWAYS_INLINE void JIT::addJump(Jump jump, int relativeOffset)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
-    m_jmpTable.append(JumpTable(jump, m_bytecodeOffset + relativeOffset));
+    m_jmpTable.append(JumpTable(jump, m_bytecodeIndex.offset() + relativeOffset));
 }
 
 ALWAYS_INLINE void JIT::addJump(const JumpList& jumpList, int relativeOffset)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
     for (auto& jump : jumpList.jumps())
         addJump(jump, relativeOffset);
@@ -242,9 +236,9 @@ ALWAYS_INLINE void JIT::addJump(const JumpList& jumpList, int relativeOffset)
 
 ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
-    jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
+    jump.linkTo(m_labels[m_bytecodeIndex.offset() + relativeOffset], this);
 }
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -573,7 +567,7 @@ ALWAYS_INLINE bool JIT::getOperandConstantInt(int op1, int op2, int& op, int32_t
 // get arg puts an arg from the SF register array into a h/w register
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 {
-    ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue value = m_codeBlock->getConstant(src);

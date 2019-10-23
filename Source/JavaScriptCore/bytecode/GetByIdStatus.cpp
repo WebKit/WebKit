@@ -52,11 +52,11 @@ bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid)
 {
     VM& vm = profiledBlock->vm();
     
-    auto instruction = profiledBlock->instructions().at(bytecodeIndex);
+    auto instruction = profiledBlock->instructions().at(bytecodeIndex.offset());
 
     StructureID structureID;
     switch (instruction->opcodeID()) {
@@ -102,7 +102,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
 }
 
-GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
+GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
@@ -130,7 +130,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& m
 #if ENABLE(DFG_JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     GetByIdStatus result = GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         locker, profiledBlock, stubInfo, uid,
         CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex));
@@ -303,7 +303,7 @@ GetByIdStatus GetByIdStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
     ICStatusContextStack& icContextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex);
     ExitFlag didExit = hasBadCacheExitSite(profiledBlock, bytecodeIndex);
     

@@ -214,7 +214,7 @@ void JITCode::clearOSREntryBlockAndResetThresholds(CodeBlock *dfgCodeBlock)
 { 
     ASSERT(m_osrEntryBlock);
 
-    unsigned osrEntryBytecode = m_osrEntryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
+    BytecodeIndex osrEntryBytecode = m_osrEntryBlock->jitCode()->ftlForOSREntry()->bytecodeIndex();
     m_osrEntryBlock.clear();
     osrEntryRetry = 0;
     tierUpEntryTriggers.set(osrEntryBytecode, JITCode::TriggerReason::DontTrigger);

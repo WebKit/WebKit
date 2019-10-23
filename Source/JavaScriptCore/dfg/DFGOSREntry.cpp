@@ -42,7 +42,7 @@ namespace JSC { namespace DFG {
 
 void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print("bc#", m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.executableAddress()));
+    out.print(m_bytecodeIndex, ", machine code = ", RawPointer(m_machineCode.executableAddress()));
     out.print(", stack rules = [");
     
     auto printOperand = [&] (VirtualRegister reg) {
@@ -92,7 +92,7 @@ void OSREntryData::dump(PrintStream& out) const
 }
 
 SUPPRESS_ASAN
-void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, unsigned bytecodeIndex)
+void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
 {
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
@@ -106,7 +106,7 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, unsign
     if (Options::verboseOSR()) {
         dataLog(
             "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
-            " from bc#", bytecodeIndex, "\n");
+            " from ", bytecodeIndex, "\n");
     }
     
     sanitizeStackForVM(vm);
@@ -329,8 +329,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, unsign
     return scratch;
 }
 
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, unsigned bytecodeIndex)
-{ 
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
+{
     ASSERT(codeBlock->jitType() == JITType::DFGJIT || codeBlock->jitType() == JITType::FTLJIT);
     ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
 
@@ -380,7 +380,7 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
     if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(frameSizeForCheck).offset()])))
         return nullptr;
 
-    auto instruction = callFrame->codeBlock()->instructions().at(callFrame->bytecodeOffset());
+    auto instruction = callFrame->codeBlock()->instructions().at(callFrame->bytecodeIndex());
     ASSERT(instruction->is<OpCatch>());
     ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(callFrame).m_buffer;
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
