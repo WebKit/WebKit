@@ -172,7 +172,7 @@ void getBytecodeIndex(VM& vm, CallFrame* startCallFrame, Vector<StackFrame>* sta
     StackVisitor::visit(vm.topCallFrame, vm, functor);
     callFrame = functor.foundCallFrame();
     unsigned stackIndex = functor.index();
-    bytecodeIndex = BytecodeIndex();
+    bytecodeIndex = BytecodeIndex(0);
     if (stackTrace && stackIndex < stackTrace->size() && stackTrace->at(stackIndex).hasBytecodeIndex())
         bytecodeIndex = stackTrace->at(stackIndex).bytecodeIndex();
 }

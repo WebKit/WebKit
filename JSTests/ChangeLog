@@ -1,3 +1,12 @@
+2019-10-23  Keith Miller  <keith_miller@apple.com>
+
+        Undo incidental change from BytecodeIndex class patch
+        https://bugs.webkit.org/show_bug.cgi?id=203339
+
+        Reviewed by Mark Lam.
+
+        * stress/error-source-location-assertion.js: Added.
+
 2019-10-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         String.prototype.matchAll should throw on non-global regex

@@ -1,3 +1,18 @@
+2019-10-23  Keith Miller  <keith_miller@apple.com>
+
+        Undo incidental change from BytecodeIndex class patch
+        https://bugs.webkit.org/show_bug.cgi?id=203339
+
+        Reviewed by Mark Lam.
+
+        It's not totally clear why we need to claim our bytecode index is
+        0 when we can't figure what the true index is. I'd rather unbreak
+        our build for now, however, and fix the underlying issue in
+        https://bugs.webkit.org/show_bug.cgi?id=203340
+
+        * runtime/Error.cpp:
+        (JSC::getBytecodeIndex):
+
 2019-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Figure out missing prepareCallOperation
