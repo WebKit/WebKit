@@ -1,5 +1,19 @@
 2019-10-24  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Mismatch in com.apple.coremedia.audiodeviceclock declarations
+        https://bugs.webkit.org/show_bug.cgi?id=203367
+        <rdar://problem/56581166>
+
+        Reviewed by Per Arne Vollan.
+
+        The 'common.sb' sandbox allows access to "com.apple.coremedia.audiodeviceclock.xpc", but
+        the WebContent sandbox blocked access to "com.apple.coremedia.audiodeviceclock". This means
+        we aren't blocking that endpoint.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2019-10-24  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Mismatch in com.apple.MediaPlayer.RemotePlayerService declarations
         https://bugs.webkit.org/show_bug.cgi?id=203368
         <rdar://problem/56581152>
