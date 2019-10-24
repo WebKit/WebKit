@@ -1,3 +1,17 @@
+2019-10-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Mismatch in com.apple.MediaPlayer.RemotePlayerService declarations
+        https://bugs.webkit.org/show_bug.cgi?id=203368
+        <rdar://problem/56581152>
+
+        Reviewed by Per Arne Vollan.
+
+        The 'common.sb' sandbox allows access to the xpc-service-name "com.apple.MediaPlayer.RemotePlayerService",
+        but we block access to the global-name "com.apple.MediaPlayer.RemoteService". We aren't blocking
+        the right thing.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-24  Brady Eidson  <beidson@apple.com>
 
         Expose pageZoom as API.

@@ -189,8 +189,7 @@
         "com.apple.mediaremote"
         "com.apple.mobileipod")
     (allow mach-lookup
-           (global-name "com.apple.mediaremoted.xpc")
-           (xpc-service-name "com.apple.MediaPlayer.RemotePlayerService")))
+           (global-name "com.apple.mediaremoted.xpc")))
 
 (define-once (url-translation)
     ;; For translating http:// & https:// URLs referencing itms:// URLs.
@@ -916,7 +915,6 @@
 ;; FIXME: remove overridden rules once the final list has been
 ;; established, see https://bugs.webkit.org/show_bug.cgi?id=193840
 (deny mach-lookup
-    (global-name "com.apple.MediaPlayer.RemotePlayerService")
     (global-name "com.apple.coremedia.audiodeviceclock")
     (global-name "com.apple.webkit.camera")
 )
