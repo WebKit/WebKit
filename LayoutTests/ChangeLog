@@ -1,3 +1,17 @@
+2019-10-24  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mac WK1 ] REGRESSION (r251261): Layout Test inspector/console/webcore-logging.html is consistently Failing
+        https://bugs.webkit.org/show_bug.cgi?id=203173
+        <rdar://problem/56424721>
+
+        Reviewed by Geoffrey Garen.
+
+        play() returns a promise and the promise can be rejected by a later pause(). We didn't handle
+        that case so we could receive a type JavaScript message for the unhandled rejected promise.
+
+        * inspector/console/webcore-logging.html:
+        * platform/mac-wk1/TestExpectations:
+
 2019-10-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Fix compositing/backing/transform-transition-from-outside-view.html

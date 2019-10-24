@@ -17,7 +17,7 @@ function setup()
 function play()
 {
     video.currentTime = 0;
-    video.play();
+    video.play().catch((err) => { });
     TestPage.dispatchEventToFrontend('PlayEvent', {count: 1});
 }
 
