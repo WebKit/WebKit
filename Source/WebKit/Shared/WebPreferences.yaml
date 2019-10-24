@@ -1353,7 +1353,7 @@ WebVREnabled:
 
 ServerTimingEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_SERVER_TIMING_ENABLED
   humanReadableName: "Server Timing"
   humanReadableDescription: "Enable Server Timing API"
   category: experimental

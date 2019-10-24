@@ -282,6 +282,13 @@
 #define DEFAULT_ASYNC_OVERFLOW_SCROLLING_ENABLED false
 #endif
 
+
+#if ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))
+#define DEFAULT_SERVER_TIMING_ENABLED true
+#else
+#define DEFAULT_SERVER_TIMING_ENABLED false
+#endif
+
 namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
