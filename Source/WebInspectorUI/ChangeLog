@@ -1,3 +1,16 @@
+2019-10-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: CONSOLE ERROR removeEventListener cannot remove blackboxed-urls-changed because it doesn't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=203372
+
+        Reviewed by Devin Rousso.
+
+        Avoid console errors when opening source panel.
+
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement.prototype._updateSourceCode): Only remove listener if it has
+        been added before.
+
 2019-10-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to inject "bootstrap" JavaScript into the page as the first script executed

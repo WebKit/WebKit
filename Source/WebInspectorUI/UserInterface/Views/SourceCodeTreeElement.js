@@ -196,7 +196,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (oldSupportsScriptBlackboxing !== newSupportsScriptBlackboxing) {
             if (newSupportsScriptBlackboxing)
                 WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._updateToggleBlackboxImageElementState, this);
-            else
+            else if (oldSupportsScriptBlackboxing)
                 WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._updateToggleBlackboxImageElementState, this);
         }
 
