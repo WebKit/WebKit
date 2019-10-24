@@ -2,15 +2,14 @@
 <html>
     <head>
         <script>
-            let streamPromise = Promise.resolve();
+
+            let stream = null;
 
             function promptForCapture()
             {
-                streamPromise = navigator.mediaDevices.enumerateDevices().then(() => {
+                navigator.mediaDevices.enumerateDevices().then(() => {
                     return navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-                });
-
-                streamPromise.then((stream) => {
+                }).then((s) => {
                     stream = s;
                     video.srcObject = stream;
                     console.log("Got user media");
@@ -19,29 +18,23 @@
 
             function stop(kind)
             {
-                streamPromise.then((stream) => {
-                    let activeTracks = [];
-                    stream.getTracks().forEach(track => {
-                        if (!kind || track.kind == kind)
-                            track.stop();
-                        else
-                            activeTracks.push(track);
-                    });
- 
-                    if (!activeTracks.length) {
-                        streamPromiseDidResolve = false;
-                        video.srcObject = null;
-                    }
+                let activeTracks = [];
+                stream.getTracks().forEach(track => {
+                    if (!kind || track.kind == kind)
+                        track.stop();
+                    else
+                        activeTracks.push(track);
                 });
-            }
 
-            let streamPromiseDidResolve = false;
+                if (!activeTracks.length) {
+                    stream = null;
+                    video.srcObject = null;
+                }
+            }
 
             function haveStream()
             {
-                // Our caller polls repeatedly until our promise resolves.
-                streamPromise.then((stream) => streamPromiseDidResolve = !!stream);
-                return streamPromiseDidResolve;
+                return stream !== null;
             }
 
             function doMultipleGetUserMediaSynchronously()
@@ -60,12 +53,12 @@
 
             function captureAudio()
             {
-                streamPromise = navigator.mediaDevices.getUserMedia({audio: true});
+                navigator.mediaDevices.getUserMedia({audio: true}).then(s => stream = s);
             }
 
             function captureAudioAndVideo()
             {
-                streamPromise = navigator.mediaDevices.getUserMedia({audio: true, video: true});
+                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => stream = s);
             }
         </script>
     <head>
