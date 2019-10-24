@@ -471,7 +471,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsAdd(JSGlobalObject* globalObject, E
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, AddFunc());
 }
@@ -480,7 +480,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsAnd(JSGlobalObject* globalObject, E
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, AndFunc());
 }
@@ -489,7 +489,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsCompareExchange(JSGlobalObject* glo
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(expected), JSValue::decode(newValue)};
     return atomicOperationWithArgs(vm, globalObject, args, CompareExchangeFunc());
 }
@@ -498,7 +498,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsExchange(JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, ExchangeFunc());
 }
@@ -507,7 +507,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsIsLockFree(JSGlobalObject* globalOb
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return isLockFree(globalObject, JSValue::decode(size));
 }
 
@@ -515,7 +515,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsLoad(JSGlobalObject* globalObject, 
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index)};
     return atomicOperationWithArgs(vm, globalObject, args, LoadFunc());
 }
@@ -524,7 +524,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsOr(JSGlobalObject* globalObject, En
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, OrFunc());
 }
@@ -533,7 +533,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsStore(JSGlobalObject* globalObject,
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, StoreFunc());
 }
@@ -542,7 +542,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsSub(JSGlobalObject* globalObject, E
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, SubFunc());
 }
@@ -551,7 +551,7 @@ EncodedJSValue JIT_OPERATION operationAtomicsXor(JSGlobalObject* globalObject, E
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
     return atomicOperationWithArgs(vm, globalObject, args, XorFunc());
 }

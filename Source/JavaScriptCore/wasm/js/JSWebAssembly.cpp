@@ -227,7 +227,7 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromiseDeferred*
             JSGlobalObject* globalObject = instance->globalObject();
             resolve(vm, globalObject, promise, instance, module, importObject, codeBlock.releaseNonNull(), resolveKind, creationMode);
         });
-    }), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException);
+    }), &Wasm::createJSToWasmWrapper, &Wasm::operationWasmToJSException);
 }
 
 static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromiseDeferred* promise, const Identifier& moduleKey, JSValue buffer, JSObject* importObject, Resolve resolveKind, Wasm::CreationMode creationMode)

@@ -61,7 +61,7 @@ JSC::EncodedJSValue JIT_OPERATION toWrapperSlow(JSC::JSGlobalObject* globalObjec
     ASSERT(globalObject);
     JSC::VM& vm = globalObject->vm();
     JSC::CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JSC::NativeCallFrameTracer tracer(vm, callFrame);
+    JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return JSC::JSValue::encode(toJS(globalObject, static_cast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
 }
 

@@ -296,16 +296,17 @@ void JIT_OPERATION operationLinkDirectCall(CallLinkInfo*, JSFunction*) WTF_INTER
 
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(VM*) WTF_INTERNAL;
 
-void JIT_OPERATION triggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*) WTF_INTERNAL;
+void JIT_OPERATION operationTriggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*) WTF_INTERNAL;
+void triggerReoptimizationNow(CodeBlock* baselineCodeBlock, CodeBlock* optiimzedCodeBlock, OSRExitBase*); // This is not JIT_OPERATION.
 
 #if USE(JSVALUE32_64)
 double JIT_OPERATION operationRandom(JSGlobalObject*);
 #endif
 
 #if ENABLE(FTL_JIT)
-void JIT_OPERATION triggerTierUpNow(VM*) WTF_INTERNAL;
-void JIT_OPERATION triggerTierUpNowInLoop(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
-char* JIT_OPERATION triggerOSREntryNow(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
+void JIT_OPERATION operationTriggerTierUpNow(VM*) WTF_INTERNAL;
+void JIT_OPERATION operationTriggerTierUpNowInLoop(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
+char* JIT_OPERATION operationTriggerOSREntryNow(VM*, unsigned bytecodeIndexBits) WTF_INTERNAL;
 #endif // ENABLE(FTL_JIT)
 
 } // extern "C"

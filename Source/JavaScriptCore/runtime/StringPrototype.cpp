@@ -724,7 +724,7 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(JSGlobalObje
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regExp = searchValue->regExp();
@@ -747,7 +747,7 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(JSGlobalObject
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CallData callData;
@@ -925,7 +925,7 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceGeneric(JSGlobalObject* glo
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     
     return replace(
         vm, globalObject, callFrame, JSValue::decode(thisValue), JSValue::decode(searchValue),

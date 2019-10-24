@@ -79,7 +79,7 @@ namespace JSC { namespace LLInt {
     CodeBlock* codeBlock = callFrame->codeBlock(); \
     JSGlobalObject* globalObject = codeBlock->globalObject(); \
     VM& vm = codeBlock->vm(); \
-    NativeCallFrameTracer tracer(vm, callFrame); \
+    SlowPathFrameTracer tracer(vm, callFrame); \
     auto throwScope = DECLARE_THROW_SCOPE(vm)
 
 #ifndef NDEBUG
@@ -536,10 +536,10 @@ LLINT_SLOW_PATH_DECL(stack_check)
     VM& vm = codeBlock->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    // It's ok to create the NativeCallFrameTracer here before we
+    // It's ok to create the SlowPathFrameTracer here before we
     // convertToStackOverflowFrame() because this function is always called
     // after the frame has been propulated with a proper CodeBlock and callee.
-    NativeCallFrameTracer tracer(vm, callFrame);
+    SlowPathFrameTracer tracer(vm, callFrame);
 
     LLINT_SET_PC_FOR_STUBS();
 
@@ -1436,7 +1436,7 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
         ASSERT(callType != CallType::JS);
     
         if (callType == CallType::Host) {
-            NativeCallFrameTracer tracer(vm, calleeFrame);
+            SlowPathFrameTracer tracer(vm, calleeFrame);
             calleeFrame->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
             LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
@@ -1456,7 +1456,7 @@ static SlowPathReturnType handleHostCall(CallFrame* calleeFrame, JSValue callee,
     ASSERT(constructType != ConstructType::JS);
     
     if (constructType == ConstructType::Host) {
-        NativeCallFrameTracer tracer(vm, calleeFrame);
+        SlowPathFrameTracer tracer(vm, calleeFrame);
         calleeFrame->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(asObject(callee)->globalObject(vm), calleeFrame));
         LLINT_CALL_RETURN(globalObject, calleeFrame, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
@@ -1773,7 +1773,7 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     VM& vm = callFrame->deprecatedVM();
-    NativeCallFrameTracer tracer(vm, callFrame);
+    SlowPathFrameTracer tracer(vm, callFrame);
     genericUnwind(vm, callFrame);
     LLINT_END_IMPL();
 }

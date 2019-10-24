@@ -55,7 +55,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject* globa
     using namespace DFG;
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
@@ -144,7 +144,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
     using namespace DFG;
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     // We cannot GC. We've got pointers in evil places.
     DeferGCForAWhile deferGC(vm.heap);
@@ -607,7 +607,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
     }
 }
 
-extern "C" void* JIT_OPERATION compileFTLLazySlowPath(CallFrame* callFrame, unsigned index)
+extern "C" void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame* callFrame, unsigned index)
 {
     VM& vm = callFrame->deprecatedVM();
 

@@ -65,6 +65,14 @@ public:
     VM& vm() { return m_codeBlock->vm(); }
     AssemblerType_T& assembler() { return m_assembler; }
 
+    void prepareCallOperation(VM& vm)
+    {
+        UNUSED_PARAM(vm);
+#if !USE(BUILTIN_FRAME_ADDRESS) || !ASSERT_DISABLED
+        storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
+#endif
+    }
+
     void checkStackPointerAlignment()
     {
         // This check is both unneeded and harder to write correctly for ARM64

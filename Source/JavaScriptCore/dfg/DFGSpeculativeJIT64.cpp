@@ -5085,7 +5085,7 @@ void SpeculativeJIT::compile(Node* node)
             callTierUp.link(&m_jit);
 
             silentSpill(savePlans);
-            callOperation(triggerTierUpNowInLoop, &vm(), TrustedImm32(bytecodeIndex.asBits()));
+            callOperation(operationTriggerTierUpNowInLoop, &vm(), TrustedImm32(bytecodeIndex.asBits()));
             silentFill(savePlans);
 
             m_jit.jump().linkTo(toNextOperation, &m_jit);
@@ -5100,7 +5100,7 @@ void SpeculativeJIT::compile(Node* node)
             MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
         
         silentSpillAllRegisters(InvalidGPRReg);
-        callOperation(triggerTierUpNow, &vm());
+        callOperation(operationTriggerTierUpNow, &vm());
         silentFillAllRegisters();
         
         done.link(&m_jit);
@@ -5138,7 +5138,7 @@ void SpeculativeJIT::compile(Node* node)
             overflowedCounter.link(&m_jit);
 
             silentSpill(savePlans);
-            callOperation(triggerOSREntryNow, tempGPR, &vm(), TrustedImm32(bytecodeIndex.asBits()));
+            callOperation(operationTriggerOSREntryNow, tempGPR, &vm(), TrustedImm32(bytecodeIndex.asBits()));
 
             if (savePlans.isEmpty())
                 m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR).linkTo(toNextOperation, &m_jit);

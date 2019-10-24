@@ -68,6 +68,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     // Store Callee.
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfCallee()), GPRInfo::argumentGPR1);
+    jit.prepareCallOperation(vm);
     jit.storePtr(GPRInfo::argumentGPR1, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
     auto call = jit.call(OperationPtrTag);
@@ -77,7 +78,7 @@ static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBa
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationThrowBadI64));
+    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmThrowBadI64));
     return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex);
 }
 
@@ -516,7 +517,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
 }
 
-void* wasmToJSException(CallFrame* callFrame, Wasm::ExceptionType type, Instance* wasmInstance)
+void* JIT_OPERATION operationWasmToJSException(CallFrame* callFrame, Wasm::ExceptionType type, Instance* wasmInstance)
 {
     wasmInstance->storeTopCallFrame(callFrame);
     JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
@@ -565,7 +566,7 @@ void emitThrowWasmToJSException(CCallHelpers& jit, GPRReg wasmInstance, Wasm::Ex
     jit.breakpoint(); // We should not reach this.
 
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(Wasm::wasmToJSException));
+        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(Wasm::operationWasmToJSException));
     });
 }
 

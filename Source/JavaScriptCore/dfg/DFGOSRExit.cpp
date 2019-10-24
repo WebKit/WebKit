@@ -956,7 +956,7 @@ CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch() const
     return CodeLocationJump<JSInternalPtrTag>(m_patchableJumpLocation);
 }
 
-void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecovery>& operands)
+void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<ValueRecovery>& operands)
 {
     HashMap<MinifiedID, int> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
     for (size_t index = 0; index < operands.size(); ++index) {
@@ -1007,7 +1007,8 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
 
         static_assert(std::is_same<decltype(operationCreateDirectArgumentsDuringExit), decltype(operationCreateClonedArgumentsDuringExit)>::value, "We assume these functions have the same signature below.");
         jit.setupArguments<decltype(operationCreateDirectArgumentsDuringExit)>(
-            AssemblyHelpers::TrustedImmPtr(&jit.vm()), AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
+            AssemblyHelpers::TrustedImmPtr(&vm), AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
+        jit.prepareCallOperation(vm);
         switch (recovery.technique()) {
         case DirectArgumentsThatWereNotCreated:
             jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationCreateDirectArgumentsDuringExit)), GPRInfo::nonArgGPR0);
@@ -1026,7 +1027,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
     }
 }
 
-void JIT_OPERATION OSRExit::compileOSRExit(CallFrame* callFrame)
+void JIT_OPERATION operationCompileOSRExit(CallFrame* callFrame)
 {
     VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1087,7 +1088,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(CallFrame* callFrame)
             jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
         }
 
-        compileExit(jit, vm, exit, operands, recovery);
+        OSRExit::compileExit(jit, vm, exit, operands, recovery);
 
         LinkBuffer patchBuffer(jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
@@ -1115,7 +1116,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         debugInfo->kind = exit.m_kind;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
 
-        jit.debugCall(vm, debugOperationPrintSpeculationFailure, debugInfo);
+        jit.debugCall(vm, operationDebugPrintSpeculationFailure, debugInfo);
     }
 
     // Perform speculation recovery. This only comes into play when an operation
@@ -1613,7 +1614,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // Note that we also roughly assume that the arguments might still be materialized outside of its
     // inline call frame scope - but for now the DFG wouldn't do that.
 
-    emitRestoreArguments(jit, operands);
+    emitRestoreArguments(jit, vm, operands);
 
     // Adjust the old JIT's execute counter. Since we are exiting OSR, we know
     // that all new calls into this code will go to the new JIT, so the execute
@@ -1651,7 +1652,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // counter to 0; otherwise we set the counter to
     // counterValueForOptimizeAfterWarmUp().
 
-    handleExitCounts(jit, exit);
+    handleExitCounts(vm, jit, exit);
 
     // Reify inlined call frames.
 
@@ -1661,7 +1662,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     adjustAndJumpToTarget(vm, jit, exit);
 }
 
-void JIT_OPERATION OSRExit::debugOperationPrintSpeculationFailure(CallFrame* callFrame, void* debugInfoRaw, void* scratch)
+void JIT_OPERATION operationDebugPrintSpeculationFailure(CallFrame* callFrame, void* debugInfoRaw, void* scratch)
 {
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);

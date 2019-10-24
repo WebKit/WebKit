@@ -36,7 +36,7 @@
 
 namespace JSC { namespace DFG {
 
-void handleExitCounts(CCallHelpers&, const OSRExitBase&);
+void handleExitCounts(VM&, CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
 void adjustAndJumpToTarget(VM&, CCallHelpers&, const OSRExitBase&);
 void* callerReturnPC(CodeBlock* baselineCodeBlockForCaller, BytecodeIndex callBytecodeIndex, InlineCallFrame::Kind callerKind, bool& callerIsLLInt);

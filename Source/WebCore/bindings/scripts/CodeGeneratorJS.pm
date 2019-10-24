@@ -5368,7 +5368,7 @@ sub GenerateOperationDefinition
         push(@$outputArray, "    IGNORE_WARNINGS_BEGIN(\"frame-address\")\n");
         push(@$outputArray, "    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);\n");
         push(@$outputArray, "    IGNORE_WARNINGS_END\n");
-        push(@$outputArray, "    JSC::NativeCallFrameTracer tracer(vm, callFrame);\n");
+        push(@$outputArray, "    JSC::JITOperationPrologueCallFrameTracer tracer(vm, callFrame);\n");
         push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
         push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
         push(@$outputArray, "    auto& impl = castedThis->wrapped();\n");

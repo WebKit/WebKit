@@ -1,3 +1,133 @@
+2019-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Figure out missing prepareCallOperation
+        https://bugs.webkit.org/show_bug.cgi?id=203285
+
+        Reviewed by Mark Lam.
+
+        We start using __builtin_frame_address to get CallFrame* in JIT operations. For the platform which is not supporting this API (MSVC),
+        we put frame-pointer to vm.topCallFrame in the caller side. The problem is that all Apple platform is now using __builtin_frame_address,
+        and we are not testing vm.topCallFrame version at all.
+
+        To find missing prepareCallOperation call, we introduce JITOperationPrologueCallFrameTracer. When USE(BUILTIN_FRAME_ADDRESS) is enabled and
+        if it is debug build, we anyway put frame-pointer to vm.topCallFrame. And after that, we ensure that vm.topCallFrame is the same to the
+        CallFrame* gained by __builtin_frame_address. By doing this, we can find places missing this call in debug build of Apple ports.
+
+        We also found that FTL's custom getter calling is putting wrong value to vm.topCallFrame. This patch fixes it too.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::operationCompileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::operationDebugPrintSpeculationFailure):
+        (JSC::DFG::OSRExit::compileOSRExit): Deleted.
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure): Deleted.
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::osrWriteBarrier):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::callPreflight):
+        (JSC::FTL::DFG::LowerDFGToB3::callCheck):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::operationCompileFTLOSRExit):
+        (JSC::FTL::compileFTLOSRExit): Deleted.
+        * ftl/FTLOSRExitCompiler.h:
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        (JSC::FTL::operationCompileFTLLazySlowPath):
+        (JSC::FTL::compileFTLLazySlowPath): Deleted.
+        * ftl/FTLOperations.h:
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::generateIfNecessary):
+        (JSC::FTL::Thunks::getSlowPathCallThunk):
+        * interpreter/FrameTracers.h:
+        (JSC::SlowPathFrameTracer::SlowPathFrameTracer):
+        (JSC::JITOperationPrologueCallFrameTracer::JITOperationPrologueCallFrameTracer):
+        (JSC::JITOperationPrologueCallFrameTracer::~JITOperationPrologueCallFrameTracer):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::prepareCallOperation):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareCallOperation): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::ftlThunkAwareRepatchCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        * runtime/AtomicsObject.cpp:
+        (JSC::operationAtomicsAdd):
+        (JSC::operationAtomicsAnd):
+        (JSC::operationAtomicsCompareExchange):
+        (JSC::operationAtomicsExchange):
+        (JSC::operationAtomicsIsLockFree):
+        (JSC::operationAtomicsLoad):
+        (JSC::operationAtomicsOr):
+        (JSC::operationAtomicsStore):
+        (JSC::operationAtomicsSub):
+        (JSC::operationAtomicsXor):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/StringPrototype.cpp:
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        (JSC::operationStringProtoFuncReplaceGeneric):
+        * tools/JSDollarVM.cpp:
+        (IGNORE_WARNINGS_BEGIN):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationWasmThrowBadI64):
+        (JSC::Wasm::operationWasmTriggerOSREntryNow):
+        (JSC::Wasm::operationWasmTriggerTierUpNow):
+        (JSC::Wasm::operationThrowBadI64): Deleted.
+        (JSC::Wasm::triggerOSREntryNow): Deleted.
+        (JSC::Wasm::triggerTierUpNow): Deleted.
+        * wasm/WasmOperations.h:
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::instantiate):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::operationWasmToJSException):
+        (JSC::Wasm::emitThrowWasmToJSException):
+        (JSC::Wasm::wasmToJSException): Deleted.
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+
 2019-10-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251482.

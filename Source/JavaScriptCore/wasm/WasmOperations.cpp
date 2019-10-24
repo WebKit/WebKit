@@ -51,11 +51,11 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace Wasm {
 
-void JIT_OPERATION operationThrowBadI64(JSWebAssemblyInstance* instance)
+void JIT_OPERATION operationWasmThrowBadI64(JSWebAssemblyInstance* instance)
 {
     VM& vm = instance->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    NativeCallFrameTracer tracer(vm, callFrame);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -224,7 +224,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     context.gpr(GPRInfo::argumentGPR1) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().executableAddress<>());
 }
 
-void JIT_OPERATION triggerOSREntryNow(Probe::Context& context)
+void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context& context)
 {
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
     uint32_t functionIndex = osrEntryData.functionIndex();
@@ -408,7 +408,7 @@ void JIT_OPERATION triggerOSREntryNow(Probe::Context& context)
     return returnWithoutOSREntry();
 }
 
-void JIT_OPERATION triggerTierUpNow(Instance* instance, uint32_t functionIndex)
+void JIT_OPERATION operationWasmTriggerTierUpNow(Instance* instance, uint32_t functionIndex)
 {
     Wasm::CodeBlock& codeBlock = *instance->codeBlock();
     ASSERT(instance->memory()->mode() == codeBlock.mode());

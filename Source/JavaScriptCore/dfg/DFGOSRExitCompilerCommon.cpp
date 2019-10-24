@@ -39,7 +39,7 @@
 
 namespace JSC { namespace DFG {
 
-void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
+void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 {
     if (!exitKindMayJettison(exit.m_kind)) {
         // FIXME: We may want to notice that we're frequently exiting
@@ -103,8 +103,9 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     
     reoptimizeNow.link(&jit);
     
-    jit.setupArguments<decltype(triggerReoptimizationNow)>(GPRInfo::regT0, GPRInfo::regT3, AssemblyHelpers::TrustedImmPtr(&exit));
-    jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(triggerReoptimizationNow)), GPRInfo::nonArgGPR0);
+    jit.setupArguments<decltype(operationTriggerReoptimizationNow)>(GPRInfo::regT0, GPRInfo::regT3, AssemblyHelpers::TrustedImmPtr(&exit));
+    jit.prepareCallOperation(vm);
+    jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationTriggerReoptimizationNow)), GPRInfo::nonArgGPR0);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     AssemblyHelpers::Jump doneAdjusting = jit.jump();
     
@@ -339,6 +340,7 @@ static void osrWriteBarrier(VM& vm, CCallHelpers& jit, GPRReg owner, GPRReg scra
     AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
     jit.setupArguments<decltype(operationOSRWriteBarrier)>(&vm, owner);
+    jit.prepareCallOperation(vm);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
     jit.call(scratch, OperationPtrTag);
 

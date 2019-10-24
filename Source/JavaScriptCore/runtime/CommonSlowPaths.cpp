@@ -77,7 +77,7 @@ namespace JSC {
     CodeBlock* codeBlock = callFrame->codeBlock(); \
     JSGlobalObject* globalObject = codeBlock->globalObject(); \
     VM& vm = codeBlock->vm(); \
-    NativeCallFrameTracer tracer(vm, callFrame); \
+    SlowPathFrameTracer tracer(vm, callFrame); \
     auto throwScope = DECLARE_THROW_SCOPE(vm); \
     UNUSED_PARAM(throwScope)
 
@@ -175,7 +175,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
     if (UNLIKELY(slotsToAdd < 0)) {
         CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForCall);
         callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        NativeCallFrameTracer tracer(vm, callFrame);
+        SlowPathFrameTracer tracer(vm, callFrame);
         ErrorHandlingScope errorScope(vm);
         throwScope.release();
         throwArityCheckStackOverflowError(globalObject, throwScope);
@@ -191,7 +191,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     if (UNLIKELY(slotsToAdd < 0)) {
         CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(callFrame, CodeForConstruct);
         callFrame->convertToStackOverflowFrame(vm, codeBlock);
-        NativeCallFrameTracer tracer(vm, callFrame);
+        SlowPathFrameTracer tracer(vm, callFrame);
         ErrorHandlingScope errorScope(vm);
         throwArityCheckStackOverflowError(globalObject, throwScope);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), callFrame);

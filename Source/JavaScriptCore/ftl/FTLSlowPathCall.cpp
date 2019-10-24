@@ -126,7 +126,7 @@ SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> 
     m_jit.addLinkTask(
         [result, &vm] (LinkBuffer& linkBuffer) {
             MacroAssemblerCodeRef<JITThunkPtrTag> thunk =
-                vm.ftlThunks->getSlowPathCallThunk(result.key());
+                vm.ftlThunks->getSlowPathCallThunk(vm, result.key());
 
             linkBuffer.link(result.call(), CodeLocationLabel<OperationPtrTag>(thunk.retaggedCode<OperationPtrTag>()));
         });

@@ -40,7 +40,7 @@ JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*, ExitTimeO
 
 void JIT_OPERATION operationPopulateObjectInOSR(JSGlobalObject*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*) WTF_INTERNAL;
 
-void* JIT_OPERATION compileFTLLazySlowPath(CallFrame*, unsigned) WTF_INTERNAL;
+void* JIT_OPERATION operationCompileFTLLazySlowPath(CallFrame*, unsigned) WTF_INTERNAL;
 
 } // extern "C"
 

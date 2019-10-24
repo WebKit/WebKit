@@ -40,9 +40,9 @@ namespace Wasm {
 
 class Instance;
 
-void JIT_OPERATION triggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
-void JIT_OPERATION triggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;
-void JIT_OPERATION operationThrowBadI64(JSWebAssemblyInstance*) WTF_INTERNAL;
+void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
+void JIT_OPERATION operationWasmTriggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;
+void JIT_OPERATION operationWasmThrowBadI64(JSWebAssemblyInstance*) WTF_INTERNAL;
 
 } } // namespace JSC::Wasm
 

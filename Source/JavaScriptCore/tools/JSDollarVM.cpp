@@ -757,7 +757,7 @@ public:
             DollarVMAssertScope assertScope;
             VM& vm = globalObject->vm();
             CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-            NativeCallFrameTracer tracer(vm, callFrame);
+            JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
             return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
         }
 
@@ -851,7 +851,7 @@ public:
             DollarVMAssertScope assertScope;
             VM& vm = globalObject->vm();
             CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-            NativeCallFrameTracer tracer(vm, callFrame);
+            JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* object = static_cast<DOMJITNode*>(pointer);
             auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(vm, object);
@@ -958,7 +958,6 @@ public:
     {
         DollarVMAssertScope assertScope;
         VM& vm = globalObject->vm();
-        NativeCallFrameTracer tracer(vm, callFrame);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(vm, callFrame->thisValue());
@@ -972,7 +971,7 @@ public:
         DollarVMAssertScope assertScope;
         VM& vm = globalObject->vm();
         CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-        NativeCallFrameTracer tracer(vm, callFrame);
+        JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
         return JSValue::encode(jsNumber(node->value()));
     }
 
@@ -1051,7 +1050,7 @@ public:
         DollarVMAssertScope assertScope;
         VM& vm = globalObject->vm();
         CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-        NativeCallFrameTracer tracer(vm, callFrame);
+        JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
         return JSValue::encode(jsNumber(node->value()));
     }
 
@@ -1114,7 +1113,7 @@ public:
             DollarVMAssertScope assertScope;
             VM& vm = globalObject->vm();
             CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-            NativeCallFrameTracer tracer(vm, callFrame);
+            JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
             JSObject* object = static_cast<JSObject*>(pointer);
             return JSValue::encode(object->getPrototypeDirect(vm));
         }

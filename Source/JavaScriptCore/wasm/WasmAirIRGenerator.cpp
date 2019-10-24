@@ -1768,7 +1768,7 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
             forceOSREntry.link(&jit);
             tierUp.link(&jit);
 
-            jit.probe(triggerOSREntryNow, osrEntryDataPtr);
+            jit.probe(operationWasmTriggerOSREntryNow, osrEntryDataPtr);
             jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR0).linkTo(tierUpResume, &jit);
             jit.farJump(GPRInfo::argumentGPR1, WasmEntryPtrTag);
         });
