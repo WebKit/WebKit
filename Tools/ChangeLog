@@ -1,3 +1,13 @@
+2019-10-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Make it possible to convert SharedBuffer segments and data views to NSData without copying
+        https://bugs.webkit.org/show_bug.cgi?id=203348
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/SharedBuffer.mm:
+        (TestWebKitAPI::TEST_F):
+
 2019-10-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] imported/mozilla/svg/text/textpath-selection.svg is flaky

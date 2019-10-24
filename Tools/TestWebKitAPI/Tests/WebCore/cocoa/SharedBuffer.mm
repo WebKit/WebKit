@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,40 @@ TEST_F(SharedBufferTest, createNSDataArray)
         expectDataArraysEqual(@[ worldData ], SharedBuffer::create((__bridge CFDataRef)worldData)->createNSDataArray().get());
 
         expectDataArraysEqual(@[ [NSData dataWithContentsOfFile:tempFilePath()] ], SharedBuffer::createWithContentsOfFile(tempFilePath())->createNSDataArray().get());
+    }
+}
+
+TEST_F(SharedBufferTest, createNSDataForDataSegment)
+{
+    @autoreleasepool {
+        auto buffer = SharedBuffer::create();
+
+        NSData *helloData = [NSData dataWithBytes:"hello" length:5];
+        buffer->append((const char*)helloData.bytes, helloData.length);
+
+        NSData *worldData = [NSData dataWithBytes:"world" length:5];
+        buffer->append((__bridge CFDataRef)worldData);
+
+        NSArray *expectedData = @[ helloData, worldData ];
+        NSUInteger expectedSize = helloData.length + worldData.length;
+
+        NSUInteger segmentCount = 0;
+        for (auto& segment : buffer.get())
+            EXPECT_TRUE([segment.segment->createNSData() isEqualToData:expectedData[segmentCount++]]);
+        EXPECT_EQ(expectedData.count, segmentCount);
+
+        NSUInteger position = 0;
+        segmentCount = 0;
+        while (buffer->size() > position) {
+            auto incrementalData = buffer->getSomeData(position);
+            EXPECT_TRUE([incrementalData.createNSData() isEqualToData:expectedData[segmentCount++]]);
+            position += incrementalData.size();
+        }
+        EXPECT_EQ(expectedData.count, segmentCount);
+
+        auto lastByte = buffer->getSomeData(expectedSize - 1);
+        EXPECT_TRUE([lastByte.createNSData() isEqualToData:[@"d" dataUsingEncoding:NSASCIIStringEncoding]]);
+        EXPECT_EQ(1LU, lastByte.size());
     }
 }
 

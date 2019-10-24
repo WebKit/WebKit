@@ -1,3 +1,23 @@
+2019-10-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Make it possible to convert SharedBuffer segments and data views to NSData without copying
+        https://bugs.webkit.org/show_bug.cgi?id=203348
+
+        Reviewed by Alex Christensen.
+
+        Added an API test.
+
+        * platform/SharedBuffer.h:
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (-[WebCoreSharedBufferData initWithDataSegment:position:]):
+        (-[WebCoreSharedBufferData length]):
+        (-[WebCoreSharedBufferData bytes]):
+        (WebCore::SharedBuffer::createCFData const):
+        (WebCore::SharedBuffer::createNSDataArray const):
+        (WebCore::SharedBuffer::DataSegment::createNSData const):
+        (WebCore::SharedBufferDataView::createNSData const):
+        (-[WebCoreSharedBufferData initWithSharedBufferDataSegment:]): Deleted.
+
 2019-10-24  Chris Dumez  <cdumez@apple.com>
 
         FetchResponse should not prevent entering the back/forward cache

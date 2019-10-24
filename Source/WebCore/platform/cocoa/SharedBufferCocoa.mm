@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "SharedBuffer.h"
+#import "config.h"
+#import "SharedBuffer.h"
 
-#include "WebCoreObjCExtras.h"
-#include <JavaScriptCore/InitializeThreading.h>
-#include <string.h>
-#include <wtf/MainThread.h>
+#import "WebCoreObjCExtras.h"
+#import <JavaScriptCore/InitializeThreading.h>
+#import <string.h>
+#import <wtf/MainThread.h>
 
 @interface WebCoreSharedBufferData : NSData
-{
-    RefPtr<const WebCore::SharedBuffer::DataSegment> sharedBufferDataSegment;
-}
-
-- (id)initWithSharedBufferDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment;
+- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position;
 @end
 
-@implementation WebCoreSharedBufferData
+@implementation WebCoreSharedBufferData {
+    RefPtr<const WebCore::SharedBuffer::DataSegment> _dataSegment;
+    NSUInteger _position;
+}
 
 + (void)initialize
 {
@@ -57,24 +56,25 @@
     [super dealloc];
 }
 
-- (id)initWithSharedBufferDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment
+- (instancetype)initWithDataSegment:(const WebCore::SharedBuffer::DataSegment&)dataSegment position:(NSUInteger)position
 {
-    self = [super init];
-    
-    if (self)
-        sharedBufferDataSegment = &dataSegment;
+    if (!(self = [super init]))
+        return nil;
 
+    RELEASE_ASSERT(!position || position < dataSegment.size());
+    _dataSegment = &dataSegment;
+    _position = position;
     return self;
 }
 
 - (NSUInteger)length
 {
-    return sharedBufferDataSegment->size();
+    return _dataSegment->size() - _position;
 }
 
 - (const void *)bytes
 {
-    return sharedBufferDataSegment->data();
+    return _dataSegment->data() + _position;
 }
 
 @end
@@ -102,7 +102,7 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData() const
     if (!m_segments.size())
         return adoptCF(CFDataCreate(nullptr, nullptr, 0));
     ASSERT(m_segments.size() == 1);
-    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:m_segments[0].segment]).leakRef());
+    return adoptCF((__bridge CFDataRef)m_segments[0].segment->createNSData().leakRef());
 }
 
 RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
@@ -117,8 +117,18 @@ RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 {
     auto dataArray = adoptNS([[NSMutableArray alloc] initWithCapacity:m_segments.size()]);
     for (const auto& segment : m_segments)
-        [dataArray addObject:adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataSegment:segment.segment]).get()];
+        [dataArray addObject:segment.segment->createNSData().get()];
     return WTFMove(dataArray);
 }
 
+RetainPtr<NSData> SharedBuffer::DataSegment::createNSData() const
+{
+    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0]);
 }
+
+RetainPtr<NSData> SharedBufferDataView::createNSData() const
+{
+    return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:m_segment.get() position:m_positionWithinSegment]);
+}
+
+} // namespace WebCore
