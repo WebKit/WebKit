@@ -251,7 +251,9 @@ private:
         OpaqueJSClassDataMap opaqueJSClassData;
     };
 
-    VM& m_vm;
+    // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
+    // cannot handle it being a reference.
+    VM* m_vm;
 
 // Our hashtable code-generator tries to access these properties, so we make them public.
 // However, we'd like it better if they could be protected.
@@ -976,7 +978,7 @@ public:
 
     void resetPrototype(VM&, JSValue prototype);
 
-    VM& vm() const { return m_vm; }
+    VM& vm() const { return *m_vm; }
     JSObject* globalThis() const;
     WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
     OptionSet<CodeGenerationMode> defaultCodeGenerationMode() const;
@@ -1126,9 +1128,9 @@ inline OptionSet<CodeGenerationMode> JSGlobalObject::defaultCodeGenerationMode()
     OptionSet<CodeGenerationMode> codeGenerationMode;
     if (hasInteractiveDebugger() || Options::forceDebuggerBytecodeGeneration())
         codeGenerationMode.add(CodeGenerationMode::Debugger);
-    if (m_vm.typeProfiler())
+    if (vm().typeProfiler())
         codeGenerationMode.add(CodeGenerationMode::TypeProfiler);
-    if (m_vm.controlFlowProfiler())
+    if (vm().controlFlowProfiler())
         codeGenerationMode.add(CodeGenerationMode::ControlFlowProfiler);
     return codeGenerationMode;
 }

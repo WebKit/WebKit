@@ -360,8 +360,7 @@ end
 
 op(handleUncaughtException, macro()
     loadp Callee + PayloadOffset[cfr], t3
-    andp MarkedBlockMask, t3
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
+    convertCalleeToVM(t3)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     storep 0, VM::callFrameForCatch[t3]
 
@@ -690,16 +689,6 @@ macro functionArityCheck(doneLabel, slowPath)
     loadp CodeBlock::m_instructionsRawPointer[t1], PC
     jmp doneLabel
 end
-
-macro branchIfException(label)
-    loadp Callee + PayloadOffset[cfr], t3
-    andp MarkedBlockMask, t3
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-    btpz VM::m_exception[t3], .noException
-    jmp label
-.noException:
-end
-
 
 # Instruction implementations
 
@@ -1942,8 +1931,7 @@ commonOp(llint_op_catch, macro() end, macro (size)
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
     loadp Callee + PayloadOffset[cfr], t3
-    andp MarkedBlockMask, t3
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
+    convertCalleeToVM(t3)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -1960,9 +1948,8 @@ commonOp(llint_op_catch, macro() end, macro (size)
     jmp _llint_throw_from_slow_path_trampoline
 
 .isCatchableException:
-    loadp Callee + PayloadOffset[cfr], t3
-    andp MarkedBlockMask, t3
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
+    loadp CodeBlock[cfr], t3
+    loadp CodeBlock::m_vm[t3], t3
 
     loadp VM::m_exception[t3], t0
     storep 0, VM::m_exception[t3]
@@ -1995,8 +1982,7 @@ end)
 
 op(llint_throw_from_slow_path_trampoline, macro()
     loadp Callee[cfr], t1
-    andp MarkedBlockMask, t1
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
+    convertCalleeToVM(t1)
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
 
     callSlowPath(_llint_slow_path_handle_exception)
@@ -2005,8 +1991,7 @@ op(llint_throw_from_slow_path_trampoline, macro()
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
     loadp Callee[cfr], t1
-    andp MarkedBlockMask, t1
-    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
+    convertCalleeToVM(t1)
     jmp VM::targetMachinePCForThrow[t1]
 end)
 
@@ -2018,71 +2003,54 @@ end)
 
 
 macro nativeCallTrampoline(executableOffsetToFunction)
-
     functionPrologue()
     storep 0, CodeBlock[cfr]
-    loadi Callee + PayloadOffset[cfr], t1
-    // Callee is still in t1 for code below
+
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
-        andp MarkedBlockMask, t1
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t3
-        storep cfr, VM::topCallFrame[t3]
-        move cfr, a1  # a1 = edx
-        storep a1, [sp]
-        loadi Callee + PayloadOffset[cfr], a0
-        loadp JSFunction::m_executable[a0], a2
-        loadp JSFunction::m_globalObject[a0], a0
-        checkStackPointerAlignment(t3, 0xdead0001)
-        call executableOffsetToFunction[a2]
-        loadp Callee + PayloadOffset[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-        addp 8, sp
-    elsif ARMv7 or C_LOOP or C_LOOP_WIN or MIPS
-        if MIPS
+        storep cfr, [sp]
+    elsif MIPS
         # calling convention says to save stack space for 4 first registers in
         # all cases. To match our 16-byte alignment, that means we need to
         # take 24 bytes
-            subp 24, sp
-        else
-            subp 8, sp # align stack pointer
-        end
-        # t1 already contains the Callee.
-        andp MarkedBlockMask, t1
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
-        storep cfr, VM::topCallFrame[t1]
-        move cfr, a1
-        loadi Callee + PayloadOffset[cfr], a0
-        loadp JSFunction::m_executable[a0], a2
-        loadp JSFunction::m_globalObject[a0], a0
-        checkStackPointerAlignment(t3, 0xdead0001)
-        if C_LOOP or C_LOOP_WIN
-            cloopCallNative executableOffsetToFunction[a2]
-        else
-            call executableOffsetToFunction[a2]
-        end
-        loadp Callee + PayloadOffset[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-        if MIPS
-            addp 24, sp
-        else
-            addp 8, sp
-        end
+        subp 24, sp
     else
-        error
+        subp 8, sp # align stack pointer
     end
-    
+
+    loadp Callee + PayloadOffset[cfr], a0
+    loadp JSFunction::m_executable[a0], a2
+    loadp JSFunction::m_globalObject[a0], a0
+    loadp JSGlobalObject::m_vm[a0], a1
+    storep cfr, VM::topCallFrame[a1]
+    move cfr, a1
+
+    checkStackPointerAlignment(t3, 0xdead0001)
+    if C_LOOP or C_LOOP_WIN
+        cloopCallNative executableOffsetToFunction[a2]
+    else
+        call executableOffsetToFunction[a2]
+    end
+
+    loadp Callee + PayloadOffset[cfr], t3
+    loadp JSFunction::m_globalObject[t3], t3
+    loadp JSGlobalObject::m_vm[t3], t3
+
+    if MIPS
+        addp 24, sp
+    else
+        addp 8, sp
+    end
+
     btpnz VM::m_exception[t3], .handleException
 
     functionEpilogue()
     ret
 
 .handleException:
-if X86 or X86_WIN
-    subp 8, sp # align stack pointer
-end
+    if X86 or X86_WIN
+        subp 8, sp # align stack pointer
+    end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end
@@ -2091,45 +2059,33 @@ end
 macro internalFunctionCallTrampoline(offsetOfFunction)
     functionPrologue()
     storep 0, CodeBlock[cfr]
-    loadi Callee + PayloadOffset[cfr], t1
+
     // Callee is still in t1 for code below
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
-        andp MarkedBlockMask, t1
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t3
-        storep cfr, VM::topCallFrame[t3]
-        move cfr, a1  # a1 = edx
-        storep a1, [sp]
-        loadi Callee + PayloadOffset[cfr], a2
-        loadp InternalFunction::m_globalObject[a2], a0
-        checkStackPointerAlignment(t3, 0xdead0001)
-        call offsetOfFunction[a2]
-        loadp Callee + PayloadOffset[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-        addp 8, sp
-    elsif ARMv7 or C_LOOP or C_LOOP_WIN or MIPS
-        subp 8, sp # align stack pointer
-        # t1 already contains the Callee.
-        andp MarkedBlockMask, t1
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
-        storep cfr, VM::topCallFrame[t1]
-        move cfr, a1
-        loadi Callee + PayloadOffset[cfr], a2
-        loadp InternalFunction::m_globalObject[a2], a0
-        checkStackPointerAlignment(t3, 0xdead0001)
-        if C_LOOP or C_LOOP_WIN
-            cloopCallNative offsetOfFunction[a2]
-        else
-            call offsetOfFunction[a2]
-        end
-        loadp Callee + PayloadOffset[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
-        addp 8, sp
+        storep cfr, [sp]
     else
-        error
+        subp 8, sp # align stack pointer
     end
+
+    loadp Callee + PayloadOffset[cfr], a2
+    loadp InternalFunction::m_globalObject[a2], a0
+    loadp JSGlobalObject::m_vm[a0], a1
+    storep cfr, VM::topCallFrame[a1]
+    move cfr, a1
+
+    checkStackPointerAlignment(t3, 0xdead0001)
+    if C_LOOP or C_LOOP_WIN
+        cloopCallNative offsetOfFunction[a2]
+    else
+        call offsetOfFunction[a2]
+    end
+
+    loadp Callee + PayloadOffset[cfr], t3
+    loadp InternalFunction::m_globalObject[t3], t3
+    loadp JSGlobalObject::m_vm[t3], t3
+
+    addp 8, sp
 
     btpnz VM::m_exception[t3], .handleException
 
@@ -2137,9 +2093,9 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     ret
 
 .handleException:
-if X86 or X86_WIN
-    subp 8, sp # align stack pointer
-end
+    if X86 or X86_WIN
+        subp 8, sp # align stack pointer
+    end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end

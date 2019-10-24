@@ -70,21 +70,23 @@ private:
     WeakBlock::FreeCell* m_allocator;
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
-    VM& m_vm;
+    // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
+    // cannot handle it being a reference.
+    VM* m_vm;
     CellContainer m_container;
 };
 
 inline WeakSet::WeakSet(VM& vm, CellContainer container)
     : m_allocator(0)
     , m_nextAllocator(0)
-    , m_vm(vm)
+    , m_vm(&vm)
     , m_container(container)
 {
 }
 
 inline VM& WeakSet::vm() const
 {
-    return m_vm;
+    return *m_vm;
 }
 
 inline bool WeakSet::isEmpty() const

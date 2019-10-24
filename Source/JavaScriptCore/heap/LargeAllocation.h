@@ -39,6 +39,8 @@ class SlotVisitor;
 
 class LargeAllocation : public BasicRawSentinelNode<LargeAllocation> {
 public:
+    friend class LLIntOffsetsExtractor;
+
     static LargeAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
 
     LargeAllocation* tryReallocate(size_t, Subspace*);
@@ -147,12 +149,11 @@ public:
     
     static constexpr unsigned alignment = MarkedBlock::atomSize;
     static constexpr unsigned halfAlignment = alignment / 2;
+    static constexpr unsigned headerSize() { return ((sizeof(LargeAllocation) + halfAlignment - 1) & ~(halfAlignment - 1)) | halfAlignment; }
 
 private:
     LargeAllocation(Heap&, size_t, Subspace*, unsigned indexInSpace, bool adjustedAlignment);
     
-    static unsigned headerSize();
-
     void* basePointer() const;
     
     size_t m_cellSize;
@@ -165,11 +166,6 @@ private:
     Subspace* m_subspace;
     WeakSet m_weakSet;
 };
-
-inline unsigned LargeAllocation::headerSize()
-{
-    return ((sizeof(LargeAllocation) + halfAlignment - 1) & ~(halfAlignment - 1)) | halfAlignment;
-}
 
 inline void* LargeAllocation::basePointer() const
 {

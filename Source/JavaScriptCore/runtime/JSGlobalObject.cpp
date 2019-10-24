@@ -410,7 +410,7 @@ static EncodedJSValue JSC_HOST_CALL enqueueJob(JSGlobalObject* globalObject, Cal
 
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(vm, structure, 0)
-    , m_vm(vm)
+    , m_vm(&vm)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
@@ -1135,7 +1135,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         catchScope.assertNoException();
         ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
 
-        ObjectPropertyCondition condition = generateConditionForSelfEquivalence(m_vm, nullptr, base, ident.impl());
+        ObjectPropertyCondition condition = generateConditionForSelfEquivalence(vm, nullptr, base, ident.impl());
         RELEASE_ASSERT(condition.requiredValue() == functionValue);
 
         bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
@@ -1145,62 +1145,62 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     };
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, vm.propertyNames->next);
         m_arrayIteratorPrototypeNext = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayIteratorProtocolWatchpointSet);
         m_arrayIteratorPrototypeNext->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), vm.propertyNames->iteratorSymbol);
         m_arrayPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayIteratorProtocolWatchpointSet);
         m_arrayPrototypeSymbolIteratorWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->join);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), vm.propertyNames->join);
         m_arrayPrototypeJoinWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_arrayJoinWatchpointSet);
         m_arrayPrototypeJoinWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, m_vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, vm.propertyNames->next);
         m_mapIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapIteratorProtocolWatchpointSet);
         m_mapIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), vm.propertyNames->iteratorSymbol);
         m_mapPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapIteratorProtocolWatchpointSet);
         m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, m_vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, vm.propertyNames->next);
         m_setIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setIteratorProtocolWatchpointSet);
         m_setIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), vm.propertyNames->iteratorSymbol);
         m_setPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setIteratorProtocolWatchpointSet);
         m_setPrototypeSymbolIteratorWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), m_vm.propertyNames->next);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), vm.propertyNames->next);
         m_stringIteratorPrototypeNextWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_stringIteratorProtocolWatchpointSet);
         m_stringIteratorPrototypeNextWatchpoint->install(vm);
     }
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), vm.propertyNames->iteratorSymbol);
         m_stringPrototypeSymbolIteratorWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_stringIteratorProtocolWatchpointSet);
         m_stringPrototypeSymbolIteratorWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->set);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), vm.propertyNames->set);
         m_mapPrototypeSetWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_mapSetWatchpointSet);
         m_mapPrototypeSetWatchpoint->install(vm);
     }
 
     {
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->add);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), vm.propertyNames->add);
         m_setPrototypeAddWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setAddWatchpointSet);
         m_setPrototypeAddWatchpoint->install(vm);
     }
@@ -1211,7 +1211,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         auto* numberPrototype = this->numberPrototype();
         this->symbolPrototype();
 
-        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype, m_vm.propertyNames->toString);
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype, vm.propertyNames->toString);
         m_numberPrototypeToStringWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_numberToStringWatchpointSet);
         m_numberPrototypeToStringWatchpoint->install(vm);
         m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype->getDirect(vm, vm.propertyNames->toString)));

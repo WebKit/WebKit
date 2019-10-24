@@ -1,3 +1,36 @@
+2019-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove LLInt's Callee size assumption
+        https://bugs.webkit.org/show_bug.cgi?id=203282
+
+        Reviewed by Mark Lam.
+
+        LLInt code still assumes that Callee is always allocated in non-LargeAllocation.
+        This patch removes this assumption by following three changes.
+
+        1. If we can get CodeBlock, we get VM& from CodeBlock.
+        2. In nativeCallTrampoline and internalFunctionCallTrampoline, we get VM& from JSGlobalObject. It involves one more pointer-chasing but it is OK
+           since this JSGlobalObject's VM* field will be touched in called native functions anyway. And this code is only used when we are not using JIT.
+        3. In exception handling code in LLInt, we get VM& from callee by checking LargeAllocation possibility. This is OK since it is only executed when
+           exception unwinding happens, and which is an expensive operation anyway.
+
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::headerSize):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::WeakSet):
+        (JSC::WeakSet::vm const):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::vm const):
+        (JSC::JSGlobalObject::defaultCodeGenerationMode const):
+        * runtime/VM.h:
+        (JSC::WeakSet::heap const):
+
 2019-10-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [JSC] Get 32-bit ports back into building order

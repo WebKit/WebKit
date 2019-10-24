@@ -539,6 +539,8 @@ const NotInitialization = constexpr InitializationMode::NotInitialization
 const MarkedBlockSize = constexpr MarkedBlock::blockSize
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 const MarkedBlockFooterOffset = constexpr MarkedBlock::offsetOfFooter
+const LargeAllocationHeaderSize = constexpr (LargeAllocation::headerSize())
+const LargeAllocationVMOffset = (LargeAllocation::m_weakSet + WeakSet::m_vm - LargeAllocationHeaderSize)
 
 const BlackThreshold = constexpr blackThreshold
 
@@ -1128,6 +1130,16 @@ end
 
 macro notFunctionCodeBlockSetter(sourceRegister)
     # Nothing to do!
+end
+
+macro convertCalleeToVM(callee)
+    btpnz callee, (constexpr LargeAllocation::halfAlignment), .largeAllocation
+    andp MarkedBlockMask, callee
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[callee], callee
+    jmp .done
+.largeAllocation:
+    loadp LargeAllocationVMOffset[callee], callee
+.done:
 end
 
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*
@@ -1782,7 +1794,11 @@ callOp(construct, OpConstruct, prepareForRegularCall, macro (getu, metadata) end
 
 macro doCallVarargs(opcodeName, size, opcodeStruct, dispatch, frameSlowPath, slowPath, prepareCall)
     callSlowPath(frameSlowPath)
-    branchIfException(_llint_throw_from_slow_path_trampoline)
+    loadp CodeBlock[cfr], t3
+    loadp CodeBlock::m_vm[t3], t3
+    btpz VM::m_exception[t3], .noException
+    jmp _llint_throw_from_slow_path_trampoline
+.noException:
     # calleeFrame in r1
     if JSVALUE64
         move r1, sp

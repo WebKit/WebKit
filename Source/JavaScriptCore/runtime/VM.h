@@ -1115,7 +1115,7 @@ inline void VM::setInitializingObjectClass(const ClassInfo* initializingObjectCl
 
 inline Heap* WeakSet::heap() const
 {
-    return &m_vm.heap;
+    return &m_vm->heap;
 }
 
 #if !ENABLE(C_LOOP)
