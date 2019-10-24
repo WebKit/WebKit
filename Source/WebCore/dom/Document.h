@@ -1360,10 +1360,6 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
-    void setNeedsDOMWindowResizeEvent();
-    void setNeedsVisualViewportResize();
-    void runResizeSteps();
-
     WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
     WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
@@ -2016,8 +2012,6 @@ private:
     bool m_hasPreparedForDestruction { false };
 
     bool m_hasStyleWithViewportUnits { false };
-    bool m_needsDOMWindowResizeEvent { false };
-    bool m_needsVisualViewportResizeEvent { false };
     bool m_isTimerThrottlingEnabled { false };
     bool m_isSuspended { false };
 

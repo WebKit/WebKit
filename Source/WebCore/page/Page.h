@@ -750,7 +750,6 @@ private:
     void handleLowModePowerChange(bool);
 
     void forEachDocument(const WTF::Function<void(Document&)>&);
-    Vector<Ref<Document>> collectDocuments();
 
     enum class TimerThrottlingState { Disabled, Enabled, EnabledIncreasing };
     void hiddenPageDOMTimerThrottlingStateChanged();

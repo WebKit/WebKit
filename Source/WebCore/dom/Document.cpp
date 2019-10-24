@@ -223,7 +223,6 @@
 #include "ValidationMessageClient.h"
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
-#include "VisualViewport.h"
 #include "WebAnimation.h"
 #include "WheelEvent.h"
 #include "WindowEventLoop.h"
@@ -3963,35 +3962,6 @@ void Document::updateViewportUnitsOnResize()
         auto* renderer = element->renderer();
         if (renderer && renderer->style().hasViewportUnits())
             element->invalidateStyle();
-    }
-}
-
-void Document::setNeedsDOMWindowResizeEvent()
-{
-    m_needsDOMWindowResizeEvent = true;
-    scheduleTimedRenderingUpdate();
-}
-
-void Document::setNeedsVisualViewportResize()
-{
-    m_needsVisualViewportResizeEvent = true;
-    scheduleTimedRenderingUpdate();
-}
-
-// https://drafts.csswg.org/cssom-view/#run-the-resize-steps
-void Document::runResizeSteps()
-{
-    // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/65.
-    if (m_needsDOMWindowResizeEvent) {
-        LOG(Events, "Document %p sending resize events to window", this);
-        m_needsDOMWindowResizeEvent = false;
-        dispatchWindowEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    }
-    if (m_needsVisualViewportResizeEvent) {
-        LOG(Events, "Document %p sending resize events to visualViewport", this);
-        m_needsVisualViewportResizeEvent = false;
-        if (auto* window = domWindow())
-            window->visualViewport().dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
 }
 

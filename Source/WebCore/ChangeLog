@@ -1,3 +1,27 @@
+2019-10-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r251269, r251294, and r251328.
+        https://bugs.webkit.org/show_bug.cgi?id=203384
+
+        Probably made many animation tests flaky (Requested by rniwa
+        on #webkit).
+
+        Reverted changesets:
+
+        "Integrate resize event with HTML5 event loop"
+        https://bugs.webkit.org/show_bug.cgi?id=202964
+        https://trac.webkit.org/changeset/251269
+
+        "Flaky Test: fast/events/resize-subframe-in-rendering-
+        update.html"
+        https://bugs.webkit.org/show_bug.cgi?id=203140
+        https://trac.webkit.org/changeset/251294
+
+        "Flaky Test: fast/events/resize-subframe-in-rendering-
+        update.html"
+        https://bugs.webkit.org/show_bug.cgi?id=203140
+        https://trac.webkit.org/changeset/251328
+
 2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to find and manipulate text by paragraphs
