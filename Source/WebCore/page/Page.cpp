@@ -2874,6 +2874,18 @@ void Page::forEachDocument(const Function<void(Document&)>& functor)
     }
 }
 
+Vector<Ref<Document>> Page::collectDocuments()
+{
+    Vector<Ref<Document>> documents;
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        auto* document = frame->document();
+        if (!document)
+            continue;
+        documents.append(*document);
+    }
+    return documents;
+}
+
 void Page::applicationWillResignActive()
 {
     forEachDocument([&] (Document& document) {
