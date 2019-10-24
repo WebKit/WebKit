@@ -6947,12 +6947,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     // For subclasses to override.
 }
 
-- (void)_didShowForcePressPreview
+- (void)_didShowContextMenu
 {
     // For subclasses to override.
 }
 
-- (void)_didDismissForcePressPreview
+- (void)_didDismissContextMenu
 {
     // For subclasses to override.
 }

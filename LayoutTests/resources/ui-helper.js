@@ -333,6 +333,19 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static longPressAndGetContextMenuContentAt(x, y)
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+            (function() {
+                uiController.didShowContextMenuCallback = function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')));
+                };
+                uiController.longPressAtPoint(${x}, ${y}, function() { });
+            })();`, resolve);
+        });
+    }
+
     static activateAndWaitForInputSessionAt(x, y)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

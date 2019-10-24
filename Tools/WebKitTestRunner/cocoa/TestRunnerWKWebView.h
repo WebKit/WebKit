@@ -35,8 +35,8 @@
 
 @property (nonatomic, copy) void (^didStartFormControlInteractionCallback)(void);
 @property (nonatomic, copy) void (^didEndFormControlInteractionCallback)(void);
-@property (nonatomic, copy) void (^didShowForcePressPreviewCallback)(void);
-@property (nonatomic, copy) void (^didDismissForcePressPreviewCallback)(void);
+@property (nonatomic, copy) void (^didShowContextMenuCallback)(void);
+@property (nonatomic, copy) void (^didDismissContextMenuCallback)(void);
 @property (nonatomic, copy) void (^willBeginZoomingCallback)(void);
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);

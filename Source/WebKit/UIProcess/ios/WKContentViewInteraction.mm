@@ -8189,6 +8189,8 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!_webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
+    [_webView _didShowContextMenu];
+    
     _showLinkPreviews = true;
     if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
         _showLinkPreviews = value.boolValue;
@@ -8812,7 +8814,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 {
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     
-    [_webView _didShowForcePressPreview];
+    [_webView _didShowContextMenu];
 
     NSURL *targetURL = controller.previewData[UIPreviewDataLink];
     URL coreTargetURL = targetURL;
@@ -8959,7 +8961,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [_webView _didDismissForcePressPreview];
+    [_webView _didDismissContextMenu];
 }
 
 - (UIImage *)_presentationSnapshotForPreviewItemController:(UIPreviewItemController *)controller
@@ -8994,7 +8996,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 {
     _longPressCanClick = NO;
     
-    [_webView _didDismissForcePressPreview];
+    [_webView _didDismissContextMenu];
 }
 
 @end

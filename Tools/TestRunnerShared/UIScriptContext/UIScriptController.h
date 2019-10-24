@@ -270,11 +270,11 @@ public:
     virtual void setDidEndFormControlInteractionCallback(JSValueRef);
     JSValueRef didEndFormControlInteractionCallback() const;
     
-    virtual void setDidShowForcePressPreviewCallback(JSValueRef);
-    JSValueRef didShowForcePressPreviewCallback() const;
+    virtual void setDidShowContextMenuCallback(JSValueRef);
+    JSValueRef didShowContextMenuCallback() const;
     
-    virtual void setDidDismissForcePressPreviewCallback(JSValueRef);
-    JSValueRef didDismissForcePressPreviewCallback() const;
+    virtual void setDidDismissContextMenuCallback(JSValueRef);
+    JSValueRef didDismissContextMenuCallback() const;
 
     virtual void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;

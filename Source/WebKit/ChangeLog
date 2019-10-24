@@ -1,3 +1,27 @@
+2019-10-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename force-press-related functions to refer to context menus, and fix a former force-press test
+        https://bugs.webkit.org/show_bug.cgi?id=202663
+        <rdar://problem/52699530>
+
+        Reviewed by Dean Jackson.
+
+        Add plumbing for contextMenu tests to function again, and rename all 
+        relevant fuctions to more correctly reflect that this does not specifically
+        require a force press to activate any longer.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didShowContextMenu]):
+        (-[WKWebView _didDismissContextMenu]):
+        (-[WKWebView _didShowForcePressPreview]): Deleted.
+        (-[WKWebView _didDismissForcePressPreview]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:didDismissPreview:committing:]):
+        (-[WKContentView _previewItemControllerDidCancelPreview:]):
+
 2019-10-23  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Should dispatch contextmenu event on right click

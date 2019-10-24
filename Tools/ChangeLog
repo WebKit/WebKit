@@ -1,3 +1,40 @@
+2019-10-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename force-press-related functions to refer to context menus, and fix a former force-press test
+        https://bugs.webkit.org/show_bug.cgi?id=202663
+        <rdar://problem/52699530>
+
+        Reviewed by Dean Jackson.
+
+        Rename all relevant fuctions to more correctly reflect that this does not specifically
+        require a force press to activate any longer.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidShowContextMenuCallback):
+        (WTR::UIScriptController::didShowContextMenuCallback const):
+        (WTR::UIScriptController::setDidDismissContextMenuCallback):
+        (WTR::UIScriptController::didDismissContextMenuCallback const):
+        (WTR::UIScriptController::setDidShowForcePressPreviewCallback): Deleted.
+        (WTR::UIScriptController::didShowForcePressPreviewCallback const): Deleted.
+        (WTR::UIScriptController::setDidDismissForcePressPreviewCallback): Deleted.
+        (WTR::UIScriptController::didDismissForcePressPreviewCallback const): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+        (-[TestRunnerWKWebView _didShowContextMenu]):
+        (-[TestRunnerWKWebView _didDismissContextMenu]):
+        (-[TestRunnerWKWebView _didShowForcePressPreview]): Deleted.
+        (-[TestRunnerWKWebView _didDismissForcePressPreview]): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::setDidShowContextMenuCallback):
+        (WTR::UIScriptControllerIOS::setDidDismissContextMenuCallback):
+        (WTR::UIScriptControllerIOS::setDidShowForcePressPreviewCallback): Deleted.
+        (WTR::UIScriptControllerIOS::setDidDismissForcePressPreviewCallback): Deleted.
+
 2019-10-23  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Multiple builds are triggered for one patch sometimes in new EWS

@@ -138,8 +138,8 @@ public:
 
     void setDidStartFormControlInteractionCallback(JSValueRef) override;
     void setDidEndFormControlInteractionCallback(JSValueRef) override;
-    void setDidShowForcePressPreviewCallback(JSValueRef) override;
-    void setDidDismissForcePressPreviewCallback(JSValueRef) override;
+    void setDidShowContextMenuCallback(JSValueRef) override;
+    void setDidDismissContextMenuCallback(JSValueRef) override;
     void setWillBeginZoomingCallback(JSValueRef) override;
     void setDidEndZoomingCallback(JSValueRef) override;
     void setDidShowKeyboardCallback(JSValueRef) override;

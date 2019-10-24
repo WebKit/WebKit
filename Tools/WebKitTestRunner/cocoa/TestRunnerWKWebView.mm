@@ -160,8 +160,8 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
     self.didStartFormControlInteractionCallback = nil;
     self.didEndFormControlInteractionCallback = nil;
-    self.didShowForcePressPreviewCallback = nil;
-    self.didDismissForcePressPreviewCallback = nil;
+    self.didShowContextMenuCallback = nil;
+    self.didDismissContextMenuCallback = nil;
     self.willBeginZoomingCallback = nil;
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
@@ -201,16 +201,16 @@ IGNORE_WARNINGS_END
     return _isInteractingWithFormControl;
 }
 
-- (void)_didShowForcePressPreview
+- (void)_didShowContextMenu
 {
-    if (self.didShowForcePressPreviewCallback)
-        self.didShowForcePressPreviewCallback();
+    if (self.didShowContextMenuCallback)
+        self.didShowContextMenuCallback();
 }
 
-- (void)_didDismissForcePressPreview
+- (void)_didDismissContextMenu
 {
-    if (self.didDismissForcePressPreviewCallback)
-        self.didDismissForcePressPreviewCallback();
+    if (self.didDismissContextMenuCallback)
+        self.didDismissContextMenuCallback();
 }
 
 - (BOOL)becomeFirstResponder
@@ -294,6 +294,7 @@ IGNORE_WARNINGS_END
     }
     return canPerformActionByDefault;
 }
+
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {

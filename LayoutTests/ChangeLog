@@ -1,3 +1,24 @@
+2019-10-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename force-press-related functions to refer to context menus, and fix a former force-press test
+        https://bugs.webkit.org/show_bug.cgi?id=202663
+        <rdar://problem/52699530>
+
+        Reviewed by Dean Jackson.
+
+        Move and rename force press test to correctly test context menu functionality.
+
+        * fast/events/touch/ios/long-press-on-link-expected.txt: Renamed from LayoutTests/platform/iphone-7/fast/events/touch/force-press-on-link-expected.txt.
+        * fast/events/touch/ios/long-press-on-link.html: Added.
+        * platform/iphone-7/fast/events/touch/force-press-on-link.html: Removed.
+        * resources/ui-helper.js:
+        (window.UIHelper.longPressAndGetContextMenuContentAt.return.new.Promise.):
+        (window.UIHelper.longPressAndGetContextMenuContentAt.return.new.Promise):
+        (window.UIHelper.longPressAndGetContextMenuContentAt):
+        (window.UIHelper.waitForInputSessionAt.return.new.Promise.):
+        (window.UIHelper.waitForInputSessionAt.return.new.Promise):
+        (window.UIHelper.waitForInputSessionAt):
+
 2019-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Import the css/css-values web platform tests

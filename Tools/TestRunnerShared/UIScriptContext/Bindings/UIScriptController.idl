@@ -203,9 +203,9 @@ interface UIScriptController {
     attribute object didStartFormControlInteractionCallback;
     attribute object didEndFormControlInteractionCallback;
 
-    // Force press preview handling
-    attribute object didShowForcePressPreviewCallback;
-    attribute object didDismissForcePressPreviewCallback;
+    // Pop Over preview handling
+    attribute object didShowContextMenuCallback;
+    attribute object didDismissContextMenuCallback;
 
     // <select> picker
     void selectFormAccessoryPickerRow(long rowIndex);

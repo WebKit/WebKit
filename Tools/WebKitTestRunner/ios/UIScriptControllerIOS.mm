@@ -873,20 +873,20 @@ void UIScriptControllerIOS::setDidEndFormControlInteractionCallback(JSValueRef c
     };
 }
     
-void UIScriptControllerIOS::setDidShowForcePressPreviewCallback(JSValueRef callback)
+void UIScriptControllerIOS::setDidShowContextMenuCallback(JSValueRef callback)
 {
-    UIScriptController::setDidShowForcePressPreviewCallback(callback);
-    webView().didShowForcePressPreviewCallback = ^ {
+    UIScriptController::setDidShowContextMenuCallback(callback);
+    webView().didShowContextMenuCallback = ^{
         if (!m_context)
             return;
-        m_context->fireCallback(CallbackTypeDidShowForcePressPreview);
+        m_context->fireCallback(CallbackTypeDidShowContextMenu);
     };
 }
 
-void UIScriptControllerIOS::setDidDismissForcePressPreviewCallback(JSValueRef callback)
+void UIScriptControllerIOS::setDidDismissContextMenuCallback(JSValueRef callback)
 {
-    UIScriptController::setDidDismissForcePressPreviewCallback(callback);
-    webView().didDismissForcePressPreviewCallback = ^ {
+    UIScriptController::setDidDismissContextMenuCallback(callback);
+    webView().didDismissContextMenuCallback = ^{
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
