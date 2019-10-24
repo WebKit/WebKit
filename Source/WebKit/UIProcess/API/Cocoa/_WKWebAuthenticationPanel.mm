@@ -33,8 +33,8 @@
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
     WeakPtr<WebKit::WebAuthenticationPanelClient> _client;
-#endif
     RetainPtr<NSMutableArray> _transports;
+#endif
 }
 
 #if ENABLE(WEB_AUTHN)
