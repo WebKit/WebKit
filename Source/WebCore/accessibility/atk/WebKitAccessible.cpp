@@ -728,7 +728,6 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
 #endif
     case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::Div:
-    case AccessibilityRole::Generic:
     case AccessibilityRole::Pre:
     case AccessibilityRole::SVGText:
     case AccessibilityRole::TextGroup:
@@ -819,10 +818,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_SUBSCRIPT;
     case AccessibilityRole::Superscript:
         return ATK_ROLE_SUPERSCRIPT;
-    case AccessibilityRole::Code:
-    case AccessibilityRole::Emphasis:
     case AccessibilityRole::Inline:
-    case AccessibilityRole::Strong:
     case AccessibilityRole::SVGTextPath:
     case AccessibilityRole::SVGTSpan:
     case AccessibilityRole::Time:

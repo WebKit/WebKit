@@ -1,3 +1,17 @@
+2019-10-23  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r251469.
+
+        Broke accessibility/ios-simulator/link-with-images-text.html
+        on iOS
+
+        Reverted changeset:
+
+        "AX: Implement support for new ARIA roles: code, strong,
+        emphasis, generic"
+        https://bugs.webkit.org/show_bug.cgi?id=203257
+        https://trac.webkit.org/changeset/251469
+
 2019-10-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251261.

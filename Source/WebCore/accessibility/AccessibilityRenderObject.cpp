@@ -2816,16 +2816,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::SVGRoot;
     
     if (isStyleFormatGroup()) {
-        if (node->hasTagName(codeTag))
-            return AccessibilityRole::Code;
         if (node->hasTagName(delTag))
             return AccessibilityRole::Deletion;
-        if (node->hasTagName(emTag))
-            return AccessibilityRole::Emphasis;
         if (node->hasTagName(insTag))
             return AccessibilityRole::Insertion;
-        if (node->hasTagName(strongTag))
-            return AccessibilityRole::Strong;
         if (node->hasTagName(subTag))
             return AccessibilityRole::Subscript;
         if (node->hasTagName(supTag))

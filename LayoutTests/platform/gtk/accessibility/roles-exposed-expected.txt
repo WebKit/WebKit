@@ -71,7 +71,7 @@ div
       AXRole: AXSection
       
 em
-      AXRole: AXStatic
+      AXRole: 
       
 fieldset
       AXRole: AXGroup
@@ -386,7 +386,7 @@ span[onclick]
       AXRole: AXStatic
       
 strong
-      AXRole: AXStatic
+      AXRole: 
       
 sub
       AXRole: AXSubscript
@@ -513,9 +513,6 @@ div[role=caption]
       
 div[role=checkbox]
       AXRole: AXCheckBox
-      
-div[role=code]
-      AXRole: AXStatic
       
 div[role=combobox]
       AXRole: AXComboBox
@@ -658,17 +655,11 @@ div[role=doc-toc]
 div[role=document]
       AXRole: AXDocument
       
-div[role=emphasis]
-      AXRole: AXStatic
-      
 div[role=figure]
       AXRole: AXGroup
       
 div[role=form]
       AXRole: AXLandmarkForm
-      
-div[role=generic]
-      AXRole: AXSection
       
 div[role=graphics-document]
       AXRole: AXDocument
@@ -816,9 +807,6 @@ div[role=spinbutton]
       
 div[role=status]
       AXRole: AXStatusBar
-      
-div[role=strong]
-      AXRole: AXStatic
       
 div[role=subscript]
       AXRole: AXSubscript

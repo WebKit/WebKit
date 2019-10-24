@@ -174,25 +174,6 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, readonly:false, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXStatic
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition:  { 0.00000, 0.00000 }
-AXSize: { 0.00000, 0.00000 }
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:code, xml-roles:code, tag:div, toolkit:WebKitGtk
-------------
 AXRole: AXComboBox
 AXParent: AXWebArea
 AXChildren: 0
@@ -345,25 +326,6 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:document, xml-roles:document, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXStatic
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition:  { 0.00000, 0.00000 }
-AXSize: { 0.00000, 0.00000 }
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:emphasis, xml-roles:emphasis, tag:div, toolkit:WebKitGtk
-------------
 AXRole: AXGroup
 AXParent: AXWebArea
 AXChildren: 0
@@ -420,25 +382,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:form, xml-roles:form, tag:div, toolkit:WebKitGtk
-------------
-AXRole: AXSection
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition:  { 0.00000, 0.00000 }
-AXSize: { 0.00000, 0.00000 }
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:generic, xml-roles:generic, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -896,25 +839,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: atomic:true, relevant:additions text, live:polite, container-live-role:status, container-atomic:true, container-relevant:additions text, container-live:polite, computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
-------------
-AXRole: AXStatic
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition:  { 0.00000, 0.00000 }
-AXSize: { 0.00000, 0.00000 }
-AXTitle: 
-AXDescription: 
-AXValue: 
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:strong, xml-roles:strong, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSubscript
 AXParent: AXWebArea

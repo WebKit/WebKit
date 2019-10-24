@@ -7,11 +7,9 @@ PASS: a[href] -> link.
 PASS: article -> article. 
 PASS: aside -> complementary. 
 PASS: button -> button. 
-PASS: code -> code. 
 PASS: del -> deletion. 
 PASS: dfn -> definition. 
 PASS: dl -> . 
-PASS: em -> emphasis. 
 PASS: footer -> contentinfo. 
 PASS: form -> form. 
 PASS: header -> banner. 
@@ -64,7 +62,6 @@ PASS: option -> option.
 PASS: optgroup -> option. 
 PASS: option -> option. 
 PASS: option -> option. 
-PASS: strong -> strong. 
 PASS: sub -> subscript. 
 PASS: sup -> superscript. 
 PASS: table -> table. 
@@ -118,7 +115,6 @@ PASS: div[role="directory"] -> list.
 PASS: div[role="document"] -> document. 
 PASS: div[role="figure"] -> figure. 
 PASS: div[role="form"] -> form. 
-PASS: div[role="generic"] -> generic. 
 PASS: div[role="graphics-document"] -> document. 
 PASS: div[role="graphics-object"] -> group. 
 PASS: div[role="graphics-symbol"] -> img. 

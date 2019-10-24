@@ -2414,7 +2414,6 @@ static void initializeRoleMap()
         { "button", AccessibilityRole::Button },
         { "caption", AccessibilityRole::Caption },
         { "checkbox", AccessibilityRole::CheckBox },
-        { "code", AccessibilityRole::Code },
         { "complementary", AccessibilityRole::LandmarkComplementary },
         { "contentinfo", AccessibilityRole::LandmarkContentInfo },
         { "deletion", AccessibilityRole::Deletion },
@@ -2474,11 +2473,9 @@ static void initializeRoleMap()
         { "combobox", AccessibilityRole::ComboBox },
         { "definition", AccessibilityRole::Definition },
         { "document", AccessibilityRole::Document },
-        { "emphasis", AccessibilityRole::Emphasis },
         { "feed", AccessibilityRole::Feed },
         { "form", AccessibilityRole::Form },
         { "rowheader", AccessibilityRole::RowHeader },
-        { "generic", AccessibilityRole::Generic },
         { "group", AccessibilityRole::ApplicationGroup },
         { "heading", AccessibilityRole::Heading },
         { "img", AccessibilityRole::Image },
@@ -2516,7 +2513,6 @@ static void initializeRoleMap()
         { "slider", AccessibilityRole::Slider },
         { "spinbutton", AccessibilityRole::SpinButton },
         { "status", AccessibilityRole::ApplicationStatus },
-        { "strong", AccessibilityRole::Strong },
         { "subscript", AccessibilityRole::Subscript },
         { "superscript", AccessibilityRole::Superscript },
         { "switch", AccessibilityRole::Switch },
@@ -3589,8 +3585,7 @@ bool AccessibilityObject::isStyleFormatGroup() const
     || node->hasTagName(preTag) || node->hasTagName(sampTag)
     || node->hasTagName(varTag) || node->hasTagName(citeTag)
     || node->hasTagName(insTag) || node->hasTagName(delTag)
-    || node->hasTagName(supTag) || node->hasTagName(subTag)
-    || node->hasTagName(emTag) || node->hasTagName(strongTag);
+    || node->hasTagName(supTag) || node->hasTagName(subTag);
 }
 
 bool AccessibilityObject::isFigureElement() const
