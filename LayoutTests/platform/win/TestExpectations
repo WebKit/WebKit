@@ -195,7 +195,7 @@ fast/dom/Geolocation/ [ Skip ]
 
 # TODO This port doesn't support Notifications.
 http/tests/notifications/ [ Skip ]
-fast/history/page-cache-notification-non-suspendable.html [ Skip ]
+fast/history/page-cache-notification-showing.html [ Skip ]
 fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 # TODO No support for print-to-pdf in Windows DRT
