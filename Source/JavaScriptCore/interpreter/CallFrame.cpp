@@ -116,7 +116,7 @@ const Instruction* CallFrame::currentVPC() const
 
 void CallFrame::setCurrentVPC(const Instruction* vpc)
 {
-    CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
+    CallSiteIndex callSite(BytecodeIndex(bitwise_cast<uint32_t>(vpc)));
     this[CallFrameSlot::argumentCount].tag() = callSite.bits();
 }
 

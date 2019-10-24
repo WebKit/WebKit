@@ -1888,7 +1888,11 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
     JSValue thisValue = getNonConstantOperand(callFrame, bytecode.m_thisValue);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     
+#if USE(JSVALUE64)
     CallSiteIndex callSiteIndex(BytecodeIndex(codeBlock->bytecodeOffset(pc)));
+#else
+    CallSiteIndex callSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(pc)));
+#endif
 
     ShadowChicken* shadowChicken = vm.shadowChicken();
     RELEASE_ASSERT(shadowChicken);

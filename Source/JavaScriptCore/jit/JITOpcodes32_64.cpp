@@ -1386,7 +1386,7 @@ void JIT::emit_op_log_shadow_chicken_tail(const Instruction* currentInstruction)
     emitLoadTag(bytecode.m_thisValue.offset(), regT1);
     JSValueRegs thisRegs(regT1, regT2);
     emitLoadPayload(bytecode.m_scope.offset(), regT3);
-    logShadowChickenTailPacket(shadowPacketReg, thisRegs, regT3, m_codeBlock, CallSiteIndex(currentInstruction));
+    logShadowChickenTailPacket(shadowPacketReg, thisRegs, regT3, m_codeBlock, CallSiteIndex(BytecodeIndex(bitwise_cast<uint32_t>(currentInstruction))));
 }
 
 } // namespace JSC
