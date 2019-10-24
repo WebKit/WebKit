@@ -1,5 +1,14 @@
 2019-10-24  Truitt Savell  <tsavell@apple.com>
 
+        Removing expectations for legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html
+        https://bugs.webkit.org/show_bug.cgi?id=203225
+
+        unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2019-10-24  Truitt Savell  <tsavell@apple.com>
+
         REGRESSION: [ iOS ] ( r251015 ) Layout Test fast/text/whitespace/pre-wrap-overflow-selection.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=203366
 
