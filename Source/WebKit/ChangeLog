@@ -1,3 +1,17 @@
+2019-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r251409) Service worker connection should not be established without service worker entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=203385
+        <rdar://problem/37790257>
+
+        Reviewed by Chris Dumez.
+
+        r251409 introduced a new call to establishSWServerConnection that should have an entitlement check.
+        This was caught by a unit test in CI that is not easy to reproduce in WebKit's test.  See the radar.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+
 2019-10-24  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Mismatch in com.apple.coremedia.audiodeviceclock declarations

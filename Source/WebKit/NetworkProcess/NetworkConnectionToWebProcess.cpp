@@ -106,7 +106,8 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     m_connection->open();
 
 #if ENABLE(SERVICE_WORKER)
-    establishSWServerConnection();
+    if (networkProcess.parentProcessHasServiceWorkerEntitlement())
+        establishSWServerConnection();
 #endif
 }
 
