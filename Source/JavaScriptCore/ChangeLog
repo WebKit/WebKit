@@ -1,3 +1,17 @@
+2019-10-24  Paulo Matos  <pmatos@igalia.com>
+
+        Disable pichdr generation on MIPS for return location labels
+        https://bugs.webkit.org/show_bug.cgi?id=203040
+
+        Reviewed by Yusuke Suzuki.
+
+        Disable generation of pichdr for return location labels generated in
+        defineOSRExitReturnLabel. Since r250806 (Allow OSR exit to the LLInt),
+        MIPS was segfaulting since the pichdr after an OSR exit was corruption
+        the gp register.
+
+        * offlineasm/mips.rb:
+
 2019-10-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to inject "bootstrap" JavaScript into the page as the first script executed
