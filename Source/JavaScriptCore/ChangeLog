@@ -1,5 +1,76 @@
 2019-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Properly organize wasm operations
+        https://bugs.webkit.org/show_bug.cgi?id=203360
+
+        Reviewed by Keith Miller.
+
+        This patch cleans up operation functions called from Wasm.
+
+        1. Properly name these operations with prefix "operation".
+        2. Do not use lambda. Define function with JIT_OPERATION.
+        3. Consolidate them in WasmOperations.cpp.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::addTableGet):
+        (JSC::Wasm::AirIRGenerator::addTableSet):
+        (JSC::Wasm::AirIRGenerator::addTableSize):
+        (JSC::Wasm::AirIRGenerator::addTableGrow):
+        (JSC::Wasm::AirIRGenerator::addTableFill):
+        (JSC::Wasm::AirIRGenerator::addGrowMemory):
+        (JSC::Wasm::AirIRGenerator::emitWriteBarrierForJSWrapper):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Popcnt>):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addTableGet):
+        (JSC::Wasm::B3IRGenerator::addTableSet):
+        (JSC::Wasm::B3IRGenerator::addRefFunc):
+        (JSC::Wasm::B3IRGenerator::addTableSize):
+        (JSC::Wasm::B3IRGenerator::addTableGrow):
+        (JSC::Wasm::B3IRGenerator::addTableFill):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::emitWriteBarrierForJSWrapper):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::getWasmTableElement): Deleted.
+        (JSC::Wasm::setWasmTableElement): Deleted.
+        (JSC::Wasm::doWasmTableGrow): Deleted.
+        (JSC::Wasm::doWasmTableFill): Deleted.
+        (JSC::Wasm::doWasmRefFunc): Deleted.
+        * wasm/WasmInstance.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::operationWasmUnwind):
+        (JSC::Wasm::operationConvertToF64):
+        (JSC::Wasm::operationConvertToI32):
+        (JSC::Wasm::operationConvertToF32):
+        (JSC::Wasm::operationIterateResults):
+        (JSC::Wasm::operationAllocateResultsArray):
+        (JSC::Wasm::operationWasmWriteBarrierSlowPath):
+        (JSC::Wasm::operationPopcount32):
+        (JSC::Wasm::operationPopcount64):
+        (JSC::Wasm::operationGrowMemory):
+        (JSC::Wasm::operationGetWasmTableElement):
+        (JSC::Wasm::setWasmTableElement):
+        (JSC::Wasm::operationSetWasmTableElement):
+        (JSC::Wasm::operationWasmTableGrow):
+        (JSC::Wasm::operationWasmTableFill):
+        (JSC::Wasm::operationWasmRefFunc):
+        (JSC::Wasm::operationGetWasmTableSize):
+        (JSC::Wasm::operationWasmToJSException):
+        * wasm/WasmOperations.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::allocateResultsArray): Deleted.
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        (JSC::Wasm::operationWasmToJSException): Deleted.
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+
+2019-10-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove LLInt's Callee size assumption
         https://bugs.webkit.org/show_bug.cgi?id=203282
 

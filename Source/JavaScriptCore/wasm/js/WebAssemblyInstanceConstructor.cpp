@@ -38,6 +38,7 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
+#include "WasmOperations.h"
 #include "WasmPlan.h"
 #include "WasmToJS.h"
 #include "WasmWorklist.h"

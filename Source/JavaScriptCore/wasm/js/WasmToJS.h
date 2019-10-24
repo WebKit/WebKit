@@ -44,7 +44,6 @@ class Instance;
 
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM&, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex, unsigned importIndex);
 
-void* JIT_OPERATION operationWasmToJSException(CallFrame*, Wasm::ExceptionType, Instance*) WTF_INTERNAL;
 void emitThrowWasmToJSException(CCallHelpers&, GPRReg wasmInstance, Wasm::ExceptionType);
 
 } } // namespace JSC::Wasm

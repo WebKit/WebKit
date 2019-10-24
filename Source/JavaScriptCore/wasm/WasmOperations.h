@@ -43,6 +43,28 @@ class Instance;
 void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
 void JIT_OPERATION operationWasmTriggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;
 void JIT_OPERATION operationWasmThrowBadI64(JSWebAssemblyInstance*) WTF_INTERNAL;
+void JIT_OPERATION operationWasmUnwind(CallFrame*) WTF_INTERNAL;
+
+double JIT_OPERATION operationConvertToF64(CallFrame*, JSValue) WTF_INTERNAL;
+int32_t JIT_OPERATION operationConvertToI32(CallFrame*, JSValue) WTF_INTERNAL;
+float JIT_OPERATION operationConvertToF32(CallFrame*, JSValue) WTF_INTERNAL;
+
+void JIT_OPERATION operationIterateResults(CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*) WTF_INTERNAL;
+JSArray* JIT_OPERATION operationAllocateResultsArray(CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*) WTF_INTERNAL;
+
+void JIT_OPERATION operationWasmWriteBarrierSlowPath(JSWebAssemblyInstance*, VM*) WTF_INTERNAL;
+uint32_t JIT_OPERATION operationPopcount32(int32_t) WTF_INTERNAL;
+uint64_t JIT_OPERATION operationPopcount64(int64_t) WTF_INTERNAL;
+int32_t JIT_OPERATION operationGrowMemory(void*, Instance*, int32_t) WTF_INTERNAL;
+
+EncodedJSValue JIT_OPERATION operationGetWasmTableElement(Instance*, unsigned, int32_t) WTF_INTERNAL;
+bool JIT_OPERATION operationSetWasmTableElement(Instance*, unsigned, int32_t, EncodedJSValue encValue) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationWasmRefFunc(Instance*, uint32_t) WTF_INTERNAL;
+int32_t JIT_OPERATION operationWasmTableGrow(Instance*, unsigned, EncodedJSValue fill, int32_t delta) WTF_INTERNAL;
+bool JIT_OPERATION operationWasmTableFill(Instance*, unsigned, int32_t offset, EncodedJSValue fill, int32_t count) WTF_INTERNAL;
+int32_t JIT_OPERATION operationGetWasmTableSize(Instance*, unsigned) WTF_INTERNAL;
+
+void* JIT_OPERATION operationWasmToJSException(CallFrame*, Wasm::ExceptionType, Instance*) WTF_INTERNAL;
 
 } } // namespace JSC::Wasm
 

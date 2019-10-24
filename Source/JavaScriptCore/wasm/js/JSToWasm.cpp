@@ -38,6 +38,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
+#include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
 #include "WasmToJS.h"
 
@@ -71,40 +72,6 @@ inline void boxWasmResult(CCallHelpers& jit, Wasm::Type type, Reg src, JSValueRe
         jit.breakpoint();
         break;
     }
-}
-
-// FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid
-// spilling the results onto the stack.
-// Saved result registers should be placed on the stack just above the last stack result.
-static JIT_OPERATION JSArray* allocateResultsArray(CallFrame* callFrame, Wasm::Instance* instance, const Signature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee)
-{
-    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
-    VM& vm = jsInstance->vm();
-    NativeCallFrameTracer tracer(vm, callFrame);
-
-    JSGlobalObject* globalObject = jsInstance->globalObject();
-    ObjectInitializationScope initializationScope(globalObject->vm());
-    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), signature->returnCount());
-
-    // FIXME: Handle allocation failure...
-    RELEASE_ASSERT(result);
-
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature);
-    RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
-
-    static_assert(sizeof(JSValue) == sizeof(CPURegister), "The code below relies on this.");
-    for (unsigned i = 0; i < signature->returnCount(); ++i) {
-        B3::ValueRep rep = wasmCallInfo.results[i];
-        JSValue value;
-        if (rep.isReg())
-            value = stackPointerFromCallee[(registerResults.find(rep.reg())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
-        else
-            value = stackPointerFromCallee[rep.offsetFromSP() / sizeof(JSValue)];
-        result->initializeIndex(initializationScope, i, value);
-    }
-
-    ASSERT(result->indexingType() == indexingType);
-    return result;
 }
 
 void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters)
@@ -150,12 +117,12 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
         GPRReg wasmContextInstanceGPR = PinnedRegisterInfo::get().wasmContextInstancePointer;
         if (Context::useFastTLS()) {
             wasmContextInstanceGPR = GPRInfo::argumentGPR1;
-            static_assert(std::is_same_v<Wasm::Instance*, typename FunctionTraits<decltype(allocateResultsArray)>::ArgumentType<1>>);
+            static_assert(std::is_same_v<Wasm::Instance*, typename FunctionTraits<decltype(operationAllocateResultsArray)>::ArgumentType<1>>);
             jit.loadWasmContextInstance(wasmContextInstanceGPR);
         }
 
-        jit.setupArguments<decltype(allocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&signature), indexingType, CCallHelpers::stackPointerRegister);
-        jit.callOperation(FunctionPtr<OperationPtrTag>(allocateResultsArray));
+        jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&signature), indexingType, CCallHelpers::stackPointerRegister);
+        jit.callOperation(FunctionPtr<OperationPtrTag>(operationAllocateResultsArray));
     }
 }
 
