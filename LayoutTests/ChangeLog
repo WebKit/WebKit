@@ -20,6 +20,15 @@
 
         * platform/win/TestExpectations:
 
+2019-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening.
+
+        Make the test added in r251385 pass in WebKit1.
+
+        * compositing/video/video-border-radius-clipping-expected.html:
+        * compositing/video/video-border-radius-clipping.html:
+
 2019-10-24  Chris Dumez  <cdumez@apple.com>
 
         FetchResponse should not prevent entering the back/forward cache
