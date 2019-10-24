@@ -1,3 +1,14 @@
+2019-10-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] Fix SVGSVGElement to conform with SVG2
+        https://bugs.webkit.org/show_bug.cgi?id=203278
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/historical-expected.txt:
+        * web-platform-tests/svg/idlharness.window-expected.txt:
+        Some sub-tests are passing now with this change.
+
 2019-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Import the css/css-values web platform tests

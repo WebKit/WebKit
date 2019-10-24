@@ -360,8 +360,8 @@ PASS SVGSVGElement interface: attribute width
 PASS SVGSVGElement interface: attribute height 
 PASS SVGSVGElement interface: attribute currentScale 
 PASS SVGSVGElement interface: attribute currentTranslate 
-FAIL SVGSVGElement interface: operation getIntersectionList(DOMRectReadOnly, SVGElement) assert_equals: property has wrong .length expected 2 but got 1
-FAIL SVGSVGElement interface: operation getEnclosureList(DOMRectReadOnly, SVGElement) assert_equals: property has wrong .length expected 2 but got 1
+PASS SVGSVGElement interface: operation getIntersectionList(DOMRectReadOnly, SVGElement) 
+PASS SVGSVGElement interface: operation getEnclosureList(DOMRectReadOnly, SVGElement) 
 PASS SVGSVGElement interface: operation checkIntersection(SVGElement, DOMRectReadOnly) 
 PASS SVGSVGElement interface: operation checkEnclosure(SVGElement, DOMRectReadOnly) 
 PASS SVGSVGElement interface: operation deselectAll() 

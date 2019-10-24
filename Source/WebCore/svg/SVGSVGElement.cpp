@@ -94,58 +94,6 @@ void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDoc
     SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
-const AtomString& SVGSVGElement::contentScriptType() const
-{
-    static NeverDestroyed<AtomString> defaultScriptType { "text/ecmascript" };
-    const AtomString& type = attributeWithoutSynchronization(SVGNames::contentScriptTypeAttr);
-    return type.isNull() ? defaultScriptType.get() : type;
-}
-
-void SVGSVGElement::setContentScriptType(const AtomString& type)
-{
-    setAttributeWithoutSynchronization(SVGNames::contentScriptTypeAttr, type);
-}
-
-const AtomString& SVGSVGElement::contentStyleType() const
-{
-    static NeverDestroyed<AtomString> defaultStyleType { "text/css" };
-    const AtomString& type = attributeWithoutSynchronization(SVGNames::contentStyleTypeAttr);
-    return type.isNull() ? defaultStyleType.get() : type;
-}
-
-void SVGSVGElement::setContentStyleType(const AtomString& type)
-{
-    setAttributeWithoutSynchronization(SVGNames::contentStyleTypeAttr, type);
-}
-
-Ref<SVGRect> SVGSVGElement::viewport() const
-{
-    // FIXME: Not implemented.
-    return SVGRect::create();
-}
-
-float SVGSVGElement::pixelUnitToMillimeterX() const
-{
-    // There are 25.4 millimeters in an inch.
-    return 25.4f / cssPixelsPerInch;
-}
-
-float SVGSVGElement::pixelUnitToMillimeterY() const
-{
-    // There are 25.4 millimeters in an inch.
-    return 25.4f / cssPixelsPerInch;
-}
-
-float SVGSVGElement::screenPixelToMillimeterX() const
-{
-    return pixelUnitToMillimeterX();
-}
-
-float SVGSVGElement::screenPixelToMillimeterY() const
-{
-    return pixelUnitToMillimeterY();
-}
-
 SVGViewSpec& SVGSVGElement::currentView()
 {
     if (!m_viewSpec)
@@ -281,23 +229,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-unsigned SVGSVGElement::suspendRedraw(unsigned)
-{
-    return 0;
-}
-
-void SVGSVGElement::unsuspendRedraw(unsigned)
-{
-}
-
-void SVGSVGElement::unsuspendRedrawAll()
-{
-}
-
-void SVGSVGElement::forceRedraw()
-{
-}
-
 Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(SVGRect& rect, SVGElement* referenceElement, bool (*checkFunction)(SVGElement&, SVGRect&))
 {
     Vector<Ref<Element>> elements;
@@ -330,20 +261,16 @@ Ref<NodeList> SVGSVGElement::getEnclosureList(SVGRect& rect, SVGElement* referen
     return collectIntersectionOrEnclosureList(rect, referenceElement, checkEnclosureWithoutUpdatingLayout);
 }
 
-bool SVGSVGElement::checkIntersection(RefPtr<SVGElement>&& element, SVGRect& rect)
+bool SVGSVGElement::checkIntersection(Ref<SVGElement>&& element, SVGRect& rect)
 {
-    if (!element)
-        return false;
     element->document().updateLayoutIgnorePendingStylesheets();
-    return checkIntersectionWithoutUpdatingLayout(*element, rect);
+    return checkIntersectionWithoutUpdatingLayout(element, rect);
 }
 
-bool SVGSVGElement::checkEnclosure(RefPtr<SVGElement>&& element, SVGRect& rect)
+bool SVGSVGElement::checkEnclosure(Ref<SVGElement>&& element, SVGRect& rect)
 {
-    if (!element)
-        return false;
     element->document().updateLayoutIgnorePendingStylesheets();
-    return checkEnclosureWithoutUpdatingLayout(*element, rect);
+    return checkEnclosureWithoutUpdatingLayout(element, rect);
 }
 
 void SVGSVGElement::deselectAll()

@@ -42,45 +42,20 @@ class SVGViewSpec;
 class SVGSVGElement final : public SVGGraphicsElement, public SVGFitToViewBox, public SVGZoomAndPan {
     WTF_MAKE_ISO_ALLOCATED(SVGSVGElement);
 public: // DOM
-    const AtomString& contentScriptType() const;
-    void setContentScriptType(const AtomString&);
-
-    const AtomString& contentStyleType() const;
-    void setContentStyleType(const AtomString&);
-
-    Ref<SVGRect> viewport() const;
-
-    float pixelUnitToMillimeterX() const;
-    float pixelUnitToMillimeterY() const;
-    float screenPixelToMillimeterX() const;
-    float screenPixelToMillimeterY() const;
-
-    bool useCurrentView() const { return m_useCurrentView; }
-    SVGViewSpec& currentView();
-
     float currentScale() const;
     void setCurrentScale(float);
 
     SVGPoint& currentTranslate() { return m_currentTranslate; }
     FloatPoint currentTranslateValue() const { return m_currentTranslate->value(); }
 
-    unsigned suspendRedraw(unsigned maxWaitMilliseconds);
-    void unsuspendRedraw(unsigned suspendHandleId);
-    void unsuspendRedrawAll();
-    void forceRedraw();
-
-    void pauseAnimations();
-    void unpauseAnimations();
-    bool animationsPaused() const;
-    bool hasActiveAnimation() const;
-
-    float getCurrentTime() const;
-    void setCurrentTime(float);
+    bool useCurrentView() const { return m_useCurrentView; }
+    SVGViewSpec& currentView();
 
     Ref<NodeList> getIntersectionList(SVGRect&, SVGElement* referenceElement);
     Ref<NodeList> getEnclosureList(SVGRect&, SVGElement* referenceElement);
-    static bool checkIntersection(RefPtr<SVGElement>&&, SVGRect&);
-    static bool checkEnclosure(RefPtr<SVGElement>&&, SVGRect&);
+    static bool checkIntersection(Ref<SVGElement>&&, SVGRect&);
+    static bool checkEnclosure(Ref<SVGElement>&&, SVGRect&);
+
     void deselectAll();
 
     static Ref<SVGNumber> createSVGNumber();
@@ -93,6 +68,18 @@ public: // DOM
     static Ref<SVGTransform> createSVGTransformFromMatrix(DOMMatrix2DInit&&);
 
     Element* getElementById(const AtomString&);
+
+    void pauseAnimations();
+    void unpauseAnimations();
+    bool animationsPaused() const;
+    bool hasActiveAnimation() const;
+    float getCurrentTime() const;
+    void setCurrentTime(float);
+    
+    unsigned suspendRedraw(unsigned) { return 0; }
+    void unsuspendRedraw(unsigned) { }
+    void unsuspendRedrawAll() { }
+    void forceRedraw() { }
 
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
