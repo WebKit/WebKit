@@ -1,0 +1,6 @@
+
+PASS getAnimations for non-animated content 
+PASS getAnimations for CSS Transitions 
+FAIL CSS Transitions targetting (pseudo-)elements should have correct order after sorting assert_equals: Transition #2 has expected target expected (object) Element node <div style="display: list-item; left: 100px; transition: ... but got (undefined) undefined
+PASS Transitions are not returned after they have finished 
+

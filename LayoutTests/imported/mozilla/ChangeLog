@@ -1,3 +1,53 @@
+2019-10-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+
+        Reviewed by Youenn Fablet.
+
+        * css-animations/test_animation-cancel-expected.txt: Removed.
+        * css-animations/test_animation-cancel.html: Removed.
+        * css-animations/test_animation-currenttime-expected.txt: Removed.
+        * css-animations/test_animation-currenttime.html: Removed.
+        * css-animations/test_animation-finish-expected.txt: Removed.
+        * css-animations/test_animation-finish.html: Removed.
+        * css-animations/test_animation-finished-expected.txt: Removed.
+        * css-animations/test_animation-finished.html: Removed.
+        * css-animations/test_animation-id.html: Removed.
+        * css-animations/test_animation-pausing.html: Removed.
+        * css-animations/test_animation-playstate.html: Removed.
+        * css-animations/test_animation-ready.html: Removed.
+        * css-animations/test_animation-reverse-expected.txt: Removed.
+        * css-animations/test_animation-reverse.html: Removed.
+        * css-animations/test_animation-starttime-expected.txt: Removed.
+        * css-animations/test_animation-starttime.html: Removed.
+        * css-animations/test_animations-dynamic-changes.html: Removed.
+        * css-animations/test_event-dispatch.html: Removed.
+        * css-animations/test_event-order-expected.txt: Removed.
+        * css-animations/test_event-order.html: Removed.
+        * css-animations/test_setting-effect.html: Removed.
+        * css-transitions/test_animation-cancel.html: Removed.
+        * css-transitions/test_animation-currenttime-expected.txt: Removed.
+        * css-transitions/test_animation-currenttime.html: Removed.
+        * css-transitions/test_animation-finished-expected.txt: Removed.
+        * css-transitions/test_animation-finished.html: Removed.
+        * css-transitions/test_animation-pausing-expected.txt: Removed.
+        * css-transitions/test_animation-pausing.html: Removed.
+        * css-transitions/test_animation-ready-expected.txt: Removed.
+        * css-transitions/test_animation-ready.html: Removed.
+        * css-transitions/test_animation-starttime-expected.txt: Removed.
+        * css-transitions/test_animation-starttime.html: Removed.
+        * css-transitions/test_csstransition-transitionproperty.html: Removed.
+        * css-transitions/test_document-get-animations-expected.txt: Removed.
+        * css-transitions/test_document-get-animations.html: Removed.
+        * css-transitions/test_element-get-animations-expected.txt: Removed.
+        * css-transitions/test_element-get-animations.html: Removed.
+        * css-transitions/test_event-dispatch.html: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes.html: Removed.
+        * css-transitions/test_setting-effect-expected.txt: Removed.
+        * css-transitions/test_setting-effect.html: Removed.
+
 2018-11-06  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update all tests to match the latest API changes

@@ -1846,8 +1846,6 @@ webkit.org/b/183903 http/tests/media/video-buffered-range-contains-currentTime.h
 
 webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
 
-webkit.org/b/186143 imported/mozilla/css-animations/test_event-dispatch.html [ Timeout Pass ]
-
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 # Tests that fail on the EWS queue since we enabled tests there
@@ -1856,7 +1854,6 @@ webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout 
 webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass Failure Crash ]
 webkit.org/b/186638 animations/play-state-paused.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
-webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure  Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/spaces/space-2.html [ Timeout Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/relations/html5-tree/class-1.html [ Timeout Pass ]
@@ -2095,8 +2092,6 @@ webkit.org/b/197507 imported/blink/compositing/repaint/end-of-opacity-transition
 webkit.org/b/197507 imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/svg/hittest/rect-miterlimit.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/transitions/no-transition-on-implicit-margins.html [ Timeout Pass ]
-webkit.org/b/197507 imported/mozilla/css-animations/test_animation-cancel.html [ Timeout Pass ]
-webkit.org/b/197507 imported/mozilla/css-transitions/test_animation-cancel.html [ Timeout Pass ]
 webkit.org/b/197507 legacy-animation-engine/animations/animation-multiple-callbacks-timestamp.html [ Timeout Pass ]
 webkit.org/b/197507 legacy-animation-engine/imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 webkit.org/b/197507 media/destructor-logging-crash.html [ Timeout Pass ]
