@@ -1,3 +1,44 @@
+2019-10-23  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement EnterPictureInPictureEvent support
+        https://bugs.webkit.org/show_bug.cgi?id=202616
+
+        Reviewed by Eric Carlson.
+
+        Implement the support for enterpictureinpicture and leavepictureinpicture events.
+        - Add a public method schduleEvent() to HTMLMediaElement in order to fire enterpictureinpicture
+        event which includes properties.
+        - In order to notify the observer (HTMLVideoElementPictureInPicture) after entering picture-in-picture
+        transition is completed and the picture-in-picture window size information is available,
+        we have to change setVideoFullscreenFrame() to virtual in HTMLMediaElement and implement it in
+        HTMLVideoElement to track the transition state.
+        - The PictureInPictureWindow does not need to ba an ActiveDOMObject, so it is updated accordingly.
+
+        With manual tests, the implementation passes LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/enter-picture-in-picture.html
+        and LayoutTests/imported/w3c/web-platform-tests/picture-in-picture/leave-picture-in-picture.html.
+
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::didEnterPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didExitPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::pictureInPictureWindowResized):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.h:
+        * Modules/pictureinpicture/PictureInPictureWindow.cpp:
+        (WebCore::PictureInPictureWindow::PictureInPictureWindow):
+        (WebCore::PictureInPictureWindow::activeDOMObjectName const): Deleted.
+        (WebCore::PictureInPictureWindow::eventTargetInterface const): Deleted.
+        (WebCore::PictureInPictureWindow::scriptExecutionContext const): Deleted.
+        * Modules/pictureinpicture/PictureInPictureWindow.h:
+        * Modules/pictureinpicture/PictureInPictureWindow.idl:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+        (WebCore::HTMLVideoElement::didBecomeFullscreenElement):
+        (WebCore::HTMLVideoElement::setVideoFullscreenFrame):
+        * html/HTMLVideoElement.h:
+        * platform/PictureInPictureObserver.h:
+
 2019-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove wasmAwareLexicalGlobalObject

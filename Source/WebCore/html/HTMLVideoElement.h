@@ -90,8 +90,13 @@ public:
     void fullscreenModeChanged(VideoFullscreenMode) final;
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
+    WEBCORE_EXPORT void didBecomeFullscreenElement() final;
     void setPictureInPictureObserver(PictureInPictureObserver*);
 #endif
+#endif
+
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    void setVideoFullscreenFrame(FloatRect) final;
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -131,6 +136,7 @@ private:
     unsigned m_lastReportedVideoHeight { 0 };
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
+    bool m_waitingForPictureInPictureWindowFrame { false };
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
 #endif
 };

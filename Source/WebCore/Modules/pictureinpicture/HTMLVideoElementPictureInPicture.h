@@ -60,8 +60,9 @@ public:
 
     void exitPictureInPicture(Ref<DeferredPromise>&&);
 
-    void didEnterPictureInPicture();
+    void didEnterPictureInPicture(IntSize);
     void didExitPictureInPicture();
+    void pictureInPictureWindowResized(IntSize);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

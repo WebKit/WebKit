@@ -185,7 +185,7 @@ public:
 #ifdef __OBJC__
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
 #endif
-    void setVideoFullscreenFrame(FloatRect);
+    virtual void setVideoFullscreenFrame(FloatRect);
     void setVideoFullscreenGravity(MediaPlayerEnums::VideoGravity);
     MediaPlayerEnums::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
@@ -576,6 +576,10 @@ public:
     WEBCORE_EXPORT void didBecomeFullscreenElement() override;
     WEBCORE_EXPORT void willExitFullscreen();
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    void scheduleEvent(Ref<Event>&&);
+#endif
+
     enum class AutoplayEventPlaybackState { None, PreventedAutoplay, StartedWithUserGesture, StartedWithoutUserGesture };
 
 protected:
@@ -613,7 +617,7 @@ protected:
     void updateMediaControlsAfterPresentationModeChange();
 #endif
 
-    void scheduleEvent(const AtomString& eventName);
+    void scheduleEvent(const AtomString&);
 
 private:
     void createMediaPlayer();

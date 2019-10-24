@@ -41,28 +41,13 @@ Ref<PictureInPictureWindow> PictureInPictureWindow::create(ScriptExecutionContex
 }
 
 PictureInPictureWindow::PictureInPictureWindow(ScriptExecutionContext& scriptExecutionContext, int width, int height)
-    : ActiveDOMObject(&scriptExecutionContext)
+    : m_scriptExecutionContext(scriptExecutionContext)
     , m_width(width)
     , m_height(height)
 {
 }
 
 PictureInPictureWindow::~PictureInPictureWindow() = default;
-
-const char* PictureInPictureWindow::activeDOMObjectName() const
-{
-    return "PictureInPictureWindow";
-}
-
-EventTargetInterface PictureInPictureWindow::eventTargetInterface() const
-{
-    return PictureInPictureWindowEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* PictureInPictureWindow::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
 
 } // namespace WebCore
 

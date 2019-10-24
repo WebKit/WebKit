@@ -143,11 +143,16 @@ void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>
     m_videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
 }
 
-void HTMLVideoElementPictureInPicture::didEnterPictureInPicture()
+void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(IntSize windowSize)
 {
     INFO_LOG(LOGIDENTIFIER);
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     if (m_enterPictureInPicturePromise) {
+        EnterPictureInPictureEvent::Init initializer;
+        initializer.bubbles = true;
+        initializer.pictureInPictureWindow = PictureInPictureWindow::create(m_videoElement.document(), windowSize.width(), windowSize.height());
+        m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
+
         m_enterPictureInPicturePromise->resolve();
         m_enterPictureInPicturePromise = nullptr;
     }
@@ -158,6 +163,8 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     INFO_LOG(LOGIDENTIFIER);
     m_videoElement.document().setPictureInPictureElement(nullptr);
     if (m_exitPictureInPicturePromise) {
+        m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
         m_exitPictureInPicturePromise->resolve();
         m_exitPictureInPicturePromise = nullptr;
     }
@@ -169,6 +176,10 @@ WTFLogChannel& HTMLVideoElementPictureInPicture::logChannel() const
     return LogMedia;
 }
 #endif
+
+void HTMLVideoElementPictureInPicture::pictureInPictureWindowResized(IntSize)
+{
+}
 
 } // namespace WebCore
 

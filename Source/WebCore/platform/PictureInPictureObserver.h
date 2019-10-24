@@ -32,8 +32,9 @@ namespace WebCore {
 class PictureInPictureObserver : public CanMakeWeakPtr<PictureInPictureObserver> {
 public:
     virtual ~PictureInPictureObserver() { };
-    virtual void didEnterPictureInPicture() = 0;
+    virtual void didEnterPictureInPicture(IntSize) = 0;
     virtual void didExitPictureInPicture() = 0;
+    virtual void pictureInPictureWindowResized(IntSize) = 0;
 };
 
 }

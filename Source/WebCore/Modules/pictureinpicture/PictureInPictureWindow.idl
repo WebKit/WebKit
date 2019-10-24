@@ -25,7 +25,6 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=PICTURE_IN_PICTURE_API,
     EnabledBySetting=PictureInPictureAPI,
     Exposed=Window

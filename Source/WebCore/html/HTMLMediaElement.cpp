@@ -1024,6 +1024,13 @@ void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
     m_asyncEventQueue->enqueueEvent(WTFMove(event));
 }
 
+#if ENABLE(PICTURE_IN_PICTURE_API)
+void HTMLMediaElement::scheduleEvent(Ref<Event>&& event)
+{
+    m_asyncEventQueue->enqueueEvent(WTFMove(event));
+}
+#endif
+
 void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 {
     m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {

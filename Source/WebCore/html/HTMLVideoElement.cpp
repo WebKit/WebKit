@@ -492,9 +492,7 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
             HTMLVideoElement::VideoPresentationMode targetVideoPresentationMode = toPresentationMode(mode);
             HTMLVideoElement::VideoPresentationMode sourceVideoPresentationMode = toPresentationMode(fullscreenMode());
 
-            if (targetVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture)
-                m_pictureInPictureObserver->didEnterPictureInPicture();
-            else if (targetVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+            if (targetVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
                 m_pictureInPictureObserver->didExitPictureInPicture();
         }
 #endif
@@ -507,12 +505,42 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
 }
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
+void HTMLVideoElement::didBecomeFullscreenElement()
+{
+    m_waitingForPictureInPictureWindowFrame = true;
+    HTMLMediaElement::didBecomeFullscreenElement();
+}
+
 void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* observer)
 {
     m_pictureInPictureObserver = observer;
 }
+
 #endif
 
+#endif
+
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+void HTMLVideoElement::setVideoFullscreenFrame(FloatRect frame)
+{
+    HTMLMediaElement::setVideoFullscreenFrame(frame);
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (toPresentationMode(fullscreenMode()) != VideoPresentationMode::PictureInPicture)
+        return;
+
+    if (m_waitingForPictureInPictureWindowFrame) {
+        m_waitingForPictureInPictureWindowFrame = false;
+        if (m_pictureInPictureObserver)
+            m_pictureInPictureObserver->didEnterPictureInPicture(IntSize(frame.size()));
+
+        return;
+    }
+
+    if (m_pictureInPictureObserver)
+        m_pictureInPictureObserver->pictureInPictureWindowResized(IntSize(frame.size()));
+#endif
+}
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

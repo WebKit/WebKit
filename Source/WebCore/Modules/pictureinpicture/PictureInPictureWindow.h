@@ -28,7 +28,6 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
 
@@ -36,7 +35,6 @@ namespace WebCore {
 
 class PictureInPictureWindow final
     : public RefCounted<PictureInPictureWindow>
-    , public ActiveDOMObject
     , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(PictureInPictureWindow);
 public:
@@ -45,9 +43,6 @@ public:
 
     int width() const { return m_width; }
     int height() const { return m_height; }
-
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
 
     using RefCounted<PictureInPictureWindow>::ref;
     using RefCounted<PictureInPictureWindow>::deref;
@@ -58,9 +53,10 @@ private:
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const;
-    ScriptExecutionContext* scriptExecutionContext() const;
+    EventTargetInterface eventTargetInterface() const override { return PictureInPictureWindowEventTargetInterfaceType; };
+    ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; };
 
+    ScriptExecutionContext& m_scriptExecutionContext;
     int m_width;
     int m_height;
 };
