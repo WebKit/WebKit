@@ -1,3 +1,15 @@
+2019-10-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Stop including 'common.sb' 
+        https://bugs.webkit.org/show_bug.cgi?id=203318
+
+        Reviewed by Per Arne Vollan.
+
+        Replace the 'import' of common.sb with the equivalent statements. This is the
+        first step in a task to remove uneeded sandbox rules.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Implement dumpResourceLoadStatistics in SQLite ITP Database
