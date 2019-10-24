@@ -1,3 +1,16 @@
+2019-10-24  Brady Eidson  <beidson@apple.com>
+
+        Formalize PDF snapshot API.
+        https://bugs.webkit.org/show_bug.cgi?id=203374
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController saveAsPDF:]):
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFSnapshot.mm:
+        (TestWebKitAPI::TEST):
+
 2019-10-24  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Make it possible to convert SharedBuffer segments and data views to NSData without copying

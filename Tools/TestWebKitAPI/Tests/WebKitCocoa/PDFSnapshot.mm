@@ -32,6 +32,7 @@
 #import "TestPDFDocument.h"
 #import "TestWKWebView.h"
 #import <WebCore/Color.h>
+#import <WebKit/WKPDFConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 using WebCore::Color;
@@ -46,7 +47,7 @@ TEST(PDFSnapshot, FullContent)
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body bgcolor=#00ff00>Hello</body>"];
 
-    [webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 1u);
@@ -76,11 +77,10 @@ TEST(PDFSnapshot, Subregions)
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body bgcolor=#00ff00>Hello</body>"];
 
     // Snapshot a subregion contained entirely within the view
-    auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
-    [snapshotConfiguration setRect:NSMakeRect(200, 150, 400, 300)];
-    [snapshotConfiguration setSnapshotWidth:@400];
+    auto configuration = adoptNS([[WKPDFConfiguration alloc] init]);
+    [configuration setRect:NSMakeRect(200, 150, 400, 300)];
 
-    [webView _takePDFSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:configuration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 1u);
@@ -100,10 +100,9 @@ TEST(PDFSnapshot, Subregions)
     didTakeSnapshot = false;
 
     // Snapshot a region larger than the view
-    [snapshotConfiguration setRect:NSMakeRect(0, 0, 1200, 1200)];
-    [snapshotConfiguration setSnapshotWidth:@1200];
+    [configuration setRect:NSMakeRect(0, 0, 1200, 1200)];
 
-    [webView _takePDFSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:configuration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 1u);
@@ -133,7 +132,7 @@ TEST(PDFSnapshot, Over200Inches)
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body bgcolor=#00ff00>Hello</body>"];
 
-    [webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 3u);
@@ -170,7 +169,7 @@ TEST(PDFSnapshot, Links)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 15000)]);
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><div style=\"-webkit-line-box-contain: glyphs\"><a href=\"https://webkit.org/\">Click me</a></div>"];
 
-    [webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 2u);
@@ -211,7 +210,7 @@ TEST(PDFSnapshot, InlineLinks)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><a href=\"https://webkit.org/\">Click me</a>"];
 
-    [webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
         EXPECT_NULL(error);
         auto document = TestPDFDocument::createFromData(pdfSnapshotData);
         EXPECT_EQ(document->pageCount(), 1u);

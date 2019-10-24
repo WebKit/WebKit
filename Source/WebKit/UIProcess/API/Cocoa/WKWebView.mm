@@ -65,6 +65,7 @@
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
+#import "WKPDFConfiguration.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSafeBrowsingWarning.h"
@@ -4664,6 +4665,32 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _resolutionForShareSheetImmediateCompletionForTesting;
 }
 
+- (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler
+{
+    WebCore::FrameIdentifier frameID;
+    if (auto mainFrame = _page->mainFrame())
+        frameID = mainFrame->frameID();
+    else {
+        completionHandler(nil, createNSError(WKErrorUnknown).get());
+        return;
+    }
+
+    Optional<WebCore::FloatRect> floatRect;
+    if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
+        floatRect = WebCore::FloatRect(pdfConfiguration.rect);
+
+    auto handler = makeBlockPtr(completionHandler);
+    _page->drawToPDF(frameID, floatRect, [retainedSelf = retainPtr(self), handler = WTFMove(handler)](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None) {
+            handler(nil, createNSError(WKErrorUnknown).get());
+            return;
+        }
+
+        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
+        handler((NSData *)data.get(), nil);
+    });
+}
+
 @end
 
 @implementation WKWebView (WKPrivate)
@@ -5095,28 +5122,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
-    WebCore::FrameIdentifier frameID;
-    if (auto mainFrame = _page->mainFrame())
-        frameID = mainFrame->frameID();
-    else {
-        completionHandler(nil, createNSError(WKErrorUnknown).get());
-        return;
+    WKPDFConfiguration *pdfConfiguration = nil;
+    if (snapshotConfiguration) {
+        pdfConfiguration = [[[WKPDFConfiguration alloc] init] autorelease];
+        pdfConfiguration.rect = snapshotConfiguration.rect;
     }
 
-    Optional<WebCore::FloatRect> floatRect;
-    if (snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect))
-        floatRect = WebCore::FloatRect(snapshotConfiguration.rect);
-
-    auto handler = makeBlockPtr(completionHandler);
-    _page->drawToPDF(frameID, floatRect, [retainedSelf = retainPtr(self), handler = WTFMove(handler)](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None) {
-            handler(nil, createNSError(WKErrorUnknown).get());
-            return;
-        }
-
-        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
-        handler((NSData *)data.get(), nil);
-    });
+    [self createPDFWithConfiguration:pdfConfiguration completionHandler:completionHandler];
 }
 
 #if PLATFORM(MAC)

@@ -296,6 +296,7 @@ UIProcess/API/Cocoa/WKNavigationData.mm
 UIProcess/API/Cocoa/WKNavigationResponse.mm
 UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
 UIProcess/API/Cocoa/WKOpenPanelParameters.mm
+UIProcess/API/Cocoa/WKPDFConfiguration.mm
 UIProcess/API/Cocoa/WKPreferences.mm
 UIProcess/API/Cocoa/WKPreviewActionItem.mm
 UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm

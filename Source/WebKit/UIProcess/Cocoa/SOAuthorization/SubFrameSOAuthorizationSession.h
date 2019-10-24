@@ -29,6 +29,8 @@
 
 #include "FrameLoadState.h"
 #include "NavigationSOAuthorizationSession.h"
+#include <WebCore/FrameIdentifier.h>
+#include <wtf/Deque.h>
 
 namespace IPC {
 class DataReference;

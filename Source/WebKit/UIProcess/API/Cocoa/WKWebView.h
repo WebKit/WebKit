@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @class WKNavigation;
+@class WKPDFConfiguration;
 @class WKSnapshotConfiguration;
 @class WKWebViewConfiguration;
 
@@ -231,6 +232,16 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 #else
 - (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macos(10.13));
 #endif
+
+/*! @abstract Create a PDF document representation from the web page currently displayed in the WKWebView
+@param pdfConfiguration An object that specifies how the PDF capture is configured.
+@param completionHandler A block to invoke when the pdf document data is ready.
+@discussion If the WKPDFConfiguration is nil, the method will create a PDF document representing the bounds of the currently displayed web page.
+The completionHandler is passed the resulting PDF document data or an error.
+The data can be used to create a PDFDocument object.
+If the data is written to a file the resulting file is a valid PDF document.
+*/
+- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.

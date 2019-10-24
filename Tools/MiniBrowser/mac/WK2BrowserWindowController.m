@@ -823,7 +823,7 @@ static NSSet *dataTypes()
     panel.allowedFileTypes = @[ @"pdf" ];
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
         if (result == NSModalResponseOK) {
-            [_webView _takePDFSnapshotWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+            [_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
                 [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
             }];
         }
