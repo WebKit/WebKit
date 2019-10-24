@@ -1,3 +1,17 @@
+2019-10-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Multiple builds are triggered for one patch sometimes in new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=199417
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (BugzillaPatchFetcher.fetch): Set the flag before sending the patch to buildbot. Unset it in case of failure. 
+        Also added additional check for sent_to_buildbot flag before processing patch.
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        (Patch.save_patch): Improved logging.
+        (Patch.set_sent_to_buildbot): Modified to accept sent_to_buildbot paramater, and set the value accordingly.
+
 2019-10-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251261.

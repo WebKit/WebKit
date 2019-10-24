@@ -60,9 +60,13 @@ class BugzillaPatchFetcher():
         _log.debug('r? patches: {}'.format(patch_ids))
         Patch.save_patches(patch_ids)
         patches_to_send = self.patches_to_send_to_buildbot(patch_ids)
-        _log.info('{} r? patches, {} patches need to be sent to Buildbot.'.format(len(patch_ids), len(patches_to_send)))
+        _log.info('{} r? patches, {} patches need to be sent to Buildbot: {}'.format(len(patch_ids), len(patches_to_send), patches_to_send))
 
         for patch_id in patches_to_send:
+            if Patch.is_patch_sent_to_buildbot(patch_id):
+                _log.error('Patch {} is already sent to buildbot.'.format(patch_id))
+                continue
+            Patch.set_sent_to_buildbot(patch_id, True)
             bz_patch = Bugzilla.retrieve_attachment(patch_id)
             if not bz_patch or bz_patch['id'] != patch_id:
                 _log.error('Unable to retrive patch "{}"'.format(patch_id))
@@ -75,9 +79,9 @@ class BugzillaPatchFetcher():
                      properties=['patch_id={}'.format(patch_id), 'bug_id={}'.format(bz_patch['bug_id']), 'owner={}'.format(bz_patch.get('creator', ''))])
             if rc == 0:
                 Patch.set_bug_id(patch_id, bz_patch['bug_id'])
-                Patch.set_sent_to_buildbot(patch_id)
             else:
                 _log.error('Failed to send patch to buildbot.')
+                Patch.set_sent_to_buildbot(patch_id, False)
                 #FIXME: send an email for this failure
         return patch_ids
 

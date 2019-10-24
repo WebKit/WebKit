@@ -45,10 +45,11 @@ class Patch(models.Model):
     @classmethod
     def save_patch(cls, patch_id, bug_id=-1, obsolete=False, sent_to_buildbot=False):
         if not Patch.is_valid_patch_id(patch_id):
+            _log.warn('Patch id {} in invalid. Skipped saving.'.format(patch_id))
             return ERR_INVALID_PATCH_ID
 
         if Patch.is_existing_patch_id(patch_id):
-            _log.debug("Patch id {} already exists in database. Skipped saving.".format(patch_id))
+            _log.debug('Patch id {} already exists in database. Skipped saving.'.format(patch_id))
             return ERR_EXISTING_PATCH
         Patch(patch_id, bug_id, obsolete, sent_to_buildbot).save()
         _log.info('Saved patch in database, id: {}'.format(patch_id))
@@ -82,18 +83,20 @@ class Patch(models.Model):
             return None
 
     @classmethod
-    def set_sent_to_buildbot(cls, patch_id):
+    def set_sent_to_buildbot(cls, patch_id, sent_to_buildbot=True):
         if not Patch.is_existing_patch_id(patch_id):
-            return ERR_NON_EXISTING_PATCH
-
-        patch = Patch.objects.get(pk=patch_id)
-        if patch.sent_to_buildbot:
-            _log.warn('Patch {} has already been sent to Buildbot.'.format(patch_id))
+            Patch.save_patch(patch_id=patch_id, sent_to_buildbot=sent_to_buildbot)
+            _log.info('Patch {} saved to database with sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
             return SUCCESS
 
-        patch.sent_to_buildbot = True
+        patch = Patch.objects.get(pk=patch_id)
+        if patch.sent_to_buildbot == sent_to_buildbot:
+            _log.warn('Patch {} already has sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
+            return SUCCESS
+
+        patch.sent_to_buildbot = sent_to_buildbot
         patch.save()
-        _log.debug('Updated patch {} with sent_to_buildbot=True'.format(patch_id))
+        _log.info('Updated patch {} with sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
         return SUCCESS
 
     @classmethod
