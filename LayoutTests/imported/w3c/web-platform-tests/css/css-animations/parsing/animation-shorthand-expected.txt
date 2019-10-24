@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 14: ReferenceError: Can't find variable: test_shorthand_value
-
-FAIL CSS Animations: animation sets longhands ReferenceError: Can't find variable: test_shorthand_value
-

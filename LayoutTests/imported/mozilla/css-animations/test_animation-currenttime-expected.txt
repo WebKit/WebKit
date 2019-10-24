@@ -1,0 +1,18 @@
+
+PASS Sanity test to check round-tripping assigning to new animation's currentTime 
+PASS Skipping forward through animation 
+PASS Skipping backwards through animation 
+PASS Redundant change, before -> active, then back 
+PASS Redundant change, before -> after, then back 
+PASS Redundant change, active -> before, then back 
+PASS Redundant change, active -> after, then back 
+PASS Redundant change, after -> before, then back 
+PASS Redundant change, after -> active, then back 
+PASS Seeking finished -> paused dispatches animationstart 
+PASS Setting currentTime to null 
+PASS Animation.currentTime after pausing 
+PASS Animation.currentTime clamping 
+PASS Animation.currentTime clamping for reversed animation 
+PASS Animation.currentTime after cancelling 
+PASS After aborting a pause when finished, the call to play() should rewind the current time 
+

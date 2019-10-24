@@ -214,7 +214,7 @@ FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1
 FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0,-1,1,0,250,0) but got matrix(-1.8369701987210297e-16, -1, 1, -1.8369701987210297e-16, 200, 0): The value should be matrix(0,-1,1,0,250,0) at 0ms but got matrix(-1.8369701987210297e-16, -1, 1, -1.8369701987210297e-16, 200, 0) expected 250 +/- 0.0001 but got 200
 FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2,0,0,-2,250,0) but got matrix(-2, 2.4492935982947064e-16, -2.4492935982947064e-16, -2, 200, 0): The value should be matrix(-2,0,0,-2,250,0) at 0ms but got matrix(-2, 2.4492935982947064e-16, -2.4492935982947064e-16, -2, 200, 0) expected 250 +/- 0.0001 but got 200
 PASS visibility (type: visibility) has testAddition function 
-PASS visibility: onto "visible" 
+FAIL visibility: onto "visible" assert_equals: The value should be visible at 1000ms expected "visible" but got "hidden"
 PASS visibility: onto "hidden" 
 PASS word-spacing (type: lengthPercentageOrCalc) has testAddition function 
 FAIL word-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"

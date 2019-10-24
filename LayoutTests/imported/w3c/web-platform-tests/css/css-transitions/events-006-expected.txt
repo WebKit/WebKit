@@ -1,4 +1,0 @@
-
-PASS transition padding-left on ::before 
-PASS transition padding-left on ::after 
-

@@ -1,3 +1,0 @@
-
-PASS changes to transition-property should cancel in-flight transitions 
-

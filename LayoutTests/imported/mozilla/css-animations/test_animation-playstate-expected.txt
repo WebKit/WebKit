@@ -1,0 +1,7 @@
+
+PASS Animation returns correct playState when running 
+PASS Animation returns correct playState when paused 
+PASS Animation.playState updates when paused by script 
+PASS Animation.playState updates when resumed by setting style 
+PASS Animation returns correct playState when cancelled 
+

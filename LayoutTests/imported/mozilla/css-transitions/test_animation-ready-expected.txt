@@ -1,0 +1,5 @@
+
+PASS A new ready promise is created each time play() is called the animation property 
+PASS ready promise is rejected when a transition is cancelled by updating transition-property 
+PASS ready promise is rejected when a transition is cancelled by changing the transition property to something not interpolable 
+

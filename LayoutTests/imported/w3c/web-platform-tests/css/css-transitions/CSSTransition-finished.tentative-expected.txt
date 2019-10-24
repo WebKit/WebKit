@@ -1,3 +1,0 @@
-
-PASS Restarting a finished transition rewinds playback 
-

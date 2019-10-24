@@ -1,3 +1,0 @@
-
-PASS Changes to transition-duration should not affect in-flight transitions 
-

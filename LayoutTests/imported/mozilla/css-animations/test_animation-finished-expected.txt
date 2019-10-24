@@ -1,0 +1,5 @@
+
+PASS finished promise is rejected when an animation is cancelled by resetting the animation property 
+PASS finished promise is rejected when an animation is cancelled by changing the animation property 
+PASS Test finished promise changes when animationPlayState set to running 
+

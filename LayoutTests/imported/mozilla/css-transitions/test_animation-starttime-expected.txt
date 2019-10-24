@@ -1,0 +1,8 @@
+
+PASS startTime of a newly created transition is unresolved 
+PASS Sanity test to check round-tripping assigning to new animation's startTime 
+PASS Skipping forward through animation 
+PASS Skipping backwards through transition 
+PASS Setting startTime to null 
+PASS Animation.startTime after paused 
+

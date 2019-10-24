@@ -1,0 +1,6 @@
+
+PASS Test exceptions when finishing infinite animation 
+PASS Test finish() while paused 
+PASS Test finish() while pause-pending with positive playbackRate 
+PASS Test finish() while pause-pending with negative playbackRate 
+

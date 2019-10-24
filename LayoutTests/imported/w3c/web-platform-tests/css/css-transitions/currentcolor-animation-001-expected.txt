@@ -1,3 +1,0 @@
-
-FAIL Transition does not occur when the value is currentcolor and color changes assert_true: expected true got false
-

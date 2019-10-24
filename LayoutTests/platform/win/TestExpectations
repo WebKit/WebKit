@@ -4093,6 +4093,19 @@ webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]
 
 webkit.org/b/186183 http/tests/security/referrer-policy-header.html [ Skip ]
 
+webkit.org/b/186522 imported/mozilla/css-animations/test_animation-finished.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-animations/test_animation-id.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-animations/test_animation-reverse.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-animations/test_cssanimation-animationname.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-animations/test_setting-effect.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-computed-timing.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-currenttime.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-finished.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-pausing.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_animation-starttime.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_csstransition-transitionproperty.html [ Failure ]
+webkit.org/b/186522 imported/mozilla/css-transitions/test_setting-effect.html [ Failure ]
+
 webkit.org/b/186562 [ Release ] accessibility/accessibility-node-memory-management.html [ Failure ]
 webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
 webkit.org/b/186562 js/dom/line-column-numbers.html [ Failure ]
@@ -4100,9 +4113,18 @@ webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]
 webkit.org/b/186562 svg/animations/animation-leak-list-property-instances.html [ Failure ]
 webkit.org/b/186562 workers/bomb.html [ Skip ]
 
+webkit.org/b/186807 imported/mozilla/css-animations/test_animation-playstate.html [ Failure ]
+webkit.org/b/186807 imported/mozilla/css-animations/test_animation-ready.html [ Failure ]
+webkit.org/b/186807 imported/mozilla/css-animations/test_animation-starttime.html [ Failure ]
+webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-cancel.html [ Failure ]
+webkit.org/b/186807 imported/mozilla/css-transitions/test_animation-ready.html [ Failure ]
 webkit.org/b/186807 transitions/transition-to-from-auto.html [ Failure ]
 webkit.org/b/186807 animations/transition-and-animation-3.html [ Skip ]
 
+webkit.org/b/186868 imported/mozilla/css-animations/test_pseudoElement-get-animations.html [ Failure ]
+webkit.org/b/186868 imported/mozilla/css-transitions/test_element-get-animations.html [ Failure ]
+
+webkit.org/b/187041 imported/mozilla/css-animations/test_animation-pausing.html [ Failure ]
 webkit.org/b/187041 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
 webkit.org/b/187177 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
@@ -4350,6 +4372,7 @@ webkit.org/b/196680 printing/page-with-zero-margin.html [ Failure ]
 
 webkit.org/b/196869 animations/animation-multiple-callbacks-timestamp.html [ Failure ]
 webkit.org/b/196869 legacy-animation-engine/animations/animation-multiple-callbacks-timestamp.html [ Failure ]
+webkit.org/b/196869 imported/mozilla/css-animations/test_animation-currenttime.html [ Failure ]
 
 webkit.org/b/194450 storage/indexeddb/modern/gc-closes-database-private.html [ Skip ]
 

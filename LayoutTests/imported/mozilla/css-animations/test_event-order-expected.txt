@@ -1,0 +1,6 @@
+
+PASS Test same events are ordered by elements. 
+FAIL Test start and iteration events are ordered by time. assert_equals: Event type should match expected "animationstart" but got "animationiteration"
+FAIL Test iteration and end events are ordered by time. assert_equals: Event type should match expected "animationend" but got "animationiteration"
+FAIL Test start and end events are sorted correctly when fired simultaneously assert_equals: Event target should match expected Element node <div style="animation: anim 100s 100s"></div> but got Element node <div style="animation: anim 100s 2"></div>
+

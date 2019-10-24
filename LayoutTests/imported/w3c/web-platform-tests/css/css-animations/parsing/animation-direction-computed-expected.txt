@@ -1,3 +1,0 @@
-
-PASS Property animation-direction value 'normal, reverse, alternate, alternate-reverse' computes to 'normal, reverse, alternate, alternate-reverse' 
-

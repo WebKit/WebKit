@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 99: TypeError: null is not an object (evaluating 'document.body.appendChild')
-#PID UNRESPONSIVE - WebKitTestRunner (pid 84570)
-FAIL: Timed out waiting for notifyDone to be called
-

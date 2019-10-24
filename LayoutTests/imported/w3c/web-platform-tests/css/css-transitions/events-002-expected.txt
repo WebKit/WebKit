@@ -1,4 +1,0 @@
-
-PASS transition:all changing padding-left from nothing 
-PASS transition:all changing padding from nothing 
-

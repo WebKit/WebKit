@@ -1,7 +1,0 @@
-
-PASS e.style['animation-delay'] = "infinite" should not set the property value 
-FAIL e.style['animation-delay'] = "0" should not set the property value assert_equals: expected "" but got "0ms"
-PASS e.style['animation-delay'] = "1s 2s" should not set the property value 
-PASS e.style['animation-delay'] = "initial, -3s" should not set the property value 
-PASS e.style['animation-delay'] = "-3s, initial" should not set the property value 
-

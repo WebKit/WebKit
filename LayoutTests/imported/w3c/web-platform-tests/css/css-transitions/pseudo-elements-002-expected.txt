@@ -1,3 +1,0 @@
-
-FAIL Check that transitions run on a pseudo element whose ancestor changes display type. assert_equals: expected "200px" but got "100px"
-

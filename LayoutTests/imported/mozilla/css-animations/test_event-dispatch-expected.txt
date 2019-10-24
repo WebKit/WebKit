@@ -1,0 +1,23 @@
+
+PASS Idle -> Active 
+PASS Idle -> After 
+PASS Before -> Active 
+PASS Before -> After 
+PASS Active -> Idle, display: none 
+PASS Active -> Idle, setting Animation.timeline = null 
+PASS Active -> Idle, calling Animation.cancel() 
+PASS Active -> Before 
+PASS Active -> After 
+PASS After -> Before 
+PASS After -> Active 
+PASS Active -> Active (forwards) 
+PASS Active -> Active (backwards) 
+PASS Active -> Idle -> Active: animationstart is fired by restarting animation 
+PASS Negative playbackRate sanity test(Before -> Active -> Before) 
+PASS Call Animation.cancel after cancelling animation. 
+PASS Restart animation after cancelling animation immediately. 
+PASS Call Animation.cancel after restarting animation immediately. 
+PASS Set timeline and play transition after clearing the timeline. 
+PASS Set null target effect after cancelling the animation. 
+PASS Cancel the animation after clearing the target effect. 
+

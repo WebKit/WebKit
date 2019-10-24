@@ -1,4 +1,0 @@
-
-PASS repeating lists 
-FAIL truncating lists assert_equals: expected "padding-top" but got "padding-left"
-

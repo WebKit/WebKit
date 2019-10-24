@@ -1,3 +1,0 @@
-
-PASS transitioncancel should be fired if the element is made display:none during the transition 
-

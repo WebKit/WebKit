@@ -1,0 +1,24 @@
+
+PASS getAnimations for non-animated content 
+PASS getAnimations for CSS Animations 
+PASS getAnimations returns CSSAnimation objects for CSS Animations 
+PASS getAnimations for multi-property animations 
+PASS getAnimations for both CSS Animations and CSS Transitions at once 
+PASS getAnimations for CSS Animations that have finished 
+PASS getAnimations for CSS Animations that have finished but are forwards filling 
+PASS getAnimations for CSS Animations with animation-name: none 
+PASS getAnimations for CSS Animations with animation-name: missing 
+FAIL getAnimations for CSS Animations where the @keyframes rule is added later assert_equals: getAnimations includes Animation when @keyframes rule is added later expected 2 but got 1
+PASS getAnimations for CSS Animations with duplicated animation-name 
+PASS getAnimations for CSS Animations with empty keyframes rule 
+PASS getAnimations for CSS animations in delay phase 
+PASS getAnimations for zero-duration CSS Animations 
+PASS getAnimations returns objects with the same identity 
+PASS getAnimations for CSS Animations that are cancelled 
+FAIL getAnimations for CSS Animations follows animation-name order assert_equals: animation order after prepending to list expected "anim1" but got "anim2"
+PASS Test AnimationFilter{ subtree: false } with single element 
+FAIL Test AnimationFilter{ subtree: true } with single element assert_equals: getAnimations({ subtree: true }) should return animations on pseudo-elements expected 3 but got 1
+PASS Test AnimationFilter{ subtree: false } with element that has a child 
+FAIL Test AnimationFilter{ subtree: true } with element that has a child assert_equals: Should find all elements, pesudo-elements that parent has expected 6 but got 1
+FAIL Test AnimationFilter{ subtree: true } with element that has many descendant assert_equals: Should find all descendants of the element expected 5 but got 1
+

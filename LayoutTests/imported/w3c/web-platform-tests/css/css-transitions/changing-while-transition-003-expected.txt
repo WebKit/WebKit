@@ -1,3 +1,0 @@
-
-PASS Changes to transition-delay should not affect in-flight transitions 
-

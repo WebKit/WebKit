@@ -1,3 +1,16 @@
+2019-10-24  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r251536.
+
+        Landed 3 Broken Tests.
+
+        Reverted changeset:
+
+        "[Web Animations] Update WPT tests related to Web Animations
+        and remove imported Mozilla tests"
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+        https://trac.webkit.org/changeset/251536
+
 2019-10-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r251269, r251294, and r251328.

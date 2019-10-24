@@ -1,0 +1,4 @@
+
+PASS Test restarting a finished transition 
+PASS Test restarting a reversed finished transition 
+

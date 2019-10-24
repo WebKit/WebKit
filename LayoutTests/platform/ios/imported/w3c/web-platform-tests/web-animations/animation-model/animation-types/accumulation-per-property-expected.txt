@@ -208,7 +208,7 @@ PASS transform: non-invertible matrices in matched transform lists (invertible o
 FAIL transform: non-invertible matrices in mismatched transform lists (non-invertible onto invertible) assert_approx_equals: expected matrix(1, 1, 1, 1, 100, 100) but got matrix(1, 1, 1, 1, 150, 50): The value should be matrix(1, 1, 1, 1, 100, 100) at 0ms but got matrix(1, 1, 1, 1, 150, 50) expected 100 +/- 0.0001 but got 150
 PASS transform: non-invertible matrices in mismatched transform lists (invertible onto non-invertible) 
 PASS visibility (type: visibility) has testAccumulation function 
-PASS visibility: onto "visible" 
+FAIL visibility: onto "visible" assert_equals: The value should be visible at 1000ms expected "visible" but got "hidden"
 PASS visibility: onto "hidden" 
 PASS word-spacing (type: lengthPercentageOrCalc) has testAccumulation function 
 FAIL word-spacing: length assert_equals: The value should be 20px at 0ms expected "20px" but got "10px"
