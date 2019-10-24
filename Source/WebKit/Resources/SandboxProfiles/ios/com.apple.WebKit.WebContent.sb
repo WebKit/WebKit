@@ -756,10 +756,21 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
+        "hw.activecpu"
         "hw.availcpu"
+        "hw.l2cachesize"
+        "hw.logicalcpu_max"
         "hw.ncpu"
+        "hw.machine"
+        "hw.memsize"
         "hw.model"
+        "hw.pagesize_compat"
+        "hw.physicalcpu_max"
+        "kern.bootargs"
         "kern.memorystatus_level"
+        "kern.osproductversion"
+        "kern.osvariant_status"
+        "kern.secure_kernel"
         "vm.footprint_suspend"))
 
 (deny iokit-get-properties (with partial-symbolication))

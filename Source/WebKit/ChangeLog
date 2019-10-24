@@ -1,3 +1,11 @@
+2019-10-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed fix after r251511.
+
+        Some syctl names were omitted from the initial checkin.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-24  Brady Eidson  <beidson@apple.com>
 
         Formalize PDF snapshot API.
