@@ -1,3 +1,26 @@
+2019-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Should dispatch contextmenu event on right click
+        https://bugs.webkit.org/show_bug.cgi?id=203316
+        <rdar://problem/54617376>
+
+        Reviewed by Wenson Hsieh.
+
+        macCatalyst does not have ENABLE(CONTEXT_MENUS), because it uses the
+        iOS-style platform-driven context menu API, but should still dispatch
+        the contextmenu event on right click, for pages that depend on that.
+
+        Separate ENABLE(CONTEXT_MENU_EVENT) out from ENABLE(CONTEXT_MENUS).
+
+        In the future, calling preventDefault on the contextmenu event should
+        block the platform context menu from appearing, but currently they
+        use entirely different gestures.
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+        * replay/UserInputBridge.cpp:
+        * replay/UserInputBridge.h:
+
 2019-10-23  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r251469.

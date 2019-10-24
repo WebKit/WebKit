@@ -1367,6 +1367,8 @@ private:
 
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }
+#endif
+#if ENABLE(CONTEXT_MENU_EVENT)
     void contextMenuForKeyEvent();
 #endif
 

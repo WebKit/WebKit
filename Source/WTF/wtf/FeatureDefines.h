@@ -77,6 +77,12 @@
 #define ENABLE_CONTEXT_MENUS 0
 #endif
 
+#if !defined(ENABLE_CONTEXT_MENU_EVENT)
+#if !PLATFORM(MACCATALYST)
+#define ENABLE_CONTEXT_MENU_EVENT 0
+#endif
+#endif
+
 #if !defined(ENABLE_CURSOR_SUPPORT)
 #define ENABLE_CURSOR_SUPPORT 0
 #endif
@@ -420,6 +426,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_CONTEXT_MENUS)
 #define ENABLE_CONTEXT_MENUS 1
+#endif
+
+#if !defined(ENABLE_CONTEXT_MENU_EVENT)
+#define ENABLE_CONTEXT_MENU_EVENT 1
 #endif
 
 #if !defined(ENABLE_CSS3_TEXT)
