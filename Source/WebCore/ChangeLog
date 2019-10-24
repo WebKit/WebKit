@@ -1,3 +1,9 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r251509.
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+
 2019-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Figure out missing prepareCallOperation

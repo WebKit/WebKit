@@ -28,6 +28,7 @@
 
 #include "DOMException.h"
 #include "DOMFileSystem.h"
+#include "Document.h"
 #include "ErrorCallback.h"
 #include "FileSystemDirectoryReader.h"
 #include "FileSystemEntryCallback.h"
