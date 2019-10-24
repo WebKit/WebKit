@@ -1,3 +1,23 @@
+2019-10-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Only process CSS properties affected by a given CSS transition
+        https://bugs.webkit.org/show_bug.cgi?id=203238
+
+        Reviewed by Simon Fraser.
+
+        When the "transition" property, or one of its longhands, would change we would iterate over every known CSS property to identify whether the before and after
+        styles showed reasons to create, modify or cancel a backing CSSTransition object. However, we only need to do this in the case where "transition-property" is
+        "all", ie. where the Animation object has its animationMode() set to Animation::AnimateAll. In all other cases, we only need to iterate over the CSS properties
+        specified by "transition-property".
+
+        We now compile a list of CSS properties to iterate over by looking at all properties listed in the "transition-property" for the before and after styles.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::compileTransitionPropertiesInStyle):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement):
+        * animation/AnimationTimeline.h:
+
 2019-10-24  youenn fablet  <youenn@apple.com>
 
         XMLHttpRequest.responseXML url should be the HTTP response URL
