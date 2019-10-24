@@ -1,3 +1,27 @@
+2019-10-24  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Reintroduce ensureGLVideoSinkContext() fix
+        https://bugs.webkit.org/show_bug.cgi?id=201401
+
+        Reviewed by Philippe Normand.
+
+        That patch was almost mechanically reverted temporarily along the rest
+        of the WebKitMediaSrc rework. In theory that should have been OK since
+        it was supposed to fix a regression of that patch... But actually
+        the bug was already causing problems before, the WebKitMediaSrc rework
+        just exposed a more common case.
+
+        It has been reported that the same bug arises when adding some CSS
+        styles to the <video> element, and the patch fixes the issue.
+
+        And the patch actually makes sense in any case... since without it
+        some perfectly valid state transitions are not covered!
+
+        So I'm reintroducing it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+
 2019-10-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Only process CSS properties affected by a given CSS transition
