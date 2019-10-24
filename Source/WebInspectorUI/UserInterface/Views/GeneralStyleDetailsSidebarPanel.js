@@ -31,7 +31,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
         this.element.classList.add("css-style");
 
-        console.assert(panelConstructor instanceof WI.StyleDetailsPanel);
+        console.assert(panelConstructor.prototype instanceof WI.StyleDetailsPanel);
         this._panel = new panelConstructor(this);
         this._panel.addEventListener(WI.StyleDetailsPanel.Event.NodeChanged, this._handleNodeChanged, this);
 
