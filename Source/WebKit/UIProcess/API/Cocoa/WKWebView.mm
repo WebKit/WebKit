@@ -99,9 +99,6 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKTextInputContextInternal.h"
-#import "_WKTextManipulationDelegate.h"
-#import "_WKTextManipulationItem.h"
-#import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/ElementContext.h>
@@ -117,7 +114,6 @@
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StringUtilities.h>
-#import <WebCore/TextManipulationController.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
@@ -280,8 +276,6 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     RetainPtr<WKSafeBrowsingWarning> _safeBrowsingWarning;
 
     BOOL _usePlatformFindUI;
-
-    WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
@@ -7464,65 +7458,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->executeEditCommand(command, argument, [capturedCompletionBlock = makeBlockPtr(completion)](WebKit::CallbackBase::Error error) {
         if (capturedCompletionBlock)
             capturedCompletionBlock(error == WebKit::CallbackBase::Error::None);
-    });
-}
-
-- (id <_WKTextManipulationDelegate>)_textManipulationDelegate
-{
-    return _textManipulationDelegate.getAutoreleased();
-}
-
-- (void)_setTextManipulationDelegate:(id <_WKTextManipulationDelegate>)delegate
-{
-    _textManipulationDelegate = delegate;
-}
-
-- (void)_startTextManipulationsWithCompletionHandler:(void(^)())completionHandler
-{
-    if (!_textManipulationDelegate)
-        return;
-    if (!_page)
-        return;
-    _page->startTextManipulations([weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::TextManipulationController::ItemIdentifier itemID,
-        const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens) {
-        if (!weakSelf)
-            return;
-
-        auto retainedSelf = weakSelf.get();
-        auto delegate = [retainedSelf _textManipulationDelegate];
-        if (!delegate)
-            return;
-
-        NSMutableArray *wkTokens = [NSMutableArray arrayWithCapacity:tokens.size()];
-        for (auto& token : tokens) {
-            auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
-            [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
-            [wkToken setContent:token.content];
-            [wkTokens addObject:wkToken.get()];
-        }
-
-        auto item = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:String::number(itemID.toUInt64()) tokens:wkTokens]);
-        [delegate _webView:retainedSelf.get() didFindTextManipulationItem:item.get()];
-    }, [capturedCompletionBlock = makeBlockPtr(completionHandler)] () {
-        capturedCompletionBlock();
-    });
-}
-
-- (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
-{
-    if (!_page)
-        return;
-
-    auto itemID = makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(String(item.identifier).toUInt64());
-
-    Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
-    for (_WKTextManipulationToken *wkToken in item.tokens) {
-        auto tokenID = makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(String(wkToken.identifier).toUInt64());
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { tokenID, wkToken.content });
-    }
-
-    _page->completeTextManipulation(itemID, tokens, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool success) {
-        capturedCompletionBlock(success);
     });
 }
 

@@ -46,7 +46,6 @@
 #import <WebCore/VideoFullscreenModel.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
-#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
 

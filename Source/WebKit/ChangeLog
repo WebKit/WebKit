@@ -1,3 +1,15 @@
+2019-10-24  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r251558.
+
+        This broke internal builds
+
+        Reverted changeset:
+
+        "Add a mechanism to find and manipulate text by paragraphs"
+        https://bugs.webkit.org/show_bug.cgi?id=203286
+        https://trac.webkit.org/changeset/251558
+
 2019-10-24  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r251409) Service worker connection should not be established without service worker entitlement

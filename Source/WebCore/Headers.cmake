@@ -503,7 +503,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/TextGranularity.h
     editing/TextIterator.h
     editing/TextIteratorBehavior.h
-    editing/TextManipulationController.h
     editing/UndoStep.h
     editing/VisiblePosition.h
     editing/VisibleSelection.h

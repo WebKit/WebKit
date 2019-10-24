@@ -73,7 +73,6 @@
 #include <WebCore/PointerID.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
-#include <WebCore/TextManipulationController.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -1196,10 +1195,6 @@ public:
 
     WebCore::Element* elementForContext(const WebCore::ElementContext&) const;
     Optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
-
-    void startTextManipulations(CompletionHandler<void()>&&);
-    void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier,
-        const Vector<WebCore::TextManipulationController::ManipulationToken>&, CompletionHandler<void(bool)>&&);
 
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();

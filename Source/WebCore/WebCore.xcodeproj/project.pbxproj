@@ -2852,7 +2852,6 @@
 		996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 996E59DC1DF00D90006612B9 /* NavigatorWebDriver.h */; };
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9B02E0C8235EAD2A004044B2 /* TextManipulationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0C3235E76AA004044B2 /* TextManipulationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B27FC60234D9ADB00394A46 /* WindowEventLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B27FC5E234D9ADA00394A46 /* WindowEventLoop.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11075,8 +11074,6 @@
 		9AC6F02521148F5400CBDA06 /* MediaEngineConfigurationFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaEngineConfigurationFactory.h; path = mediacapabilities/MediaEngineConfigurationFactory.h; sourceTree = "<group>"; };
 		9AC6F02D21148F9F00CBDA06 /* MediaEngineConfigurationFactoryMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEngineConfigurationFactoryMock.cpp; sourceTree = "<group>"; };
 		9AC6F02F21148FA200CBDA06 /* MediaEngineConfigurationFactoryMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEngineConfigurationFactoryMock.h; sourceTree = "<group>"; };
-		9B02E0C3235E76AA004044B2 /* TextManipulationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextManipulationController.h; sourceTree = "<group>"; };
-		9B02E0C4235E76AA004044B2 /* TextManipulationController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextManipulationController.cpp; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B73F64 /* ReadableByteStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReadableByteStreamInternalsBuiltins.h; path = DerivedSources/WebCore/ReadableByteStreamInternalsBuiltins.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamInternalsBuiltins.h; path = DerivedSources/WebCore/StreamInternalsBuiltins.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B03D8061BB3110D00B764D8 /* ReadableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReadableStreamBuiltins.h; path = DerivedSources/WebCore/ReadableStreamBuiltins.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21441,8 +21438,6 @@
 				93309DCC099E64910056E581 /* TextIterator.cpp */,
 				93309DCD099E64910056E581 /* TextIterator.h */,
 				9392146818A6D791000EE688 /* TextIteratorBehavior.h */,
-				9B02E0C4235E76AA004044B2 /* TextManipulationController.cpp */,
-				9B02E0C3235E76AA004044B2 /* TextManipulationController.h */,
 				93309DCA099E64910056E581 /* TypingCommand.cpp */,
 				93309DCB099E64910056E581 /* TypingCommand.h */,
 				9B2D8A7814997CCF00ECEF3E /* UndoStep.h */,
@@ -32357,7 +32352,6 @@
 				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
 				93309E1C099E64920056E581 /* TextIterator.h in Headers */,
 				9392146918A6D791000EE688 /* TextIteratorBehavior.h in Headers */,
-				9B02E0C8235EAD2A004044B2 /* TextManipulationController.h in Headers */,
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
 				E4D988B417BFD1F60084FB88 /* TextNodeTraversal.h in Headers */,
 				1C18DA59181AF6A500C4EF22 /* TextPainter.h in Headers */,

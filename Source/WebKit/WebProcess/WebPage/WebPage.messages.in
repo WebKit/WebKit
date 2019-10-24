@@ -582,7 +582,4 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
     SendMessageToWebExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
 #endif
-
-    StartTextManipulations() -> () Async
-    CompleteTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID, Vector<WebCore::TextManipulationController::ManipulationToken> tokens) -> (bool success) Async
 }
