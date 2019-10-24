@@ -1,3 +1,17 @@
+2019-10-24  Chris Dumez  <cdumez@apple.com>
+
+        FetchResponse should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203092
+        <rdar://problem/56554677>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/history/page-cache-active-fetch-response-blobReadAsBlob-expected.txt: Added.
+        * fast/history/page-cache-active-fetch-response-blobReadAsBlob.html: Added.
+
 2019-10-24  Truitt Savell  <tsavell@apple.com>
 
         Removing expectations for legacy-animation-engine/compositing/backing/transform-transition-from-outside-view.html

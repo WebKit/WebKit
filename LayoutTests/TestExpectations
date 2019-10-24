@@ -269,6 +269,7 @@ http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ DumpJSConsoleLogIn
 fast/history/page-cache-active-fetch-request-blobReadAsBlob.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-active-fetch-request-blobReadAsText.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-active-fetch-request-blobReadAsReadableStream.html [ DumpJSConsoleLogInStdErr ]
+fast/history/page-cache-active-fetch-response-blobReadAsBlob.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/202495 imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html [ ImageOnlyFailure ]
 
