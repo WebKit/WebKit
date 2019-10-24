@@ -1,5 +1,13 @@
 2019-10-24  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip new tests added in 251509 on Windows
+
+        DataTransferItems is not supported on this platform.
+
+        * platform/win/TestExpectations:
+
+2019-10-24  Chris Dumez  <cdumez@apple.com>
+
         FetchResponse should not prevent entering the back/forward cache
         https://bugs.webkit.org/show_bug.cgi?id=203092
         <rdar://problem/56554677>
