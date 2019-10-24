@@ -53,7 +53,7 @@ public:
     void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
 
     // InspectorInstrumentation
-    void didClearMainFrameWindowObject();
+    void didClearWindowObjectInWorld(Frame&);
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();

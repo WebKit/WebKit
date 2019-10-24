@@ -77,6 +77,9 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
         this._textEditor.addEventListener(WI.TextEditor.Event.MIMETypeChanged, this._handleTextEditorMIMETypeChanged, this);
         this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentWillPopulate, this._contentWillPopulate, this);
         this._textEditor.addEventListener(WI.SourceCodeTextEditor.Event.ContentDidPopulate, this._contentDidPopulate, this);
+
+        if (this._script instanceof WI.LocalScript && this._script.editable)
+            this._textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, this._handleTextEditorContentDidChange, this);
     }
 
     // Public
@@ -211,7 +214,7 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
             return;
 
         // Allow editing any local file since edits can be saved and reloaded right from the Inspector.
-        if (this._script.urlComponents.scheme === "file")
+        if (this._script.urlComponents.scheme === "file" || (this._script instanceof WI.LocalScript && this._script.editable))
             this._textEditor.readOnly = false;
 
         this.element.removeChildren();
@@ -220,13 +223,20 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     _contentDidPopulate(event)
     {
+        let isLocalScript = this._script instanceof WI.LocalScript;
+
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
 
-        this._showTypesButtonNavigationItem.enabled = this._textEditor.canShowTypeAnnotations();
+        this._showTypesButtonNavigationItem.enabled = !isLocalScript && this._textEditor.canShowTypeAnnotations();
         this._showTypesButtonNavigationItem.activated = WI.settings.showJavaScriptTypeInformation.value;
 
-        this._codeCoverageButtonNavigationItem.enabled = this._textEditor.canShowCoverageHints();
+        this._codeCoverageButtonNavigationItem.enabled = !isLocalScript && this._textEditor.canShowCoverageHints();
         this._codeCoverageButtonNavigationItem.activated = WI.settings.enableControlFlowProfiler.value;
+    }
+
+    _handleTextEditorContentDidChange(event)
+    {
+        this._script.currentRevision.updateRevisionContent(this._textEditor.string);
     }
 
     _togglePrettyPrint(event)

@@ -252,6 +252,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             return false;
         if (this._sourceCode instanceof WI.LocalResource)
             return false;
+        if (this._sourceCode instanceof WI.LocalScript)
+            return false;
 
         let caseSensitive = WI.SearchUtilities.defaultSettings.caseSensitive.value;
         let isRegex = WI.SearchUtilities.defaultSettings.regularExpression.value;
@@ -2179,7 +2181,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _createTypeTokenAnnotator()
     {
         // COMPATIBILITY (iOS 8): Runtime.getRuntimeTypesForVariablesAtOffsets did not exist yet.
-        if (!this.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"))
+        if (!this.target || !this.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"))
             return;
 
         var script = this._getAssociatedScript();
@@ -2192,7 +2194,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _createBasicBlockAnnotator()
     {
         // COMPATIBILITY (iOS 8): Runtime.getBasicBlocks did not exist yet.
-        if (!this.target.hasCommand("Runtime.getBasicBlocks"))
+        if (!this.target || !this.target.hasCommand("Runtime.getBasicBlocks"))
             return;
 
         var script = this._getAssociatedScript();

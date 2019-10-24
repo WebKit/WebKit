@@ -67,7 +67,7 @@ WI.ObjectStore = class ObjectStore
 
         WI.ObjectStore._databaseCallbacks = [callback];
 
-        const version = 4; // Increment this for every edit to `WI.objectStores`.
+        const version = 5; // Increment this for every edit to `WI.objectStores`.
 
         let databaseRequest = window.indexedDB.open(WI.ObjectStore._databaseName, version);
         databaseRequest.addEventListener("upgradeneeded", (event) => {
@@ -117,6 +117,14 @@ WI.ObjectStore = class ObjectStore
 
         let resolved = this._resolveKeyPath(object, key);
         resolved.object[resolved.key] = value;
+    }
+
+    async get(...args)
+    {
+        if (!WI.ObjectStore.supported())
+            return undefined;
+
+        return this._operation("readonly", (objectStore) => objectStore.get(...args));
     }
 
     async getAll(...args)
@@ -240,6 +248,7 @@ WI.ObjectStore.toJSONSymbol = Symbol("ObjectStore-toJSON");
 
 // Be sure to update the `version` above when making changes.
 WI.objectStores = {
+    general: new WI.ObjectStore("general"),
     audits: new WI.ObjectStore("audit-manager-tests", {keyPath: "__id", autoIncrement: true}),
     breakpoints: new WI.ObjectStore("debugger-breakpoints", {keyPath: "__id"}),
     domBreakpoints: new WI.ObjectStore("dom-debugger-dom-breakpoints", {keyPath: "__id"}),

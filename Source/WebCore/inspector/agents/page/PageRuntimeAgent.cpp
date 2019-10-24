@@ -85,7 +85,7 @@ void PageRuntimeAgent::disable(ErrorString& errorString)
     InspectorRuntimeAgent::disable(errorString);
 }
 
-void PageRuntimeAgent::didCreateMainWorldContext(Frame& frame)
+void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame)
 {
     auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
     if (!pageAgent)

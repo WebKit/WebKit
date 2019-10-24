@@ -103,6 +103,7 @@ public:
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) override;
     void getResourceTree(ErrorString&, RefPtr<Inspector::Protocol::Page::FrameResourceTree>&) override;
     void getResourceContent(ErrorString&, const String& frameId, const String& url, String* content, bool* base64Encoded) override;
+    void setBootstrapScript(ErrorString&, const String* optionalSource) final;
     void searchInResource(ErrorString&, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
     void searchInResources(ErrorString&, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&) override;
     void setShowRulers(ErrorString&, bool) override;
@@ -128,6 +129,7 @@ public:
     void defaultAppearanceDidChange(bool useDarkAppearance);
     void applyUserAgentOverride(String&);
     void applyEmulatedMedia(String&);
+    void didClearWindowObjectInWorld(Frame&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
     void didScroll();
@@ -160,6 +162,7 @@ private:
     String m_userAgentOverride;
     String m_emulatedMedia;
     String m_forcedAppearance;
+    String m_bootstrapScript;
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };
 };

@@ -113,8 +113,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._pauseReasonGroup = new WI.DetailsSectionGroup([this._pauseReasonTextRow]);
         this._pauseReasonSection = new WI.DetailsSection("paused-reason", WI.UIString("Pause Reason"), [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
 
-        this._pauseReasonContainer = document.createElement("div");
+        this._pauseReasonContainer = this.contentView.element.appendChild(document.createElement("div"));
         this._pauseReasonContainer.classList.add("pause-reason-container");
+        this._pauseReasonContainer.hidden = true;
         this._pauseReasonContainer.appendChild(this._pauseReasonSection.element);
 
         this._callStackTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
@@ -126,22 +127,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let callStackGroup = new WI.DetailsSectionGroup([callStackRow]);
         this._callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [callStackGroup]);
 
-        this._callStackContainer = document.createElement("div");
+        this._callStackContainer = this.contentView.element.appendChild(document.createElement("div"));
         this._callStackContainer.classList.add("call-stack-container");
+        this._callStackContainer.hidden = true;
         this._callStackContainer.appendChild(this._callStackSection.element);
-
-        this._localResourceOverridesTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
-        this._localResourceOverridesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
-
-        let localResourceOverridesRow = new WI.DetailsSectionRow;
-        localResourceOverridesRow.element.appendChild(this._localResourceOverridesTreeOutline.element);
-
-        let localResourceOverridesGroup = new WI.DetailsSectionGroup([localResourceOverridesRow]);
-        this._localResourceOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localResourceOverridesGroup]);
-
-        this._localResourceOverridesContainer = document.createElement("div");
-        this._localResourceOverridesContainer.classList.add("local-overrides-container");
-        this._localResourceOverridesContainer.appendChild(this._localResourceOverridesSection.element);
 
         this._mainTargetTreeElement = null;
         this._activeCallFrameTreeElement = null;
@@ -206,15 +195,26 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let breakpointsGroup = new WI.DetailsSectionGroup([breakpointsRow]);
         this._breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
 
-        this._breakpointsContainer = document.createElement("div");
-        this._breakpointsContainer.classList.add("breakpoints-container");
-        this._breakpointsContainer.appendChild(this._breakpointsSection.element);
+        let breakpointsContainer = this.contentView.element.appendChild(document.createElement("div"));
+        breakpointsContainer.classList.add("breakpoints-container");
+        breakpointsContainer.appendChild(this._breakpointsSection.element);
 
-        this.contentView.element.insertBefore(this._breakpointsContainer, this.contentView.element.firstChild);
+        this._localOverridesTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._localOverridesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
+
+        let localOverridesRow = new WI.DetailsSectionRow;
+        localOverridesRow.element.appendChild(this._localOverridesTreeOutline.element);
+
+        let localOverridesGroup = new WI.DetailsSectionGroup([localOverridesRow]);
+        this._localOverridesSection = new WI.DetailsSection("local-overrides", WI.UIString("Local Overrides"), [localOverridesGroup]);
+
+        this._localOverridesContainer = this.contentView.element.appendChild(document.createElement("div"));
+        this._localOverridesContainer.classList.add("local-overrides-container");
+        this._localOverridesContainer.hidden = true;
+        this._localOverridesContainer.appendChild(this._localOverridesSection.element);
 
         this._resourcesNavigationBar = new WI.NavigationBar;
         this.contentView.addSubview(this._resourcesNavigationBar);
-        this.contentView.element.insertBefore(this._resourcesNavigationBar.element, this._breakpointsContainer.nextSibling);
 
         this._resourceGroupingModeScopeBarItems = {};
         let createResourceGroupingModeScopeBarItem = (mode, label) => {
@@ -228,16 +228,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourceGroupingModeScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._handleResourceGroupingModeScopeBarSelectionChanged, this);
         this._resourcesNavigationBar.addNavigationItem(this._resourceGroupingModeScopeBar);
 
-        let resourcesContainer = document.createElement("div");
+        let resourcesContainer = this.contentView.element.appendChild(document.createElement("div"));
         resourcesContainer.classList.add("resources-container");
-        this.contentView.element.insertBefore(resourcesContainer, this._resourcesNavigationBar.element.nextSibling);
 
         this._resourcesTreeOutline = this.contentTreeOutline;
         this._resourcesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
         resourcesContainer.appendChild(this._resourcesTreeOutline.element);
 
-        if (InspectorBackend.hasDomain("CSS")) {
+        if (WI.NetworkManager.supportsBootstrapScript() || InspectorBackend.hasDomain("CSS")) {
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
@@ -271,6 +270,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, this._handleFrameWasAdded, this);
+
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.BootstrapScriptCreated, this._handleBootstrapScriptCreated, this);
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.BootstrapScriptDestroyed, this._handleBootstrapScriptDestroyed, this);
+        }
 
         if (WI.NetworkManager.supportsLocalResourceOverrides()) {
             WI.networkManager.addEventListener(WI.NetworkManager.Event.LocalResourceOverrideAdded, this._handleLocalResourceOverrideAdded, this);
@@ -342,9 +346,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         this._handleResourceGroupingModeChanged();
 
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            let bootstrapScript = WI.networkManager.bootstrapScript;
+            if (bootstrapScript)
+                this._addLocalOverride(bootstrapScript);
+        }
+
         if (WI.NetworkManager.supportsLocalResourceOverrides()) {
             for (let localResourceOverride of WI.networkManager.localResourceOverrides)
-                this._addLocalResourceOverride(localResourceOverride);
+                this._addLocalOverride(localResourceOverride);
         }
 
         if (WI.domDebuggerManager.supported) {
@@ -443,12 +453,15 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         // A custom implementation is needed for this since the frames are populated lazily.
 
         if (representedObject instanceof WI.LocalResourceOverride)
-            return this._localResourceOverridesTreeOutline.findTreeElement(representedObject);
+            return this._localOverridesTreeOutline.findTreeElement(representedObject);
 
         if (representedObject instanceof WI.LocalResource) {
             let localResourceOverride = WI.networkManager.localResourceOverrideForURL(representedObject.url);
-            return this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride);
+            return this._localOverridesTreeOutline.findTreeElement(localResourceOverride);
         }
+
+        if (representedObject instanceof WI.Script && representedObject === WI.networkManager.bootstrapScript)
+            return this._localOverridesTreeOutline.findTreeElement(representedObject);
 
         if (!this._mainFrameTreeElement && (representedObject instanceof WI.Resource || representedObject instanceof WI.Frame || representedObject instanceof WI.Collection)) {
             // All resources are under the main frame, so we need to return early if we don't have the main frame yet.
@@ -545,7 +558,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, (event) => {
             let treeElement = event.data.element;
-            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._localResourceOverridesSection];
+            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._localOverridesSection];
             let detailsSection = detailsSections.find((detailsSection) => detailsSection.element.contains(treeElement.listItemElement));
             if (!detailsSection)
                 return;
@@ -713,6 +726,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _compareTreeElements(a, b)
     {
         const rankFunctions = [
+            (treeElement) => treeElement instanceof WI.ScriptTreeElement && treeElement.representedObject === WI.networkManager.bootstrapScript,
+            (treeElement) => treeElement instanceof WI.LocalResourceOverrideTreeElement,
             (treeElement) => treeElement instanceof WI.CSSStyleSheetTreeElement && treeElement.representedObject.isInspectorStyleSheet(),
             (treeElement) => treeElement === this._mainFrameTreeElement,
             (treeElement) => treeElement instanceof WI.FrameTreeElement,
@@ -1235,37 +1250,43 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._addIssue(issue, sourceCode);
     }
 
-    _addLocalResourceOverride(localResourceOverride)
+    _addLocalOverride(localOverride)
     {
-        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsLocalResourceOverrides());
 
-        if (this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride))
+        if (this._localOverridesTreeOutline.findTreeElement(localOverride))
             return;
 
-        let parentTreeElement = this._localResourceOverridesTreeOutline;
-        let resourceTreeElement = new WI.LocalResourceOverrideTreeElement(localResourceOverride.localResource, localResourceOverride);
-        let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
-        parentTreeElement.insertChild(resourceTreeElement, index);
+        let parentTreeElement = this._localOverridesTreeOutline;
 
-        if (!this._localResourceOverridesContainer.parentNode)
-            this.contentView.element.insertBefore(this._localResourceOverridesContainer, this._resourcesNavigationBar.element);
+        let localOverrideTreeElement = null;
+        if (localOverride === WI.networkManager.bootstrapScript)
+            localOverrideTreeElement = new WI.BootstrapScriptTreeElement(localOverride);
+        else if (localOverride instanceof WI.LocalResourceOverride)
+            localOverrideTreeElement = new WI.LocalResourceOverrideTreeElement(localOverride.localResource, localOverride);
+        console.assert(localOverrideTreeElement);
+
+        let index = insertionIndexForObjectInListSortedByFunction(localOverrideTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
+        parentTreeElement.insertChild(localOverrideTreeElement, index);
+
+        this._localOverridesContainer.hidden = false;
     }
 
-    _removeLocalResourceOverride(localResourceOverride)
+    _removeResourceOverride(localOverride)
     {
-        console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
+        console.assert(WI.NetworkManager.supportsBootstrapScript() || WI.NetworkManager.supportsLocalResourceOverrides());
 
-        let resourceTreeElement = this._localResourceOverridesTreeOutline.findTreeElement(localResourceOverride);
+        let resourceTreeElement = this._localOverridesTreeOutline.findTreeElement(localOverride);
         if (!resourceTreeElement)
             return;
 
         let wasSelected = resourceTreeElement.selected;
 
-        let parentTreeElement = this._localResourceOverridesTreeOutline;
+        let parentTreeElement = this._localOverridesTreeOutline;
         parentTreeElement.removeChild(resourceTreeElement);
 
         if (!parentTreeElement.children.length) {
-            this._localResourceOverridesContainer.remove();
+            this._localOverridesContainer.hidden = true;
 
             if (wasSelected && WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource)
                 WI.showRepresentedObject(WI.networkManager.mainFrame.mainResource);
@@ -1887,6 +1908,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _populateCreateResourceContextMenu(contextMenu)
     {
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            contextMenu.appendItem(WI.UIString("Inspector Bootstrap Script"), async () => {
+                await WI.networkManager.createBootstrapScript();
+                WI.networkManager.bootstrapScriptEnabled = true;
+                WI.showRepresentedObject(WI.networkManager.bootstrapScript);
+            });
+        }
+
         if (InspectorBackend.hasDomain("CSS")) {
             let addInspectorStyleSheetItem = (menu, frame) => {
                 menu.appendItem(WI.UIString("Inspector Style Sheet"), () => {
@@ -1990,14 +2019,24 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._addResourcesRecursivelyForFrame(frame);
     }
 
+    _handleBootstrapScriptCreated(event)
+    {
+        this._addLocalOverride(event.data.bootstrapScript);
+    }
+
+    _handleBootstrapScriptDestroyed(event)
+    {
+        this._removeResourceOverride(event.data.bootstrapScript);
+    }
+
     _handleLocalResourceOverrideAdded(event)
     {
-        this._addLocalResourceOverride(event.data.localResourceOverride);
+        this._addLocalOverride(event.data.localResourceOverride);
     }
 
     _handleLocalResourceOverrideRemoved(event)
     {
-        this._removeLocalResourceOverride(event.data.localResourceOverride);
+        this._removeResourceOverride(event.data.localResourceOverride);
     }
 
     _handleDebuggerBreakpointAdded(event)
@@ -2088,10 +2127,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerPaused(event)
     {
-        this.contentView.element.insertBefore(this._callStackContainer, this.contentView.element.firstChild);
+        this._callStackContainer.hidden = false;
 
         if (this._updatePauseReason())
-            this.contentView.element.insertBefore(this._pauseReasonContainer, this.contentView.element.firstChild);
+            this._pauseReasonContainer.hidden = false;
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
@@ -2104,9 +2143,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerResumed(event)
     {
-        this._callStackContainer.remove();
+        this._callStackContainer.hidden = true;
 
-        this._pauseReasonContainer.remove();
+        this._pauseReasonContainer.hidden = true;
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = false;

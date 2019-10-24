@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function addSubframe() {
+    let iframe = document.body.appendChild(document.createElement("iframe"));
+    iframe.src = "resources/bootstrap-iframe.html";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.setBootstrapScript");
+
+    suite.addTestCase({
+        name: "Page.setBootstrapScript.SubFrame",
+        description: "Test that the bootstrap script is executed in all sub frames.",
+        async test() {
+            InspectorTest.log("Setting bootstrap script...");
+            await WI.networkManager.createBootstrapScript();
+            WI.networkManager.bootstrapScriptEnabled = true;
+            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(`window.valueFromBootstrapScript = 42;`);
+
+            InspectorTest.log("Adding subframe...");
+            let [frameWasAddedEvent] = await Promise.all([
+                WI.networkManager.awaitEvent(WI.NetworkManager.Event.FrameWasAdded),
+                InspectorTest.evaluateInPage(`addSubframe()`),
+            ]);
+
+            let {frame} = frameWasAddedEvent.data;
+
+            await frame.awaitEvent(WI.Frame.Event.PageExecutionContextChanged);
+
+            let {result} = await RuntimeAgent.evaluate.invoke({
+                expression: `window.valueFromBootstrapScript`,
+                contextId: frame.pageExecutionContext.id,
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.value, 42, "'valueFromBootstrapScript' should be '42'.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Page.setBootstrapScript command.</p>
+</body>
+</html>

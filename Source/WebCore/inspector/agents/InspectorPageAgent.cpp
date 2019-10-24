@@ -58,6 +58,7 @@
 #include "RenderObject.h"
 #include "RenderTheme.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleScope.h"
@@ -581,6 +582,11 @@ void InspectorPageAgent::getResourceContent(ErrorString& errorString, const Stri
     resourceContent(errorString, frame, URL({ }, url), content, base64Encoded);
 }
 
+void InspectorPageAgent::setBootstrapScript(ErrorString&, const String* optionalSource)
+{
+    m_bootstrapScript = optionalSource ? *optionalSource : nullString();
+}
+
 void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
     results = JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
@@ -758,6 +764,14 @@ void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
 void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
 {
     m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Inspector::Protocol::Page::Appearance::Dark : Inspector::Protocol::Page::Appearance::Light);
+}
+
+void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame)
+{
+    if (m_bootstrapScript.isEmpty())
+        return;
+
+    frame.script().evaluate(ScriptSourceCode(m_bootstrapScript, URL { URL(), "web-inspector://bootstrap.js"_s }));
 }
 
 void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect)

@@ -97,6 +97,7 @@
         "isEnterKey": true,
         "isFunctionStringNativeCode": true,
         "isTextLikelyMinified": true,
+        "isWebInspectorBootstrapScript": true,
         "isWebInspectorConsoleEvaluationScript": true,
         "isWebInspectorInternalScript": true,
         "isWebKitInternalScript": true,

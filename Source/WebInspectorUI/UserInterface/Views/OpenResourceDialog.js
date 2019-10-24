@@ -159,6 +159,14 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         this._addLocalResourceOverrides();
 
+        if (WI.NetworkManager.supportsBootstrapScript()) {
+            let bootstrapScript = WI.networkManager.bootstrapScript;
+            if (bootstrapScript) {
+                const suppressFilterUpdate = true;
+                this._addResource(bootstrapScript, suppressFilterUpdate);
+            }
+        }
+
         this._updateFilter();
 
         this._inputElement.focus();

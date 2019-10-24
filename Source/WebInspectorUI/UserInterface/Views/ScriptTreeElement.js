@@ -36,11 +36,15 @@ WI.ScriptTreeElement = class ScriptTreeElement extends WI.SourceCodeTreeElement
         this.mainTitle = script.displayName;
 
         if (script.url && !script.dynamicallyAddedScriptElement) {
-            // Show the host as the subtitle if it is different from the main title.
-            let host = WI.displayNameForHost(script.urlComponents.host);
-            this.subtitle = this.mainTitle !== host ? host : null;
+            if (script.urlComponents.scheme === "web-inspector")
+                this.tooltip = this.mainTitle;
+            else {
+                // Show the host as the subtitle if it is different from the main title.
+                let host = WI.displayNameForHost(script.urlComponents.host);
+                this.subtitle = this.mainTitle !== host ? host : null;
 
-            this.tooltip = script.url;
+                this.tooltip = script.url;
+            }
 
             this.addClassName(WI.ResourceTreeElement.ResourceIconStyleClassName);
             this.addClassName(WI.Resource.Type.Script);

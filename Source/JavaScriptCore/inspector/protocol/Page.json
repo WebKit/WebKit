@@ -184,6 +184,12 @@
             ]
         },
         {
+            "name": "setBootstrapScript",
+            "parameters": [
+                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." }
+            ]
+        },
+        {
             "name": "searchInResource",
             "description": "Searches for given string in resource content.",
             "parameters": [

@@ -1,3 +1,117 @@
+2019-10-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to inject "bootstrap" JavaScript into the page as the first script executed
+        https://bugs.webkit.org/show_bug.cgi?id=195847
+        <rdar://problem/48950551>
+
+        Reviewed by Joseph Pecoraro.
+
+        When debugging webpages, it's often useful to be able to swizzle various functions in order
+        to add extra logs for when they're called (e.g. `Event.prototype.preventDefault`). Sometimes
+        this can be difficult, such as if the page saves a copy of the function and references that
+        instead, in which case it would be helpful to have a way to guarantee that the swizzled code
+        is the first thing evaluated after the context is created.
+
+        This change adds support for that concept, which has been named Inspector Bootstrap Script.
+        Once created, it will be injected as the first user script to every new global object that
+        is created afterwards. Modifications to the Inspector Bootstrap Script take effect for all
+        new global objects created _after_ the modification happened.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.supportsBootstrapScript): Added.
+        (WI.NetworkManager.get bootstrapScriptURL): Added.
+        (WI.NetworkManager.get bootstrapScriptSourceObjectStoreKey): Added.
+        (WI.NetworkManager.prototype.initializeTarget):
+        (WI.NetworkManager.prototype.get bootstrapScript): Added.
+        (WI.NetworkManager.prototype.get bootstrapScriptEnabled): Added.
+        (WI.NetworkManager.prototype.set bootstrapScriptEnabled): Added.
+        (WI.NetworkManager.prototype.async createBootstrapScript): Added.
+        (WI.NetworkManager.prototype.destroyBootstrapScript): Added.
+        (WI.NetworkManager.prototype._processServiceWorkerConfiguration):
+        (WI.NetworkManager.prototype._handleBootstrapScriptContentDidChange): Added.
+
+        * UserInterface/Models/LocalScript.js:
+        (WI.LocalScript):
+        (WI.LocalScript.prototype.get editable): Added.
+        (WI.LocalScript.prototype.get supportsScriptBlackboxing): Added.
+        (WI.LocalScript.prototype.requestContentFromBackend):
+        (WI.LocalScript.prototype.handleCurrentRevisionContentChange): Added.
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView):
+        (WI.ScriptContentView.prototype._contentWillPopulate):
+        (WI.ScriptContentView.prototype._contentDidPopulate):
+        (WI.ScriptContentView.prototype._handleTextEditorContentDidChange): Added.
+        Support editing of `WI.LocalScript` that are specifically marked as such.
+
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+        (WI.Script.prototype.get displayName):
+        (WI.Script.prototype.get displayURL):
+        (WI.Script.prototype.isMainResource):
+        (WI.Script.prototype._resolveResource):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch):
+        (WI.SourceCodeTextEditor.prototype._createTypeTokenAnnotator):
+        (WI.SourceCodeTextEditor.prototype._createBasicBlockAnnotator):
+        Allow a `WI.Script` to not have an associated `WI.Target`, specifically for `WI.LocalScript`.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WI.SourcesNavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalOverride): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._removeResourceOverride): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateResourceContextMenu):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBootstrapScriptCreated): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBootstrapScriptDestroyed): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleLocalResourceOverrideAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleLocalResourceOverrideRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+        (WI.SourcesNavigationSidebarPanel.prototype._addLocalResourceOverride): Removed.
+        (WI.SourcesNavigationSidebarPanel.prototype._removeLocalResourceOverride): Removed.
+        Add an item in the create resource context menu for creating/focusing the bootstrap script.
+
+        * UserInterface/Views/ScriptTreeElement.js:
+        (WI.ScriptTreeElement):
+        * UserInterface/Views/BootstrapScriptTreeElement.js: Added.
+        (WI.BootstrapScriptTreeElement):
+        (WI.BootstrapScriptTreeElement.prototype.onattach):
+        (WI.BootstrapScriptTreeElement.prototype.ondetach):
+        (WI.BootstrapScriptTreeElement.prototype.ondelete):
+        (WI.BootstrapScriptTreeElement.prototype.onspace):
+        (WI.BootstrapScriptTreeElement.prototype.canSelectOnMouseDown):
+        (WI.BootstrapScriptTreeElement.prototype.populateContextMenu):
+        (WI.BootstrapScriptTreeElement.prototype.updateStatus):
+        (WI.BootstrapScriptTreeElement.prototype._handleNetworkManagerBootstrapScriptToggled):
+        * UserInterface/Views/BootstrapScriptTreeElement.css: Added.
+        (.item.script.bootstrap .status > input[type="checkbox"]):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.css:
+        (.item.resource.override .status > input[type="checkbox"]): Added.
+        (.item.resource.override .status > div): Removed.
+        Don't show the full bootstrap script URL. Instead, show "Inspector Bootstrap Script".
+
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype.didPresentDialog):
+        Show the bootstrap script in the open resource dialog.
+
+        * UserInterface/Base/Utilities.js:
+        (isWebInspectorBootstrapScript): Added.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.scriptDidFail):
+
+        * UserInterface/Base/ObjectStore.js:
+        (WI.ObjectStore.static _open):
+        (WI.ObjectStore.prototype.async get): Added.
+        Add a generalized object store that can be used for one-off values that need the larger
+        storage capacity of `IndexedDB`.
+
+        * .eslintrc:
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-10-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: notify inspector when provisional page is created, committed and destroyed

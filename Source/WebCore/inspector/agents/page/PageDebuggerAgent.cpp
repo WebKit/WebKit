@@ -155,8 +155,11 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
     return injectedScript;
 }
 
-void PageDebuggerAgent::didClearMainFrameWindowObject()
+void PageDebuggerAgent::didClearWindowObjectInWorld(Frame& frame)
 {
+    if (!frame.isMainFrame())
+        return;
+
     didClearGlobalObject();
 }
 

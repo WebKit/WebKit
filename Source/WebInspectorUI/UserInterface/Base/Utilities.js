@@ -1594,6 +1594,11 @@ function appendWebInspectorConsoleEvaluationSourceURL(string)
     return "\n//# sourceURL=__WebInspectorConsoleEvaluation__\n" + string;
 }
 
+function isWebInspectorBootstrapScript(url)
+{
+    return url === WI.NetworkManager.bootstrapScriptURL;
+}
+
 function isWebInspectorInternalScript(url)
 {
     return url === "__WebInspectorInternal__";

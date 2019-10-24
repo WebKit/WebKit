@@ -29,7 +29,7 @@ WI.Script = class Script extends WI.SourceCode
     {
         super();
 
-        console.assert(target instanceof WI.Target);
+        console.assert(target instanceof WI.Target || this instanceof WI.LocalScript);
         console.assert(range instanceof WI.TextRange);
 
         this._target = target;
@@ -127,6 +127,11 @@ WI.Script = class Script extends WI.SourceCode
 
     get displayName()
     {
+        if (isWebInspectorBootstrapScript(this._sourceURL || this._url)) {
+            console.assert(WI.NetworkManager.supportsBootstrapScript());
+            return WI.UIString("Inspector Bootstrap Script");
+        }
+
         if (this._url && !this._dynamicallyAddedScriptElement)
             return WI.displayNameForURL(this._url, this.urlComponents);
 
@@ -153,9 +158,13 @@ WI.Script = class Script extends WI.SourceCode
 
     get displayURL()
     {
+        if (isWebInspectorBootstrapScript(this._sourceURL || this._url)) {
+            console.assert(WI.NetworkManager.supportsBootstrapScript());
+            return WI.UIString("Inspector Bootstrap Script");
+        }
+
         const isMultiLine = true;
         const dataURIMaxSize = 64;
-
         if (this._url)
             return WI.truncateURL(this._url, isMultiLine, dataURIMaxSize);
         if (this._sourceURL)
@@ -185,7 +194,7 @@ WI.Script = class Script extends WI.SourceCode
 
     isMainResource()
     {
-        return this._target.mainResource === this;
+        return this._target && this._target.mainResource === this;
     }
 
     requestContentFromBackend()
@@ -250,7 +259,7 @@ WI.Script = class Script extends WI.SourceCode
             return null;
 
         let resolver = WI.networkManager;
-        if (this._target !== WI.mainTarget)
+        if (this._target && this._target !== WI.mainTarget)
             resolver = this._target.resourceCollection;
 
         try {

@@ -1,0 +1,9 @@
+Tests for Page.setBootstrapScript command.
+
+
+== Running test suite: Page.setBootstrapScript
+-- Running test case: Page.setBootstrapScript.SubFrame
+Setting bootstrap script...
+Adding subframe...
+PASS: 'valueFromBootstrapScript' should be '42'.
+
