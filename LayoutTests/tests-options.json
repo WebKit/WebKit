@@ -11,6 +11,9 @@
     "http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html": [
         "slow"
     ],
+    "imported/w3c/css/css-values/vh_not_refreshing_on_chrome.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm": [
         "slow"
     ],

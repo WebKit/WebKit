@@ -1,0 +1,325 @@
+CONSOLE MESSAGE: line 78: div.style.width = 10vw
+CONSOLE MESSAGE: line 68: Retrieving width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.height = 10vw
+CONSOLE MESSAGE: line 68: Retrieving height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.minWidth = 10vw
+CONSOLE MESSAGE: line 68: Retrieving min-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.minHeight = 10vw
+CONSOLE MESSAGE: line 68: Retrieving min-height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.maxWidth = 10vw
+CONSOLE MESSAGE: line 68: Retrieving max-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.maxHeight = 10vw
+CONSOLE MESSAGE: line 68: Retrieving max-height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.marginTop = 10vw
+CONSOLE MESSAGE: line 68: Retrieving margin-top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.paddingTop = 10vw
+CONSOLE MESSAGE: line 68: Retrieving padding-top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.borderTopWidth = 10vw
+CONSOLE MESSAGE: line 68: Retrieving border-top-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.fontSize = 10vw
+CONSOLE MESSAGE: line 68: Retrieving font-size property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.lineHeight = 10vw
+CONSOLE MESSAGE: line 68: Retrieving line-height property. Result: 80px
+CONSOLE MESSAGE: line 78: table.style.borderSpacing = 10vw
+CONSOLE MESSAGE: line 68: Retrieving border-spacing property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.top = 10vw
+CONSOLE MESSAGE: line 68: Retrieving top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.right = 10vw
+CONSOLE MESSAGE: line 68: Retrieving right property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.bottom = 10vw
+CONSOLE MESSAGE: line 68: Retrieving bottom property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.left = 10vw
+CONSOLE MESSAGE: line 68: Retrieving left property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.letterSpacing = 10vw
+CONSOLE MESSAGE: line 68: Retrieving letter-spacing property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.textIndent = 10vw
+CONSOLE MESSAGE: line 68: Retrieving text-indent property. Result: 80px
+CONSOLE MESSAGE: line 78: td.style.verticalAlign = 10vw
+CONSOLE MESSAGE: line 68: Retrieving vertical-align property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.wordSpacing = 10vw
+CONSOLE MESSAGE: line 68: Retrieving word-spacing property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.width = 10vh
+CONSOLE MESSAGE: line 68: Retrieving width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.height = 10vh
+CONSOLE MESSAGE: line 68: Retrieving height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.minWidth = 10vh
+CONSOLE MESSAGE: line 68: Retrieving min-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.minHeight = 10vh
+CONSOLE MESSAGE: line 68: Retrieving min-height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.maxWidth = 10vh
+CONSOLE MESSAGE: line 68: Retrieving max-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.maxHeight = 10vh
+CONSOLE MESSAGE: line 68: Retrieving max-height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.marginTop = 10vh
+CONSOLE MESSAGE: line 68: Retrieving margin-top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.paddingTop = 10vh
+CONSOLE MESSAGE: line 68: Retrieving padding-top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.borderTopWidth = 10vh
+CONSOLE MESSAGE: line 68: Retrieving border-top-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.fontSize = 10vh
+CONSOLE MESSAGE: line 68: Retrieving font-size property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.lineHeight = 10vh
+CONSOLE MESSAGE: line 68: Retrieving line-height property. Result: 60px
+CONSOLE MESSAGE: line 78: table.style.borderSpacing = 10vh
+CONSOLE MESSAGE: line 68: Retrieving border-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.top = 10vh
+CONSOLE MESSAGE: line 68: Retrieving top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.right = 10vh
+CONSOLE MESSAGE: line 68: Retrieving right property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.bottom = 10vh
+CONSOLE MESSAGE: line 68: Retrieving bottom property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.left = 10vh
+CONSOLE MESSAGE: line 68: Retrieving left property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.letterSpacing = 10vh
+CONSOLE MESSAGE: line 68: Retrieving letter-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.textIndent = 10vh
+CONSOLE MESSAGE: line 68: Retrieving text-indent property. Result: 60px
+CONSOLE MESSAGE: line 78: td.style.verticalAlign = 10vh
+CONSOLE MESSAGE: line 68: Retrieving vertical-align property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.wordSpacing = 10vh
+CONSOLE MESSAGE: line 68: Retrieving word-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.width = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.height = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.minWidth = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving min-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.minHeight = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving min-height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.maxWidth = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving max-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.maxHeight = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving max-height property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.marginTop = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving margin-top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.paddingTop = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving padding-top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.borderTopWidth = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving border-top-width property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.fontSize = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving font-size property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.lineHeight = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving line-height property. Result: 60px
+CONSOLE MESSAGE: line 78: table.style.borderSpacing = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving border-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.top = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving top property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.right = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving right property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.bottom = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving bottom property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.left = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving left property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.letterSpacing = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving letter-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.textIndent = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving text-indent property. Result: 60px
+CONSOLE MESSAGE: line 78: td.style.verticalAlign = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving vertical-align property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.wordSpacing = 10vmin
+CONSOLE MESSAGE: line 68: Retrieving word-spacing property. Result: 60px
+CONSOLE MESSAGE: line 78: div.style.width = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.height = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.minWidth = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving min-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.minHeight = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving min-height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.maxWidth = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving max-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.maxHeight = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving max-height property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.marginTop = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving margin-top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.paddingTop = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving padding-top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.borderTopWidth = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving border-top-width property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.fontSize = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving font-size property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.lineHeight = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving line-height property. Result: 80px
+CONSOLE MESSAGE: line 78: table.style.borderSpacing = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving border-spacing property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.top = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving top property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.right = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving right property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.bottom = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving bottom property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.left = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving left property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.letterSpacing = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving letter-spacing property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.textIndent = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving text-indent property. Result: 80px
+CONSOLE MESSAGE: line 78: td.style.verticalAlign = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving vertical-align property. Result: 80px
+CONSOLE MESSAGE: line 78: div.style.wordSpacing = 10vmax
+CONSOLE MESSAGE: line 68: Retrieving word-spacing property. Result: 80px
+
+PASS vw length applied to width 
+PASS vw length applied to width: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to height 
+PASS vw length applied to height: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to min-width 
+PASS vw length applied to min-width: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to min-height 
+PASS vw length applied to min-height: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to max-width 
+PASS vw length applied to max-width: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to max-height 
+PASS vw length applied to max-height: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to margin-top 
+PASS vw length applied to margin-top: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to padding-top 
+PASS vw length applied to padding-top: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to border-top-width 
+PASS vw length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to font-size 
+PASS vw length applied to font-size: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to line-height 
+PASS vw length applied to line-height: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to border-spacing 
+PASS vw length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to top 
+PASS vw length applied to top: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to right 
+PASS vw length applied to right: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to bottom 
+PASS vw length applied to bottom: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to left 
+PASS vw length applied to left: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to letter-spacing 
+PASS vw length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to text-indent 
+PASS vw length applied to text-indent: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to vertical-align 
+PASS vw length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
+PASS vw length applied to word-spacing 
+PASS vw length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to width 
+PASS vh length applied to width: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to height 
+PASS vh length applied to height: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to min-width 
+PASS vh length applied to min-width: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to min-height 
+PASS vh length applied to min-height: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to max-width 
+PASS vh length applied to max-width: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to max-height 
+PASS vh length applied to max-height: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to margin-top 
+PASS vh length applied to margin-top: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to padding-top 
+PASS vh length applied to padding-top: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to border-top-width 
+PASS vh length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to font-size 
+PASS vh length applied to font-size: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to line-height 
+PASS vh length applied to line-height: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to border-spacing 
+PASS vh length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to top 
+PASS vh length applied to top: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to right 
+PASS vh length applied to right: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to bottom 
+PASS vh length applied to bottom: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to left 
+PASS vh length applied to left: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to letter-spacing 
+PASS vh length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to text-indent 
+PASS vh length applied to text-indent: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to vertical-align 
+PASS vh length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
+PASS vh length applied to word-spacing 
+PASS vh length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to width 
+PASS vmin length applied to width: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to height 
+PASS vmin length applied to height: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to min-width 
+PASS vmin length applied to min-width: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to min-height 
+PASS vmin length applied to min-height: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to max-width 
+PASS vmin length applied to max-width: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to max-height 
+PASS vmin length applied to max-height: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to margin-top 
+PASS vmin length applied to margin-top: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to padding-top 
+PASS vmin length applied to padding-top: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to border-top-width 
+PASS vmin length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to font-size 
+PASS vmin length applied to font-size: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to line-height 
+PASS vmin length applied to line-height: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to border-spacing 
+PASS vmin length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to top 
+PASS vmin length applied to top: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to right 
+PASS vmin length applied to right: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to bottom 
+PASS vmin length applied to bottom: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to left 
+PASS vmin length applied to left: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to letter-spacing 
+PASS vmin length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to text-indent 
+PASS vmin length applied to text-indent: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to vertical-align 
+PASS vmin length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
+PASS vmin length applied to word-spacing 
+PASS vmin length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to width 
+PASS vmax length applied to width: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to height 
+PASS vmax length applied to height: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to min-width 
+PASS vmax length applied to min-width: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to min-height 
+PASS vmax length applied to min-height: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to max-width 
+PASS vmax length applied to max-width: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to max-height 
+PASS vmax length applied to max-height: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to margin-top 
+PASS vmax length applied to margin-top: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to padding-top 
+PASS vmax length applied to padding-top: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to border-top-width 
+PASS vmax length applied to border-top-width: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to font-size 
+PASS vmax length applied to font-size: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to line-height 
+PASS vmax length applied to line-height: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to border-spacing 
+PASS vmax length applied to border-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to top 
+PASS vmax length applied to top: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to right 
+PASS vmax length applied to right: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to bottom 
+PASS vmax length applied to bottom: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to left 
+PASS vmax length applied to left: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to letter-spacing 
+PASS vmax length applied to letter-spacing: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to text-indent 
+PASS vmax length applied to text-indent: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to vertical-align 
+PASS vmax length applied to vertical-align: getComputedStyle returns a non-zero px-based value 
+PASS vmax length applied to word-spacing 
+PASS vmax length applied to word-spacing: getComputedStyle returns a non-zero px-based value 
+Checks viewport units. Also re-check with zoom in/out.
+
+Test the Web Forward!
+Test	T	W	F

@@ -1,0 +1,7 @@
+
+FAIL testing border-top-left-radius: calc(10px + 25%) calc(20px + 25%) assert_equals: expected "calc(25% + 10px) calc(25% + 20px)" but got "10px 20px"
+FAIL testing border-top-right-radius: calc(1em + 25%) assert_equals: expected "calc(25% + 16px)" but got "16px"
+PASS testing border-bottom-right-radius: calc(25%) 
+PASS testing border-bottom-left-radius: calc(25px); 
+FAIL testing border-radius shorthand assert_equals: expected "calc(25% + 10px) calc(25% + 16px) 25% 25px / calc(25% + 20px) calc(25% + 16px) 25% 25px" but got "10px 16px 25% 25px / 20px 16px 25% 25px"
+

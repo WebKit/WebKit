@@ -1,3 +1,20 @@
+2019-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Import the css/css-values web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=203342
+
+        Reviewed by Dean Jackson.
+
+        Import wpt revision e68120da0fb52f010f206f3ecc63cfa09885b0f4 (Wed Oct 23 13:18:06 2019 -0700)
+        css-values tests.
+
+        * TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/absolute_length_units-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/lh-rlh-on-root-001-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Added.
+        * tests-options.json:
+
 2019-10-23  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r251469.

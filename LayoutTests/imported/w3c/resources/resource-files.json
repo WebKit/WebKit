@@ -12,6 +12,10 @@
         "web-platform-tests/tools"
     ],
     "files": [
+        "css/css-values/absolute_length_units.html",
+        "css/css-values/support/vh-support-transform-origin-iframe.html",
+        "css/css-values/support/vh-support-transform-translate-iframe.html",
+        "css/css-values/support/vh_not_refreshing_on_chrome_iframe.html",
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/available-001.xht",
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/support/available-001a.xht",
         "csswg-test/WOFF2-UserAgent/Tests/xhtml1/support/available-001b.xht",
