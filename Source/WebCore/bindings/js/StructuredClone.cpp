@@ -41,11 +41,12 @@ enum class CloneMode {
 
 static EncodedJSValue cloneArrayBufferImpl(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, CloneMode mode)
 {
+    VM& vm = lexicalGlobalObject->vm();
+
     ASSERT(lexicalGlobalObject);
     ASSERT(callFrame->argumentCount());
-    ASSERT(callFrame->lexicalGlobalObject() == lexicalGlobalObject);
+    ASSERT(callFrame->lexicalGlobalObject(vm) == lexicalGlobalObject);
 
-    VM& vm = lexicalGlobalObject->vm();
     auto* buffer = toUnsharedArrayBuffer(vm, callFrame->uncheckedArgument(0));
     if (!buffer) {
         auto scope = DECLARE_THROW_SCOPE(vm);

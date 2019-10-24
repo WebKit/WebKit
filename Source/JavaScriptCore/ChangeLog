@@ -1,3 +1,50 @@
+2019-10-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove wasmAwareLexicalGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=203351
+
+        Reviewed by Mark Lam.
+
+        CallFrame::lexicalGlobalObject() is no longer called frequently. We can just make the current wasmAwareLexicalGlobalObject as CallFrame::lexicalGlobalObject,
+        and remove wasmAwareLexicalGlobalObject function.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::breakProgram):
+        (JSC::lexicalGlobalObjectForCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::deprecatedVMEntryGlobalObject const):
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::thisValue const):
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * debugger/DebuggerCallFrame.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::thisObject const):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::thisValue const):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::lexicalGlobalObjectFromWasmCallee const):
+        (JSC::CallFrame::wasmAwareLexicalGlobalObject): Deleted.
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::debug):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * interpreter/StackVisitor.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_throw_stack_overflow_error):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor):
+        (JSC::RetrieveArgumentsFunctor::operator() const):
+        (JSC::retrieveArguments):
+        * runtime/JSScope.h:
+        (JSC::CallFrame::lexicalGlobalObject const):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2019-10-23  Keith Miller  <keith_miller@apple.com>
 
         Undo incidental change from BytecodeIndex class patch

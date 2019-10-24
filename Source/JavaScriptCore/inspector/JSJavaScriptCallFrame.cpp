@@ -206,9 +206,9 @@ JSValue JSJavaScriptCallFrame::scopeChain(JSGlobalObject* globalObject) const
     return constructArray(this->globalObject(vm), static_cast<ArrayAllocationProfile*>(nullptr), list);
 }
 
-JSValue JSJavaScriptCallFrame::thisObject(JSGlobalObject*) const
+JSValue JSJavaScriptCallFrame::thisObject(JSGlobalObject* globalObject) const
 {
-    return impl().thisValue();
+    return impl().thisValue(globalObject->vm());
 }
 
 JSValue JSJavaScriptCallFrame::isTailDeleted(JSC::JSGlobalObject*) const

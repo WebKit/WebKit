@@ -306,7 +306,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 // https://bugs.webkit.org/show_bug.cgi?id=203206
                 VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
-                return v.toInt32(callFrame->lexicalGlobalObject());
+                return v.toInt32(callFrame->lexicalGlobalObject(vm));
             };
 
             slowPath.append(jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters));
@@ -340,7 +340,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 // https://bugs.webkit.org/show_bug.cgi?id=203206
                 VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
-                return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject()));
+                return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject(vm)));
             };
 
             auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);
@@ -379,7 +379,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 // https://bugs.webkit.org/show_bug.cgi?id=203206
                 VM& vm = callFrame->deprecatedVM();
                 NativeCallFrameTracer tracer(vm, callFrame);
-                return v.toNumber(callFrame->lexicalGlobalObject());
+                return v.toNumber(callFrame->lexicalGlobalObject(vm));
             };
 
             auto notANumber = jit.branchIfNotNumber(GPRInfo::returnValueGPR, DoNotHaveTagRegisters);

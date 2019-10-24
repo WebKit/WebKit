@@ -271,8 +271,9 @@ CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
 
 class RetrieveArgumentsFunctor {
 public:
-    RetrieveArgumentsFunctor(JSFunction* functionObj)
-        : m_targetCallee(functionObj)
+    RetrieveArgumentsFunctor(VM& vm, JSFunction* functionObj)
+        : m_vm(vm)
+        , m_targetCallee(functionObj)
         , m_result(jsNull())
     {
     }
@@ -288,18 +289,19 @@ public:
         if (callee != m_targetCallee)
             return StackVisitor::Continue;
 
-        m_result = JSValue(visitor->createArguments());
+        m_result = JSValue(visitor->createArguments(m_vm));
         return StackVisitor::Done;
     }
 
 private:
+    VM& m_vm;
     JSObject* m_targetCallee;
     mutable JSValue m_result;
 };
 
 static JSValue retrieveArguments(VM& vm, CallFrame* callFrame, JSFunction* functionObj)
 {
-    RetrieveArgumentsFunctor functor(functionObj);
+    RetrieveArgumentsFunctor functor(vm, functionObj);
     if (callFrame)
         callFrame->iterate(vm, functor);
     return functor.result();

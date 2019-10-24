@@ -190,18 +190,6 @@ Register* CallFrame::topOfFrameInternal()
     return registers() + codeBlock->stackPointerOffset();
 }
 
-JSGlobalObject* CallFrame::wasmAwareLexicalGlobalObject(VM& vm)
-{
-#if ENABLE(WEBASSEMBLY)
-    if (!callee().isWasm())
-        return lexicalGlobalObject();
-    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
-#else
-    UNUSED_PARAM(vm);
-    return lexicalGlobalObject();
-#endif
-}
-
 bool CallFrame::isAnyWasmCallee()
 {
     CalleeBits callee = this->callee();
@@ -356,6 +344,13 @@ void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAl
     setCallee(stackOverflowCallee);
     setArgumentCountIncludingThis(0);
 }
+
+#if ENABLE(WEBASSEMBLY)
+JSGlobalObject* CallFrame::lexicalGlobalObjectFromWasmCallee(VM& vm) const
+{
+    return vm.wasmContext.load()->owner<JSWebAssemblyInstance>()->globalObject();
+}
+#endif
 
 bool isFromJSCode(void* returnAddress)
 {

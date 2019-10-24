@@ -525,7 +525,7 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     if (!m_currentCallFrame)
         return false;
 
-    JSGlobalObject* globalObject = m_currentCallFrame->lexicalGlobalObject();
+    JSGlobalObject* globalObject = m_currentCallFrame->lexicalGlobalObject(m_vm);
     if (exception) {
         // An erroneous condition counts as "false".
         handleExceptionInBreakpointCondition(globalObject, exception);
@@ -626,7 +626,7 @@ void Debugger::breakProgram()
     m_pauseAtNextOpportunity = true;
     setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm.topCallFrame;
-    pauseIfNeeded(m_currentCallFrame->lexicalGlobalObject());
+    pauseIfNeeded(m_currentCallFrame->lexicalGlobalObject(m_vm));
 }
 
 void Debugger::continueProgram()
@@ -675,7 +675,7 @@ static inline JSGlobalObject* lexicalGlobalObjectForCallFrame(VM& vm, CallFrame*
 {
     if (!callFrame)
         return nullptr;
-    return callFrame->wasmAwareLexicalGlobalObject(vm);
+    return callFrame->lexicalGlobalObject(vm);
 }
 
 void Debugger::updateCallFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrameUpdateAction action)

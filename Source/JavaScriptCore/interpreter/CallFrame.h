@@ -125,13 +125,11 @@ namespace JSC  {
             return this[scopeRegisterOffset].Register::scope();
         }
 
-        JSGlobalObject* wasmAwareLexicalGlobalObject(VM&);
-
         JS_EXPORT_PRIVATE bool isAnyWasmCallee();
 
         // Global object in which the currently executing code was defined.
         // Differs from VM::deprecatedVMEntryGlobalObject() during function calls across web browser frames.
-        JSGlobalObject* lexicalGlobalObject() const;
+        JSGlobalObject* lexicalGlobalObject(VM&) const;
 
         // FIXME: Remove this function
         // https://bugs.webkit.org/show_bug.cgi?id=203272
@@ -169,6 +167,9 @@ namespace JSC  {
         CallSiteIndex unsafeCallSiteIndex() const;
     private:
         unsigned callSiteBitsAsBytecodeOffset() const;
+#if ENABLE(WEBASSEMBLY)
+        JS_EXPORT_PRIVATE JSGlobalObject* lexicalGlobalObjectFromWasmCallee(VM&) const;
+#endif
     public:
 
         // This will try to get you the bytecode offset, but you should be aware that

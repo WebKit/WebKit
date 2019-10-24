@@ -280,7 +280,7 @@ Document* responsibleDocument(VM& vm, CallFrame& callFrame)
     auto* callerFrame = functor.callerFrame();
     if (!callerFrame)
         return nullptr;
-    return asJSDOMWindow(callerFrame->lexicalGlobalObject())->wrapped().document();
+    return asJSDOMWindow(callerFrame->lexicalGlobalObject(vm))->wrapped().document();
 }
 
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)

@@ -125,7 +125,7 @@ JSC::JSGlobalObject* DebuggerCallFrame::deprecatedVMEntryGlobalObject() const
     if (!isValid())
         return nullptr;
     VM& vm = m_validMachineFrame->deprecatedVM();
-    return vm.deprecatedVMEntryGlobalObject(m_validMachineFrame->wasmAwareLexicalGlobalObject(vm));
+    return vm.deprecatedVMEntryGlobalObject(m_validMachineFrame->lexicalGlobalObject(vm));
 }
 
 SourceID DebuggerCallFrame::sourceID() const
@@ -171,7 +171,7 @@ DebuggerScope* DebuggerCallFrame::scope()
         else if (JSCallee* callee = jsDynamicCast<JSCallee*>(vm, m_validMachineFrame->jsCallee()))
             scope = callee->scope();
         else
-            scope = m_validMachineFrame->lexicalGlobalObject()->globalLexicalEnvironment();
+            scope = m_validMachineFrame->lexicalGlobalObject(vm)->globalLexicalEnvironment();
 
         m_scope.set(vm, DebuggerScope::create(vm, scope));
     }
@@ -193,7 +193,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
     return ProgramType;
 }
 
-JSValue DebuggerCallFrame::thisValue() const
+JSValue DebuggerCallFrame::thisValue(VM& vm) const
 {
     ASSERT(isValid());
     if (!isValid())
@@ -215,7 +215,7 @@ JSValue DebuggerCallFrame::thisValue() const
     ECMAMode ecmaMode = NotStrictMode;
     if (codeBlock && codeBlock->isStrictMode())
         ecmaMode = StrictMode;
-    return thisValue.toThis(m_validMachineFrame->lexicalGlobalObject(), ecmaMode);
+    return thisValue.toThis(m_validMachineFrame->lexicalGlobalObject(vm), ecmaMode);
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
@@ -265,7 +265,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue thisValue = this->thisValue();
+    JSValue thisValue = this->thisValue(vm);
     JSValue result = vm.interpreter->execute(eval, globalObject, thisValue, scope()->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();

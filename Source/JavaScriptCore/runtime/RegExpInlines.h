@@ -143,7 +143,7 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         // FIXME: Revisit JSGlobalObject.
         // https://bugs.webkit.org/show_bug.cgi?id=203204
-        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject();
+        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject(vm);
         throwScope.throwException(globalObject, errorToThrow(globalObject));
         if (!hasHardError(m_constructionErrorCode))
             reset();
@@ -273,7 +273,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         // FIXME: Revisit JSGlobalObject.
         // https://bugs.webkit.org/show_bug.cgi?id=203204
-        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject();
+        JSGlobalObject* globalObject = vm.topCallFrame->lexicalGlobalObject(vm);
         throwScope.throwException(globalObject, errorToThrow(globalObject));
         if (!hasHardError(m_constructionErrorCode))
             reset();

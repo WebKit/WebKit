@@ -1943,7 +1943,7 @@ extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCall
 
     JSGlobalObject* globalObject = nullptr;
     if (callFrame)
-        globalObject = callFrame->lexicalGlobalObject();
+        globalObject = callFrame->lexicalGlobalObject(*vm);
     else
         globalObject = protoFrame->callee()->globalObject(*vm);
     throwStackOverflowError(globalObject, scope);

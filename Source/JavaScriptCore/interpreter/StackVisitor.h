@@ -97,7 +97,7 @@ public:
         Optional<RegisterAtOffsetList> calleeSaveRegistersForUnwinding();
 #endif
 
-        ClonedArguments* createArguments();
+        ClonedArguments* createArguments(VM&);
         CallFrame* callFrame() const { return m_callFrame; }
         
         void dump(PrintStream&, Indenter = Indenter()) const;

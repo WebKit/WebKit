@@ -74,9 +74,10 @@ JSC::VM& commonVMSlow()
 
 Frame* lexicalFrameFromCommonVM()
 {
-    if (auto* topCallFrame = commonVM().topCallFrame) {
-        if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(topCallFrame->lexicalGlobalObject())) {
-            if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(commonVM(), globalObject)) {
+    JSC::VM& vm = commonVM();
+    if (auto* topCallFrame = vm.topCallFrame) {
+        if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(topCallFrame->lexicalGlobalObject(vm))) {
+            if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(vm, globalObject)) {
                 if (auto* frame = window->wrapped().frame())
                     return frame;
             }

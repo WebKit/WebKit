@@ -515,7 +515,7 @@ private:
 
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
-    JSGlobalObject* globalObject = callFrame->wasmAwareLexicalGlobalObject(vm);
+    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     if (Debugger* debugger = globalObject->debugger()) {
         SuspendExceptionScope scope(&vm);
@@ -1216,7 +1216,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = callFrame->deprecatedVM();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    Debugger* debugger = callFrame->lexicalGlobalObject()->debugger();
+    Debugger* debugger = callFrame->lexicalGlobalObject(vm)->debugger();
     if (!debugger)
         return;
 

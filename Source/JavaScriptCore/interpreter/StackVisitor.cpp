@@ -369,13 +369,13 @@ intptr_t StackVisitor::Frame::sourceID()
     return noSourceID;
 }
 
-ClonedArguments* StackVisitor::Frame::createArguments()
+ClonedArguments* StackVisitor::Frame::createArguments(VM& vm)
 {
     ASSERT(m_callFrame);
     CallFrame* physicalFrame = m_callFrame;
     // FIXME: Revisit JSGlobalObject.
     // https://bugs.webkit.org/show_bug.cgi?id=203204
-    JSGlobalObject* globalObject = physicalFrame->lexicalGlobalObject();
+    JSGlobalObject* globalObject = physicalFrame->lexicalGlobalObject(vm);
     ClonedArguments* arguments;
     ArgumentsMode mode;
     if (Options::useFunctionDotArguments())

@@ -140,8 +140,13 @@ inline JSScope* Register::scope() const
     return jsCast<JSScope*>(unboxedCell());
 }
 
-inline JSGlobalObject* CallFrame::lexicalGlobalObject() const
+inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
 {
+    UNUSED_PARAM(vm);
+#if ENABLE(WEBASSEMBLY)
+    if (callee().isWasm())
+        return lexicalGlobalObjectFromWasmCallee(vm);
+#endif
     return jsCallee()->globalObject();
 }
 
