@@ -65,6 +65,7 @@ enum class IncludeSecureCookies : bool;
 
 namespace WebKit {
 
+class NetworkSchemeRegistry;
 class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkResourceLoadParameters;
@@ -164,6 +165,8 @@ public:
     WebSWServerConnection& swConnection();
 #endif
 
+    NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
 
@@ -192,6 +195,8 @@ private:
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const URL& redirectURL);
     void startDownload(DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+
+    void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, const String&);
@@ -346,6 +351,7 @@ private:
 
     HashSet<WebCore::MessagePortIdentifier> m_processEntangledPorts;
     HashMap<uint64_t, Function<void()>> m_messageBatchDeliveryCompletionHandlers;
+    Ref<NetworkSchemeRegistry> m_schemeRegistry;
 };
 
 } // namespace WebKit

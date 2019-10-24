@@ -3596,6 +3596,7 @@
 		587743A421C30AD800AE9084 /* HTTPSUpgradeList.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = HTTPSUpgradeList.db; path = DerivedSources/WebKit2/HTTPSUpgradeList.db; sourceTree = BUILT_PRODUCTS_DIR; };
 		58E977DC21C499FE005D92A6 /* NetworkHTTPSUpgradeChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkHTTPSUpgradeChecker.cpp; sourceTree = "<group>"; };
 		58E977DD21C49A00005D92A6 /* NetworkHTTPSUpgradeChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkHTTPSUpgradeChecker.h; sourceTree = "<group>"; };
+		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
 		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSocketStreamMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkSocketStreamMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C0B17751E7C879C00E9123C /* NetworkSocketStreamMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSocketStreamMessages.h; path = DerivedSources/WebKit2/NetworkSocketStreamMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketStreamMessageReceiver.cpp; path = DerivedSources/WebKit2/WebSocketStreamMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3673,6 +3674,7 @@
 		5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageSessionProvider.h; sourceTree = "<group>"; };
 		5CA26D7F217ABBB600F97A35 /* WKSafeBrowsingWarning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSafeBrowsingWarning.mm; sourceTree = "<group>"; };
 		5CA26D80217ABBB600F97A35 /* WKSafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSafeBrowsingWarning.h; sourceTree = "<group>"; };
+		5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeRegistry.h; sourceTree = "<group>"; };
 		5CA46E7A21F1A23900CE86B4 /* APIHTTPCookieStoreCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = APIHTTPCookieStoreCocoa.mm; path = UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm; sourceTree = SOURCE_ROOT; };
 		5CA98549210BEB5A0057EB6B /* SafeBrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SafeBrowsingWarning.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SafeBrowsingWarningCocoa.mm; sourceTree = "<group>"; };
@@ -6797,6 +6799,8 @@
 				51240EBE220B6947005CFC63 /* NetworkResourceLoadMap.h */,
 				5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */,
 				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
+				5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */,
+				5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */,
 				532159521DBAE6FC0054AA3C /* NetworkSession.cpp */,
 				5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */,
 				5C89DF5621AF61FF004645E8 /* NetworkSessionCreationParameters.cpp */,

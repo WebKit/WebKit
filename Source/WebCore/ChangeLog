@@ -1,3 +1,16 @@
+2019-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global
+        https://bugs.webkit.org/show_bug.cgi?id=202891
+
+        Reviewed by Youenn Fablet.
+
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled):
+        (WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled):
+        * platform/LegacySchemeRegistry.h:
+
 2019-10-24  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Make it possible to convert SharedBuffer segments and data views to NSData without copying

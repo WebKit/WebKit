@@ -371,7 +371,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         registerURLSchemeAsDisplayIsolated(scheme);
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsCORSEnabled)
-        registerURLSchemeAsCORSEnabled(scheme);
+        LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsAlwaysRevalidated)
         registerURLSchemeAsAlwaysRevalidated(scheme);
@@ -559,9 +559,10 @@ void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) con
     LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
 }
 
-void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme) const
+void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme)
 {
     LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled({ urlScheme }), 0);
 }
 
 void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) const
@@ -1172,6 +1173,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
     }
     
     return *m_networkProcessConnection;

@@ -43,6 +43,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkResourceLoaderMessages.h"
+#include "NetworkSchemeRegistry.h"
 #include "NetworkSession.h"
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
@@ -94,6 +95,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     , m_mdnsRegister(*this)
 #endif
     , m_webProcessIdentifier(webProcessIdentifier)
+    , m_schemeRegistry(NetworkSchemeRegistry::create())
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -458,7 +460,7 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
     };
 
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(*this, networkProcess(), WTFMove(loadParameters), WTFMove(completionHandler));
+    new PingLoad(*this, WTFMove(loadParameters), WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)
@@ -545,6 +547,12 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     }
 
     loader->convertToDownload(downloadID, request, response);
+}
+
+void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<String>&& schemes)
+{
+    for (auto&& scheme : WTFMove(schemes))
+        m_schemeRegistry->registerURLSchemeAsCORSEnabled(WTFMove(scheme));
 }
 
 void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
