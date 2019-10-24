@@ -117,11 +117,9 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_type(type)
     , m_level(level)
     , m_url()
+    , m_globalObject(globalObject)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    if (globalObject)
-        m_globalObject = { globalObject->vm(), globalObject };
-
     if (!messages.size())
         return;
 
@@ -342,9 +340,6 @@ void ConsoleMessage::clear()
 
     if (m_arguments)
         m_arguments = nullptr;
-
-    if (m_globalObject)
-        m_globalObject.clear();
 }
 
 JSC::JSGlobalObject* ConsoleMessage::globalObject() const
@@ -353,7 +348,7 @@ JSC::JSGlobalObject* ConsoleMessage::globalObject() const
         return m_arguments->globalObject();
 
     if (m_globalObject)
-        return m_globalObject.get();
+        return m_globalObject;
 
     return nullptr;
 }

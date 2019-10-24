@@ -31,7 +31,6 @@
 #pragma once
 
 #include "ConsoleTypes.h"
-#include "Strong.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Logger.h>
@@ -95,7 +94,7 @@ private:
     RefPtr<ScriptCallStack> m_callStack;
     Vector<JSONLogValue> m_jsonLogValues;
     String m_url;
-    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
+    JSC::JSGlobalObject* m_globalObject { nullptr };
     unsigned m_line { 0 };
     unsigned m_column { 0 };
     unsigned m_repeatCount { 1 };

@@ -1,3 +1,18 @@
+2019-10-23  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r251482.
+
+        r251261 broke multiple tests, reverting this as part of that
+        rollout.
+
+        Reverted changeset:
+
+        "[ Mac WK1 ] REGRESSION (r251261): Layout Test
+        inspector/console/webcore-logging.html is consistently
+        Failing"
+        https://bugs.webkit.org/show_bug.cgi?id=203173
+        https://trac.webkit.org/changeset/251482
+
 2019-10-23  Chris Dumez  <cdumez@apple.com>
 
         FileSystemDirectoryReader / FileSystemEntry should not prevent entering the back/forward cache
