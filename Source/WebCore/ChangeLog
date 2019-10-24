@@ -1,3 +1,41 @@
+2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a mechanism to find and manipulate text by paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=203286
+
+        Reviewed by Wenson Hsieh.
+
+        This patch introduces TextManipulationController which allows WebKit clients to find and replace
+        text content in a given document by paragraph boundary. For now, TextManipulationController finds
+        all paragraphs in the document and invokes the callback for each paragraph. In the future, this
+        controller will support detecting removal and insertion of new content to the document.
+
+        Tests: TextManipulation.StartTextManipulationFindSimpleParagraphs
+               TextManipulation.StartTextManipulationFindParagraphsWithMultileTokens
+               TextManipulation.CompleteTextManipulationShouldReplaceSimpleParagraphContent
+               TextManipulation.CompleteTextManipulationShouldFailWhenContentIsChanged
+               TextManipulation.CompleteTextManipulationShouldFailWhenDocumentHasBeenNavigatedAway
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Clear TextManipulationController. Otherwise m_items
+        in TextManipulationController may keep a bunch of nodes alive and not let this document destructed.
+        (WebCore::Document::textManipulationController): Added.
+        * dom/Document.h:
+        (WebCore::Document::textManipulationControllerIfExists): Added.
+        * editing/TextManipulationController.cpp: Added.
+        (WebCore::TextManipulationController::TextManipulationController): Added.
+        (WebCore::TextManipulationController::startObservingParagraphs): Finds all pargraphs and invoke
+        the callback.
+        (WebCore::TextManipulationController::addItem): Added. A helper for startObservingParagraphs.
+        (WebCore::TextManipulationController::completeManipulation): Added.
+        (WebCore::TextManipulationController::replace): Added. A helper for completeManipulation.
+        * editing/TextManipulationController.h: Added.
+        (WebCore::TextManipulationController::ManipulationToken::encode const): Added.
+        (WebCore::TextManipulationController::ManipulationToken::decode): Added.
+
 2019-10-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for partial leading and trailing content

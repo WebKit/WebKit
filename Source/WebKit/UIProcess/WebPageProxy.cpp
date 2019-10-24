@@ -9419,6 +9419,34 @@ void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationCo
 }
 #endif
 
+void WebPageProxy::startTextManipulations(TextManipulationItemCallback&& callback, WTF::CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+    m_textManipulationItemCallback = WTFMove(callback);
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::StartTextManipulations(), WTFMove(completionHandler), m_webPageID);
+}
+
+void WebPageProxy::didFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier itemID,
+    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens)
+{
+    if (!m_textManipulationItemCallback)
+        return;
+    m_textManipulationItemCallback(itemID, tokens);
+}
+
+void WebPageProxy::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
+    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, WTF::Function<void (bool success)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(false);
+        return;
+    }
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(itemID, tokens), WTFMove(completionHandler), m_webPageID);
+}
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

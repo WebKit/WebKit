@@ -196,6 +196,7 @@ class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
 class Text;
+class TextManipulationController;
 class TextResourceDecoder;
 class TreeWalker;
 class UndoManager;
@@ -1557,6 +1558,9 @@ public:
     void setPictureInPictureElement(HTMLVideoElement*);
 #endif
 
+    WEBCORE_EXPORT TextManipulationController& textManipulationController();
+    TextManipulationController* textManipulationControllerIfExists() { return m_textManipulationController.get(); }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2085,6 +2089,8 @@ private:
 #if ENABLE(PICTURE_IN_PICTURE_API)
     WeakPtr<HTMLVideoElement> m_pictureInPictureElement;
 #endif
+
+    std::unique_ptr<TextManipulationController> m_textManipulationController;
 
     HashMap<Element*, ElementIdentifier> m_identifiedElementsMap;
 };

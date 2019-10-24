@@ -1061,6 +1061,7 @@ editing/SplitTextNodeContainingElementCommand.cpp
 editing/TextCheckingHelper.cpp
 editing/TextInsertionBaseCommand.cpp
 editing/TextIterator.cpp
+editing/TextManipulationController.cpp
 editing/TypingCommand.cpp
 editing/UnlinkCommand.cpp
 editing/VisiblePosition.cpp
