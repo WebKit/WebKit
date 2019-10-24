@@ -1,3 +1,17 @@
+2019-10-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Fix compositing/backing/transform-transition-from-outside-view.html
+        https://bugs.webkit.org/show_bug.cgi?id=184566
+
+        Reviewed by Simon Fraser.
+
+        For the most part this is the same fix that Simon Fraser made to address 184611 in r251412 although here I also
+        changed the setTimeout call to requestAnimationFrame in order to ensure that the backing store bit was set in the
+        layer dump for WK1.
+
+        * TestExpectations:
+        * compositing/backing/transform-transition-from-outside-view.html:
+
 2019-10-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip new tests added in 251509 on Windows

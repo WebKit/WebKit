@@ -33,17 +33,24 @@
             testRunner.waitUntilDone();
         }
 
+        function filterString(inputString, skippedLinesRegexp)
+        {
+            var lines = inputString.split("\n");
+            var filtered = lines.filter(function (str) { return !skippedLinesRegexp.test(str); });
+            return filtered.join("\n");
+        }
+
         function dumpLayers()
         {
             if (window.testRunner) {
-                output.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                output.innerText = filterString(window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED), /transform/);
                 testRunner.notifyDone();
             }
         }
 
         window.addEventListener("load", function() {
             document.body.classList.add('changed');
-            window.setTimeout(dumpLayers, 0);
+            requestAnimationFrame(dumpLayers);
         });
     </script>
 </head>
