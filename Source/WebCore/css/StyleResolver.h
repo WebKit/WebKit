@@ -28,6 +28,7 @@
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MediaQueryEvaluator.h"
+#include "PropertyCascade.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
@@ -94,12 +95,6 @@ enum class RuleMatchingBehavior: uint8_t {
     MatchOnlyUserAgentRules,
 };
 
-enum class CascadeLevel: uint8_t {
-    UserAgentLevel,
-    AuthorLevel,
-    UserLevel
-};
-
 struct ElementStyle {
     ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Style::Relations> relations = { })
         : renderStyle(WTFMove(renderStyle))
@@ -151,7 +146,6 @@ public:
     std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
     bool isAnimationNameValid(const String&);
 
-public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
     enum CSSRuleFilter {
         UAAndUserCSSRules   = 1 << 1,
@@ -163,7 +157,6 @@ public:
     Vector<RefPtr<StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
     Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(const Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
-public:
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, std::unique_ptr<RenderStyle>);
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
@@ -172,7 +165,6 @@ public:
 
     void setFontSize(FontCascadeDescription&, float size);
 
-public:
     bool useSVGZoomRules() const;
     bool useSVGZoomRulesForLength() const;
 
@@ -208,48 +200,6 @@ public:
     void clearCachedPropertiesAffectedByViewportUnits();
 
     bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
-    
-    class CascadedProperties {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        CascadedProperties(TextDirection, WritingMode);
-
-        struct Property {
-            void apply(StyleResolver&, ApplyCascadedPropertyState&);
-
-            CSSPropertyID id;
-            CascadeLevel level;
-            Style::ScopeOrdinal styleScopeOrdinal;
-            CSSValue* cssValue[3];
-        };
-
-        bool hasProperty(CSSPropertyID) const;
-        Property& property(CSSPropertyID);
-
-        void addNormalMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
-        void addImportantMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
-
-        void applyDeferredProperties(StyleResolver&, ApplyCascadedPropertyState&);
-
-        HashMap<AtomString, Property>& customProperties() { return m_customProperties; }
-        bool hasCustomProperty(const String&) const;
-        Property customProperty(const String&) const;
-        
-    private:
-        void addMatch(const MatchedProperties&, CascadeLevel, bool isImportant, bool inheritedOnly);
-        void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
-        void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
-        static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
-
-        Property m_properties[numCSSProperties + 2];
-        std::bitset<numCSSProperties + 2> m_propertyIsPresent;
-
-        Vector<Property, 8> m_deferredProperties;
-        HashMap<AtomString, Property> m_customProperties;
-
-        TextDirection m_direction;
-        WritingMode m_writingMode;
-    };
 
     void applyCascadedProperties(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
     void applyCascadedCustomProperty(const String& name, ApplyCascadedPropertyState&);
@@ -278,7 +228,7 @@ private:
     template<CustomPropertyCycleTracking>
     inline void applyCascadedPropertiesImpl(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
 
-    void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
+    void cascadeMatches(Style::PropertyCascade&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
     DocumentRuleSets m_ruleSets;
 
@@ -336,16 +286,16 @@ public:
 
         const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
 
-        CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
-        void setCascadeLevel(CascadeLevel level) { m_cascadeLevel = level; }
+        Style::CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
+        void setCascadeLevel(Style::CascadeLevel level) { m_cascadeLevel = level; }
         Style::ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
         void setStyleScopeOrdinal(Style::ScopeOrdinal styleScopeOrdinal) { m_styleScopeOrdinal = styleScopeOrdinal; }
 
-        CascadedProperties* authorRollback() const { return m_authorRollback.get(); }
-        CascadedProperties* userRollback() const { return m_userRollback.get(); }
+        Style::PropertyCascade* authorRollback() const { return m_authorRollback.get(); }
+        Style::PropertyCascade* userRollback() const { return m_userRollback.get(); }
         
-        void setAuthorRollback(std::unique_ptr<CascadedProperties>& rollback) { m_authorRollback = WTFMove(rollback); }
-        void setUserRollback(std::unique_ptr<CascadedProperties>& rollback) { m_userRollback = WTFMove(rollback); }
+        void setAuthorRollback(std::unique_ptr<Style::PropertyCascade>& rollback) { m_authorRollback = WTFMove(rollback); }
+        void setUserRollback(std::unique_ptr<Style::PropertyCascade>& rollback) { m_userRollback = WTFMove(rollback); }
 
         const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
@@ -357,8 +307,8 @@ public:
         const RenderStyle* m_parentStyle { nullptr };
         std::unique_ptr<RenderStyle> m_ownedParentStyle;
         const RenderStyle* m_rootElementStyle { nullptr };
-        std::unique_ptr<CascadedProperties> m_authorRollback;
-        std::unique_ptr<CascadedProperties> m_userRollback;
+        std::unique_ptr<Style::PropertyCascade> m_authorRollback;
+        std::unique_ptr<Style::PropertyCascade> m_userRollback;
 
         const SelectorFilter* m_selectorFilter { nullptr };
 
@@ -371,7 +321,7 @@ public:
         Style::ScopeOrdinal m_styleScopeOrdinal { Style::ScopeOrdinal::Element };
 
         InsideLink m_elementLinkState { InsideLink::NotInside };
-        CascadeLevel m_cascadeLevel { CascadeLevel::UserAgentLevel };
+        Style::CascadeLevel m_cascadeLevel { Style::CascadeLevel::UserAgent };
 
         bool m_applyPropertyToRegularStyle { true };
         bool m_applyPropertyToVisitedLinkStyle { false };
@@ -388,10 +338,7 @@ public:
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
 
-    CascadeLevel cascadeLevel() const { return m_state.cascadeLevel(); }
-    void setCascadeLevel(CascadeLevel level) { m_state.setCascadeLevel(level); }
-    
-    CascadedProperties* cascadedPropertiesForRollback(const MatchResult&);
+    Style::PropertyCascade* cascadedPropertiesForRollback(const MatchResult&);
 
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
@@ -407,10 +354,10 @@ public:
 
     bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
+    void applyProperty(CSSPropertyID, CSSValue*, ApplyCascadedPropertyState&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
+
 private:
     void cacheBorderAndBackground();
-
-    void applyProperty(CSSPropertyID, CSSValue*, ApplyCascadedPropertyState&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
@@ -476,14 +423,13 @@ private:
 // properties have been resolved.
 struct ApplyCascadedPropertyState {
     StyleResolver* styleResolver;
-    StyleResolver::CascadedProperties* cascade;
+    Style::PropertyCascade* cascade;
     const MatchResult* matchResult;
     Bitmap<numCSSProperties> appliedProperties = { };
     HashSet<String> appliedCustomProperties = { };
     Bitmap<numCSSProperties> inProgressProperties = { };
     HashSet<String> inProgressPropertiesCustom = { };
 };
-
 
 inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const
 {

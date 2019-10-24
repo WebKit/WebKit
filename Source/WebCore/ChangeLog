@@ -1,3 +1,69 @@
+2019-10-24  Antti Koivisto  <antti@apple.com>
+
+        Move property cascade out of StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=203361
+
+        Reviewed by Zalan Bujtas.
+
+        Rename StyleResolver::CascadedProperties -> Style::PropertyCascade and move it into a file of its own.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::cascadedPropertiesForRollback):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::applyCascadedPropertiesImpl):
+        (WebCore::shouldApplyPropertyInParseOrder): Deleted.
+        (WebCore::isValidMarkerStyleProperty): Deleted.
+        (WebCore::isValidCueStyleProperty): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::CascadedProperties): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::hasProperty const): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::property): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::hasCustomProperty const): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::customProperty const): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::setPropertyInternal): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::set): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::setDeferred): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::addMatch): Deleted.
+        (WebCore::declarationsForCascadeLevel): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::addNormalMatches): Deleted.
+        (WebCore::hasImportantProperties): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::applyDeferredProperties): Deleted.
+        (WebCore::StyleResolver::CascadedProperties::Property::apply): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::authorRollback const):
+        (WebCore::StyleResolver::State::userRollback const):
+        (WebCore::StyleResolver::State::setAuthorRollback):
+        (WebCore::StyleResolver::State::setUserRollback):
+        (WebCore::StyleResolver::CascadedProperties::customProperties): Deleted.
+        (WebCore::StyleResolver::cascadeLevel const): Deleted.
+        (WebCore::StyleResolver::setCascadeLevel): Deleted.
+        * style/PropertyCascade.cpp: Added.
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+        (WebCore::Style::isValidMarkerStyleProperty):
+        (WebCore::Style::isValidCueStyleProperty):
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        (WebCore::Style::PropertyCascade::setPropertyInternal):
+        (WebCore::Style::PropertyCascade::set):
+        (WebCore::Style::PropertyCascade::setDeferred):
+        (WebCore::Style::PropertyCascade::addMatch):
+        (WebCore::Style::declarationsForCascadeLevel):
+        (WebCore::Style::PropertyCascade::addNormalMatches):
+        (WebCore::Style::hasImportantProperties):
+        (WebCore::Style::PropertyCascade::addImportantMatches):
+        (WebCore::Style::PropertyCascade::applyDeferredProperties):
+        (WebCore::Style::PropertyCascade::Property::apply):
+        * style/PropertyCascade.h: Added.
+        (WebCore::Style::PropertyCascade::customProperties):
+        (WebCore::Style::PropertyCascade::hasProperty const):
+        (WebCore::Style::PropertyCascade::property):
+        (WebCore::Style::PropertyCascade::hasCustomProperty const):
+        (WebCore::Style::PropertyCascade::customProperty const):
+
 2019-10-24  Chris Dumez  <cdumez@apple.com>
 
         AudioContext should not prevent entering the back/forward cache
