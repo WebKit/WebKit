@@ -145,13 +145,20 @@ InlineTextItem::InlineTextItem(const Box& inlineBox)
 {
 }
 
-std::unique_ptr<InlineTextItem> InlineTextItem::split(unsigned splitPosition, unsigned length) const
+std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const
 {
-    RELEASE_ASSERT(splitPosition >= this->start());
-    RELEASE_ASSERT(splitPosition + length <= end());
+    RELEASE_ASSERT(length <= this->length());
     ASSERT(!isSegmentBreak());
     ASSERT(m_textItemType != TextItemType::Undefined);
-    return makeUnique<InlineTextItem>(layoutBox(), splitPosition, length, m_textItemType);
+    return makeUnique<InlineTextItem>(layoutBox(), start(), length, m_textItemType);
+}
+
+std::unique_ptr<InlineTextItem> InlineTextItem::right(unsigned length) const
+{
+    RELEASE_ASSERT(length <= this->length());
+    ASSERT(!isSegmentBreak());
+    ASSERT(m_textItemType != TextItemType::Undefined);
+    return makeUnique<InlineTextItem>(layoutBox(), end() - length, length, m_textItemType);
 }
 
 bool InlineTextItem::isWhitespace() const

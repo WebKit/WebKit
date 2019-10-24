@@ -50,7 +50,8 @@ public:
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
     bool isSegmentBreak() const;
 
-    std::unique_ptr<InlineTextItem> split(unsigned splitPosition, unsigned length) const;
+    std::unique_ptr<InlineTextItem> left(unsigned length) const;
+    std::unique_ptr<InlineTextItem> right(unsigned length) const;
 
     enum class TextItemType { Undefined, Whitespace, NonWhitespace, SegmentBreak };
     InlineTextItem(const Box&, unsigned start, unsigned length, TextItemType);

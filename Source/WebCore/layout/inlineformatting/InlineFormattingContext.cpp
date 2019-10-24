@@ -95,18 +95,28 @@ void InlineFormattingContext::lineLayout(UsedHorizontalValues usedHorizontalValu
 {
     auto& inlineItems = formattingState().inlineItems();
     auto lineLogicalTop = geometryForBox(root()).contentBoxTop();
-    LineLayout::IndexAndRange currentInlineItem;
-    while (currentInlineItem.index < inlineItems.size()) {
+    unsigned leadingInlineItemIndex = 0;
+    Optional<LineLayout::PartialContent> leadingPartialContent;
+    while (leadingInlineItemIndex < inlineItems.size()) {
         auto lineConstraints = initialConstraintsForLine(usedHorizontalValues, lineLogicalTop);
-        auto lineInput = LineLayout::LineInput { lineConstraints, root().style().textAlign(), currentInlineItem, inlineItems };
+
+        auto lineInput = LineLayout::LineInput { lineConstraints, root().style().textAlign(), inlineItems, leadingInlineItemIndex, leadingPartialContent };
         auto lineLayout = LineLayout { *this, lineInput };
 
         auto lineContent = lineLayout.layout();
         setDisplayBoxesForLine(lineContent, usedHorizontalValues);
 
-        if (lineContent.lastCommitted) {
-            currentInlineItem = { lineContent.lastCommitted->index + 1, WTF::nullopt };
+        leadingPartialContent = { };
+        if (lineContent.trailingInlineItemIndex) {
             lineLogicalTop = lineContent.lineBox.logicalBottom();
+            // When the trailing content is partial, we need to reuse the last InlinItem.
+            if (lineContent.trailingPartialContent) {
+                leadingInlineItemIndex = *lineContent.trailingInlineItemIndex;
+                // Turn previous line's overflow content length into the next line's leading content partial length.
+                // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10. 
+                leadingPartialContent = LineLayout::PartialContent { lineContent.trailingPartialContent->length };
+            } else
+                leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         } else {
             // Floats prevented us placing any content on the line.
             ASSERT(lineInput.initialConstraints.lineIsConstrainedByFloat);
@@ -225,15 +235,15 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(UsedHori
 {
     auto& inlineItems = formattingState().inlineItems();
     LayoutUnit maximumLineWidth;
-    LineLayout::IndexAndRange currentInlineItem;
-    while (currentInlineItem.index < inlineItems.size()) {
+    unsigned leadingInlineItemIndex = 0;
+    while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         auto initialLineConstraints = Line::InitialConstraints { { }, usedHorizontalValues.constraints.width, false, { } };
-        auto lineInput = LineLayout::LineInput { initialLineConstraints, currentInlineItem, inlineItems };
+        auto lineInput = LineLayout::LineInput { initialLineConstraints, inlineItems, leadingInlineItemIndex };
 
         auto lineContent = LineLayout(*this, lineInput).layout();
 
-        currentInlineItem = { lineContent.lastCommitted->index + 1, { } };
+        leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         LayoutUnit floatsWidth;
         for (auto& floatItem : lineContent.floats)
             floatsWidth += geometryForBox(floatItem->layoutBox()).marginBoxWidth();

@@ -41,30 +41,27 @@ public:
     struct LineContent;
     LineContent layout();
 
-    struct IndexAndRange {
-        unsigned index { 0 };
-        struct Range {
-            unsigned start { 0 };
-            unsigned length { 0 };
-        };
-        Optional<Range> partialContext;
+    struct PartialContent {
+        // This will potentially gain some more members. 
+        unsigned length;
     };
-
     struct LineInput {
-        LineInput(const Line::InitialConstraints&, TextAlignMode, IndexAndRange firstToProcess, const InlineItems&);
-        LineInput(const Line::InitialConstraints&, IndexAndRange firstToProcess, const InlineItems&);
+        LineInput(const Line::InitialConstraints&, TextAlignMode, const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
+        LineInput(const Line::InitialConstraints&, const InlineItems&, unsigned leadingInlineItemIndex);
 
         Line::InitialConstraints initialConstraints;
         TextAlignMode horizontalAlignment;
         // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
         Line::SkipAlignment skipAlignment { Line::SkipAlignment::No };
-        IndexAndRange firstInlineItem;
         const InlineItems& inlineItems;
+        unsigned leadingInlineItemIndex { 0 };
+        Optional<PartialContent> leadingPartialContent;
         Optional<LayoutUnit> floatMinimumLogicalBottom;
     };
 
     struct LineContent {
-        Optional<IndexAndRange> lastCommitted;
+        Optional<unsigned> trailingInlineItemIndex;
+        Optional<PartialContent> trailingPartialContent;
         Vector<WeakPtr<InlineItem>> floats;
         const Line::RunList runList;
         const LineBox lineBox;
@@ -87,6 +84,7 @@ private:
     struct UncommittedContent {
         void add(const InlineItem&, LayoutUnit logicalWidth);
         void reset();
+        void trim(unsigned newSize);
 
         Vector<Run>& runs() { return m_uncommittedRuns; }
         const Vector<Run>& runs() const { return m_uncommittedRuns; }
@@ -106,8 +104,9 @@ private:
     UncommittedContent m_uncommittedContent;
     unsigned m_committedInlineItemCount { 0 };
     Vector<WeakPtr<InlineItem>> m_floats;
-    std::unique_ptr<InlineTextItem> m_leadingPartialInlineTextItem;
-    std::unique_ptr<InlineTextItem> m_trailingPartialInlineTextItem;
+    std::unique_ptr<InlineTextItem> m_leadingPartialTextItem;
+    std::unique_ptr<InlineTextItem> m_trailingPartialTextItem;
+    Optional<unsigned> m_overflowTextLength;
 };
 
 }

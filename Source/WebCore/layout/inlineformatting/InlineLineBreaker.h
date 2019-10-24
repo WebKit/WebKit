@@ -38,14 +38,28 @@ class InlineTextItem;
 
 class LineBreaker {
 public:
-    enum class BreakingBehavior { Keep, Split, Wrap };
-    BreakingBehavior breakingContext(const Vector<LineLayout::Run>&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
-    BreakingBehavior breakingContextForFloat(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    struct BreakingContext {
+        enum class ContentBreak { Keep, Split, Wrap };
+        ContentBreak contentBreak;
+        struct TrailingPartialContent {
+            unsigned runIndex { 0 };
+            unsigned length { 0 };
+            LayoutUnit logicalWidth;
+        };
+        Optional<TrailingPartialContent> trailingPartialContent;
+    };
+    BreakingContext breakingContextForInlineContent(const Vector<LineLayout::Run>&, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
+    bool shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty);
 
 private:
 
-    BreakingBehavior wordBreakingBehavior(const Vector<LineLayout::Run>&, bool lineIsEmpty) const;
-    bool m_hyphenationIsDisabled { true };
+    LineBreaker::BreakingContext wordBreakingBehavior(const Vector<LineLayout::Run>&, LayoutUnit availableWidth, bool lineIsEmpty) const;
+
+    struct SplitLengthAndWidth {
+        unsigned length { 0 };
+        LayoutUnit leftLogicalWidth;
+    };
+    Optional<SplitLengthAndWidth> tryBreakingTextRun(const LineLayout::Run overflowRun, LayoutUnit availableWidth) const;
 };
 
 }

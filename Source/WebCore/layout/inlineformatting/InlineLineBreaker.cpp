@@ -35,59 +35,80 @@
 namespace WebCore {
 namespace Layout {
 
-LineBreaker::BreakingBehavior LineBreaker::breakingContext(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
+LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
-    // First content always stays on line.
-    if (lineIsEmpty || logicalWidth <= availableWidth)
-        return BreakingBehavior::Keep;
+    if (logicalWidth <= availableWidth)
+        return { BreakingContext::ContentBreak::Keep, { } };
 
-    // FIXME: Look inside the list to find out whether it requires text content related line breaking (e.g <span>text</span> <- the first inline item here is a 'container start' but the content is text only).
-    auto& inlineItem = runs.first().inlineItem;
-    if (is<InlineTextItem>(inlineItem))
-        return wordBreakingBehavior(runs, lineIsEmpty);
+    auto isTextContent = [](auto& runs) {
+        // <span>text</span> is considered a text run even with the [container start][container end] inline items.
+        for (auto& run : runs) {
+            auto& inlineItem = run.inlineItem;
+            // Skip "typeless" inline items.
+            if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+                continue;
+            return inlineItem.isText();
+        }
+        return false;
+    };
+    if (isTextContent(runs))
+        return wordBreakingBehavior(runs, availableWidth, lineIsEmpty);
 
-    return BreakingBehavior::Wrap;
+    // First non-text inline content always stays on line.
+    return { lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
 }
 
-LineBreaker::BreakingBehavior LineBreaker::breakingContextForFloat(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
+bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
-    return (lineIsEmpty || floatLogicalWidth <= availableWidth) ? BreakingBehavior::Keep : BreakingBehavior::Wrap;
+    return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-LineBreaker::BreakingBehavior LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, bool lineIsEmpty) const
+LineBreaker::BreakingContext LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, LayoutUnit availableWidth, bool lineIsEmpty) const
 {
-    // FIXME: Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
+    // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    auto& inlineItem = downcast<InlineTextItem>(runs.first().inlineItem);
-
-    // Word breaking behaviour:
-    // 1. Whitesapce collapse on -> push whitespace to next line.
-    // 2. Whitespace collapse off -> whitespace is split where possible.
-    // 3. Non-whitespace -> first run on the line -> either split or kept on the line. (depends on overflow-wrap)
-    // 4. Non-whitespace -> already content on the line -> either gets split (word-break: break-all) or gets pushed to the next line.
-    // (Hyphenate when possible)
-    // 5. Non-text type -> next line
-    auto& style = inlineItem.style();
-
-    if (inlineItem.isWhitespace())
-        return style.collapseWhiteSpace() ? BreakingBehavior::Wrap : BreakingBehavior::Split;
-
-    auto shouldHypenate = !m_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.locale());
-    if (shouldHypenate)
-        return BreakingBehavior::Split;
-
-    if (style.autoWrap()) {
-        // Break any word
-        if (style.wordBreak() == WordBreak::BreakAll)
-            return BreakingBehavior::Split;
-
-        // Break first run on line.
-        if (lineIsEmpty && style.breakWords() && style.preserveNewline())
-            return BreakingBehavior::Split;
+    LayoutUnit runsWidth = 0;
+    for (unsigned i = 0; i < runs.size(); ++i) {
+        auto& run = runs[i];
+        ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
+        runsWidth += run.logicalWidth;
+        if (runsWidth <= availableWidth)
+            continue;
+        // Let's find the first breaking opportunity starting from this overflown inline item.
+        if (!run.inlineItem.isText()) {
+            // Can't split horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [container end] is the overflown inline item
+            // we need to check if there's another inline item beyond the [container end] to split.
+            continue;
+        }
+        // Do not even try to wrap 'pre' and 'no-wrap' content.
+        auto whitespace = run.inlineItem.style().whiteSpace();
+        if (whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::NoWrap)
+            continue;
+        // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
+        // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
+        // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
+        auto adjustedAvailableWidth = std::max(LayoutUnit { }, availableWidth - runsWidth + run.logicalWidth);
+        if (auto splitLengthAndWidth = tryBreakingTextRun(run, adjustedAvailableWidth))
+            return { BreakingContext::ContentBreak::Split, BreakingContext::TrailingPartialContent { i, splitLengthAndWidth->length, splitLengthAndWidth->leftLogicalWidth } };
     }
+    // We did not manage to break in this sequence of runs.
+    return { lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
+}
 
-    // Non-breakable non-whitespace run.
-    return lineIsEmpty ? BreakingBehavior::Keep : BreakingBehavior::Wrap;
+Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const LineLayout::Run overflowRun, LayoutUnit availableWidth) const
+{
+    ASSERT(overflowRun.inlineItem.isText());
+    auto breakWords = overflowRun.inlineItem.style().wordBreak();
+    if (breakWords == WordBreak::KeepAll)
+        return { };
+    auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
+    if (breakWords == WordBreak::BreakAll) {
+        // FIXME: Pass in the content logical left to be able to measure tabs.
+        auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
+        return SplitLengthAndWidth { splitData.length, splitData.logicalWidth };
+    }
+    // FIXME: Find first soft wrap opportunity (e.g. hyphenation)
+    return { };
 }
 
 }
