@@ -1,3 +1,15 @@
+2019-10-24  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203102
+
+        Reviewed by Geoffrey Garen.
+
+        Update layout test coverage.
+
+        * fast/history/page-cache-running-audiocontext-expected.txt:
+        * fast/history/page-cache-running-audiocontext.html:
+
 2019-10-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests

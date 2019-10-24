@@ -1,3 +1,31 @@
+2019-10-24  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203102
+
+        Reviewed by Geoffrey Garen.
+
+        Allow pages with AudioContexts that are rendering in the back/forward cache.
+        Upon entering the back/forward cache, we suspend rendering and update IsPlaying
+        state so that the browser no longer shows the "Audio Playing" icon. Upon restoring
+        from the back/forward cache, we resume rendering and update IsPlaying state again
+        so that the browser shows the "Audio Playing" icon again. I tested it on:
+        - http://webaudioplayground.appspot.com
+
+        With regards to events dispatching, the AudioContext class is already using a
+        GenericEventQueue that properly delays event dispatching while in the back/forward
+        cache.
+
+        No new tests, updated existing test.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::suspend):
+        (WebCore::AudioContext::resume):
+        (WebCore::AudioContext::suspendRendering):
+        (WebCore::AudioContext::resumeRendering):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+
 2019-10-24  Antti Koivisto  <antti@apple.com>
 
         Move MatchResult and related types out of StyleResolver

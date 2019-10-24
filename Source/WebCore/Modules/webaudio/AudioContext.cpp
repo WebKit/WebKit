@@ -340,10 +340,20 @@ void AudioContext::stop()
     clear();
 }
 
-bool AudioContext::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+void AudioContext::suspend(ReasonForSuspension)
 {
-    // FIXME: We should be able to suspend while rendering as well with some more code.
-    return m_state != State::Suspended && m_state != State::Closed;
+    if (state() == State::Running) {
+        m_mediaSession->beginInterruption(PlatformMediaSession::PlaybackSuspended);
+        document()->updateIsPlayingMedia();
+    }
+}
+
+void AudioContext::resume()
+{
+    if (state() == State::Interrupted) {
+        m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+        document()->updateIsPlayingMedia();
+    }
 }
 
 const char* AudioContext::activeDOMObjectName() const
@@ -1229,7 +1239,7 @@ void AudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
+void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
@@ -1258,7 +1268,7 @@ void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
     });
 }
 
-void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
+void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext() || m_isStopScheduled) {
         promise.reject(InvalidStateError);
