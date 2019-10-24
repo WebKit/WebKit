@@ -4409,6 +4409,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 #endif
 
+- (void)setPageZoom:(CGFloat)pageZoom
+{
+    _page->setPageZoomFactor(pageZoom);
+}
+
+- (CGFloat)pageZoom
+{
+    return _page->pageZoomFactor();
+}
+
 - (BOOL)_usePlatformFindUI
 {
     return _usePlatformFindUI;
@@ -5622,12 +5632,12 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (double)_pageZoomFactor
 {
-    return _page->pageZoomFactor();
+    return [self pageZoom];
 }
 
 - (void)_setPageZoomFactor:(double)zoomFactor
 {
-    _page->setPageZoomFactor(zoomFactor);
+    [self setPageZoom:zoomFactor];
 }
 
 - (id <_WKDiagnosticLoggingDelegate>)_diagnosticLoggingDelegate

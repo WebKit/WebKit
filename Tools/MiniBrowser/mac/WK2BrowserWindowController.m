@@ -273,12 +273,12 @@ static BOOL areEssentiallyEqual(double a, double b)
         _zoomTextOnly = NO;
         double currentTextZoom = _webView._textZoomFactor;
         _webView._textZoomFactor = 1;
-        _webView._pageZoomFactor = currentTextZoom;
+        _webView.pageZoom = currentTextZoom;
     } else {
         _zoomTextOnly = YES;
         double currentPageZoom = _webView._pageZoomFactor;
         _webView._textZoomFactor = currentPageZoom;
-        _webView._pageZoomFactor = 1;
+        _webView.pageZoom = 1;
     }
 }
 
@@ -290,12 +290,12 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (_zoomTextOnly)
         _webView._textZoomFactor = 1;
     else
-        _webView._pageZoomFactor = 1;
+        _webView.pageZoom = 1;
 }
 
 - (BOOL)canResetZoom
 {
-    return _zoomTextOnly ? (_webView._textZoomFactor != 1) : (_webView._pageZoomFactor != 1);
+    return _zoomTextOnly ? (_webView._textZoomFactor != 1) : (_webView.pageZoom != 1);
 }
 
 - (IBAction)toggleShrinkToFit:(id)sender
@@ -376,7 +376,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (CGFloat)currentZoomFactor
 {
-    return _zoomTextOnly ? _webView._textZoomFactor : _webView._pageZoomFactor;
+    return _zoomTextOnly ? _webView._textZoomFactor : _webView.pageZoom;
 }
 
 - (void)setCurrentZoomFactor:(CGFloat)factor
@@ -384,7 +384,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (_zoomTextOnly)
         _webView._textZoomFactor = factor;
     else
-        _webView._pageZoomFactor = factor;
+        _webView.pageZoom = factor;
 }
 
 - (BOOL)canZoomIn

@@ -1,3 +1,19 @@
+2019-10-24  Brady Eidson  <beidson@apple.com>
+
+        Expose pageZoom as API.
+        https://bugs.webkit.org/show_bug.cgi?id=203381
+
+        Reviewed by Andy Estes.
+
+        No new tests (No behavior change, identical to SPI)
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setPageZoom:]):
+        (-[WKWebView pageZoom]):
+        (-[WKWebView _pageZoomFactor]):
+        (-[WKWebView _setPageZoomFactor:]):
+
 2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to find and manipulate text by paragraphs

@@ -274,7 +274,7 @@ If the data is written to a file the resulting file is a valid PDF document.
  */
 @property (nonatomic) BOOL allowsMagnification;
 
-/* @abstract The factor by which the page content is currently scaled.
+/* @abstract The factor by which the viewport of the page is currently scaled.
  @discussion The default value is 1.0.
  */
 @property (nonatomic) CGFloat magnification;
@@ -287,6 +287,13 @@ If the data is written to a file the resulting file is a valid PDF document.
 - (void)setMagnification:(CGFloat)magnification centeredAtPoint:(CGPoint)point;
 
 #endif
+
+/* @abstract The factor by which page content is scaled relative to the viewport.
+@discussion The default value is 1.0.
+ Changing this value is equivalent to web content setting the CSS "zoom"
+ property on all page content.
+*/
+@property (nonatomic) CGFloat pageZoom WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
