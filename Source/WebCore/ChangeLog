@@ -1,3 +1,15 @@
+2019-10-24  youenn fablet  <youenn@apple.com>
+
+        XMLHttpRequest.responseXML url should be the HTTP response URL
+        https://bugs.webkit.org/show_bug.cgi?id=203289
+
+        Reviewed by Chris Dumez.
+
+        Follow https://xhr.spec.whatwg.org/#document-response step 9.
+        Covered by rebased tests.
+
+        * xml/XMLHttpRequest.cpp:
+
 2019-10-24  Antti Koivisto  <antti@apple.com>
 
         Move property cascade out of StyleResolver

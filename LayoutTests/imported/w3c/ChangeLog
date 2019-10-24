@@ -1,3 +1,13 @@
+2019-10-24  youenn fablet  <youenn@apple.com>
+
+        XMLHttpRequest.responseXML url should be the HTTP response URL
+        https://bugs.webkit.org/show_bug.cgi?id=203289
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/xhr-response-url.https-expected.txt:
+        * web-platform-tests/xhr/responsexml-document-properties-expected.txt:
+
 2019-10-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests

@@ -13,8 +13,8 @@ PASS body
 PASS doctype 
 FAIL all assert_equals: expected undefined but got [object HTMLAllCollection]
 PASS cookie 
-FAIL Test document URL properties after redirect assert_equals: expected "http://localhost:8800/xhr/resources/well-formed.xml" but got "http://localhost:8800/xhr/resources/redirect.py?location=well-formed.xml"
-FAIL Test document URL properties of document with <base> after redirect assert_equals: expected "http://localhost:8800/xhr/resources/base.xml" but got "http://localhost:8800/xhr/resources/redirect.py?location=base.xml"
+PASS Test document URL properties after redirect 
+PASS Test document URL properties of document with <base> after redirect 
 PASS lastModified set to time of response if no HTTP header provided 
 PASS lastModified set to related HTTP header if provided 
 PASS cookie (after setting it) 
