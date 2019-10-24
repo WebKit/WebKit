@@ -146,10 +146,8 @@
                        "com.apple.security.exception.files.home-relative-path.read-write")))
     ;; CoreMedia framework.
     (allow mach-lookup
-           (global-name "com.apple.mediaserverd")
            (global-name "com.apple.coremedia.admin")
            (global-name "com.apple.coremedia.asset.xpc")
-           (global-name "com.apple.coremedia.assetcacheinspector")
            (global-name "com.apple.coremedia.assetimagegenerator.xpc")
            (global-name "com.apple.coremedia.audiodeviceclock.xpc")
            (global-name "com.apple.coremedia.audioprocessingtap.xpc")
@@ -158,7 +156,6 @@
            (global-name "com.apple.coremedia.cpeprotector.xpc")
            (global-name "com.apple.coremedia.customurlloader.xpc")
            (global-name "com.apple.coremedia.endpoint.xpc")
-           (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
            (global-name "com.apple.coremedia.figcpecryptor")
            (global-name "com.apple.coremedia.figcontentkeysession.xpc")
            (global-name "com.apple.coremedia.formatreader.xpc")
@@ -170,15 +167,10 @@
            (global-name "com.apple.coremedia.routingsessionmanager.xpc")
            (global-name "com.apple.coremedia.samplebufferaudiorenderer.xpc")
            (global-name "com.apple.coremedia.samplebufferrendersynchronizer.xpc")
-           (global-name "com.apple.coremedia.sandboxserver")
            (global-name "com.apple.coremedia.sandboxserver.xpc")
            (global-name "com.apple.coremedia.systemcontroller.xpc")
            (global-name "com.apple.coremedia.sts")
-           ;; <rdar://problem/13239958>
-           (global-name "com.apple.coremedia.videocompositor")
-           (global-name "com.apple.coremedia.visualcontext.xpc")
-           (global-name "com.apple.coremedia.volumecontroller.xpc")
-           (global-name "com.apple.pegasus"))
+           (global-name "com.apple.coremedia.volumecontroller.xpc"))
     (mobile-preferences-read
         "com.apple.avfoundation"
         "com.apple.coreaudio"
@@ -187,13 +179,9 @@
     ;; Required by the MediaPlayer framework.
     (allow mach-lookup
            (global-name "com.apple.airplay.apsynccontroller.xpc")
-           (global-name "com.apple.audio.AudioSession")
-           (global-name "com.apple.springboard.backgroundappservices"))
+           (global-name "com.apple.audio.AudioSession"))
     (mobile-preferences-read "com.apple.mobileipod")
     ;; Needed by the MediaPlayer framework:
-    (allow mach-lookup
-           (global-name "com.apple.itunescloudd.xpc")
-           (global-name "com.apple.itunesstored.xpc"))
     (mobile-preferences-read "com.apple.itunesstored"))
 
 (define-once (media-remote)
@@ -230,9 +218,6 @@
                 "IOAccelSharedUserClient2"))
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
-    (allow mach-lookup
-           (global-name "com.apple.cvmsServ")
-           (global-name "com.apple.gpumemd.source"))
     (allow mach-lookup
            (xpc-service-name-prefix "com.apple.AGXCompilerService"))
 
@@ -852,7 +837,7 @@
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
-;; FIXME: Remove the webkti specific extension classes <rdar://problem/17755931>
+;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
 (allow file-issue-extension (require-all
     (extension "com.apple.app-sandbox.read-write")
     (extension-class "com.apple.nsurlstorage.extension-cache")))
@@ -920,49 +905,8 @@
 ;; FIXME: remove overridden rules once the final list has been
 ;; established, see https://bugs.webkit.org/show_bug.cgi?id=193840
 (deny mach-lookup
-    (global-name "com.apple.CoreAuthentication.daemon.libxpc")
-    (global-name "com.apple.Honeybee.event-notify")
     (global-name "com.apple.MediaPlayer.RemotePlayerService")
-    (global-name "com.apple.ReportCrash.SimulateCrash")
-    (global-name "com.apple.accountsd.accountmanager")
-    (global-name "com.apple.appsupport.cplogd")
-    (global-name "com.apple.assertiond.processassertionconnection")
-    (global-name "com.apple.audio.reporting.xpc")
-    (global-name "com.apple.backboard.hid.services")
-    (global-name "com.apple.cfprefsd.agent")
-    (global-name "com.apple.containermanagerd")
-    (global-name "com.apple.coremedia.assetcacheinspector")
     (global-name "com.apple.coremedia.audiodeviceclock")
-    (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
-    (global-name "com.apple.coremedia.sandboxserver")
-    (global-name "com.apple.coremedia.videocompositor")
-    (global-name "com.apple.coremedia.visualcontext.xpc")
-    (global-name "com.apple.coreservices.lsuseractivitymanager.xpc")
-    (global-name "com.apple.ctkd.token-client")
-    (global-name "com.apple.cvmsServ")
-    (global-name "com.apple.duetknowledged.activity")
-    (global-name "com.apple.dyld.closured")
-    (global-name "com.apple.gpumemd.source")
-    (global-name "com.apple.hangtracerd")
-    (global-name "com.apple.itunescloudd.xpc")
-    (global-name "com.apple.itunesstored.xpc")
-    (global-name "com.apple.locationd.spi")
-    (global-name "com.apple.locationd.synchronous")
-    (global-name "com.apple.lsd")
-    (global-name "com.apple.lsd.advertisingidentifiers")
-    (global-name "com.apple.lsd.icons")
-    (global-name "com.apple.lsd.openurl")
-    (global-name "com.apple.lsdiconservice")
-    (global-name "com.apple.managedconfiguration.profiled.public")
-    (global-name "com.apple.marco")
-    (global-name "com.apple.mediaserverd")
-    (global-name "com.apple.mobile.usermanagerd.xpc")
-    (global-name "com.apple.nesessionmanager")
-    (global-name "com.apple.pegasus")
-    (global-name "com.apple.pluginkit.pkd")
-    (global-name "com.apple.pluginkit.plugin-service")
-    (global-name "com.apple.springboard.backgroundappservices")
-    (global-name "com.apple.system.libinfo.muser")
     (global-name "com.apple.webkit.camera")
 )
 

@@ -1,3 +1,16 @@
+2019-10-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove 'deny' rules that do not have a corresponding 'allow' rule
+        https://bugs.webkit.org/show_bug.cgi?id=203352
+
+        Reviewed by Per Arne Vollan.
+
+        Now that we no longer import 'common.sb', and have removed entries that allowed
+        services that we block, we can remove the 'deny' command. This is safe because
+        everything is denied by default.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Pass CORS-enabled schemes through WebProcess instead of having them NetworkProcess-global
