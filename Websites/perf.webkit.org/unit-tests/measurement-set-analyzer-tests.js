@@ -61,10 +61,10 @@ describe('MeasurementSetAnalyzer', () => {
         {
             let runId = startRunId;
             let buildId = 3400;
-            let buildNumber = 1;
+            let buildTag = 1;
             let commit_id = 1;
             let revision = 1;
-            const makeRun = (value, commitTime) => [runId++, value, 1, value, value, false, [[commit_id++, MockModels.webkit.id(), revision++, 0, 0]], commitTime, commitTime + 10, buildId++, buildNumber++, MockModels.builder.id()];
+            const makeRun = (value, commitTime) => [runId++, value, 1, value, value, false, [[commit_id++, MockModels.webkit.id(), revision++, 0, 0]], commitTime, commitTime + 10, buildId++, buildTag++, MockModels.builder.id()];
             timeIncrement = Math.floor(timeIncrement);
             return values.map((value, index) => makeRun(value, startTime + index * timeIncrement));
         }
@@ -162,7 +162,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues.slice(0, 39), 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -205,7 +205,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -264,7 +264,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -351,7 +351,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -432,7 +432,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -496,7 +496,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(dataBeforeSmallProgression.concat(simpleSegmentableValues), 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -588,7 +588,7 @@ describe('MeasurementSetAnalyzer', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(dataBeforeHugeProgression.concat(simpleSegmentableValues), 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,

@@ -112,7 +112,7 @@ function measurementCluster()
             'commitTime',
             'build',
             'buildTime',
-            'buildNumber',
+            'buildTag',
             'builder'
         ],
         'lastModified': 1455236216153,

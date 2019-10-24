@@ -16,7 +16,7 @@ function makeReport(rootFile, buildRequestId = 1, repositoryList = ['WebKit'], b
         slaveName: 'someSlave',
         slavePassword: 'somePassword',
         builderName: 'someBuilder',
-        buildNumber: 123,
+        buildTag: "123",
         buildTime: buildTime,
         buildRequest: buildRequestId,
         rootFile: rootFile,
@@ -153,24 +153,116 @@ describe('/api/upload-root/', function () {
         });
     });
 
-    it('should reject when build number is missing', () => {
+    it('should reject when build tag is missing', () => {
         return addSlaveAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
-            delete report.buildNumber;
+            delete report.buildTag;
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
         }).then((response) => {
-            assert.equal(response['status'], 'InvalidBuildNumber');
+            assert.equal(response['status'], 'InvalidBuildTag');
         });
     });
 
     it('should reject when build number is not a number', () => {
         return addSlaveAndCreateRootFile().then((rootFile) => {
             const report = makeReport(rootFile);
+            delete report.buildTag;
             report.buildNumber = '1abc';
             return TestServer.remoteAPI().postFormData('/api/upload-root/', report);
         }).then((response) => {
             assert.equal(response['status'], 'InvalidBuildNumber');
         });
+    });
+
+    it('should reject if both build number and build tag exists but different', async () => {
+        const rootFile = await addSlaveAndCreateRootFile();
+        const report = makeReport(rootFile);
+        report.buildNumber = '456';
+        const response = await TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        assert.equal(response['status'], 'BuilderNumberTagMismatch');
+    });
+
+    it('should accept if both build number and build tag exists with same value', async () => {
+        const testGroup = await createTestGroupWithPatchAndOwnedCommits();
+        const webkit = Repository.findById(MockData.webkitRepositoryId());
+        const ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
+
+        const buildRequest = testGroup.buildRequests()[0];
+        assert.equal(testGroup.buildRequests().length, 6);
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert(!buildRequest.hasFinished());
+        assert(buildRequest.isPending());
+        assert.equal(buildRequest.buildId(), null);
+
+        const commitSet = buildRequest.commitSet();
+        assert.equal(commitSet.revisionForRepository(webkit), '191622');
+        const webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.equal(webkitPatch.filename(), 'patch.dat');
+        assert.equal(commitSet.rootForRepository(webkit), null);
+        assert.equal(commitSet.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+        assert.equal(commitSet.patchForRepository(ownedJSC), null);
+        assert.equal(commitSet.rootForRepository(ownedJSC), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        const otherBuildRequest = testGroup.buildRequests()[1];
+        const otherCommitSet = otherBuildRequest.commitSet();
+        assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+        assert.equal(otherCommitSet.patchForRepository(webkit), null);
+        assert.equal(otherCommitSet.rootForRepository(webkit), null);
+        assert.equal(otherCommitSet.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+        assert.equal(otherCommitSet.patchForRepository(ownedJSC), null);
+        assert.equal(otherCommitSet.rootForRepository(ownedJSC), null);
+        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        const rootFile = await addSlaveAndCreateRootFile();
+        const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
+        report.buildNumber = report.buildTag;
+        const response = await TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        assert.equal(response['status'], 'OK');
+    });
+
+    it('should continue working with build number if build tag is not present', async () => {
+        const testGroup = await createTestGroupWithPatchAndOwnedCommits();
+        const webkit = Repository.findById(MockData.webkitRepositoryId());
+        const ownedJSC = Repository.findById(MockData.ownedJSCRepositoryId());
+
+        const buildRequest = testGroup.buildRequests()[0];
+        assert.equal(testGroup.buildRequests().length, 6);
+        assert(buildRequest.isBuild());
+        assert(!buildRequest.isTest());
+        assert(!buildRequest.hasFinished());
+        assert(buildRequest.isPending());
+        assert.equal(buildRequest.buildId(), null);
+
+        const commitSet = buildRequest.commitSet();
+        assert.equal(commitSet.revisionForRepository(webkit), '191622');
+        const webkitPatch = commitSet.patchForRepository(webkit);
+        assert(webkitPatch instanceof UploadedFile);
+        assert.equal(webkitPatch.filename(), 'patch.dat');
+        assert.equal(commitSet.rootForRepository(webkit), null);
+        assert.equal(commitSet.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+        assert.equal(commitSet.patchForRepository(ownedJSC), null);
+        assert.equal(commitSet.rootForRepository(ownedJSC), null);
+        assert.deepEqual(commitSet.allRootFiles(), []);
+
+        const otherBuildRequest = testGroup.buildRequests()[1];
+        const otherCommitSet = otherBuildRequest.commitSet();
+        assert.equal(otherCommitSet.revisionForRepository(webkit), '192736');
+        assert.equal(otherCommitSet.patchForRepository(webkit), null);
+        assert.equal(otherCommitSet.rootForRepository(webkit), null);
+        assert.equal(otherCommitSet.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+        assert.equal(otherCommitSet.patchForRepository(ownedJSC), null);
+        assert.equal(otherCommitSet.rootForRepository(ownedJSC), null);
+        assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+        const rootFile = await addSlaveAndCreateRootFile();
+        const report = makeReport(rootFile, buildRequest.id(), ['WebKit']);
+        delete report.buildTag;
+        report.buildNumber = '123';
+        const response = await TestServer.remoteAPI().postFormData('/api/upload-root/', report);
+        assert.equal(response['status'], 'OK');
     });
 
     it('should reject when build time is missing', () => {

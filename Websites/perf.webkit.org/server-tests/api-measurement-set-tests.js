@@ -47,7 +47,7 @@ describe("/api/measurement-set", function () {
     function clusterTime(index) { return new Date(clusterStart + clusterSize * index); }
 
     const reportWithBuildTime = [{
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": clusterTime(7.8).toISOString(),
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -64,7 +64,7 @@ describe("/api/measurement-set", function () {
     reportWithBuildTime.startTime = +clusterTime(7);
 
     const reportWithRevision = [{
-        "buildNumber": "124",
+        "buildTag": "124",
         "buildTime": "2013-02-28T15:34:51Z",
         "revisions": {
             "WebKit": {
@@ -86,7 +86,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const reportWithNewRevision = [{
-        "buildNumber": "125",
+        "buildTag": "125",
         "buildTime": "2013-02-28T21:45:17Z",
         "revisions": {
             "WebKit": {
@@ -108,7 +108,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const reportWithAncientRevision = [{
-        "buildNumber": "126",
+        "buildTag": "126",
         "buildTime": "2013-02-28T23:07:25Z",
         "revisions": {
             "WebKit": {
@@ -130,7 +130,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const secondReportWithRevision = [{
-        "buildNumber": "127",
+        "buildTag": "127",
         "buildTime": "2013-02-28T23:07:25Z",
         "revisions": {
             "WebKit": {
@@ -152,7 +152,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const thirdReportWithRevision = [{
-        "buildNumber": "128",
+        "buildTag": "128",
         "buildTime": "2013-02-28T23:07:25Z",
         "revisions": {
             "WebKit": {
@@ -174,7 +174,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const reportBaselineWithRevision = [{
-        "buildNumber": "129",
+        "buildTag": "129",
         "buildTime": "2013-02-28T15:35:51Z",
         "revisions": {
             "WebKit": {
@@ -196,7 +196,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const secondReportBaselineWithRevision = [{
-        "buildNumber": "130",
+        "buildTag": "130",
         "buildTime": "2013-02-28T23:01:25Z",
         "revisions": {
             "WebKit": {
@@ -218,7 +218,7 @@ describe("/api/measurement-set", function () {
         }}];
 
     const thirdReportBaselineWithRevision = [{
-        "buildNumber": "131",
+        "buildTag": "131",
         "buildTime": "2013-02-28T23:01:25Z",
         "revisions": {
             "WebKit": {
@@ -340,7 +340,7 @@ describe("/api/measurement-set", function () {
             assert.equal(response['clusterCount'], 1);
             assert.deepEqual(response['formatMap'], [
                 'id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier',
-                'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder']);
+                'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder']);
 
             assert.equal(response['startTime'], reportWithBuildTime.startTime);
             assert(typeof(response['lastModified']) == 'number', 'lastModified time should be a numeric');
@@ -359,7 +359,7 @@ describe("/api/measurement-set", function () {
                 revisions: [],
                 commitTime: buildTime,
                 buildTime: buildTime,
-                buildNumber: '123'});
+                buildTag: '123'});
         });
     });
 
@@ -438,7 +438,7 @@ describe("/api/measurement-set", function () {
                revisions: [[1, repositoryId, '144000', null, revisionTime]],
                commitTime: revisionTime,
                buildTime: revisionBuildTime,
-               buildNumber: '124' });
+               buildTag: '124' });
             assert.deepEqual(format(response['formatMap'], currentRows[1]), {
                 mean: 3,
                 iterationCount: 5,
@@ -448,7 +448,7 @@ describe("/api/measurement-set", function () {
                 revisions: [],
                 commitTime: buildTime,
                 buildTime: buildTime,
-                buildNumber: '123' });
+                buildTag: '123' });
         });
     });
 
@@ -467,15 +467,15 @@ describe("/api/measurement-set", function () {
 
         const currentRows = response['configurations']['current'];
         assert.equal(currentRows.length, 2);
-        assert.deepEqual(format(response['formatMap'], currentRows[0]).buildNumber, 127);
-        assert.deepEqual(format(response['formatMap'], currentRows[1]).buildNumber, 128);
+        assert.deepEqual(format(response['formatMap'], currentRows[0]).buildTag, 127);
+        assert.deepEqual(format(response['formatMap'], currentRows[1]).buildTag, 128);
         assert(format(response['formatMap'], currentRows[0]).commitTime < response.startTime);
         assert(format(response['formatMap'], currentRows[1]).commitTime < response.startTime);
 
         const baselineRows = response['configurations']['baseline'];
         assert.equal(baselineRows.length, 2);
-        assert.deepEqual(format(response['formatMap'], baselineRows[0]).buildNumber, 131);
-        assert.deepEqual(format(response['formatMap'], baselineRows[1]).buildNumber, 129);
+        assert.deepEqual(format(response['formatMap'], baselineRows[0]).buildTag, 131);
+        assert.deepEqual(format(response['formatMap'], baselineRows[1]).buildTag, 129);
     });
 
     it("should order results by build time when commit times are missing", () => {
@@ -490,7 +490,7 @@ describe("/api/measurement-set", function () {
             ]);
         }).then(() => {
             return remote.postJSON('/api/report/', [{
-                "buildNumber": "1001",
+                "buildTag": "1001",
                 "buildTime": '2017-01-19 15:28:01',
                 "revisions": {
                     "macOS": {
@@ -504,7 +504,7 @@ describe("/api/measurement-set", function () {
             }]);
         }).then(() => {
             return remote.postJSON('/api/report/', [{
-                "buildNumber": "1002",
+                "buildTag": "1002",
                 "buildTime": '2017-01-19 19:46:37',
                 "revisions": {
                     "macOS": {
@@ -532,7 +532,7 @@ describe("/api/measurement-set", function () {
                revisions: [[3, 1, 'macOS 16C68', 1, 0]],
                commitTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
-               buildNumber: '1001' });
+               buildTag: '1001' });
             assert.deepEqual(format(response['formatMap'], currentRows[1]), {
                 mean: 7,
                 iterationCount: 5,
@@ -542,13 +542,13 @@ describe("/api/measurement-set", function () {
                 revisions: [[2, 1, 'macOS 16A323', 0, 0]],
                 commitTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
-                buildNumber: '1002' });
+                buildTag: '1002' });
         });
     });
 
-    function buildNumbers(parsedResult, config)
+    function buildTags(parsedResult, config)
     {
-        return parsedResult['configurations'][config].map((row) => format(parsedResult['formatMap'], row)['buildNumber']);
+        return parsedResult['configurations'][config].map((row) => format(parsedResult['formatMap'], row)['buildTag']);
     }
 
     it("should include one data point after the current time range", () => {
@@ -564,8 +564,8 @@ describe("/api/measurement-set", function () {
         }).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['clusterCount'], 2, 'should have two clusters');
-            assert.deepEqual(buildNumbers(response, 'current'),
-                [reportWithAncientRevision[0]['buildNumber'], reportWithNewRevision[0]['buildNumber']]);
+            assert.deepEqual(buildTags(response, 'current'),
+                [reportWithAncientRevision[0]['buildTag'], reportWithNewRevision[0]['buildTag']]);
         });
     });
 
@@ -583,7 +583,7 @@ describe("/api/measurement-set", function () {
             assert.equal(response['clusterCount'], 2, 'should have two clusters');
             let currentRows = response['configurations']['current'];
             assert.equal(currentRows.length, 2, 'should contain two data points');
-            assert.deepEqual(buildNumbers(response, 'current'), [reportWithAncientRevision[0]['buildNumber'], reportWithBuildTime[0]['buildNumber']]);
+            assert.deepEqual(buildTags(response, 'current'), [reportWithAncientRevision[0]['buildTag'], reportWithBuildTime[0]['buildTag']]);
         });
     });
 
@@ -606,11 +606,11 @@ describe("/api/measurement-set", function () {
                 assert.deepEqual(newResult, cachedResult);
                 return remote.getJSONWithStatus(`${cachePrefix}-${cachedResult['startTime']}.json`);
             }).then((oldResult) => {
-                const oldBuildNumbers = buildNumbers(oldResult, 'current');
-                const newBuildNumbers = buildNumbers(newResult, 'current');
-                assert(oldBuildNumbers.length >= 2, 'The old cluster should contain at least two data points');
-                assert(newBuildNumbers.length >= 2, 'The new cluster should contain at least two data points');
-                assert.deepEqual(oldBuildNumbers.slice(oldBuildNumbers.length - 2), newBuildNumbers.slice(0, 2),
+                const oldbuildTags = buildTags(oldResult, 'current');
+                const newbuildTags = buildTags(newResult, 'current');
+                assert(oldbuildTags.length >= 2, 'The old cluster should contain at least two data points');
+                assert(newbuildTags.length >= 2, 'The new cluster should contain at least two data points');
+                assert.deepEqual(oldbuildTags.slice(oldbuildTags.length - 2), newbuildTags.slice(0, 2),
                     'Two conseqcutive clusters should share two data points');
             });
         });
@@ -648,7 +648,7 @@ describe("/api/measurement-set", function () {
     }
 
     const reportWithBuildRequest = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -682,7 +682,7 @@ describe("/api/measurement-set", function () {
     });
 
     const reportWithCommitsNeedsRoundCommitTimeAndBuildRequest = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -727,7 +727,7 @@ describe("/api/measurement-set", function () {
     });
 
     const reportWithCommitsNeedsRoundCommitTime = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",

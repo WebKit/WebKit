@@ -106,10 +106,16 @@ class ReportProcessor {
     }
 
     private function construct_build_data(&$report, $builder_id, $slave_id) {
-        array_key_exists('buildNumber', $report) or $this->exit_with_error('MissingBuildNumber');
+        if (array_key_exists('buildNumber', $report)) {
+            if (array_key_exists('buildTag', $report) && $report['buildTag'] != $report['buildNumber'])
+                $this->exit_with_error('BuilderNumberTagMismatch');
+            $report['buildTag'] = $report['buildNumber'];
+            unset($report['buildNumber']);
+        }
+        array_key_exists('buildTag', $report) or $this->exit_with_error('MissingBuildSerial');
         array_key_exists('buildTime', $report) or $this->exit_with_error('MissingBuildTime');
 
-        return array('builder' => $builder_id, 'slave' => $slave_id, 'number' => $report['buildNumber'], 'time' => $report['buildTime']);
+        return array('builder' => $builder_id, 'slave' => $slave_id, 'tag' => $report['buildTag'], 'time' => $report['buildTime']);
     }
 
     private function store_report(&$report, $build_data) {
@@ -117,7 +123,7 @@ class ReportProcessor {
         $this->report_id = $this->db->insert_row('reports', 'report', array(
             'builder' => $build_data['builder'],
             'slave' => $build_data['slave'],
-            'build_number' => $build_data['number'],
+            'build_tag' => $build_data['tag'],
             'content' => json_encode($report)));
         if (!$this->report_id)
             $this->exit_with_error('FailedToStoreRunReport');
@@ -134,8 +140,8 @@ class ReportProcessor {
 
     private function resolve_build_id(&$build_data, $revisions, $build_request_id) {
         $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
-            WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3 LIMIT 2",
-            array($build_data['builder'], $build_data['number'], $build_data['time']));
+            WHERE build_builder = $1 AND build_tag = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3 LIMIT 2",
+            array($build_data['builder'], $build_data['tag'], $build_data['time']));
         if ($results) {
             $first_result = $results[0];
             if ($first_result['build_slave'] != $build_data['slave'])

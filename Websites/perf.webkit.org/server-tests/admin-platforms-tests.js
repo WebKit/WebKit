@@ -13,7 +13,7 @@ describe("/admin/platforms", function () {
     {
         return [
             {
-                "buildNumber": "3001",
+                "buildTag": "3001",
                 "buildTime": "2013-02-28T09:01:47",
                 "builderName": "someBuilder",
                 "builderPassword": "somePassword",
@@ -21,7 +21,7 @@ describe("/admin/platforms", function () {
                 "tests": {"test": { "metrics": {"FrameRate": { "current": [[1, 1, 1], [1, 1, 1]] } } } },
             },
             {
-                "buildNumber": "3001",
+                "buildTag": "3001",
                 "buildTime": "2013-02-28T10:12:03",
                 "builderName": "someBuilder",
                 "builderPassword": "somePassword",
@@ -29,7 +29,7 @@ describe("/admin/platforms", function () {
                 "tests": {"test": { "metrics": {"FrameRate": { "current": [[2, 2, 2], [2, 2, 2]] }, "Combined": { "current": [[3, 3, 3], [3, 3, 3]] }} } },
             },
             {
-                "buildNumber": "3003",
+                "buildTag": "3003",
                 "buildTime": "2013-02-28T12:56:26",
                 "builderName": "someBuilder",
                 "builderPassword": "somePassword",

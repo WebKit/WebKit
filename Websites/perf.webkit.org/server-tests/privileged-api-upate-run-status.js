@@ -12,7 +12,7 @@ describe("/privileged-api/update-run-status", function () {
     prepareServerTest(this);
 
     const reportWithRevision = [{
-        "buildNumber": "124",
+        "buildTag": "124",
         "buildTime": "2013-02-28T15:34:51",
         "revisions": {
             "WebKit": {

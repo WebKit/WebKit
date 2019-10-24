@@ -44,11 +44,11 @@ class ChartPaneStatusView extends ComponentBase {
 
         if (build) {
             const url = build.url();
-            const buildNumber = build.buildNumber();
+            const buildTag = build.buildTag();
             tableContent.push(element('tr', [
                 element('td', 'Build'),
                 element('td', {colspan: 2}, [
-                    url ? link(buildNumber, build.label(), url, true) : buildNumber,
+                    url ? link(buildTag, build.label(), url, true) : buildTag,
                     ` (${Metric.formatTime(build.buildTime())})`
                 ]),
             ]));

@@ -11,7 +11,7 @@ const assertThrows = require('./resources/common-operations.js').assertThrows;
 async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 {
     const reportWithRevision = [{
-        "buildNumber": "124",
+        "buildTag": "124",
         "buildTime": "2015-10-27T15:34:51",
         "revisions": {
             "WebKit": {
@@ -40,7 +40,7 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
         }}];
 
     const anotherReportWithRevision = [{
-        "buildNumber": "125",
+        "buildTag": "125",
         "buildTime": "2015-10-27T17:27:41",
         "revisions": {
             "WebKit": {

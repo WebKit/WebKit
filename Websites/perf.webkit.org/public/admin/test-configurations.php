@@ -14,7 +14,7 @@ function add_run($metric_id, $platform_id, $type, $date, $mean) {
         return notice("Failed to add the configuration for metric $metric_id and platform $platform_id");
     }
 
-    $build_id = $db->insert_row('builds', 'build', array('number' => 0, 'time' => $date));
+    $build_id = $db->insert_row('builds', 'build', array('tag' => 0, 'time' => $date));
     if (!$build_id) {
         $db->rollback_transaction();
         return notice("Failed to add a build");

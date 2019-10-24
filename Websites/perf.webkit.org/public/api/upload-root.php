@@ -10,9 +10,16 @@ function main()
     $db = connect();
     $slave_id = verify_slave($db, $_POST);
 
+    if (array_key_exists('buildNumber', $_POST) && array_key_exists('buildTag', $_POST) && $_POST['buildNumber'] != $_POST['buildTag'])
+        exit_with_error('BuilderNumberTagMismatch', array('buildNumber' => $_POST['buildNumber'], 'buildTag' => $_POST['buildTag']));
+    elseif (array_key_exists('buildNumber', $_POST) && !array_key_exists('buildTag', $_POST)) {
+        require_format('buildNumber', $_POST['buildNumber'], '/^\d+$/');
+        $_POST['buildTag'] = $_POST['buildNumber'];
+    }
+
     $arguments = validate_arguments($_POST, array(
         'builderName' => '/.+/',
-        'buildNumber' => 'int',
+        'buildTag' => '/.+/',
         'buildTime' => '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d*Z?$/',
         'buildRequest' => 'int',
         'repositoryList' => 'json',
@@ -27,7 +34,7 @@ function main()
     assert($test_group);
 
     $builder_id = $db->select_or_insert_row('builders', 'builder', array('name' => $arguments['builderName']));
-    $build_info = array('builder' => $builder_id, 'slave' => $slave_id, 'number' => $arguments['buildNumber'], 'time' => $arguments['buildTime']);
+    $build_info = array('builder' => $builder_id, 'slave' => $slave_id, 'tag' => $arguments['buildTag'], 'time' => $arguments['buildTime']);
 
     $commit_set_id = $request_row['request_commit_set'];
     $commit_set_items_to_update = compute_commit_set_items_to_update($db, $commit_set_id, $arguments['repositoryList']);

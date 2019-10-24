@@ -18,7 +18,7 @@ const sampleCluster = {
         ]
     },
     'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions',
-        'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+        'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
     'startTime': 1449532800000,
     'endTime': 1454716800000,
     'lastModified': 1452067190008,
@@ -55,7 +55,7 @@ describe('MeasurementAdaptor', function () {
             var adaptor = new MeasurementAdaptor(sampleCluster.formatMap);
             assert.ok(adaptor.applyTo(sampleData).build() instanceof Build);
             assert.equal(adaptor.applyTo(sampleData).build().id(), 184629);
-            assert.equal(adaptor.applyTo(sampleData).build().buildNumber(), '178');
+            assert.equal(adaptor.applyTo(sampleData).build().buildTag(), '178');
             assert.equal(adaptor.applyTo(sampleData).build().builder(), MockModels.builder);
             assert.equal(adaptor.applyTo(sampleData).build().label(), 'Build 178 on WebKit Perf Builder');
             assert.equal(adaptor.applyTo(sampleData).build().url(), 'http://build.webkit.org/builders/WebKit Perf Builder/178');

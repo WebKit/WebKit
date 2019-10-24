@@ -103,7 +103,7 @@ describe("/api/commits/", function () {
     }
 
     const report = [{
-        "buildNumber": "124",
+        "buildTag": "124",
         "buildTime": "2015-10-27T15:34:51",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",

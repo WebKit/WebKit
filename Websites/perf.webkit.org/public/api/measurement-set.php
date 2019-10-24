@@ -168,14 +168,14 @@ class MeasurementSetFetcher {
 
     function execute_query($config_id) {
         return $this->db->query('
-            SELECT test_runs.*, build_id, build_number, build_builder, build_time,
+            SELECT test_runs.*, build_id, build_tag, build_builder, build_time,
             array_agg((commit_id, commit_repository, commit_revision, commit_order, extract(epoch from commit_time at time zone \'utc\') * 1000)) AS revisions,
             extract(epoch from max(commit_time at time zone \'utc\')) * 1000 AS revision_time
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
                     LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
                 WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
-                GROUP BY build_id, build_builder, build_number, build_time, build_latest_revision, build_slave,
+                GROUP BY build_id, build_builder, build_tag, build_time, build_latest_revision, build_slave,
                     run_id, run_config, run_build, run_iteration_count_cache, run_mean_cache, run_sum_cache, run_square_sum_cache, run_marked_outlier
                 ORDER BY revision_time, build_time', array($config_id));
     }
@@ -183,7 +183,7 @@ class MeasurementSetFetcher {
     static function format_map()
     {
         return array('id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions',
-            'commitTime', 'build', 'buildTime', 'buildNumber', 'builder');
+            'commitTime', 'build', 'buildTime', 'buildTag', 'builder');
     }
 
     private static function format_run(&$run, &$commit_time) {
@@ -202,7 +202,7 @@ class MeasurementSetFetcher {
             $commit_time,
             intval($run['build_id']),
             $build_time,
-            $run['build_number'],
+            $run['build_tag'],
             intval($run['build_builder']));
     }
 
@@ -284,7 +284,7 @@ class AnalysisResultsFetcher {
             $this->build_to_commits[$build_id],
             intval($build_id),
             Database::to_js_time($row['build_time']),
-            $row['build_number'],
+            $row['build_tag'],
             intval($row['build_builder']),
             intval($row['config_metric']),
             $row['config_type']);
@@ -293,7 +293,7 @@ class AnalysisResultsFetcher {
     static function format_map()
     {
         return array('id', 'mean', 'iterationCount', 'sum', 'squareSum', 'revisions',
-            'build', 'buildTime', 'buildNumber', 'builder', 'metric', 'configType');
+            'build', 'buildTime', 'buildTag', 'builder', 'metric', 'configType');
     }
 }
 

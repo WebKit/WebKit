@@ -148,13 +148,13 @@ describe('/api/manifest', function () {
         let db = TestServer.database();
         return Promise.all([
             db.insert('builders', {id: 1, name: 'SomeBuilder', password_hash: 'a',
-                build_url: 'https://build.webkit.org/builders/$builderName/build/$buildNumber'}),
+                build_url: 'https://build.webkit.org/builders/$builderName/build/$buildTag'}),
             db.insert('builders', {id: 2, name: 'SomeOtherBuilder', password_hash: 'b'})
         ]).then(() => {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
             assert.deepEqual(content.builders, {
-                '1': {name: 'SomeBuilder', buildUrl: 'https://build.webkit.org/builders/$builderName/build/$buildNumber'},
+                '1': {name: 'SomeBuilder', buildUrl: 'https://build.webkit.org/builders/$builderName/build/$buildTag'},
                 '2': {name: 'SomeOtherBuilder', buildUrl: null}
             });
 

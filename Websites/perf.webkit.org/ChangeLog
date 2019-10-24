@@ -1,3 +1,77 @@
+2019-10-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Refactor "builds" table "build_number" row to "build_tag" to fit more generic use cases.
+        https://bugs.webkit.org/show_bug.cgi?id=203270
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename "build_number" to "build_tag" to fit more generic use cases.
+        Add support to be backward compatible to accept reports contain either
+        "buildNumber" or "buildTag".
+
+        * browser-tests/index.html:
+        * init-database.sql:
+        * migrate-database.sql: Updated migration sql for this change.
+        * public/admin/test-configurations.php:
+        * public/api/measurement-set.php:
+        * public/api/runs.php:
+        * public/api/upload-root.php: Added support for both "buildNumber" and "buildTag".
+        * public/include/report-processor.php: Added support for both "buildNumber" and "buildTag".
+        * public/v3/models/builder.js:
+        (Builder.prototype.urlForBuild):
+        (Builder):
+        (Build):
+        (Build.prototype.buildTag):
+        (Build.prototype.label):
+        (Build.prototype.url):
+        (Build.prototype.buildNumber): Deleted.
+        * public/v3/models/measurement-adaptor.js:
+        (MeasurementAdaptor):
+        (MeasurementAdaptor.prototype.applyTo.return.build):
+        * public/v3/pages/chart-pane-status-view.js:
+        * public/v3/pages/test-freshness-page.js:
+        (TestFreshnessPage.prototype._renderTooltip):
+        * server-tests/admin-platforms-tests.js:
+        (reportsForDifferentPlatforms):
+        * server-tests/admin-reprocess-report-tests.js:
+        * server-tests/api-commits-tests.js:
+        * server-tests/api-manifest-tests.js:
+        * server-tests/api-measurement-set-tests.js:
+        * server-tests/api-report-tests.js: Added unit tests for testing "buildNumber" and "buildTag".
+        (emptyReport):
+        (reportWitMismatchingCommitTime):
+        (reportWithOneSecondCommitTimeDifference):
+        (emptySlaveReport):
+        (makeReport):
+        (reportWithSameSubtestName):
+        * server-tests/api-upload-root-tests.js: Added unit tests for testing "buildNumber" and "buildTag".
+        * server-tests/privileged-api-add-build-requests-tests.js:
+        * server-tests/privileged-api-create-analysis-task-tests.js:
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask):
+        * server-tests/privileged-api-upate-run-status.js:
+        * server-tests/privileged-api-update-test-group-tests.js:
+        (async.createAnalysisTask):
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockConfiguration):
+        (MockData.sampleBuildData):
+        (MockData.finishedBuildData):
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.initialize):
+        (BuildbotBuildEntry.prototype.buildTag):
+        (BuildbotBuildEntry.prototype.url):
+        (BuildbotSyncer.prototype.urlForBuildTag):
+        (BuildbotBuildEntry.prototype.buildNumber): Deleted.
+        (BuildbotSyncer.prototype.urlForBuildNumber): Deleted.
+        * unit-tests/analysis-task-tests.js:
+        (measurementCluster):
+        * unit-tests/buildbot-syncer-tests.js:
+        * unit-tests/measurement-adaptor-tests.js:
+        * unit-tests/measurement-set-analyzer-tests.js:
+        * unit-tests/measurement-set-tests.js:
+        * unit-tests/resources/mock-v3-models.js:
+
 2019-10-11  Dewei Zhu  <dewei_zhu@apple.com>
 
         Improve test freshness page interaction experience.

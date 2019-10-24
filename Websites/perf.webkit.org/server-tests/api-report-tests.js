@@ -14,7 +14,7 @@ describe("/api/report", function () {
     function emptyReport()
     {
         return {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "slaveName": "someSlave",
@@ -36,7 +36,7 @@ describe("/api/report", function () {
     function reportWitMismatchingCommitTime()
     {
         return {
-            "buildNumber": "124",
+            "buildTag": "124",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "slaveName": "someSlave",
@@ -58,7 +58,7 @@ describe("/api/report", function () {
     function reportWithOneSecondCommitTimeDifference()
     {
         return {
-            "buildNumber": "125",
+            "buildTag": "125",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "slaveName": "someSlave",
@@ -80,7 +80,7 @@ describe("/api/report", function () {
     function emptySlaveReport()
     {
         return {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "slaveName": "someSlave",
@@ -127,7 +127,7 @@ describe("/api/report", function () {
     it("should reject a report without a builder password", () => {
         return addBuilderForReport(emptyReport()).then(() => {
             var report = [{
-                "buildNumber": "123",
+                "buildTag": "123",
                 "buildTime": "2013-02-28T10:12:03.388304",
                 "builderName": "someBuilder",
                 "tests": {},
@@ -273,9 +273,34 @@ describe("/api/report", function () {
         }).then(() => {
             return TestServer.database().selectAll('builds');
         }).then((builds) => {
-            assert.strictEqual(builds[0]['number'], 123);
+            assert.equal(builds[0]['tag'], 123);
         });
     });
+
+    it("should continue working with build number if build tag is not present", async () => {
+        await addBuilderForReport(emptyReport());
+        const report = emptyReport();
+        report.buildNumber = report.buildTag;
+        delete report.buildTag;
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+        assert.equal(response['status'], 'OK');
+    });
+
+    it("should reject if a report specifies both build number and build tag with different values", async () => {
+        await addBuilderForReport(emptyReport());
+        const report = emptyReport();
+        report.buildNumber = '456';
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+        assert.equal(response['status'], 'BuilderNumberTagMismatch');
+    })
+
+    it("should accept if a report specifies both build number and build tag with identical value", async () => {
+        await addBuilderForReport(emptyReport());
+        const report = emptyReport();
+        report.buildNumber = report.buildTag;
+        const response = await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+        assert.equal(response['status'], 'OK');
+    })
 
     it("should add the platform", () => {
         return addBuilderForReport(emptyReport()).then(() => {
@@ -405,7 +430,7 @@ describe("/api/report", function () {
     });
 
     const reportWithTwoLevelsOfAggregations = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -627,7 +652,7 @@ describe("/api/report", function () {
     function makeReport(tests)
     {
         return {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -792,7 +817,7 @@ describe("/api/report", function () {
 
     it("should reject a report when there are more than one non-matching aggregators in a subtest", async () => {
         const reportWithAmbigiousAggregators = {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -829,7 +854,7 @@ describe("/api/report", function () {
     function reportWithSameSubtestName()
     {
         return {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03.388304",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -869,7 +894,7 @@ describe("/api/report", function () {
         }).then((tests) => {
             assert.equal(tests.length, 6);
             let newReport = reportWithSameSubtestName();
-            newReport.buildNumber = "125";
+            newReport.buildTag = "125";
             newReport.buildTime = "2013-02-28T12:17:24.1";
             return TestServer.remoteAPI().postJSON('/api/report/', [newReport]);
         }).then((response) => {
@@ -881,7 +906,7 @@ describe("/api/report", function () {
     });
 
     const reportWithSameSingleValue = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -920,7 +945,7 @@ describe("/api/report", function () {
     });
 
     const reportWithSameValuePairs = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -952,7 +977,7 @@ describe("/api/report", function () {
 
     const reportsUpdatingDifferentTests = [
         {
-            "buildNumber": "123",
+            "buildTag": "123",
             "buildTime": "2013-02-28T10:12:03",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -960,7 +985,7 @@ describe("/api/report", function () {
             "tests": {"test1": {"metrics": {"Time": {"current": 3}}}}
         },
         {
-            "buildNumber": "124",
+            "buildTag": "124",
             "buildTime": "2013-02-28T11:31:21",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -968,7 +993,7 @@ describe("/api/report", function () {
             "tests": {"test2": {"metrics": {"Time": {"current": 3}}}}
         },
         {
-            "buildNumber": "125",
+            "buildTag": "125",
             "buildTime": "2013-02-28T12:45:34",
             "builderName": "someBuilder",
             "builderPassword": "somePassword",
@@ -1013,7 +1038,7 @@ describe("/api/report", function () {
     });
 
     const reportWithBuildRequest = {
-        "buildNumber": "123",
+        "buildTag": "123",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -1027,7 +1052,7 @@ describe("/api/report", function () {
     };
 
     const anotherReportWithSameBuildRequest = {
-        "buildNumber": "124",
+        "buildTag": "124",
         "buildTime": "2013-02-28T10:12:03.388304",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -1053,7 +1078,7 @@ describe("/api/report", function () {
             return reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithBuildRequest);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
-            return TestServer.database().selectRows('builds', {number: '123'});
+            return TestServer.database().selectRows('builds', {tag: '123'});
         }).then((results) => {
             assert.equal(results.length, 1);
             return TestServer.database().selectRows('platforms', {name: 'Mountain Lion'});
@@ -1062,7 +1087,7 @@ describe("/api/report", function () {
             return TestServer.remoteAPI().postJSON('/api/report/', [anotherReportWithSameBuildRequest]);
         }).then((response) => {
             assert.equal(response['status'], 'FailedToUpdateBuildRequest');
-            return TestServer.database().selectRows('builds', {number: '124'});
+            return TestServer.database().selectRows('builds', {tag: '124'});
         }).then((results) => {
             assert.equal(results.length, 0);
             return TestServer.database().selectRows('platforms', {name: 'Lion'});

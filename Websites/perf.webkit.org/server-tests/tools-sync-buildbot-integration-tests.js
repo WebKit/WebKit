@@ -214,14 +214,14 @@ function createTestGroupWihOwnedCommit()
     });
 }
 
-function uploadRoot(buildRequestId, buildNumber, repositoryList = ["WebKit"], buildTime = '2017-05-10T02:54:08.666')
+function uploadRoot(buildRequestId, buildTag, repositoryList = ["WebKit"], buildTime = '2017-05-10T02:54:08.666')
 {
-    return TemporaryFile.makeTemporaryFile(`root${buildNumber}.dat`, `root for build ${buildNumber} and repository list at ${buildTime}`).then((rootFile) => {
+    return TemporaryFile.makeTemporaryFile(`root${buildTag}.dat`, `root for build ${buildTag} and repository list at ${buildTime}`).then((rootFile) => {
         return TestServer.remoteAPI().postFormData('/api/upload-root/', {
             slaveName: 'sync-slave',
             slavePassword: 'password',
             builderName: 'some builder',
-            buildNumber: buildNumber,
+            buildTag: buildTag,
             buildTime: buildTime,
             buildRequest: buildRequestId,
             rootFile,
@@ -1389,7 +1389,7 @@ describe('sync-buildbot', function () {
             assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
             assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2), {
                 'builds': [
-                     MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildNumber: 1002}),
+                     MockData.runningBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 2, buildTag: 1002}),
                      MockData.finishedBuildData({builderId: MockData.builderIDForName('some builder'), buildRequestId: 1})]
             });
             assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2), {});
@@ -1461,7 +1461,7 @@ describe('sync-buildbot', function () {
             assertAndResolveRequest(requests[3], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
             assertAndResolveRequest(requests[4], 'GET', MockData.recentBuildsUrl('some builder', 2), {});
             assertAndResolveRequest(requests[5], 'GET', MockData.recentBuildsUrl('other builder', 2),
-                MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildNumber: 312}));
+                MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildTag: 312}));
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 9);
@@ -1474,7 +1474,7 @@ describe('sync-buildbot', function () {
             assertAndResolveRequest(requests[9], 'GET', MockData.recentBuildsUrl('some tester', 2), {});
             assertAndResolveRequest(requests[10], 'GET', MockData.recentBuildsUrl('some builder', 2), {});
             assertAndResolveRequest(requests[11], 'GET', MockData.recentBuildsUrl('other builder', 2),
-                MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildNumber: 312}));
+                MockData.finishedBuild({builderId: MockData.builderIDForName('other builder'), buildRequestId: 1, buildTag: 312}));
             return syncPromise;
         }).then(() => {
             return TestGroup.fetchForTask(taskId, true);

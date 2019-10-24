@@ -17,7 +17,7 @@ class MeasurementAdaptor {
         this._revisionsIndex = nameMap['revisions'];
         this._buildIndex = nameMap['build'];
         this._buildTimeIndex = nameMap['buildTime'];
-        this._buildNumberIndex = nameMap['buildNumber'];
+        this._buildTagIndex = nameMap['buildTag'];
         this._builderIndex = nameMap['builder'];
         this._metricIndex = nameMap['metric'];
         this._configTypeIndex = nameMap['configType'];
@@ -62,7 +62,7 @@ class MeasurementAdaptor {
             commitSet: function () { return MeasurementCommitSet.ensureSingleton(id, row[self._revisionsIndex]); },
             build: function () {
                 if (cachedBuild == null && builderId)
-                    cachedBuild = new Build(buildId, Builder.findById(builderId), row[self._buildNumberIndex], row[self._buildTimeIndex]);
+                    cachedBuild = new Build(buildId, Builder.findById(builderId), row[self._buildTagIndex], row[self._buildTimeIndex]);
                 return cachedBuild;
             },
             time: row[this._commitTimeIndex],

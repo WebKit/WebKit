@@ -283,11 +283,11 @@ function samplePendingBuildRequests(buildRequestId, buildTime, workerName, build
     };
 }
 
-function sampleBuildData(workerName, isComplete, buildRequestId, buildNumber, builderId, state_string)
+function sampleBuildData(workerName, isComplete, buildRequestId, buildTag, builderId, state_string)
 {
     return {
         "builderid": builderId || 102,
-        "number": buildNumber || 614,
+        "number": buildTag || 614,
         "buildrequestid": 17,
         "complete": isComplete,
         "complete_at": null,
@@ -1110,7 +1110,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(pendingEntries.length, 1);
             const entry = pendingEntries[0];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.ok(!entry.buildNumber());
+            assert.ok(!entry.buildTag());
             assert.ok(!entry.workerName());
             assert.equal(entry.buildRequestId(), 16733);
             assert.ok(entry.isPending());
@@ -1128,7 +1128,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(entries.length, 1);
             const entry = entries[0];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 614);
+            assert.equal(entry.buildTag(), 614);
             assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 16733);
             assert.ok(!entry.isPending());
@@ -1146,7 +1146,7 @@ describe('BuildbotSyncer', () => {
             assert.deepEqual(entries.length, 1);
             const entry = entries[0];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 1755);
+            assert.equal(entry.buildTag(), 1755);
             assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 18935);
             assert.ok(!entry.isPending());
@@ -1165,7 +1165,7 @@ describe('BuildbotSyncer', () => {
 
             let entry = entries[0];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 614);
+            assert.equal(entry.buildTag(), 614);
             assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 16733);
             assert.ok(!entry.isPending());
@@ -1176,7 +1176,7 @@ describe('BuildbotSyncer', () => {
 
             entry = entries[1];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 1755);
+            assert.equal(entry.buildTag(), 1755);
             assert.equal(entry.slaveName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 18935);
             assert.ok(!entry.isPending());
@@ -1225,7 +1225,7 @@ describe('BuildbotSyncer', () => {
 
             let entry = entries[0];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 1755);
+            assert.equal(entry.buildTag(), 1755);
             assert.equal(entry.workerName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 18935);
             assert.ok(!entry.isPending());
@@ -1235,7 +1235,7 @@ describe('BuildbotSyncer', () => {
 
             entry = entries[1];
             assert.ok(entry instanceof BuildbotBuildEntry);
-            assert.equal(entry.buildNumber(), 614);
+            assert.equal(entry.buildTag(), 614);
             assert.equal(entry.slaveName(), 'ABTest-iPad-0');
             assert.equal(entry.buildRequestId(), 16733);
             assert.ok(!entry.isPending());
@@ -1291,7 +1291,7 @@ describe('BuildbotSyncer', () => {
                 assert.equal(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.ok(!entry.buildNumber());
+                assert.ok(!entry.buildTag());
                 assert.ok(!entry.slaveName());
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(entry.isPending());
@@ -1315,7 +1315,7 @@ describe('BuildbotSyncer', () => {
                 assert.equal(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.buildTag(), 614);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
@@ -1339,7 +1339,7 @@ describe('BuildbotSyncer', () => {
                 assert.deepEqual(entries.length, 1);
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.buildTag(), 1755);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
@@ -1366,7 +1366,7 @@ describe('BuildbotSyncer', () => {
 
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), null);
+                assert.equal(entry.buildTag(), null);
                 assert.equal(entry.slaveName(), null);
                 assert.equal(entry.buildRequestId(), 123);
                 assert.ok(entry.isPending());
@@ -1376,7 +1376,7 @@ describe('BuildbotSyncer', () => {
 
                 entry = entries[1];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.buildTag(), 614);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
@@ -1386,7 +1386,7 @@ describe('BuildbotSyncer', () => {
 
                 entry = entries[2];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.buildTag(), 1755);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
@@ -1413,7 +1413,7 @@ describe('BuildbotSyncer', () => {
 
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), null);
+                assert.equal(entry.buildTag(), null);
                 assert.equal(entry.slaveName(), null);
                 assert.equal(entry.buildRequestId(), 123);
                 assert.ok(entry.isPending());
@@ -1423,7 +1423,7 @@ describe('BuildbotSyncer', () => {
 
                 entry = entries[1];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), null);
+                assert.equal(entry.buildTag(), null);
                 assert.equal(entry.slaveName(), null);
                 assert.equal(entry.buildRequestId(), 456);
                 assert.ok(entry.isPending());
@@ -1433,7 +1433,7 @@ describe('BuildbotSyncer', () => {
 
                 entry = entries[2];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.buildTag(), 614);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
@@ -1443,7 +1443,7 @@ describe('BuildbotSyncer', () => {
 
                 entry = entries[3];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.buildTag(), 1755);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 18935);
                 assert.ok(!entry.isPending());
@@ -1470,7 +1470,7 @@ describe('BuildbotSyncer', () => {
 
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 614);
+                assert.equal(entry.buildTag(), 614);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());
@@ -1497,7 +1497,7 @@ describe('BuildbotSyncer', () => {
 
                 let entry = entries[0];
                 assert.ok(entry instanceof BuildbotBuildEntry);
-                assert.equal(entry.buildNumber(), 1755);
+                assert.equal(entry.buildTag(), 1755);
                 assert.equal(entry.slaveName(), 'ABTest-iPad-0');
                 assert.equal(entry.buildRequestId(), 16733);
                 assert.ok(!entry.isPending());

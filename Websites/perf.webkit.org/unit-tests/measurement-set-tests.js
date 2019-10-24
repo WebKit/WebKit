@@ -754,7 +754,7 @@ describe('MeasurementSet', () => {
             "formatMap": [
                 "id", "mean", "iterationCount", "sum", "squareSum", "markedOutlier",
                 "revisions",
-                "commitTime", "build", "buildTime", "buildNumber", "builder"
+                "commitTime", "build", "buildTime", "buildTag", "builder"
             ],
             "startTime": 1480636800000,
             "endTime": 1485820800000,
@@ -767,7 +767,7 @@ describe('MeasurementSet', () => {
         let builder;
         let webkit;
         beforeEach(() => {
-            builder = new Builder(7, {name: 'EFL Linux 64-bit Release WK2 (Perf)', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildNumber'});
+            builder = new Builder(7, {name: 'EFL Linux 64-bit Release WK2 (Perf)', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildTag'});
             webkit = new Repository(1, {name: 'WebKit', url: 'http://trac.webkit.org/changeset/$1'});
         });
 
@@ -816,7 +816,7 @@ describe('MeasurementSet', () => {
                 const build = point.build();
                 assert.equal(point.build(), build);
                 assert.equal(build.builder(), builder);
-                assert.equal(build.buildNumber(), 10877);
+                assert.equal(build.buildTag(), 10877);
                 const buildTime = build.buildTime();
                 assert(buildTime instanceof Date);
                 assert.equal(+buildTime, 1482413222311);
@@ -841,7 +841,7 @@ describe('MeasurementSet', () => {
 
                 const build = point.build();
                 assert.equal(build.builder(), builder);
-                assert.equal(build.buildNumber(), 10878);
+                assert.equal(build.buildTag(), 10878);
                 assert.equal(+build.buildTime(), 1482424992735);
 
                 assert.equal(point.time, commitTime);
@@ -854,35 +854,35 @@ describe('MeasurementSet', () => {
                 assert.equal(points[2].id, 26532275);
                 assert.equal(points[2].commitSet().revisionForRepository(webkit), '210102');
                 assert.equal(+points[2].build().buildTime(), 1482436041865);
-                assert.equal(points[2].build().buildNumber(), 10879);
+                assert.equal(points[2].build().buildTag(), 10879);
                 assert.equal(points[2].time, 1482431464371);
                 assert.equal(points[2].value, 134.2725);
 
                 assert.equal(points[3].id, 26547226);
                 assert.equal(points[3].commitSet().revisionForRepository(webkit), '210168');
                 assert.equal(+points[3].build().buildTime(), 1482852452143);
-                assert.equal(points[3].build().buildNumber(), 10902);
+                assert.equal(points[3].build().buildTag(), 10902);
                 assert.equal(points[3].time, 1482852412735);
                 assert.equal(points[3].value, 150.9625);
 
                 assert.equal(points[4].id, 26559915);
                 assert.equal(points[4].commitSet().revisionForRepository(webkit), '210222');
                 assert.equal(+points[4].build().buildTime(), 1483347926429);
-                assert.equal(points[4].build().buildNumber(), 10924);
+                assert.equal(points[4].build().buildTag(), 10924);
                 assert.equal(points[4].time, 1483347732051);
                 assert.equal(points[4].value, 141.72);
 
                 assert.equal(points[5].id, 26564388);
                 assert.equal(points[5].commitSet().revisionForRepository(webkit), '210231');
                 assert.equal(+points[5].build().buildTime(), 1483415426049);
-                assert.equal(points[5].build().buildNumber(), 10930);
+                assert.equal(points[5].build().buildTag(), 10930);
                 assert.equal(points[5].time, 1483412171531);
                 assert.equal(points[5].value, 138.13125);
 
                 assert.equal(points[6].id, 26568867);
                 assert.equal(points[6].commitSet().revisionForRepository(webkit), '210240');
                 assert.equal(+points[6].build().buildTime(), 1483469642993);
-                assert.equal(points[6].build().buildNumber(), 10935);
+                assert.equal(points[6].build().buildTag(), 10935);
                 assert.equal(points[6].time, 1483469584347);
                 assert.equal(points[6].value, 144.16);
             });
@@ -902,42 +902,42 @@ describe('MeasurementSet', () => {
                 assert.equal(points[0].id, 26530031);
                 assert.equal(points[0].commitSet().revisionForRepository(webkit), '210096');
                 assert.equal(+points[0].build().buildTime(), 1482413222311);
-                assert.equal(points[0].build().buildNumber(), 10877);
+                assert.equal(points[0].build().buildTag(), 10877);
                 assert.equal(points[0].time, 1482398562950);
                 assert.equal(points[0].value, 135.26375);
 
                 assert.equal(points[1].id, 26532275);
                 assert.equal(points[1].commitSet().revisionForRepository(webkit), '210102');
                 assert.equal(+points[1].build().buildTime(), 1482436041865);
-                assert.equal(points[1].build().buildNumber(), 10879);
+                assert.equal(points[1].build().buildTag(), 10879);
                 assert.equal(points[1].time, 1482431464371);
                 assert.equal(points[1].value, 134.2725);
 
                 assert.equal(points[2].id, 26547226);
                 assert.equal(points[2].commitSet().revisionForRepository(webkit), '210168');
                 assert.equal(+points[2].build().buildTime(), 1482852452143);
-                assert.equal(points[2].build().buildNumber(), 10902);
+                assert.equal(points[2].build().buildTag(), 10902);
                 assert.equal(points[2].time, 1482852412735);
                 assert.equal(points[2].value, 150.9625);
 
                 assert.equal(points[3].id, 26559915);
                 assert.equal(points[3].commitSet().revisionForRepository(webkit), '210222');
                 assert.equal(+points[3].build().buildTime(), 1483347926429);
-                assert.equal(points[3].build().buildNumber(), 10924);
+                assert.equal(points[3].build().buildTag(), 10924);
                 assert.equal(points[3].time, 1483347732051);
                 assert.equal(points[3].value, 141.72);
 
                 assert.equal(points[4].id, 26564388);
                 assert.equal(points[4].commitSet().revisionForRepository(webkit), '210231');
                 assert.equal(+points[4].build().buildTime(), 1483415426049);
-                assert.equal(points[4].build().buildNumber(), 10930);
+                assert.equal(points[4].build().buildTag(), 10930);
                 assert.equal(points[4].time, 1483412171531);
                 assert.equal(points[4].value, 138.13125);
 
                 assert.equal(points[5].id, 26568867);
                 assert.equal(points[5].commitSet().revisionForRepository(webkit), '210240');
                 assert.equal(+points[5].build().buildTime(), 1483469642993);
-                assert.equal(points[5].build().buildNumber(), 10935);
+                assert.equal(points[5].build().buildTag(), 10935);
                 assert.equal(points[5].time, 1483469584347);
                 assert.equal(points[5].value, 144.16);
             });
@@ -992,9 +992,9 @@ describe('MeasurementSet', () => {
         {
             var runId = startRunId;
             var buildId = 3400;
-            var buildNumber = 1;
+            var buildTag = 1;
             var makeRun = function (value, commitTime) {
-                return [runId++, value, 1, value, value, false, [], commitTime, commitTime + 10, buildId++, buildNumber++, MockModels.builder.id()];
+                return [runId++, value, 1, value, value, false, [], commitTime, commitTime + 10, buildId++, buildTag++, MockModels.builder.id()];
             }
 
             timeIncrement = Math.floor(timeIncrement);
@@ -1012,7 +1012,7 @@ describe('MeasurementSet', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues, 6400, 4000, 1000 / 50)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -1052,7 +1052,7 @@ describe('MeasurementSet', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(segmentableValuesWithSameValueInTheEnd, 6400, 4000, 1000 / 200)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -1083,7 +1083,7 @@ describe('MeasurementSet', () => {
             requests[0].resolve({
                 'clusterStart': 1000,
                 'clusterSize': 1000,
-                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                 'configurations': {current: makeSampleRuns(simpleSegmentableValues.slice(30), 6400, 4000, 1000 / 30)},
                 'startTime': 4000,
                 'endTime': 5000,
@@ -1115,7 +1115,7 @@ describe('MeasurementSet', () => {
                 requests[1].resolve({
                     'clusterStart': 1000,
                     'clusterSize': 1000,
-                    'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder'],
+                    'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions', 'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
                     'configurations': {current: makeSampleRuns(simpleSegmentableValues.slice(0, 30), 6500, 3000, 1000 / 30)},
                     'startTime': 3000,
                     'endTime': 4000,

@@ -7,29 +7,29 @@ class Builder extends LabeledObject {
         this._buildUrlTemplate = object.buildUrl;
     }
 
-    urlForBuild(buildNumber)
+    urlForBuild(buildTag)
     {
         if (!this._buildUrlTemplate)
             return null;
-        return this._buildUrlTemplate.replace(/\$builderName/g, this.name()).replace(/\$buildNumber/g, buildNumber);
+        return this._buildUrlTemplate.replace(/\$builderName/g, this.name()).replace(/\$buildTag/g, buildTag);
     }
 }
 
 class Build extends DataModelObject {
-    constructor(id, builder, buildNumber, buildTime)
+    constructor(id, builder, buildTag, buildTime)
     {
         console.assert(builder instanceof Builder);
         super(id);
         this._builder = builder;
-        this._buildNumber = buildNumber;
+        this._buildTag = buildTag;
         this._buildTime = new Date(buildTime);
     }
 
     builder() { return this._builder; }
-    buildNumber() { return this._buildNumber; }
+    buildTag() { return this._buildTag; }
     buildTime() { return this._buildTime; }
-    label() { return `Build ${this._buildNumber} on ${this._builder.label()}`; }
-    url() { return this._builder.urlForBuild(this._buildNumber); }
+    label() { return `Build ${this._buildTag} on ${this._builder.label()}`; }
+    url() { return this._builder.urlForBuild(this._buildTag); }
 }
 
 if (typeof module != 'undefined') {

@@ -10,7 +10,7 @@ describe("/admin/reprocess-report", function () {
     prepareServerTest(this);
 
     const simpleReport = [{
-        "buildNumber": "1986",
+        "buildTag": "1986",
         "buildTime": "2013-02-28T10:12:03",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -23,7 +23,7 @@ describe("/admin/reprocess-report", function () {
         }];
 
     const simpleReportWithRevisions = [{
-        "buildNumber": "1986",
+        "buildTag": "1986",
         "buildTime": "2013-02-28T10:12:03",
         "builderName": "someBuilder",
         "builderPassword": "somePassword",
@@ -71,10 +71,10 @@ describe("/admin/reprocess-report", function () {
             const builds = result[0];
             const reports = result[1];
             assert.equal(builds.length, 1);
-            assert.equal(builds[0]['number'], 1986);
+            assert.equal(builds[0]['tag'], 1986);
             assert.equal(reports.length, 1);
             reportId = reports[0]['id'];
-            assert.equal(reports[0]['build_number'], 1986);
+            assert.equal(reports[0]['build_tag'], 1986);
             return db.query('UPDATE reports SET report_build = NULL; DELETE FROM builds');
         }).then(() => {
             return db.selectAll('builds');
@@ -85,7 +85,7 @@ describe("/admin/reprocess-report", function () {
             return db.selectAll('builds');
         }).then((builds) => {
             assert.equal(builds.length, 1);
-            assert.equal(builds[0]['number'], 1986);
+            assert.equal(builds[0]['tag'], 1986);
         });
     });
 

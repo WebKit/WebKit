@@ -9,7 +9,7 @@ const prepareServerTest = require('./resources/common-operations.js').prepareSer
 const assertThrows = require('./resources/common-operations.js').assertThrows;
 
 const reportWithRevision = [{
-    "buildNumber": "124",
+    "buildTag": "124",
     "buildTime": "2015-10-27T15:34:51",
     "revisions": {
         "WebKit": {
@@ -34,7 +34,7 @@ const reportWithRevision = [{
     }}];
 
 const reportWithRevisionNoTimestamp = [{
-    "buildNumber": "124",
+    "buildTag": "124",
     "buildTime": "2015-10-27T15:34:51",
     "revisions": {
         "WebKit": {
@@ -58,7 +58,7 @@ const reportWithRevisionNoTimestamp = [{
     }}];
 
 const anotherReportWithRevision = [{
-    "buildNumber": "125",
+    "buildTag": "125",
     "buildTime": "2015-10-27T17:27:41",
     "revisions": {
         "WebKit": {
@@ -83,7 +83,7 @@ const anotherReportWithRevision = [{
     }}];
 
 const anotherReportWithRevisionNoTimestamp = [{
-    "buildNumber": "125",
+    "buildTag": "125",
     "buildTime": "2015-10-27T17:27:41",
     "revisions": {
         "WebKit": {
