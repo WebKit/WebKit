@@ -37,6 +37,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 @interface WKWebView (Details)
 - (WKPageRef)_pageForTesting;
@@ -323,6 +324,13 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
+    BOOL shouldUnhideSelectionView = NO;
+    WeakObjCPtr<UIView> selectionView = [platformView() valueForKeyPath:@"_currentContentView.interactionAssistant.selectionView"];
+    if (![selectionView isHidden]) {
+        shouldUnhideSelectionView = YES;
+        [selectionView setHidden:YES];
+    }
+
 #if HAVE(IOSURFACE)
     __block bool isDone = false;
     __block RetainPtr<CGImageRef> result;
@@ -342,8 +350,6 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     }];
     while (!isDone)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
-    return result;
-
 #else
     CGFloat deviceScaleFactor = 2; // FIXME: hardcode 2x for now. In future we could respect 1x and 3x as we do on Mac.
     CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
@@ -360,13 +366,15 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     size_t rowBytes = CARenderServerGetBufferRowBytes(buffer);
 
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(buffer, data, CARenderServerGetBufferDataSize(buffer), releaseDataProviderData));
+    auto provider = adoptCF(CGDataProviderCreateWithData(buffer, data, CARenderServerGetBufferDataSize(buffer), releaseDataProviderData));
     
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
-    RELEASE_ASSERT(cgImage);
-
-    return cgImage;
+    auto result = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
+    RELEASE_ASSERT(result);
 #endif
+    if (shouldUnhideSelectionView)
+        [selectionView setHidden:NO];
+
+    return result;
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 

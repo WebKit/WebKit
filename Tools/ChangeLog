@@ -1,3 +1,33 @@
+2019-10-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] imported/mozilla/svg/text/textpath-selection.svg is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203247
+        <rdar://problem/52124292>
+
+        Reviewed by Tim Horton.
+
+        Roughly 1 in 3000 runs, this test fails due to an image diff, where only the expectation or test page shows a
+        native selection view on iOS. Both the test and expectation create DOM selections on the page, which is then
+        followed by a native selection view on the page at some point in the future.
+
+        This "point in the future" depends on both WebKit implementation details (i.e. when the next remote layer tree
+        commit happens) as well as UIKit implementation details (for example, many methods in UITextSelectionView and
+        UIWKTextInteractionAssistant will schedule changes to UIView geometry using a runloop timer, instead of applying
+        the updates immediately). Because of the latter, it's impractical to expect native selection views on iOS to
+        always appear or not appear after finishing this layout test.
+
+        To mitigate this rare source of flakiness, we hide these native text selection views when snapshotting iOS
+        WKWebViews for the purposes of ref and pixel testing.
+
+        Note that we still have a considerable number of layout tests that inspect these native selection views on iOS,
+        but they work by waiting until the native selection views reach a particular state (e.g. by polling for the
+        number of ranged selection subviews, or the presence of selection handles, or waiting for a caret selection with
+        a given geometry, etc.), which ensures that they are robust against subtle changes to the timing of selection
+        updates in the UI process.
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2019-10-23  Chris Dumez  <cdumez@apple.com>
 
         WebBackForwardCache::removeEntriesMatching() may re-enter and crash
