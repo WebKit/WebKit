@@ -95,7 +95,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const RuleSet
     ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
 }
 
-StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
+const MatchResult& ElementRuleCollector::matchResult() const
 {
     ASSERT(m_mode == SelectorChecker::Mode::ResolvingStyle);
     return m_result;
@@ -124,14 +124,8 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
     if (!propertySet)
         return;
 
-    if (m_result.ranges.lastAuthorRule != -1)
-        ++m_result.ranges.lastAuthorRule;
-    else {
-        m_result.ranges.lastAuthorRule = m_result.matchedProperties().size();
-        m_result.ranges.firstAuthorRule = m_result.ranges.lastAuthorRule;
-    }
+    addMatchedProperties({ propertySet }, DeclarationOrigin::Author);
 
-    m_result.addMatchedProperties(*propertySet);
     if (!isCacheable)
         m_result.isCacheable = false;
 }
@@ -178,22 +172,6 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
     if (m_matchedRules.size() <= m_matchedRuleTransferIndex)
         return;
 
-    auto rangeForDeclarationOrigin = [&]() {
-        switch (declarationOrigin) {
-        case DeclarationOrigin::UserAgent: return m_result.ranges.UARuleRange();
-        case DeclarationOrigin::Author: return m_result.ranges.authorRuleRange();
-        case DeclarationOrigin::User: return m_result.ranges.userRuleRange();
-        }
-        ASSERT_NOT_REACHED();
-        return m_result.ranges.authorRuleRange();
-    }();
-
-    // FIXME: Range updating should be done by MatchResults type
-    // FIXME: MatchResults shouldn't be in StyleResolver namespace.
-    bool updateRanges = m_mode != SelectorChecker::Mode::CollectingRules;
-    if (updateRanges && rangeForDeclarationOrigin.firstRuleIndex == -1)
-        rangeForDeclarationOrigin.firstRuleIndex = m_result.matchedRules.size();
-
     for (; m_matchedRuleTransferIndex < m_matchedRules.size(); ++m_matchedRuleTransferIndex) {
         auto& matchedRule = m_matchedRules[m_matchedRuleTransferIndex];
         if (fromScope && matchedRule.styleScopeOrdinal < *fromScope)
@@ -204,11 +182,13 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
             continue;
         }
 
-        m_result.addMatchedProperties(matchedRule.ruleData->rule()->properties(), matchedRule.ruleData->rule(), matchedRule.ruleData->linkMatchType(), matchedRule.ruleData->propertyWhitelistType(), matchedRule.styleScopeOrdinal);
+        addMatchedProperties({
+            &matchedRule.ruleData->rule()->properties(),
+            static_cast<uint16_t>(matchedRule.ruleData->linkMatchType()),
+            static_cast<uint16_t>(matchedRule.ruleData->propertyWhitelistType()),
+            matchedRule.styleScopeOrdinal
+        }, declarationOrigin);
     }
-
-    if (updateRanges)
-        rangeForDeclarationOrigin.lastRuleIndex = m_result.matchedRules.size() - 1;
 }
 
 void ElementRuleCollector::matchAuthorRules()
@@ -586,9 +566,10 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
 
         if (is<HTMLElement>(styledElement)) {
             bool isAuto;
-            TextDirection textDirection = downcast<HTMLElement>(styledElement).directionalityIfhasDirAutoAttribute(isAuto);
+            auto textDirection = downcast<HTMLElement>(styledElement).directionalityIfhasDirAutoAttribute(isAuto);
+            auto& properties = textDirection == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration();
             if (isAuto)
-                m_result.addMatchedProperties(textDirection == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration());
+                addMatchedProperties({ &properties }, DeclarationOrigin::Author);
         }
     }
     
@@ -631,6 +612,61 @@ bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet* ruleSet)
     collectMatchingRules(MatchRequest(ruleSet));
 
     return !m_matchedRules.isEmpty();
+}
+
+void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedProperties, DeclarationOrigin declarationOrigin)
+{
+    // FIXME: This should be moved to the matched properties cache code.
+    auto computeIsCacheable = [&] {
+        if (!m_result.isCacheable)
+            return false;
+
+        if (matchedProperties.styleScopeOrdinal != Style::ScopeOrdinal::Element)
+            return false;
+
+        auto& properties = *matchedProperties.properties;
+        for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
+            // Currently the property cache only copy the non-inherited values and resolve
+            // the inherited ones.
+            // Here we define some exception were we have to resolve some properties that are not inherited
+            // by default. If those exceptions become too common on the web, it should be possible
+            // to build a list of exception to resolve instead of completely disabling the cache.
+            StyleProperties::PropertyReference current = properties.propertyAt(i);
+            if (current.isInherited())
+                continue;
+
+            // If the property value is explicitly inherited, we need to apply further non-inherited properties
+            // as they might override the value inherited here. For this reason we don't allow declarations with
+            // explicitly inherited properties to be cached.
+            const CSSValue& value = *current.value();
+            if (value.isInheritedValue())
+                return false;
+
+            // The value currentColor has implicitely the same side effect. It depends on the value of color,
+            // which is an inherited value, making the non-inherited property implicitly inherited.
+            if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueCurrentcolor)
+                return false;
+
+            if (value.hasVariableReferences())
+                return false;
+        }
+
+        return true;
+    };
+
+    m_result.isCacheable = computeIsCacheable();
+
+    switch (declarationOrigin) {
+    case DeclarationOrigin::UserAgent:
+        m_result.userAgentDeclarations.append(WTFMove(matchedProperties));
+        break;
+    case DeclarationOrigin::User:
+        m_result.userDeclarations.append(WTFMove(matchedProperties));
+        break;
+    case DeclarationOrigin::Author:
+        m_result.authorDeclarations.append(WTFMove(matchedProperties));
+        break;
+    }
 }
 
 } // namespace WebCore

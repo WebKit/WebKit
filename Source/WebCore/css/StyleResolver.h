@@ -25,6 +25,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSToStyleMap.h"
 #include "DocumentRuleSets.h"
+#include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
@@ -99,18 +100,6 @@ enum class CascadeLevel: uint8_t {
     UserLevel
 };
 
-class PseudoStyleRequest {
-public:
-    PseudoStyleRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = WTF::nullopt)
-        : pseudoId(pseudoId)
-        , scrollbarState(scrollbarState)
-    {
-    }
-
-    PseudoId pseudoId;
-    Optional<StyleScrollbarState> scrollbarState;
-};
-
 struct ElementStyle {
     ElementStyle(std::unique_ptr<RenderStyle> renderStyle, std::unique_ptr<Style::Relations> relations = { })
         : renderStyle(WTFMove(renderStyle))
@@ -175,8 +164,6 @@ public:
     Vector<RefPtr<StyleRule>> pseudoStyleRulesForElement(const Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
 public:
-    struct MatchResult;
-
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, std::unique_ptr<RenderStyle>);
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
@@ -221,48 +208,6 @@ public:
     void clearCachedPropertiesAffectedByViewportUnits();
 
     bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
-
-    struct RuleRange {
-        RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
-        int& firstRuleIndex;
-        int& lastRuleIndex;
-    };
-
-    struct MatchRanges {
-        MatchRanges() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
-        int firstUARule;
-        int lastUARule;
-        int firstAuthorRule;
-        int lastAuthorRule;
-        int firstUserRule;
-        int lastUserRule;
-        RuleRange UARuleRange() { return RuleRange(firstUARule, lastUARule); }
-        RuleRange authorRuleRange() { return RuleRange(firstAuthorRule, lastAuthorRule); }
-        RuleRange userRuleRange() { return RuleRange(firstUserRule, lastUserRule); }
-    };
-
-    struct MatchedProperties {
-        MatchedProperties();
-        ~MatchedProperties();
-        
-        RefPtr<StyleProperties> properties;
-        uint16_t linkMatchType;
-        uint16_t whitelistType;
-        Style::ScopeOrdinal styleScopeOrdinal;
-    };
-
-    struct MatchResult {
-        MatchResult() : isCacheable(true) { }
-        Vector<StyleRule*, 64> matchedRules;
-        MatchRanges ranges;
-        bool isCacheable;
-
-        const Vector<MatchedProperties, 64>& matchedProperties() const { return m_matchedProperties; }
-
-        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone, Style::ScopeOrdinal = Style::ScopeOrdinal::Element);
-    private:
-        Vector<MatchedProperties, 64> m_matchedProperties;
-    };
     
     class CascadedProperties {
         WTF_MAKE_FAST_ALLOCATED;
@@ -281,8 +226,8 @@ public:
         bool hasProperty(CSSPropertyID) const;
         Property& property(CSSPropertyID);
 
-        void addNormalMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
-        void addImportantMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
+        void addNormalMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
+        void addImportantMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
 
         void applyDeferredProperties(StyleResolver&, ApplyCascadedPropertyState&);
 
@@ -291,7 +236,7 @@ public:
         Property customProperty(const String&) const;
         
     private:
-        void addMatch(const MatchResult&, unsigned index, bool isImportant, bool inheritedOnly);
+        void addMatch(const MatchedProperties&, CascadeLevel, bool isImportant, bool inheritedOnly);
         void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
         void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
         static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
@@ -334,14 +279,6 @@ private:
     inline void applyCascadedPropertiesImpl(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
 
     void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
-
-    void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
-    void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
-
-    bool isLeftPage(int pageIndex) const;
-    bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
-    bool isFirstPage(int pageIndex) const;
-    String pageName(int pageIndex) const;
 
     DocumentRuleSets m_ruleSets;
 
@@ -477,20 +414,22 @@ private:
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
-    static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
+    static unsigned computeMatchedPropertiesHash(const MatchResult&);
     struct MatchedPropertiesCacheItem {
-        Vector<MatchedProperties> matchedProperties;
-        MatchRanges ranges;
+        Vector<MatchedProperties> userAgentDeclarations;
+        Vector<MatchedProperties> userDeclarations;
+        Vector<MatchedProperties> authorDeclarations;
         std::unique_ptr<RenderStyle> renderStyle;
         std::unique_ptr<RenderStyle> parentRenderStyle;
         
         MatchedPropertiesCacheItem(const MatchResult& matchResult, const RenderStyle* style, const RenderStyle* parentStyle)
-            : ranges(matchResult.ranges)
-            , renderStyle(RenderStyle::clonePtr(*style))
+            : renderStyle(RenderStyle::clonePtr(*style))
             , parentRenderStyle(RenderStyle::clonePtr(*parentStyle))
         {
             // Assign rather than copy-construct so we only allocate as much vector capacity as needed.
-            matchedProperties = matchResult.matchedProperties();
+            userAgentDeclarations = matchResult.userAgentDeclarations;
+            userDeclarations = matchResult.userDeclarations;
+            authorDeclarations = matchResult.authorDeclarations;
         }
         MatchedPropertiesCacheItem() = default;
     };
@@ -531,11 +470,6 @@ private:
     bool m_matchAuthorAndUserStyles { true };
     // See if we still have crashes where StyleResolver gets deleted early.
     bool m_isDeleted { false };
-
-    friend bool operator==(const MatchedProperties&, const MatchedProperties&);
-    friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
-    friend bool operator==(const MatchRanges&, const MatchRanges&);
-    friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
 
 // State to use when applying properties, to keep track of which custom and high-priority
@@ -543,7 +477,7 @@ private:
 struct ApplyCascadedPropertyState {
     StyleResolver* styleResolver;
     StyleResolver::CascadedProperties* cascade;
-    const StyleResolver::MatchResult* matchResult;
+    const MatchResult* matchResult;
     Bitmap<numCSSProperties> appliedProperties = { };
     HashSet<String> appliedCustomProperties = { };
     Bitmap<numCSSProperties> inProgressProperties = { };

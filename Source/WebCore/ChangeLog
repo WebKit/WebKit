@@ -1,3 +1,66 @@
+2019-10-24  Antti Koivisto  <antti@apple.com>
+
+        Move MatchResult and related types out of StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=203252
+
+        Reviewed by Zalan Bujtas.
+
+        Reverse the dependency between StyleResolver and ElementRuleCollector so that the former depends on the latter.
+        This makes the code easier to understand and enables further cleanups.
+
+        The patch also gets rid of the confusing RuleRange objects in fovor of splitting declarations from different cascade levels to separate vectors.
+        The desired cascade level is indicated with an enum instead of a range.
+
+        There is also some general modernization.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchResult const):
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+        (WebCore::ElementRuleCollector::matchAllRules):
+        (WebCore::ElementRuleCollector::addMatchedProperties):
+        (WebCore::ElementRuleCollector::matchedResult): Deleted.
+        * css/ElementRuleCollector.h:
+        (WebCore::PseudoStyleRequest::PseudoStyleRequest):
+        (WebCore::MatchResult::isEmpty const):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * css/PageRuleCollector.cpp:
+        (WebCore::PageRuleCollector::matchPageRules):
+        * css/PageRuleCollector.h:
+        (WebCore::PageRuleCollector::matchResult const):
+        (WebCore::PageRuleCollector::matchedResult): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::computeMatchedPropertiesHash):
+        (WebCore::StyleResolver::findFromMatchedPropertiesCache):
+        (WebCore::extractDirectionAndWritingMode):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::cascadedPropertiesForRollback):
+        (WebCore::StyleResolver::CascadedProperties::addMatch):
+        (WebCore::declarationsForCascadeLevel):
+        (WebCore::StyleResolver::CascadedProperties::addNormalMatches):
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties): Deleted.
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        (WebCore::cascadeLevelForIndex): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::MatchedPropertiesCacheItem::MatchedPropertiesCacheItem):
+        (WebCore::PseudoStyleRequest::PseudoStyleRequest): Deleted.
+        (WebCore::StyleResolver::RuleRange::RuleRange): Deleted.
+        (WebCore::StyleResolver::MatchRanges::MatchRanges): Deleted.
+        (WebCore::StyleResolver::MatchRanges::UARuleRange): Deleted.
+        (WebCore::StyleResolver::MatchRanges::authorRuleRange): Deleted.
+        (WebCore::StyleResolver::MatchRanges::userRuleRange): Deleted.
+        (WebCore::StyleResolver::MatchResult::MatchResult): Deleted.
+        (WebCore::StyleResolver::MatchResult::matchedProperties const): Deleted.
+        (WebCore::StyleResolver::isRightPage const): Deleted.
+
 2019-10-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to inject "bootstrap" JavaScript into the page as the first script executed

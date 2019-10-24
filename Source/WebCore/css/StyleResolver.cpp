@@ -119,7 +119,7 @@ using namespace HTMLNames;
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
-static void extractDirectionAndWritingMode(const RenderStyle&, const StyleResolver::MatchResult&, TextDirection&, WritingMode&);
+static void extractDirectionAndWritingMode(const RenderStyle&, const MatchResult&, TextDirection&, WritingMode&);
 
 inline void StyleResolver::State::cacheBorderAndBackground()
 {
@@ -137,54 +137,6 @@ inline void StyleResolver::State::clear()
     m_parentStyle = nullptr;
     m_ownedParentStyle = nullptr;
     m_cssToLengthConversionData = CSSToLengthConversionData();
-}
-
-void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType, Style::ScopeOrdinal styleScopeOrdinal)
-{
-    m_matchedProperties.grow(m_matchedProperties.size() + 1);
-    StyleResolver::MatchedProperties& newProperties = m_matchedProperties.last();
-    newProperties.properties = const_cast<StyleProperties*>(&properties);
-    newProperties.linkMatchType = linkMatchType;
-    newProperties.whitelistType = propertyWhitelistType;
-    newProperties.styleScopeOrdinal = styleScopeOrdinal;
-    matchedRules.append(rule);
-
-    if (styleScopeOrdinal != Style::ScopeOrdinal::Element)
-        isCacheable = false;
-
-    if (isCacheable) {
-        for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
-            // Currently the property cache only copy the non-inherited values and resolve
-            // the inherited ones.
-            // Here we define some exception were we have to resolve some properties that are not inherited
-            // by default. If those exceptions become too common on the web, it should be possible
-            // to build a list of exception to resolve instead of completely disabling the cache.
-
-            StyleProperties::PropertyReference current = properties.propertyAt(i);
-            if (!current.isInherited()) {
-                // If the property value is explicitly inherited, we need to apply further non-inherited properties
-                // as they might override the value inherited here. For this reason we don't allow declarations with
-                // explicitly inherited properties to be cached.
-                const CSSValue& value = *current.value();
-                if (value.isInheritedValue()) {
-                    isCacheable = false;
-                    break;
-                }
-
-                // The value currentColor has implicitely the same side effect. It depends on the value of color,
-                // which is an inherited value, making the non-inherited property implicitly inherited.
-                if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueCurrentcolor) {
-                    isCacheable = false;
-                    break;
-                }
-
-                if (value.hasVariableReferences()) {
-                    isCacheable = false;
-                    break;
-                }
-            }
-        }
-    }
 }
 
 StyleResolver::StyleResolver(Document& document)
@@ -275,20 +227,18 @@ void StyleResolver::sweepMatchedPropertiesCache()
     // Look for cache entries containing a style declaration with a single ref and remove them.
     // This may happen when an element attribute mutation causes it to generate a new inlineStyle()
     // or presentationAttributeStyle(), potentially leaving this cache with the last ref on the old one.
-    Vector<unsigned, 16> toRemove;
-    MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.begin();
-    MatchedPropertiesCache::iterator end = m_matchedPropertiesCache.end();
-    for (; it != end; ++it) {
-        Vector<MatchedProperties>& matchedProperties = it->value.matchedProperties;
-        for (size_t i = 0; i < matchedProperties.size(); ++i) {
-            if (matchedProperties[i].properties->hasOneRef()) {
-                toRemove.append(it->key);
-                break;
-            }
+    auto hasOneRef = [](auto& declarations) {
+        for (auto& matchedProperties : declarations) {
+            if (matchedProperties.properties->hasOneRef())
+                return true;
         }
-    }
-    for (size_t i = 0; i < toRemove.size(); ++i)
-        m_matchedPropertiesCache.remove(toRemove[i]);
+        return false;
+    };
+
+    m_matchedPropertiesCache.removeIf([&](auto& keyValue) {
+        auto& entry = keyValue.value;
+        return hasOneRef(entry.userAgentDeclarations) || hasOneRef(entry.userDeclarations) || hasOneRef(entry.authorDeclarations);
+    });
 
     m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
 }
@@ -389,7 +339,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     auto elementStyleRelations = Style::commitRelationsToRenderStyle(style, element, collector.styleRelations());
 
-    applyMatchedProperties(collector.matchedResult(), element);
+    applyMatchedProperties(collector.matchResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(*state.style(), *state.parentStyle(), parentBoxStyle, &element);
@@ -407,7 +357,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     RELEASE_ASSERT(!m_isDeleted);
 
     MatchResult result;
-    result.addMatchedProperties(keyframe->properties());
+    result.authorDeclarations.append({ &keyframe->properties() });
 
     ASSERT(!m_state.style());
 
@@ -424,7 +374,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
     CascadedProperties cascade(direction, writingMode);
-    cascade.addNormalMatches(result, 0, result.matchedProperties().size() - 1);
+    cascade.addNormalMatches(result, CascadeLevel::AuthorLevel);
 
     ApplyCascadedPropertyState applyState { this, &cascade, &result };
     applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
@@ -590,12 +540,12 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
 
     ASSERT(!collector.matchedPseudoElementIds());
 
-    if (collector.matchedResult().matchedProperties().isEmpty())
+    if (collector.matchResult().isEmpty())
         return nullptr;
 
     state.style()->setStyleType(pseudoStyleRequest.pseudoId);
 
-    applyMatchedProperties(collector.matchedResult(), element);
+    applyMatchedProperties(collector.matchResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(*state.style(), *m_state.parentStyle(), nullptr, nullptr);
@@ -623,14 +573,14 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     PageRuleCollector collector(m_state, m_ruleSets);
     collector.matchAllPageRules(pageIndex);
 
-    MatchResult& result = collector.matchedResult();
+    auto& result = collector.matchResult();
 
     TextDirection direction;
     WritingMode writingMode;
     extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
 
     CascadedProperties cascade(direction, writingMode);
-    cascade.addNormalMatches(result, 0, result.matchedProperties().size() - 1);
+    cascade.addNormalMatches(result, CascadeLevel::AuthorLevel);
 
     ApplyCascadedPropertyState applyState { this, &cascade, &result };
     applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
@@ -1319,34 +1269,11 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::meterTag;
 }
 
-unsigned StyleResolver::computeMatchedPropertiesHash(const MatchedProperties* properties, unsigned size)
+unsigned StyleResolver::computeMatchedPropertiesHash(const MatchResult& matchResult)
 {
-    return StringHasher::hashMemory(properties, sizeof(MatchedProperties) * size);
-}
-
-bool operator==(const StyleResolver::MatchRanges& a, const StyleResolver::MatchRanges& b)
-{
-    return a.firstUARule == b.firstUARule
-        && a.lastUARule == b.lastUARule
-        && a.firstAuthorRule == b.firstAuthorRule
-        && a.lastAuthorRule == b.lastAuthorRule
-        && a.firstUserRule == b.firstUserRule
-        && a.lastUserRule == b.lastUserRule;
-}
-
-bool operator!=(const StyleResolver::MatchRanges& a, const StyleResolver::MatchRanges& b)
-{
-    return !(a == b);
-}
-
-bool operator==(const StyleResolver::MatchedProperties& a, const StyleResolver::MatchedProperties& b)
-{
-    return a.properties == b.properties && a.linkMatchType == b.linkMatchType;
-}
-
-bool operator!=(const StyleResolver::MatchedProperties& a, const StyleResolver::MatchedProperties& b)
-{
-    return !(a == b);
+    return StringHasher::hashMemory(matchResult.userAgentDeclarations.data(), sizeof(MatchedProperties) * matchResult.userAgentDeclarations.size())
+        ^ StringHasher::hashMemory(matchResult.userDeclarations.data(), sizeof(MatchedProperties) * matchResult.userDeclarations.size())
+        ^ StringHasher::hashMemory(matchResult.authorDeclarations.data(), sizeof(MatchedProperties) * matchResult.authorDeclarations.size());
 }
 
 const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedPropertiesCache(unsigned hash, const MatchResult& matchResult)
@@ -1356,17 +1283,11 @@ const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedP
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.find(hash);
     if (it == m_matchedPropertiesCache.end())
         return nullptr;
-    MatchedPropertiesCacheItem& cacheItem = it->value;
 
-    size_t size = matchResult.matchedProperties().size();
-    if (size != cacheItem.matchedProperties.size())
+    auto& cacheItem = it->value;
+    if (matchResult.userAgentDeclarations != cacheItem.userAgentDeclarations || matchResult.userDeclarations != cacheItem.userDeclarations || matchResult.authorDeclarations != cacheItem.authorDeclarations)
         return nullptr;
-    for (size_t i = 0; i < size; ++i) {
-        if (matchResult.matchedProperties()[i] != cacheItem.matchedProperties[i])
-            return nullptr;
-    }
-    if (cacheItem.ranges != matchResult.ranges)
-        return nullptr;
+
     return &cacheItem;
 }
 
@@ -1423,7 +1344,7 @@ static bool isCacheableInMatchedPropertiesCache(const Element& element, const Re
     return true;
 }
 
-void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolver::MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
+void extractDirectionAndWritingMode(const RenderStyle& style, const MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
 {
     direction = style.direction();
     writingMode = style.writingMode();
@@ -1431,26 +1352,28 @@ void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolve
     bool hadImportantWritingMode = false;
     bool hadImportantDirection = false;
 
-    for (const auto& matchedProperties : matchResult.matchedProperties()) {
-        for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
-            auto property = matchedProperties.properties->propertyAt(i);
-            if (!property.value()->isPrimitiveValue())
-                continue;
-            switch (property.id()) {
-            case CSSPropertyWritingMode:
-                if (!hadImportantWritingMode || property.isImportant()) {
-                    writingMode = downcast<CSSPrimitiveValue>(*property.value());
-                    hadImportantWritingMode = property.isImportant();
+    for (auto* matchedDeclarations : { &matchResult.userAgentDeclarations, &matchResult.userDeclarations, &matchResult.authorDeclarations }) {
+        for (const auto& matchedProperties : *matchedDeclarations) {
+            for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
+                auto property = matchedProperties.properties->propertyAt(i);
+                if (!property.value()->isPrimitiveValue())
+                    continue;
+                switch (property.id()) {
+                case CSSPropertyWritingMode:
+                    if (!hadImportantWritingMode || property.isImportant()) {
+                        writingMode = downcast<CSSPrimitiveValue>(*property.value());
+                        hadImportantWritingMode = property.isImportant();
+                    }
+                    break;
+                case CSSPropertyDirection:
+                    if (!hadImportantDirection || property.isImportant()) {
+                        direction = downcast<CSSPrimitiveValue>(*property.value());
+                        hadImportantDirection = property.isImportant();
+                    }
+                    break;
+                default:
+                    break;
                 }
-                break;
-            case CSSPropertyDirection:
-                if (!hadImportantDirection || property.isImportant()) {
-                    direction = downcast<CSSPrimitiveValue>(*property.value());
-                    hadImportantDirection = property.isImportant();
-                }
-                break;
-            default:
-                break;
             }
         }
     }
@@ -1459,7 +1382,7 @@ void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolve
 void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
 {
     State& state = m_state;
-    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties().data(), matchResult.matchedProperties().size()) : 0;
+    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult) : 0;
     bool applyInheritedOnly = false;
     const MatchedPropertiesCacheItem* cacheItem = nullptr;
     if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))
@@ -1493,8 +1416,8 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
         CascadedProperties cascade(direction, writingMode);
-        cascade.addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-        cascade.addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+        cascade.addNormalMatches(matchResult, CascadeLevel::UserAgentLevel, applyInheritedOnly);
+        cascade.addImportantMatches(matchResult, CascadeLevel::UserAgentLevel, applyInheritedOnly);
 
         ApplyCascadedPropertyState applyState { this, &cascade, &matchResult };
 
@@ -1520,10 +1443,12 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     }
 
     CascadedProperties cascade(direction, writingMode);
-    cascade.addNormalMatches(matchResult, 0, matchResult.matchedProperties().size() - 1, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+    cascade.addNormalMatches(matchResult, CascadeLevel::UserAgentLevel, applyInheritedOnly);
+    cascade.addNormalMatches(matchResult, CascadeLevel::UserLevel, applyInheritedOnly);
+    cascade.addNormalMatches(matchResult, CascadeLevel::AuthorLevel, applyInheritedOnly);
+    cascade.addImportantMatches(matchResult, CascadeLevel::AuthorLevel, applyInheritedOnly);
+    cascade.addImportantMatches(matchResult, CascadeLevel::UserLevel, applyInheritedOnly);
+    cascade.addImportantMatches(matchResult, CascadeLevel::UserAgentLevel, applyInheritedOnly);
 
     ApplyCascadedPropertyState applyState { this, &cascade, &matchResult };
 
@@ -1719,10 +1644,10 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         auto newAuthorRollback(makeUnique<CascadedProperties>(direction, writingMode));
 
         // This special rollback cascade contains UA rules and user rules but no author rules.
-        newAuthorRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
-        newAuthorRollback->addNormalMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
-        newAuthorRollback->addImportantMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
-        newAuthorRollback->addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
+        newAuthorRollback->addNormalMatches(matchResult, CascadeLevel::UserAgentLevel, false);
+        newAuthorRollback->addNormalMatches(matchResult, CascadeLevel::UserLevel, false);
+        newAuthorRollback->addImportantMatches(matchResult, CascadeLevel::UserLevel, false);
+        newAuthorRollback->addImportantMatches(matchResult, CascadeLevel::UserAgentLevel, false);
 
         state().setAuthorRollback(newAuthorRollback);
         return state().authorRollback();
@@ -1736,8 +1661,8 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         auto newUserRollback(makeUnique<CascadedProperties>(direction, writingMode));
 
         // This special rollback cascade contains only UA rules.
-        newUserRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
-        newUserRollback->addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
+        newUserRollback->addNormalMatches(matchResult, CascadeLevel::UserAgentLevel, false);
+        newUserRollback->addImportantMatches(matchResult, CascadeLevel::UserAgentLevel, false);
 
         state().setUserRollback(newUserRollback);
         return state().userRollback();
@@ -2210,10 +2135,6 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
     return true;
 }
 
-inline StyleResolver::MatchedProperties::MatchedProperties() = default;
-
-StyleResolver::MatchedProperties::~MatchedProperties() = default;
-
 StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, WritingMode writingMode)
     : m_direction(direction)
     , m_writingMode(writingMode)
@@ -2299,22 +2220,11 @@ void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& 
     m_deferredProperties.append(property);
 }
 
-static CascadeLevel cascadeLevelForIndex(const StyleResolver::MatchResult& matchResult, int index)
-{
-    if (index >= matchResult.ranges.firstUARule && index <= matchResult.ranges.lastUARule)
-        return CascadeLevel::UserAgentLevel;
-    if (index >= matchResult.ranges.firstUserRule && index <= matchResult.ranges.lastUserRule)
-        return CascadeLevel::UserLevel;
-    return CascadeLevel::AuthorLevel;
-}
 
-void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult, unsigned index, bool isImportant, bool inheritedOnly)
+void StyleResolver::CascadedProperties::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool isImportant, bool inheritedOnly)
 {
-    auto& matchedProperties = matchResult.matchedProperties()[index];
     auto& styleProperties = *matchedProperties.properties;
-
     auto propertyWhitelistType = static_cast<PropertyWhitelistType>(matchedProperties.whitelistType);
-    auto cascadeLevel = cascadeLevelForIndex(matchResult, index);
 
     for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
         auto current = styleProperties.propertyAt(i);
@@ -2342,13 +2252,22 @@ void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult,
     }
 }
 
-void StyleResolver::CascadedProperties::addNormalMatches(const MatchResult& matchResult, int startIndex, int endIndex, bool inheritedOnly)
-{
-    if (startIndex == -1)
-        return;
 
-    for (int i = startIndex; i <= endIndex; ++i)
-        addMatch(matchResult, i, false, inheritedOnly);
+static auto& declarationsForCascadeLevel(const MatchResult& matchResult, CascadeLevel cascadeLevel)
+{
+    switch (cascadeLevel) {
+    case CascadeLevel::UserAgentLevel: return matchResult.userAgentDeclarations;
+    case CascadeLevel::UserLevel: return matchResult.userDeclarations;
+    case CascadeLevel::AuthorLevel: return matchResult.authorDeclarations;
+    }
+    ASSERT_NOT_REACHED();
+    return matchResult.authorDeclarations;
+}
+
+void StyleResolver::CascadedProperties::addNormalMatches(const MatchResult& matchResult, CascadeLevel cascadeLevel, bool inheritedOnly)
+{
+    for (auto& matchedDeclarations : declarationsForCascadeLevel(matchResult, cascadeLevel))
+        addMatch(matchedDeclarations, cascadeLevel, false, inheritedOnly);
 }
 
 static bool hasImportantProperties(const StyleProperties& properties)
@@ -2360,20 +2279,19 @@ static bool hasImportantProperties(const StyleProperties& properties)
     return false;
 }
 
-void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& matchResult, int startIndex, int endIndex, bool inheritedOnly)
+void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& matchResult, CascadeLevel cascadeLevel, bool inheritedOnly)
 {
-    if (startIndex == -1)
-        return;
-
     struct IndexAndOrdinal {
-        int index;
+        unsigned index;
         Style::ScopeOrdinal ordinal;
     };
     Vector<IndexAndOrdinal> importantMatches;
     bool hasMatchesFromOtherScopes = false;
 
-    for (int i = startIndex; i <= endIndex; ++i) {
-        const MatchedProperties& matchedProperties = matchResult.matchedProperties()[i];
+    auto& matchedDeclarations = declarationsForCascadeLevel(matchResult, cascadeLevel);
+
+    for (unsigned i = 0; i < matchedDeclarations.size(); ++i) {
+        const MatchedProperties& matchedProperties = matchedDeclarations[i];
 
         if (!hasImportantProperties(*matchedProperties.properties))
             continue;
@@ -2396,7 +2314,7 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
     }
 
     for (auto& match : importantMatches)
-        addMatch(matchResult, match.index, true, inheritedOnly);
+        addMatch(matchedDeclarations[match.index], cascadeLevel, true, inheritedOnly);
 }
 
 void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& resolver, ApplyCascadedPropertyState& applyState)

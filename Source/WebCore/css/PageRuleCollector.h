@@ -36,7 +36,7 @@ public:
         , m_ruleSets(ruleSets) { }
 
     void matchAllPageRules(int pageIndex);
-    StyleResolver::MatchResult& matchedResult() { return m_result; }
+    const MatchResult& matchResult() const { return m_result; }
 
 private:
     bool isLeftPage(int pageIndex) const;
@@ -50,7 +50,7 @@ private:
     const StyleResolver::State& m_state;
     DocumentRuleSets& m_ruleSets;
 
-    StyleResolver::MatchResult m_result;
+    MatchResult m_result;
 };
 
 } // namespace WebCore

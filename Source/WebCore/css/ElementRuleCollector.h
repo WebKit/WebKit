@@ -23,7 +23,7 @@
 
 #include "MediaQueryEvaluator.h"
 #include "SelectorChecker.h"
-#include "StyleResolver.h"
+#include "StyleScope.h"
 #include <memory>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -36,10 +36,38 @@ class RuleData;
 class RuleSet;
 class SelectorFilter;
 
+class PseudoStyleRequest {
+public:
+    PseudoStyleRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = WTF::nullopt)
+        : pseudoId(pseudoId)
+        , scrollbarState(scrollbarState)
+    {
+    }
+
+    PseudoId pseudoId;
+    Optional<StyleScrollbarState> scrollbarState;
+};
+
 struct MatchedRule {
     const RuleData* ruleData;
-    unsigned specificity;   
+    unsigned specificity;
     Style::ScopeOrdinal styleScopeOrdinal;
+};
+
+struct MatchedProperties {
+    RefPtr<const StyleProperties> properties;
+    uint16_t linkMatchType { SelectorChecker::MatchAll };
+    uint16_t whitelistType { PropertyWhitelistNone };
+    Style::ScopeOrdinal styleScopeOrdinal { Style::ScopeOrdinal::Element };
+};
+
+struct MatchResult {
+    bool isCacheable { true };
+    Vector<MatchedProperties, 32> userAgentDeclarations;
+    Vector<MatchedProperties, 32> userDeclarations;
+    Vector<MatchedProperties, 32> authorDeclarations;
+
+    bool isEmpty() const { return userAgentDeclarations.isEmpty() && userDeclarations.isEmpty() && authorDeclarations.isEmpty(); }
 };
 
 class ElementRuleCollector {
@@ -62,7 +90,7 @@ public:
 
     bool hasAnyMatchingRules(const RuleSet*);
 
-    StyleResolver::MatchResult& matchedResult();
+    const MatchResult& matchResult() const;
     const Vector<RefPtr<StyleRule>>& matchedRuleList() const;
 
     void clearMatchedRules();
@@ -94,11 +122,12 @@ private:
 
     void sortMatchedRules();
 
-    enum class DeclarationOrigin { UserAgent, Author, User };
+    enum class DeclarationOrigin { UserAgent, User, Author };
     void sortAndTransferMatchedRules(DeclarationOrigin);
     void transferMatchedRules(DeclarationOrigin, Optional<Style::ScopeOrdinal> forScope = { });
 
     void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal);
+    void addMatchedProperties(MatchedProperties&&, DeclarationOrigin);
 
     const Element& element() const { return m_element.get(); }
 
@@ -123,9 +152,19 @@ private:
     // Output.
     Vector<RefPtr<StyleRule>> m_matchedRuleList;
     bool m_didMatchUncommonAttributeSelector { false };
-    StyleResolver::MatchResult m_result;
+    MatchResult m_result;
     Style::Relations m_styleRelations;
     PseudoIdSet m_matchedPseudoElementIds;
 };
+
+inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
+{
+    return a.properties == b.properties && a.linkMatchType == b.linkMatchType;
+}
+
+inline bool operator!=(const MatchedProperties& a, const MatchedProperties& b)
+{
+    return !(a == b);
+}
 
 } // namespace WebCore
