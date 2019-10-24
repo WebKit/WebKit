@@ -1,3 +1,23 @@
+2019-10-23  Chris Dumez  <cdumez@apple.com>
+
+        WebBackForwardCache::removeEntriesMatching() may re-enter and crash
+        https://bugs.webkit.org/show_bug.cgi?id=203341
+        <rdar://problem/56553939>
+
+        Reviewed by Geoffrey Garen.
+
+        When WebBackForwardCache::removeEntriesMatching() was clearing the WebBackForwardListItem's
+        WebBackForwardCacheEntry, it could destroyed a SuspendedPageProxy which could shutdown a
+        WebProcess. Upon shutting down, we would try to remove WebBackForwardCache entries associated
+        with a given process, re-enter removeEntriesMatching() and crash.
+
+        To address the issue, I made WebBackForwardCache::removeEntriesMatching() safe to re-enter.
+        We now clear the WebBackForwardListItems' WebBackForwardCacheEntries only after we're done
+        updating m_itemsWithCachedPage.
+
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::removeEntriesMatching):
+
 2019-10-23  Megan Gardner  <megan_gardner@apple.com>
 
         Rename force-press-related functions to refer to context menus, and fix a former force-press test

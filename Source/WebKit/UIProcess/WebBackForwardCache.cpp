@@ -147,13 +147,17 @@ void WebBackForwardCache::removeEntriesForPage(WebPageProxy& page)
 
 void WebBackForwardCache::removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>& matches)
 {
+    Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;
     m_itemsWithCachedPage.removeAllMatching([&](auto* item) {
         if (matches(*item)) {
-            item->setBackForwardCacheEntry(nullptr);
+            itemsWithEntriesToClear.append(*item);
             return true;
         }
         return false;
     });
+
+    for (auto& item : itemsWithEntriesToClear)
+        item->setBackForwardCacheEntry(nullptr);
 }
 
 void WebBackForwardCache::clear()
