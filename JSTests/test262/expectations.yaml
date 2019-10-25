@@ -741,6 +741,9 @@ test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
 test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
+test/built-ins/BigInt/constructor-integer.js:
+  default: 'RangeError: Not safe integer'
+  strict mode: 'RangeError: Not safe integer'
 test/built-ins/Boolean/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«falseÂ») to be true'
@@ -870,198 +873,6 @@ test/built-ins/Date/proto-from-ctor-realm-zero.js:
 test/built-ins/Error/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«ErrorÂ», Â«ErrorÂ») to be true'
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/Symbol.toStringTag.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-job-not-active-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-length.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-missing-internal-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-name.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/next-prop-desc.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/FinalizationGroupCleanupIteratorPrototype/proto.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/constructor.js:
-  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/FinalizationGroup/gc-has-one-chance-to-call-cleanupCallback.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/instance-extensible.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/length.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/name.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/newtarget-prototype-is-not-object.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prop-desc.js:
-  default: 'Test262Error: obj should have an own property FinalizationGroup'
-  strict mode: 'Test262Error: obj should have an own property FinalizationGroup'
-test/built-ins/FinalizationGroup/proto-from-ctor-realm.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/proto.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype-from-newtarget-abrupt.js:
-  default: 'Test262Error: Expected a Test262Error but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a ReferenceError'
-test/built-ins/FinalizationGroup/prototype-from-newtarget-custom.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype-from-newtarget.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/Symbol.toStringTag.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-iterator-proto.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/callback-not-callable-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-reference.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanup-prevented-with-unregister.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/cleanupcallback-iterator-proto.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/custom-this.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-dynamic.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/iterator-holdings-multiple-values.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/length.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/name.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/prop-desc.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/this-does-not-have-internal-cells-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/cleanupSome/this-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/constructor.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/prop-desc.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/proto.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/custom-this.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/holdings-any-value-type.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/holdings-same-as-target.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/length.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/name.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/prop-desc.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/return-undefined-register-itself.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/return-undefined.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/target-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/this-does-not-have-internal-target-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/this-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/unregisterToken-not-object-or-undefined-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings-and-target.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-holdings.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/register/unregisterToken-same-as-target.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/custom-this.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/length.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/name.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/prop-desc.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/this-does-not-have-internal-cells-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/this-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/unregister.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/prototype/unregister/unregisterToken-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/returns-new-object-from-constructor.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
-test/built-ins/FinalizationGroup/target-not-callable-throws.js:
-  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/FinalizationGroup/undefined-newtarget-throws.js:
-  default: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof FinalizationGroup is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/FinalizationGroup/unnaffected-by-poisoned-cleanupCallback.js:
-  default: "ReferenceError: Can't find variable: FinalizationGroup"
-  strict mode: "ReferenceError: Can't find variable: FinalizationGroup"
 test/built-ins/Function/call-bind-this-realm-undef.js:
   default: 'Test262Error: implicit undefined Expected SameValue(Â«[object global]Â», Â«[object Undefined]Â») to be true'
   strict mode: 'Test262Error: implicit undefined Expected SameValue(Â«[object global]Â», Â«[object Undefined]Â») to be true'
@@ -1224,6 +1035,9 @@ test/built-ins/NativeErrors/TypeError/proto-from-ctor-realm.js:
 test/built-ins/NativeErrors/URIError/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«URIErrorÂ», Â«URIErrorÂ») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«URIErrorÂ», Â«URIErrorÂ») to be true'
+test/built-ins/Number/bigint-conversion.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/built-ins/Number/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«0Â», Â«0Â») to be true'
@@ -1345,45 +1159,6 @@ test/built-ins/Proxy/has/call-in-prototype.js:
 test/built-ins/Proxy/revocable/revocation-function-name.js:
   default: 'Test262Error: obj should have an own property name'
   strict mode: 'Test262Error: obj should have an own property name'
-test/built-ins/RegExp/match-indices/indices-array-element.js:
-  default: "TypeError: undefined is not an object (evaluating 'indices[0]')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'indices[0]')"
-test/built-ins/RegExp/match-indices/indices-array-matched.js:
-  default: "TypeError: undefined is not an object (evaluating 'indices.length')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'indices.length')"
-test/built-ins/RegExp/match-indices/indices-array-non-unicode-match.js:
-  default: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
-  strict mode: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
-test/built-ins/RegExp/match-indices/indices-array-properties.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/RegExp/match-indices/indices-array-unicode-match.js:
-  default: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
-  strict mode: 'Test262Error: Expected [[1, 2], [1, 2]] to be structurally equal to undefined. '
-test/built-ins/RegExp/match-indices/indices-array-unicode-property-names.js:
-  default: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-  strict mode: 'SyntaxError: Invalid regular expression: invalid group specifier name'
-test/built-ins/RegExp/match-indices/indices-array-unmatched.js:
-  default: "TypeError: undefined is not an object (evaluating 'indices.length')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'indices.length')"
-test/built-ins/RegExp/match-indices/indices-array.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(indices)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(indices)')"
-test/built-ins/RegExp/match-indices/indices-groups-object-undefined.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/RegExp/match-indices/indices-groups-object-unmatched.js:
-  default: "TypeError: undefined is not an object (evaluating 'result.groups')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'result.groups')"
-test/built-ins/RegExp/match-indices/indices-groups-object.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/RegExp/match-indices/indices-groups-properties.js:
-  default: "TypeError: undefined is not an object (evaluating '/(?<fst>.)|(?<snd>.)/u.exec(\"abcd\").indices.groups')"
-  strict mode: "TypeError: undefined is not an object (evaluating '/(?<fst>.)|(?<snd>.)/u.exec(\"abcd\").indices.groups')"
-test/built-ins/RegExp/match-indices/indices-property.js:
-  default: 'Test262Error: obj should have an own property indices'
-  strict mode: 'Test262Error: obj should have an own property indices'
 test/built-ins/RegExp/named-groups/groups-object-subclass-sans.js:
   default: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«bÂ», Â«$<a>Â») to be true'
@@ -2019,87 +1794,27 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/built-ins/WeakMap/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakMap]Â», Â«[object WeakMap]Â») to be true'
-test/built-ins/WeakRef/constructor.js:
-  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/WeakRef/instance-extensible.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/length.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/name.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/newtarget-prototype-is-not-object.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prop-desc.js:
-  default: 'Test262Error: obj should have an own property WeakRef'
-  strict mode: 'Test262Error: obj should have an own property WeakRef'
 test/built-ins/WeakRef/proto-from-ctor-realm.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/proto.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype-from-newtarget-abrupt.js:
-  default: 'Test262Error: Expected a Test262Error but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a ReferenceError'
-test/built-ins/WeakRef/prototype-from-newtarget-custom.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype-from-newtarget.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/Symbol.toStringTag.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/constructor.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/custom-this.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/length.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/name.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/prop-desc.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/return-target.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/this-does-not-have-internal-target-throws.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/deref/this-not-object-throws.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/prop-desc.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/prototype/proto.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/returns-new-object-from-constructor.js:
-  default: "ReferenceError: Can't find variable: WeakRef"
-  strict mode: "ReferenceError: Can't find variable: WeakRef"
-test/built-ins/WeakRef/target-not-object-throws.js:
-  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-test/built-ins/WeakRef/undefined-newtarget-throws.js:
-  default: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
-  strict mode: 'Test262Error: typeof WeakRef is function Expected SameValue(Â«undefinedÂ», Â«functionÂ») to be true'
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object WeakRef]Â», Â«[object WeakRef]Â») to be true'
 test/built-ins/WeakSet/proto-from-ctor-realm.js:
   default: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«[object WeakSet]Â», Â«[object WeakSet]Â») to be true'
+test/intl402/BigInt/prototype/toLocaleString/de-DE.js:
+  default: 'RangeError: toString() radix argument must be between 2 and 36'
+  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
+test/intl402/BigInt/prototype/toLocaleString/default-options-object-prototype.js:
+  default: 'RangeError: toString() radix argument must be between 2 and 36'
+  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
+test/intl402/BigInt/prototype/toLocaleString/en-US.js:
+  default: 'RangeError: toString() radix argument must be between 2 and 36'
+  strict mode: 'RangeError: toString() radix argument must be between 2 and 36'
+test/intl402/BigInt/prototype/toLocaleString/returns-same-results-as-NumberFormat.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+test/intl402/BigInt/prototype/toLocaleString/throws-same-exceptions-as-NumberFormat.js:
+  default: "Test262Error: BigInt.prototype.toLocaleString didn't throw exception for locales null. Expected a TypeError but got a RangeError"
+  strict mode: "Test262Error: BigInt.prototype.toLocaleString didn't throw exception for locales null. Expected a TypeError but got a RangeError"
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: 'Test262Error: "kn" should be returned in locale. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
   strict mode: 'Test262Error: "kn" should be returned in locale. Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
@@ -3308,42 +3023,6 @@ test/language/expressions/object/scope-meth-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/object/scope-setter-body-lex-distinc.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/optional-chaining/call-expression.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/member-expression-async-identifier.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/member-expression-async-literal.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/member-expression-async-this.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/member-expression.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/optional-chain-async-optional-chain-square-brackets.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/optional-chain-async-square-brackets.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/optional-chain-expression-optional-expression.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/optional-chain.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/optional-expression.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/runtime-semantics-evaluation.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
-test/language/expressions/optional-chaining/short-circuiting.js:
-  default: "SyntaxError: Unexpected token '.'"
-  strict mode: "SyntaxError: Unexpected token '.'"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-decrement/S11.3.2_A5_T2.js:
@@ -3358,6 +3037,9 @@ test/language/expressions/postfix-decrement/S11.3.2_A5_T5.js:
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/postfix-decrement/bigint.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/postfix-increment/S11.3.1_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/postfix-increment/S11.3.1_A5_T2.js:
@@ -3372,6 +3054,9 @@ test/language/expressions/postfix-increment/S11.3.1_A5_T5.js:
 test/language/expressions/postfix-increment/S11.3.1_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/postfix-increment/bigint.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/prefix-decrement/S11.4.5_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-decrement/S11.4.5_A5_T2.js:
@@ -3386,6 +3071,9 @@ test/language/expressions/prefix-decrement/S11.4.5_A5_T5.js:
 test/language/expressions/prefix-decrement/S11.4.5_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/prefix-decrement/bigint.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/prefix-increment/S11.4.4_A5_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/prefix-increment/S11.4.4_A5_T2.js:
@@ -3400,6 +3088,9 @@ test/language/expressions/prefix-increment/S11.4.4_A5_T5.js:
 test/language/expressions/prefix-increment/S11.4.4_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/prefix-increment/bigint.js:
+  default: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
+  strict mode: "TypeError: Conversion from 'BigInt' to 'number' is not allowed."
 test/language/expressions/super/call-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
@@ -3409,6 +3100,9 @@ test/language/expressions/super/call-proto-not-ctor.js:
 test/language/expressions/super/prop-poisoned-underscore-proto.js:
   default: 'Test262Error: should not be called'
   strict mode: 'Test262Error: should not be called'
+test/language/expressions/unsigned-right-shift/bigint-toprimitive.js:
+  default: 'Test262Error: 0n >>> {[Symbol.toPrimitive]: function() {throw new MyError();}} throws MyError Expected a MyError but got a TypeError'
+  strict mode: 'Test262Error: 0n >>> {[Symbol.toPrimitive]: function() {throw new MyError();}} throws MyError Expected a MyError but got a TypeError'
 test/language/expressions/yield/star-iterable.js:
   default: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
   strict mode: 'Test262Error: First result `done` flag Expected SameValue(Â«falseÂ», Â«undefinedÂ») to be true'
@@ -3725,7 +3419,13 @@ test/language/statements/for-in/12.6.4-2.js:
 test/language/statements/for-in/dstr/array-elem-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-in/dstr/array-elem-nested-memberexpr-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/array-elem-nested-obj-invalid.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-in/dstr/array-elem-put-obj-literal-optchain-prop-ref.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/array-elem-target-simple-strict.js:
@@ -3752,6 +3452,12 @@ test/language/statements/for-in/dstr/array-rest-nested-obj-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/obj-id-simple-strict.js:
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-in/dstr/obj-prop-elem-target-memberexpr-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-in/dstr/obj-prop-elem-target-obj-literal-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr/obj-prop-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3807,7 +3513,13 @@ test/language/statements/for-of/dstr/array-elem-iter-thrw-close.js:
 test/language/statements/for-of/dstr/array-elem-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/dstr/array-elem-nested-memberexpr-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-elem-nested-obj-invalid.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/dstr/array-elem-put-obj-literal-optchain-prop-ref.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/array-elem-target-simple-strict.js:
@@ -3888,6 +3600,12 @@ test/language/statements/for-of/dstr/obj-id-put-let.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/obj-id-simple-strict.js:
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/dstr/obj-prop-elem-target-memberexpr-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-of/dstr/obj-prop-elem-target-obj-literal-optchain-prop-ref.js:
+  default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/dstr/obj-prop-nested-array-invalid.js:
   default: 'Test262: This statement should not be evaluated.'

@@ -1,3 +1,17 @@
+2019-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        test262-runner should be able to pass JSC a feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=203301
+
+        Reviewed by Keith Miller.
+
+        * test262/config.yaml:
+        Add feature flag mapping.
+        Also skip a few forgotten features as well as BigInt TypedArray tests.
+
+        * test262/expectations.yaml:
+        Regenerate expectations.
+
 2019-10-23  Keith Miller  <keith_miller@apple.com>
 
         Undo incidental change from BytecodeIndex class patch

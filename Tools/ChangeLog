@@ -1,3 +1,13 @@
+2019-10-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        test262-runner should be able to pass JSC a feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=203301
+
+        Reviewed by Keith Miller.
+
+        * Scripts/test262/Runner.pm:
+        Recognize mapping from 262 features to JSC runtime options.
+
 2019-10-25  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.common.checkout.scm

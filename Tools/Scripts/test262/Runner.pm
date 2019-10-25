@@ -652,8 +652,10 @@ sub processFile {
 
         ($includesfh, $includesfile) = compileTest($includes) if defined $includes;
 
+        my $args = getFeatureFlags($data);
+
         foreach my $scenario (@scenarios) {
-            my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data);
+            my ($result, $execTime) = runTest($includesfile, $filename, $scenario, $data, $args);
 
             $resultsdata = processResult($filename, $data, $scenario, $result, $execTime);
             DumpFile($resultsfh, $resultsdata);
@@ -661,6 +663,19 @@ sub processFile {
 
         close $includesfh if defined $includesfh;
     }
+}
+
+sub getFeatureFlags {
+    my ($data) = @_;
+    my $featureFlags = '';
+
+    if (exists $config->{flags} and $data->{features}) {
+        foreach my $feature (@{ $data->{features} }) {
+            $featureFlags .= ' --' . $config->{flags}->{$feature} . '=1' if $config->{flags}->{$feature};
+        }
+    }
+
+    return $featureFlags;
 }
 
 sub shouldSkip {
@@ -739,10 +754,8 @@ sub compileTest {
 }
 
 sub runTest {
-    my ($includesfile, $filename, $scenario, $data) = @_;
+    my ($includesfile, $filename, $scenario, $data, $args) = @_;
     $includesfile ||= '';
-
-    my $args = '';
 
     if ($timeout) {
         $args .= " --watchdog=$timeout ";
