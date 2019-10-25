@@ -1,3 +1,26 @@
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
+        DatabaseContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203103
+
+        Reviewed by Geoffrey Garen.
+
+        Let pages with active webdatabase transactions into the back/forward cache. We make sure
+        to queue tasks that run script to the Window event loop, so that they get delayed when
+        the document is suspended.
+
+        No new tests, updated existing test.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::performPendingCallback):
+
 2019-10-24  Mark Lam  <mark.lam@apple.com>
 
         Move JSC::Register inline methods into RegisterInlines.h.

@@ -1,3 +1,18 @@
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
+        DatabaseContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203103
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/history/page-cache-webdatabase-pending-transaction-expected.txt:
+        * fast/history/page-cache-webdatabase-pending-transaction.html:
+        Update existing test to reflect behavior change.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unmark test as flaky.
+
 2019-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Add more information to SRI failure console messages

@@ -130,15 +130,6 @@ void DatabaseContext::stop()
     stopDatabases();
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool DatabaseContext::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    if (!hasOpenDatabases() || !m_databaseThread)
-        return false;
-
-    return m_databaseThread->hasPendingDatabaseActivity();
-}
-
 DatabaseThread* DatabaseContext::databaseThread()
 {
     if (!m_databaseThread && !m_hasOpenDatabases) {
