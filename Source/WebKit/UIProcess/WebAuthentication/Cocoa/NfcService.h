@@ -28,33 +28,29 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoService.h"
-#include <wtf/RunLoop.h>
 
 OBJC_CLASS NFReaderSession;
 
 namespace WebKit {
 
-class NfcConnection;
+class CtapNfcDriver;
 
 class NfcService : public FidoService {
 public:
     explicit NfcService(Observer&);
     ~NfcService();
 
-    static bool isAvailable();
-
     // For NfcConnection.
     void didConnectTag();
-    void didDetectMultipleTags() const;
 
 #if HAVE(NEAR_FIELD)
 protected:
-    void setConnection(Ref<NfcConnection>&&); // For MockNfcConnection
+    void setDriver(std::unique_ptr<CtapNfcDriver>&&);
 #endif
 
 private:
     void startDiscoveryInternal() final;
-    void restartDiscoveryInternal() final;
+    void continueAddDeviceAfterGetInfo(Vector<uint8_t>&& response);
 
     // Overrided by MockNfcService.
     virtual void platformStartDiscovery();
@@ -62,9 +58,8 @@ private:
 #if HAVE(NEAR_FIELD)
     // Only one reader session is allowed per time.
     // Keep the reader session alive here when it tries to connect to a tag.
-    RefPtr<NfcConnection> m_connection;
+    std::unique_ptr<CtapNfcDriver> m_driver;
 #endif
-    RunLoop::Timer<NfcService> m_restartTimer;
 };
 
 } // namespace WebKit

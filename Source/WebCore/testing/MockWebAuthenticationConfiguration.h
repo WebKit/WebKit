@@ -93,7 +93,6 @@ struct MockWebAuthenticationConfiguration {
         NfcError error { NfcError::Success };
         Vector<String> payloadBase64;
         bool multipleTags { false };
-        bool multiplePhysicalTags { false };
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<NfcConfiguration> decode(Decoder&);
@@ -194,7 +193,7 @@ Optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthentica
 template<class Encoder>
 void MockWebAuthenticationConfiguration::NfcConfiguration::encode(Encoder& encoder) const
 {
-    encoder << error << payloadBase64 << multipleTags << multiplePhysicalTags;
+    encoder << error << payloadBase64 << multipleTags;
 }
 
 template<class Decoder>
@@ -206,8 +205,6 @@ Optional<MockWebAuthenticationConfiguration::NfcConfiguration> MockWebAuthentica
     if (!decoder.decode(result.payloadBase64))
         return WTF::nullopt;
     if (!decoder.decode(result.multipleTags))
-        return WTF::nullopt;
-    if (!decoder.decode(result.multiplePhysicalTags))
         return WTF::nullopt;
     return result;
 }

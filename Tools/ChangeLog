@@ -1,3 +1,19 @@
+2019-10-25  Matt Lewis  <jlewis3@apple.com>
+
+        Rolling out r251579,r251162,r251512,r251500, and r251498 for build failures
+        and test failures
+
+        Unreviewed rollout.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
+        (-[TestWebAuthenticationPanelUIDelegate _webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+        (-[TestWebAuthenticationPanelUIDelegate panel]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc-multiple-tags.html: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html: Removed.
+
 2019-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] fast/forms/ios/accessory-bar-navigation.html is a flaky failure
@@ -90,12 +106,6 @@
         (SVN.diff_for_revision): Diff for revision should be byte array.
         (SVN.propget): Use Python 3 compatible encoding.
 
-2019-10-24  Jiewen Tan  <jiewen_tan@apple.com>
-
-        Unreviewed, a test fix after r251498
-
-        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html:
-
 2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to find and manipulate text by paragraphs
@@ -123,12 +133,6 @@
         "Add a mechanism to find and manipulate text by paragraphs"
         https://bugs.webkit.org/show_bug.cgi?id=203286
         https://trac.webkit.org/changeset/251558
-
-2019-10-24  Jiewen Tan  <jiewen_tan@apple.com>
-
-        Unreviewed, a test fix after r251498
-
-        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
 
 2019-10-24  Brady Eidson  <beidson@apple.com>
 
@@ -287,38 +291,6 @@
         "Using version 1 CFRunloopSource for faster task dispatch"
         https://bugs.webkit.org/show_bug.cgi?id=202874
         https://trac.webkit.org/changeset/251261
-
-2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
-
-        [WebAuthn] Warn users when multiple NFC tags present
-        https://bugs.webkit.org/show_bug.cgi?id=200932
-        <rdar://problem/54890736>
-
-        Reviewed by Brent Fulgham.
-
-        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
-        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
-        (-[TestWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:]):
-        (TestWebKitAPI::TEST):
-        Adds a new test for -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:].
-        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-get-assertion-nfc-multiple-tags.html: Added.
-
-2019-10-22  Jiewen Tan  <jiewen_tan@apple.com>
-
-        [WebAuthn] Add more information to _WKWebAuthenticationPanel
-        https://bugs.webkit.org/show_bug.cgi?id=202561
-        <rdar://problem/55973910>
-
-        Reviewed by Youenn Fablet.
-
-        Adds new API tests.
-
-        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
-        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
-        (-[TestWebAuthenticationPanelUIDelegate _webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:]):
-        (-[TestWebAuthenticationPanelUIDelegate panel]):
-        (TestWebKitAPI::TEST):
-        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html: Added.
 
 2019-10-23  Aakash Jain  <aakash_jain@apple.com>
 

@@ -31,19 +31,18 @@
 #include "APIUIClient.h"
 #include "APIWebAuthenticationPanel.h"
 #include "APIWebAuthenticationPanelClient.h"
-#include "LocalService.h"
-#include "NfcService.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
-#include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 namespace {
+
+const size_t maxTransportNumber = 3;
 
 // Suggested by WebAuthN spec as of 7 August 2018.
 const unsigned maxTimeOutValue = 120000;
@@ -109,12 +108,12 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             if (transport == AuthenticatorTransport::Ble)
                 continue;
             result.add(transport);
-            if (result.size() >= AuthenticatorManager::maxTransportNumber)
+            if (result.size() >= maxTransportNumber)
                 return result;
         }
     }
 
-    ASSERT(result.size() < AuthenticatorManager::maxTransportNumber);
+    ASSERT(result.size() < maxTransportNumber);
     return result;
 }
 
@@ -142,16 +141,7 @@ static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKe
     return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
-static ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
-{
-    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
-        return ClientDataType::Create;
-    return ClientDataType::Get;
-}
-
 } // namespace
-
-const size_t AuthenticatorManager::maxTransportNumber = 3;
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
@@ -171,7 +161,6 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     m_pendingCompletionHandler = WTFMove(callback);
 
     // 2. Ask clients to show appropriate UI if any and then start the request.
-    initTimeOutTimer();
     runPanel();
 }
 
@@ -224,12 +213,6 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
-{
-    if (auto *panel = m_pendingRequestData.panel.get())
-        panel->client().updatePanel(status);
-}
-
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
@@ -247,7 +230,6 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
         return;
     }
     respondReceivedInternal(WTFMove(respond));
-    restartDiscovery();
 }
 
 void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
@@ -272,19 +254,16 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(Web
     return AuthenticatorTransportService::create(transport, observer);
 }
 
-void AuthenticatorManager::filterTransports(TransportSet& transports) const
+void AuthenticatorManager::respondReceivedInternal(Respond&&)
 {
-    if (!NfcService::isAvailable())
-        transports.remove(AuthenticatorTransport::Nfc);
-    if (!LocalService::isAvailable())
-        transports.remove(AuthenticatorTransport::Internal);
 }
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
-    ASSERT(RunLoop::isMain());
     ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
     for (auto& transport : transports) {
+        if (transport == AuthenticatorTransport::Internal && !isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
+            continue;
         // Only allow USB authenticators when clients don't have dedicated UI.
         if (transport != AuthenticatorTransport::Usb && (m_pendingRequestData.panelResult == WebAuthenticationPanelResult::Unavailable))
             continue;
@@ -294,15 +273,8 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
     }
 }
 
-void AuthenticatorManager::initTimeOutTimer()
+void AuthenticatorManager::initTimeOutTimer(const Optional<unsigned>& timeOutInMs)
 {
-    Optional<unsigned> timeOutInMs;
-    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        timeOutInMs = options.timeout;
-    }, [&](const PublicKeyCredentialRequestOptions& options) {
-        timeOutInMs = options.timeout;
-    });
-
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
@@ -324,19 +296,32 @@ void AuthenticatorManager::runPanel()
     if (!frame)
         return;
 
-    // Get available transports and start discovering authenticators on them.
-    auto& options = m_pendingRequestData.options;
-    auto transports = getTransports();
-    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options));
+    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(m_pendingRequestData.options));
     auto& panel = *m_pendingRequestData.panel;
-    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, m_pendingRequestData.origin, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
+    page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, m_pendingRequestData.origin, [weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
         if (!weakThis || !weakPanel
             || (result == WebAuthenticationPanelResult::DidNotPresent)
             || (weakPanel.get() != m_pendingRequestData.panel.get()))
             return;
         m_pendingRequestData.panelResult = result;
-        startDiscovery(transports);
+        startRequest();
+    });
+}
+
+void AuthenticatorManager::startRequest()
+{
+    ASSERT(RunLoop::isMain());
+    // Get available transports and start discovering authenticators on them.
+    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
+        initTimeOutTimer(options.timeout);
+
+        auto transports = collectTransports(options.authenticatorSelection);
+        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
+        startDiscovery(collectTransports(options.authenticatorSelection));
+    }, [&](const  PublicKeyCredentialRequestOptions& options) {
+        initTimeOutTimer(options.timeout);
+        startDiscovery(collectTransports(options.allowCredentials));
     });
 }
 
@@ -345,7 +330,7 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
     if (auto *panel = m_pendingRequestData.panel.get()) {
         WTF::switchOn(respond, [&](const WebCore::PublicKeyCredentialData&) {
             panel->client().dismissPanel(WebAuthenticationResult::Succeeded);
-        }, [&](const WebCore::ExceptionData&) {
+        }, [&](const  WebCore::ExceptionData&) {
             panel->client().dismissPanel(WebAuthenticationResult::Failed);
         });
     }
@@ -358,27 +343,6 @@ void AuthenticatorManager::resetState()
     m_authenticators.clear();
     m_services.clear();
     m_pendingRequestData = { };
-}
-
-auto AuthenticatorManager::getTransports() const -> TransportSet
-{
-    TransportSet transports;
-    WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        transports = collectTransports(options.authenticatorSelection);
-        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
-    }, [&](const PublicKeyCredentialRequestOptions& options) {
-        transports = collectTransports(options.allowCredentials);
-    });
-    if (!isFeatureEnabled(m_pendingRequestData.page.get(), WebPreferencesKey::webAuthenticationLocalAuthenticatorEnabledKey()))
-        transports.remove(AuthenticatorTransport::Internal);
-    filterTransports(transports);
-    return transports;
-}
-
-void AuthenticatorManager::restartDiscovery()
-{
-    for (auto& service : m_services)
-        service->restartDiscovery();
 }
 
 } // namespace WebKit

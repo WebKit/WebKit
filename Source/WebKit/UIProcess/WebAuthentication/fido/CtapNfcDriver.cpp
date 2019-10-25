@@ -36,7 +36,7 @@ namespace WebKit {
 using namespace apdu;
 using namespace fido;
 
-CtapNfcDriver::CtapNfcDriver(Ref<NfcConnection>&& connection)
+CtapNfcDriver::CtapNfcDriver(UniqueRef<NfcConnection>&& connection)
     : m_connection(WTFMove(connection))
 {
 }

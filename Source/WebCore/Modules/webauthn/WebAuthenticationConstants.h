@@ -70,10 +70,4 @@ const size_t ES256FieldElementLength = 32;
 // https://www.w3.org/TR/webauthn/#none-attestation
 const char noneAttestationValue[] = "none";
 
-// https://www.w3.org/TR/webauthn-1/#dom-collectedclientdata-type
-enum class ClientDataType : bool {
-    Create,
-    Get
-};
-
 } // namespace WebCore

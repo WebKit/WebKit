@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "WebAuthenticationFlags.h"
 #include <WebCore/AuthenticatorTransport.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -49,7 +48,6 @@ public:
         virtual ~Observer() = default;
 
         virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
-        virtual void serviceStatusUpdated(WebAuthenticationStatus) = 0;
     };
 
     static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, Observer&);
@@ -57,9 +55,8 @@ public:
 
     virtual ~AuthenticatorTransportService() = default;
 
-    // These operations are guaranteed to execute asynchronously.
+    // This operation is guaranteed to execute asynchronously.
     void startDiscovery();
-    void restartDiscovery();
 
 protected:
     explicit AuthenticatorTransportService(Observer&);
@@ -68,9 +65,6 @@ protected:
 
 private:
     virtual void startDiscoveryInternal() = 0;
-    // NFC service's polling is one shot. It halts after the first tags are detected.
-    // Therefore, a restart process is needed to resume polling after exceptions.
-    virtual void restartDiscoveryInternal() { };
 
     WeakPtr<Observer> m_observer;
 };

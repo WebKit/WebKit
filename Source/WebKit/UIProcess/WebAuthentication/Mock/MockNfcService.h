@@ -39,8 +39,6 @@ public:
     MockNfcService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 
     NSData* transceive();
-    void receiveStopPolling();
-    void receiveStartPolling();
 
 private:
     void platformStartDiscovery() final;

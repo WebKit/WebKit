@@ -50,14 +50,6 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
     requestTimeOutTimer().stop();
 }
 
-void MockAuthenticatorManager::filterTransports(TransportSet& transports) const
-{
-    if (!m_testConfiguration.nfc)
-        transports.remove(AuthenticatorTransport::Nfc);
-    if (!m_testConfiguration.local)
-        transports.remove(AuthenticatorTransport::Internal);
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

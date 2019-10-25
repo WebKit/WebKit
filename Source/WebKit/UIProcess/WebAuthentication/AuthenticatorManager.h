@@ -55,8 +55,6 @@ public:
     using AuthenticatorTransportService::Observer::weakPtrFactory;
     using WeakValueType = AuthenticatorTransportService::Observer::WeakValueType;
 
-    const static size_t maxTransportNumber;
-
     AuthenticatorManager();
     virtual ~AuthenticatorManager() = default;
 
@@ -75,7 +73,6 @@ protected:
 private:
     // AuthenticatorTransportService::Observer
     void authenticatorAdded(Ref<Authenticator>&&) final;
-    void serviceStatusUpdated(WebAuthenticationStatus) final;
 
     // Authenticator::Observer
     void respondReceived(Respond&&) final;
@@ -85,16 +82,14 @@ private:
     // Overriden by MockAuthenticatorManager.
     virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const;
     // Overriden to return every exception for tests to confirm.
-    virtual void respondReceivedInternal(Respond&&) { }
-    virtual void filterTransports(TransportSet&) const;
+    virtual void respondReceivedInternal(Respond&&);
 
     void startDiscovery(const TransportSet&);
-    void initTimeOutTimer();
+    void initTimeOutTimer(const Optional<unsigned>& timeOutInMs);
     void timeOutTimerFired();
     void runPanel();
+    void startRequest();
     void resetState();
-    TransportSet getTransports() const;
-    void restartDiscovery();
 
     // Request: We only allow one request per time. A new request will cancel any pending ones.
     WebAuthenticationRequestData m_pendingRequestData;

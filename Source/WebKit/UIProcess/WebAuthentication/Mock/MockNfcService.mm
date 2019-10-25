@@ -38,26 +38,20 @@
 
 #import "NearFieldSoftLink.h"
 
-namespace {
-uint8_t tagID1[] = { 0x01 };
-uint8_t tagID2[] = { 0x02 };
-}
-
 #if HAVE(NEAR_FIELD)
 
 @interface WKMockNFTag : NSObject <NFTag>
 
 - (instancetype)initWithType:(NFTagType)type;
-- (instancetype)initWithType:(NFTagType)type tagID:(NSData *)tagID;
 
 @end
 
 @implementation WKMockNFTag {
     NFTagType _type;
-    RetainPtr<NSData> _tagID;
 }
 
 @synthesize technology=_technology;
+@synthesize tagID=_tagID;
 @synthesize AppData=_AppData;
 @synthesize UID=_UID;
 @synthesize ndefAvailability=_ndefAvailability;
@@ -72,22 +66,17 @@ uint8_t tagID2[] = { 0x02 };
     return _type;
 }
 
-- (NSData *)tagID
-{
-    return _tagID.get();
-}
-
 - (instancetype)initWithNFTag:(id<NFTag>)tag
 {
-    if ((self = [super init])) {
+    if ((self = [super init]))
         _type = tag.type;
-        _tagID = tag.tagID;
-    }
     return self;
 }
 
 - (void)dealloc
 {
+    [_tagID release];
+    _tagID = nil;
     [_AppData release];
     _AppData = nil;
     [_UID release];
@@ -108,15 +97,8 @@ uint8_t tagID2[] = { 0x02 };
 
 - (instancetype)initWithType:(NFTagType)type
 {
-    return [self initWithType:type tagID:adoptNS([[NSData alloc] initWithBytes:tagID1 length:sizeof(tagID1)]).get()];
-}
-
-- (instancetype)initWithType:(NFTagType)type tagID:(NSData *)tagID
-{
-    if ((self = [super init])) {
+    if ((self = [super init]))
         _type = type;
-        _tagID = tagID;
-    }
     return self;
 }
 
@@ -150,22 +132,6 @@ static BOOL NFReaderSessionConnectTag(id, SEL, NFTag *)
     return YES;
 }
 
-static BOOL NFReaderSessionStopPolling(id, SEL)
-{
-    if (!globalNfcService)
-        return NO;
-    globalNfcService->receiveStopPolling();
-    return YES;
-}
-
-static BOOL NFReaderSessionStartPollingWithError(id, SEL, NSError **)
-{
-    if (!globalNfcService)
-        return NO;
-    globalNfcService->receiveStartPolling();
-    return YES;
-}
-
 static NSData* NFReaderSessionTransceive(id, SEL, NSData *)
 {
     if (!globalNfcService)
@@ -193,21 +159,6 @@ NSData* MockNfcService::transceive()
     return [result autorelease];
 }
 
-void MockNfcService::receiveStopPolling()
-{
-    // For purpose of restart polling.
-    m_configuration.nfc->multiplePhysicalTags = false;
-}
-
-void MockNfcService::receiveStartPolling()
-{
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
-        if (!weakThis)
-            return;
-        weakThis->detectTags();
-    });
-}
-
 void MockNfcService::platformStartDiscovery()
 {
 #if HAVE(NEAR_FIELD)
@@ -226,14 +177,15 @@ void MockNfcService::platformStartDiscovery()
         Method methodToSwizzle3 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(transceive:));
         method_setImplementation(methodToSwizzle3, (IMP)NFReaderSessionTransceive);
 
-        Method methodToSwizzle4 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(stopPolling));
-        method_setImplementation(methodToSwizzle4, (IMP)NFReaderSessionStopPolling);
-
-        Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(startPollingWithError:));
-        method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
-
         auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
-        setConnection(NfcConnection::create(readerSession.get(), *this));
+        setDriver(WTF::makeUnique<CtapNfcDriver>(makeUniqueRef<NfcConnection>(readerSession.get(), *this)));
+
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
+            if (!weakThis)
+                return;
+            weakThis->detectTags();
+        });
+        return;
     }
     LOG_ERROR("No nfc authenticators is available.");
 #endif // HAVE(NEAR_FIELD)
@@ -254,9 +206,6 @@ void MockNfcService::detectTags() const
 
         if (configuration.nfc->multipleTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A]).get()];
-
-        if (configuration.nfc->multiplePhysicalTags)
-            [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytes:tagID2 length:sizeof(tagID2)]).get()]).get()];
 
         [globalNFReaderSessionDelegate readerSession:nil didDetectTags:tags.get()];
     });

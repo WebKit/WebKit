@@ -1,3 +1,13 @@
+2019-10-25  Matt Lewis  <jlewis3@apple.com>
+
+        Rolling out r251579,r251162,r251512,r251500, and r251498 for build failures
+        and test failures
+
+        Unreviewed rollout.
+
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html:
+
 2019-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 13] fast/forms/ios/accessory-bar-navigation.html is a flaky failure
@@ -541,18 +551,6 @@
         * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-database.html: Added.
         * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database-expected.txt: Added.
         * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html: Added.
-
-2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
-
-        [WebAuthn] Warn users when multiple NFC tags present
-        https://bugs.webkit.org/show_bug.cgi?id=200932
-        <rdar://problem/54890736>
-
-        Reviewed by Brent Fulgham.
-
-        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
-        * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html:
-        Adds new tests for multiple physical tags and service restart.
 
 2019-10-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 

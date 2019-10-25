@@ -33,6 +33,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/U2fResponseConverter.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {

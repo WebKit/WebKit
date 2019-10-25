@@ -49,16 +49,6 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {
     _WKWebAuthenticationResultFailed,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-typedef NS_ENUM(NSInteger, _WKWebAuthenticationTransport) {
-    _WKWebAuthenticationTransportUSB,
-    _WKWebAuthenticationTransportNFC,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
-    _WKWebAuthenticationTypeCreate,
-    _WKWebAuthenticationTypeGet,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
 @optional
@@ -73,8 +63,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
 @property (nonatomic, readonly, copy) NSString *relyingPartyID;
-@property (nonatomic, readonly, copy) NSArray *transports;
-@property (nonatomic, readonly) _WKWebAuthenticationType type;
 
 - (void)cancel;
 
