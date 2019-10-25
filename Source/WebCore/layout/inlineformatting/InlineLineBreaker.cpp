@@ -35,6 +35,11 @@
 namespace WebCore {
 namespace Layout {
 
+static inline bool isContentWrappingAllowed(const RenderStyle& style)
+{
+    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+}
+
 LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     if (logicalWidth <= availableWidth)
@@ -51,8 +56,16 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         }
         return false;
     };
-    if (isTextContent(runs))
-        return wordBreakingBehavior(runs, availableWidth, lineIsEmpty);
+    if (isTextContent(runs)) {
+        if (auto trailingPartialContent = wordBreakingBehavior(runs, availableWidth))
+            return { BreakingContext::ContentBreak::Split, trailingPartialContent };
+        // If we did not manage to break this content, we still need to decide whether keep it or wrap it to the next line.
+        // FIXME: Keep tracking the last breaking opportunity where we can wrap the content:
+        // <span style="white-space: pre;">this fits</span> <span style="white-space: pre;">this does not fit but does not wrap either</span>
+        // ^^ could wrap at the whitespace position between the 2 inline containers.
+        auto contentShouldWrap = !lineIsEmpty && isContentWrappingAllowed(runs[0].inlineItem.style());
+        return { contentShouldWrap ? BreakingContext::ContentBreak::Wrap : BreakingContext::ContentBreak::Keep, { } };
+    }
 
     // First non-text inline content always stays on line.
     return { lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
@@ -63,15 +76,17 @@ bool LineBreaker::shouldWrapFloatBox(LayoutUnit floatLogicalWidth, LayoutUnit av
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-LineBreaker::BreakingContext LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, LayoutUnit availableWidth, bool lineIsEmpty) const
+Optional<LineBreaker::BreakingContext::TrailingPartialContent> LineBreaker::wordBreakingBehavior(const Vector<LineLayout::Run>& runs, LayoutUnit availableWidth) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
-    LayoutUnit runsWidth = 0;
+    LayoutUnit runsWidth;
     for (unsigned i = 0; i < runs.size(); ++i) {
         auto& run = runs[i];
         ASSERT(run.inlineItem.isText() || run.inlineItem.isContainerStart() || run.inlineItem.isContainerEnd());
         runsWidth += run.logicalWidth;
+        // FIXME: In case of multiple inline items, we might not be able to split the content where it overflows (<span style="white-space: normal">this still fits the line</span<span style="white-space: pre">this is not anymore, but can't split</span)
+        // so we need to look for split positions even runsWidth <= availableWidth.
         if (runsWidth <= availableWidth)
             continue;
         // Let's find the first breaking opportunity starting from this overflown inline item.
@@ -80,19 +95,18 @@ LineBreaker::BreakingContext LineBreaker::wordBreakingBehavior(const Vector<Line
             // we need to check if there's another inline item beyond the [container end] to split.
             continue;
         }
-        // Do not even try to wrap 'pre' and 'no-wrap' content.
-        auto whitespace = run.inlineItem.style().whiteSpace();
-        if (whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::NoWrap)
+        // Do not try to split 'pre' and 'no-wrap' content.
+        if (!isContentWrappingAllowed(run.inlineItem.style()))
             continue;
         // At this point the available width can very well be negative e.g. when some part of the continuous text content can not be broken into parts ->
         // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
         // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
         auto adjustedAvailableWidth = std::max(LayoutUnit { }, availableWidth - runsWidth + run.logicalWidth);
         if (auto splitLengthAndWidth = tryBreakingTextRun(run, adjustedAvailableWidth))
-            return { BreakingContext::ContentBreak::Split, BreakingContext::TrailingPartialContent { i, splitLengthAndWidth->length, splitLengthAndWidth->leftLogicalWidth } };
+            return BreakingContext::TrailingPartialContent { i, splitLengthAndWidth->length, splitLengthAndWidth->leftLogicalWidth };
     }
     // We did not manage to break in this sequence of runs.
-    return { lineIsEmpty ? BreakingContext::ContentBreak::Keep : BreakingContext::ContentBreak::Wrap, { } };
+    return { };
 }
 
 Optional<LineBreaker::SplitLengthAndWidth> LineBreaker::tryBreakingTextRun(const LineLayout::Run overflowRun, LayoutUnit availableWidth) const

@@ -53,7 +53,7 @@ public:
 
 private:
 
-    LineBreaker::BreakingContext wordBreakingBehavior(const Vector<LineLayout::Run>&, LayoutUnit availableWidth, bool lineIsEmpty) const;
+    Optional<BreakingContext::TrailingPartialContent> wordBreakingBehavior(const Vector<LineLayout::Run>&, LayoutUnit availableWidth) const;
 
     struct SplitLengthAndWidth {
         unsigned length { 0 };
