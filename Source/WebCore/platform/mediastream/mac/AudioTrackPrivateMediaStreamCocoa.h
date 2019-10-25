@@ -45,6 +45,8 @@ public:
         return adoptRef(*new AudioTrackPrivateMediaStreamCocoa(streamTrack));
     }
 
+    void clear();
+
     void play();
     void pause();
     bool isPlaying() { return m_isPlaying; }
@@ -90,6 +92,7 @@ private:
     bool m_isPlaying { false };
     bool m_autoPlay { false };
     bool m_muted { false };
+    bool m_isCleared { false };
 };
 
 }
