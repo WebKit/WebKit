@@ -1,3 +1,4 @@
+//@ skip if true # added by mark-jsc-stress-test.py
 //@ skip if $hostOS == "windows"
 description("This test checks the behavior of Intl.NumberFormat as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).");
 
