@@ -1,3 +1,22 @@
+2019-10-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.xcode
+        https://bugs.webkit.org/show_bug.cgi?id=203417
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.xcode.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (ReadableBinaryFileObject.seek): Add seek function to mirror actual binary file
+        behavior and support plistlib.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._disambiguate_device_type): Use values instead of itervalues.
+        (SimulatedDeviceManager._get_device_identifier_for_type): Use items instead of iteritems.
+        (SimulatedDeviceManager.device_count_for_type): Use values instead of itervalues.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (SimulatedDeviceTest.mock_host_for_simctl): Use items instead of iteritems.
+        (change_state_to): Explicitly use bytes to edit a binary file.
+
 2019-10-25  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Status page should show compiler ERRORS

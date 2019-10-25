@@ -232,7 +232,7 @@ class SimulatedDeviceManager(object):
 
         if full_device_type.hardware_type is None:
             # Again, we use the existing devices to determine a legal hardware type
-            for name in SimulatedDeviceManager._device_identifier_to_name.itervalues():
+            for name in SimulatedDeviceManager._device_identifier_to_name.values():
                 type_from_name = DeviceType.from_string(name)
                 if type_from_name == full_device_type:
                     full_device_type.hardware_type = type_from_name.hardware_type
@@ -243,7 +243,7 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _get_device_identifier_for_type(device_type):
-        for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.iteritems():
+        for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.items():
             if type_name.lower() == u'{} {}'.format(device_type.hardware_family.lower(), device_type.hardware_type.lower()):
                 return type_id
         return None
@@ -348,7 +348,7 @@ class SimulatedDeviceManager(object):
             filter = lambda device: device.platform_device.is_booted_or_booting() and device.device_type in device_type
             return len(SimulatedDeviceManager.device_by_filter(filter, host=host))
 
-        for name in SimulatedDeviceManager._device_identifier_to_name.itervalues():
+        for name in SimulatedDeviceManager._device_identifier_to_name.values():
             if DeviceType.from_string(name) in device_type:
                 return SimulatedDeviceManager.max_supported_simulators(host)
         return 0

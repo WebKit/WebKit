@@ -486,6 +486,9 @@ class ReadableBinaryFileObject(object):
         self.offset += bytes
         return self.data[start:self.offset]
 
+    def seek(self, offset):
+        self.offset = offset
+
 
 class ReadableTextFileObject(ReadableBinaryFileObject):
     def __init__(self, fs, path, data):
