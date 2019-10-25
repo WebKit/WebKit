@@ -467,10 +467,34 @@
     "imported/w3c/web-platform-tests/cors/status-async.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-animations/CSSAnimation-effect.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/properties-value-implicit-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-001.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/matchMedia.xht": [
@@ -2016,6 +2040,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [

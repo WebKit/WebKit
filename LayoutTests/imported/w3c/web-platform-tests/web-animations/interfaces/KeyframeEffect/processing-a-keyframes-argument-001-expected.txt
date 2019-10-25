@@ -21,6 +21,7 @@ PASS non-animatable property 'unicodeBidi' is not accessed when using a property
 PASS non-animatable property 'willChange' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'writingMode' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'unsupportedProperty' is not accessed when using a property-indexed keyframe object 
+PASS non-animatable property 'float' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'font-size' is not accessed when using a property-indexed keyframe object 
 PASS non-animatable property 'animation' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'animationDelay' is not accessed when using a keyframe sequence 
@@ -44,6 +45,7 @@ PASS non-animatable property 'unicodeBidi' is not accessed when using a keyframe
 PASS non-animatable property 'willChange' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'writingMode' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'unsupportedProperty' is not accessed when using a keyframe sequence 
+PASS non-animatable property 'float' is not accessed when using a keyframe sequence 
 PASS non-animatable property 'font-size' is not accessed when using a keyframe sequence 
 PASS Equivalent property-indexed and sequenced keyframes: two properties with one value 
 PASS Equivalent property-indexed and sequenced keyframes: two properties with three values 

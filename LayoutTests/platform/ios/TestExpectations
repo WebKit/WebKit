@@ -3397,4 +3397,7 @@ webkit.org/b/202518 imported/w3c/web-platform-tests/2dcontext/drawing-text-to-th
 
 webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
 
+webkit.org/b/203291 imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html [ Failure ]
+webkit.org/b/203291 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
+
 webkit.org/b/203366 fast/text/whitespace/pre-wrap-overflow-selection.html [ Pass Failure ]

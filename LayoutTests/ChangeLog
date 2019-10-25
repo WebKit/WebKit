@@ -1,3 +1,27 @@
+2019-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+        <rdar://problem/56577481>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * tests-options.json:
+
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
         DatabaseContext should not prevent entering the back/forward cache

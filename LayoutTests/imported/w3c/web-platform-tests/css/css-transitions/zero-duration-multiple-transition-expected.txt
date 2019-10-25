@@ -1,0 +1,3 @@
+
+PASS transition-duration of 0 prevents earlier transitions with the same property from starting. 
+

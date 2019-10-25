@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/play-states.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/seamlessly-updating-the-playback-rate-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-current-time-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-playback-rate-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-start-time-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-target-effect-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/the-current-time-of-an-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html

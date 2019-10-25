@@ -1,3 +1,0 @@
-
-PASS pause() and play() a transition 
-

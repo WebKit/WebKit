@@ -1,3 +1,439 @@
+2019-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+        <rdar://problem/56577481>
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-animations/AnimationEffect-getComputedTiming.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-computed-timing-expected.txt.
+        * web-platform-tests/css/css-animations/AnimationEffect-getComputedTiming.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-computed-timing.html.
+        * web-platform-tests/css/css-animations/CSSAnimation-animationName.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_cssanimation-animationname-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-animationName.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_cssanimation-animationname.html.
+        * web-platform-tests/css/css-animations/CSSAnimation-canceling.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-canceling.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_setting-effect-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-effect.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-finished.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-finished.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-getCurrentTime.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-getCurrentTime.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-id.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-id-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-id.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-pausing.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-pausing-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-pausing.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-playState.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-playstate-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-playState.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-ready.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animation-ready-expected.txt.
+        * web-platform-tests/css/css-animations/CSSAnimation-ready.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-startTime.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/CSSAnimation-startTime.tentative.html: Added.
+        * web-platform-tests/css/css-animations/CSSPseudoElement-getAnimations.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_pseudoElement-get-animations-expected.txt.
+        * web-platform-tests/css/css-animations/CSSPseudoElement-getAnimations.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_pseudoElement-get-animations.html.
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_document-get-animations-expected.txt.
+        * web-platform-tests/css/css-animations/Document-getAnimations.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_document-get-animations.html.
+        * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_animations-dynamic-changes-expected.txt.
+        * web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative.html: Added.
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_element-get-animations-expected.txt.
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_element-get-animations.html.
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_keyframeeffect-getkeyframes-expected.txt.
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html.
+        * web-platform-tests/css/css-animations/KeyframeEffect-target.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_effect-target-expected.txt.
+        * web-platform-tests/css/css-animations/KeyframeEffect-target.tentative.html: Renamed from LayoutTests/imported/mozilla/css-animations/test_effect-target.html.
+        * web-platform-tests/css/css-animations/META.yml: Added.
+        * web-platform-tests/css/css-animations/OWNERS: Removed.
+        * web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time-expected.html: Added.
+        * web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html: Added.
+        * web-platform-tests/css/css-animations/animation-pseudo-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-animations/animation-pseudo-dynamic-001.html: Added.
+        * web-platform-tests/css/css-animations/animation-transform-pause-and-set-time-expected.html: Added.
+        * web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html: Added.
+        * web-platform-tests/css/css-animations/animationevent-interface-expected.txt:
+        * web-platform-tests/css/css-animations/animationevent-interface.js:
+        (test):
+        (test.):
+        * web-platform-tests/css/css-animations/animationevent-marker-pseudoelement-expected.txt: Added.
+        * web-platform-tests/css/css-animations/animationevent-marker-pseudoelement.html: Added.
+        * web-platform-tests/css/css-animations/computed-style-animation-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-animations/computed-style-animation-parsing.html: Added.
+        * web-platform-tests/css/css-animations/event-dispatch.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-animations/test_event-dispatch-expected.txt.
+        * web-platform-tests/css/css-animations/event-dispatch.tentative.html: Added.
+        * web-platform-tests/css/css-animations/event-order.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-animations/event-order.tentative.html: Added.
+        * web-platform-tests/css/css-animations/historical-expected.txt: Added.
+        * web-platform-tests/css/css-animations/historical.html: Added.
+        * web-platform-tests/css/css-animations/idlharness-expected.txt: Added.
+        * web-platform-tests/css/css-animations/idlharness.html: Added.
+        * web-platform-tests/css/css-animations/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-animations/inheritance.html: Added.
+        * web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash-expected.txt: Added.
+        * web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-delay-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-direction-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-duration-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-fill-mode-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-iteration-count-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-name-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-play-state-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-computed-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-computed.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-invalid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-valid-expected.txt: Added.
+        * web-platform-tests/css/css-animations/parsing/animation-valid.html: Added.
+        * web-platform-tests/css/css-animations/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-animations/responsive/column-rule-color-001-expected.txt: Added.
+        * web-platform-tests/css/css-animations/responsive/column-rule-color-001.html: Added.
+        * web-platform-tests/css/css-animations/responsive/column-width-001-expected.txt: Added.
+        * web-platform-tests/css/css-animations/responsive/column-width-001.html: Added.
+        * web-platform-tests/css/css-animations/responsive/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/css/css-animations/style-animation-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-animations/style-animation-parsing.html: Added.
+        * web-platform-tests/css/css-animations/support/testcommon.js:
+        * web-platform-tests/css/css-animations/support/w3c-import.log:
+        * web-platform-tests/css/css-animations/w3c-import.log:
+        * web-platform-tests/css/css-transitions/AnimationEffect-getComputedTiming.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_animation-computed-timing-expected.txt.
+        * web-platform-tests/css/css-transitions/AnimationEffect-getComputedTiming.tentative.html: Renamed from LayoutTests/imported/mozilla/css-transitions/test_animation-computed-timing.html.
+        * web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_pseudoElement-get-animations-expected.txt.
+        * web-platform-tests/css/css-transitions/CSSPseudoElement-getAnimations.tentative.html: Renamed from LayoutTests/imported/mozilla/css-transitions/test_pseudoElement-get-animations.html.
+        * web-platform-tests/css/css-transitions/CSSTransition-canceling.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_animation-cancel-expected.txt.
+        * web-platform-tests/css/css-transitions/CSSTransition-canceling.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-currentTime.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-currentTime.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-effect.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-effect.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-finished.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-finished.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-ready.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-ready.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-startTime.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/CSSTransition-transitionProperty.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_csstransition-transitionproperty-expected.txt.
+        * web-platform-tests/css/css-transitions/CSSTransition-transitionProperty.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/Document-getAnimations.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/Element-getAnimations.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/Element-getAnimations.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/KeyframeEffect-getKeyframes.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/KeyframeEffect-getKeyframes.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/KeyframeEffect-target.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_effect-target-expected.txt.
+        * web-platform-tests/css/css-transitions/KeyframeEffect-target.tentative.html: Renamed from LayoutTests/imported/mozilla/css-transitions/test_effect-target.html.
+        * web-platform-tests/css/css-transitions/META.yml: Added.
+        * web-platform-tests/css/css-transitions/README.md: Added.
+        * web-platform-tests/css/css-transitions/before-load-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/before-load-001.html: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-001.html: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-002.html: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-003-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/changing-while-transition-003.html: Added.
+        * web-platform-tests/css/css-transitions/currentcolor-animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/currentcolor-animation-001.html: Added.
+        * web-platform-tests/css/css-transitions/disconnected-element-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/disconnected-element-001.html: Added.
+        * web-platform-tests/css/css-transitions/event-dispatch.tentative-expected.txt: Renamed from LayoutTests/imported/mozilla/css-transitions/test_event-dispatch-expected.txt.
+        * web-platform-tests/css/css-transitions/event-dispatch.tentative.html: Added.
+        * web-platform-tests/css/css-transitions/events-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-001.html: Added.
+        * web-platform-tests/css/css-transitions/events-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-002.html: Added.
+        * web-platform-tests/css/css-transitions/events-003-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-003.html: Added.
+        * web-platform-tests/css/css-transitions/events-004-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-004.html: Added.
+        * web-platform-tests/css/css-transitions/events-005-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-005.html: Added.
+        * web-platform-tests/css/css-transitions/events-006-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-006.html: Added.
+        * web-platform-tests/css/css-transitions/events-007-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/events-007.html: Added.
+        * web-platform-tests/css/css-transitions/historical-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/historical.html: Added.
+        * web-platform-tests/css/css-transitions/idlharness-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/idlharness.html: Added.
+        * web-platform-tests/css/css-transitions/inherit-height-transition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/inherit-height-transition.html: Added.
+        * web-platform-tests/css/css-transitions/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/inheritance.html: Added.
+        * web-platform-tests/css/css-transitions/no-transition-from-ua-to-blocking-stylesheet-expected.html: Added.
+        * web-platform-tests/css/css-transitions/no-transition-from-ua-to-blocking-stylesheet.html: Added.
+        * web-platform-tests/css/css-transitions/non-rendered-element-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/non-rendered-element-001.html: Added.
+        * web-platform-tests/css/css-transitions/non-rendered-element-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/non-rendered-element-002.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-computed.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-computed.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-invalid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-valid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-valid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-computed.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-invalid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-valid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-duration-valid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-invalid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-computed.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-invalid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-valid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-property-valid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-shorthand.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-invalid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-valid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-valid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-valid-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/parsing/transition-valid.html: Added.
+        * web-platform-tests/css/css-transitions/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-transitions/properties-value-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-001.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-002.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-003.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-auto-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-auto-001.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-implicit-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-implicit-001.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-001.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-002.html: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-003-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/properties-value-inherit-003.html: Added.
+        * web-platform-tests/css/css-transitions/pseudo-elements-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/pseudo-elements-001.html: Added.
+        * web-platform-tests/css/css-transitions/pseudo-elements-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/pseudo-elements-002.html: Added.
+        * web-platform-tests/css/css-transitions/starting-of-transitions-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/starting-of-transitions-001.html: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-green.png: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-lime.png: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-maroon.png: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-navy.png: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-red.png: Added.
+        * web-platform-tests/css/css-transitions/support/1x1-white.png: Added.
+        * web-platform-tests/css/css-transitions/support/60x60-gg-rr.png: Added.
+        * web-platform-tests/css/css-transitions/support/60x60-green.png: Added.
+        * web-platform-tests/css/css-transitions/support/60x60-red.png: Added.
+        * web-platform-tests/css/css-transitions/support/README: Added.
+        * web-platform-tests/css/css-transitions/support/a-green-transition.css: Added.
+        (.a):
+        * web-platform-tests/css/css-transitions/support/a-green.css: Added.
+        (.a):
+        * web-platform-tests/css/css-transitions/support/b-green.css: Added.
+        (.b):
+        * web-platform-tests/css/css-transitions/support/c-red.css: Added.
+        (.c):
+        * web-platform-tests/css/css-transitions/support/cat.png: Added.
+        * web-platform-tests/css/css-transitions/support/generalParallelTest.js: Added.
+        (suite.root.generalParallelTest.setup):
+        (suite.root.generalParallelTest.data.transition.computedStyle):
+        (suite.root.generalParallelTest.data.container.computedStyle):
+        (suite.root.generalParallelTest.data.pseudo.computedStyle):
+        (suite.root.generalParallelTest._setupDom):
+        (suite.root.generalParallelTest.):
+        (suite.root.generalParallelTest._setupEvents):
+        (suite.root.generalParallelTest.teardown):
+        (suite.root.generalParallelTest.sliceStart):
+        (suite.root.generalParallelTest.sliceDone):
+        (suite.root.generalParallelTest.done):
+        (suite.root.generalParallelTest.addStyles):
+        (suite.root.generalParallelTest.getStyle):
+        (suite.root.generalParallelTest._getStyleFor):
+        (suite.root.generalParallelTest._addClass):
+        (suite.root.generalParallelTest._removeClass):
+        (suite.root.generalParallelTest.startTransition):
+        (suite.root.generalParallelTest.runLoop):
+        (suite.root.generalParallelTest.startValueCollection):
+        (suite.root.generalParallelTest.stopValueCollection):
+        (suite.root.generalParallelTest.assertExpectedEventsFunc):
+        (suite.root.generalParallelTest.assertIntermediateValuesFunc):
+        * web-platform-tests/css/css-transitions/support/helper.js: Added.
+        (root.setStyle):
+        (serializeStyles):
+        (root.computedStyle):
+        (root.reflow):
+        (root.extend):
+        (root.domFixture):
+        (root.assert_times_equal):
+        (root.assert_time_equals_literal):
+        (root.assert_end_events_equal):
+        (root.assert_end_event_batch_equal):
+        (root.addDiv):
+        (root.addStyle):
+        (root.waitForFrame):
+        (root.waitForAnimationFrames.return.new.Promise):
+        (root.waitForAnimationFrames):
+        (root.frameTimeout):
+        * web-platform-tests/css/css-transitions/support/import-green.css: Added.
+        (.import):
+        * web-platform-tests/css/css-transitions/support/import-red.css: Added.
+        (.import):
+        * web-platform-tests/css/css-transitions/support/one.gif: Added.
+        * web-platform-tests/css/css-transitions/support/pattern-grg-rgr-grg.png: Added.
+        * web-platform-tests/css/css-transitions/support/pattern-grg-rrg-rgg.png: Added.
+        * web-platform-tests/css/css-transitions/support/pattern-rgr-grg-rgr.png: Added.
+        * web-platform-tests/css/css-transitions/support/pattern-tr.png: Added.
+        * web-platform-tests/css/css-transitions/support/properties.js: Added.
+        (values.string_appeared_here):
+        (assemble.):
+        (assemble):
+        (root.getPropertyTests):
+        (root.getMissingPropertyTests):
+        (root.getUnspecifiedPropertyTests):
+        (root.getFontSizeRelativePropertyTests):
+        (root.getAutoPropertyTests):
+        (root.filterPropertyTests):
+        * web-platform-tests/css/css-transitions/support/ruler-h-50%.png: Added.
+        * web-platform-tests/css/css-transitions/support/ruler-h-50px.png: Added.
+        * web-platform-tests/css/css-transitions/support/ruler-v-100px.png: Added.
+        * web-platform-tests/css/css-transitions/support/ruler-v-50px.png: Added.
+        * web-platform-tests/css/css-transitions/support/runParallelAsyncHarness.js: Added.
+        (noop):
+        (runLoop.concludeSlice):
+        (root.runParallelAsyncHarness):
+        * web-platform-tests/css/css-transitions/support/square-purple.png: Added.
+        * web-platform-tests/css/css-transitions/support/square-teal.png: Added.
+        * web-platform-tests/css/css-transitions/support/square-white.png: Added.
+        * web-platform-tests/css/css-transitions/support/support/README: Added.
+        * web-platform-tests/css/css-transitions/support/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-transitions/support/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-transitions/support/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/css/css-transitions/support/swatch-blue.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-green.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-lime.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-orange.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-red.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-teal.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-white.png: Added.
+        * web-platform-tests/css/css-transitions/support/swatch-yellow.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-bl.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-br.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-inner-half-size.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-outer.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-tl.png: Added.
+        * web-platform-tests/css/css-transitions/support/test-tr.png: Added.
+        * web-platform-tests/css/css-transitions/support/two.gif: Added.
+        * web-platform-tests/css/css-transitions/support/vendorPrefix.js: Added.
+        (root.addVendorPrefix):
+        (root.addValueVendorPrefix):
+        (root.getVendorPrefix):
+        (root.getValueVendorPrefix):
+        * web-platform-tests/css/css-transitions/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-transitions/transition-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-001.html: Added.
+        * web-platform-tests/css/css-transitions/transition-background-position-with-edge-offset-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-background-position-with-edge-offset.html: Added.
+        * web-platform-tests/css/css-transitions/transition-delay-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-delay-001.html: Added.
+        * web-platform-tests/css/css-transitions/transition-duration-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-duration-001.html: Added.
+        * web-platform-tests/css/css-transitions/transition-property-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-property-001.html: Added.
+        * web-platform-tests/css/css-transitions/transition-property-002-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-property-002.html: Added.
+        * web-platform-tests/css/css-transitions/transition-reparented-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transition-reparented.html: Added.
+        * web-platform-tests/css/css-transitions/transition-test-expected.html: Added.
+        * web-platform-tests/css/css-transitions/transition-test.html: Added.
+        * web-platform-tests/css/css-transitions/transitioncancel-001-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transitioncancel-001.html: Added.
+        * web-platform-tests/css/css-transitions/transitionevent-interface-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/transitionevent-interface.html: Added.
+        * web-platform-tests/css/css-transitions/w3c-import.log: Added.
+        * web-platform-tests/css/css-transitions/zero-duration-multiple-transition-expected.txt: Added.
+        * web-platform-tests/css/css-transitions/zero-duration-multiple-transition.html: Added.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-types.js:
+        (const.visibilityType.testAdditionOrAccumulation):
+        (const.filterListType.testInterpolation):
+        * web-platform-tests/web-animations/animation-model/animation-types/w3c-import.log: Added.
+        * web-platform-tests/web-animations/animation-model/combining-effects/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/w3c-import.log: Added.
+        * web-platform-tests/web-animations/interfaces/Animatable/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness.window-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness.window.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/oncancel.html:
+        * web-platform-tests/web-animations/interfaces/Animation/w3c-import.log: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffect/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness.window-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness.window.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations.html:
+        * web-platform-tests/web-animations/interfaces/Document/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness.window-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness.window.html: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness.window-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness.window.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/w3c-import.log: Added.
+        * web-platform-tests/web-animations/resources/w3c-import.log: Added.
+        * web-platform-tests/web-animations/timing-model/animation-effects/w3c-import.log: Added.
+        * web-platform-tests/web-animations/timing-model/animations/w3c-import.log: Added.
+        * web-platform-tests/web-animations/timing-model/time-transformations/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/timing-model/timelines/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+        * web-platform-tests/web-animations/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-animations/support/w3c-import.log.
+
 2019-10-24  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r251536.

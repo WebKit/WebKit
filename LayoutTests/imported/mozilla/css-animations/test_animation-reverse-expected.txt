@@ -1,3 +1,0 @@
-
-PASS reverse() from idle state starts playing the animation 
-

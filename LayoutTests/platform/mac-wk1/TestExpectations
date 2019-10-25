@@ -802,4 +802,3 @@ webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basi
 http/tests/is-logged-in/ [ Skip ]
 
 webkit.org/b/203176 [ Debug ] fast/scrolling/latching/scroll-select-bottom-test.html [ Pass Failure ]
-
