@@ -1,3 +1,13 @@
+2019-10-25  Dean Jackson  <dino@apple.com>
+
+        Cherry-pick r251388. rdar://56579651
+
+    Move ElementContext from WebKit to WebCore
+    https://bugs.webkit.org/show_bug.cgi?id=203210
+    <rdar://problem/56475682>
+
+    Reviewed by Simon Fraser.
+
 2019-10-20  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r250773. rdar://problem/56271900

@@ -189,6 +189,7 @@ enum class WritingDirection : uint8_t;
 struct BackForwardItemIdentifier;
 struct CompositionUnderline;
 struct DictationAlternative;
+struct ElementContext;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
 struct Highlight;
@@ -1186,6 +1187,7 @@ public:
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
     WebCore::Element* elementForTextInputContext(const TextInputContext&);
+    Optional<WebCore::ElementContext> contextForElement(WebCore::Element&) const;
 
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();
