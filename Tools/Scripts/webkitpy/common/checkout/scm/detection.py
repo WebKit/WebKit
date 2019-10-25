@@ -32,9 +32,9 @@ import logging
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
 
-from .svn import SVN
-from .git import Git
-from .stub_repository import StubRepository
+from webkitpy.common.checkout.scm.svn import SVN
+from webkitpy.common.checkout.scm.git import Git
+from webkitpy.common.checkout.scm.stub_repository import StubRepository
 
 _log = logging.getLogger(__name__)
 

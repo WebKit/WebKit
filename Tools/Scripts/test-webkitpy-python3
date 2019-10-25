@@ -30,8 +30,11 @@ import os
 import sys
 import unittest
 
+from webkitpy.common.checkout.scm.scm_unittest import SCMTest
+
 
 PYTHON3_COMPATIBLE_DIRECTORIES = [
+  'webkitpy.common.checkout.scm',
   'webkitpy.common.config',
   'webkitpy.common.system',
   'webkitpy.common.thread',
@@ -39,6 +42,17 @@ PYTHON3_COMPATIBLE_DIRECTORIES = [
   'webkitpy.common.watchlist',
   'webkitpy.results',
 ]
+SLOW_TESTS = [
+    SCMTest,
+]
+
+def is_slow(candidate):
+    if isinstance(candidate, unittest.suite.TestSuite):
+        return any(is_slow(test) for test in candidate)
+    for test in SLOW_TESTS:
+        if isinstance(candidate, test):
+            return True
+    return False
 
 
 def main():
@@ -52,6 +66,11 @@ def main():
         '-f', '--stop-on-fail',
         default=False, action='store_true',
         help='Stop on first fail or error',
+    )
+    parser.add_argument(
+        '-a', '--all',
+        default=False, action='store_true',
+        help='Enables SCM tests, which are slow and so disable by default',
     )
 
     if len(PYTHON3_COMPATIBLE_DIRECTORIES) == 1:
@@ -74,7 +93,8 @@ def main():
     for module_name in options.modules_to_test:
         module_suite = unittest.defaultTestLoader.discover(os.path.join(root, module_name.replace('.', '/')), pattern='*test.py', top_level_dir=root)
         for test in (module_suite or []):
-            suite.addTest(test)
+            if options.all or not is_slow(test):
+                suite.addTest(test)
 
     if suite.countTestCases() == 0:
         raise RuntimeError('No matching tests found.')

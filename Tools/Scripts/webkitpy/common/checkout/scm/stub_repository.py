@@ -29,7 +29,7 @@ import logging
 import json
 
 from webkitpy.common.system.filesystem import FileSystem
-from .scm import SCM
+from webkitpy.common.checkout.scm.scm import SCM
 
 _log = logging.getLogger(__name__)
 

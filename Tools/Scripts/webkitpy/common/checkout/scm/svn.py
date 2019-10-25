@@ -36,13 +36,14 @@ import string
 import sys
 import tempfile
 
+from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.version import Version
+from webkitpy.common.unicode_compatibility import encode_if_necessary
 
-from .scm import AuthenticationError, SCM, commit_error_handler
 
 _log = logging.getLogger(__name__)
 
@@ -321,7 +322,7 @@ class SVN(SCM, SVNRepository):
 
     def diff_for_revision(self, revision):
         # FIXME: This should probably use cwd=self.checkout_root
-        return self._run_svn(['diff', '-c', revision])
+        return self._run_svn(['diff', '-c', revision], decode_output=False)
 
     def _bogus_dir_name(self):
         rnd = ''.join(random.sample(string.ascii_letters, 5))
@@ -411,4 +412,4 @@ class SVN(SCM, SVNRepository):
 
     def propget(self, pname, path):
         dir, base = os.path.split(path)
-        return self._run_svn(['pget', pname, base], cwd=dir).encode('utf-8').rstrip("\n")
+        return encode_if_necessary(self._run_svn(['pget', pname, base], cwd=dir).rstrip("\n"))

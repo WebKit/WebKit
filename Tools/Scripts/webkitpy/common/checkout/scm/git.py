@@ -34,9 +34,10 @@ import re
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
 
-from .commitmessage import CommitMessage
-from .scm import AuthenticationError, SCM, commit_error_handler
-from .svn import SVNRepository
+from webkitpy.common.checkout.scm.commitmessage import CommitMessage
+from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
+from webkitpy.common.checkout.scm.svn import SVNRepository
+from webkitpy.common.unicode_compatibility import decode_for, encode_if_necessary
 
 _log = logging.getLogger(__name__)
 
@@ -251,7 +252,7 @@ class Git(SCM, SVNRepository):
     def revisions_changing_file(self, path, limit=5):
         # git rev-list head --remove-empty --limit=5 -- path would be equivalent.
         commit_ids = self._run_git(["log", "--remove-empty", "--pretty=format:%H", "-%s" % limit, "--", path]).splitlines()
-        return filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids))
+        return list(filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids)))
 
     def conflicted_files(self):
         # We do not need to pass decode_output for this diff command
@@ -331,7 +332,7 @@ class Git(SCM, SVNRepository):
         if not revision:
             return diff
 
-        return "Subversion Revision: " + revision + '\n' + diff
+        return encode_if_necessary("Subversion Revision: ") + encode_if_necessary(revision) + encode_if_necessary('\n') + encode_if_necessary(diff)
 
     def create_patch(self, git_commit=None, changed_files=None, git_index=False):
         """Returns a byte array (str()) representing the patch file.

@@ -30,7 +30,7 @@
 
 import unittest
 
-from .detection import SCMDetector
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture

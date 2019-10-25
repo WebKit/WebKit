@@ -23,7 +23,7 @@
 import unittest
 
 from webkitpy.common.system import filesystem_mock
-from .stub_repository import StubRepository
+from webkitpy.common.checkout.scm.stub_repository import StubRepository
 
 mock_stub_repository_json = {'branch': 'trunk', 'id': '2738499'}
 

@@ -1,3 +1,26 @@
+2019-10-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common.checkout.scm
+        https://bugs.webkit.org/show_bug.cgi?id=203277
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.checkout.scm, add --all flag.
+        * Scripts/webkitpy/common/checkout/scm/detection.py: Use full import paths.
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py: Ditto.
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.revisions_changing_file): Convert filter iterator to list.
+        (Git.prepend_svn_revision): Patches need to be bytes.
+        * Scripts/webkitpy/common/checkout/scm/scm.py: Import unicode.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Use full import paths,
+        differentiate between binary and text files, replace assertItemsEqual with sorted,
+        list fix regexes on byte arrays.
+        * Scripts/webkitpy/common/checkout/scm/stub_repository.py: Use full import paths.
+        * Scripts/webkitpy/common/checkout/scm/stub_repository_unittest.py: Use full import paths.
+        * Scripts/webkitpy/common/checkout/scm/svn.py: Use full import paths.
+        (SVN.diff_for_revision): Diff for revision should be byte array.
+        (SVN.propget): Use Python 3 compatible encoding.
+
 2019-10-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a test fix after r251498
