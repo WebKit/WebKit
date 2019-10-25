@@ -66,7 +66,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_suspensionToken(m_process->throttler().foregroundActivityToken())
 #endif
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageProxyID = %" PRIu64 " webPageID = %" PRIu64 " navigationID = %" PRIu64 " suspendedPage: %p", m_page.identifier().toUInt64(), m_webPageID.toUInt64(), navigationID, suspendedPage.get());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 " navigationID=%" PRIu64 " suspendedPage: %p", m_page.identifier().toUInt64(), m_webPageID.toUInt64(), navigationID, suspendedPage.get());
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
     m_process->addProvisionalPageProxy(*this);
@@ -108,7 +108,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
 
 void ProvisionalPageProxy::processDidTerminate()
 {
-    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "processDidTerminate: pageProxyID = %" PRIu64 " webPageID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "processDidTerminate: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
     m_page.provisionalProcessDidTerminate();
 }
 
@@ -125,7 +125,7 @@ void ProvisionalPageProxy::cancel()
         
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame for pageProxyID = %" PRIu64 " webPageID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "cancel: Simulating a didFailProvisionalLoadForFrame for pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
     ASSERT(m_mainFrame);
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
@@ -144,14 +144,14 @@ void ProvisionalPageProxy::initializeWebPage()
 
 void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData: pageProxyID = %" PRIu64 " webPageID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadData: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
     m_page.loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
 }
 
 void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageProxyID = %" PRIu64 " webPageID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
     // If this is a client-side redirect continuing in a new process, then the new process will overwrite the fromItem's URL. In this case,
     // we need to make sure we update fromItem's processIdentifier as we want future navigations to this BackForward item to happen in the
@@ -164,7 +164,7 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
 
 void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebBackForwardListItem& item, Optional<WebsitePoliciesData>&& websitePolicies)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "goToBackForwardItem: pageProxyID = %" PRIu64 " webPageID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "goToBackForwardItem: pageProxyID=%" PRIu64 " webPageID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64());
 
     auto itemStates = m_page.backForwardList().filteredItemStates([this, targetItem = &item](auto& item) {
         if (auto* backForwardCacheEntry = item.backForwardCacheEntry()) {
@@ -189,7 +189,7 @@ inline bool ProvisionalPageProxy::validateInput(FrameIdentifier frameID, const O
 
 void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateMainFrame: pageProxyID = %" PRIu64 " webPageID = %" PRIu64 ", frameID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64());
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateMainFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64());
     ASSERT(!m_mainFrame);
 
     m_mainFrame = WebFrameProxy::create(m_page, frameID);
@@ -227,7 +227,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didStartProvisionalLoadForFrame: pageProxyID = %" PRIu64 " webPageID = %" PRIu64 ", frameID = %" PRIu64 ", navigationID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didStartProvisionalLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
     ASSERT(m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = url;
 
@@ -247,7 +247,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "didFailProvisionalLoadForFrame: pageProxyID = %" PRIu64 " webPageID = %" PRIu64 ", frameID = %" PRIu64 ", navigationID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "didFailProvisionalLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID=%" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
 
@@ -263,7 +263,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, uint64
     if (!validateInput(frameID, navigationID))
         return;
 
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCommitLoadForFrame: pageProxyID = %" PRIu64 " webPageID = %" PRIu64 ", frameID = %" PRIu64 ", navigationID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCommitLoadForFrame: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 ", frameID=%" PRIu64 ", navigationID = %" PRIu64, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), frameID.toUInt64(), navigationID);
     m_provisionalLoadURL = { };
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
