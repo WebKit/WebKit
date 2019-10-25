@@ -53,7 +53,7 @@ public:
 
     unsigned evaluationRound() const { return m_evaluationRound; }
 
-    void evaluateAll();
+    void styleResolverChanged();
 
     bool evaluate(const MediaQuerySet&);
 

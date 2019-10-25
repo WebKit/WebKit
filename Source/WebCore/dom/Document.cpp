@@ -3911,19 +3911,13 @@ StyleSheetList& Document::styleSheets()
     return *m_styleSheetList;
 }
 
-void Document::updateElementsAffectedByMediaQueries()
+void Document::evaluateMediaQueryList()
 {
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    if (m_mediaQueryMatcher)
+        m_mediaQueryMatcher->styleResolverChanged();
+    
     checkViewportDependentPictures();
     checkAppearanceDependentPictures();
-}
-
-void Document::evaluateMediaQueriesAndReportChanges()
-{
-    if (!m_mediaQueryMatcher)
-        return;
-
-    m_mediaQueryMatcher->evaluateAll();
 }
 
 void Document::checkViewportDependentPictures()

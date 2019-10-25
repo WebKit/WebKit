@@ -560,9 +560,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     auto& frameView = *view();
     frameView.adjustMediaTypeForPrinting(printing);
 
-    // FIXME: Consider invoking Page::updateRendering or an equivalent.
     m_doc->styleScope().didChangeStyleSheetEnvironment();
-    m_doc->evaluateMediaQueriesAndReportChanges();
     if (shouldUsePrintingLayout())
         frameView.forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
     else {

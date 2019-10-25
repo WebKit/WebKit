@@ -556,8 +556,7 @@ public:
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
 
-    void updateElementsAffectedByMediaQueries();
-    void evaluateMediaQueriesAndReportChanges();
+    void evaluateMediaQueryList();
 
     FormController& formController();
     Vector<String> formElementsState() const;

@@ -25,8 +25,6 @@
         if (!window.testRunner)
             return;
 
-        testRunner.waitUntilDone();
-
         var query = window.matchMedia("screen");
 
         query.addListener(callback1);
@@ -51,7 +49,6 @@
         query.addListener(callback2);
 
         window.internals.settings.setMediaTypeOverride("handheld");
-        requestAnimationFrame(() => testRunner.notifyDone());
     }
 
 </script>

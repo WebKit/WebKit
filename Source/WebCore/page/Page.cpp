@@ -1305,8 +1305,7 @@ void Page::updateRendering()
 
     // FIXME: Run the scroll steps
 
-    for (auto& document : collectDocuments())
-        document->evaluateMediaQueriesAndReportChanges();
+    // FIXME: Evaluate media queries and report changes.
 
     for (auto& document : documents) {
         DOMHighResTimeStamp timestamp = document->domWindow()->nowTimestamp();
@@ -2667,7 +2666,7 @@ void Page::accessibilitySettingsDidChange()
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document()) {
             document->styleScope().evaluateMediaQueriesForAccessibilitySettingsChange();
-            document->updateElementsAffectedByMediaQueries();
+            document->evaluateMediaQueryList();
         }
     }
 }
@@ -2681,7 +2680,7 @@ void Page::appearanceDidChange()
 
         document->styleScope().didChangeStyleSheetEnvironment();
         document->styleScope().evaluateMediaQueriesForAppearanceChange();
-        document->updateElementsAffectedByMediaQueries();
+        document->evaluateMediaQueryList();
     }
 }
 

@@ -886,15 +886,10 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
 
     m_emulatedMedia = media;
 
-    // FIXME: Schedule a rendering update instead of synchronously updating the layout.
     m_inspectedPage.updateStyleAfterChangeInEnvironment();
 
-    auto document = makeRefPtr(m_inspectedPage.mainFrame().document());
-    if (!document)
-        return;
-
-    document->updateLayout();
-    document->evaluateMediaQueriesAndReportChanges();
+    if (auto* document = m_inspectedPage.mainFrame().document())
+        document->updateLayout();
 }
 
 void InspectorPageAgent::setForcedAppearance(ErrorString&, const String& appearance)
