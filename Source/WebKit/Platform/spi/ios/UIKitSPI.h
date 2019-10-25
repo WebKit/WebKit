@@ -46,6 +46,7 @@
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboardInputModeController.h>
 #import <UIKit/UIKeyboardIntl.h>
+#import <UIKit/UIKeyboardPreferencesController.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
 #import <UIKit/UIMenuController_Private.h>
@@ -985,6 +986,12 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @end
 
 #endif
+
+@interface UIKeyboardPreferencesController : NSObject
++ (UIKeyboardPreferencesController *)sharedPreferencesController;
+- (void)setValue:(id)value forPreferenceKey:(NSString *)key;
+- (BOOL)boolForPreferenceKey:(NSString *)key;
+@end
 
 @interface UIMenuItem (UIMenuController_SPI)
 @property (nonatomic) BOOL dontDismiss;

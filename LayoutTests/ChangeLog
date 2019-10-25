@@ -1,3 +1,16 @@
+2019-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] fast/forms/ios/accessory-bar-navigation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203294
+        <rdar://problem/54520848>
+
+        Reviewed by Tim Horton.
+
+        Upstream an iOS 13 layout test result into open source. Note that fast/forms/ios is not currently run in open
+        automation at all, so this expectation was unused anyways.
+
+        * fast/forms/ios/accessory-bar-navigation-expected.txt:
+
 2019-10-25  youenn fablet  <youenn@apple.com>
 
         WebProcess should unregister its interest for a SWServerRegistration when all its corresponding ServiceWorkerRegistrations are destroyed

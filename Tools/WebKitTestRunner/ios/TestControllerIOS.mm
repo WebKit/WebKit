@@ -147,6 +147,13 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
+    UIKeyboardPreferencesController *keyboardPreferences = UIKeyboardPreferencesController.sharedPreferencesController;
+    NSString *automaticMinimizationEnabledPreferenceKey = @"AutomaticMinimizationEnabled";
+    if (![keyboardPreferences boolForPreferenceKey:automaticMinimizationEnabledPreferenceKey]) {
+        [keyboardPreferences setValue:@YES forPreferenceKey:automaticMinimizationEnabledPreferenceKey];
+        CFPreferencesSetAppValue((__bridge CFStringRef)automaticMinimizationEnabledPreferenceKey, kCFBooleanTrue, CFSTR("com.apple.Preferences"));
+    }
+
     GSEventSetHardwareKeyboardAttached(true, 0);
 
     m_inputModeSwizzlers.clear();

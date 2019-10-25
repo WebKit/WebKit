@@ -1,3 +1,37 @@
+2019-10-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 13] fast/forms/ios/accessory-bar-navigation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203294
+        <rdar://problem/54520848>
+
+        Reviewed by Tim Horton.
+
+        This layout test consistently fails when it is the first test to involve bringing up the keyboard that is run in
+        a newly created iOS simulator. This is because a software keyboard is presented when focusing the input fields
+        in the test, and the test expectation (which depends on the visual viewport) requires a hardware keyboard.
+
+        WebKitTestRunner already simulates the hardware keyboard being attached using the call to GraphicsServices SPI
+        in TestController::platformResetStateToConsistentValues. However, this was effectively a no-op in the case where
+        the simulated device has never (in its lifetime, even through reboots) brought up an input view. This is because
+        -[UIKeyboardImpl hardwareKeyboardAvailabilityChanged] is never called, due to UIInputResponderController never
+        having an active instance with an input view set. As a result, the automaticMinimizationEnabled property of
+        UIKeyboardImpl is never set to its correct initial value (which depends on GSEventIsHardwareKeyboardAttached()).
+
+        This leads to UIKeyboardImpl not automatically minimizing itself even though the hardware keyboard is attached
+        (but only until the next time the keyboard is shown, after a hardware keyboard availability change notification
+        has been sent, which occurs between every layout test).
+
+        To work around this source of flakiness, we ensure that the keyboard preference for enabling automatic
+        minimization has been set to @YES by the time we attempt to simulate connecting the hardware keyboard by calling
+        GSEventIsHardwareKeyboardAttached. Note that the extra step of writing the value to com.apple.Preferences is
+        necessary because logic in TextInput.framework exists that periodically wipes out any cached values for keyboard
+        preferences on UIInputResponderController, and then attempts to regenerate them by reading defaults in
+        com.apple.Preferences. However, the same logic also fails to actually update com.apple.Preferences before
+        reading from it, which results in a software keyboard *very* rarely appearing again when running layout tests
+        that don't expect to observe a software keyboard.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+
 2019-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add exclusion rules to text manipulation SPI
