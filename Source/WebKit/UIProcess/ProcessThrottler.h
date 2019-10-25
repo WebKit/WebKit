@@ -41,6 +41,8 @@ enum ProcessSuppressionDisabledCounterType { };
 typedef RefCounter<ProcessSuppressionDisabledCounterType> ProcessSuppressionDisabledCounter;
 typedef ProcessSuppressionDisabledCounter::Token ProcessSuppressionDisabledToken;
 
+enum class IsSuspensionImminent : bool { No, Yes };
+
 class ProcessThrottlerClient;
 
 class ProcessThrottler : private ProcessAssertion::Client {
@@ -54,31 +56,34 @@ public:
 
     ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
 
-    inline ForegroundActivityToken foregroundActivityToken() const;
-    inline BackgroundActivityToken backgroundActivityToken() const;
+    ForegroundActivityToken foregroundActivityToken() const;
+    BackgroundActivityToken backgroundActivityToken() const;
     
     void didConnectToProcess(ProcessID);
-    void processReadyToSuspend();
-    void didCancelProcessSuspension();
+    void processReadyToSuspend(uint64_t pendingRequestToSuspendID);
     bool shouldBeRunnable() const { return m_foregroundCounter.value() || m_backgroundCounter.value(); }
 
 private:
-    AssertionState assertionState();
-    void updateAssertion();
-    void updateAssertionNow();
-    void suspendTimerFired();
+    AssertionState expectedAssertionState();
+    void updateAssertionIfNeeded();
+    void updateAssertionStateNow();
+    void setAssertionState(AssertionState);
+    void prepareToSuspendTimeoutTimerFired();
+    void sendPrepareToSuspendIPC(IsSuspensionImminent);
 
     // ProcessAssertionClient
     void uiAssertionWillExpireImminently() override;
 
+    void clearPendingRequestToSuspend();
+
     ProcessThrottlerClient& m_process;
+    ProcessID m_processIdentifier { 0 };
     std::unique_ptr<ProcessAssertion> m_assertion;
-    RunLoop::Timer<ProcessThrottler> m_suspendTimer;
+    RunLoop::Timer<ProcessThrottler> m_prepareToSuspendTimeoutTimer;
     ForegroundActivityCounter m_foregroundCounter;
     BackgroundActivityCounter m_backgroundCounter;
-    int m_suspendMessageCount { 0 };
+    Optional<uint64_t> m_pendingRequestToSuspendID;
     bool m_shouldTakeUIBackgroundAssertion;
-    bool m_uiAssertionExpired { false };
 };
 
 inline ProcessThrottler::ForegroundActivityToken ProcessThrottler::foregroundActivityToken() const

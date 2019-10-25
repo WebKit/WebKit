@@ -1377,16 +1377,17 @@ void WebProcess::resetAllGeolocationPermissions()
 }
 #endif
 
-void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
+void WebProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend(%" PRIu64 ") isSuspensionImminent: %d", this, requestToSuspendID, isSuspensionImminent);
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
 #if PLATFORM(COCOA)
     if (m_processType == ProcessType::PrewarmedWebContent) {
-        if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
-            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
-            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+        if (requestToSuspendID) {
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Sending ProcessReadyToSuspend(%" PRIu64 ") IPC message", this, requestToSuspendID);
+            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
         }
         return;
     }
@@ -1402,7 +1403,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
 
     freezeAllLayerTrees();
-    
+
 #if PLATFORM(COCOA)
     destroyRenderingResources();
 #endif
@@ -1416,66 +1417,17 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     updateFreezerStatus();
 #endif
 
-    markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend](bool success) {
+    markAllLayersVolatile([this, requestToSuspendID](bool success) {
         if (success)
             RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
         else
             RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Failed to mark all layers as volatile", this);
 
-        if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
-            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::actualPrepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
-            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+        if (requestToSuspendID) {
+            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Sending ProcessReadyToSuspend(%" PRIu64 ") IPC message", this, requestToSuspendID);
+            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
         }
     });
-}
-
-void WebProcess::processWillSuspendImminently()
-{
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently() BEGIN", this);
-    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently() END", this);
-}
-
-void WebProcess::prepareToSuspend()
-{
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend()", this);
-    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
-}
-
-void WebProcess::cancelPrepareToSuspend()
-{
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
-
-    m_processIsSuspended = false;
-
-#if PLATFORM(COCOA)
-    if (m_processType == ProcessType::PrewarmedWebContent)
-        return;
-#endif
-
-    unfreezeAllLayerTrees();
-
-#if PLATFORM(IOS_FAMILY)
-    m_webSQLiteDatabaseTracker.setIsSuspended(false);
-    SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
-    accessibilityProcessSuspendedNotification(false);
-#endif
-
-#if ENABLE(VIDEO)
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->processDidResume();
-    resumeAllMediaBuffering();
-#endif
-
-    // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
-    // shouldn't send DidCancelProcessSuspension; the UI process strictly expects one or the other.
-    if (!m_pageMarkingLayersAsVolatileCounter)
-        return;
-
-    cancelMarkAllLayersVolatile();
-
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend() Sending DidCancelProcessSuspension IPC message", this);
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);
 }
 
 void WebProcess::markAllLayersVolatile(WTF::Function<void(bool)>&& completionHandler)

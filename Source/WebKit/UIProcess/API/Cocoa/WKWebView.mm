@@ -7611,7 +7611,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_processWillSuspendImminentlyForTesting
 {
     if (_page)
-        _page->process().sendProcessWillSuspendImminently();
+        _page->process().sendPrepareToSuspend(0, WebKit::IsSuspensionImminent::Yes);
 }
 
 - (void)_processDidResumeForTesting

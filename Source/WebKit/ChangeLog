@@ -1,3 +1,64 @@
+2019-10-24  Chris Dumez  <cdumez@apple.com>
+
+        Simplify ProcessThrottler implementation
+        https://bugs.webkit.org/show_bug.cgi?id=203370
+
+        Reviewed by Alex Christensen.
+
+        Simplify ProcessThrottler implementation by:
+        - Getting rid of CancelPrepareToSuspend IPC. Instead a regular ProcessDidResume IPC is sent to
+          the child process.
+        - Getting rid of the ProcessWillSuspendImminently IPC and send a regular ProcessDidResume IPC
+          with a 'isSuspensionImminent' flag instead.
+        - Whether the suspension is imminent or not, the child process now always responds with
+          a ProcessReadyToSuspend IPC. This simplifies our logic as the idea is that treating imminent
+          and non-imminent suspension should share as much of the same logic as possible.
+        - All PrepareToSuspend IPCs now have an associated identifier and the child process sends back
+          this identifier when responding with a ProcessReadyToSuspend IPC. This allows the
+          ProcessThrottler to easily ignore outdated requests to suspend, without requiring the
+          m_suspendMessageCount data member we had.
+
+        This patch also adds more logging to ProcessThrottler and the suspension logic in the child
+        processes. All ProcessThrottler logging now also shows the child process's PID for clarity.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspendImminentlyForTestingSync):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processWillSuspendImminentlyForTesting]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        (WebKit::NetworkProcessProxy::processReadyToSuspend):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::generatePrepareToSuspendRequestID):
+        (WebKit::ProcessThrottler::ProcessThrottler):
+        (WebKit::m_backgroundCounter):
+        (WebKit::ProcessThrottler::expectedAssertionState):
+        (WebKit::ProcessThrottler::updateAssertionStateNow):
+        (WebKit::ProcessThrottler::setAssertionState):
+        (WebKit::ProcessThrottler::updateAssertionIfNeeded):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        (WebKit::ProcessThrottler::prepareToSuspendTimeoutTimerFired):
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+        (WebKit::ProcessThrottler::clearPendingRequestToSuspend):
+        (WebKit::ProcessThrottler::sendPrepareToSuspendIPC):
+        (WebKit::ProcessThrottler::uiAssertionWillExpireImminently):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendPrepareToSuspend):
+        (WebKit::WebProcessProxy::processReadyToSuspend):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to find and manipulate text by paragraphs

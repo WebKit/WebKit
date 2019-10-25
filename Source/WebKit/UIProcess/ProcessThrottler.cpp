@@ -31,21 +31,25 @@
 
 namespace WebKit {
     
-static const Seconds processSuspensionTimeout { 30_s };
-    
+static const Seconds processSuspensionTimeout { 20_s };
+
+static uint64_t generatePrepareToSuspendRequestID()
+{
+    static uint64_t prepareToSuspendRequestID = 0;
+    return ++prepareToSuspendRequestID;
+}
+
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
-    , m_suspendTimer(RunLoop::main(), this, &ProcessThrottler::suspendTimerFired)
-    , m_foregroundCounter([this](RefCounterEvent) { updateAssertion(); })
-    , m_backgroundCounter([this](RefCounterEvent) { updateAssertion(); })
+    , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
+    , m_foregroundCounter([this](RefCounterEvent) { updateAssertionIfNeeded(); })
+    , m_backgroundCounter([this](RefCounterEvent) { updateAssertionIfNeeded(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
     
-AssertionState ProcessThrottler::assertionState()
+AssertionState ProcessThrottler::expectedAssertionState()
 {
-    ASSERT(!m_suspendTimer.isActive());
-    
     if (m_foregroundCounter.value())
         return AssertionState::Foreground;
     if (m_backgroundCounter.value())
@@ -53,86 +57,112 @@ AssertionState ProcessThrottler::assertionState()
     return AssertionState::Suspended;
 }
     
-void ProcessThrottler::updateAssertionNow()
+void ProcessThrottler::updateAssertionStateNow()
 {
-    m_suspendTimer.stop();
-    if (m_assertion) {
-        auto newState = assertionState();
-        if (m_assertion->state() == newState)
-            return;
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::updateAssertionNow() updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", this, newState, m_foregroundCounter.value(), m_backgroundCounter.value());
-        m_assertion->setState(newState);
-        m_process.didSetAssertionState(newState);
-    }
+    setAssertionState(expectedAssertionState());
+}
+
+void ProcessThrottler::setAssertionState(AssertionState newState)
+{
+    RELEASE_ASSERT(m_assertion);
+    if (m_assertion->state() == newState)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::setAssertionState() Updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", m_processIdentifier, this, newState, m_foregroundCounter.value(), m_backgroundCounter.value());
+    m_assertion->setState(newState);
+    m_process.didSetAssertionState(newState);
 }
     
-void ProcessThrottler::updateAssertion()
+void ProcessThrottler::updateAssertionIfNeeded()
 {
-    bool shouldBeRunnable = this->shouldBeRunnable();
-
-    // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
-    // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
-    // in the background for too long.
-    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !shouldBeRunnable) {
-        ++m_suspendMessageCount;
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::updateAssertion() sending PrepareToSuspend IPC", this);
-        m_process.sendPrepareToSuspend();
-        m_suspendTimer.startOneShot(processSuspensionTimeout);
-        m_assertion->setState(AssertionState::Background);
-        m_process.didSetAssertionState(AssertionState::Background);
+    if (!m_assertion)
         return;
-    }
 
-    if (shouldBeRunnable) {
-        // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
-        if (m_suspendTimer.isActive())
-            m_process.sendCancelPrepareToSuspend();
-
-        if ((m_assertion && m_assertion->state() == AssertionState::Suspended) || m_uiAssertionExpired) {
+    if (shouldBeRunnable()) {
+        if (m_assertion->state() == AssertionState::Suspended || m_pendingRequestToSuspendID) {
+            if (m_assertion->state() == AssertionState::Suspended)
+                RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::updateAssertionIfNeeded() sending ProcessDidResume IPC because the process was suspended", m_processIdentifier, this);
+            else
+                RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::updateAssertionIfNeeded() sending ProcessDidResume IPC because the WebProcess is still processing request to suspend: %" PRIu64, m_processIdentifier, this, *m_pendingRequestToSuspendID);
             m_process.sendProcessDidResume();
-            m_uiAssertionExpired = false;
+            clearPendingRequestToSuspend();
+        }
+    } else {
+        // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
+        // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
+        // in the background for too long.
+        if (m_assertion->state() != AssertionState::Suspended) {
+            sendPrepareToSuspendIPC(IsSuspensionImminent::No);
+            m_prepareToSuspendTimeoutTimer.startOneShot(processSuspensionTimeout);
+            return;
         }
     }
 
-    updateAssertionNow();
+    updateAssertionStateNow();
 }
 
 void ProcessThrottler::didConnectToProcess(ProcessID pid)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::didConnectToProcess(%d)", this, pid);
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::didConnectToProcess()", pid, this);
+    RELEASE_ASSERT(!m_assertion);
 
-    m_suspendTimer.stop();
     if (m_shouldTakeUIBackgroundAssertion)
-        m_assertion = makeUnique<ProcessAndUIAssertion>(pid, "Web content visibility"_s, assertionState());
+        m_assertion = makeUnique<ProcessAndUIAssertion>(pid, "Web content visibility"_s, expectedAssertionState());
     else
-        m_assertion = makeUnique<ProcessAssertion>(pid, "Web content visibility"_s, assertionState());
-    m_process.didSetAssertionState(assertionState());
+        m_assertion = makeUnique<ProcessAssertion>(pid, "Web content visibility"_s, expectedAssertionState());
+
+    m_processIdentifier = pid;
+    m_process.didSetAssertionState(expectedAssertionState());
     m_assertion->setClient(*this);
 }
     
-void ProcessThrottler::suspendTimerFired()
+void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
 {
-    updateAssertionNow();
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::prepareToSuspendTimeoutTimerFired() Updating process assertion to allow suspension", m_processIdentifier, this);
+    RELEASE_ASSERT(m_pendingRequestToSuspendID);
+    updateAssertionStateNow();
 }
     
-void ProcessThrottler::processReadyToSuspend()
+void ProcessThrottler::processReadyToSuspend(uint64_t requestToSuspendID)
 {
-    if (!--m_suspendMessageCount)
-        updateAssertionNow();
-    ASSERT(m_suspendMessageCount >= 0);
+    RELEASE_ASSERT(requestToSuspendID);
+    if (!m_pendingRequestToSuspendID || *m_pendingRequestToSuspendID != requestToSuspendID)
+        return;
+
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::processReadyToSuspend(%" PRIu64 ") Updating process assertion to allow suspension", m_processIdentifier, this, requestToSuspendID);
+    clearPendingRequestToSuspend();
+
+    if (m_assertion->state() != AssertionState::Suspended)
+        updateAssertionStateNow();
 }
 
-void ProcessThrottler::didCancelProcessSuspension()
+void ProcessThrottler::clearPendingRequestToSuspend()
 {
-    if (!--m_suspendMessageCount)
-        updateAssertionNow();
-    ASSERT(m_suspendMessageCount >= 0);
+    m_prepareToSuspendTimeoutTimer.stop();
+    m_pendingRequestToSuspendID = WTF::nullopt;
+}
+
+void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspensionImminent)
+{
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::sendPrepareToSuspendIPC() isSuspensionImminent: %d", m_processIdentifier, this, isSuspensionImminent == IsSuspensionImminent::Yes);
+    if (m_pendingRequestToSuspendID) {
+        // Do not send a new PrepareToSuspend IPC for imminent suspension if we've already sent a non-imminent PrepareToSuspend IPC.
+        RELEASE_ASSERT(isSuspensionImminent == IsSuspensionImminent::Yes);
+        RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::sendPrepareToSuspendIPC() Not sending PrepareToSuspend() IPC because there is already one in flight (%" PRIu64 ")", m_processIdentifier, this, *m_pendingRequestToSuspendID);
+    } else {
+        m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
+        RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::sendPrepareToSuspendIPC() Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent: %d) IPC", m_processIdentifier, this, *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes);
+        m_process.sendPrepareToSuspend(*m_pendingRequestToSuspendID, isSuspensionImminent);
+    }
+
+    setAssertionState(isSuspensionImminent == IsSuspensionImminent::Yes ? AssertionState::Suspended : AssertionState::Background);
 }
 
 void ProcessThrottler::uiAssertionWillExpireImminently()
 {
-    m_process.sendProcessWillSuspendImminently();
-    m_uiAssertionExpired = true;
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::uiAssertionWillExpireImminently()", m_processIdentifier, this);
+    sendPrepareToSuspendIPC(IsSuspensionImminent::Yes);
+    m_prepareToSuspendTimeoutTimer.stop();
 }
 
-}
+} // namespace WebKit

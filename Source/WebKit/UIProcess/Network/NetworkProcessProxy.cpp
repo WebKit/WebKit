@@ -1068,28 +1068,16 @@ void NetworkProcessProxy::setShouldBlockThirdPartyCookiesForTesting(PAL::Session
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
-void NetworkProcessProxy::sendProcessWillSuspendImminently()
-{
-    if (canSendMessage())
-        send(Messages::NetworkProcess::ProcessWillSuspendImminently(), 0);
-}
-
 void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
 {
     if (canSendMessage())
         sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync::Reply(), 0);
 }
     
-void NetworkProcessProxy::sendPrepareToSuspend()
+void NetworkProcessProxy::sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent isSuspensionImminent)
 {
     if (canSendMessage())
-        send(Messages::NetworkProcess::PrepareToSuspend(), 0);
-}
-
-void NetworkProcessProxy::sendCancelPrepareToSuspend()
-{
-    if (canSendMessage())
-        send(Messages::NetworkProcess::CancelPrepareToSuspend(), 0);
+        send(Messages::NetworkProcess::PrepareToSuspend(requestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes), 0);
 }
 
 void NetworkProcessProxy::sendProcessDidResume()
@@ -1098,9 +1086,9 @@ void NetworkProcessProxy::sendProcessDidResume()
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
 
-void NetworkProcessProxy::processReadyToSuspend()
+void NetworkProcessProxy::processReadyToSuspend(uint64_t requestToSuspendID)
 {
-    m_throttler.processReadyToSuspend();
+    m_throttler.processReadyToSuspend(requestToSuspendID);
 }
 
 void NetworkProcessProxy::didSetAssertionState(AssertionState)

@@ -223,8 +223,7 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    void processReadyToSuspend();
-    void didCancelProcessSuspension();
+    void processReadyToSuspend(uint64_t requestToSuspendID);
 
     void setIsHoldingLockedFiles(bool);
 
@@ -299,9 +298,7 @@ public:
     void didStartProvisionalLoadForMainFrame(const URL&);
 
     // ProcessThrottlerClient
-    void sendProcessWillSuspendImminently() override;
-    void sendPrepareToSuspend() override;
-    void sendCancelPrepareToSuspend() override;
+    void sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent) override;
     void sendProcessDidResume() override;
     void didSetAssertionState(AssertionState) override;
 

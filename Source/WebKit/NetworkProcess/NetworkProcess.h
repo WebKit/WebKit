@@ -174,10 +174,8 @@ public:
     void ensureSession(const PAL::SessionID&, bool shouldUseTestingNetworkSession, const String& identifier);
 #endif
 
-    void processWillSuspendImminently();
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
-    void prepareToSuspend();
-    void cancelPrepareToSuspend();
+    void prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent);
     void processDidResume();
     void resume();
 
@@ -357,8 +355,6 @@ private:
     void platformProcessDidTransitionToForeground();
     void platformProcessDidTransitionToBackground();
 
-    enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
-    void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
     void platformPrepareToSuspend(CompletionHandler<void()>&&);
     void platformProcessDidResume();
 

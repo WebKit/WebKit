@@ -30,13 +30,13 @@
 
 namespace WebKit {
 
+enum class IsSuspensionImminent : bool;
+
 class ProcessThrottlerClient {
 public:
     virtual ~ProcessThrottlerClient() { }
 
-    virtual void sendProcessWillSuspendImminently() = 0;
-    virtual void sendPrepareToSuspend() = 0;
-    virtual void sendCancelPrepareToSuspend() = 0;
+    virtual void sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent) = 0;
     virtual void sendProcessDidResume() = 0;
     virtual void didSetAssertionState(AssertionState) = 0;
 };

@@ -74,10 +74,8 @@ messages -> NetworkProcess LegacyReceiver {
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()
 
-    ProcessWillSuspendImminently()
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
-    PrepareToSuspend()
-    CancelPrepareToSuspend()
+    PrepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
     ProcessDidResume()
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

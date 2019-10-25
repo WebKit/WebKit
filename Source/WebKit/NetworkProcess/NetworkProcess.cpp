@@ -2075,8 +2075,21 @@ void NetworkProcess::processDidTransitionToBackground()
     platformProcessDidTransitionToBackground();
 }
 
-void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
+void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
+    prepareToSuspend(0, true);
+    completionHandler();
+}
+
+void NetworkProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
+{
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(%" PRIu64 "), isSuspensionImminent: %d", this, requestToSuspendID, isSuspensionImminent);
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
+    for (auto& server : m_idbServers.values())
+        server->tryStop(isSuspensionImminent ? IDBServer::ShouldForceStop::Yes : IDBServer::ShouldForceStop::No);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     m_webSQLiteDatabaseTracker.setIsSuspended(true);
 #endif
@@ -2084,11 +2097,11 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<CallbackAggregator> callbackAggregator;
-    if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
-        callbackAggregator = CallbackAggregator::create([this] {
-            RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::notifyProcessReadyToSuspend() Sending ProcessReadyToSuspend IPC message", this);
+    if (requestToSuspendID) {
+        callbackAggregator = CallbackAggregator::create([this, requestToSuspendID] {
+            RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::notifyProcessReadyToSuspend(%" PRIu64 ") Sending ProcessReadyToSuspend IPC message", this, requestToSuspendID);
             if (parentProcessConnection())
-                parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
+                parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
         });
     }
 
@@ -2106,44 +2119,6 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 #endif
 
     m_storageManagerSet->suspend([callbackAggregator] { });
-}
-
-void NetworkProcess::processWillSuspendImminently()
-{
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently() BEGIN", this);
-#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
-    for (auto& server : m_idbServers.values())
-        server->tryStop(IDBServer::ShouldForceStop::Yes);
-#endif
-    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processWillSuspendImminently() END", this);
-}
-
-void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
-{
-    processWillSuspendImminently();
-    completionHandler();
-}
-
-void NetworkProcess::prepareToSuspend()
-{
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend()", this);
-
-#if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
-    for (auto& server : m_idbServers.values())
-        server->tryStop(IDBServer::ShouldForceStop::No);
-#endif
-    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
-}
-
-void NetworkProcess::cancelPrepareToSuspend()
-{
-    // Although it is tempting to send a NetworkProcessProxy::DidCancelProcessSuspension message from here
-    // we do not because prepareToSuspend() already replied with a NetworkProcessProxy::ProcessReadyToSuspend
-    // message. And NetworkProcessProxy expects to receive either a NetworkProcessProxy::ProcessReadyToSuspend-
-    // or NetworkProcessProxy::DidCancelProcessSuspension- message, but not both.
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::cancelPrepareToSuspend()", this);
-    resume();
 }
 
 void NetworkProcess::applicationDidEnterBackground()

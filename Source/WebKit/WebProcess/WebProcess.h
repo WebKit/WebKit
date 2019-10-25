@@ -234,9 +234,7 @@ public:
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
-    void processWillSuspendImminently();
-    void prepareToSuspend();
-    void cancelPrepareToSuspend();
+    void prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent);
     void processDidResume();
 
     void sendPrewarmInformation(const URL&);
@@ -387,9 +385,6 @@ private:
     void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
     void setInjectedBundleParameters(const IPC::DataReference&);
-
-    enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
-    void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
 
     bool areAllPagesSuspended() const;
 

@@ -93,9 +93,7 @@ messages -> WebProcess LegacyReceiver {
     EnsureAutomationSessionProxy(String sessionIdentifier)
     DestroyAutomationSessionProxy()
 
-    ProcessWillSuspendImminently()
-    PrepareToSuspend()
-    CancelPrepareToSuspend()
+    PrepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
     ProcessDidResume()
 
     MainThreadPing()
