@@ -313,7 +313,7 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
 
     if (auto* parameters = loader.parameters()) {
         if (!matchIntegrityMetadata(cachedScript, parameters->integrity())) {
-            promise->reject(TypeError, makeString("Cannot load script ", cachedScript.url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check."));
+            promise->reject(TypeError, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, parameters->integrity())));
             return;
         }
     }

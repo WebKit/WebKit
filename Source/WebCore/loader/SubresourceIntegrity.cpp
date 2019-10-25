@@ -208,4 +208,23 @@ bool matchIntegrityMetadata(const CachedResource& resource, const String& integr
     return false;
 }
 
+String integrityMismatchDescription(const CachedResource& resource, const String& integrityMetadata)
+{
+    StringBuilder builder;
+
+    builder.append(resource.url().stringCenterEllipsizedToLength());
+    builder.append(". Failed integrity metadata check. ");
+    builder.append("Content length: ");
+    if (auto* resourceBuffer = resource.resourceBuffer())
+        builder.appendNumber(resourceBuffer->size());
+    else
+        builder.append("(no content)");
+    builder.append(", Expected content length: ");
+    builder.appendNumber(resource.response().expectedContentLength());
+    builder.append(", Expected metadata: ");
+    builder.append(integrityMetadata);
+
+    return builder.toString();
+}
+
 }

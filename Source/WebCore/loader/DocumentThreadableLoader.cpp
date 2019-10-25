@@ -442,7 +442,7 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
 
     if (m_delayCallbacksForIntegrityCheck) {
         if (!matchIntegrityMetadata(*m_resource, m_options.integrity)) {
-            reportIntegrityMetadataError(m_resource->url());
+            reportIntegrityMetadataError(*m_resource, m_options.integrity);
             return;
         }
 
@@ -683,9 +683,9 @@ void DocumentThreadableLoader::reportCrossOriginResourceSharingError(const URL& 
     logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Cross-Origin Resource Sharing policy."_s, ResourceError::Type::AccessControl));
 }
 
-void DocumentThreadableLoader::reportIntegrityMetadataError(const URL& url)
+void DocumentThreadableLoader::reportIntegrityMetadataError(const CachedResource& resource, const String& expectedMetadata)
 {
-    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Failed integrity metadata check."_s, ResourceError::Type::General));
+    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, resource.url(), makeString("Failed integrity metadata check. "_s, integrityMismatchDescription(resource, expectedMetadata)), ResourceError::Type::General));
 }
 
 void DocumentThreadableLoader::logErrorAndFail(const ResourceError& error)

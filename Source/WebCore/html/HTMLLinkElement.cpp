@@ -432,7 +432,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     Ref<HTMLLinkElement> protectedThis(*this);
 
     if (!cachedStyleSheet->errorOccurred() && !matchIntegrityMetadata(*cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)) {
-        document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load stylesheet ", cachedStyleSheet->url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check."));
+        document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load stylesheet ", integrityMismatchDescription(*cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)));
 
         m_loading = false;
         sheetLoaded();

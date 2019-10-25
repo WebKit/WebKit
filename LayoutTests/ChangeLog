@@ -1,3 +1,15 @@
+2019-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        Add more information to SRI failure console messages
+        https://bugs.webkit.org/show_bug.cgi?id=203383
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/subresource-integrity/sri-enabled-with-setting-expected.txt:
+        * http/tests/subresource-integrity/sri-module-expected.txt:
+        * http/tests/subresource-integrity/sri-script-expected.txt:
+        * http/tests/subresource-integrity/sri-style-expected.txt:
+
 2019-10-24  Devin Rousso  <drousso@apple.com>
 
         Automate generation of computedProperties

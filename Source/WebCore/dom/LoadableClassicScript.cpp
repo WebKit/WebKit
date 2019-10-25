@@ -110,7 +110,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
     if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
         m_error = Error {
             ErrorType::FailedIntegrityCheck,
-            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", m_cachedScript->url().stringCenterEllipsizedToLength(), ". Failed integrity metadata check.") }
+            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(resource, m_integrity)) }
         };
     }
 
