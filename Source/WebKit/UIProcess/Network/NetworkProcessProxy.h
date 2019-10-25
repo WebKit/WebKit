@@ -159,8 +159,6 @@ public:
     void setShouldDowngradeReferrerForTesting(bool, CompletionHandler<void()>&&);
     void setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID, bool, CompletionHandler<void()>&&);
 #endif
-
-    void processReadyToSuspend(uint64_t requestToSuspendID);
     
     void sendProcessDidTransitionToForeground();
     void sendProcessDidTransitionToBackground();
@@ -208,7 +206,7 @@ private:
     void clearCallbackStates();
 
     // ProcessThrottlerClient
-    void sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent) final;
+    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
     void didSetAssertionState(AssertionState) final;
 
     // IPC::Connection::Client

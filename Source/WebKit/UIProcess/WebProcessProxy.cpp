@@ -1217,21 +1217,15 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
     return UserData::transform(object, Transformer());
 }
 
-void WebProcessProxy::sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent isSuspensionImminent)
+void WebProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    if (canSendMessage())
-        send(Messages::WebProcess::PrepareToSuspend(requestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes), 0);
+    sendWithAsyncReply(Messages::WebProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler));
 }
 
 void WebProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::WebProcess::ProcessDidResume(), 0);
-}
-
-void WebProcessProxy::processReadyToSuspend(uint64_t requestToSuspendID)
-{
-    m_throttler.processReadyToSuspend(requestToSuspendID);
 }
 
 void WebProcessProxy::didSetAssertionState(AssertionState state)

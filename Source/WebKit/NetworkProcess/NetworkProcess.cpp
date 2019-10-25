@@ -2077,13 +2077,12 @@ void NetworkProcess::processDidTransitionToBackground()
 
 void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
-    prepareToSuspend(0, true);
-    completionHandler();
+    prepareToSuspend(true, WTFMove(completionHandler));
 }
 
-void NetworkProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
+void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(%" PRIu64 "), isSuspensionImminent: %d", this, requestToSuspendID, isSuspensionImminent);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
     for (auto& server : m_idbServers.values())
@@ -2096,14 +2095,10 @@ void NetworkProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspen
 
     lowMemoryHandler(Critical::Yes);
 
-    RefPtr<CallbackAggregator> callbackAggregator;
-    if (requestToSuspendID) {
-        callbackAggregator = CallbackAggregator::create([this, requestToSuspendID] {
-            RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::notifyProcessReadyToSuspend(%" PRIu64 ") Sending ProcessReadyToSuspend IPC message", this, requestToSuspendID);
-            if (parentProcessConnection())
-                parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
-        });
-    }
+    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Process is ready to suspend", this);
+        completionHandler();
+    });
 
     platformPrepareToSuspend([callbackAggregator] { });
     platformSyncAllCookies([callbackAggregator] { });

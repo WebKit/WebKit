@@ -123,13 +123,11 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     updateAssertionStateNow();
 }
     
-void ProcessThrottler::processReadyToSuspend(uint64_t requestToSuspendID)
+void ProcessThrottler::processReadyToSuspend()
 {
-    RELEASE_ASSERT(requestToSuspendID);
-    if (!m_pendingRequestToSuspendID || *m_pendingRequestToSuspendID != requestToSuspendID)
-        return;
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::processReadyToSuspend() Updating process assertion to allow suspension", m_processIdentifier, this);
 
-    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::processReadyToSuspend(%" PRIu64 ") Updating process assertion to allow suspension", m_processIdentifier, this, requestToSuspendID);
+    RELEASE_ASSERT(m_pendingRequestToSuspendID);
     clearPendingRequestToSuspend();
 
     if (m_assertion->state() != AssertionState::Suspended)
@@ -152,7 +150,10 @@ void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspension
     } else {
         m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
         RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::sendPrepareToSuspendIPC() Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent: %d) IPC", m_processIdentifier, this, *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes);
-        m_process.sendPrepareToSuspend(*m_pendingRequestToSuspendID, isSuspensionImminent);
+        m_process.sendPrepareToSuspend(isSuspensionImminent, [this, weakThis = makeWeakPtr(*this), requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
+            if (weakThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
+                processReadyToSuspend();
+        });
     }
 
     setAssertionState(isSuspensionImminent == IsSuspensionImminent::Yes ? AssertionState::Suspended : AssertionState::Background);

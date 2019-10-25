@@ -1,3 +1,40 @@
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Use sendWithAsyncReply() to simplify the prepareToSuspend logic
+        https://bugs.webkit.org/show_bug.cgi?id=203422
+
+        Reviewed by Alex Christensen.
+
+        Use sendWithAsyncReply() to simplify the prepareToSuspend logic and make it easier to
+        understand.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processWillSuspendImminentlyForTestingSync):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processWillSuspendImminentlyForTesting]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        (WebKit::NetworkProcessProxy::processReadyToSuspend): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::processReadyToSuspend):
+        (WebKit::ProcessThrottler::sendPrepareToSuspendIPC):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendPrepareToSuspend):
+        (WebKit::WebProcessProxy::processReadyToSuspend): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-10-25  youenn fablet  <youenn@apple.com>
 
         WebProcess should unregister its interest for a SWServerRegistration when all its corresponding ServiceWorkerRegistrations are destroyed

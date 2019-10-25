@@ -1377,19 +1377,16 @@ void WebProcess::resetAllGeolocationPermissions()
 }
 #endif
 
-void WebProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent)
+void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend(%" PRIu64 ") isSuspensionImminent: %d", this, requestToSuspendID, isSuspensionImminent);
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() isSuspensionImminent: %d", this, isSuspensionImminent);
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
 #if PLATFORM(COCOA)
     if (m_processType == ProcessType::PrewarmedWebContent) {
-        if (requestToSuspendID) {
-            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Sending ProcessReadyToSuspend(%" PRIu64 ") IPC message", this, requestToSuspendID);
-            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
-        }
-        return;
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Process is ready to suspend", this);
+        return completionHandler();
     }
 #endif
 
@@ -1417,16 +1414,14 @@ void WebProcess::prepareToSuspend(uint64_t requestToSuspendID, bool isSuspension
     updateFreezerStatus();
 #endif
 
-    markAllLayersVolatile([this, requestToSuspendID](bool success) {
+    markAllLayersVolatile([this, completionHandler = WTFMove(completionHandler)](bool success) mutable {
         if (success)
             RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Successfuly marked all layers as volatile", this);
         else
             RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile() Failed to mark all layers as volatile", this);
 
-        if (requestToSuspendID) {
-            RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Sending ProcessReadyToSuspend(%" PRIu64 ") IPC message", this, requestToSuspendID);
-            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(requestToSuspendID), 0);
-        }
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Process is ready to suspend", this);
+        completionHandler();
     });
 }
 

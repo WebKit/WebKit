@@ -1074,21 +1074,15 @@ void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
         sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync::Reply(), 0);
 }
     
-void NetworkProcessProxy::sendPrepareToSuspend(uint64_t requestToSuspendID, IsSuspensionImminent isSuspensionImminent)
+void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    if (canSendMessage())
-        send(Messages::NetworkProcess::PrepareToSuspend(requestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
-}
-
-void NetworkProcessProxy::processReadyToSuspend(uint64_t requestToSuspendID)
-{
-    m_throttler.processReadyToSuspend(requestToSuspendID);
 }
 
 void NetworkProcessProxy::didSetAssertionState(AssertionState)

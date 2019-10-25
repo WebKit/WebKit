@@ -31,7 +31,6 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
 
-    ProcessReadyToSuspend(uint64_t pendingRequestToSuspendID)
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     # Diagnostic messages logging

@@ -45,7 +45,7 @@ enum class IsSuspensionImminent : bool { No, Yes };
 
 class ProcessThrottlerClient;
 
-class ProcessThrottler : private ProcessAssertion::Client {
+class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler>, private ProcessAssertion::Client {
 public:
     enum ForegroundActivityCounterType { };
     typedef RefCounter<ForegroundActivityCounterType> ForegroundActivityCounter;
@@ -60,7 +60,6 @@ public:
     BackgroundActivityToken backgroundActivityToken() const;
     
     void didConnectToProcess(ProcessID);
-    void processReadyToSuspend(uint64_t pendingRequestToSuspendID);
     bool shouldBeRunnable() const { return m_foregroundCounter.value() || m_backgroundCounter.value(); }
 
 private:
@@ -70,6 +69,7 @@ private:
     void setAssertionState(AssertionState);
     void prepareToSuspendTimeoutTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
+    void processReadyToSuspend();
 
     // ProcessAssertionClient
     void uiAssertionWillExpireImminently() override;

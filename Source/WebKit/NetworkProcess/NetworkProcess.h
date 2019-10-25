@@ -175,7 +175,7 @@ public:
 #endif
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
-    void prepareToSuspend(uint64_t requestToSuspendID, bool isSuspensionImminent);
+    void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
     void processDidResume();
     void resume();
 

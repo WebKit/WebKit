@@ -37,7 +37,6 @@ messages -> WebProcessProxy LegacyReceiver {
     GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Synchronous
 #endif
     GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
-    ProcessReadyToSuspend(uint64_t requestToSuspendID)
 
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
