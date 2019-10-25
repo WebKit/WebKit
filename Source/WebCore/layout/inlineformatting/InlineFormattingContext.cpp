@@ -353,7 +353,7 @@ void InlineFormattingContext::collectInlineContent()
             if (treatAsInlineContainer(layoutBox))
                 formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::ContainerEnd));
             else if (layoutBox.isLineBreakBox())
-                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::HardLineBreak));
+                formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::LineBreakBox));
             else if (layoutBox.isFloatingPositioned())
                 formattingState.addInlineItem(makeUnique<InlineItem>(layoutBox, InlineItem::Type::Float));
             else {
@@ -449,7 +449,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         auto& layoutBox = lineRun->layoutBox();
         auto& displayBox = formattingState.displayBox(layoutBox);
 
-        if (lineRun->isLineBreak()) {
+        if (lineRun->isForcedLineBreak()) {
             displayBox.setTopLeft(logicalRect.topLeft());
             displayBox.setContentBoxWidth(logicalRect.width());
             displayBox.setContentBoxHeight(logicalRect.height());

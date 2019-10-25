@@ -30,6 +30,7 @@
 
 #include "Invalidation.h"
 #include "LayoutBox.h"
+#include "LayoutContext.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 

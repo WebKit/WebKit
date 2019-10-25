@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "InlineItem.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "LayoutBox.h"
-#include <wtf/WeakPtr.h>
+#include "InlineTextItem.h"
 
 namespace WebCore {
 namespace Layout {
 
-class InlineItem : public CanMakeWeakPtr<InlineItem> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    enum class Type { Text, LineBreakBox, Box, Float, ContainerStart, ContainerEnd };
-    InlineItem(const Box& layoutBox, Type);
-
-    Type type() const { return m_type; }
-    const Box& layoutBox() const { return m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox.style(); }
-
-    bool isText() const;
-    bool isBox() const { return type() == Type::Box; }
-    bool isFloat() const { return type() == Type::Float; }
-    bool isForcedLineBreak() const;
-    bool isContainerStart() const { return type() == Type::ContainerStart; }
-    bool isContainerEnd() const { return type() == Type::ContainerEnd; }
-
-private:
-    const Box& m_layoutBox;
-    const Type m_type;
-};
-
-inline InlineItem::InlineItem(const Box& layoutBox, Type type)
-    : m_layoutBox(layoutBox)
-    , m_type(type)
+bool InlineItem::isForcedLineBreak() const
 {
+    if (type() == Type::LineBreakBox)
+        return true;
+    if (type() != Type::Text || !static_cast<const InlineTextItem*>(this)->isSegmentBreak())
+        return false;
+    // Segment break with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line)
+    return style().preserveNewline();
 }
 
-#define SPECIALIZE_TYPE_TRAITS_INLINE_ITEM(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
-    static bool isType(const WebCore::Layout::InlineItem& inlineItem) { return inlineItem.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+bool InlineItem::isText() const
+{
+    // If this setup turns out to be a perf hit, we could easily switch over to generate-the-narrow-type way.
+    return type() == Type::Text && !isForcedLineBreak();
+}
 
 }
 }

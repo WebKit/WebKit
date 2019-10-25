@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class GraphicsContext;
 class RenderView;
 
 namespace Layout {

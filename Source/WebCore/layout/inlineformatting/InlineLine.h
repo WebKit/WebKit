@@ -76,9 +76,9 @@ public:
         bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
         bool isCollapsed() const { return m_isCollapsed; }
 
-        bool isText() const { return m_inlineItem.isText(); }
+        bool isText() const { return m_inlineItem.isText() && !isForcedLineBreak(); }
         bool isBox() const { return m_inlineItem.isBox(); }
-        bool isLineBreak() const { return m_inlineItem.isLineBreak(); }
+        bool isForcedLineBreak() const { return m_inlineItem.isForcedLineBreak(); }
         bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
         bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
 
@@ -126,7 +126,7 @@ private:
     void appendReplacedInlineBox(const InlineItem&, LayoutUnit logicalWidth);
     void appendInlineContainerStart(const InlineItem&, LayoutUnit logicalWidth);
     void appendInlineContainerEnd(const InlineItem&, LayoutUnit logicalWidth);
-    void appendHardLineBreak(const InlineItem&);
+    void appendLineBreak(const InlineItem&);
 
     void removeTrailingTrimmableContent();
     void alignContentHorizontally();

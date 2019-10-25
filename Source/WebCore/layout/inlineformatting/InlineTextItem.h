@@ -48,7 +48,7 @@ public:
 
     bool isWhitespace() const;
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
-    bool isSegmentBreak() const;
+    bool isSegmentBreak() const { return m_textItemType == TextItemType::SegmentBreak; }
 
     std::unique_ptr<InlineTextItem> left(unsigned length) const;
     std::unique_ptr<InlineTextItem> right(unsigned length) const;
@@ -62,11 +62,6 @@ private:
     unsigned m_length { 0 };
     TextItemType m_textItemType { TextItemType::Undefined };
 };
-
-inline bool InlineTextItem::isSegmentBreak() const
-{
-    return m_textItemType == TextItemType::SegmentBreak;
-}
 
 }
 }

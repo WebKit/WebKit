@@ -9226,6 +9226,7 @@
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
 		6F77868523491AC6004D9636 /* DisplayPainter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayPainter.cpp; sourceTree = "<group>"; };
 		6F77868723491AD7004D9636 /* DisplayPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayPainter.h; sourceTree = "<group>"; };
+		6F7B8CEC23626E6600C9FF15 /* InlineItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineItem.cpp; sourceTree = "<group>"; };
 		6F7CA3C4208C2956002F29AB /* LayoutState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		6F7CA3C5208C2956002F29AB /* LayoutState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineFormattingContext.h; sourceTree = "<group>"; };
@@ -16607,6 +16608,7 @@
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
 				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,
 				1123AFDC209ABBBA00736ACC /* InlineInvalidation.h */,
+				6F7B8CEC23626E6600C9FF15 /* InlineItem.cpp */,
 				6FE7CFA02177EEF1005B1573 /* InlineItem.h */,
 				6F0CD692229ED31900C5994E /* InlineLine.cpp */,
 				6F0CD694229ED32700C5994E /* InlineLine.h */,

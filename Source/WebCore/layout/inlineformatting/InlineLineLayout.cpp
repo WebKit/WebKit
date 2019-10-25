@@ -37,7 +37,7 @@ namespace Layout {
 
 static LayoutUnit inlineItemWidth(const FormattingContext& formattingContext, const InlineItem& inlineItem, LayoutUnit contentLogicalLeft)
 {
-    if (inlineItem.isLineBreak())
+    if (inlineItem.isForcedLineBreak())
         return 0;
 
     if (is<InlineTextItem>(inlineItem)) {
@@ -182,8 +182,8 @@ LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem
         m_lineHasIntrusiveFloat = true;
         return IsEndOfLine::No;
     }
-    // Explicit line breaks are also special.
-    if (inlineItem.isHardLineBreak()) {
+    // Forced line breaks are also special.
+    if (inlineItem.isForcedLineBreak()) {
         auto isEndOfLine = !m_uncommittedContent.isEmpty() ? processUncommittedContent() : IsEndOfLine::No;
         // When the uncommitted content fits(or the line is empty), add the line break to this line as well.
         if (isEndOfLine == IsEndOfLine::No) {
@@ -241,7 +241,7 @@ bool LineLayout::shouldProcessUncommittedContent(const InlineItem& inlineItem) c
     // [inline container start][text content][inline container end]
     // An incoming <img> box would enable us to commit the "<span>continuous</span>" content
     // while additional text content would not.
-    ASSERT(!inlineItem.isFloat() && !inlineItem.isHardLineBreak());
+    ASSERT(!inlineItem.isFloat() && !inlineItem.isForcedLineBreak());
     ASSERT(!m_uncommittedContent.isEmpty());
 
     auto* lastUncomittedContent = &m_uncommittedContent.runs().last().inlineItem;

@@ -1,3 +1,50 @@
+2019-10-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for preserved new line (pre, pre-wrap, break-spaces, pre-line)
+        https://bugs.webkit.org/show_bug.cgi?id=203395
+        <rdar://problem/56606243>
+
+        Reviewed by Antti Koivisto.
+
+        <pre>Let's wrap the line
+        when the inline item's type is forced line break.</pre>
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineDescentNeedsCollapsing const):
+        * layout/inlineformatting/InlineItem.cpp: Copied from Source/WebCore/layout/tableformatting/TableInvalidation.cpp.
+        (WebCore::Layout::InlineItem::isForcedLineBreak const):
+        (WebCore::Layout::InlineItem::isText const):
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItem::isBox const):
+        (WebCore::Layout::InlineItem::isText const): Deleted.
+        (WebCore::Layout::InlineItem::isHardLineBreak const): Deleted.
+        (WebCore::Layout::InlineItem::isLineBreak const): Deleted.
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::alignContentVertically):
+        (WebCore::Layout::Line::append):
+        (WebCore::Layout::Line::appendLineBreak):
+        (WebCore::Layout::Line::adjustBaselineAndLineHeight):
+        (WebCore::Layout::Line::inlineItemContentHeight const):
+        (WebCore::Layout::Line::appendHardLineBreak): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::isText const):
+        (WebCore::Layout::Line::Run::isForcedLineBreak const):
+        (WebCore::Layout::Line::Run::isLineBreak const): Deleted.
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::inlineItemWidth):
+        (WebCore::Layout::LineLayout::placeInlineItem):
+        (WebCore::Layout::LineLayout::shouldProcessUncommittedContent const):
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::isSegmentBreak const):
+        * layout/tableformatting/TableInvalidation.cpp:
+
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
         DatabaseContext should not prevent entering the back/forward cache

@@ -47,7 +47,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
         if (run->isContainerEnd() || layoutBox.style().verticalAlign() != VerticalAlign::Baseline)
             continue;
 
-        if (run->isLineBreak())
+        if (run->isForcedLineBreak())
             return false;
         if (run->isText()) {
             if (!run->isVisuallyEmpty())
