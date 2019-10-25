@@ -841,7 +841,7 @@ class RunWebKit1LeakTests(RunWebKit1Tests):
     warnOnWarnings = True
 
     def start(self):
-        self.setCommand(self.command + ["--leaks"])
+        self.setCommand(self.command + ["--leaks", "--result-report-flavor", "Leaks"])
         return RunWebKit1Tests.start(self)
 
 
