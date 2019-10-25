@@ -91,6 +91,7 @@ public:
     }
 
     const CSSCalcValue* value() const { return m_calcValue.get(); }
+
     RefPtr<CSSPrimitiveValue> consumeValue()
     {
         if (!m_calcValue)
@@ -98,6 +99,18 @@ public:
         m_sourceRange = m_range;
         return CSSValuePool::singleton().createValue(WTFMove(m_calcValue));
     }
+
+    RefPtr<CSSPrimitiveValue> consumeInteger(double minimumValue)
+    {
+        if (!m_calcValue)
+            return nullptr;
+        m_sourceRange = m_range;
+
+        double value = std::max(m_calcValue->doubleValue(), minimumValue);
+        value = std::round(value);
+        return CSSValuePool::singleton().createValue(value, CSSPrimitiveValue::UnitType::CSS_NUMBER);
+    }
+
     RefPtr<CSSPrimitiveValue> consumeNumber()
     {
         if (!m_calcValue)
@@ -146,12 +159,9 @@ RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, double mini
 
     CalcParser calcParser(range, CalculationCategory::Number);
     if (const CSSCalcValue* calculation = calcParser.value()) {
-        if (calculation->category() != CalculationCategory::Number || !calculation->isInt())
+        if (calculation->category() != CalculationCategory::Number)
             return nullptr;
-        double value = calculation->doubleValue();
-        if (value < minimumValue)
-            return nullptr;
-        return calcParser.consumeNumber();
+        return calcParser.consumeInteger(minimumValue);
     }
 
     return nullptr;

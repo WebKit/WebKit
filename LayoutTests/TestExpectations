@@ -3899,7 +3899,6 @@ webkit.org/b/203328 imported/w3c/web-platform-tests/css/css-values/attr-length-v
 webkit.org/b/203329 imported/w3c/web-platform-tests/css/css-values/attr-length-valid.html [ ImageOnlyFailure ]
 webkit.org/b/203330 imported/w3c/web-platform-tests/css/css-values/attr-px-invalid-cast.html [ ImageOnlyFailure ]
 webkit.org/b/203331 imported/w3c/web-platform-tests/css/css-values/attr-px-valid.html [ ImageOnlyFailure ]
-webkit.org/b/203332 imported/w3c/web-platform-tests/css/css-values/calc-positive-fraction-001.html [ ImageOnlyFailure ]
 webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ ImageOnlyFailure ]
 webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ ImageOnlyFailure ]
