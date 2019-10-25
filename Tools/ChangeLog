@@ -1,3 +1,9 @@
+2019-10-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a test fix after r251498
+
+        * TestWebKitAPI/Tests/WebKitCocoa/web-authentication-make-credential-hid.html:
+
 2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a mechanism to find and manipulate text by paragraphs
