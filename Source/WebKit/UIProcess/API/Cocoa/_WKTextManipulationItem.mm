@@ -24,38 +24,33 @@
  */
 
 #import "config.h"
-#import "DownloadProxyMap.h"
+#import "_WKTextManipulationItem.h"
 
-#if PLATFORM(IOS_FAMILY)
-#import <wtf/BlockPtr.h>
-#import <wtf/WeakPtr.h>
-#import <UIKit/UIKit.h>
-#endif
+#import <wtf/RetainPtr.h>
 
-namespace WebKit {
-
-void DownloadProxyMap::platformCreate()
-{
-#if PLATFORM(IOS_FAMILY)
-    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationDidEnterBackground();
-    }).get()];
-    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationWillEnterForeground();
-    }).get()];
-#endif
+@implementation _WKTextManipulationItem {
+    RetainPtr<NSString> _identifier;
+    RetainPtr<NSArray<_WKTextManipulationToken *>> _tokens;
 }
 
-void DownloadProxyMap::platformDestroy()
+- (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens
 {
-#if PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
-#endif
+    if (!(self = [super init]))
+        return nil;
+
+    _identifier = identifier;
+    _tokens = tokens;
+    return self;
 }
 
-} // namespace WebKit
+- (NSString *)identifier
+{
+    return _identifier.get();
+}
+
+- (NSArray<_WKTextManipulationToken *> *)tokens
+{
+    return _tokens.get();
+}
+
+@end

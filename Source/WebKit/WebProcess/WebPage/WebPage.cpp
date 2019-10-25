@@ -6836,6 +6836,51 @@ Optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& e
     return WebCore::ElementContext { elementRectInRootViewCoordinates(element, *frame), m_identifier, document.identifier(), document.identifierForElement(element) };
 }
 
+void WebPage::startTextManipulations(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_page)
+        return;
+
+    auto mainDocument = makeRefPtr(m_page->mainFrame().document());
+    if (!mainDocument)
+        return;
+
+    mainDocument->textManipulationController().startObservingParagraphs([webPage = makeWeakPtr(*this)] (WebCore::Document& document,
+        WebCore::TextManipulationController::ItemIdentifier itemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens) {
+        auto* frame = document.frame();
+        if (!webPage || !frame || webPage->mainFrame() != frame)
+            return;
+
+        auto* webFrame = WebFrame::fromCoreFrame(*frame);
+        if (!webFrame)
+            return;
+
+        webPage->send(Messages::WebPageProxy::DidFindTextManipulationItem(itemIdentifier, tokens));
+    });
+    // For now, we assume startObservingParagraphs find all paragraphs synchronously at once.
+    completionHandler();
+}
+
+void WebPage::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
+    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto completeManipulation = [&] {
+        if (!m_page)
+            return false;
+
+        auto mainDocument = makeRefPtr(m_page->mainFrame().document());
+        if (!mainDocument)
+            return false;
+
+        auto* controller = mainDocument->textManipulationControllerIfExists();
+        if (!controller)
+            return false;
+
+        return controller->completeManipulation(itemID, tokens);
+    };
+    completionHandler(completeManipulation());
+}
+
 PAL::SessionID WebPage::sessionID() const
 {
     return WebProcess::singleton().sessionID();

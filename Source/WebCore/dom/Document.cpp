@@ -213,6 +213,7 @@
 #include "SubresourceLoader.h"
 #include "TextAutoSizing.h"
 #include "TextEvent.h"
+#include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include "TouchAction.h"
 #include "TransformSource.h"
@@ -2477,6 +2478,8 @@ void Document::prepareForDestruction()
 #endif
 
     m_undoManager->removeAllItems();
+
+    m_textManipulationController = nullptr; // Free nodes kept alive by TextManipulationController.
 
 #if ENABLE(ACCESSIBILITY)
     if (this != &topDocument()) {
@@ -8320,5 +8323,12 @@ void Document::setPictureInPictureElement(HTMLVideoElement* element)
     m_pictureInPictureElement = makeWeakPtr(element);
 }
 #endif
+
+TextManipulationController& Document::textManipulationController()
+{
+    if (!m_textManipulationController)
+        m_textManipulationController = makeUnique<TextManipulationController>(*this);
+    return *m_textManipulationController;
+}
 
 } // namespace WebCore

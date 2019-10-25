@@ -1,3 +1,49 @@
+2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a mechanism to find and manipulate text by paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=203286
+
+        Reviewed by Wenson Hsieh.
+
+        This patch introduces a new SPI to find paragraphs of text and let client replace the content of each paragraph.
+        For now, this SPI is limited to find & replace contents of main frame's document.
+
+        WKWebView's _startTextManipulationsWithCompletionHandler sends StartTextManipulations message to WebContent process
+        to find all paragraphs in the main frame. WebContent process will send back DidFindTextManipulationItem message
+        for each paragraph, which in turn calls back _WKTextManipulationDelegate's _webView: didFindTextManipulationItem:.
+
+        Upon receiving this delegate callback, the client can invoke WKWebView's _completeTextManipulation to replace
+        the content. It will send CompleteTextManipulation to WebContent process, which will invoke completeManipulation
+        on main frame's document's TextManipulationController.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _textManipulationDelegate]): Aded.
+        (-[WKWebView _setTextManipulationDelegate:]): Aded.
+        (-[WKWebView _startTextManipulationsWithCompletionHandler:]):
+        (-[WKWebView _completeTextManipulation:completion:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationDelegate.h: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.h: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.mm: Added.
+        (-[_WKTextManipulationItem initWithIdentifier:tokens:]):
+        (-[_WKTextManipulationItem identifier]):
+        (-[_WKTextManipulationItem tokens]):
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.mm: Added.
+        (-[_WKTextManipulationToken init]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startTextManipulations):
+        (WebKit::WebPageProxy::didFindTextManipulationItem):
+        (WebKit::WebPageProxy::completeTextManipulation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::startTextManipulations):
+        (WebKit::WebPage::completeTextManipulation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-10-24  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r251558.

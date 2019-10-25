@@ -23,39 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "DownloadProxyMap.h"
+#import <WebKit/WKFoundation.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <wtf/BlockPtr.h>
-#import <wtf/WeakPtr.h>
-#import <UIKit/UIKit.h>
-#endif
+#import <Foundation/Foundation.h>
 
-namespace WebKit {
+@class _WKTextManipulationItem;
 
-void DownloadProxyMap::platformCreate()
-{
-#if PLATFORM(IOS_FAMILY)
-    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationDidEnterBackground();
-    }).get()];
-    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationWillEnterForeground();
-    }).get()];
-#endif
-}
+@protocol _WKTextManipulationDelegate <NSObject>
 
-void DownloadProxyMap::platformDestroy()
-{
-#if PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
-#endif
-}
+@optional
 
-} // namespace WebKit
+- (void)_webView:(WKWebView *)webView didFindTextManipulationItem:(_WKTextManipulationItem *)item;
+
+@end
+

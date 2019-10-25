@@ -23,39 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "DownloadProxyMap.h"
+#import <WebKit/WKFoundation.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <wtf/BlockPtr.h>
-#import <wtf/WeakPtr.h>
-#import <UIKit/UIKit.h>
-#endif
+#import <Foundation/Foundation.h>
 
-namespace WebKit {
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKTextManipulationToken : NSObject
 
-void DownloadProxyMap::platformCreate()
-{
-#if PLATFORM(IOS_FAMILY)
-    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationDidEnterBackground();
-    }).get()];
-    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationWillEnterForeground();
-    }).get()];
-#endif
-}
+@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy) NSString *content;
 
-void DownloadProxyMap::platformDestroy()
-{
-#if PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
-#endif
-}
-
-} // namespace WebKit
+@end

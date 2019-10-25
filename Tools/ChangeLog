@@ -1,3 +1,19 @@
+2019-10-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a mechanism to find and manipulate text by paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=203286
+
+        Reviewed by Wenson Hsieh.
+
+        Added basic API tests for the new SPI.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm: Added.
+        (-[TextManipulationDelegate init]):
+        (-[TextManipulationDelegate _webView:didFindItem:forFrame:]):
+        (-[TextManipulationDelegate items]):
+        (TestWebKitAPI::createItem):
+
 2019-10-24  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r251558.

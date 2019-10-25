@@ -24,38 +24,9 @@
  */
 
 #import "config.h"
-#import "DownloadProxyMap.h"
+#import "_WKTextManipulationToken.h"
 
-#if PLATFORM(IOS_FAMILY)
-#import <wtf/BlockPtr.h>
-#import <wtf/WeakPtr.h>
-#import <UIKit/UIKit.h>
-#endif
+#import <wtf/RetainPtr.h>
 
-namespace WebKit {
-
-void DownloadProxyMap::platformCreate()
-{
-#if PLATFORM(IOS_FAMILY)
-    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationDidEnterBackground();
-    }).get()];
-    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
-        if (!weakThis)
-            return;
-        weakThis->applicationWillEnterForeground();
-    }).get()];
-#endif
-}
-
-void DownloadProxyMap::platformDestroy()
-{
-#if PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
-#endif
-}
-
-} // namespace WebKit
+@implementation _WKTextManipulationToken
+@end
