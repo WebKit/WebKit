@@ -1,3 +1,44 @@
+2019-10-25  youenn fablet  <youenn@apple.com>
+
+        mp4 video element broken with service worker
+        https://bugs.webkit.org/show_bug.cgi?id=184447
+        <rdar://problem/39313155>
+
+        Reviewed by Chris Dumez.
+
+        Update fetch header handling to properly handle range header as per https://fetch.spec.whatwg.org/#headers-class.
+        In particular, remove thre range header from a Request/Headers object whenever modified.
+        Add checks so that range responses are not reused for non range requests.
+        For that purpose, add a range-requested flag to ResourceResponse.
+        Ass helper routines implementing part of fetch spec.
+        Covered by enabled test.
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::removePrivilegedNoCORSRequestHeaders):
+        (WebCore::appendToHeaderMap):
+        (WebCore::FetchHeaders::remove):
+        (WebCore::FetchHeaders::set):
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::setInternalHeaders):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isNoCORSSafelistedRequestHeaderName):
+        (WebCore::isPriviledgedNoCORSRequestHeaderName):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::crossThreadData const):
+        (WebCore::ResourceResponseBase::fromCrossThreadData):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::isRangeRequested const):
+        (WebCore::ResourceResponseBase::setAsRangeRequested):
+        (WebCore::ResourceResponseBase::encode const):
+        (WebCore::ResourceResponseBase::decode):
+
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r251586.

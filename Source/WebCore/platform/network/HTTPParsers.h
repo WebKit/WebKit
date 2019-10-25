@@ -96,6 +96,8 @@ size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned cha
 
 // HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
 bool isForbiddenHeaderName(const String&);
+bool isNoCORSSafelistedRequestHeaderName(const String&);
+bool isPriviledgedNoCORSRequestHeaderName(const String&);
 bool isForbiddenResponseHeaderName(const String&);
 bool isForbiddenMethod(const String&);
 bool isSimpleHeader(const String& name, const String& value);

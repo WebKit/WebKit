@@ -222,9 +222,12 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     } else
         m_signal->follow(input.m_signal.get());
 
-    auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
-    if (fillResult.hasException())
-        return fillResult;
+    if (init.hasMembers()) {
+        auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
+        if (fillResult.hasException())
+            return fillResult;
+    } else
+        m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
 
     auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
     if (setBodyResult.hasException())

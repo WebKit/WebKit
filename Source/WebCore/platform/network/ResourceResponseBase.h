@@ -68,6 +68,7 @@ public:
         Type type;
         Tainting tainting;
         bool isRedirected;
+        bool isRangeRequested;
     };
 
     CrossThreadData crossThreadData() const;
@@ -180,6 +181,9 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, ResourceResponseBase&);
 
+    bool isRangeRequested() const { return m_isRangeRequested; }
+    void setAsRangeRequested() { m_isRangeRequested = true; }
+
 protected:
     enum InitLevel {
         Uninitialized,
@@ -238,6 +242,7 @@ private:
     Source m_source { Source::Unknown };
     Type m_type { Type::Default };
     Tainting m_tainting { Tainting::Basic };
+    bool m_isRangeRequested { false };
 
 protected:
     int m_httpStatusCode { 0 };
@@ -273,6 +278,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_tainting);
     encoder << m_isRedirected;
+    encoder << m_isRangeRequested;
 }
 
 template<class Decoder>
@@ -284,6 +290,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (responseIsNull)
         return true;
+
+    response.m_isNull = false;
 
     if (!decoder.decode(response.m_url))
         return false;
@@ -318,7 +326,11 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(isRedirected))
         return false;
     response.m_isRedirected = isRedirected;
-    response.m_isNull = false;
+
+    bool isRangeRequested = false;
+    if (!decoder.decode(isRangeRequested))
+        return false;
+    response.m_isRangeRequested = isRangeRequested;
 
     return true;
 }
