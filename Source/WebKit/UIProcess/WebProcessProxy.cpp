@@ -1237,8 +1237,14 @@ void WebProcessProxy::processReadyToSuspend(uint64_t requestToSuspendID)
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (isRunningServiceWorkers())
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(%u)", this, state);
+
+    if (isRunningServiceWorkers() && !pageCount()) {
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState() release all assertions for network process because this is a service worker process without page", this);
+        m_foregroundToken = nullptr;
+        m_backgroundToken = nullptr;
         return;
+    }
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
 

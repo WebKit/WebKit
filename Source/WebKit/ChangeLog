@@ -1,5 +1,32 @@
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
+        [iOS] Regression(r251067) WebProcesses with service workers no longer keep their network process alive
+        https://bugs.webkit.org/show_bug.cgi?id=203388
+        <rdar://problem/56600074>
+
+        Reviewed by Geoffrey Garen.
+
+        Historically, WebProcessProxy::didSetAssertionState() used to return early for service worker processes
+        because we did not want service worker processes to prevent the network process from suspending. The
+        WebProcesses using the service worker process would prevent the network process from suspending when
+        they are visible, so it would work fine.
+
+        However, after r251067, there is no longer a concept of service worker process per se. Service workers
+        will now sometimes run in regular WebProcesses where we have pages. In such cases, didSetAssertionState()
+        would still return early and fail to keep its network process alive, even when the page(s) in this process
+        are visible on screen.
+
+        To address the issue, we now only return early if the process has a service worker but no page.
+        This should restore pre-existing behavior.
+
+        Note that this was causing hangs such as <rdar://problem/56245136> because the WebProcess would be
+        stuck on sync IPC to a suspended network process.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
         Standardize "PageID=" vs "pageID =" in release logging
         https://bugs.webkit.org/show_bug.cgi?id=203002
 
