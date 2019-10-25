@@ -38,6 +38,7 @@
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
+#include "FrameLoaderTypes.h"
 #include "GenericTaskQueue.h"
 #include "GraphicsTypes.h"
 #include "MediaProducer.h"
@@ -1530,7 +1531,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    WEBCORE_EXPORT void dispatchSystemPreviewActionEvent(const String& message);
+    WEBCORE_EXPORT void dispatchSystemPreviewActionEvent(const SystemPreviewInfo&, const String& message);
 #endif
 
 protected:
