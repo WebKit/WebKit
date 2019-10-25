@@ -43,7 +43,7 @@ class Origin {
 public:
     Origin() = default;
     Origin(WTF::HashTableDeletedValueType)
-        : m_bytecodeIndex(BytecodeIndex(WTF::HashTableDeletedValue))
+        : m_bytecodeIndex(WTF::HashTableDeletedValue)
     { }
     
     Origin(Bytecodes* bytecodes, BytecodeIndex bytecodeIndex)
@@ -55,7 +55,7 @@ public:
     
     Origin(Database&, CodeBlock*, BytecodeIndex);
     
-    bool operator!() const { return !!m_bytecodeIndex; }
+    bool operator!() const { return !m_bytecodeIndex; }
     
     Bytecodes* bytecodes() const { return m_bytecodes; }
     BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }

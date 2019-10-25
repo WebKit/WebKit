@@ -54,7 +54,8 @@ public:
 #if CPU(ADDRESS64)
         : m_compositeValue(buildCompositeValue(deletedMarker(), BytecodeIndex()))
 #else
-        : m_inlineCallFrame(deletedMarker())
+        : m_bytecodeIndex(WTF::HashTableDeletedValue)
+        , m_inlineCallFrame(deletedMarker())
 #endif
     {
     }
@@ -134,7 +135,7 @@ public:
 #if CPU(ADDRESS64)
         return !isSet() && (m_compositeValue & s_maskCompositeValueForPointer);
 #else
-        return !!m_bytecodeIndex && !!m_inlineCallFrame;
+        return m_bytecodeIndex.isHashTableDeletedValue() && !!m_inlineCallFrame;
 #endif
     }
     

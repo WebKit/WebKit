@@ -36,6 +36,10 @@ namespace JSC {
 class BytecodeIndex {
 public:
     BytecodeIndex() = default;
+    BytecodeIndex(WTF::HashTableDeletedValueType)
+        : m_offset(deletedValue().asBits())
+    {
+    }
     explicit BytecodeIndex(uint32_t bytecodeOffset)
         : m_offset(bytecodeOffset)
     { }

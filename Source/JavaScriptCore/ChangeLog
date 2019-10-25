@@ -1,3 +1,27 @@
+2019-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r251468): Build, test failures in 32-bit JSC after BytecodeIndex refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=203290
+
+        Reviewed by Keith Miller.
+
+        * bytecode/BytecodeIndex.h:
+        (JSC::BytecodeIndex::BytecodeIndex):
+        Add a BytecodeIndex(WTF::HashTableDeletedValueType) constructor.
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        Have the CodeOrigin(WTF::HashTableDeletedValueType) constructor
+        initialize the BytecodeIndex object accordingly, as a deleted value.
+        (JSC::CodeOrigin::isHashTableDeletedValue const):
+        Test BytecodeIndex object's deleted-value condition through the
+        corresponding BytecodeIndex::isHashTableDeletedValue() method.
+        * profiler/ProfilerOrigin.h:
+        (JSC::Profiler::Origin::Origin):
+        Simplify the m_bytecodeIndex member initialization for a deleted value.
+        (JSC::Profiler::Origin::operator! const):
+        Fix the negation operator, returning true if the m_bytecodeIndex is
+        either empty or deleted.
+
 2019-10-24  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mac WK1 ] REGRESSION (r251261): Layout Test inspector/console/webcore-logging.html is consistently Failing
