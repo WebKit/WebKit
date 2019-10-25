@@ -1,3 +1,45 @@
+2019-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add exclusion rules to text manipulation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203398
+        <rdar://problem/56567256>
+
+        Reviewed by Wenson Hsieh.
+
+        Added SPI to specify the configuration for the text manipulation (see r251574), in particular, the set of rules
+        governing which content should be excluded or included in text manipulations.
+
+        Test: TextManipulation.StartTextManipulationExitEarlyWithoutDelegate
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]): Takes _WKTextManipulationConfiguration
+        as an argument. Also fixed a bug that we weren't calling the completion handler when the delegate was not set.
+        (-[WKWebView _completeTextManipulation:completion:]):
+        (-[WKWebView _startTextManipulationsWithCompletionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.h: Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm: Added.
+        (-[_WKTextManipulationExclusionRule initExclusion:forElement:]): Added.
+        (-[_WKTextManipulationExclusionRule initExclusion:forAttribute:value:]): Added.
+        (-[_WKTextManipulationExclusionRule elementName]): Added.
+        (-[_WKTextManipulationExclusionRule attributeName]): Added.
+        (-[_WKTextManipulationExclusionRule attributeValue]): Added.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h: Added excluded boolean property.
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.mm: Removed the superflous import of RetainPtr.h
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startTextManipulations):
+        (WebKit::WebPageProxy::completeTextManipulation):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::startTextManipulations):
+        (WebKit::WebPage::completeTextManipulation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Use sendWithAsyncReply() to simplify the prepareToSuspend logic

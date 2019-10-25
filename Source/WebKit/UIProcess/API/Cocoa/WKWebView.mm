@@ -99,7 +99,9 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKTextInputContextInternal.h"
+#import "_WKTextManipulationConfiguration.h"
 #import "_WKTextManipulationDelegate.h"
+#import "_WKTextManipulationExclusionRule.h"
 #import "_WKTextManipulationItem.h"
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
@@ -7477,13 +7479,27 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _textManipulationDelegate = delegate;
 }
 
-- (void)_startTextManipulationsWithCompletionHandler:(void(^)())completionHandler
+- (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
-    if (!_textManipulationDelegate)
+    using ExclusionRule = WebCore::TextManipulationController::ExclusionRule;
+
+    if (!_textManipulationDelegate || !_page) {
+        completionHandler();
         return;
-    if (!_page)
-        return;
-    _page->startTextManipulations([weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::TextManipulationController::ItemIdentifier itemID,
+    }
+
+    Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules;
+    if (configuration) {
+        for (_WKTextManipulationExclusionRule *wkRule in configuration.exclusionRules) {
+            auto type = wkRule.isExclusion ? ExclusionRule::Type::Exclude : ExclusionRule::Type::Include;
+            if (wkRule.attributeName)
+                exclusionRules.append({type, ExclusionRule::AttributeRule { wkRule.attributeName, wkRule.attributeValue } });
+            else
+                exclusionRules.append({type, ExclusionRule::ElementRule { wkRule.elementName } });
+        }
+    }
+
+    _page->startTextManipulations(exclusionRules, [weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::TextManipulationController::ItemIdentifier itemID,
         const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens) {
         if (!weakSelf)
             return;
@@ -7498,6 +7514,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
             [wkToken setIdentifier:String::number(token.identifier.toUInt64())];
             [wkToken setContent:token.content];
+            [wkToken setExcluded:token.isExcluded];
             [wkTokens addObject:wkToken.get()];
         }
 
@@ -7510,6 +7527,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
 {
+    using ManipulationResult = WebCore::TextManipulationController::ManipulationResult;
+
     if (!_page)
         return;
 
@@ -7521,8 +7540,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         tokens.append(WebCore::TextManipulationController::ManipulationToken { tokenID, wkToken.content });
     }
 
-    _page->completeTextManipulation(itemID, tokens, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool success) {
-        capturedCompletionBlock(success);
+    _page->completeTextManipulation(itemID, tokens, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (ManipulationResult result) {
+        capturedCompletionBlock(result == ManipulationResult::Success);
     });
 }
 

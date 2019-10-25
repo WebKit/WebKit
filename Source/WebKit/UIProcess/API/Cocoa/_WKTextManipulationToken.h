@@ -32,5 +32,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 @property (nonatomic, copy) NSString *identifier;
 @property (nonatomic, copy) NSString *content;
+@property (nonatomic, getter=isExcluded) BOOL excluded;
 
 @end

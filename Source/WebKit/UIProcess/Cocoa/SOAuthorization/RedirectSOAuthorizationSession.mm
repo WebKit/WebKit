@@ -28,7 +28,9 @@
 
 #if HAVE(APP_SSO)
 
+#import "APINavigationAction.h"
 #import "DataReference.h"
+#import "WebPageProxy.h"
 #import <WebCore/ResourceResponse.h>
 
 namespace WebKit {

@@ -1614,10 +1614,10 @@ public:
 #endif
 
     using TextManipulationItemCallback = WTF::Function<void (WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&)>;
-    void startTextManipulations(TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
+    void startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>&, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
     void didFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&);
-    void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier,
-        const Vector<WebCore::TextManipulationController::ManipulationToken>&, WTF::Function<void (bool success)>&&);
+    void completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier, const Vector<WebCore::TextManipulationController::ManipulationToken>&,
+        WTF::Function<void (WebCore::TextManipulationController::ManipulationResult)>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

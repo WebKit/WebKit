@@ -26,25 +26,93 @@
 #include "config.h"
 #include "TextManipulationController.h"
 
+#include "CharacterData.h"
 #include "Editing.h"
+#include "ElementAncestorIterator.h"
 #include "ScriptDisallowedScope.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 
 namespace WebCore {
 
+inline bool TextManipulationController::ExclusionRule::match(const Element& element) const
+{
+    return switchOn(rule, [&element] (ElementRule rule) {
+        return rule.localName == element.localName();
+    }, [&element] (AttributeRule rule) {
+        return equalIgnoringASCIICase(element.getAttribute(rule.name), rule.value);
+    });
+}
+
+class ExclusionRuleMatcher {
+public:
+    using ExclusionRule = TextManipulationController::ExclusionRule;
+    using Type = TextManipulationController::ExclusionRule::Type;
+
+    ExclusionRuleMatcher(const Vector<ExclusionRule>& rules)
+        : m_rules(rules)
+    { }
+
+    bool isExcluded(Node* node)
+    {
+        if (!node)
+            return false;
+
+        RefPtr<Element> startingElement = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
+        if (!startingElement)
+            return false;
+
+        Type type = Type::Include;
+        RefPtr<Element> matchingElement;
+        for (auto& element : elementLineage(startingElement.get())) {
+            if (auto typeOrNullopt = typeForElement(element)) {
+                type = *typeOrNullopt;
+                matchingElement = &element;
+                break;
+            }
+        }
+
+        for (auto& element : elementLineage(startingElement.get())) {
+            m_cache.set(element, type);
+            if (&element == matchingElement)
+                break;
+        }
+
+        return type == Type::Exclude;
+    }
+
+    Optional<Type> typeForElement(Element& element)
+    {
+        auto it = m_cache.find(element);
+        if (it != m_cache.end())
+            return it->value;
+
+        for (auto& rule : m_rules) {
+            if (rule.match(element))
+                return rule.type;
+        }
+
+        return WTF::nullopt;
+    }
+
+private:
+    const Vector<ExclusionRule>& m_rules;
+    HashMap<Ref<Element>, ExclusionRule::Type> m_cache;
+};
+
 TextManipulationController::TextManipulationController(Document& document)
     : m_document(makeWeakPtr(document))
 {
 }
 
-void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback)
+void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules)
 {
     auto document = makeRefPtr(m_document.get());
     if (!document)
         return;
 
     m_callback = WTFMove(callback);
+    m_exclusionRules = WTFMove(exclusionRules);
 
     VisiblePosition start = firstPositionInNode(m_document.get());
     VisiblePosition end = lastPositionInNode(m_document.get());
@@ -52,6 +120,7 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     if (!document)
         return; // VisiblePosition or TextIterator's constructor may have updated the layout and executed arbitrary scripts.
 
+    ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
     Vector<ManipulationToken> tokensInCurrentParagraph;
     Position startOfCurrentParagraph = start.deepEquivalent();
     while (!iterator.atEnd()) {
@@ -64,8 +133,8 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
         size_t offsetOfNextNewLine = 0;
         while ((offsetOfNextNewLine = currentText.find('\n', endOfLastNewLine)) != notFound) {
             if (endOfLastNewLine < offsetOfNextNewLine) {
-                tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(),
-                    currentText.substring(endOfLastNewLine, offsetOfNextNewLine - endOfLastNewLine).toString() });
+                auto stringUntilEndOfLine = currentText.substring(endOfLastNewLine, offsetOfNextNewLine - endOfLastNewLine).toString();
+                tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), stringUntilEndOfLine, exclusionRuleMatcher.isExcluded(iterator.node()) });
             }
 
             auto lastRange = iterator.range();
@@ -83,7 +152,7 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 
         auto remainingText = currentText.substring(endOfLastNewLine);
         if (remainingText.length())
-            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), remainingText.toString() });
+            tokensInCurrentParagraph.append(ManipulationToken { m_tokenIdentifier.generate(), remainingText.toString(), exclusionRuleMatcher.isExcluded(iterator.node()) });
 
         iterator.advance();
     }
@@ -99,14 +168,14 @@ void TextManipulationController::addItem(const Position& startOfParagraph, const
     m_callback(*m_document, result.iterator->key, result.iterator->value.tokens);
 }
 
-bool TextManipulationController::completeManipulation(ItemIdentifier itemIdentifier, const Vector<ManipulationToken>& replacementTokens)
+auto TextManipulationController::completeManipulation(ItemIdentifier itemIdentifier, const Vector<ManipulationToken>& replacementTokens) -> ManipulationResult
 {
     if (!itemIdentifier)
-        return false;
+        return ManipulationResult::InvalidItem;
 
     auto itemIterator = m_items.find(itemIdentifier);
     if (itemIterator == m_items.end())
-        return false;
+        return ManipulationResult::InvalidItem;
 
     auto didReplace = replace(itemIterator->value, replacementTokens);
 
@@ -115,35 +184,48 @@ bool TextManipulationController::completeManipulation(ItemIdentifier itemIdentif
     return didReplace;
 }
 
-bool TextManipulationController::replace(const ManipulationItem& item, const Vector<ManipulationToken>& replacementTokens)
+struct DOMChange {
+    Ref<CharacterData> node;
+    String newData;
+};
+
+auto TextManipulationController::replace(const ManipulationItem& item, const Vector<ManipulationToken>& replacementTokens) -> ManipulationResult
 {
     TextIterator iterator { item.start, item.end };
     size_t currentTokenIndex = 0;
-    HashMap<TokenIdentifier, Ref<Node>> tokenToNode;
+    HashMap<TokenIdentifier, std::pair<RefPtr<Node>, const ManipulationToken*>> tokenToNodeTokenPair;
+
     while (!iterator.atEnd()) {
         auto string = iterator.text().toString();
         if (currentTokenIndex >= item.tokens.size())
-            return false;
+            return ManipulationResult::ContentChanged;
         auto& currentToken = item.tokens[currentTokenIndex];
         if (iterator.text() != currentToken.content)
-            return false;
-        tokenToNode.add(currentToken.identifier, *iterator.node());
+            return ManipulationResult::ContentChanged;
+        tokenToNodeTokenPair.set(currentToken.identifier, std::pair<RefPtr<Node>, const ManipulationToken*> { iterator.node(), &currentToken });
         iterator.advance();
         ++currentTokenIndex;
     }
 
     // FIXME: This doesn't preseve the order of the replacement at all.
-    for (auto& token : replacementTokens) {
-        auto* node = tokenToNode.get(token.identifier);
-        if (!node)
-            return false;
-        if (!is<CharacterData>(node))
+    Vector<DOMChange> changes;
+    for (auto& newToken : replacementTokens) {
+        auto it = tokenToNodeTokenPair.find(newToken.identifier);
+        if (it == tokenToNodeTokenPair.end())
+            return ManipulationResult::InvalidToken;
+        auto& oldToken = *it->value.second;
+        if (oldToken.isExcluded)
+            return ManipulationResult::ExclusionViolation;
+        auto* node = it->value.first.get();
+        if (!node || !is<CharacterData>(*node))
             continue;
-        // FIXME: It's not safe to update DOM while iterating over the tokens.
-        downcast<CharacterData>(node)->setData(token.content);
+        changes.append({ downcast<CharacterData>(*node), newToken.content });
     }
 
-    return true;
+    for (auto& change : changes)
+        change.node->setData(change.newData);
+
+    return ManipulationResult::Success;
 }
 
 } // namespace WebCore

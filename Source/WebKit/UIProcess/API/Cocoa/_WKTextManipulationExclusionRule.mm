@@ -24,7 +24,54 @@
  */
 
 #import "config.h"
-#import "_WKTextManipulationToken.h"
+#import "_WKTextManipulationExclusionRule.h"
 
-@implementation _WKTextManipulationToken
+#include <wtf/RetainPtr.h>
+
+@implementation _WKTextManipulationExclusionRule {
+    BOOL _isExclusion;
+    RetainPtr<NSString> _elementName;
+    RetainPtr<NSString> _attributeName;
+    RetainPtr<NSString> _attributeValue;
+}
+
+- (instancetype)initExclusion:(BOOL)exclusion forElement:(NSString *)localName
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _isExclusion = exclusion;
+    _elementName = localName;
+    
+    return self;
+}
+
+- (instancetype)initExclusion:(BOOL)exclusion forAttribute:(NSString *)name value:(NSString *)value
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _isExclusion = exclusion;
+    _attributeName = name;
+    _attributeValue = value;
+
+    return self;
+}
+
+- (NSString *)elementName
+{
+    return _elementName.get();
+}
+
+- (NSString *)attributeName
+{
+    return _attributeName.get();
+}
+
+- (NSString *)attributeValue
+{
+    return _attributeValue.get();
+}
+
 @end
+

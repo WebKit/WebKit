@@ -23,8 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKTextManipulationToken.h"
+#import <WebKit/WKFoundation.h>
 
-@implementation _WKTextManipulationToken
+#import <Foundation/Foundation.h>
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKTextManipulationExclusionRule : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initExclusion:(BOOL)exclusion forElement:(NSString *)localName;
+- (instancetype)initExclusion:(BOOL)exclusion forAttribute:(NSString *)name value:(NSString *)value;
+
+@property (nonatomic, readonly) BOOL isExclusion;
+@property (nonatomic, readonly) NSString *elementName;
+@property (nonatomic, readonly) NSString *attributeName;
+@property (nonatomic, readonly) NSString *attributeValue;
+
 @end

@@ -1,3 +1,43 @@
+2019-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add exclusion rules to text manipulation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203398
+        <rdar://problem/56567256>
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds the ability to define a ordered set of rules to exclude or include content an element of
+        a certain name or one with a certain attribute value.
+
+        Also made completeManipulation return more detailed errors for debugging purposes.
+
+        Tests: TextManipulation.StartTextManipulationApplySingleExcluionRuleForElement
+               TextManipulation.StartTextManipulationApplyInclusionExclusionRulesForAttributes
+               TextManipulation.CompleteTextManipulationFailWhenExclusionIsViolated
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::ExclusionRule::match const): Added.
+        (WebCore::ExclusionRuleMatcher): Added. This class is responsible for figuring out whether a given node
+        is excluded or included in the text manipulation.
+        (WebCore::ExclusionRuleMatcher::ExclusionRuleMatcher): Added.
+        (WebCore::ExclusionRuleMatcher::isExcluded): Added.
+        (WebCore::ExclusionRuleMatcher::typeForElement): Added.
+        (WebCore::TextManipulationController::startObservingParagraphs): Added a Vector of ExclusionRule as
+        an argument.
+        (WebCore::TextManipulationController::completeManipulation):
+        (WebCore::TextManipulationController::replace):
+        * editing/TextManipulationController.h:
+        (WebCore::TextManipulationController::ExclusionRule): Added.
+        (WebCore::TextManipulationController::ManipulationResult): Added.
+        (WebCore::TextManipulationController::ManipulationToken::encode const): Include isExcluded boolean.
+        (WebCore::TextManipulationController::ManipulationToken::decode): Ditto.
+        (WebCore::TextManipulationController::ExclusionRule::encode const): Added.
+        (WebCore::TextManipulationController::ExclusionRule::decode): Added.
+        (WebCore::TextManipulationController::ExclusionRule::ElementRule::encode const): Added.
+        (WebCore::TextManipulationController::ExclusionRule::ElementRule::decode): Added.
+        (WebCore::TextManipulationController::ExclusionRule::AttributeRule::encode const): Added.
+        (WebCore::TextManipulationController::ExclusionRule::AttributeRule::decode): Added.
+
 2019-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Move code around in CSSCalculationValue.cpp

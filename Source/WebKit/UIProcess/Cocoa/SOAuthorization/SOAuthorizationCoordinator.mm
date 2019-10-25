@@ -29,6 +29,7 @@
 #if HAVE(APP_SSO)
 
 #import "APIFrameHandle.h"
+#import "APINavigationAction.h"
 #import "PopUpSOAuthorizationSession.h"
 #import "RedirectSOAuthorizationSession.h"
 #import "SubFrameSOAuthorizationSession.h"

@@ -6836,7 +6836,7 @@ Optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& e
     return WebCore::ElementContext { elementRectInRootViewCoordinates(element, *frame), m_identifier, document.identifier(), document.identifierForElement(element) };
 }
 
-void WebPage::startTextManipulations(CompletionHandler<void()>&& completionHandler)
+void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
         return;
@@ -6856,25 +6856,26 @@ void WebPage::startTextManipulations(CompletionHandler<void()>&& completionHandl
             return;
 
         webPage->send(Messages::WebPageProxy::DidFindTextManipulationItem(itemIdentifier, tokens));
-    });
+    }, WTFMove(exclusionRules));
     // For now, we assume startObservingParagraphs find all paragraphs synchronously at once.
     completionHandler();
 }
 
 void WebPage::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
-    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, CompletionHandler<void(bool)>&& completionHandler)
+    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, CompletionHandler<void(WebCore::TextManipulationController::ManipulationResult)>&& completionHandler)
 {
+    using ManipulationResult = WebCore::TextManipulationController::ManipulationResult;
     auto completeManipulation = [&] {
         if (!m_page)
-            return false;
+            return ManipulationResult::InvalidItem;
 
         auto mainDocument = makeRefPtr(m_page->mainFrame().document());
         if (!mainDocument)
-            return false;
+            return ManipulationResult::InvalidItem;
 
         auto* controller = mainDocument->textManipulationControllerIfExists();
         if (!controller)
-            return false;
+            return ManipulationResult::InvalidItem;
 
         return controller->completeManipulation(itemID, tokens);
     };

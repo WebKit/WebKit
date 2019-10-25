@@ -24,7 +24,8 @@
  */
 
 #import "config.h"
-#import "_WKTextManipulationToken.h"
+#import "_WKTextManipulationConfiguration.h"
 
-@implementation _WKTextManipulationToken
+@implementation _WKTextManipulationConfiguration
 @end
+

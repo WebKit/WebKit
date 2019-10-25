@@ -9419,14 +9419,15 @@ void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationCo
 }
 #endif
 
-void WebPageProxy::startTextManipulations(TextManipulationItemCallback&& callback, WTF::CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::startTextManipulations(const Vector<WebCore::TextManipulationController::ExclusionRule>& exclusionRules,
+    TextManipulationItemCallback&& callback, WTF::CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler();
         return;
     }
     m_textManipulationItemCallback = WTFMove(callback);
-    m_process->connection()->sendWithAsyncReply(Messages::WebPage::StartTextManipulations(), WTFMove(completionHandler), m_webPageID);
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules), WTFMove(completionHandler), m_webPageID);
 }
 
 void WebPageProxy::didFindTextManipulationItem(WebCore::TextManipulationController::ItemIdentifier itemID,
@@ -9438,10 +9439,10 @@ void WebPageProxy::didFindTextManipulationItem(WebCore::TextManipulationControll
 }
 
 void WebPageProxy::completeTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID,
-    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, WTF::Function<void (bool success)>&& completionHandler)
+    const Vector<WebCore::TextManipulationController::ManipulationToken>& tokens, WTF::Function<void (WebCore::TextManipulationController::ManipulationResult result)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
-        completionHandler(false);
+        completionHandler(WebCore::TextManipulationController::ManipulationResult::InvalidItem);
         return;
     }
     m_process->connection()->sendWithAsyncReply(Messages::WebPage::CompleteTextManipulation(itemID, tokens), WTFMove(completionHandler), m_webPageID);
