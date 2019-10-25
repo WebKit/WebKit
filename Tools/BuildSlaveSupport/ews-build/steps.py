@@ -736,6 +736,25 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
     step.setCommand(step.command + ['--' + platform])
 
 
+class BuildLogLineObserver(logobserver.LogLineObserver, object):
+    def __init__(self, errorReceived=None):
+        self.errorReceived = errorReceived
+        self.error_context_buffer = []
+        self.whitespace_re = re.compile('^[\s]*$')
+        super(BuildLogLineObserver, self).__init__()
+
+    def outLineReceived(self, line):
+        is_whitespace = self.whitespace_re.search(line) is not None
+        if is_whitespace:
+            self.error_context_buffer = []
+        else:
+            self.error_context_buffer.append(line)
+
+        if "rror:" in line and self.errorReceived:
+            map(self.errorReceived, self.error_context_buffer)
+            self.error_context_buffer = []
+
+
 class CompileWebKit(shell.Compile):
     name = 'compile-webkit'
     description = ['compiling']
@@ -755,6 +774,9 @@ class CompileWebKit(shell.Compile):
         architecture = self.getProperty('architecture')
         additionalArguments = self.getProperty('additionalArguments')
 
+        if platform != 'windows':
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
+
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios') and architecture:
@@ -771,6 +793,17 @@ class CompileWebKit(shell.Compile):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def errorReceived(self, error):
+        self._addToLog('errors', error + '\n')
 
     def evaluateCommand(self, cmd):
         if cmd.didFail():

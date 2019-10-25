@@ -1,3 +1,16 @@
+2019-10-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Status page should show compiler ERRORS
+        https://bugs.webkit.org/show_bug.cgi?id=203418
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BuildLogLineObserver): Class for Analyzing build logs and extracting error logs.
+        (CompileWebKit.start): Initialize the log observer.
+        (CompileWebKit):
+        (CompileWebKit.errorReceived): Add the error to the errors log.
+
 2019-10-25  Matt Lewis  <jlewis3@apple.com>
 
         Rolling out r251579,r251162,r251512,r251500, and r251498 for build failures
