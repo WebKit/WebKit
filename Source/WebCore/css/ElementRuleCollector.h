@@ -22,6 +22,7 @@
 #pragma once
 
 #include "MediaQueryEvaluator.h"
+#include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleScope.h"
 #include <memory>
@@ -32,8 +33,6 @@ namespace WebCore {
 
 class DocumentRuleSets;
 class MatchRequest;
-class RuleData;
-class RuleSet;
 class SelectorFilter;
 
 class PseudoStyleRequest {

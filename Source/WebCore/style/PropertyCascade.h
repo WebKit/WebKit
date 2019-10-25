@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class StyleResolver;
-struct ApplyCascadedPropertyState;
 
 namespace Style {
 
@@ -45,29 +44,38 @@ enum class CascadeLevel : uint8_t {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyCascade(TextDirection, WritingMode);
+    PropertyCascade(StyleResolver&, const MatchResult&, TextDirection, WritingMode);
     ~PropertyCascade();
 
+    StyleResolver& styleResolver() { return m_styleResolver; }
+
     struct Property {
-        void apply(StyleResolver&, ApplyCascadedPropertyState&);
+        void apply(PropertyCascade&);
 
         CSSPropertyID id;
         CascadeLevel level;
         ScopeOrdinal styleScopeOrdinal;
-        CSSValue* cssValue[3];
+        CSSValue* cssValue[3]; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
     bool hasProperty(CSSPropertyID) const;
     Property& property(CSSPropertyID);
 
-    void addNormalMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
-    void addImportantMatches(const MatchResult&, CascadeLevel, bool inheritedOnly = false);
-
-    void applyDeferredProperties(StyleResolver&, ApplyCascadedPropertyState&);
-
-    HashMap<AtomString, Property>& customProperties() { return m_customProperties; }
     bool hasCustomProperty(const String&) const;
     Property customProperty(const String&) const;
+
+    void addNormalMatches(CascadeLevel, bool inheritedOnly = false);
+    void addImportantMatches(CascadeLevel, bool inheritedOnly = false);
+
+    bool hasAppliedProperty(CSSPropertyID) const;
+
+    void applyProperties(int firstProperty, int lastProperty);
+    void applyDeferredProperties();
+
+    void applyCustomProperties();
+    void applyCustomProperty(const String& name);
+
+    PropertyCascade* propertyCascadeForRollback(CascadeLevel);
 
 private:
     void addMatch(const MatchedProperties&, CascadeLevel, bool isImportant, bool inheritedOnly);
@@ -75,14 +83,35 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
 
+    enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
+    template<CustomPropertyCycleTracking trackCycles>
+    void applyPropertiesImpl(int firstProperty, int lastProperty);
+
+    StyleResolver& m_styleResolver;
+    const MatchResult& m_matchResult;
+
+    TextDirection m_direction;
+    WritingMode m_writingMode;
+
     Property m_properties[numCSSProperties + 2];
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;
 
     Vector<Property, 8> m_deferredProperties;
     HashMap<AtomString, Property> m_customProperties;
 
-    TextDirection m_direction;
-    WritingMode m_writingMode;
+    // State to use when applying properties, to keep track of which custom and high-priority
+    // properties have been resolved.
+    struct ApplyState {
+        Bitmap<numCSSProperties> appliedProperties = { };
+        HashSet<String> appliedCustomProperties = { };
+        Bitmap<numCSSProperties> inProgressProperties = { };
+        HashSet<String> inProgressPropertiesCustom = { };
+    };
+
+    ApplyState m_applyState;
+
+    std::unique_ptr<PropertyCascade> m_authorRollbackCascade;
+    std::unique_ptr<PropertyCascade> m_userRollbackCascade;
 };
 
 inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
@@ -104,6 +133,11 @@ inline bool PropertyCascade::hasCustomProperty(const String& name) const
 inline PropertyCascade::Property PropertyCascade::customProperty(const String& name) const
 {
     return m_customProperties.get(name);
+}
+
+inline bool PropertyCascade::hasAppliedProperty(CSSPropertyID propertyID) const
+{
+    return m_applyState.appliedProperties.get(propertyID);
 }
 
 }

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
+#include "PropertyCascade.h"
 #include "RenderStyle.h"
 #include "StyleResolver.h"
 
@@ -44,21 +45,21 @@ String CSSVariableReferenceValue::customCSSText() const
     return m_stringValue;
 }
 
-static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, ApplyCascadedPropertyState&);
+static bool resolveTokenRange(CSSParserTokenRange, Vector<CSSParserToken>&, Style::PropertyCascade&);
 
-static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
+static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::PropertyCascade& cascade)
 {
     if (range.atEnd())
         return false;
     ASSERT(range.peek().type() == CommaToken);
     range.consume();
-    return resolveTokenRange(range, result, state);
+    return resolveTokenRange(range, result, cascade);
 }
 
-static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
+static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::PropertyCascade& cascade)
 {
-    auto& registeredProperties = state.styleResolver->document().getCSSRegisteredCustomPropertySet();
-    auto& style = *state.styleResolver->style();
+    auto& registeredProperties = cascade.styleResolver().document().getCSSRegisteredCustomPropertySet();
+    auto& style = *cascade.styleResolver().style();
 
     range.consumeWhitespace();
     ASSERT(range.peek().type() == IdentToken);
@@ -66,11 +67,11 @@ static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParser
     ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
 
     // Apply this variable first, in case it is still unresolved
-    state.styleResolver->applyCascadedCustomProperty(variableName, state);
+    cascade.applyCustomProperty(variableName);
 
     // Apply fallback to detect cycles
     Vector<CSSParserToken> fallbackResult;
-    bool fallbackReturn = resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, state);
+    bool fallbackReturn = resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, cascade);
 
     auto* property = style.getCustomProperty(variableName);
 
@@ -92,24 +93,24 @@ static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParser
     return true;
 }
 
-static bool resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>& result, ApplyCascadedPropertyState& state)
+static bool resolveTokenRange(CSSParserTokenRange range, Vector<CSSParserToken>& result, Style::PropertyCascade& cascade)
 {
     bool success = true;
     while (!range.atEnd()) {
         if (range.peek().functionId() == CSSValueVar || range.peek().functionId() == CSSValueEnv)
-            success &= resolveVariableReference(range.consumeBlock(), result, state);
+            success &= resolveVariableReference(range.consumeBlock(), result, cascade);
         else
             result.append(range.consume());
     }
     return success;
 }
 
-RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(ApplyCascadedPropertyState& state) const
+RefPtr<CSSVariableData> CSSVariableReferenceValue::resolveVariableReferences(Style::PropertyCascade& cascade) const
 {
     Vector<CSSParserToken> resolvedTokens;
     CSSParserTokenRange range = m_data->tokenRange();
 
-    if (!resolveTokenRange(range, resolvedTokens, state))
+    if (!resolveTokenRange(range, resolvedTokens, cascade))
         return nullptr;
 
     return CSSVariableData::create(resolvedTokens);

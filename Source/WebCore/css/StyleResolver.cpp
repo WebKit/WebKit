@@ -76,6 +76,7 @@
 #include "PageRuleCollector.h"
 #include "PaintWorkletGlobalScope.h"
 #include "Pair.h"
+#include "PropertyCascade.h"
 #include "Quirks.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
@@ -373,24 +374,23 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
 
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
-    Style::PropertyCascade cascade(direction, writingMode);
-    cascade.addNormalMatches(result, Style::CascadeLevel::Author);
+    Style::PropertyCascade cascade(*this, result, direction, writingMode);
+    cascade.addNormalMatches(Style::CascadeLevel::Author);
 
-    ApplyCascadedPropertyState applyState { this, &cascade, &result };
-    applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
+    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, update it now.
     updateFont();
 
     // Now resolve remaining custom properties and the rest, in any order
-    for (auto it = cascade.customProperties().begin(); it != cascade.customProperties().end(); ++it)
-        applyCascadedCustomProperty(it->key, applyState);
-    applyCascadedProperties(firstLowPriorityProperty, lastCSSProperty, applyState);
+    cascade.applyCustomProperties();
+
+    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
 
     // If our font got dirtied by one of the non-essential font props, update it a second time.
     updateFont();
 
-    cascade.applyDeferredProperties(*this, applyState);
+    cascade.applyDeferredProperties();
 
     adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr, nullptr);
 
@@ -579,21 +579,20 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     WritingMode writingMode;
     extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
 
-    Style::PropertyCascade cascade(direction, writingMode);
-    cascade.addNormalMatches(result, Style::CascadeLevel::Author);
+    Style::PropertyCascade cascade(*this, result, direction, writingMode);
+    cascade.addNormalMatches(Style::CascadeLevel::Author);
 
-    ApplyCascadedPropertyState applyState { this, &cascade, &result };
-    applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
+    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, update it now.
     updateFont();
 
     // Now resolve remaining custom properties and the rest, in any order
-    for (auto it = cascade.customProperties().begin(); it != cascade.customProperties().end(); ++it)
-        applyCascadedCustomProperty(it->key, applyState);
-    applyCascadedProperties(firstLowPriorityProperty, lastCSSProperty, applyState);
+    cascade.applyCustomProperties();
 
-    cascade.applyDeferredProperties(*this, applyState);
+    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
+
+    cascade.applyDeferredProperties();
 
     // Now return the style.
     return m_state.takeStyle();
@@ -1382,52 +1381,48 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        Style::PropertyCascade cascade(direction, writingMode);
-        cascade.addNormalMatches(matchResult, Style::CascadeLevel::UserAgent, applyInheritedOnly);
-        cascade.addImportantMatches(matchResult, Style::CascadeLevel::UserAgent, applyInheritedOnly);
+        Style::PropertyCascade cascade(*this, matchResult, direction, writingMode);
+        cascade.addNormalMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
+        cascade.addImportantMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
 
-        ApplyCascadedPropertyState applyState { this, &cascade, &matchResult };
-
-        applyCascadedProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, applyState);
+        cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
         adjustStyleForInterCharacterRuby();
 
 #if ENABLE(DARK_MODE_CSS)
         // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-        applyCascadedProperties(CSSPropertyColorScheme, CSSPropertyColorScheme, applyState);
+        cascade.applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
 #endif
 
-        applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
+        cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
         // If our font got dirtied, update it now.
         updateFont();
 
         // Now resolve remaining custom properties and the rest, in any order
-        for (auto it = cascade.customProperties().begin(); it != cascade.customProperties().end(); ++it)
-            applyCascadedCustomProperty(it->key, applyState);
-        applyCascadedProperties(firstLowPriorityProperty, lastCSSProperty, applyState);
+        cascade.applyCustomProperties();
+
+        cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
 
         state.cacheBorderAndBackground();
     }
 
-    Style::PropertyCascade cascade(direction, writingMode);
-    cascade.addNormalMatches(matchResult, Style::CascadeLevel::UserAgent, applyInheritedOnly);
-    cascade.addNormalMatches(matchResult, Style::CascadeLevel::User, applyInheritedOnly);
-    cascade.addNormalMatches(matchResult, Style::CascadeLevel::Author, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, Style::CascadeLevel::Author, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, Style::CascadeLevel::User, applyInheritedOnly);
-    cascade.addImportantMatches(matchResult, Style::CascadeLevel::UserAgent, applyInheritedOnly);
+    Style::PropertyCascade cascade(*this, matchResult, direction, writingMode);
+    cascade.addNormalMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
+    cascade.addNormalMatches(Style::CascadeLevel::User, applyInheritedOnly);
+    cascade.addNormalMatches(Style::CascadeLevel::Author, applyInheritedOnly);
+    cascade.addImportantMatches(Style::CascadeLevel::Author, applyInheritedOnly);
+    cascade.addImportantMatches(Style::CascadeLevel::User, applyInheritedOnly);
+    cascade.addImportantMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
 
-    ApplyCascadedPropertyState applyState { this, &cascade, &matchResult };
-
-    applyCascadedProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, applyState);
+    cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     adjustStyleForInterCharacterRuby();
 
 #if ENABLE(DARK_MODE_CSS)
     // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-    applyCascadedProperties(CSSPropertyColorScheme, CSSPropertyColorScheme, applyState);
+    cascade.applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
 #endif
 
-    applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
+    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     // If the effective zoom value changes, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
@@ -1441,14 +1436,14 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     // Now resolve remaining custom properties and the rest, in any order
-    for (auto it = cascade.customProperties().begin(); it != cascade.customProperties().end(); ++it)
-        applyCascadedCustomProperty(it->key, applyState);
-    applyCascadedProperties(firstLowPriorityProperty, lastCSSProperty, applyState);
+    cascade.applyCustomProperties();
+
+    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
 
     // Finally, some properties must be applied in the order they were parsed.
     // There are some CSS properties that affect the same RenderStyle values,
     // so to preserve behavior, we queue them up during cascade and flush here.
-    cascade.applyDeferredProperties(*this, applyState);
+    cascade.applyDeferredProperties();
 
     ASSERT(!state.fontDirty());
 
@@ -1469,9 +1464,10 @@ void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std:
 
 void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* value)
 {
-    ApplyCascadedPropertyState applyState { this, nullptr, nullptr };
+    MatchResult matchResult;
+    Style::PropertyCascade cascade(*this, matchResult, { }, { });
     if (value)
-        applyProperty(id, value, applyState);
+        applyProperty(id, value, cascade);
 }
 
 inline bool isValidVisitedLinkProperty(CSSPropertyID id)
@@ -1520,64 +1516,17 @@ bool StyleResolver::useSVGZoomRulesForLength() const
     return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
 }
 
-Style::PropertyCascade* StyleResolver::cascadedPropertiesForRollback(const MatchResult& matchResult)
+void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, Style::PropertyCascade& cascade, SelectorChecker::LinkMatchMask linkMatchMask)
 {
-    TextDirection direction;
-    WritingMode writingMode;
-    extractDirectionAndWritingMode(*state().style(), matchResult, direction, writingMode);
-
-    switch (state().cascadeLevel()) {
-    case Style::CascadeLevel::Author: {
-        auto* authorRollback = state().authorRollback();
-        if (authorRollback)
-            return authorRollback;
-
-        auto newAuthorRollback = makeUnique<Style::PropertyCascade>(direction, writingMode);
-
-        // This special rollback cascade contains UA rules and user rules but no author rules.
-        newAuthorRollback->addNormalMatches(matchResult, Style::CascadeLevel::UserAgent, false);
-        newAuthorRollback->addNormalMatches(matchResult, Style::CascadeLevel::User, false);
-        newAuthorRollback->addImportantMatches(matchResult, Style::CascadeLevel::User, false);
-        newAuthorRollback->addImportantMatches(matchResult, Style::CascadeLevel::UserAgent, false);
-
-        state().setAuthorRollback(newAuthorRollback);
-        return state().authorRollback();
-    }
-
-    case Style::CascadeLevel::User: {
-        auto* userRollback = state().userRollback();
-        if (userRollback)
-            return userRollback;
-
-        auto newUserRollback = makeUnique<Style::PropertyCascade>(direction, writingMode);
-
-        // This special rollback cascade contains only UA rules.
-        newUserRollback->addNormalMatches(matchResult, Style::CascadeLevel::UserAgent, false);
-        newUserRollback->addImportantMatches(matchResult, Style::CascadeLevel::UserAgent, false);
-
-        state().setUserRollback(newUserRollback);
-        return state().userRollback();
-    }
-
-    case Style::CascadeLevel::UserAgent:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascadedPropertyState& applyState, SelectorChecker::LinkMatchMask linkMatchMask)
-{
-    auto* matchResult = applyState.matchResult;
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     State& state = m_state;
 
     RefPtr<CSSValue> valueToApply = value;
     if (value->hasVariableReferences()) {
-        valueToApply = resolvedVariableValue(id, *value, applyState);
-        // If appliedProperties already has this id, then we detected a cycle, and this value should be unset.
-        if (!valueToApply || applyState.appliedProperties.get(id)) {
+        valueToApply = resolvedVariableValue(id, *value, cascade);
+        // If the cascade has already applied this id, then we detected a cycle, and this value should be unset.
+        if (!valueToApply || cascade.hasAppliedProperty(id)) {
             if (CSSProperty::isInheritedProperty(id))
                 valueToApply = CSSValuePool::singleton().createInheritedValue();
             else
@@ -1588,7 +1537,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
     if (CSSProperty::isDirectionAwareProperty(id)) {
         CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, state.style()->direction(), state.style()->writingMode());
         ASSERT(newId != id);
-        return applyProperty(newId, valueToApply.get(), applyState, linkMatchMask);
+        return applyProperty(newId, valueToApply.get(), cascade, linkMatchMask);
     }
 
     CSSValue* valueToCheckForInheritInitial = valueToApply.get();
@@ -1613,12 +1562,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
     bool isRevert = valueToCheckForInheritInitial->isRevertValue() || customPropertyValueID == CSSValueRevert;
 
     if (isRevert) {
-        if (state.cascadeLevel() == Style::CascadeLevel::UserAgent || !matchResult)
+        if (state.cascadeLevel() == Style::CascadeLevel::UserAgent)
             isUnset = true;
         else {
-            // Fetch the correct rollback object from the state, building it if necessary.
-            // This requires having the original MatchResult available.
-            auto* rollback = cascadedPropertiesForRollback(*matchResult);
+            auto* rollback = cascade.propertyCascadeForRollback(state.cascadeLevel());
             ASSERT(rollback);
 
             // With the cascade built, we need to obtain the property and apply it. If the property is
@@ -1628,13 +1575,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
                 if (customPropertyRegistered && customPropertyRegistered->inherits && rollback->hasCustomProperty(customPropertyValue->name())) {
                     auto property = rollback->customProperty(customPropertyValue->name());
                     if (property.cssValue[linkMatchMask])
-                        applyProperty(property.id, property.cssValue[linkMatchMask], applyState, linkMatchMask);
+                        applyProperty(property.id, property.cssValue[linkMatchMask], cascade, linkMatchMask);
                     return;
                 }
             } else if (rollback->hasProperty(id)) {
                 auto& property = rollback->property(id);
                 if (property.cssValue[linkMatchMask])
-                    applyProperty(property.id, property.cssValue[linkMatchMask], applyState, linkMatchMask);
+                    applyProperty(property.id, property.cssValue[linkMatchMask], cascade, linkMatchMask);
                 return;
             }
 
@@ -1676,10 +1623,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
     StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit, customPropertyRegistered);
 }
 
-RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value, ApplyCascadedPropertyState& state) const
+RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value, Style::PropertyCascade& cascade) const
 {
     CSSParser parser(document());
-    return parser.parseValueWithVariableReferences(propID, value, state);
+    return parser.parseValueWithVariableReferences(propID, value, cascade);
 }
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
@@ -2028,116 +1975,6 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
 
     outOperations = operations;
     return true;
-}
-
-void StyleResolver::applyCascadedCustomProperty(const String& name, ApplyCascadedPropertyState& state)
-{
-    if (state.appliedCustomProperties.contains(name) || !state.cascade->customProperties().contains(name))
-        return;
-
-    auto property = state.cascade->customProperties().get(name);
-    bool inCycle = state.inProgressPropertiesCustom.contains(name);
-
-    for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
-        if (!property.cssValue[index])
-            continue;
-        if (index != SelectorChecker::MatchDefault && this->state().style()->insideLink() == InsideLink::NotInside)
-            continue;
-
-        Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
-
-        if (inCycle) {
-            state.appliedCustomProperties.add(name); // Make sure we do not try to apply this property again while resolving it.
-            valueToApply = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
-        }
-
-        state.inProgressPropertiesCustom.add(name);
-
-        if (WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
-            RefPtr<CSSValue> parsedValue = resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), state);
-
-            if (state.appliedCustomProperties.contains(name))
-                return; // There was a cycle and the value was reset, so bail.
-
-            if (!parsedValue)
-                parsedValue = CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
-
-            valueToApply = downcast<CSSCustomPropertyValue>(*parsedValue);
-        }
-
-        if (state.inProgressPropertiesCustom.contains(name)) {
-            if (index == SelectorChecker::MatchDefault) {
-                this->state().setApplyPropertyToRegularStyle(true);
-                this->state().setApplyPropertyToVisitedLinkStyle(false);
-            }
-
-            if (index == SelectorChecker::MatchLink) {
-                this->state().setApplyPropertyToRegularStyle(true);
-                this->state().setApplyPropertyToVisitedLinkStyle(false);
-            }
-
-            if (index == SelectorChecker::MatchVisited) {
-                this->state().setApplyPropertyToRegularStyle(false);
-                this->state().setApplyPropertyToVisitedLinkStyle(true);
-            }
-            applyProperty(CSSPropertyCustom, valueToApply.ptr(), state, index);
-        }
-    }
-
-    state.inProgressPropertiesCustom.remove(name);
-    state.appliedCustomProperties.add(name);
-
-    for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
-        if (!property.cssValue[index])
-            continue;
-        if (index != SelectorChecker::MatchDefault && this->state().style()->insideLink() == InsideLink::NotInside)
-            continue;
-
-        Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
-
-        if (inCycle && WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
-            // Resolve this value so that we reset its dependencies.
-            resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), state);
-        }
-    }
-}
-
-void StyleResolver::applyCascadedProperties(int firstProperty, int lastProperty, ApplyCascadedPropertyState& state)
-{
-    if (LIKELY(state.cascade->customProperties().isEmpty()))
-        return applyCascadedPropertiesImpl<CustomPropertyCycleTracking::Disabled>(firstProperty, lastProperty, state);
-    return applyCascadedPropertiesImpl<CustomPropertyCycleTracking::Enabled>(firstProperty, lastProperty, state);
-}
-
-template<StyleResolver::CustomPropertyCycleTracking TrackCycles>
-inline void StyleResolver::applyCascadedPropertiesImpl(int firstProperty, int lastProperty, ApplyCascadedPropertyState& state)
-{
-    for (int id = firstProperty; id <= lastProperty; ++id) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!state.cascade->hasProperty(propertyID))
-            continue;
-        ASSERT(propertyID != CSSPropertyCustom);
-        auto& property = state.cascade->property(propertyID);
-
-        if (TrackCycles == CustomPropertyCycleTracking::Disabled) {
-            // If we don't have any custom properties, then there can't be any cycles.
-            property.apply(*this, state);
-        } else {
-            if (UNLIKELY(state.inProgressProperties.get(propertyID))) {
-                // We are in a cycle (eg. setting font size using registered custom property value containing em).
-                // So this value should be unset.
-                state.appliedProperties.set(propertyID);
-                // This property is in a cycle, and only the root of the call stack will have firstProperty != lastProperty.
-                ASSERT(firstProperty == lastProperty);
-                continue;
-            }
-
-            state.inProgressProperties.set(propertyID);
-            property.apply(*this, state);
-            state.appliedProperties.set(propertyID);
-            state.inProgressProperties.set(propertyID, false);
-        }
-    }
 }
 
 } // namespace WebCore

@@ -39,8 +39,11 @@
 
 namespace WebCore {
 
-struct ApplyCascadedPropertyState;
 class CSSParserTokenRange;
+
+namespace Style {
+class PropertyCascade;
+}
 
 class CSSVariableReferenceValue : public CSSValue {
 public:
@@ -52,7 +55,7 @@ public:
     bool equals(const CSSVariableReferenceValue& other) const { return m_data.get() == other.m_data.get(); }
     String customCSSText() const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(ApplyCascadedPropertyState&) const;
+    RefPtr<CSSVariableData> resolveVariableReferences(Style::PropertyCascade&) const;
 
 private:
     CSSVariableReferenceValue(Ref<CSSVariableData>&& data)

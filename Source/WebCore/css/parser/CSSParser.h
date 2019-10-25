@@ -30,7 +30,6 @@
 
 namespace WebCore {
 
-struct ApplyCascadedPropertyState;
 class CSSParserObserver;
 class CSSSelectorList;
 class Color;
@@ -41,6 +40,10 @@ class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
 class RenderStyle;
+
+namespace Style {
+class PropertyCascade;
+}
 
 class CSSParser {
 public:
@@ -78,7 +81,7 @@ public:
 
     void parseSelector(const String&, CSSSelectorList&);
 
-    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, ApplyCascadedPropertyState&);
+    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::PropertyCascade&);
 
     static Color parseColor(const String&, bool strict = false);
     static Color parseSystemColor(const String&, const CSSParserContext*);

@@ -201,9 +201,6 @@ public:
 
     bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
 
-    void applyCascadedProperties(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
-    void applyCascadedCustomProperty(const String& name, ApplyCascadedPropertyState&);
-
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
     void checkForGenericFamilyChange(RenderStyle&, const RenderStyle* parentStyle);
@@ -214,21 +211,11 @@ private:
 
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
     void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
-
-    std::unique_ptr<GridPosition> adjustNamedGridItemPosition(const NamedGridAreaMap&, const NamedGridLinesMap&, const GridPosition&, GridPositionSide) const;
     
     void adjustStyleForInterCharacterRuby();
     
-    bool fastRejectSelector(const RuleData&) const;
-
     enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
     void applyMatchedProperties(const MatchResult&, const Element&, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
-
-    enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
-    template<CustomPropertyCycleTracking>
-    inline void applyCascadedPropertiesImpl(int firstProperty, int lastProperty, ApplyCascadedPropertyState&);
-
-    void cascadeMatches(Style::PropertyCascade&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
     DocumentRuleSets m_ruleSets;
 
@@ -291,12 +278,6 @@ public:
         Style::ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
         void setStyleScopeOrdinal(Style::ScopeOrdinal styleScopeOrdinal) { m_styleScopeOrdinal = styleScopeOrdinal; }
 
-        Style::PropertyCascade* authorRollback() const { return m_authorRollback.get(); }
-        Style::PropertyCascade* userRollback() const { return m_userRollback.get(); }
-        
-        void setAuthorRollback(std::unique_ptr<Style::PropertyCascade>& rollback) { m_authorRollback = WTFMove(rollback); }
-        void setUserRollback(std::unique_ptr<Style::PropertyCascade>& rollback) { m_userRollback = WTFMove(rollback); }
-
         const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
     private:
@@ -307,8 +288,6 @@ public:
         const RenderStyle* m_parentStyle { nullptr };
         std::unique_ptr<RenderStyle> m_ownedParentStyle;
         const RenderStyle* m_rootElementStyle { nullptr };
-        std::unique_ptr<Style::PropertyCascade> m_authorRollback;
-        std::unique_ptr<Style::PropertyCascade> m_userRollback;
 
         const SelectorFilter* m_selectorFilter { nullptr };
 
@@ -338,8 +317,6 @@ public:
     bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
     bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
 
-    Style::PropertyCascade* cascadedPropertiesForRollback(const MatchResult&);
-
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
     const FontCascadeDescription& fontDescription() { return m_state.fontDescription(); }
@@ -350,11 +327,11 @@ public:
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
-    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&, ApplyCascadedPropertyState&) const;
+    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&, Style::PropertyCascade&) const;
 
     bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
-    void applyProperty(CSSPropertyID, CSSValue*, ApplyCascadedPropertyState&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
+    void applyProperty(CSSPropertyID, CSSValue*, Style::PropertyCascade&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
 
 private:
     void cacheBorderAndBackground();
@@ -417,18 +394,6 @@ private:
     bool m_matchAuthorAndUserStyles { true };
     // See if we still have crashes where StyleResolver gets deleted early.
     bool m_isDeleted { false };
-};
-
-// State to use when applying properties, to keep track of which custom and high-priority
-// properties have been resolved.
-struct ApplyCascadedPropertyState {
-    StyleResolver* styleResolver;
-    Style::PropertyCascade* cascade;
-    const MatchResult* matchResult;
-    Bitmap<numCSSProperties> appliedProperties = { };
-    HashSet<String> appliedCustomProperties = { };
-    Bitmap<numCSSProperties> inProgressProperties = { };
-    HashSet<String> inProgressPropertiesCustom = { };
 };
 
 inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const

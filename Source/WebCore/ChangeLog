@@ -1,3 +1,64 @@
+2019-10-25  Antti Koivisto  <antti@apple.com>
+
+        Move more cascade related code from StyleResolver to PropertyCascade
+        https://bugs.webkit.org/show_bug.cgi?id=203409
+
+        Reviewed by Zalan Bujtas.
+
+        - Move a bunch of StyleResolver member functions to PropertyCascade.
+        - Make ApplyCascadedPropertyState part of the PropertyCascade internal state.
+        - Pass around a reference to the PropertyCascade itself instead of the state object
+          The state contained PropertyCascade member already so this is equivalent but simpler.
+
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::resolveVariableFallback):
+        (WebCore::resolveVariableReference):
+        (WebCore::resolveTokenRange):
+        (WebCore::CSSVariableReferenceValue::resolveVariableReferences const):
+        * css/CSSVariableReferenceValue.h:
+        * css/ElementRuleCollector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::resolvedVariableValue const):
+        (WebCore::StyleResolver::cascadedPropertiesForRollback): Deleted.
+        (WebCore::StyleResolver::applyCascadedCustomProperty): Deleted.
+        (WebCore::StyleResolver::applyCascadedProperties): Deleted.
+        (WebCore::StyleResolver::applyCascadedPropertiesImpl): Deleted.
+
+        These become PropertyCascade members.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::authorRollback const): Deleted.
+        (WebCore::StyleResolver::State::userRollback const): Deleted.
+        (WebCore::StyleResolver::State::setAuthorRollback): Deleted.
+        (WebCore::StyleResolver::State::setUserRollback): Deleted.
+
+        Rollbacks are now owned by PropertyCascade.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        (WebCore::Style::PropertyCascade::set):
+        (WebCore::Style::PropertyCascade::addNormalMatches):
+        (WebCore::Style::PropertyCascade::addImportantMatches):
+        (WebCore::Style::PropertyCascade::applyDeferredProperties):
+        (WebCore::Style::PropertyCascade::applyProperties):
+        (WebCore::Style::PropertyCascade::applyPropertiesImpl):
+        (WebCore::Style::PropertyCascade::applyCustomProperties):
+        (WebCore::Style::PropertyCascade::applyCustomProperty):
+        (WebCore::Style::PropertyCascade::propertyCascadeForRollback):
+        (WebCore::Style::PropertyCascade::Property::apply):
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::styleResolver):
+        (WebCore::Style::PropertyCascade::hasAppliedProperty const):
+        (WebCore::Style::PropertyCascade::customProperties): Deleted.
+
 2019-10-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for no-wrap
