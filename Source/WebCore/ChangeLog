@@ -1,3 +1,48 @@
+2019-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Move code around in CSSCalculationValue.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=203397
+
+        Reviewed by Zalan Bujtas.
+
+        Large amounts of code were in inline (but virtual) functions in CSSCalcPrimitiveValue, CSSCalcOperation
+        and CSSCalcExpressionNodeParser, making it hard to navigate around this file. Move code into
+        out-of-line functions. No behavior changes.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcPrimitiveValue::createCalcExpression const):
+        (WebCore::CSSCalcPrimitiveValue::doubleValue const):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx const):
+        (WebCore::CSSCalcPrimitiveValue::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValue::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValue::equals const):
+        (WebCore::CSSCalcOperation::create):
+        (WebCore::CSSCalcOperation::createMinOrMax):
+        (WebCore::CSSCalcOperation::createSimplified):
+        (WebCore::CSSCalcOperation::primitiveType const):
+        (WebCore::CSSCalcOperation::createCalcExpression const):
+        (WebCore::CSSCalcOperation::doubleValue const):
+        (WebCore::CSSCalcOperation::computeLengthPx const):
+        (WebCore::CSSCalcOperation::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcOperation::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcOperation::buildCssText):
+        (WebCore::CSSCalcOperation::customCSSText const):
+        (WebCore::CSSCalcOperation::equals const):
+        (WebCore::CSSCalcOperation::evaluateOperator):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::checkDepthAndIndex):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueTerm):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseMinMaxExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueExpression):
+        (WebCore::CSSCalcValue::customCSSText const):
+        (WebCore::CSSCalcValue::equals const):
+        (WebCore::CSSCalcValue::clampToPermittedRange const):
+        (WebCore::CSSCalcValue::doubleValue const):
+        (WebCore::CSSCalcValue::computeLengthPx const):
+
 2019-10-25  youenn fablet  <youenn@apple.com>
 
         mp4 video element broken with service worker
