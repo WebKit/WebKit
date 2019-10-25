@@ -73,6 +73,7 @@ private:
 
     void contextDestroyed() override;
     void stop() override;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     const char* activeDOMObjectName() const override { return "DatabaseContext"; }
 
     RefPtr<DatabaseThread> m_databaseThread;

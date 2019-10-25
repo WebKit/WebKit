@@ -47,7 +47,6 @@
 #include "SQLTransactionErrorCallback.h"
 #include "SQLiteTransaction.h"
 #include "VoidCallback.h"
-#include "WindowEventLoop.h"
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -110,21 +109,18 @@ void SQLTransaction::performNextStep()
 
 void SQLTransaction::performPendingCallback()
 {
-    ASSERT(isMainThread());
-    m_database->document().eventLoop().queueTask(TaskSource::Networking, m_database->document(), [this, protectedThis = makeRef(*this)]() mutable {
-        LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep));
+    LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep));
 
-        ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback
-            || m_nextStep == &SQLTransaction::deliverTransactionErrorCallback
-            || m_nextStep == &SQLTransaction::deliverStatementCallback
-            || m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback
-            || m_nextStep == &SQLTransaction::deliverSuccessCallback);
+    ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback
+           || m_nextStep == &SQLTransaction::deliverTransactionErrorCallback
+           || m_nextStep == &SQLTransaction::deliverStatementCallback
+           || m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback
+           || m_nextStep == &SQLTransaction::deliverSuccessCallback);
 
-        checkAndHandleClosedDatabase();
+    checkAndHandleClosedDatabase();
 
-        if (m_nextStep)
-            (this->*m_nextStep)();
-    });
+    if (m_nextStep)
+        (this->*m_nextStep)();
 }
 
 void SQLTransaction::notifyDatabaseThreadIsShuttingDown()

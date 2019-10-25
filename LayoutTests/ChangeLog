@@ -1,3 +1,16 @@
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r251586.
+
+        New test is flaky
+
+        Reverted changeset:
+
+        "DatabaseContext should not prevent entering the back/forward
+        cache"
+        https://bugs.webkit.org/show_bug.cgi?id=203103
+        https://trac.webkit.org/changeset/251586
+
 2019-10-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests

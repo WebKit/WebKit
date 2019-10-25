@@ -38,7 +38,6 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
-#include "WindowEventLoop.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -193,7 +192,6 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase& database)
 
 ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
-    ASSERT(isMainThread());
     ScriptController::initializeThreading();
 
     bool setVersionInNewDatabase = !creationCallback;
@@ -210,7 +208,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, con
     if (database->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->setHasPendingCreationEvent(true);
-        database->m_document->eventLoop().queueTask(TaskSource::Networking, database->m_document, [creationCallback, database]() {
+        database->m_document->postTask([creationCallback, database] (ScriptExecutionContext&) {
             creationCallback->handleEvent(*database);
             database->setHasPendingCreationEvent(false);
         });
