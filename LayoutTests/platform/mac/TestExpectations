@@ -2025,3 +2025,8 @@ webkit.org/b/202598 imported/w3c/web-platform-tests/2dcontext/line-styles/2d.lin
 webkit.org/b/198867 [ Mojave+ ] webgl/many-contexts.html [ Skip ]
 
 webkit.org/b/203171 inspector/layers/layers-for-node.html [ Pass Failure ]
+
+webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
+webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
+webkit.org/b/203357 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
+webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]
