@@ -1,3 +1,18 @@
+2019-10-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add SSL support for peformance dashboard database connection.
+        https://bugs.webkit.org/show_bug.cgi?id=203426
+
+        Reviewed by Ryosuke Niwa.
+
+        Performance dashboard should allow connecting Postgres database with SSL.
+
+        * public/include/db.php: Add SSL configuration to connection string if specified.
+        * tools/js/database.js: Add SSL configuration to connection string if specified.
+        (Database.prototype._prepareSSLConfig):
+        (Database.prototype.connect):
+        * unit-tests/checkconfig.js: Added unit tests for optional ssl fields.
+
 2019-10-22  Dewei Zhu  <dewei_zhu@apple.com>
 
         Refactor "builds" table "build_number" row to "build_tag" to fit more generic use cases.

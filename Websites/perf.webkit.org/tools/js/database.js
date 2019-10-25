@@ -10,6 +10,24 @@ class Database {
         this._databaseName = databaseName || config.value('database.name');
     }
 
+    _prepareSSLConfig()
+    {
+        if (!config.value('database.ssl') || config.value('database.ssl.mode') == 'disable')
+            return '';
+
+        const certificateConfigs = ['?ssl=true'];
+        for(const key of ['cert', 'key', 'rootcert']) {
+            const fullKey = `database.ssl.${key}`;
+            let path = config.value(fullKey);
+            if (!path)
+                continue
+            if (path[0] != '/')
+                path = config.path(fullKey);
+            certificateConfigs.push(`${key}=${path}`);
+        }
+        return certificateConfigs.join('&');
+    }
+
     connect(options)
     {
         console.assert(this._client === null);
@@ -20,7 +38,7 @@ class Database {
         let port = config.value('database.port');
 
         // No need to worry about escaping strings since they are only set by someone who can write to config.json.
-        let connectionString = `tcp://${username}:${password}@${host}:${port}/${this._databaseName}`;
+        let connectionString = `tcp://${username}:${password}@${host}:${port}/${this._databaseName}${this._prepareSSLConfig()}`;
 
         let client = new pg.Client(connectionString);
         if (!options || !options.keepAlive)

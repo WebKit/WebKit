@@ -116,8 +116,33 @@ class Database
 
     function connect() {
         $databaseConfig = config('database');
-        $this->connection = @pg_connect('host=' . $databaseConfig['host'] . ' port=' . $databaseConfig['port']
-            . ' dbname=' . $databaseConfig['name'] . ' user=' . $databaseConfig['username'] . ' password=' . $databaseConfig['password']);
+
+        $host = $databaseConfig['host'];
+        $port = $databaseConfig['port'];
+        $dbname = $databaseConfig['name'];
+        $user = $databaseConfig['username'];
+        $password = $databaseConfig['password'];
+        $connectionString = "host=$host port=$port dbname=$dbname user=$user password=$password";
+
+        $sslConfigString = '';
+
+        if (array_get($databaseConfig, 'ssl')) {
+            $sslConfig = $databaseConfig['ssl'];
+            $sslConfigString .= ' sslmode=' . array_get($sslConfig, 'mode', 'require');
+            foreach (array('rootcert', 'cert', 'key') as $key) {
+                if (!array_get($sslConfig, $key))
+                    continue;
+
+                $path = $sslConfig[$key];
+                if (strlen($path) && $path[0] !== '/')
+                    $path = CONFIG_DIR . '/' . $path;
+
+                $sslConfigString .= " ssl$key=$path";
+            }
+        }
+
+        $connectionString .= $sslConfigString;
+        $this->connection = @pg_connect($connectionString);
         return $this->connection ? true : false;
     }
 
