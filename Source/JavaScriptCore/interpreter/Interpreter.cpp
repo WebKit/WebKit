@@ -66,7 +66,7 @@
 #include "ObjectPrototype.h"
 #include "Parser.h"
 #include "ProgramCodeBlock.h"
-#include "ProtoCallFrame.h"
+#include "ProtoCallFrameInlines.h"
 #include "RegExpObject.h"
 #include "Register.h"
 #include "RegisterAtOffsetList.h"

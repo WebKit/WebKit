@@ -29,6 +29,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
+#import "CallFrameInlines.h"
 #import "CatchScope.h"
 #import "Completion.h"
 #import "Error.h"

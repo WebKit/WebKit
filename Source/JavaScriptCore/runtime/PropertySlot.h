@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "CallFrame.h"
 #include "DOMAnnotation.h"
+#include "GetVM.h"
 #include "JSCJSValue.h"
 #include "PropertyName.h"
 #include "PropertyOffset.h"

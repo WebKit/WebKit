@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #pragma once
 
 #include "AuxiliaryBarrierInlines.h"
+#include "ButterflyInlines.h"
 #include "Error.h"
 #include "JSObject.h"
 #include "JSTypedArrays.h"

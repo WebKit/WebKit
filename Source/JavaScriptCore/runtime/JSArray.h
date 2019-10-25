@@ -22,8 +22,8 @@
 
 #include "ArgList.h"
 #include "ArrayConventions.h"
-#include "ButterflyInlines.h"
-#include "JSCellInlines.h"
+#include "Butterfly.h"
+#include "JSCell.h"
 #include "JSObject.h"
 
 namespace JSC {

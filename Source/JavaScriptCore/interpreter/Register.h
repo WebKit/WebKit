@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,17 +51,17 @@ namespace JSC {
         JSValue asanUnsafeJSValue() const;
         EncodedJSValue encodedJSValue() const;
         
-        Register& operator=(CallFrame*);
-        Register& operator=(CodeBlock*);
-        Register& operator=(JSScope*);
-        Register& operator=(JSObject*);
+        ALWAYS_INLINE Register& operator=(CallFrame*);
+        ALWAYS_INLINE Register& operator=(CodeBlock*);
+        ALWAYS_INLINE Register& operator=(JSScope*);
+        ALWAYS_INLINE Register& operator=(JSObject*);
 
         int32_t i() const;
-        CallFrame* callFrame() const;
-        CodeBlock* codeBlock() const;
-        CodeBlock* asanUnsafeCodeBlock() const;
-        JSObject* object() const;
-        JSScope* scope() const;
+        ALWAYS_INLINE CallFrame* callFrame() const;
+        ALWAYS_INLINE CodeBlock* codeBlock() const;
+        ALWAYS_INLINE CodeBlock* asanUnsafeCodeBlock() const;
+        ALWAYS_INLINE JSObject* object() const;
+        ALWAYS_INLINE JSScope* scope() const;
         int32_t unboxedInt32() const;
         int32_t asanUnsafeUnboxedInt32() const;
         int64_t unboxedInt52() const;
@@ -136,36 +136,9 @@ namespace JSC {
 
     // Interpreter functions
 
-    ALWAYS_INLINE Register& Register::operator=(CallFrame* callFrame)
-    {
-        u.callFrame = callFrame;
-        return *this;
-    }
-
-    ALWAYS_INLINE Register& Register::operator=(CodeBlock* codeBlock)
-    {
-        u.codeBlock = codeBlock;
-        return *this;
-    }
-
     ALWAYS_INLINE int32_t Register::i() const
     {
         return jsValue().asInt32();
-    }
-
-    ALWAYS_INLINE CallFrame* Register::callFrame() const
-    {
-        return u.callFrame;
-    }
-    
-    ALWAYS_INLINE CodeBlock* Register::codeBlock() const
-    {
-        return u.codeBlock;
-    }
-
-    SUPPRESS_ASAN ALWAYS_INLINE CodeBlock* Register::asanUnsafeCodeBlock() const
-    {
-        return u.codeBlock;
     }
 
     ALWAYS_INLINE int32_t Register::unboxedInt32() const

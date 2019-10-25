@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "CallFrame.h"
 #include "ConstructData.h"
 #include "JSCast.h"
 #include <wtf/PtrTag.h>

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 #pragma once
 
 #include "ArrayPrototype.h"
+#include "ButterflyInlines.h"
 #include "Error.h"
 #include "JSArray.h"
 #include "JSCellInlines.h"

@@ -39,6 +39,7 @@
 #include "B3SlotBaseValue.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
+#include "ButterflyInlines.h"
 #include "CallFrameShuffler.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"

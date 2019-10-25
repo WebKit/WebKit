@@ -129,27 +129,6 @@ inline JSScope* JSScope::next()
     return m_next.get();
 }
 
-inline Register& Register::operator=(JSScope* scope)
-{
-    *this = JSValue(scope);
-    return *this;
-}
-
-inline JSScope* Register::scope() const
-{
-    return jsCast<JSScope*>(unboxedCell());
-}
-
-inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
-{
-    UNUSED_PARAM(vm);
-#if ENABLE(WEBASSEMBLY)
-    if (callee().isWasm())
-        return lexicalGlobalObjectFromWasmCallee(vm);
-#endif
-    return jsCallee()->globalObject();
-}
-
 inline size_t JSScope::offsetOfNext()
 {
     return OBJECT_OFFSETOF(JSScope, m_next);

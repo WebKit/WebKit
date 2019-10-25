@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MetadataTable.h"
+#pragma once
 
-#include "JSCInlines.h"
-#include "OpcodeInlines.h"
-#include "UnlinkedMetadataTableInlines.h"
-#include <wtf/FastMalloc.h>
+#include "ProtoCallFrame.h"
+#include "RegisterInlines.h"
 
 namespace JSC {
 
-MetadataTable::MetadataTable(UnlinkedMetadataTable& unlinkedMetadata)
+inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSGlobalObject* globalObject, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
 {
-    new (&linkingData()) UnlinkedMetadataTable::LinkingData {
-        unlinkedMetadata,
-        1,
-    };
+    this->args = otherArgs;
+    this->setCodeBlock(codeBlock);
+    this->setCallee(callee);
+    this->setGlobalObject(globalObject);
+    this->setArgumentCountIncludingThis(argCountIncludingThis);
+    if (codeBlock && argCountIncludingThis < codeBlock->numParameters())
+        this->hasArityMismatch = true;
+    else
+        this->hasArityMismatch = false;
+
+    // Round up argCountIncludingThis to keep the stack frame size aligned.
+    size_t paddedArgsCount = roundArgumentCountToAlignFrame(argCountIncludingThis);
+    this->setPaddedArgCount(paddedArgsCount);
+    this->clearCurrentVPC();
+    this->setThisValue(thisValue);
 }
 
-struct DeallocTable {
-    template<typename Op>
-    static void withOpcodeType(MetadataTable* table)
-    {
-        table->forEach<Op>([](auto& entry) {
-            entry.~Metadata();
-        });
-    }
-};
-
-MetadataTable::~MetadataTable()
+inline JSObject* ProtoCallFrame::callee() const
 {
-    for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; i++)
-        getOpcodeType<DeallocTable>(static_cast<OpcodeID>(i), this);
-    linkingData().~LinkingData();
+    return calleeValue.Register::object();
 }
 
-void MetadataTable::destroy(MetadataTable* table)
+inline void ProtoCallFrame::setCallee(JSObject* callee)
 {
-    Ref<UnlinkedMetadataTable> unlinkedMetadata = WTFMove(table->linkingData().unlinkedMetadata);
-    table->~MetadataTable();
-    // Since UnlinkedMetadata::unlink frees the underlying memory of MetadataTable.
-    // We need to destroy LinkingData before calling it.
-    unlinkedMetadata->unlink(*table);
+    calleeValue = callee;
 }
 
-size_t MetadataTable::sizeInBytes()
+inline CodeBlock* ProtoCallFrame::codeBlock() const
 {
-    return linkingData().unlinkedMetadata->sizeInBytes(*this);
+    return codeBlockValue.Register::codeBlock();
+}
+
+inline void ProtoCallFrame::setCodeBlock(CodeBlock* codeBlock)
+{
+    codeBlockValue = codeBlock;
 }
 
 } // namespace JSC

@@ -40,7 +40,7 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
-#include "ProtoCallFrame.h"
+#include "ProtoCallFrameInlines.h"
 #include "VM.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"

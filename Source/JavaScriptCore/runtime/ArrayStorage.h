@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,10 +103,7 @@ public:
         return totalSizeFor(m_indexBias, propertyCapacity, vectorLength());
     }
 
-    size_t totalSize(Structure* structure) const
-    {
-        return totalSize(structure->outOfLineCapacity());
-    }
+    inline size_t totalSize(Structure*) const;
 
     static unsigned availableVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
     {
@@ -117,41 +114,19 @@ public:
         return vectorLength;
     }
 
-    static unsigned availableVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
-    {
-        return availableVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
-    }
+    inline static unsigned availableVectorLength(unsigned indexBias, Structure*, unsigned vectorLength);
 
-    unsigned availableVectorLength(size_t propertyCapacity, unsigned vectorLength)
-    {
-        return availableVectorLength(m_indexBias, propertyCapacity, vectorLength);
-    }
+    inline unsigned availableVectorLength(size_t propertyCapacity, unsigned vectorLength);
 
-    unsigned availableVectorLength(Structure* structure, unsigned vectorLength)
-    {
-        return availableVectorLength(structure->outOfLineCapacity(), vectorLength);
-    }
+    inline unsigned availableVectorLength(Structure*, unsigned vectorLength);
 
-    static unsigned optimalVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
-    {
-        vectorLength = std::max(BASE_ARRAY_STORAGE_VECTOR_LEN, vectorLength);
-        return availableVectorLength(indexBias, propertyCapacity, vectorLength);
-    }
+    inline static unsigned optimalVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength);
 
-    static unsigned optimalVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
-    {
-        return optimalVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
-    }
+    inline static unsigned optimalVectorLength(unsigned indexBias, Structure*, unsigned vectorLength);
 
-    unsigned optimalVectorLength(size_t propertyCapacity, unsigned vectorLength)
-    {
-        return optimalVectorLength(m_indexBias, propertyCapacity, vectorLength);
-    }
+    inline unsigned optimalVectorLength(size_t propertyCapacity, unsigned vectorLength);
 
-    unsigned optimalVectorLength(Structure* structure, unsigned vectorLength)
-    {
-        return optimalVectorLength(structure->outOfLineCapacity(), vectorLength);
-    }
+    inline unsigned optimalVectorLength(Structure*, unsigned vectorLength);
 
     WriteBarrier<SparseArrayValueMap> m_sparseMap;
     unsigned m_indexBias;

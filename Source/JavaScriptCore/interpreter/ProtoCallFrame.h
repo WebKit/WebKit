@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,16 +47,13 @@ public:
     JSValue *args;
     JSGlobalObject* globalObject;
 
-    void init(CodeBlock*, JSGlobalObject*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
+    inline void init(CodeBlock*, JSGlobalObject*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
 
-    CodeBlock* codeBlock() const { return codeBlockValue.Register::codeBlock(); }
-    void setCodeBlock(CodeBlock* codeBlock) { codeBlockValue = codeBlock; }
+    inline CodeBlock* codeBlock() const;
+    inline void setCodeBlock(CodeBlock*);
 
-    JSObject* callee() const { return calleeValue.Register::object(); }
-    void setCallee(JSObject* callee)
-    {
-        calleeValue = callee;
-    }
+    inline JSObject* callee() const;
+    inline void setCallee(JSObject*);
     void setGlobalObject(JSGlobalObject* object)
     {
         globalObject = object;
@@ -85,24 +82,5 @@ public:
         args[argumentIndex] = value;
     }
 };
-
-inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSGlobalObject* globalObject, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
-{
-    this->args = otherArgs;
-    this->setCodeBlock(codeBlock);
-    this->setCallee(callee);
-    this->setGlobalObject(globalObject);
-    this->setArgumentCountIncludingThis(argCountIncludingThis);
-    if (codeBlock && argCountIncludingThis < codeBlock->numParameters())
-        this->hasArityMismatch = true;
-    else
-        this->hasArityMismatch = false;
-
-    // Round up argCountIncludingThis to keep the stack frame size aligned.
-    size_t paddedArgsCount = roundArgumentCountToAlignFrame(argCountIncludingThis);
-    this->setPaddedArgCount(paddedArgsCount);
-    this->clearCurrentVPC();
-    this->setThisValue(thisValue);
-}
 
 } // namespace JSC

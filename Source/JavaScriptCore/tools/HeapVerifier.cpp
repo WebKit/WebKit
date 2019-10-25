@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HeapVerifier.h"
 
+#include "ButterflyInlines.h"
 #include "CodeBlockInlines.h"
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"

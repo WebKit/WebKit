@@ -64,7 +64,7 @@
 #include "ObjectPropertyConditionSet.h"
 #include "OpcodeInlines.h"
 #include "ProgramCodeBlock.h"
-#include "ProtoCallFrame.h"
+#include "ProtoCallFrameInlines.h"
 #include "RegExpObject.h"
 #include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"

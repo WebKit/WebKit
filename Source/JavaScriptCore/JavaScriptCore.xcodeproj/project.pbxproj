@@ -1865,6 +1865,10 @@
 		FE1BD0211E72027900134BC9 /* CellProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0201E72027000134BC9 /* CellProfile.h */; };
 		FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0231E72052F00134BC9 /* HeapVerifier.h */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1D6D6D2362544B007A5C26 /* RegisterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1D6D6C2362544A007A5C26 /* RegisterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1D6D6F236258FE007A5C26 /* GetVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1D6D6E236258FE007A5C26 /* GetVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1D6D7123625AB1007A5C26 /* ArrayStorageInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1D6D7023625AB0007A5C26 /* ArrayStorageInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1D6D752362649F007A5C26 /* ProtoCallFrameInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1D6D742362649D007A5C26 /* ProtoCallFrameInlines.h */; };
 		FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5049,6 +5053,10 @@
 		FE1BD0231E72052F00134BC9 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
+		FE1D6D6C2362544A007A5C26 /* RegisterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterInlines.h; sourceTree = "<group>"; };
+		FE1D6D6E236258FE007A5C26 /* GetVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetVM.h; sourceTree = "<group>"; };
+		FE1D6D7023625AB0007A5C26 /* ArrayStorageInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayStorageInlines.h; sourceTree = "<group>"; };
+		FE1D6D742362649D007A5C26 /* ProtoCallFrameInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrameInlines.h; sourceTree = "<group>"; };
 		FE1E2C3C2240C1EF00F6B729 /* JSCPtrTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCPtrTag.cpp; sourceTree = "<group>"; };
 		FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARM64EAssembler.h; sourceTree = "<group>"; };
 		FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM64E.h; sourceTree = "<group>"; };
@@ -5927,7 +5935,9 @@
 				1429D77B0ED20D7300B89619 /* Interpreter.h */,
 				E39D9D841D39000600667282 /* InterpreterInlines.h */,
 				65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */,
+				FE1D6D742362649D007A5C26 /* ProtoCallFrameInlines.h */,
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
+				FE1D6D6C2362544A007A5C26 /* RegisterInlines.h */,
 				DC17E8131C9C7FD4008A6AB3 /* ShadowChicken.cpp */,
 				DC17E8141C9C7FD4008A6AB3 /* ShadowChicken.h */,
 				DC17E8151C9C7FD4008A6AB3 /* ShadowChickenInlines.h */,
@@ -6901,6 +6911,7 @@
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
 				F692A84E0255597D01FF60F7 /* ArrayPrototype.h */,
 				0FB7F38A15ED8E3800F167B2 /* ArrayStorage.h */,
+				FE1D6D7023625AB0007A5C26 /* ArrayStorageInlines.h */,
 				8B6016F31F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.cpp */,
 				8B6016F41F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h */,
 				5B70CFDD1DB69E5C00EC23F9 /* AsyncFunctionConstructor.cpp */,
@@ -7077,6 +7088,7 @@
 				0F2B66B317B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h */,
 				14788EE521501B2900A561C8 /* GetPutInfo.cpp */,
 				796465681B952FF0003059EE /* GetPutInfo.h */,
+				FE1D6D6E236258FE007A5C26 /* GetVM.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
 				E355D38E2244686C008F1AD6 /* GlobalExecutable.cpp */,
@@ -8871,6 +8883,7 @@
 				0FEC85041BDACDAC0080FF74 /* B3BlockWorklist.h in Headers */,
 				DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */,
 				0F6B8AE31C4EFE1700969052 /* B3BreakCriticalEdges.h in Headers */,
+				FE1D6D752362649F007A5C26 /* ProtoCallFrameInlines.h in Headers */,
 				DC9A0C201D2D9CB30085124E /* B3CaseCollection.h in Headers */,
 				DC9A0C1F1D2D9CB10085124E /* B3CaseCollectionInlines.h in Headers */,
 				0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */,
@@ -8914,6 +8927,7 @@
 				0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */,
 				4319DA041C1BE40D001D260B /* B3LowerMacrosAfterOptimizations.h in Headers */,
 				0FEC851E1BDACDAC0080FF74 /* B3LowerToAir.h in Headers */,
+				FE1D6D6D2362544B007A5C26 /* RegisterInlines.h in Headers */,
 				43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */,
 				0FEC85201BDACDAC0080FF74 /* B3MemoryValue.h in Headers */,
 				0F2C63C41E69EF9400C13839 /* B3MemoryValueInlines.h in Headers */,
@@ -9478,6 +9492,7 @@
 				0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
+				FE1D6D7123625AB1007A5C26 /* ArrayStorageInlines.h in Headers */,
 				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
 				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
 				A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */,
@@ -9995,6 +10010,7 @@
 				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
 				BC18C45D0E16F5CD00B34460 /* Register.h in Headers */,
 				E328C6C91DA432F900D255FD /* RegisterAtOffset.h in Headers */,
+				FE1D6D6F236258FE007A5C26 /* GetVM.h in Headers */,
 				E328C6C81DA4306100D255FD /* RegisterAtOffsetList.h in Headers */,
 				969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */,
 				9688CB160ED12B4E001D6499 /* RegisterInfo.h in Headers */,
@@ -11040,7 +11056,6 @@
 				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
 				5C4196622270E0000047B7CD /* InspectorBackendDispatcherCompatibility.cpp in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
-				FE1D6D4523580E1F007A5C26 /* Options.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
 				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,

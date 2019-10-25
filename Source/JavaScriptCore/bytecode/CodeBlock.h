@@ -1032,30 +1032,6 @@ private:
     std::unique_ptr<RareData> m_rareData;
 };
 
-inline Register& CallFrame::r(int index)
-{
-    CodeBlock* codeBlock = this->codeBlock();
-    if (codeBlock->isConstantRegisterIndex(index))
-        return *reinterpret_cast<Register*>(&codeBlock->constantRegister(index));
-    return this[index];
-}
-
-inline Register& CallFrame::r(VirtualRegister reg)
-{
-    return r(reg.offset());
-}
-
-inline Register& CallFrame::uncheckedR(int index)
-{
-    RELEASE_ASSERT(index < FirstConstantRegisterIndex);
-    return this[index];
-}
-
-inline Register& CallFrame::uncheckedR(VirtualRegister reg)
-{
-    return uncheckedR(reg.offset());
-}
-
 template <typename ExecutableType>
 Exception* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {

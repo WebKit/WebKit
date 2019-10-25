@@ -25,6 +25,7 @@
 #include "ArgList.h"
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
+#include "GetVM.h"
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"

@@ -1,3 +1,105 @@
+2019-10-24  Mark Lam  <mark.lam@apple.com>
+
+        Move JSC::Register inline methods into RegisterInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=203391
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        We're doing this because:
+        1. RegisterInlines.h is the canonical place to put inline Register methods.
+        2. It helps reduce build time.
+           e.g. build-jsc went from 208.02 to 196.81 seconds (about a 5% reduction).
+        3. This enables experimental work to box JSCells in JSValue.
+
+        This patch also handles the fallout of this change, which necessitates more
+        inline methods being moved from <file>.h to their respective <file>Inlines.h.
+
+        JSArray.h used to include ButterflyInlines.h and JSCellInlines.h.  This is a
+        violation of inclusion ordering (.h should not #include Inlines.h).  This
+        violation has been removed.
+
+        * API/JSAPIGlobalObject.mm:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CallFrame::r): Deleted.
+        (JSC::CallFrame::uncheckedR): Deleted.
+        * bytecode/MetadataTable.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::guaranteedJSValueCallee const): Deleted.
+        (JSC::CallFrame::jsCallee const): Deleted.
+        (JSC::CallFrame::codeBlock const): Deleted.
+        (JSC::CallFrame::unsafeCodeBlock const): Deleted.
+        (JSC::CallFrame::scope const): Deleted.
+        (JSC::CallFrame::topOfFrame): Deleted.
+        (JSC::CallFrame::setScope): Deleted.
+        (JSC::CallFrame::setCallee): Deleted.
+        (JSC::CallFrame::setCodeBlock): Deleted.
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::r):
+        (JSC::CallFrame::uncheckedR):
+        (JSC::CallFrame::guaranteedJSValueCallee const):
+        (JSC::CallFrame::jsCallee const):
+        (JSC::CallFrame::codeBlock const):
+        (JSC::CallFrame::unsafeCodeBlock const):
+        (JSC::CallFrame::lexicalGlobalObject const):
+        (JSC::CallFrame::setCallee):
+        (JSC::CallFrame::setCodeBlock):
+        (JSC::CallFrame::setScope):
+        (JSC::CallFrame::scope const):
+        (JSC::CallFrame::topOfFrame):
+        * interpreter/Interpreter.cpp:
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::init): Deleted.
+        * interpreter/ProtoCallFrameInlines.h: Added.
+        (JSC::ProtoCallFrame::init):
+        (JSC::ProtoCallFrame::callee const):
+        (JSC::ProtoCallFrame::setCallee):
+        (JSC::ProtoCallFrame::codeBlock const):
+        (JSC::ProtoCallFrame::setCodeBlock):
+        * interpreter/Register.h:
+        (JSC::Register::callFrame const): Deleted.
+        (JSC::Register::codeBlock const): Deleted.
+        (JSC::Register::asanUnsafeCodeBlock const): Deleted.
+        * interpreter/RegisterInlines.h: Added.
+        (JSC::Register::callFrame const):
+        (JSC::Register::codeBlock const):
+        (JSC::Register::asanUnsafeCodeBlock const):
+        (JSC::Register::object const):
+        (JSC::Register::operator=):
+        (JSC::Register::scope const):
+        * interpreter/StackVisitor.cpp:
+        * jit/AssemblyHelpers.h:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::optimalVectorLength): Deleted.
+        * runtime/ArrayStorageInlines.h: Added.
+        (JSC::ArrayStorage::availableVectorLength):
+        (JSC::ArrayStorage::optimalVectorLength):
+        (JSC::ArrayStorage::totalSize const):
+        * runtime/ButterflyInlines.h:
+        * runtime/ClassInfo.h:
+        * runtime/GetVM.h: Added.
+        * runtime/JSArray.h:
+        * runtime/JSArrayInlines.h:
+        * runtime/JSCellInlines.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.h:
+        (JSC::Register::object const): Deleted.
+        (JSC::Register::operator=): Deleted.
+        * runtime/JSObjectInlines.h:
+        * runtime/JSScope.h:
+        (JSC::Register::operator=): Deleted.
+        (JSC::Register::scope const): Deleted.
+        (JSC::CallFrame::lexicalGlobalObject const): Deleted.
+        * runtime/JSString.h:
+        * runtime/PropertyNameArray.h:
+        * runtime/PropertySlot.h:
+        * runtime/VMInlines.h:
+        * tools/HeapVerifier.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+
 2019-10-24  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r251468): Build, test failures in 32-bit JSC after BytecodeIndex refactoring

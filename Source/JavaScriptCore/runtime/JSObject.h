@@ -1497,17 +1497,6 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
 }
 
-ALWAYS_INLINE JSObject* Register::object() const
-{
-    return asObject(jsValue());
-}
-
-ALWAYS_INLINE Register& Register::operator=(JSObject* object)
-{
-    u.value = JSValue::encode(JSValue(object));
-    return *this;
-}
-
 inline size_t offsetInButterfly(PropertyOffset offset)
 {
     return offsetInOutOfLineStorage(offset) + Butterfly::indexOfPropertyStorage();

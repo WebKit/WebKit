@@ -29,7 +29,7 @@
 #include "AllocatorInlines.h"
 #include "CompleteSubspaceInlines.h"
 #include "CPU.h"
-#include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "DeferGC.h"
 #include "FreeListInlines.h"
 #include "Handle.h"

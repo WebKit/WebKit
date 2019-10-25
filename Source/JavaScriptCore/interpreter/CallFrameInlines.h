@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,65 @@
 #include "CallFrame.h"
 #include "JSCallee.h"
 #include "JSGlobalObject.h"
+#include "RegisterInlines.h"
 
 namespace JSC {
+
+inline Register& CallFrame::r(int index)
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    if (codeBlock->isConstantRegisterIndex(index))
+        return *reinterpret_cast<Register*>(&codeBlock->constantRegister(index));
+    return this[index];
+}
+
+inline Register& CallFrame::r(VirtualRegister reg)
+{
+    return r(reg.offset());
+}
+
+inline Register& CallFrame::uncheckedR(int index)
+{
+    RELEASE_ASSERT(index < FirstConstantRegisterIndex);
+    return this[index];
+}
+
+inline Register& CallFrame::uncheckedR(VirtualRegister reg)
+{
+    return uncheckedR(reg.offset());
+}
+
+inline JSValue CallFrame::guaranteedJSValueCallee() const
+{
+    ASSERT(!callee().isWasm());
+    return this[CallFrameSlot::callee].jsValue();
+}
+
+inline JSObject* CallFrame::jsCallee() const
+{
+    ASSERT(!callee().isWasm());
+    return this[CallFrameSlot::callee].object();
+}
+
+inline CodeBlock* CallFrame::codeBlock() const
+{
+    return this[CallFrameSlot::codeBlock].Register::codeBlock();
+}
+
+inline SUPPRESS_ASAN CodeBlock* CallFrame::unsafeCodeBlock() const
+{
+    return this[CallFrameSlot::codeBlock].Register::asanUnsafeCodeBlock();
+}
+
+inline JSGlobalObject* CallFrame::lexicalGlobalObject(VM& vm) const
+{
+    UNUSED_PARAM(vm);
+#if ENABLE(WEBASSEMBLY)
+    if (callee().isWasm())
+        return lexicalGlobalObjectFromWasmCallee(vm);
+#endif
+    return jsCallee()->globalObject();
+}
 
 inline bool CallFrame::isStackOverflowFrame() const
 {
@@ -41,6 +98,34 @@ inline bool CallFrame::isStackOverflowFrame() const
 inline bool CallFrame::isWasmFrame() const
 {
     return callee().isWasm();
+}
+
+inline void CallFrame::setCallee(JSObject* callee)
+{
+    static_cast<Register*>(this)[CallFrameSlot::callee] = callee;
+}
+
+inline void CallFrame::setCodeBlock(CodeBlock* codeBlock)
+{
+    static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock;
+}
+
+inline void CallFrame::setScope(int scopeRegisterOffset, JSScope* scope)
+{
+    static_cast<Register*>(this)[scopeRegisterOffset] = scope;
+}
+
+inline JSScope* CallFrame::scope(int scopeRegisterOffset) const
+{
+    ASSERT(this[scopeRegisterOffset].Register::scope());
+    return this[scopeRegisterOffset].Register::scope();
+}
+
+inline Register* CallFrame::topOfFrame()
+{
+    if (!codeBlock())
+        return registers();
+    return topOfFrameInternal();
 }
 
 } // namespace JSC

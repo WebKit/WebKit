@@ -27,6 +27,7 @@
 #include "BooleanPrototype.h"
 #include "ErrorType.h"
 #include "ExceptionHelpers.h"
+#include "GetVM.h"
 #include "InternalFunction.h"
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"

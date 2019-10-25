@@ -35,6 +35,7 @@
 #include "InlineCallFrame.h"
 #include "JITAllocator.h"
 #include "JITCode.h"
+#include "JSCellInlines.h"
 #include "MacroAssembler.h"
 #include "MarkedSpace.h"
 #include "RegisterAtOffsetList.h"

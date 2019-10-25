@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -104,26 +104,14 @@ namespace JSC  {
         // yet sure if the callee is a cell. In general, a JS callee is guaranteed
         // to be a cell, however, there is a brief window where we need to check
         // to see if it's a cell, and if it's not, we throw an exception.
-        JSValue guaranteedJSValueCallee() const
-        {
-            ASSERT(!callee().isWasm());
-            return this[CallFrameSlot::callee].jsValue();
-        }
-        JSObject* jsCallee() const
-        {
-            ASSERT(!callee().isWasm());
-            return this[CallFrameSlot::callee].object();
-        }
+        inline JSValue guaranteedJSValueCallee() const;
+        inline JSObject* jsCallee() const;
         CalleeBits callee() const { return CalleeBits(this[CallFrameSlot::callee].pointer()); }
         SUPPRESS_ASAN CalleeBits unsafeCallee() const { return CalleeBits(this[CallFrameSlot::callee].asanUnsafePointer()); }
-        CodeBlock* codeBlock() const { return this[CallFrameSlot::codeBlock].Register::codeBlock(); }
+        CodeBlock* codeBlock() const;
         CodeBlock** addressOfCodeBlock() const { return bitwise_cast<CodeBlock**>(this + CallFrameSlot::codeBlock); }
-        SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const { return this[CallFrameSlot::codeBlock].Register::asanUnsafeCodeBlock(); }
-        JSScope* scope(int scopeRegisterOffset) const
-        {
-            ASSERT(this[scopeRegisterOffset].Register::scope());
-            return this[scopeRegisterOffset].Register::scope();
-        }
+        inline SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const;
+        inline JSScope* scope(int scopeRegisterOffset) const;
 
         JS_EXPORT_PRIVATE bool isAnyWasmCallee();
 
@@ -183,18 +171,13 @@ namespace JSC  {
         // CodeOrigin(BytecodeIndex(0)) if we're in native code.
         JS_EXPORT_PRIVATE CodeOrigin codeOrigin();
 
-        Register* topOfFrame()
-        {
-            if (!codeBlock())
-                return registers();
-            return topOfFrameInternal();
-        }
+        inline Register* topOfFrame();
     
         const Instruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
         void setCurrentVPC(const Instruction*);
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
-        void setScope(int scopeRegisterOffset, JSScope* scope) { static_cast<Register*>(this)[scopeRegisterOffset] = scope; }
+        inline void setScope(int scopeRegisterOffset, JSScope*);
 
         static void initDeprecatedCallFrameForDebugger(CallFrame* globalExec, JSCallee* globalCallee);
 
@@ -269,8 +252,8 @@ namespace JSC  {
         bool isWasmFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[CallFrameSlot::argumentCount].payload() = count; }
-        void setCallee(JSObject* callee) { static_cast<Register*>(this)[CallFrameSlot::callee] = callee; }
-        void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[CallFrameSlot::codeBlock] = codeBlock; }
+        inline void setCallee(JSObject*);
+        inline void setCodeBlock(CodeBlock*);
         void setReturnPC(void* value) { callerFrameAndPC().returnPC = reinterpret_cast<const Instruction*>(value); }
 
         String friendlyFunctionName();
@@ -323,8 +306,6 @@ namespace JSC  {
         SUPPRESS_ASAN const CallerFrameAndPC& unsafeCallerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
     };
 
-// Helper function to get VM& from JSGlobalObject* if JSGlobalObject.h is not included.
-VM& getVM(JSGlobalObject*);
 JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
 #if USE(BUILTIN_FRAME_ADDRESS)
