@@ -1348,9 +1348,6 @@ mathml/focus-event-handling.html [ Failure ]
 # <rdar://problem/52962272> fast/scrolling/ios/body-overflow-hidden.html is an Image failure
 fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
-# <rdar://problem/56480245> REGRESSION (~r251067): http/tests/workers/service/registration-clear-redundant-worker.html is a flaky timeout (203218)
-webkit.org/b/203218 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
-
 # <rdar://problem/56506063> Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure (203256)
 webkit.org/b/203256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
 

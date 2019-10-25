@@ -1,3 +1,13 @@
+2019-10-25  youenn fablet  <youenn@apple.com>
+
+        WebProcess should unregister its interest for a SWServerRegistration when all its corresponding ServiceWorkerRegistrations are destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=203410
+
+        Reviewed by Chris Dumez.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-25  Truitt Savell  <tsavell@apple.com>
 
         Followup test gardening after r251591

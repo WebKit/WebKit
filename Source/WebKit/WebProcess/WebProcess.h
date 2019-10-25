@@ -48,11 +48,12 @@
 #if PLATFORM(MAC)
 #include <WebCore/ScreenProperties.h>
 #endif
+#include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/Timer.h>
 #include <pal/HysteresisActivity.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounter.h>
 #include <wtf/text/AtomString.h>
@@ -289,6 +290,11 @@ public:
     bool areAllPagesThrottleable() const;
 
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
+
+#if ENABLE(SERVICE_WORKER)
+    void addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
+    bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
+#endif
 
 private:
     WebProcess();
@@ -573,6 +579,10 @@ private:
 
 #if PLATFORM(IOS)
     float m_backlightLevel { 0 };
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    HashCountedSet<WebCore::ServiceWorkerRegistrationIdentifier> m_swRegistrationCounts;
 #endif
 
     HashMap<StorageAreaIdentifier, StorageAreaMap*> m_storageAreaMaps;

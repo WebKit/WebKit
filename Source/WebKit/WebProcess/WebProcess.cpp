@@ -1757,6 +1757,16 @@ void WebProcess::registerServiceWorkerClients()
     ServiceWorkerProvider::singleton().registerServiceWorkerClients();
 }
 
+void WebProcess::addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+{
+    m_swRegistrationCounts.add(identifier);
+}
+
+bool WebProcess::removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+{
+    ASSERT(m_swRegistrationCounts.contains(identifier));
+    return m_swRegistrationCounts.remove(identifier);
+}
 #endif
 
 #if PLATFORM(MAC)
