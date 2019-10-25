@@ -8,7 +8,6 @@ background-clip: border-box
 background-color: rgb(0, 128, 0)
 background-image: none
 background-origin: padding-box
-background-position: 0% 0%
 background-repeat: repeat
 background-size: auto
 baseline-shift: baseline
@@ -69,7 +68,6 @@ fill-rule: nonzero
 filter: none
 flex-basis: auto
 flex-direction: row
-flex-flow: row nowrap
 flex-grow: 0
 flex-shrink: 1
 flex-wrap: nowrap
@@ -80,7 +78,6 @@ font-optical-sizing: auto
 font-size: 16px
 font-style: normal
 font-synthesis: style weight small-caps
-font-variant: normal
 font-variant-alternates: normal
 font-variant-caps: normal
 font-variant-east-asian: normal
@@ -147,7 +144,6 @@ page-break-before: auto
 page-break-inside: auto
 paint-order: normal
 perspective: none
-perspective-origin: 50% 50%
 pointer-events: auto
 position: static
 resize: none
@@ -178,7 +174,6 @@ text-shadow: none
 text-transform: none
 top: auto
 transform: none
-transform-origin: 50% 50%
 transform-style: flat
 transition-delay: 0s
 transition-duration: 0s
@@ -252,14 +247,12 @@ zoom: 1
 -webkit-mask-composite: source-over
 -webkit-mask-image: none
 -webkit-mask-origin: border-box
--webkit-mask-position: 0% 0%
 -webkit-mask-repeat: repeat
 -webkit-mask-size: auto
 -webkit-nbsp-mode: normal
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical
 -webkit-text-combine: none
--webkit-text-decorations-in-effect: none
 -webkit-text-emphasis-color: rgb(0, 0, 0)
 -webkit-text-emphasis-position: over right
 -webkit-text-emphasis-style: none

@@ -480,7 +480,48 @@ print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
 print HEADER "const int lastCSSProperty = $last;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
-print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n";
+print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n\n";
+
+print HEADER "static const CSSPropertyID computedPropertyIDs[] = {\n";
+my $numComputedPropertyIDs = 0;
+sub sortWithPrefixedPropertiesLast
+{
+    my $aStartsWithPrefix = substr($a, 0, 1) eq "-";
+    my $bStartsWithPrefix = substr($b, 0, 1) eq "-";
+    if ($aStartsWithPrefix && !$bStartsWithPrefix) {
+        return 1;
+    }
+    if (!$aStartsWithPrefix && $bStartsWithPrefix) {
+        return -1;
+    }
+    return $a cmp $b;
+}
+foreach my $name (sort sortWithPrefixedPropertiesLast @names) {
+  next if (exists($propertiesWithStyleBuilderOptions{$name}{"skip-builder"}));
+  next if (grep { $_ eq $name } @internalProprerties);
+
+  # Skip properties if they have a non-internal longhand property.
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
+    my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
+    if (scalar @longhands != 1) {
+      my $hasNonInternalLonghand = 0;
+      foreach my $longhand (@longhands) {
+        if (!exists($propertiesWithStyleBuilderOptions{$longhand}{"skip-builder"}) && !grep { $_ eq $longhand } @internalProprerties) {
+          $hasNonInternalLonghand = 1;
+          last;
+        }
+      }
+      if ($hasNonInternalLonghand) {
+        next;
+      }
+    }
+  }
+
+  print HEADER "    CSSProperty" . $nameToId{$name} . ",\n";
+  $numComputedPropertyIDs += 1;
+}
+print HEADER "};\n";
+print HEADER "const size_t numComputedPropertyIDs = $numComputedPropertyIDs;\n";
 
 print HEADER << "EOF";
 

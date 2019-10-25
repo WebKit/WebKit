@@ -88,388 +88,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
 
-// List of all properties we know how to compute, omitting shorthands.
-static const CSSPropertyID computedProperties[] = {
-    CSSPropertyAlignContent,
-    CSSPropertyAlignItems,
-    CSSPropertyAlignSelf,
-    CSSPropertyAlignmentBaseline,
-    CSSPropertyAlt,
-    CSSPropertyAnimationDelay,
-    CSSPropertyAnimationDirection,
-    CSSPropertyAnimationDuration,
-    CSSPropertyAnimationFillMode,
-    CSSPropertyAnimationIterationCount,
-    CSSPropertyAnimationName,
-    CSSPropertyAnimationPlayState,
-    CSSPropertyAnimationTimingFunction,
-    CSSPropertyBackgroundAttachment,
-    CSSPropertyBackgroundBlendMode,
-    CSSPropertyBackgroundClip,
-    CSSPropertyBackgroundColor,
-    CSSPropertyBackgroundImage,
-    CSSPropertyBackgroundOrigin,
-    CSSPropertyBackgroundPosition, // more-specific background-position-x/y are non-standard
-    CSSPropertyBackgroundRepeat,
-    CSSPropertyBackgroundSize,
-    CSSPropertyBaselineShift,
-    CSSPropertyBorderBottomColor,
-    CSSPropertyBorderBottomLeftRadius,
-    CSSPropertyBorderBottomRightRadius,
-    CSSPropertyBorderBottomStyle,
-    CSSPropertyBorderBottomWidth,
-    CSSPropertyBorderCollapse,
-    CSSPropertyBorderImageOutset,
-    CSSPropertyBorderImageRepeat,
-    CSSPropertyBorderImageSlice,
-    CSSPropertyBorderImageSource,
-    CSSPropertyBorderImageWidth,
-    CSSPropertyBorderLeftColor,
-    CSSPropertyBorderLeftStyle,
-    CSSPropertyBorderLeftWidth,
-    CSSPropertyBorderRightColor,
-    CSSPropertyBorderRightStyle,
-    CSSPropertyBorderRightWidth,
-    CSSPropertyBorderTopColor,
-    CSSPropertyBorderTopLeftRadius,
-    CSSPropertyBorderTopRightRadius,
-    CSSPropertyBorderTopStyle,
-    CSSPropertyBorderTopWidth,
-    CSSPropertyBottom,
-    CSSPropertyBoxShadow,
-    CSSPropertyBoxSizing,
-    CSSPropertyBufferedRendering,
-    CSSPropertyCaptionSide,
-    CSSPropertyCaretColor,
-    CSSPropertyClear,
-    CSSPropertyClip,
-    CSSPropertyClipPath,
-    CSSPropertyClipRule,
-    CSSPropertyColor,
-    CSSPropertyColorInterpolation,
-    CSSPropertyColorInterpolationFilters,
-    CSSPropertyColorRendering,
-#if ENABLE(DARK_MODE_CSS)
-    CSSPropertyColorScheme,
-#endif
-    CSSPropertyColumnCount,
-    CSSPropertyColumnFill,
-    CSSPropertyColumnGap,
-    CSSPropertyColumnRuleColor,
-    CSSPropertyColumnRuleStyle,
-    CSSPropertyColumnRuleWidth,
-    CSSPropertyColumnSpan,
-    CSSPropertyColumnWidth,
-    CSSPropertyContent,
-    CSSPropertyCounterIncrement,
-    CSSPropertyCounterReset,
-    CSSPropertyCursor,
-    CSSPropertyCx,
-    CSSPropertyCy,
-    CSSPropertyDirection,
-    CSSPropertyDisplay,
-    CSSPropertyDominantBaseline,
-    CSSPropertyEmptyCells,
-    CSSPropertyFill,
-    CSSPropertyFillOpacity,
-    CSSPropertyFillRule,
-    CSSPropertyFilter,
-    CSSPropertyFlexBasis,
-    CSSPropertyFlexDirection,
-    CSSPropertyFlexFlow,
-    CSSPropertyFlexGrow,
-    CSSPropertyFlexShrink,
-    CSSPropertyFlexWrap,
-    CSSPropertyFloat,
-    CSSPropertyFloodColor,
-    CSSPropertyFloodOpacity,
-    CSSPropertyFontFamily,
-#if ENABLE(VARIATION_FONTS)
-    CSSPropertyFontOpticalSizing,
-#endif
-    CSSPropertyFontSize,
-    CSSPropertyFontStretch,
-    CSSPropertyFontStyle,
-    CSSPropertyFontSynthesis,
-    CSSPropertyFontVariant,
-    CSSPropertyFontVariantAlternates,
-    CSSPropertyFontVariantCaps,
-    CSSPropertyFontVariantEastAsian,
-    CSSPropertyFontVariantLigatures,
-    CSSPropertyFontVariantNumeric,
-    CSSPropertyFontVariantPosition,
-#if ENABLE(VARIATION_FONTS)
-    CSSPropertyFontVariationSettings,
-#endif
-    CSSPropertyFontWeight,
-    CSSPropertyGlyphOrientationHorizontal,
-    CSSPropertyGlyphOrientationVertical,
-    CSSPropertyGridAutoColumns,
-    CSSPropertyGridAutoFlow,
-    CSSPropertyGridAutoRows,
-    CSSPropertyGridColumnEnd,
-    CSSPropertyGridColumnStart,
-    CSSPropertyGridRowEnd,
-    CSSPropertyGridRowStart,
-    CSSPropertyGridTemplateAreas,
-    CSSPropertyGridTemplateColumns,
-    CSSPropertyGridTemplateRows,
-    CSSPropertyHangingPunctuation,
-    CSSPropertyHeight,
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    CSSPropertyImageOrientation,
-#endif
-    CSSPropertyImageRendering,
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    CSSPropertyImageResolution,
-#endif
-#if ENABLE(CSS_COMPOSITING)
-    CSSPropertyIsolation,
-#endif
-    CSSPropertyJustifyContent,
-    CSSPropertyJustifyItems,
-    CSSPropertyJustifySelf,
-    CSSPropertyKerning,
-    CSSPropertyLeft,
-    CSSPropertyLetterSpacing,
-    CSSPropertyLightingColor,
-    CSSPropertyLineBreak,
-    CSSPropertyLineHeight,
-    CSSPropertyListStyleImage,
-    CSSPropertyListStylePosition,
-    CSSPropertyListStyleType,
-    CSSPropertyMarginBottom,
-    CSSPropertyMarginLeft,
-    CSSPropertyMarginRight,
-    CSSPropertyMarginTop,
-    CSSPropertyMarkerEnd,
-    CSSPropertyMarkerMid,
-    CSSPropertyMarkerStart,
-    CSSPropertyMask,
-    CSSPropertyMaskType,
-    CSSPropertyMaxHeight,
-    CSSPropertyMaxWidth,
-    CSSPropertyMinHeight,
-    CSSPropertyMinWidth,
-#if ENABLE(CSS_COMPOSITING)
-    CSSPropertyMixBlendMode,
-#endif
-    CSSPropertyObjectFit,
-    CSSPropertyObjectPosition,
-    CSSPropertyOpacity,
-    CSSPropertyOrder,
-    CSSPropertyOrphans,
-    CSSPropertyOutlineColor,
-    CSSPropertyOutlineOffset,
-    CSSPropertyOutlineStyle,
-    CSSPropertyOutlineWidth,
-    CSSPropertyOverflowWrap,
-    CSSPropertyOverflowX,
-    CSSPropertyOverflowY,
-    CSSPropertyPaddingBottom,
-    CSSPropertyPaddingLeft,
-    CSSPropertyPaddingRight,
-    CSSPropertyPaddingTop,
-    CSSPropertyPageBreakAfter,
-    CSSPropertyPageBreakBefore,
-    CSSPropertyPageBreakInside,
-    CSSPropertyPaintOrder,
-    CSSPropertyPerspective,
-    CSSPropertyPerspectiveOrigin,
-    CSSPropertyPlaceContent,
-    CSSPropertyPlaceItems,
-    CSSPropertyPlaceSelf,
-    CSSPropertyPointerEvents,
-    CSSPropertyPosition,
-    CSSPropertyR,
-    CSSPropertyResize,
-    CSSPropertyRight,
-    CSSPropertyRowGap,
-    CSSPropertyRx,
-    CSSPropertyRy,
-#if ENABLE(CSS_SCROLL_SNAP)
-    CSSPropertyScrollPadding,
-    CSSPropertyScrollPaddingBottom,
-    CSSPropertyScrollPaddingLeft,
-    CSSPropertyScrollPaddingRight,
-    CSSPropertyScrollPaddingTop,
-    CSSPropertyScrollSnapAlign,
-    CSSPropertyScrollSnapMargin,
-    CSSPropertyScrollSnapMarginBottom,
-    CSSPropertyScrollSnapMarginLeft,
-    CSSPropertyScrollSnapMarginRight,
-    CSSPropertyScrollSnapMarginTop,
-    CSSPropertyScrollSnapType,
-#endif
-    CSSPropertyShapeImageThreshold,
-    CSSPropertyShapeMargin,
-    CSSPropertyShapeOutside,
-    CSSPropertyShapeRendering,
-    CSSPropertySpeakAs,
-    CSSPropertyStopColor,
-    CSSPropertyStopOpacity,
-    CSSPropertyStroke,
-    CSSPropertyStrokeColor,
-    CSSPropertyStrokeDasharray,
-    CSSPropertyStrokeDashoffset,
-    CSSPropertyStrokeLinecap,
-    CSSPropertyStrokeLinejoin,
-    CSSPropertyStrokeMiterlimit,
-    CSSPropertyStrokeOpacity,
-    CSSPropertyStrokeWidth,
-    CSSPropertyTabSize,
-    CSSPropertyTableLayout,
-    CSSPropertyTextAlign,
-    CSSPropertyTextAnchor,
-    CSSPropertyTextDecoration,
-    CSSPropertyTextDecorationColor,
-    CSSPropertyTextDecorationLine,
-    CSSPropertyTextDecorationSkip,
-    CSSPropertyTextDecorationStyle,
-    CSSPropertyTextIndent,
-    CSSPropertyTextOverflow,
-    CSSPropertyTextRendering,
-    CSSPropertyTextShadow,
-    CSSPropertyTextTransform,
-    CSSPropertyTextUnderlinePosition,
-    CSSPropertyTop,
-#if ENABLE(POINTER_EVENTS)
-    CSSPropertyTouchAction,
-#endif
-    CSSPropertyTransform,
-    CSSPropertyTransformBox,
-    CSSPropertyTransformOrigin,
-    CSSPropertyTransformStyle,
-    CSSPropertyTransitionDelay,
-    CSSPropertyTransitionDuration,
-    CSSPropertyTransitionProperty,
-    CSSPropertyTransitionTimingFunction,
-    CSSPropertyUnicodeBidi,
-    CSSPropertyVectorEffect,
-    CSSPropertyVerticalAlign,
-    CSSPropertyVisibility,
-    CSSPropertyWhiteSpace,
-    CSSPropertyWidows,
-    CSSPropertyWidth,
-    CSSPropertyWillChange,
-    CSSPropertyWordBreak,
-    CSSPropertyWordSpacing,
-    CSSPropertyWordWrap,
-    CSSPropertyWritingMode,
-    CSSPropertyX,
-    CSSPropertyY,
-    CSSPropertyZIndex,
-    CSSPropertyZoom,
-    CSSPropertyAppleColorFilter,
-    CSSPropertyWebkitAppearance,
-#if ENABLE(FILTERS_LEVEL_2)
-    CSSPropertyWebkitBackdropFilter,
-#endif
-    CSSPropertyWebkitBackfaceVisibility,
-    CSSPropertyWebkitBackgroundClip,
-    CSSPropertyWebkitBackgroundComposite,
-    CSSPropertyWebkitBackgroundOrigin,
-    CSSPropertyWebkitBackgroundSize,
-    CSSPropertyWebkitBorderFit,
-    CSSPropertyWebkitBorderHorizontalSpacing,
-    CSSPropertyWebkitBorderImage,
-    CSSPropertyWebkitBorderVerticalSpacing,
-    CSSPropertyWebkitBoxAlign,
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-    CSSPropertyWebkitBoxDecorationBreak,
-#endif
-    CSSPropertyWebkitBoxDirection,
-    CSSPropertyWebkitBoxFlex,
-    CSSPropertyWebkitBoxFlexGroup,
-    CSSPropertyWebkitBoxLines,
-    CSSPropertyWebkitBoxOrdinalGroup,
-    CSSPropertyWebkitBoxOrient,
-    CSSPropertyWebkitBoxPack,
-    CSSPropertyWebkitBoxReflect,
-    CSSPropertyWebkitBoxShadow,
-    CSSPropertyWebkitClipPath,
-    CSSPropertyWebkitColumnAxis,
-    CSSPropertyWebkitColumnBreakAfter,
-    CSSPropertyWebkitColumnBreakBefore,
-    CSSPropertyWebkitColumnBreakInside,
-    CSSPropertyWebkitColumnProgression,
-#if ENABLE(CURSOR_VISIBILITY)
-    CSSPropertyWebkitCursorVisibility,
-#endif
-    CSSPropertyWebkitFontKerning,
-    CSSPropertyWebkitFontSmoothing,
-    CSSPropertyWebkitHyphenateCharacter,
-    CSSPropertyWebkitHyphenateLimitAfter,
-    CSSPropertyWebkitHyphenateLimitBefore,
-    CSSPropertyWebkitHyphenateLimitLines,
-    CSSPropertyWebkitHyphens,
-    CSSPropertyWebkitInitialLetter,
-    CSSPropertyWebkitLineAlign,
-    CSSPropertyWebkitLineBoxContain,
-    CSSPropertyWebkitLineClamp,
-    CSSPropertyWebkitLineGrid,
-    CSSPropertyWebkitLineSnap,
-    CSSPropertyWebkitLocale,
-    CSSPropertyWebkitMarginAfterCollapse,
-    CSSPropertyWebkitMarginBeforeCollapse,
-    CSSPropertyWebkitMarqueeDirection,
-    CSSPropertyWebkitMarqueeIncrement,
-    CSSPropertyWebkitMarqueeRepetition,
-    CSSPropertyWebkitMarqueeStyle,
-    CSSPropertyWebkitMaskBoxImage,
-    CSSPropertyWebkitMaskBoxImageOutset,
-    CSSPropertyWebkitMaskBoxImageRepeat,
-    CSSPropertyWebkitMaskBoxImageSlice,
-    CSSPropertyWebkitMaskBoxImageSource,
-    CSSPropertyWebkitMaskBoxImageWidth,
-    CSSPropertyWebkitMaskClip,
-    CSSPropertyWebkitMaskComposite,
-    CSSPropertyWebkitMaskImage,
-    CSSPropertyWebkitMaskOrigin,
-    CSSPropertyWebkitMaskPosition,
-    CSSPropertyWebkitMaskRepeat,
-    CSSPropertyWebkitMaskSize,
-    CSSPropertyWebkitMaskSourceType,
-    CSSPropertyWebkitNbspMode,
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    CSSPropertyWebkitOverflowScrolling,
-#endif
-    CSSPropertyWebkitPrintColorAdjust,
-    CSSPropertyWebkitRtlOrdering,
-#if ENABLE(TOUCH_EVENTS)
-    CSSPropertyWebkitTapHighlightColor,
-#endif
-#if ENABLE(CSS3_TEXT)
-    CSSPropertyWebkitTextAlignLast,
-#endif
-    CSSPropertyWebkitTextCombine,
-    CSSPropertyWebkitTextDecorationsInEffect,
-    CSSPropertyWebkitTextEmphasisColor,
-    CSSPropertyWebkitTextEmphasisPosition,
-    CSSPropertyWebkitTextEmphasisStyle,
-    CSSPropertyWebkitTextFillColor,
-#if ENABLE(CSS3_TEXT)
-    CSSPropertyWebkitTextJustify,
-#endif
-    CSSPropertyWebkitTextOrientation,
-    CSSPropertyWebkitTextSecurity,
-#if ENABLE(TEXT_AUTOSIZING)
-    CSSPropertyWebkitTextSizeAdjust,
-#endif
-    CSSPropertyWebkitTextStrokeColor,
-    CSSPropertyWebkitTextStrokeWidth,
-    CSSPropertyWebkitTextZoom,
-#if PLATFORM(IOS_FAMILY)
-    CSSPropertyWebkitTouchCallout,
-#endif
-    CSSPropertyWebkitTransformStyle,
-    CSSPropertyWebkitUserDrag,
-    CSSPropertyWebkitUserModify,
-    CSSPropertyWebkitUserSelect,
-};
-
-const unsigned numComputedProperties = WTF_ARRAY_LENGTH(computedProperties);
-
 static CSSValueID valueForRepeatRule(NinePieceImageRule rule)
 {
     switch (rule) {
@@ -1757,10 +1375,10 @@ void CSSComputedStyleDeclaration::deref()
 String CSSComputedStyleDeclaration::cssText() const
 {
     StringBuilder result;
-    for (unsigned i = 0; i < numComputedProperties; i++) {
+    for (unsigned i = 0; i < numComputedPropertyIDs; i++) {
         if (i)
             result.append(' ');
-        result.append(getPropertyName(computedProperties[i]), ": ", getPropertyValue(computedProperties[i]), ';');
+        result.append(getPropertyName(computedPropertyIDs[i]), ": ", getPropertyValue(computedPropertyIDs[i]), ';');
     }
     return result.toString();
 }
@@ -4284,31 +3902,31 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!style)
         return 0;
 
-    return numComputedProperties + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
+    return numComputedPropertyIDs + style->inheritedCustomProperties().size() + style->nonInheritedCustomProperties().size();
 }
 
 String CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (i >= length())
         return String();
-    
-    if (i < numComputedProperties)
-        return getPropertyNameString(computedProperties[i]);
-    
+
+    if (i < numComputedPropertyIDs)
+        return getPropertyNameString(computedPropertyIDs[i]);
+
     auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return String();
 
     const auto& inheritedCustomProperties = style->inheritedCustomProperties();
 
-    if (i < numComputedProperties + inheritedCustomProperties.size()) {
+    if (i < numComputedPropertyIDs + inheritedCustomProperties.size()) {
         auto results = copyToVector(inheritedCustomProperties.keys());
-        return results.at(i - numComputedProperties);
+        return results.at(i - numComputedPropertyIDs);
     }
 
     const auto& nonInheritedCustomProperties = style->nonInheritedCustomProperties();
     auto results = copyToVector(nonInheritedCustomProperties.keys());
-    return results.at(i - inheritedCustomProperties.size() - numComputedProperties);
+    return results.at(i - inheritedCustomProperties.size() - numComputedPropertyIDs);
 }
 
 bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)
@@ -4327,11 +3945,6 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
     }
     RefPtr<CSSValue> computedValue = propertyValue(propertyID);
     return computedValue && value && computedValue->equals(*value);
-}
-
-Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
-{
-    return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
 Ref<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand)
@@ -4402,13 +4015,25 @@ Ref<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand(c
 
 Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length)
 {
-    Vector<CSSProperty, 256> list;
+    Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
         if (auto value = propertyValue(set[i]))
             list.append(CSSProperty(set[i], WTFMove(value), false));
     }
-    return MutableStyleProperties::create(list.data(), list.size());
+    return MutableStyleProperties::create(WTFMove(list));
+}
+
+Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
+{
+    Vector<CSSProperty> list;
+    list.reserveInitialCapacity(numCSSProperties);
+    for (unsigned i = firstCSSProperty; i < lastCSSProperty; ++i) {
+        auto propertyID = convertToCSSPropertyID(i);
+        if (auto value = propertyValue(propertyID))
+            list.append(CSSProperty(propertyID, WTFMove(value)));
+    }
+    return MutableStyleProperties::create(WTFMove(list));
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

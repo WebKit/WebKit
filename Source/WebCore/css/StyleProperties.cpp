@@ -78,12 +78,10 @@ MutableStyleProperties::MutableStyleProperties(CSSParserMode cssParserMode)
 {
 }
 
-MutableStyleProperties::MutableStyleProperties(const CSSProperty* properties, unsigned length)
+MutableStyleProperties::MutableStyleProperties(Vector<CSSProperty>&& properties)
     : StyleProperties(HTMLStandardMode, MutablePropertiesType)
+    , m_propertyVector(WTFMove(properties))
 {
-    m_propertyVector.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i)
-        m_propertyVector.uncheckedAppend(properties[i]);
 }
 
 MutableStyleProperties::~MutableStyleProperties() = default;
@@ -1509,13 +1507,13 @@ Ref<MutableStyleProperties> StyleProperties::mutableCopy() const
 
 Ref<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
-    Vector<CSSProperty, 256> list;
+    Vector<CSSProperty> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
         if (auto value = getPropertyCSSValueInternal(set[i]))
             list.uncheckedAppend(CSSProperty(set[i], WTFMove(value), false));
     }
-    return MutableStyleProperties::create(list.data(), list.size());
+    return MutableStyleProperties::create(WTFMove(list));
 }
 
 PropertySetCSSStyleDeclaration* MutableStyleProperties::cssStyleDeclaration()
@@ -1568,9 +1566,9 @@ Ref<MutableStyleProperties> MutableStyleProperties::create(CSSParserMode cssPars
     return adoptRef(*new MutableStyleProperties(cssParserMode));
 }
 
-Ref<MutableStyleProperties> MutableStyleProperties::create(const CSSProperty* properties, unsigned count)
+Ref<MutableStyleProperties> MutableStyleProperties::create(Vector<CSSProperty>&& properties)
 {
-    return adoptRef(*new MutableStyleProperties(properties, count));
+    return adoptRef(*new MutableStyleProperties(WTFMove(properties)));
 }
 
 String StyleProperties::PropertyReference::cssName() const

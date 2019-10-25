@@ -209,7 +209,7 @@ inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() co
 class MutableStyleProperties final : public StyleProperties {
 public:
     WEBCORE_EXPORT static Ref<MutableStyleProperties> create(CSSParserMode = HTMLQuirksMode);
-    static Ref<MutableStyleProperties> create(const CSSProperty* properties, unsigned count);
+    static Ref<MutableStyleProperties> create(Vector<CSSProperty>&&);
 
     WEBCORE_EXPORT ~MutableStyleProperties();
 
@@ -256,7 +256,7 @@ public:
 private:
     explicit MutableStyleProperties(CSSParserMode);
     explicit MutableStyleProperties(const StyleProperties&);
-    MutableStyleProperties(const CSSProperty* properties, unsigned count);
+    MutableStyleProperties(Vector<CSSProperty>&&);
 
     bool removeShorthandProperty(CSSPropertyID);
     CSSProperty* findCSSPropertyWithID(CSSPropertyID);

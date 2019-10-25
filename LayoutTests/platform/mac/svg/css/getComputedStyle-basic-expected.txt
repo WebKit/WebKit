@@ -16,8 +16,6 @@ rect: style.getPropertyValue(background-image) : none
 rect: style.getPropertyCSSValue(background-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-origin) : padding-box
 rect: style.getPropertyCSSValue(background-origin) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(background-position) : 0% 0%
-rect: style.getPropertyCSSValue(background-position) : [object CSSValueList]
 rect: style.getPropertyValue(background-repeat) : repeat
 rect: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-size) : auto
@@ -138,8 +136,6 @@ rect: style.getPropertyValue(flex-basis) : auto
 rect: style.getPropertyCSSValue(flex-basis) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-direction) : row
 rect: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(flex-flow) : row nowrap
-rect: style.getPropertyCSSValue(flex-flow) : [object CSSValueList]
 rect: style.getPropertyValue(flex-grow) : 0
 rect: style.getPropertyCSSValue(flex-grow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(flex-shrink) : 1
@@ -160,8 +156,6 @@ rect: style.getPropertyValue(font-style) : normal
 rect: style.getPropertyCSSValue(font-style) : [object CSSValue]
 rect: style.getPropertyValue(font-synthesis) : style weight small-caps
 rect: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
-rect: style.getPropertyValue(font-variant) : normal
-rect: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-variant-alternates) : normal
 rect: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-variant-caps) : normal
@@ -294,8 +288,6 @@ rect: style.getPropertyValue(paint-order) : normal
 rect: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(perspective) : none
 rect: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(perspective-origin) : 0px 0px
-rect: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 rect: style.getPropertyValue(pointer-events) : auto
 rect: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(position) : static
@@ -356,8 +348,6 @@ rect: style.getPropertyValue(top) : auto
 rect: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(transform) : none
 rect: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(transform-origin) : 0px 0px
-rect: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
 rect: style.getPropertyValue(transform-style) : flat
 rect: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(transition-delay) : 0s
@@ -504,8 +494,6 @@ rect: style.getPropertyValue(-webkit-mask-image) : none
 rect: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-origin) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-position) : 0% 0%
-rect: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
 rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-size) : auto
@@ -518,8 +506,6 @@ rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-combine) : none
 rect: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
-rect: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-emphasis-position) : over right
@@ -562,8 +548,6 @@ g: style.getPropertyValue(background-image) : none
 g: style.getPropertyCSSValue(background-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-origin) : padding-box
 g: style.getPropertyCSSValue(background-origin) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(background-position) : 0% 0%
-g: style.getPropertyCSSValue(background-position) : [object CSSValueList]
 g: style.getPropertyValue(background-repeat) : repeat
 g: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-size) : auto
@@ -684,8 +668,6 @@ g: style.getPropertyValue(flex-basis) : auto
 g: style.getPropertyCSSValue(flex-basis) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-direction) : row
 g: style.getPropertyCSSValue(flex-direction) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(flex-flow) : row nowrap
-g: style.getPropertyCSSValue(flex-flow) : [object CSSValueList]
 g: style.getPropertyValue(flex-grow) : 0
 g: style.getPropertyCSSValue(flex-grow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(flex-shrink) : 1
@@ -706,8 +688,6 @@ g: style.getPropertyValue(font-style) : normal
 g: style.getPropertyCSSValue(font-style) : [object CSSValue]
 g: style.getPropertyValue(font-synthesis) : style weight small-caps
 g: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
-g: style.getPropertyValue(font-variant) : normal
-g: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-variant-alternates) : normal
 g: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-variant-caps) : normal
@@ -840,8 +820,6 @@ g: style.getPropertyValue(paint-order) : normal
 g: style.getPropertyCSSValue(paint-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(perspective) : none
 g: style.getPropertyCSSValue(perspective) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(perspective-origin) : 0px 0px
-g: style.getPropertyCSSValue(perspective-origin) : [object CSSValueList]
 g: style.getPropertyValue(pointer-events) : auto
 g: style.getPropertyCSSValue(pointer-events) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(position) : static
@@ -902,8 +880,6 @@ g: style.getPropertyValue(top) : auto
 g: style.getPropertyCSSValue(top) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(transform) : none
 g: style.getPropertyCSSValue(transform) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(transform-origin) : 0px 0px
-g: style.getPropertyCSSValue(transform-origin) : [object CSSValueList]
 g: style.getPropertyValue(transform-style) : flat
 g: style.getPropertyCSSValue(transform-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(transition-delay) : 0s
@@ -1050,8 +1026,6 @@ g: style.getPropertyValue(-webkit-mask-image) : none
 g: style.getPropertyCSSValue(-webkit-mask-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-origin) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-origin) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-position) : 0% 0%
-g: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-mask-repeat) : repeat
 g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-size) : auto
@@ -1064,8 +1038,6 @@ g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-combine) : none
 g: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
-g: style.getPropertyCSSValue(-webkit-text-decorations-in-effect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-emphasis-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-emphasis-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-emphasis-position) : over right
