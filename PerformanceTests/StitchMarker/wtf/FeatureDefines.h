@@ -574,6 +574,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_NOTIFICATIONS 0
 #endif
 
+#if !defined(ENABLE_OFFSCREEN_CANVAS)
+#define ENABLE_OFFSCREEN_CANVAS 0
+#endif
+
 #if !defined(ENABLE_OPENTYPE_VERTICAL)
 #define ENABLE_OPENTYPE_VERTICAL 0
 #endif

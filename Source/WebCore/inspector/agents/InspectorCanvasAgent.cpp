@@ -40,7 +40,6 @@
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
 #include "Microtasks.h"
-#include "OffscreenCanvas.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -55,6 +54,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 
 #if ENABLE(WEBGL)
 #include "WebGLProgram.h"

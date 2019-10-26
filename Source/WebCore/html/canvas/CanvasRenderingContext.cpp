@@ -33,7 +33,6 @@
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
-#include "OffscreenCanvas.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMallocInlines.h>

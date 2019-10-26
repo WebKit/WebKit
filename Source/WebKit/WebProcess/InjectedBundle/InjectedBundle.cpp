@@ -264,6 +264,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setCSSTypedOMEnabled(enabled);
 #endif
 
+#if ENABLE(OFFSCREEN_CANVAS)
+    if (preference == "OffscreenCanvasEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setOffscreenCanvasEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \

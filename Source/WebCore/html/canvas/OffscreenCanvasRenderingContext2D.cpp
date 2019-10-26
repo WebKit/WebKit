@@ -33,6 +33,8 @@
 #include "config.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 
+#if ENABLE(OFFSCREEN_CANVAS)
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,3 +50,4 @@ OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = defaul
 
 } // namespace WebCore
 
+#endif

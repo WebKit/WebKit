@@ -1247,13 +1247,22 @@ SpringTimingFunctionEnabled:
   humanReadableDescription: "CSS Spring Animation prototype"
   category: experimental
 
-ImageBitmapOffscreenCanvasEnabled:
+ImageBitmapEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "ImageBitmap and OffscreenCanvas"
-  humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
+  humanReadableName: "ImageBitmap"
+  humanReadableDescription: "Support for the ImageBitmap APIs"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
+
+OffscreenCanvasEnabled:
+  type: bool
+  defaultValue: DEFAULT_OFFSCREEN_CANVAS_ENABLED
+  humanReadableName: "OffscreenCanvas"
+  humanReadableDescription: "Support for the OffscreenCanvas APIs"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(OFFSCREEN_CANVAS)
 
 IntersectionObserverEnabled:
   type: bool

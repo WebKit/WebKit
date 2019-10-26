@@ -1,3 +1,39 @@
+2019-10-26  Chris Lord  <clord@igalia.com>
+
+        Put OffscreenCanvas behind a build flag
+        https://bugs.webkit.org/show_bug.cgi?id=203146
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests. No behavior changes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSEventTargetCustom.cpp:
+        * bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp:
+        * dom/EventTargetFactory.in:
+        * html/ImageBitmap.idl:
+        * html/OffscreenCanvas.cpp:
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/ImageBitmapRenderingContext.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::canvas):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * page/PageConsoleClient.cpp:
+        (WebCore::canvasRenderingContext):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setImageBitmapEnabled):
+        (WebCore::RuntimeEnabledFeatures::imageBitmapEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setOffscreenCanvasEnabled):
+        (WebCore::RuntimeEnabledFeatures::offscreenCanvasEnabled const):
+        * page/WindowOrWorkerGlobalScope.idl:
+
 2019-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         Support for callbacks for manifest events

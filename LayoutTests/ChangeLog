@@ -1,3 +1,31 @@
+2019-10-26  Chris Lord  <clord@igalia.com>
+
+        Put OffscreenCanvas behind a build flag
+        https://bugs.webkit.org/show_bug.cgi?id=203146
+
+        Reviewed by Ryosuke Niwa.
+
+        OffscreenCanvas is disabled by default except on GTK/WPE. Adjust test
+        expectations accordingly.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-serializable-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt.
+
 2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: remove custom expectations from platform/gtk/inspector-protocol

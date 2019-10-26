@@ -25,7 +25,8 @@
 
 [
     CustomIsReachable,
-    EnabledAtRuntime=ImageBitmapOffscreenCanvas,
+    EnabledAtRuntime=OffscreenCanvas,
+    Conditional=OFFSCREEN_CANVAS,
     Exposed=(Window), // FIXME: OffscreenCanvas - should be Window,Worker
     JSGenerateToJSObject,
     JSCustomMarkFunction,

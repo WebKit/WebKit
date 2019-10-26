@@ -26,6 +26,8 @@
 #include "config.h"
 #include "OffscreenCanvas.h"
 
+#if ENABLE(OFFSCREEN_CANVAS)
+
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "JSDOMPromiseDeferred.h"
@@ -145,3 +147,5 @@ RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
 }
 
 }
+
+#endif

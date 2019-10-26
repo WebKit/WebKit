@@ -18,6 +18,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(OFFSCREEN_CANVAS)
+
 #include "JSOffscreenCanvasRenderingContext2D.h"
 
 namespace WebCore {
@@ -45,3 +48,4 @@ void JSOffscreenCanvasRenderingContext2D::visitAdditionalChildren(SlotVisitor& v
 
 } // namespace WebCore
 
+#endif

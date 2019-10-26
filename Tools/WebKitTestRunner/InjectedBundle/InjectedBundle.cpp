@@ -560,6 +560,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_testRunner->setTabKeyCyclesThroughElements(true);
     m_testRunner->clearTestRunnerCallbacks();
 
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    m_testRunner->setOffscreenCanvasEnabled(true);
+#endif
+
     if (m_timeout > 0_s)
         m_testRunner->setCustomTimeout(m_timeout);
 

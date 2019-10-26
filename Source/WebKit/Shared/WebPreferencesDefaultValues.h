@@ -289,6 +289,12 @@
 #define DEFAULT_SERVER_TIMING_ENABLED false
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#define DEFAULT_OFFSCREEN_CANVAS_ENABLED DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+#else
+#define DEFAULT_OFFSCREEN_CANVAS_ENABLED false
+#endif
+
 namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();

@@ -41,7 +41,11 @@ typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
 typedef (Float32Array or sequence<GLfloat>) Float32List;
 typedef (Int32Array or sequence<GLint>) Int32List;
 
+#if defined(ENABLE_OFFSCREEN_CANVAS)
 typedef (HTMLCanvasElement or OffscreenCanvas) WebGLCanvas;
+#else
+typedef (HTMLCanvasElement) WebGLCanvas;
+#endif
 
 [
     Conditional=WEBGL,

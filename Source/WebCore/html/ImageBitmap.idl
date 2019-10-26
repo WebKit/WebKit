@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=ImageBitmapOffscreenCanvas,
+    EnabledAtRuntime=ImageBitmap,
     Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface ImageBitmap {

@@ -29,7 +29,7 @@ MediaStreamTrack conditional=MEDIA_STREAM
 MessagePort
 Node
 Notification conditional=NOTIFICATIONS
-OffscreenCanvas
+OffscreenCanvas conditional=OFFSCREEN_CANVAS
 PaymentRequest conditional=PAYMENT_REQUEST
 PaymentResponse conditional=PAYMENT_REQUEST
 Performance

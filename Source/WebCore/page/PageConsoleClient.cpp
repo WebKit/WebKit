@@ -56,9 +56,7 @@
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageData.h"
 #include "JSNode.h"
-#include "JSOffscreenCanvas.h"
 #include "Node.h"
-#include "OffscreenCanvas.h"
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
@@ -69,6 +67,11 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "JSOffscreenCanvas.h"
+#include "OffscreenCanvas.h"
+#endif
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
@@ -248,8 +251,10 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue 
 {
     if (auto* canvas = JSHTMLCanvasElement::toWrapped(vm, target))
         return canvas->renderingContext();
+#if ENABLE(OFFSCREEN_CANVAS)
     if (auto* canvas = JSOffscreenCanvas::toWrapped(vm, target))
         return canvas->renderingContext();
+#endif
     if (auto* context = JSCanvasRenderingContext2D::toWrapped(vm, target))
         return context;
     if (auto* context = JSImageBitmapRenderingContext::toWrapped(vm, target))

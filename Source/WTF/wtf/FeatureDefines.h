@@ -632,6 +632,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_NOTIFICATIONS 0
 #endif
 
+#if !defined(ENABLE_OFFSCREEN_CANVAS)
+#define ENABLE_OFFSCREEN_CANVAS 0
+#endif
+
 #if !defined(ENABLE_OPENTYPE_VERTICAL)
 #define ENABLE_OPENTYPE_VERTICAL 0
 #endif

@@ -1,3 +1,21 @@
+2019-10-26  Chris Lord  <clord@igalia.com>
+
+        Put OffscreenCanvas behind a build flag
+        https://bugs.webkit.org/show_bug.cgi?id=203146
+
+        Reviewed by Ryosuke Niwa.
+
+        Split the ImageBitmapOffscreenCanvas setting into two separate
+        settings so OffscreenCanvas can be disabled at build time.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+
 2019-10-25  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r251599): Crash in MobileSafari tests (ASSERTION FAILED: m_pendingRequestToSuspendID)

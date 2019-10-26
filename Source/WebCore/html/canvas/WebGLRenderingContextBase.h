@@ -69,7 +69,9 @@ class OESTextureHalfFloat;
 class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
 class OESElementIndexUint;
+#if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
+#endif
 class WebGLActiveInfo;
 class WebGLContextGroup;
 class WebGLContextObject;
@@ -93,7 +95,11 @@ class WebGLUniformLocation;
 class HTMLVideoElement;
 #endif
 
+#if ENABLE(OFFSCREEN_CANVAS)
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+#else
+using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
+#endif
 
 class WebGLRenderingContextBase : public GraphicsContext3D::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
@@ -837,7 +843,9 @@ protected:
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
     bool supportsDrawBuffers();
 
+#if ENABLE(OFFSCREEN_CANVAS)
     OffscreenCanvas* offscreenCanvas();
+#endif
 
     template <typename T> inline Optional<T> checkedAddAndMultiply(T value, T add, T multiply);
     template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GC3Dintptr uoffset, GC3Dsizei n);

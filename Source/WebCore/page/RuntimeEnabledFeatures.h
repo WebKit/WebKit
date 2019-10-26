@@ -112,8 +112,13 @@ public:
     void setWebAnimationsCSSIntegrationEnabled(bool isEnabled) { m_isWebAnimationsCSSIntegrationEnabled = isEnabled; }
     bool webAnimationsCSSIntegrationEnabled() const { return m_areWebAnimationsEnabled && m_isWebAnimationsCSSIntegrationEnabled; }
 
-    void setImageBitmapOffscreenCanvasEnabled(bool isEnabled) { m_isImageBitmapOffscreenCanvasEnabled = isEnabled; }
-    bool imageBitmapOffscreenCanvasEnabled() const { return m_isImageBitmapOffscreenCanvasEnabled; }
+    void setImageBitmapEnabled(bool isEnabled) { m_isImageBitmapEnabled = isEnabled; }
+    bool imageBitmapEnabled() const { return m_isImageBitmapEnabled; }
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    void setOffscreenCanvasEnabled(bool isEnabled) { m_isOffscreenCanvasEnabled = isEnabled; }
+    bool offscreenCanvasEnabled() const { return m_isOffscreenCanvasEnabled; }
+#endif
 
     void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
     bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
@@ -407,7 +412,10 @@ private:
     bool m_inputEventsEnabled { true };
     bool m_areWebAnimationsEnabled { true };
     bool m_isWebAnimationsCSSIntegrationEnabled { false };
-    bool m_isImageBitmapOffscreenCanvasEnabled { true };
+    bool m_isImageBitmapEnabled { true };
+#if ENABLE(OFFSCREEN_CANVAS)
+    bool m_isOffscreenCanvasEnabled { false };
+#endif
     bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };
     bool m_isWebSocketEnabled { true };

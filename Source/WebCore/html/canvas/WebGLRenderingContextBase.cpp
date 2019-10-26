@@ -63,7 +63,6 @@
 #include "OESTextureHalfFloat.h"
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
-#include "OffscreenCanvas.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RuntimeEnabledFeatures.h"
@@ -106,6 +105,10 @@
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 
 namespace WebCore {
 
@@ -681,11 +684,14 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
 WebGLCanvas WebGLRenderingContextBase::canvas()
 {
     auto& base = canvasBase();
+#if ENABLE(OFFSCREEN_CANVAS)
     if (is<OffscreenCanvas>(base))
         return &downcast<OffscreenCanvas>(base);
+#endif
     return &downcast<HTMLCanvasElement>(base);
 }
 
+#if ENABLE(OFFSCREEN_CANVAS)
 OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
 {
     auto& base = canvasBase();
@@ -693,6 +699,7 @@ OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
         return nullptr;
     return &downcast<OffscreenCanvas>(base);
 }
+#endif
 
 // We check for context loss handling after a few seconds to give the JS a chance to register the event listeners
 // and to discard temporary GL contexts (e.g. feature detection).

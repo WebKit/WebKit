@@ -34,8 +34,11 @@
 #include "JSEventListener.h"
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScope.h"
-#include "OffscreenCanvas.h"
 #include "WorkerGlobalScope.h"
+
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
 
 namespace WebCore {
 using namespace JSC;

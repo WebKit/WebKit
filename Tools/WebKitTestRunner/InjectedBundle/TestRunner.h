@@ -510,6 +510,8 @@ public:
     void setAdClickAttributionConversionURLForTesting(JSStringRef);
     void markAdClickAttributionsAsExpiredForTesting();
 
+    void setOffscreenCanvasEnabled(bool);
+
 private:
     TestRunner();
 

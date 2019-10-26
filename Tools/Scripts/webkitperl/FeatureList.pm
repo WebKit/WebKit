@@ -134,6 +134,7 @@ my (
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,
     $notificationsSupport,
+    $offscreenCanvasSupport,
     $orientationEventsSupport,
     $paymentRequestSupport,
     $pdfkitPluginSupport,
@@ -434,6 +435,9 @@ my @features = (
 
     { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", value => \$notificationsSupport },
+
+    { option => "offscreen-canvas", desc => "Toggle OffscreenCanvas support",
+      define => "ENABLE_OFFSCREEN_CANVAS", value => \$offscreenCanvasSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", value => \$orientationEventsSupport },
