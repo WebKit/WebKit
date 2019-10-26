@@ -763,6 +763,7 @@ http/tests/adClickAttribution [ Pass ]
 # User interaction is a WebKit2 concept.
 inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Pass ]
 inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Pass ]
+inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Pass ]
 
 # Target domain is only present in WebKit2.
 http/tests/inspector/target [ Pass ]

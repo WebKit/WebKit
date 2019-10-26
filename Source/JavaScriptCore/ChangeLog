@@ -1,3 +1,15 @@
+2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: support emulateUserGesture parameter in Runtime.callFunctionOn
+        https://bugs.webkit.org/show_bug.cgi?id=200262
+
+        Reviewed by Devin Rousso.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/protocol/Runtime.json:
+
 2019-10-24  Mark Lam  <mark.lam@apple.com>
 
         Move JSC::Register inline methods into RegisterInlines.h.

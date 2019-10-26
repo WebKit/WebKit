@@ -2245,8 +2245,6 @@ webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slo
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
 
 webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
-webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
-webkit.org/b/149916 inspector/codemirror/prettyprinting-javascript.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/clearMessages.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/command-line-api.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/console-api.html [ Pass Timeout ]

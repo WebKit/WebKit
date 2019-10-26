@@ -1,3 +1,31 @@
+2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: support emulateUserGesture parameter in Runtime.callFunctionOn
+        https://bugs.webkit.org/show_bug.cgi?id=200262
+
+        Reviewed by Devin Rousso.
+
+        Support emulateUserGesture in Runtime.callFunctionOn
+
+        Tests: inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html
+               inspector/runtime/callFunctionOn-emulateUserGesture.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::evaluateOnCallFrame):
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        (WebCore::asBool):
+        (WebCore::PageRuntimeAgent::evaluate):
+        (WebCore::PageRuntimeAgent::callFunctionOn):
+        * inspector/agents/page/PageRuntimeAgent.h:
+        * inspector/agents/page/UserGestureEmulationScope.cpp: Added.
+        (WebCore::UserGestureEmulationScope::UserGestureEmulationScope): Extracted logic
+        of overriding user gesture into the scope object to share it between evaluate and
+        callFunctionOn as well as PageDebuggerAgent::evaluateOnCallFrame.
+        (WebCore::UserGestureEmulationScope::~UserGestureEmulationScope):
+        * inspector/agents/page/UserGestureEmulationScope.h: Added.
+
 2019-10-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant LineLayout::LineInput c'tor
