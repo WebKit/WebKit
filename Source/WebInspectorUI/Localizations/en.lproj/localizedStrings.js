@@ -1022,7 +1022,6 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
-localizedStrings["Show Icons"] = "Show Icons";
 localizedStrings["Show Jump to Effective Property Button"] = "Show Jump to Effective Property Button";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";

@@ -364,7 +364,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         if (InspectorBackend.hasDomain("CSS")) {
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
-            stylesGroup.addSetting(WI.settings.experimentalEnableStylesIcons, WI.UIString("Show Icons"));
             stylesGroup.addSetting(WI.settings.experimentalEnableStylesJumpToEffective, WI.UIString("Show Jump to Effective Property Button"));
             experimentalSettingsView.addSeparator();
         }
@@ -393,10 +392,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 
-        if (InspectorBackend.hasDomain("CSS")) {
-            listenForChange(WI.settings.experimentalEnableStylesIcons);
+        if (InspectorBackend.hasDomain("CSS"))
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
-        }
 
         this.addSettingsView(experimentalSettingsView);
     }

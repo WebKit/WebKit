@@ -62,42 +62,40 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         super.initialLayout();
 
-        if (WI.settings.experimentalEnableStylesIcons.value) {
-            let iconClassName = null;
-            switch (this._style.type) {
-            case WI.CSSStyleDeclaration.Type.Rule:
-                console.assert(this._style.ownerRule);
-                if (this._style.inherited) {
-                    iconClassName = "inherited-style-rule-icon";
-                    break;
-                }
-
-                switch (this._style.ownerRule.type) {
-                case WI.CSSStyleSheet.Type.Author:
-                    iconClassName = "author-style-rule-icon";
-                    break;
-                case WI.CSSStyleSheet.Type.User:
-                    iconClassName = "user-style-rule-icon";
-                    break;
-                case WI.CSSStyleSheet.Type.UserAgent:
-                    iconClassName = "user-agent-style-rule-icon";
-                    break;
-                case WI.CSSStyleSheet.Type.Inspector:
-                    iconClassName = "inspector-style-rule-icon";
-                    break;
-                }
-                break;
-            case WI.CSSStyleDeclaration.Type.Inline:
-            case WI.CSSStyleDeclaration.Type.Attribute:
-                if (this._style.inherited)
-                    iconClassName = "inherited-element-style-rule-icon";
-                else
-                    iconClassName = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+        let iconClassName = null;
+        switch (this._style.type) {
+        case WI.CSSStyleDeclaration.Type.Rule:
+            console.assert(this._style.ownerRule);
+            if (this._style.inherited) {
+                iconClassName = "inherited-style-rule-icon";
                 break;
             }
-            console.assert(iconClassName);
-            this._element.classList.add("has-icon", iconClassName);
+
+            switch (this._style.ownerRule.type) {
+            case WI.CSSStyleSheet.Type.Author:
+                iconClassName = "author-style-rule-icon";
+                break;
+            case WI.CSSStyleSheet.Type.User:
+                iconClassName = "user-style-rule-icon";
+                break;
+            case WI.CSSStyleSheet.Type.UserAgent:
+                iconClassName = "user-agent-style-rule-icon";
+                break;
+            case WI.CSSStyleSheet.Type.Inspector:
+                iconClassName = "inspector-style-rule-icon";
+                break;
+            }
+            break;
+        case WI.CSSStyleDeclaration.Type.Inline:
+        case WI.CSSStyleDeclaration.Type.Attribute:
+            if (this._style.inherited)
+                iconClassName = "inherited-element-style-rule-icon";
+            else
+                iconClassName = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+            break;
         }
+        console.assert(iconClassName);
+        this._element.classList.add("has-icon", iconClassName);
 
         let groupings = this._style.groupings.filter((grouping) => grouping.text !== "all");
         if (groupings.length) {
@@ -352,14 +350,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             selectorElement.classList.add(WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
         };
 
-        if (WI.settings.experimentalEnableStylesIcons.value) {
-            if (!this._iconElement) {
-                this._iconElement = document.createElement("img");
-                this._iconElement.classList.add("icon");
-                WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
-            }
-            this._selectorElement.appendChild(this._iconElement);
+        if (!this._iconElement) {
+            this._iconElement = document.createElement("img");
+            this._iconElement.classList.add("icon");
+            WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
         }
+        this._selectorElement.appendChild(this._iconElement);
 
         switch (this._style.type) {
         case WI.CSSStyleDeclaration.Type.Rule:
