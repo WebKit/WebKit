@@ -1,3 +1,14 @@
+2019-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust a layout test after r251522
+        https://bugs.webkit.org/show_bug.cgi?id=202663
+
+        Reviewed by Simon Fraser.
+
+        Fix relative file paths when including ui-helper.js and basic-gestures.js.
+
+        * fast/events/touch/ios/long-press-on-link.html:
+
 2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK] LayoutTests/inspector tests timeout
