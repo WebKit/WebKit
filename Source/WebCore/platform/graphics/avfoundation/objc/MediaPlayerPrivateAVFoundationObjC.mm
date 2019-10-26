@@ -174,7 +174,7 @@ static void ensureOnMainThread(Function<void()>&& f)
         callOnMainThread(WTFMove(f));
 }
 
-@interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate>
+@interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate, AVPlayerItemMetadataOutputPushDelegate, AVPlayerItemMetadataCollectorPushDelegate>
 {
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
     GenericTaskQueue<Timer> m_taskQueue;
@@ -187,6 +187,8 @@ static void ensureOnMainThread(Function<void()>&& f)
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 - (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime;
 - (void)outputSequenceWasFlushed:(id)output;
+- (void)metadataCollector:(AVPlayerItemMetadataCollector *)metadataCollector didCollectDateRangeMetadataGroups:(NSArray<AVDateRangeMetadataGroup *> *)metadataGroups indexesOfNewGroups:(NSIndexSet *)indexesOfNewGroups indexesOfModifiedGroups:(NSIndexSet *)indexesOfModifiedGroups;
+- (void)metadataOutput:(AVPlayerItemMetadataOutput *)output didOutputTimedMetadataGroups:(NSArray<AVTimedMetadataGroup *> *)groups fromPlayerItemTrack:(AVPlayerItemTrack *)track;
 @end
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
@@ -435,6 +437,19 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         if (m_avPlayerItem)
             [m_avPlayerItem.get() removeOutput:m_legibleOutput.get()];
         m_legibleOutput = nil;
+    }
+
+    if (m_metadataCollector) {
+        // FIXME - removeMediaDataCollector sometimes crashes, do not uncomment this until rdar://56617504 has been fixed.
+        // if (m_avPlayerItem)
+        //     [m_avPlayerItem.get() removeMediaDataCollector:m_metadataCollector.get()];
+        m_metadataCollector = nil;
+    }
+
+    if (m_metadataOutput) {
+        if (m_avPlayerItem)
+            [m_avPlayerItem.get() removeOutput:m_metadataOutput.get()];
+        m_metadataOutput = nil;
     }
 
     if (m_avPlayerItem) {
@@ -939,14 +954,14 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     if (m_avPlayer)
         setAVPlayerItem(m_avPlayerItem.get());
 
-    const NSTimeInterval legibleOutputAdvanceInterval = 2;
+    const NSTimeInterval avPlayerOutputAdvanceInterval = 2;
 
     RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:[NSNumber numberWithUnsignedInt:kCMSubtitleFormatType_WebVTT], nil]);
     m_legibleOutput = adoptNS([PAL::allocAVPlayerItemLegibleOutputInstance() initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
     [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
     [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
-    [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
+    [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:avPlayerOutputAdvanceInterval];
     [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
     [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
 
@@ -960,6 +975,15 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     createVideoOutput();
 #endif
+
+    m_metadataCollector = adoptNS([PAL::allocAVPlayerItemMetadataCollectorInstance() initWithIdentifiers:nil classifyingLabels:nil]);
+    [m_metadataCollector.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
+    [m_avPlayerItem.get() addMediaDataCollector:m_metadataCollector.get()];
+
+    m_metadataOutput = adoptNS([PAL::allocAVPlayerItemMetadataOutputInstance() initWithIdentifiers:nil]);
+    [m_metadataOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
+    [m_metadataOutput.get() setAdvanceIntervalForDelegateInvocation:avPlayerOutputAdvanceInterval];
+    [m_avPlayerItem.get() addOutput:m_metadataOutput.get()];
 
     setDelayCallbacks(false);
 }
@@ -2972,7 +2996,6 @@ void MediaPlayerPrivateAVFoundationObjC::setBufferingPolicy(MediaPlayer::Bufferi
 }
 
 #if ENABLE(DATACUE_VALUE)
-
 static const AtomString& metadataType(NSString *avMetadataKeySpace)
 {
     static NeverDestroyed<const AtomString> quickTimeUserData("com.apple.quicktime.udta", AtomString::ConstructFromLiteral);
@@ -2980,6 +3003,7 @@ static const AtomString& metadataType(NSString *avMetadataKeySpace)
     static NeverDestroyed<const AtomString> quickTimeMetadata("com.apple.quicktime.mdta", AtomString::ConstructFromLiteral);
     static NeverDestroyed<const AtomString> iTunesMetadata("com.apple.itunes", AtomString::ConstructFromLiteral);
     static NeverDestroyed<const AtomString> id3Metadata("org.id3", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> hlsDateRangeMetadata("com.apple.quicktime.HLS", AtomString::ConstructFromLiteral);
 
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceQuickTimeUserData])
         return quickTimeUserData;
@@ -2991,11 +3015,39 @@ static const AtomString& metadataType(NSString *avMetadataKeySpace)
         return iTunesMetadata;
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceID3])
         return id3Metadata;
+    if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceHLSDateRange])
+        return hlsDateRangeMetadata;
 
     return emptyAtom();
 }
-
 #endif
+
+void MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive(const RetainPtr<NSArray>& groups, const MediaTime& currentTime)
+{
+    for (AVDateRangeMetadataGroup *group in groups.get()) {
+        auto groupStartDate = group.startDate.timeIntervalSince1970;
+        auto groupEndDate = group.endDate.timeIntervalSince1970;
+        auto groupDuration = MediaTime::createWithDouble(groupEndDate - groupStartDate);
+
+        // A manifest without a #EXT-X-PROGRAM-DATE-TIME won't have a start date, so if currentDate
+        // is zero assume the metadata items start at the beginning of the stream.
+        double groupStartTime = 0;
+        if (auto currentDate = m_avPlayerItem.get().currentDate.timeIntervalSince1970)
+            groupStartTime = groupStartDate - currentDate - currentTime.toDouble();
+
+        auto groupCopy = adoptNS([[NSMutableArray alloc] init]);
+        for (AVMetadataItem *item in group.items) {
+            RetainPtr<AVMutableMetadataItem> itemCopy = adoptNS([item mutableCopy]);
+            if (!CMTIME_IS_VALID(itemCopy.get().time))
+                itemCopy.get().time = CMTimeMakeWithSeconds(groupStartTime, MediaTime::DefaultTimeScale);
+            if (!CMTIME_IS_VALID(itemCopy.get().duration))
+                itemCopy.get().duration = toCMTime(groupDuration);
+            [groupCopy addObject:itemCopy.get()];
+        }
+
+        metadataDidArrive(groupCopy, currentTime);
+    }
+}
 
 void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArray>& metadata, const MediaTime& mediaTime)
 {
@@ -3025,10 +3077,14 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
     m_metadataTrack->updatePendingCueEndTimes(earliestStartTime);
 
     for (AVMetadataItem *item in m_currentMetaData.get()) {
-        MediaTime start = std::max(PAL::toMediaTime(item.time), MediaTime::zeroTime());
+        MediaTime start;
+        if (CMTIME_IS_VALID(item.time))
+            start = std::max(PAL::toMediaTime(item.time), MediaTime::zeroTime());
+
         MediaTime end = MediaTime::positiveInfiniteTime();
-        if (CMTIME_IS_VALID(item.duration))
-            end = start + PAL::toMediaTime(item.duration);
+        auto duration = item.duration;
+        if (CMTIME_IS_VALID(duration) && CMTimeGetSeconds(duration) > 0.001)
+            end = start + PAL::toMediaTime(duration);
 
         AtomString type = nullAtom();
         if (item.keySpace)
@@ -3254,7 +3310,6 @@ NSArray* itemKVOProperties()
         @"playbackBufferEmpty",
         @"duration",
         @"hasEnabledAudio",
-        @"timedMetadata",
         @"canPlayFastForward",
         @"canPlayFastReverse",
     nil];
@@ -3375,14 +3430,7 @@ NSArray* playerKVOProperties()
                     player->presentationSizeDidChange(FloatSize([newValue sizeValue]));
                 else if ([keyPath isEqualToString:@"duration"])
                     player->durationDidChange(PAL::toMediaTime([newValue CMTimeValue]));
-                else if ([keyPath isEqualToString:@"timedMetadata"] && newValue) {
-                    MediaTime now;
-                    CMTime itemTime = [(AVPlayerItem *)object.get() currentTime];
-                    if (CMTIME_IS_NUMERIC(itemTime))
-                        now = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
-                    player->metadataDidArrive(RetainPtr<NSArray>(newValue), now);
-                    shouldLogValue = false;
-                } else if ([keyPath isEqualToString:@"canPlayFastReverse"])
+                else if ([keyPath isEqualToString:@"canPlayFastReverse"])
                     player->canPlayFastReverseDidChange([newValue boolValue]);
                 else if ([keyPath isEqualToString:@"canPlayFastForward"])
                     player->canPlayFastForwardDidChange([newValue boolValue]);
@@ -3449,6 +3497,35 @@ NSArray* playerKVOProperties()
     });
 }
 
+- (void)metadataOutput:(AVPlayerItemMetadataOutput *)output didOutputTimedMetadataGroups:(NSArray<AVTimedMetadataGroup *> *)metadataGroups fromPlayerItemTrack:(AVPlayerItemTrack *)track
+{
+    ASSERT(isMainThread());
+    UNUSED_PARAM(output);
+    UNUSED_PARAM(track);
+
+    m_taskQueue.enqueueTask([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+        if (!player)
+            return;
+
+        for (AVTimedMetadataGroup *group in metadataGroups.get())
+            player->metadataDidArrive(retainPtr(group.items), currentTime);
+    });
+}
+
+- (void)metadataCollector:(AVPlayerItemMetadataCollector *)metadataCollector didCollectDateRangeMetadataGroups:(NSArray<AVDateRangeMetadataGroup *> *)metadataGroups indexesOfNewGroups:(NSIndexSet *)indexesOfNewGroups indexesOfModifiedGroups:(NSIndexSet *)indexesOfModifiedGroups
+{
+    ASSERT(isMainThread());
+    UNUSED_PARAM(metadataCollector);
+    UNUSED_PARAM(indexesOfNewGroups);
+    UNUSED_PARAM(indexesOfModifiedGroups);
+
+    m_taskQueue.enqueueTask([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+        if (!player)
+            return;
+
+        player->metadataGroupDidArrive(metadataGroups, currentTime);
+    });
+}
 @end
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
@@ -3506,7 +3583,7 @@ NSArray* playerKVOProperties()
 
 @end
 
-#endif
+#endif // HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 
@@ -3534,6 +3611,6 @@ NSArray* playerKVOProperties()
 
 @end
 
-#endif
+#endif // HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 
 #endif

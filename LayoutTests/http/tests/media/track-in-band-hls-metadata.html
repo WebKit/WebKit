@@ -11,12 +11,14 @@
             var cuechangeCount = 0;
             var loadCount = 0;
             var cueData = [
-                 {"key" : "TIT2", "data" : "Stream Counting"},
-                 {"key" : "TPE1", "data" : "Andy"},
-                 {"key" : "TALB", "data" : "Greatest Hits"},
-                 {"key" : "GEOB", "data" : {}, "type" : "image/png", "info" : "Our Hero", "name" : "abe.png"},
-                 {"key" : "APIC", "data" : {}, "type" : "image/png"},
-                 {"key" : "TXXX", "data" : "Text Blob"},
+                 {"key" : "X-START-OFFSET", "keySpace" : "com.apple.quicktime.HLS", "data" : "0.000000"},
+                 {"key" : "X-END-OFFSET",   "keySpace" : "com.apple.quicktime.HLS", "data" : "5.000000"},
+                 {"key" : "TIT2",           "keySpace" : "org.id3",                 "data" : "Stream Counting"},
+                 {"key" : "TPE1",           "keySpace" : "org.id3",                 "data" : "Andy"},
+                 {"key" : "TALB",           "keySpace" : "org.id3",                 "data" : "Greatest Hits"},
+                 {"key" : "GEOB",           "keySpace" : "org.id3",                 "data" : {}, "type" : "image/png", "info" : "Our Hero", "name" : "abe.png"},
+                 {"key" : "APIC",           "keySpace" : "org.id3",                 "data" : {}, "type" : "image/png"},
+                 {"key" : "TXXX",           "keySpace" : "org.id3",                 "data" : "Text Blob"},
             ];
             var imageSizes = [ [76, 103], [100, 100] ];
             var cue;
@@ -43,7 +45,7 @@
                     return;
                 }
 
-                testImage(4);
+                testImage(6);
             }
 
             function testImage(cueIndex)
@@ -60,6 +62,9 @@
                 // Make a mutable copy of observed so we can remove attributes as they are processed.
                 observed = JSON.parse(JSON.stringify(observed));
                 for (property in expected) {
+                    if (property === "keySpace")
+                        continue;
+
                     observedValue = observed[property];
                     expectedValue = expected[property];
                     cue.value[property] = observedValue;
@@ -79,21 +84,20 @@
 
             function cuechange(event)
             {
-                consoleWrite("EVENT(cuechange)");
-                if (++cuechangeCount != 6)
+                if (++cuechangeCount != cueData.length)
                     return;
 
                 consoleWrite("<br><em>** Validate cue data</em>");
                 track.removeEventListener("cuechange", cuechange, true);
                 video.pause();
 
-                for (var i = 0; i < 6; i++) {
+                for (var i = 0; i < cueData.length; i++) {
                     consoleWrite(`<em>* ${i + 1}</em>`);
                     cue = track.cues[i];
 
                     testExpected("typeof(cue)", undefined, "!=");
-                    testExpected("cue.type", "org.id3");
                     testExpected("cue.data", null);
+                    testExpected("cue.type", cueData[i].keySpace);
                     testExpected("cue.value", null, "!=");
                     if (typeof(cue.value) == undefined) {
                         failTest(`Error: cue.value is undefined!`);
@@ -107,7 +111,7 @@
                 consoleWrite("<em>** Extract images from cue data, validate by setting img.src</em>");
                 imageElement = document.querySelector("#photo");
                 waitForEvent('load', imageLoad, false, false, imageElement)
-                testImage(3);
+                testImage(5);
             }
 
             function canplaythrough()

@@ -1,3 +1,14 @@
+2019-10-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Support for callbacks for manifest events
+        https://bugs.webkit.org/show_bug.cgi?id=202101
+        <rdar://problem/54277362>
+
+        Reviewed by Jer Noble.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2019-10-25  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Move the QLPreviewConverter delegate into PreviewConverter and vend a C++ client interface
