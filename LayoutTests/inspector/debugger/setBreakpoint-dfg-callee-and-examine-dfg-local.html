@@ -40,9 +40,6 @@ function test()
                     breakpointId = responseObject.result.breakpointId;
                     InspectorProtocol.sendCommand("Runtime.evaluate", {
                         expression: "dfgWithoutInline3();"
-                    }, function(responseObject) {
-                        ProtocolTest.log("Test complete");
-                        ProtocolTest.completeTest();
                     });
                 });
             });
@@ -98,9 +95,12 @@ function test()
                         resumeFromBreakpoint();
                         return;
                     }
-                    InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
+                    InspectorProtocol.awaitEvent({event: "Debugger.resumed"}).then(() => {
                         ProtocolTest.log("Resumed from breakpoint");
+                        ProtocolTest.log("Test complete");
+                        ProtocolTest.completeTest();
                     });
+                    InspectorProtocol.sendCommand("Debugger.resume");
                 });
             });
         });

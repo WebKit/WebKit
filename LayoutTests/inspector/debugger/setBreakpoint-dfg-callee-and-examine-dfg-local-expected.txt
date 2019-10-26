@@ -13,8 +13,8 @@ Evaluating in DFG frame at frame[2]: 'localVal3 = 12;'
 Response value is 12
 Evaluating in DFG frame at frame[2]: 'localVal3'
 Response value is 12
-Resumed from breakpoint
 inside breakpointBasic
 result: 42
+Resumed from breakpoint
 Test complete
 

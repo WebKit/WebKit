@@ -1,3 +1,20 @@
+2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK] Layout test inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139359
+
+        Reviewed by Devin Rousso.
+
+        Renable the test on all platforms. With the current implementation of inspector client in tests
+        response to Debugger.resume is dispatched in the front-end synchronously and the front-end would
+        call InspectoTest.log when inspected script execution is not yet resumed.
+
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local-expected.txt:
+        * inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         Support for callbacks for manifest events
