@@ -1,3 +1,123 @@
+2019-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Import css/css-syntax WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=203444
+
+        Reviewed by Antti Koivisto.
+
+        Imported from WPT at 5eebc927c57ec8c5e234fef8e4cc480ac339462c (Mon Oct 21 20:23:09 2019 +0100).
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-syntax/META.yml: Added.
+        * web-platform-tests/css/css-syntax/anb-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/anb-parsing.html: Added.
+        * web-platform-tests/css/css-syntax/anb-serialization-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/anb-serialization.html: Added.
+        * web-platform-tests/css/css-syntax/cdc-vs-ident-tokens-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/cdc-vs-ident-tokens.html: Added.
+        * web-platform-tests/css/css-syntax/charset-is-not-a-rule-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset-is-not-a-rule.html: Added.
+        * web-platform-tests/css/css-syntax/charset/.htaccess: Added.
+        * web-platform-tests/css/css-syntax/charset/MANIFEST: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16be-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16be.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl-ascii-only-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl-ascii-only.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-charset-attribute-bogus-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-charset-attribute-bogus.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-1250-charset-attribute-windows-1253-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-1250-charset-attribute-windows-1253.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus-charset-attribute-windows-1250-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus-charset-attribute-windows-1250.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16-ascii-only-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16-ascii-only.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16be-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16be.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16be-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16be.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus-at-charset-windows-1250-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus-at-charset-windows-1250.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-windows-1250-at-charset-windows-1253-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-windows-1250-at-charset-windows-1253.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-no-decl-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-no-decl.html: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-utf8-bom-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-css-utf8-bom.html: Added.
+        * web-platform-tests/css/css-syntax/charset/support/MANIFEST: Added.
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-bogus.css: Added.
+        (@charset "bogus";):
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-utf16-ascii-only.css: Added.
+        (@charset "utf-16";):
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-utf16.css: Added.
+        (@charset "utf-16";):
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-utf16be.css: Added.
+        (@charset "utf-16be";):
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-windows-1250-in-utf16.css: Added.
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-windows-1250-in-utf16be.css: Added.
+        * web-platform-tests/css/css-syntax/charset/support/at-charset-windows-1250.css: Added.
+        (@charset "windows-1250";):
+        * web-platform-tests/css/css-syntax/charset/support/bomless-utf16.css: Added.
+        * web-platform-tests/css/css-syntax/charset/support/bomless-utf16be.css: Added.
+        * web-platform-tests/css/css-syntax/charset/support/http-bogus-at-charset-windows-1250.bogus.css: Added.
+        (@charset "windows-1250";):
+        * web-platform-tests/css/css-syntax/charset/support/http-bogus-at-charset-windows-1250.bogus.css.headers: Added.
+        * web-platform-tests/css/css-syntax/charset/support/http-bogus.bogus.css: Added.
+        (#È):
+        * web-platform-tests/css/css-syntax/charset/support/http-bogus.bogus.css.headers: Added.
+        * web-platform-tests/css/css-syntax/charset/support/http-windows-1250-at-charset-windows-1253.windows1250.css: Added.
+        (@charset "windows-1253";):
+        * web-platform-tests/css/css-syntax/charset/support/http-windows-1250-at-charset-windows-1253.windows1250.css.headers: Added.
+        * web-platform-tests/css/css-syntax/charset/support/no-decl-ascii-only.css: Added.
+        (#foo):
+        * web-platform-tests/css/css-syntax/charset/support/no-decl.css: Added.
+        (#È):
+        * web-platform-tests/css/css-syntax/charset/support/utf8-bom.css: Added.
+        (ï»¿#È):
+        * web-platform-tests/css/css-syntax/charset/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-syntax/charset/w3c-import.log: Added.
+        * web-platform-tests/css/css-syntax/charset/xml-stylesheet-page-windows-1251-charset-attribute-windows-1250-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/charset/xml-stylesheet-page-windows-1251-charset-attribute-windows-1250.xhtml: Added.
+        * web-platform-tests/css/css-syntax/decimal-points-in-numbers-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/decimal-points-in-numbers.html: Added.
+        * web-platform-tests/css/css-syntax/declarations-trim-whitespace-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/declarations-trim-whitespace.html: Added.
+        * web-platform-tests/css/css-syntax/escaped-eof-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/escaped-eof.html: Added.
+        * web-platform-tests/css/css-syntax/ident-three-code-points-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/ident-three-code-points.html: Added.
+        * web-platform-tests/css/css-syntax/inclusive-ranges-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/inclusive-ranges.html: Added.
+        * web-platform-tests/css/css-syntax/input-preprocessing-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/input-preprocessing.html: Added.
+        * web-platform-tests/css/css-syntax/serialize-consecutive-tokens-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/serialize-consecutive-tokens.html: Added.
+        * web-platform-tests/css/css-syntax/unclosed-constructs-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/unclosed-constructs.html: Added.
+        * web-platform-tests/css/css-syntax/unclosed-url-at-eof-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/unclosed-url-at-eof.html: Added.
+        * web-platform-tests/css/css-syntax/unicode-range-selector-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/unicode-range-selector.html: Added.
+        * web-platform-tests/css/css-syntax/urange-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/urange-parsing.html: Added.
+        * web-platform-tests/css/css-syntax/url-whitespace-consumption-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/url-whitespace-consumption.html: Added.
+        * web-platform-tests/css/css-syntax/w3c-import.log: Added.
+        * web-platform-tests/css/css-syntax/whitespace-expected.txt: Added.
+        * web-platform-tests/css/css-syntax/whitespace.html: Added.
+
 2019-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Update css/support directory in WPT

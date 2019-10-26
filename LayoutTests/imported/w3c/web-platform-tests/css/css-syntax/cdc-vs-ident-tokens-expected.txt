@@ -1,0 +1,3 @@
+
+PASS CDC-token is properly emitted, and not parsed as an ident. 
+

@@ -12,6 +12,8 @@
         "web-platform-tests/tools"
     ],
     "files": [
+        "css/css-syntax/charset/page-utf16-css-bomless-utf16be.html",
+        "css/css-syntax/charset/page-utf16-css-no-decl-ascii-only.html",
         "css/css-values/absolute_length_units.html",
         "css/css-values/support/vh-support-transform-origin-iframe.html",
         "css/css-values/support/vh-support-transform-translate-iframe.html",

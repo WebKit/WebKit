@@ -1,5 +1,6 @@
 {
     "apng": "import", 
+    "css/css-syntax": "import", 
     "css/css-values": "import", 
     "css/geometry": "import", 
     "css/support": "import", 

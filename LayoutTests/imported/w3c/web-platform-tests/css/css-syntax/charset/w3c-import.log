@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/.htaccess
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/MANIFEST
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-utf16-css-bomless-utf16be.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl-ascii-only.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-utf16-css-no-decl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-charset-attribute-bogus.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-1250-charset-attribute-windows-1253.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus-charset-attribute-windows-1250.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-bogus.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16-ascii-only.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-utf16be.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-at-charset-windows-1250-in-utf16be.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus-at-charset-windows-1250.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-bogus.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-windows-1250-at-charset-windows-1253.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-no-decl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-utf8-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/xml-stylesheet-page-windows-1251-charset-attribute-windows-1250.xhtml
