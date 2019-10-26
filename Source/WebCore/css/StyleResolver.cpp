@@ -372,10 +372,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     WritingMode writingMode;
     extractDirectionAndWritingMode(*state.style(), result, direction, writingMode);
 
-    // We don't need to bother with !important. Since there is only ever one
-    // decl, there's nothing to override. So just add the first properties.
-    Style::PropertyCascade cascade(*this, result, direction, writingMode);
-    cascade.addNormalMatches(Style::CascadeLevel::Author);
+    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author }, direction, writingMode);
 
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
@@ -579,8 +576,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     WritingMode writingMode;
     extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
 
-    Style::PropertyCascade cascade(*this, result, direction, writingMode);
-    cascade.addNormalMatches(Style::CascadeLevel::Author);
+    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author }, direction, writingMode);
 
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
@@ -1349,7 +1345,8 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 {
     State& state = m_state;
     unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult) : 0;
-    bool applyInheritedOnly = false;
+    auto includedProperties = Style::PropertyCascade::IncludedProperties::All;
+
     const MatchedPropertiesCacheItem* cacheItem = nullptr;
     if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))
         && isCacheableInMatchedPropertiesCache(element, state.style(), state.parentStyle())) {
@@ -1367,7 +1364,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
             state.style()->setInsideLink(linkStatus);
             return;
         }
-        applyInheritedOnly = true; 
+        includedProperties = Style::PropertyCascade::IncludedProperties::InheritedOnly;
     }
 
     // Directional properties (*-before/after) are aliases that depend on the TextDirection and WritingMode.
@@ -1381,9 +1378,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        Style::PropertyCascade cascade(*this, matchResult, direction, writingMode);
-        cascade.addNormalMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
-        cascade.addImportantMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
+        Style::PropertyCascade cascade(*this, matchResult, { Style::CascadeLevel::UserAgent }, direction, writingMode, includedProperties);
 
         cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
         adjustStyleForInterCharacterRuby();
@@ -1406,13 +1401,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         state.cacheBorderAndBackground();
     }
 
-    Style::PropertyCascade cascade(*this, matchResult, direction, writingMode);
-    cascade.addNormalMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
-    cascade.addNormalMatches(Style::CascadeLevel::User, applyInheritedOnly);
-    cascade.addNormalMatches(Style::CascadeLevel::Author, applyInheritedOnly);
-    cascade.addImportantMatches(Style::CascadeLevel::Author, applyInheritedOnly);
-    cascade.addImportantMatches(Style::CascadeLevel::User, applyInheritedOnly);
-    cascade.addImportantMatches(Style::CascadeLevel::UserAgent, applyInheritedOnly);
+    Style::PropertyCascade cascade(*this, matchResult, Style::allCascadeLevels(), direction, writingMode, includedProperties);
 
     cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     adjustStyleForInterCharacterRuby();
@@ -1465,7 +1454,7 @@ void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std:
 void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* value)
 {
     MatchResult matchResult;
-    Style::PropertyCascade cascade(*this, matchResult, { }, { });
+    Style::PropertyCascade cascade(*this, matchResult, { }, { }, { });
     if (value)
         applyProperty(id, value, cascade);
 }

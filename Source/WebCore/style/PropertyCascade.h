@@ -36,22 +36,23 @@ class StyleResolver;
 namespace Style {
 
 enum class CascadeLevel : uint8_t {
-    UserAgent,
-    User,
-    Author
+    UserAgent   = 1 << 0,
+    User        = 1 << 1,
+    Author      = 1 << 2
 };
+
+static constexpr OptionSet<CascadeLevel> allCascadeLevels() { return { Style::CascadeLevel::UserAgent, Style::CascadeLevel::User, Style::CascadeLevel::Author }; }
 
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyCascade(StyleResolver&, const MatchResult&, TextDirection, WritingMode);
+    enum IncludedProperties { All, InheritedOnly };
+    PropertyCascade(StyleResolver&, const MatchResult&, OptionSet<CascadeLevel>, TextDirection, WritingMode, IncludedProperties = IncludedProperties::All);
     ~PropertyCascade();
 
     StyleResolver& styleResolver() { return m_styleResolver; }
 
     struct Property {
-        void apply(PropertyCascade&);
-
         CSSPropertyID id;
         CascadeLevel level;
         ScopeOrdinal styleScopeOrdinal;
@@ -64,9 +65,6 @@ public:
     bool hasCustomProperty(const String&) const;
     Property customProperty(const String&) const;
 
-    void addNormalMatches(CascadeLevel, bool inheritedOnly = false);
-    void addImportantMatches(CascadeLevel, bool inheritedOnly = false);
-
     bool hasAppliedProperty(CSSPropertyID) const;
 
     void applyProperties(int firstProperty, int lastProperty);
@@ -78,7 +76,10 @@ public:
     PropertyCascade* propertyCascadeForRollback(CascadeLevel);
 
 private:
-    void addMatch(const MatchedProperties&, CascadeLevel, bool isImportant, bool inheritedOnly);
+    bool addNormalMatches(CascadeLevel);
+    void addImportantMatches(CascadeLevel);
+    bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
+
     void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
@@ -86,9 +87,11 @@ private:
     enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
     template<CustomPropertyCycleTracking trackCycles>
     void applyPropertiesImpl(int firstProperty, int lastProperty);
+    void applyProperty(const Property&);
 
     StyleResolver& m_styleResolver;
     const MatchResult& m_matchResult;
+    IncludedProperties m_includedProperties;
 
     TextDirection m_direction;
     WritingMode m_writingMode;

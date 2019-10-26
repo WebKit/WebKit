@@ -140,12 +140,26 @@ static inline bool isValidCueStyleProperty(CSSPropertyID id)
 }
 #endif
 
-PropertyCascade::PropertyCascade(StyleResolver& styleResolver, const MatchResult& matchResult, TextDirection direction, WritingMode writingMode)
+PropertyCascade::PropertyCascade(StyleResolver& styleResolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, TextDirection direction, WritingMode writingMode, IncludedProperties includedProperties)
     : m_styleResolver(styleResolver)
     , m_matchResult(matchResult)
+    , m_includedProperties(includedProperties)
     , m_direction(direction)
     , m_writingMode(writingMode)
 {
+    OptionSet<CascadeLevel> cascadeLevelsWithImportant;
+
+    for (auto cascadeLevel : cascadeLevels) {
+        bool hasImportant = addNormalMatches(cascadeLevel);
+        if (hasImportant)
+            cascadeLevelsWithImportant.add(cascadeLevel);
+    }
+
+    for (auto cascadeLevel : { CascadeLevel::Author, CascadeLevel::User, CascadeLevel::UserAgent }) {
+        if (!cascadeLevelsWithImportant.contains(cascadeLevel))
+            continue;
+        addImportantMatches(cascadeLevel);
+    }
 }
 
 PropertyCascade::~PropertyCascade() = default;
@@ -209,16 +223,21 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned
 }
 
 
-void PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool isImportant, bool inheritedOnly)
+bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {
     auto& styleProperties = *matchedProperties.properties;
     auto propertyWhitelistType = static_cast<PropertyWhitelistType>(matchedProperties.whitelistType);
+    bool hasImportantProperties = false;
 
     for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
         auto current = styleProperties.propertyAt(i);
-        if (isImportant != current.isImportant())
+
+        if (current.isImportant())
+            hasImportantProperties = true;
+        if (important != current.isImportant())
             continue;
-        if (inheritedOnly && !current.isInherited()) {
+
+        if (m_includedProperties == IncludedProperties::InheritedOnly && !current.isInherited()) {
             // Inherited only mode is used after matched properties cache hit.
             // A match with a value that is explicitly inherited should never have been cached.
             ASSERT(!current.value()->isInheritedValue());
@@ -238,6 +257,8 @@ void PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         else
             set(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);
     }
+
+    return hasImportantProperties;
 }
 
 static auto& declarationsForCascadeLevel(const MatchResult& matchResult, CascadeLevel cascadeLevel)
@@ -251,10 +272,13 @@ static auto& declarationsForCascadeLevel(const MatchResult& matchResult, Cascade
     return matchResult.authorDeclarations;
 }
 
-void PropertyCascade::addNormalMatches(CascadeLevel cascadeLevel, bool inheritedOnly)
+bool PropertyCascade::addNormalMatches(CascadeLevel cascadeLevel)
 {
+    bool hasImportant = false;
     for (auto& matchedDeclarations : declarationsForCascadeLevel(m_matchResult, cascadeLevel))
-        addMatch(matchedDeclarations, cascadeLevel, false, inheritedOnly);
+        hasImportant |= addMatch(matchedDeclarations, cascadeLevel, false);
+
+    return hasImportant;
 }
 
 static bool hasImportantProperties(const StyleProperties& properties)
@@ -266,7 +290,7 @@ static bool hasImportantProperties(const StyleProperties& properties)
     return false;
 }
 
-void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel, bool inheritedOnly)
+void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
 {
     struct IndexAndOrdinal {
         unsigned index;
@@ -301,13 +325,13 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel, bool inheri
     }
 
     for (auto& match : importantMatches)
-        addMatch(matchedDeclarations[match.index], cascadeLevel, true, inheritedOnly);
+        addMatch(matchedDeclarations[match.index], cascadeLevel, true);
 }
 
 void PropertyCascade::applyDeferredProperties()
 {
     for (auto& property : m_deferredProperties)
-        property.apply(*this);
+        applyProperty(property);
 }
 
 void PropertyCascade::applyProperties(int firstProperty, int lastProperty)
@@ -339,14 +363,14 @@ inline void PropertyCascade::applyPropertiesImpl(int firstProperty, int lastProp
             }
 
             m_applyState.inProgressProperties.set(propertyID);
-            property.apply(*this);
+            applyProperty(property);
             m_applyState.appliedProperties.set(propertyID);
             m_applyState.inProgressProperties.set(propertyID, false);
             continue;
         }
 
         // If we don't have any custom properties, then there can't be any cycles.
-        property.apply(*this);
+        applyProperty(property);
     }
 }
 
@@ -433,23 +457,15 @@ PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel cascad
     switch (cascadeLevel) {
     case CascadeLevel::Author:
         if (!m_authorRollbackCascade) {
-            m_authorRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, m_direction, m_writingMode);
-
-            // This special rollback cascade contains UA rules and user rules but no author rules.
-            m_authorRollbackCascade->addNormalMatches(CascadeLevel::UserAgent, false);
-            m_authorRollbackCascade->addNormalMatches(CascadeLevel::User, false);
-            m_authorRollbackCascade->addImportantMatches(CascadeLevel::User, false);
-            m_authorRollbackCascade->addImportantMatches(CascadeLevel::UserAgent, false);
+            auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent, CascadeLevel::User };
+            m_authorRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
         }
         return m_authorRollbackCascade.get();
 
     case CascadeLevel::User:
         if (!m_userRollbackCascade) {
-            m_userRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, m_direction, m_writingMode);
-
-            // This special rollback cascade contains only UA rules.
-            m_userRollbackCascade->addNormalMatches(CascadeLevel::UserAgent, false);
-            m_userRollbackCascade->addImportantMatches(CascadeLevel::UserAgent, false);
+            auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent };
+            m_userRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
         }
         return m_userRollbackCascade.get();
 
@@ -460,32 +476,31 @@ PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel cascad
     return nullptr;
 }
 
-void PropertyCascade::Property::apply(PropertyCascade& cascade)
+inline void PropertyCascade::applyProperty(const Property& property)
 {
-    auto& resolver = cascade.styleResolver();
-    StyleResolver::State& state = resolver.state();
-    state.setCascadeLevel(level);
-    state.setStyleScopeOrdinal(styleScopeOrdinal);
+    StyleResolver::State& state = m_styleResolver.state();
+    state.setCascadeLevel(property.level);
+    state.setStyleScopeOrdinal(property.styleScopeOrdinal);
 
-    if (cssValue[SelectorChecker::MatchDefault]) {
+    if (property.cssValue[SelectorChecker::MatchDefault]) {
         state.setApplyPropertyToRegularStyle(true);
         state.setApplyPropertyToVisitedLinkStyle(false);
-        resolver.applyProperty(id, cssValue[SelectorChecker::MatchDefault], cascade, SelectorChecker::MatchDefault);
+        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchDefault], *this, SelectorChecker::MatchDefault);
     }
 
     if (state.style()->insideLink() == InsideLink::NotInside)
         return;
 
-    if (cssValue[SelectorChecker::MatchLink]) {
+    if (property.cssValue[SelectorChecker::MatchLink]) {
         state.setApplyPropertyToRegularStyle(true);
         state.setApplyPropertyToVisitedLinkStyle(false);
-        resolver.applyProperty(id, cssValue[SelectorChecker::MatchLink], cascade, SelectorChecker::MatchLink);
+        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchLink], *this, SelectorChecker::MatchLink);
     }
 
-    if (cssValue[SelectorChecker::MatchVisited]) {
+    if (property.cssValue[SelectorChecker::MatchVisited]) {
         state.setApplyPropertyToRegularStyle(false);
         state.setApplyPropertyToVisitedLinkStyle(true);
-        resolver.applyProperty(id, cssValue[SelectorChecker::MatchVisited], cascade, SelectorChecker::MatchVisited);
+        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchVisited], *this, SelectorChecker::MatchVisited);
     }
 
     state.setApplyPropertyToRegularStyle(true);
