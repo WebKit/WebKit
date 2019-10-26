@@ -1,5 +1,18 @@
 2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: remove custom expectations from platform/gtk/inspector-protocol
+        https://bugs.webkit.org/show_bug.cgi?id=203453
+
+        Unreviewed, test expectations cleanup.
+
+        * platform/gtk/inspector-protocol/debugger/setBreakpoint-dfg-and-modify-local-expected.txt: Removed.
+        * platform/gtk/inspector-protocol/debugger/setBreakpoint-dfg-expected.txt: Removed.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Removed.
+        Removed platform/gtk/inspector-protocol altogether as there is no LayoutTests/inspector-protocol
+        folder any more. Corresponding tests were either deleted or moved to LayoutTests/inspector a while ago.
+
+2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
         [GTK] Layout test inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=139359
 
