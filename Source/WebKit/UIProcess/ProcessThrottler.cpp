@@ -92,8 +92,8 @@ void ProcessThrottler::updateAssertionIfNeeded()
         // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
         // in the background for too long.
         if (m_assertion->state() != AssertionState::Suspended) {
-            sendPrepareToSuspendIPC(IsSuspensionImminent::No);
             m_prepareToSuspendTimeoutTimer.startOneShot(processSuspensionTimeout);
+            sendPrepareToSuspendIPC(IsSuspensionImminent::No);
             return;
         }
     }

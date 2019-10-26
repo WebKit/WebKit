@@ -1,3 +1,17 @@
+2019-10-25  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r251599): Crash in MobileSafari tests (ASSERTION FAILED: m_pendingRequestToSuspendID)
+        https://bugs.webkit.org/show_bug.cgi?id=203437
+        <rdar://problem/56633399>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionIfNeeded):
+        Start the timer before sending the PrepareToSuspend IPC. The reason is that if the process has been
+        terminated, the completion handler may run synchronously and cancel the request to suspend / stop
+        the timer. Therefore, re-starting the timer after would be a mistake.
+
 2019-10-25  David Kilzer  <ddkilzer@apple.com>
 
         Unused arguments in MESSAGE_CHECK_CONTEXTID() macros
