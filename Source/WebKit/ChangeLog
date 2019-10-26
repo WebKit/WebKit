@@ -1,3 +1,17 @@
+2019-10-26  youenn fablet  <youenn@apple.com>
+
+        Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+
+        Reviewed by Eric Carlson.
+
+        In case the request has user gesture priviledge, do not look at denied request history.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::getRequestAction):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::isUserGesturePriviledged const):
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

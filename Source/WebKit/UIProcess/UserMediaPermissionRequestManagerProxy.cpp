@@ -345,7 +345,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     ASSERT(!(requestingScreenCapture && !request.hasVideoDevice()));
     ASSERT(!(requestingScreenCapture && requestingMicrophone));
 
-    if (wasRequestDenied(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera, requestingScreenCapture))
+    if (!request.isUserGesturePriviledged() && wasRequestDenied(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera, requestingScreenCapture))
         return RequestAction::Deny;
 
     if (request.requestType() == MediaStreamRequest::Type::DisplayMedia)

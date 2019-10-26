@@ -1,0 +1,3 @@
+
+PASS Testing getUserMedia with and without user gesture after user denied access 
+

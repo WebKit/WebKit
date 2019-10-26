@@ -1,3 +1,14 @@
+2019-10-26  youenn fablet  <youenn@apple.com>
+
+        Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+
+        Reviewed by Eric Carlson.
+
+        Update test to take into account the ability to reask permission.
+        * TestWebKitAPI/Tests/WebKitCocoa/GetDisplayMedia.mm:
+        (TestWebKitAPI::TEST_F):
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

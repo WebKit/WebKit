@@ -1,3 +1,15 @@
+2019-10-26  youenn fablet  <youenn@apple.com>
+
+        Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-deny-persistency5-expected.txt:
+        * fast/mediastream/getUserMedia-deny-persistency5.html:
+        * fast/mediastream/screencapture-user-gesture-expected.txt:
+        * fast/mediastream/screencapture-user-gesture.html:
+
 2019-10-26  Rob Buis  <rbuis@igalia.com>
 
         Main implementation for lazy image loading
