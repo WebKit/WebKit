@@ -1,3 +1,20 @@
+2019-10-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix autoscroll test specifically for iPad
+        https://bugs.webkit.org/show_bug.cgi?id=203392
+        <rdar://problem/51712479>
+
+        Reviewed by Wenson Hsieh.
+
+        On iPad, we only have one gesture that will set off the magnified caret gesture.
+        If we touch in the same point as where we touched to focus the element, in the
+        test environment, nothing resets the positionInformation, which then erroneously
+        thinks that there is no focused element, which then blocks the caret gesture from
+        starting. The easiest fix for this is to not have the point to focus the element 
+        be the same point that we use to start the caret gesture.
+
+        * fast/events/touch/ios/drag-to-autoscroll-in-single-line-editable.html:
+
 2019-10-25  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r251261?): Flaky Test: inspector/runtime/getProperties.html

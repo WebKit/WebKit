@@ -24,7 +24,7 @@
             
             var textLength = scrollBox.value.length;
 
-            await tapAtPoint(tapPointX, tapPointY);
+            await tapAtPoint(tapPointX - 1, tapPointY - 1);
             await didShowKeyboard();
             await longPressAndHoldAtPoint(tapPointX, tapPointY);
             await continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY);
