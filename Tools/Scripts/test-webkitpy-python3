@@ -34,7 +34,7 @@ from webkitpy.common.checkout.scm.scm_unittest import SCMTest
 
 
 PYTHON3_COMPATIBLE_DIRECTORIES = [
-  'webkitpy.common.checkout.scm',
+  'webkitpy.common.checkout',
   'webkitpy.common.config',
   'webkitpy.common.system',
   'webkitpy.common.thread',

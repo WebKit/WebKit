@@ -26,11 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import cStringIO as StringIO
-import diff_parser
 import re
 import unittest
 
+import webkitpy.common.checkout.diff_parser as diff_parser
+
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 
 
@@ -145,7 +146,7 @@ Index: Tools/Scripts/webkitpy/common/checkout/diff_parser.py
  F
 """
 
-        inputfmt = StringIO.StringIO("""\
+        inputfmt = StringIO("""\
 diff --git a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
 index 2ed552c4555db72df16b212547f2c125ae301a04..72870482000c0dba64ce4300ed782c03ee79b74f 100644
 --- a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
@@ -158,7 +159,7 @@ index 2ed552c4555db72df16b212547f2c125ae301a04..72870482000c0dba64ce4300ed782c03
  E
  F
 """)
-        shortfmt = StringIO.StringIO("""\
+        shortfmt = StringIO("""\
 diff --git a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py b/Tools/Scripts/webkitpy/common/checkout/diff_parser.py
 index b48b162..f300960 100644
 --- a/Tools/Scripts/webkitpy/common/checkout/diff_parser.py

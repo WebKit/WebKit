@@ -34,7 +34,7 @@ import textwrap
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.unicode_compatibility import StringIO
+from webkitpy.common.unicode_compatibility import StringIO, unicode
 import webkitpy.common.config.urls as config_urls
 
 _log = logging.getLogger(__name__)

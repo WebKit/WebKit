@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .commitinfo import CommitInfo
+from webkitpy.common.checkout.commitinfo import CommitInfo
 
 # FIXME: These imports are wrong, we should use a shared MockCommittersList.
 from webkitpy.common.config.committers import CommitterList

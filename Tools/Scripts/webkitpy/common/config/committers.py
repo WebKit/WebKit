@@ -33,6 +33,7 @@ import fnmatch
 import json
 import sys
 
+from functools import reduce
 from webkitpy.common.editdistance import edit_distance
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
@@ -76,6 +77,15 @@ class Contributor(object):
 
     def __unicode__(self):
         return u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0]))
+
+    def __hash__(self):
+        return hash(self.full_name) \
+            ^ reduce(lambda a, b: hash(a) ^ hash(b), (self.emails or []) + [0]) \
+            ^ reduce(lambda a, b: hash(a) ^ hash(b), (self._case_preserved_emails or []) + [0]) \
+            ^ reduce(lambda a, b: hash(a) ^ hash(b), (self.irc_nicknames or []) + [0]) \
+            ^ hash(self.expertise) \
+            ^ hash(self.can_commit) \
+            ^ hash(self.can_review)
 
     def __eq__(self, other):
         return (other is not None

@@ -29,9 +29,8 @@
 
 import unittest
 
-from StringIO import StringIO
-
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.common.checkout.changelog import *
 
 

@@ -1,5 +1,26 @@
 2019-10-25  Jonathan Bedard  <jbedard@apple.com>
 
+        Python 3: Add support in webkitpy.common.checkout
+        https://bugs.webkit.org/show_bug.cgi?id=201956
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.checkout.
+        * Scripts/webkitpy/common/checkout/changelog.py: Import Python 3 compatible unicdoe.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py: Import Python 3 compatible StringIO.
+        * Scripts/webkitpy/common/checkout/checkout.py: Use Python 3 compatible reduce.
+        (Checkout._modified_files_matching_predicate): Convert iterators into lists before returning.
+        (Checkout.suggested_reviewers): Ditto.
+        * Scripts/webkitpy/common/checkout/checkout_mock.py: Use full import paths.
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py: Use full import paths, convert
+        iterators into lists.
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py: Use full import paths, use Python 3
+        compatible StringIO.
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__hash__): Committers need to be hashable to be inserted into a set.
+
+2019-10-25  Jonathan Bedard  <jbedard@apple.com>
+
         Python 3: Add support in webkitpy.xcode
         https://bugs.webkit.org/show_bug.cgi?id=203417
 
