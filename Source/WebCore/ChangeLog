@@ -1,3 +1,14 @@
+2019-10-25  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Build failures in projects that have both AppKit and WAK headers
+        https://bugs.webkit.org/show_bug.cgi?id=203429
+        <rdar://problem/56598370>
+
+        Reviewed by Sam Weinig.
+
+        * platform/ios/wak/WAKAppKitStubs.h:
+        Slightly abuse the preprocessor to avoid errors due to redefining AppKit symbols.
+
 2019-10-25  Antti Koivisto  <antti@apple.com>
 
         Move more cascade related code from StyleResolver to PropertyCascade

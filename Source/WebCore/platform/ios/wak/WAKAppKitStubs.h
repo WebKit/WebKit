@@ -150,18 +150,29 @@ typedef NSUInteger NSRectEdge;
 @class WAKView;
 @class WAKWindow;
 
-/* Device-independent bits found in event modifier flags */
-enum {
-    NSEventModifierFlagCapsLock = 1 << 16,
-    NSEventModifierFlagShift = 1 << 17,
-    NSEventModifierFlagControl = 1 << 18,
-    NSEventModifierFlagOption = 1 << 19,
-    NSEventModifierFlagCommand = 1 << 20,
-    NSEventModifierFlagNumericPad = 1 << 21,
-    NSEventModifierFlagHelp = 1 << 22,
-    NSEventModifierFlagFunction = 1 << 23,
-    NSEventModifierFlagDeviceIndependentFlagsMask = 0xffff0000U
+typedef NS_OPTIONS(NSUInteger, WKNSEventModifierFlags) {
+    WKNSEventModifierFlagCapsLock = 1 << 16,
+    WKNSEventModifierFlagShift = 1 << 17,
+    WKNSEventModifierFlagControl = 1 << 18,
+    WKNSEventModifierFlagOption = 1 << 19,
+    WKNSEventModifierFlagCommand = 1 << 20,
+    WKNSEventModifierFlagNumericPad = 1 << 21,
+    WKNSEventModifierFlagHelp = 1 << 22,
+    WKNSEventModifierFlagFunction = 1 << 23,
+    WKNSEventModifierFlagDeviceIndependentFlagsMask = 0xffff0000U
 };
+
+#ifndef NSEventModifierFlagCapsLock
+#define NSEventModifierFlagCapsLock WKNSEventModifierFlagCapsLock
+#define NSEventModifierFlagShift WKNSEventModifierFlagShift
+#define NSEventModifierFlagControl WKNSEventModifierFlagControl
+#define NSEventModifierFlagOption WKNSEventModifierFlagOption
+#define NSEventModifierFlagCommand WKNSEventModifierFlagCommand
+#define NSEventModifierFlagNumericPad WKNSEventModifierFlagNumericPad
+#define NSEventModifierFlagHelp WKNSEventModifierFlagHelp
+#define NSEventModifierFlagFunction WKNSEventModifierFlagFunction
+#define NSEventModifierFlagDeviceIndependentFlagsMask WKNSEventModifierFlagDeviceIndependentFlagsMask
+#endif
 
 typedef enum _WKWritingDirection {
     WKWritingDirectionNatural     = -1, /* Determines direction using the Unicode Bidi Algorithm rules P2 and P3 */
@@ -169,39 +180,77 @@ typedef enum _WKWritingDirection {
     WKWritingDirectionRightToLeft       /* Right to left writing direction */
 } WKWritingDirection;
 
-typedef enum _NSSelectionAffinity {
-    NSSelectionAffinityUpstream = 0,
-    NSSelectionAffinityDownstream = 1
-} NSSelectionAffinity;
+typedef NS_ENUM(NSUInteger, WKNSSelectionAffinity) {
+    WKNSSelectionAffinityUpstream = 0,
+    WKNSSelectionAffinityDownstream = 1
+};
 
-typedef enum _NSCellState {
-    NSControlStateValueMixed = -1,
-    NSControlStateValueOff   =  0,
-    NSControlStateValueOn    =  1
-} NSControlStateValue;
+#ifndef NSSelectionAffinityUpstream
+#define NSSelectionAffinity WKNSSelectionAffinity
+#define NSSelectionAffinityUpstream WKNSSelectionAffinityUpstream
+#define NSSelectionAffinityDownstream WKNSSelectionAffinityDownstream
+#endif
 
-typedef enum _NSCompositingOperation {
-    NSCompositeClear           = 0,
-    NSCompositeCopy            = 1,
-    NSCompositeSourceOver      = 2,
-    NSCompositeSourceIn        = 3,
-    NSCompositeSourceOut       = 4,
-    NSCompositeSourceAtop      = 5,
-    NSCompositeDestinationOver = 6,
-    NSCompositeDestinationIn   = 7,
-    NSCompositeDestinationOut  = 8,
-    NSCompositeDestinationAtop = 9,
-    NSCompositeXOR             = 10,
-    NSCompositePlusDarker      = 11,
-    NSCompositeHighlight       = 12,
-    NSCompositePlusLighter     = 13
-} NSCompositingOperation;
+typedef NS_ENUM(NSInteger, WKNSControlStateValue) {
+    WKNSControlStateValueMixed = -1,
+    WKNSControlStateValueOff   =  0,
+    WKNSControlStateValueOn    =  1
+};
 
-typedef enum _NSSelectionDirection {
-    NSDirectSelection = 0,
-    NSSelectingNext,
-    NSSelectingPrevious
-} NSSelectionDirection;
+#ifndef NSControlStateValueMixed
+#define NSControlStateValue WKNSControlStateValue
+#define NSControlStateValueMixed WKNSControlStateValueMixed
+#define NSControlStateValueOff WKNSControlStateValueOff
+#define NSControlStateValueOn WKNSControlStateValueOn
+#endif
+
+typedef NS_ENUM(NSUInteger, WKNSCompositingOperation) {
+    WKNSCompositeClear           = 0,
+    WKNSCompositeCopy            = 1,
+    WKNSCompositeSourceOver      = 2,
+    WKNSCompositeSourceIn        = 3,
+    WKNSCompositeSourceOut       = 4,
+    WKNSCompositeSourceAtop      = 5,
+    WKNSCompositeDestinationOver = 6,
+    WKNSCompositeDestinationIn   = 7,
+    WKNSCompositeDestinationOut  = 8,
+    WKNSCompositeDestinationAtop = 9,
+    WKNSCompositeXOR             = 10,
+    WKNSCompositePlusDarker      = 11,
+    WKNSCompositeHighlight       = 12,
+    WKNSCompositePlusLighter     = 13
+};
+
+#ifndef NSCompositeClear
+#define NSCompositingOperation WKNSCompositingOperation
+#define NSCompositeClear WKNSCompositeClear
+#define NSCompositeCopy WKNSCompositeCopy
+#define NSCompositeSourceOver WKNSCompositeSourceOver
+#define NSCompositeSourceIn WKNSCompositeSourceIn
+#define NSCompositeSourceOut WKNSCompositeSourceOut
+#define NSCompositeSourceAtop WKNSCompositeSourceAtop
+#define NSCompositeDestinationOver WKNSCompositeDestinationOver
+#define NSCompositeDestinationIn WKNSCompositeDestinationIn
+#define NSCompositeDestinationOut WKNSCompositeDestinationOut
+#define NSCompositeDestinationAtop WKNSCompositeDestinationAtop
+#define NSCompositeXOR WKNSCompositeXOR
+#define NSCompositePlusDarker WKNSCompositePlusDarker
+#define NSCompositeHighlight WKNSCompositeHighlight
+#define NSCompositePlusLighter WKNSCompositePlusLighter
+#endif
+
+typedef NS_ENUM(NSUInteger, WKNSSelectionDirection) {
+    WKNSDirectSelection = 0,
+    WKNSSelectingNext,
+    WKNSSelectingPrevious
+};
+
+#ifndef NSDirectSelection
+#define NSSelectionDirection WKNSSelectionDirection
+#define NSDirectSelection WKNSDirectSelection
+#define NSSelectingNext WKNSSelectingNext
+#define NSSelectingPrevious WKNSSelectingPrevious
+#endif
 
 #endif // TARGET_OS_IPHONE
 
