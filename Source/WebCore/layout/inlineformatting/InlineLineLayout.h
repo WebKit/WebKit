@@ -36,7 +36,7 @@ namespace Layout {
 class LineLayout {
 public:
     struct LineInput;
-    LineLayout(const InlineFormattingContext&, const LineInput&);
+    LineLayout(const InlineFormattingContext&, Line::SkipAlignment, const LineInput&);
 
     struct LineContent;
     LineContent layout();
@@ -46,13 +46,10 @@ public:
         unsigned length;
     };
     struct LineInput {
-        LineInput(const Line::InitialConstraints&, TextAlignMode, const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
-        LineInput(const Line::InitialConstraints&, const InlineItems&, unsigned leadingInlineItemIndex);
+        LineInput(const Line::InitialConstraints&, TextAlignMode horizontalAlignment, const InlineItems&, unsigned leadingInlineItemIndex, Optional<PartialContent> leadingPartialContent);
 
         Line::InitialConstraints initialConstraints;
         TextAlignMode horizontalAlignment;
-        // FIXME Alternatively we could just have a second pass with vertical positioning (preferred width computation opts out) 
-        Line::SkipAlignment skipAlignment { Line::SkipAlignment::No };
         const InlineItems& inlineItems;
         unsigned leadingInlineItemIndex { 0 };
         Optional<PartialContent> leadingPartialContent;

@@ -74,14 +74,6 @@ LineLayout::LineInput::LineInput(const Line::InitialConstraints& initialLineCons
 {
 }
 
-LineLayout::LineInput::LineInput(const Line::InitialConstraints& initialLineConstraints, const InlineItems& inlineItems, unsigned leadingInlineItemIndex)
-    : initialConstraints(initialLineConstraints)
-    , skipAlignment(Line::SkipAlignment::Yes)
-    , inlineItems(inlineItems)
-    , leadingInlineItemIndex(leadingInlineItemIndex)
-{
-}
-
 void LineLayout::UncommittedContent::add(const InlineItem& inlineItem, LayoutUnit logicalWidth)
 {
     m_uncommittedRuns.append({ inlineItem, logicalWidth });
@@ -94,10 +86,10 @@ void LineLayout::UncommittedContent::reset()
     m_width = 0;
 }
 
-LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, const LineInput& lineInput)
+LineLayout::LineLayout(const InlineFormattingContext& inlineFormattingContext, Line::SkipAlignment skipAlignment, const LineInput& lineInput)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_lineInput(lineInput)
-    , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.horizontalAlignment, lineInput.skipAlignment)
+    , m_line(inlineFormattingContext, lineInput.initialConstraints, lineInput.horizontalAlignment, skipAlignment)
     , m_lineHasIntrusiveFloat(lineInput.initialConstraints.lineIsConstrainedByFloat)
 {
 }

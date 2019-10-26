@@ -101,7 +101,7 @@ void InlineFormattingContext::lineLayout(UsedHorizontalValues usedHorizontalValu
         auto lineConstraints = initialConstraintsForLine(usedHorizontalValues, lineLogicalTop);
 
         auto lineInput = LineLayout::LineInput { lineConstraints, root().style().textAlign(), inlineItems, leadingInlineItemIndex, leadingPartialContent };
-        auto lineLayout = LineLayout { *this, lineInput };
+        auto lineLayout = LineLayout { *this, Line::SkipAlignment::No, lineInput };
 
         auto lineContent = lineLayout.layout();
         setDisplayBoxesForLine(lineContent, usedHorizontalValues);
@@ -239,9 +239,9 @@ LayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(UsedHori
     while (leadingInlineItemIndex < inlineItems.size()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
         auto initialLineConstraints = Line::InitialConstraints { { }, usedHorizontalValues.constraints.width, false, { } };
-        auto lineInput = LineLayout::LineInput { initialLineConstraints, inlineItems, leadingInlineItemIndex };
+        auto lineInput = LineLayout::LineInput { initialLineConstraints, root().style().textAlign(), inlineItems, leadingInlineItemIndex, { } };
 
-        auto lineContent = LineLayout(*this, lineInput).layout();
+        auto lineContent = LineLayout(*this, Line::SkipAlignment::Yes, lineInput).layout();
 
         leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
         LayoutUnit floatsWidth;
