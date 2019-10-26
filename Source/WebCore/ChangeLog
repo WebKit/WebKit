@@ -1,3 +1,77 @@
+2019-10-26  Rob Buis  <rbuis@igalia.com>
+
+        Main implementation for lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=200764
+
+        Reviewed by Simon Fraser.
+
+        Implement lazy image loading as specified here [1]. Lazy image loading
+        is controlled by the loading attribute on <img>. When the loading attribute is
+        auto or not specified, the behavior is like before this patch, i.e. loading is
+        eager.
+
+        Not all loading=lazy requests will turn into actual lazy image loads, when
+        scripting is turned off or images are not http(s), they will not be deferred.
+
+        This implementation relies on Intersection Observer and hence works on WK2 only.
+
+        Deferred images are painted using a simple outline until fully loaded.
+
+        [1] https://github.com/whatwg/html/pull/3752/files
+
+        Tests: http/tests/lazyload/attribute.html
+               http/tests/lazyload/invisible-image.html
+               http/tests/lazyload/js-image.html
+               http/tests/lazyload/lazy-image-load-in-iframes-scripting-disabled.html
+               http/tests/lazyload/lazy-image-load-in-iframes-scripting-enabled.html
+               http/tests/lazyload/lazy.html
+               http/tests/lazyload/scroll-element-moved-from-document.html
+               http/tests/lazyload/scroll-element-removed-from-document.html
+               http/tests/lazyload/scroll.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::lazyLoadImageObserver):
+        * dom/Document.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::loadDeferredImage):
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        (WebCore::HTMLImageElement::loadingForBindings const):
+        (WebCore::HTMLImageElement::setLoadingForBindings):
+        (WebCore::HTMLImageElement::isDeferred const):
+        (WebCore::HTMLImageElement::isLazyLoadable const):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+        * html/LazyLoadImageObserver.cpp: Added.
+        (WebCore::LazyLoadImageObserver::observe):
+        (WebCore::LazyLoadImageObserver::unobserve):
+        (WebCore::LazyLoadImageObserver::intersectionObserver):
+        (WebCore::LazyLoadImageObserver::isObserved const):
+        * html/LazyLoadImageObserver.h: Added.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::loadDeferredImage):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::isDeferred const):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+        (WebCore::CachedResourceLoader::clientDefersImage const):
+        (WebCore::CachedResourceLoader::shouldDeferImageLoad const):
+        (WebCore::CachedResourceLoader::reloadImagesIfNotDeferred):
+        * loader/cache/CachedResourceLoader.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::isDeferredImage):
+        (WebCore::RenderImage::paintReplaced):
+
 2019-10-26  Antti Koivisto  <antti@apple.com>
 
         Move StyleResolver::applyProperty to PropertyCascade

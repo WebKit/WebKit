@@ -1,0 +1,4 @@
+
+PASS Test that document load event is fired 
+PASS Test that invisible images are loaded 
+

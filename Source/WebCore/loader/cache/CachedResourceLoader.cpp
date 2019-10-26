@@ -207,7 +207,7 @@ Frame* CachedResourceLoader::frame() const
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
 
-ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request)
+ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request, ImageLoading imageLoading)
 {
     if (Frame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
@@ -220,8 +220,9 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
         }
     }
 
-    auto defer = clientDefersImage(request.resourceRequest().url()) ? DeferOption::DeferredByClient : DeferOption::NoDefer;
-    return castCachedResourceTo<CachedImage>(requestResource(CachedResource::Type::ImageResource, WTFMove(request), ForPreload::No, defer));
+    if (imageLoading == ImageLoading::Immediate)
+        imageLoading = clientDefersImage(request.resourceRequest().url());
+    return castCachedResourceTo<CachedImage>(requestResource(CachedResource::Type::ImageResource, WTFMove(request), ForPreload::No, imageLoading));
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedFont>> CachedResourceLoader::requestFont(CachedResourceRequest&& request, bool isSVG)
@@ -824,7 +825,7 @@ bool CachedResourceLoader::shouldSendXTempTabletHeader(CachedResource::Type type
 }
 #endif
 
-ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
+ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, ImageLoading imageLoading)
 {
     if (!frame() || !frame()->page()) {
         RELEASE_LOG_IF_ALLOWED("requestResource: failed because no frame or page");
@@ -948,7 +949,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     auto& cookieJar = page.cookieJar();
 
-    RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, defer);
+    RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
     case Reload:
         memoryCache.remove(*resource);
@@ -1010,7 +1011,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         incrementRequestCount(*resource);
     }
 
-    if ((policy != Use || resource->stillNeedsLoad()) && defer == DeferOption::NoDefer) {
+    if ((policy != Use || resource->stillNeedsLoad()) && imageLoading == ImageLoading::Immediate) {
         resource->load(*this);
 
         // We don't support immediate loads, but we do support immediate failure.
@@ -1119,7 +1120,7 @@ static void logResourceRevalidationDecision(CachedResource::RevalidationDecision
     }
 }
 
-CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, CachedResourceRequest& cachedResourceRequest, CachedResource* existingResource, ForPreload forPreload, DeferOption defer) const
+CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, CachedResourceRequest& cachedResourceRequest, CachedResource* existingResource, ForPreload forPreload, ImageLoading imageLoading) const
 {
     auto& request = cachedResourceRequest.resourceRequest();
 
@@ -1175,7 +1176,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     ASSERT(!request.isConditional());
 
     // Do not load from cache if images are not enabled. The load for this image will be blocked in CachedImage::load.
-    if (defer == DeferOption::DeferredByClient)
+    if (imageLoading == ImageLoading::DeferredUntilVisible)
         return Reload;
 
     // Don't reload resources while pasting or if cache mode allows stale resources.
@@ -1320,9 +1321,9 @@ void CachedResourceLoader::setImagesEnabled(bool enable)
     reloadImagesIfNotDeferred();
 }
 
-bool CachedResourceLoader::clientDefersImage(const URL&) const
+ImageLoading CachedResourceLoader::clientDefersImage(const URL&) const
 {
-    return !m_imagesEnabled;
+    return m_imagesEnabled ? ImageLoading::Immediate : ImageLoading::DeferredUntilVisible;
 }
 
 bool CachedResourceLoader::shouldPerformImageLoad(const URL& url) const
@@ -1332,13 +1333,13 @@ bool CachedResourceLoader::shouldPerformImageLoad(const URL& url) const
 
 bool CachedResourceLoader::shouldDeferImageLoad(const URL& url) const
 {
-    return clientDefersImage(url) || !shouldPerformImageLoad(url);
+    return clientDefersImage(url) == ImageLoading::DeferredUntilVisible || !shouldPerformImageLoad(url);
 }
 
 void CachedResourceLoader::reloadImagesIfNotDeferred()
 {
     for (auto& resource : m_documentResources.values()) {
-        if (is<CachedImage>(*resource) && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
+        if (is<CachedImage>(*resource) && resource->stillNeedsLoad() && clientDefersImage(resource->url()) == ImageLoading::Immediate)
             downcast<CachedImage>(*resource).load(*this);
     }
 }

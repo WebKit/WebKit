@@ -161,6 +161,10 @@ public:
         if (!LinkLoader::isSupportedType(type.value(), m_typeAttribute))
             return nullptr;
 
+        // Do not preload if lazyload is possible but metadata fetch is disabled.
+        if (equalLettersIgnoringASCIICase(m_lazyloadAttribute, "lazy"))
+            return nullptr;
+
         auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript, m_referrerPolicy);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
@@ -205,6 +209,12 @@ private:
             if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
                 m_sizesAttribute = attributeValue;
                 break;
+            }
+            if (RuntimeEnabledFeatures::sharedFeatures().lazyImageLoadingEnabled()) {
+                if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
+                    m_lazyloadAttribute = attributeValue;
+                    break;
+                }
             }
             processImageAndScriptAttribute(attributeName, attributeValue);
             break;
@@ -370,6 +380,7 @@ private:
     String m_metaContent;
     String m_asAttribute;
     String m_typeAttribute;
+    String m_lazyloadAttribute;
     bool m_metaIsViewport;
     bool m_metaIsDisabledAdaptations;
     bool m_inputIsImage;

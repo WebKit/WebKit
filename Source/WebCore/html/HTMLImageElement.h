@@ -126,7 +126,16 @@ public:
 
     void defaultEventHandler(Event&) final;
 
+    void loadDeferredImage();
+
     bool createdByParser() const { return m_createdByParser; }
+
+    const AtomString& loadingForBindings() const;
+    void setLoadingForBindings(const AtomString&);
+
+    bool isLazyLoadable() const;
+
+    bool isDeferred() const;
 
     bool isDroppedImagePlaceholder() const { return m_isDroppedImagePlaceholder; }
     void setIsDroppedImagePlaceholder() { m_isDroppedImagePlaceholder = true; }

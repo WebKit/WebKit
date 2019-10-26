@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:enableLazyImageLoading=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="placeholder.js"></script>
+
+<body>
+  <div style="height:10000px;"></div>
+</body>
+
+<script>
+  async_test(function(t) {
+    const img = new Image();
+    img.onload = t.step_func_done(function() {
+      assert_true(is_image_fully_loaded(img));
+    });
+    img.src = '../loading/resources/base-image1.png';
+  }, "Test that load event is fired for JS Image() fetches");
+
+  async_test(function(t) {
+    const attached_img = document.createElement("IMG");
+    document.body.appendChild(attached_img);
+    attached_img.onload = t.step_func_done(function() {
+      assert_true(is_image_fully_loaded(attached_img));
+    });
+    attached_img.src = "../loading/resources/base-image2.png";
+  }, "Test that load event is fired for <img> created via JS and attached below viewport");
+
+  async_test(function(t) {
+    var iframe = document.createElement('iframe');
+    iframe.srcdoc = "<img loading='lazy' style='width:100px;height:100px'></img>";
+    iframe.onload = function() {
+      var iframe_img = iframe.contentDocument.getElementsByTagName('img')[0];
+      var adopted_img = document.adoptNode(iframe_img);
+      document.body.appendChild(adopted_img);
+      adopted_img.onload = t.step_func_done(function() {
+        assert_true(is_image_fully_loaded(adopted_img));
+      });
+      adopted_img.src = "../loading/resources/base-image2.png";
+    };
+    document.body.appendChild(iframe);
+  }, "Test that load event is fired for adopted <img> that is appended below the viewport");
+
+  async_test(function(t) {
+    const img = new Image();
+    img.loading = "lazy";
+    img.src = '../loading/resources/base-image1.png';
+    img.decode().then(() => {
+      assert_true(is_image_fully_loaded(img));
+      t.done();
+    }).catch((encodingError) => {
+      assert_unreached();
+    })
+  }, "Test that load event is fired for JS Image() decode even with loading set to lazy");
+
+</script>

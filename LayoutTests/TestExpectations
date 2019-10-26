@@ -3854,7 +3854,6 @@ fast/text/design-system-ui-14.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-15.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
-webkit.org/b/196698 imported/w3c/web-platform-tests/loading/lazyload/image-loading-lazy.tentative.html
 webkit.org/b/196698 imported/w3c/web-platform-tests/loading/lazyload/iframe-loading-lazy.tentative.html
 
 webkit.org/b/202517 imported/w3c/web-platform-tests/2dcontext/text-styles/2d.text.draw.baseline.ideographic.html [ Skip ]

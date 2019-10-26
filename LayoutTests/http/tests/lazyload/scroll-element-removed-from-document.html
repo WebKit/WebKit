@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:enableLazyImageLoading=true ] -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="placeholder.js"></script>
+
+<body>
+  <img id="in_viewport" src='../loading/resources/base-image1.png'>
+  <div style="height:10000px;"></div>
+  <img id="below_viewport" src='../loading/resources/base-image2.png' loading="lazy">
+</body>
+
+<script>
+  var in_viewport_element = document.getElementById("in_viewport");
+  var below_viewport_element = document.getElementById("below_viewport");
+
+  async_test(function(t) {
+    below_viewport_element.remove();
+    assert_false(is_image_fully_loaded(below_viewport_element));
+    in_viewport_element.addEventListener("load", t.step_func(function() {
+      window.scrollTo(0, 10000);
+      t.step_timeout(function() { assert_false(is_image_fully_loaded(below_viewport_element)); t.done(); }, 1000);
+    }));
+  }, "Test that <img> below viewport is not loaded when removed from the document and then scrolled to");
+</script>

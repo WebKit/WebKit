@@ -43,6 +43,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "LazyLoadImageObserver.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
@@ -53,6 +54,7 @@
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
@@ -244,7 +246,10 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
 #endif
     } else if (name == x_apple_editable_imageAttr)
         updateEditableImage();
-    else {
+    else if (name == loadingAttr) {
+        if (!equalLettersIgnoringASCIICase(value, "lazy"))
+            loadDeferredImage();
+    } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
             if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
@@ -261,6 +266,11 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         }
         HTMLElement::parseAttribute(name, value);
     }
+}
+
+void HTMLImageElement::loadDeferredImage()
+{
+    m_imageLoader->loadDeferredImage();
 }
 
 const AtomString& HTMLImageElement::altText() const
@@ -665,6 +675,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
 void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    m_createdByParser = false;
     m_imageLoader->elementDidMoveToNewDocument();
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
@@ -859,6 +870,37 @@ bool HTMLImageElement::hasPendingActivity() const
 size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 {
     return m_imageLoader->pendingDecodePromisesCountForTesting();
+}
+
+const AtomString& HTMLImageElement::loadingForBindings() const
+{
+    static NeverDestroyed<AtomString> autoValue("auto", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> eager("eager", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
+    auto attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
+    if (equalLettersIgnoringASCIICase(attributeValue, "eager"))
+        return eager;
+    if (equalLettersIgnoringASCIICase(attributeValue, "lazy"))
+        return lazy;
+    return autoValue;
+}
+
+void HTMLImageElement::setLoadingForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(loadingAttr, value);
+}
+
+bool HTMLImageElement::isDeferred() const
+{
+    return m_imageLoader->isDeferred();
+}
+
+bool HTMLImageElement::isLazyLoadable() const
+{
+    if (document().frame() && !document().frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+        return false;
+    // Never do lazy loading for image elements created from JavaScript.
+    return createdByParser() && equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy");
 }
 
 }

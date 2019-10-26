@@ -119,6 +119,7 @@
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
 #include "LayoutDisallowedScope.h"
+#include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
@@ -8323,6 +8324,13 @@ TextManipulationController& Document::textManipulationController()
     if (!m_textManipulationController)
         m_textManipulationController = makeUnique<TextManipulationController>(*this);
     return *m_textManipulationController;
+}
+
+LazyLoadImageObserver& Document::lazyLoadImageObserver()
+{
+    if (!m_lazyLoadImageObserver)
+        m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
+    return *m_lazyLoadImageObserver;
 }
 
 } // namespace WebCore

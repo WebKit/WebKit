@@ -91,7 +91,9 @@ public:
     void removeAllClientsWaitingForAsyncDecoding();
 
     void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
-    
+
+    bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
+
 private:
     void clear();
 
@@ -127,8 +129,6 @@ private:
 
     // For compatibility, images keep loading even if there are HTTP errors.
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
-
-    bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     class CachedImageObserver final : public RefCounted<CachedImageObserver>, public ImageObserver {
     public:
