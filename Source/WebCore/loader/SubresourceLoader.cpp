@@ -334,7 +334,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
 
 #if USE(QUICK_LOOK)
     if (shouldCreatePreviewLoaderForResponse(response)) {
-        m_previewLoader = LegacyPreviewLoader::create(*this, response);
+        m_previewLoader = makeUnique<LegacyPreviewLoader>(*this, response);
         if (m_previewLoader->didReceiveResponse(response))
             return;
     }

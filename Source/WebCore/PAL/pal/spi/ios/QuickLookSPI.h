@@ -39,6 +39,7 @@
 - (NSURLRequest *)safeRequestForRequest:(NSURLRequest *)request;
 - (id)initWithConnection:(NSURLConnection *)connection delegate:(id)delegate response:(NSURLResponse *)response options:(NSDictionary *)options;
 - (id)initWithData:(NSData *)data name:(NSString *)name uti:(NSString *)uti options:(NSDictionary *)options;
+- (void)appendData:(NSData *)data;
 - (void)appendDataArray:(NSArray *)dataArray;
 - (void)finishConverting;
 - (void)finishedAppendingData;

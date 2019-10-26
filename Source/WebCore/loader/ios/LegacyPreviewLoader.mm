@@ -38,34 +38,9 @@
 #import "QuickLook.h"
 #import "ResourceLoader.h"
 #import "Settings.h"
-#import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
-
-@interface WebPreviewLoader : NSObject {
-    WeakPtr<ResourceLoader> _resourceLoader;
-    ResourceResponse _response;
-    RefPtr<LegacyPreviewLoaderClient> _client;
-    std::unique_ptr<PreviewConverter> _converter;
-    RetainPtr<NSMutableArray> _bufferedDataArray;
-    BOOL _hasLoadedPreview;
-    BOOL _hasProcessedResponse;
-    RefPtr<SharedBuffer> _bufferedData;
-    long long _lengthReceived;
-    BOOL _needsToCallDidFinishLoading;
-}
-
-- (instancetype)initWithResourceLoader:(ResourceLoader&)resourceLoader resourceResponse:(const ResourceResponse&)resourceResponse;
-- (void)appendDataArray:(NSArray<NSData *> *)dataArray;
-- (void)finishedAppending;
-- (void)failed;
-
-@property (nonatomic, readonly) BOOL shouldDecidePolicyBeforeLoading;
-
-@end
-
-@implementation WebPreviewLoader
+namespace WebCore {
 
 static RefPtr<LegacyPreviewLoaderClient>& testingClient()
 {
@@ -79,210 +54,13 @@ static LegacyPreviewLoaderClient& emptyClient()
     return emptyClient.get();
 }
 
-- (instancetype)initWithResourceLoader:(ResourceLoader&)resourceLoader resourceResponse:(const ResourceResponse&)resourceResponse
+static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, const String& previewFileName, const String& previewType)
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _resourceLoader = makeWeakPtr(resourceLoader);
-    _response = resourceResponse;
-    _converter = makeUnique<PreviewConverter>(self, _response);
-    _bufferedDataArray = adoptNS([[NSMutableArray alloc] init]);
-    _shouldDecidePolicyBeforeLoading = resourceLoader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview();
-
-    if (testingClient())
-        _client = testingClient();
-    else if (auto client = resourceLoader.frameLoader()->client().createPreviewLoaderClient(_converter->previewFileName(), _converter->previewUTI()))
-        _client = WTFMove(client);
-    else
-        _client = &emptyClient();
-
-    LOG(Network, "WebPreviewConverter created with preview file name \"%s\".", _converter->previewFileName().utf8().data());
-    return self;
-}
-
-- (void)appendDataArray:(NSArray<NSData *> *)dataArray
-{
-    LOG(Network, "WebPreviewConverter appending data array with count %ld.", dataArray.count);
-    [_converter->platformConverter() appendDataArray:dataArray];
-    [_bufferedDataArray addObjectsFromArray:dataArray];
-    _client->didReceiveDataArray((CFArrayRef)dataArray);
-}
-
-- (void)finishedAppending
-{
-    LOG(Network, "WebPreviewConverter finished appending data.");
-    [_converter->platformConverter() finishedAppendingData];
-    _client->didFinishLoading();
-}
-
-- (void)failed
-{
-    LOG(Network, "WebPreviewConverter failed.");
-    [_converter->platformConverter() finishConverting];
-    _client->didFail();
-}
-
-- (void)_loadPreviewIfNeeded
-{
-    if (!_resourceLoader)
-        return;
-
-    ASSERT(!_resourceLoader->reachedTerminalState());
-    if (_hasLoadedPreview)
-        return;
-
-    _hasLoadedPreview = YES;
-    [_bufferedDataArray removeAllObjects];
-
-    ResourceResponse response { _converter->previewResponse() };
-    response.setIsQuickLook(true);
-    ASSERT(response.mimeType().length());
-
-    _resourceLoader->documentLoader()->setPreviewConverter(WTFMove(_converter));
-
-    if (_shouldDecidePolicyBeforeLoading) {
-        _hasProcessedResponse = YES;
-        _resourceLoader->didReceivePreviewResponse(response);
-        return;
-    }
-
-    _hasProcessedResponse = NO;
-    _resourceLoader->didReceiveResponse(response, [self, retainedSelf = retainPtr(self)] {
-        _hasProcessedResponse = YES;
-
-        if (!_resourceLoader)
-            return;
-
-        if (_resourceLoader->reachedTerminalState())
-            return;
-
-        if (auto bufferedData = WTFMove(_bufferedData)) {
-            _resourceLoader->didReceiveData(bufferedData->data(), bufferedData->size(), _lengthReceived, DataPayloadBytes);
-            _lengthReceived = 0;
-        }
-
-        if (_resourceLoader->reachedTerminalState())
-            return;
-
-        if (_needsToCallDidFinishLoading) {
-            _needsToCallDidFinishLoading = NO;
-            _resourceLoader->didFinishLoading(NetworkLoadMetrics { });
-        }
-    });
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
-{
-    if (!_resourceLoader)
-        return;
-
-    ASSERT_UNUSED(connection, !connection);
-    if (_resourceLoader->reachedTerminalState())
-        return;
-
-    [self _loadPreviewIfNeeded];
-
-    auto dataLength = data.length;
-
-    // QuickLook code sends us a nil data at times. The check below is the same as the one in
-    // ResourceHandleMac.cpp added for a different bug.
-    if (!dataLength)
-        return;
-
-    if (_hasProcessedResponse) {
-        _resourceLoader->didReceiveData(reinterpret_cast<const char*>(data.bytes), dataLength, lengthReceived, DataPayloadBytes);
-        return;
-    }
-
-    if (!_bufferedData)
-        _bufferedData = SharedBuffer::create(data);
-    else
-        _bufferedData->append(data);
-    _lengthReceived += lengthReceived;
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    if (!_resourceLoader)
-        return;
-
-    ASSERT_UNUSED(connection, !connection);
-    if (_resourceLoader->reachedTerminalState())
-        return;
-    
-    ASSERT(_hasLoadedPreview);
-
-    if (!_hasProcessedResponse) {
-        _needsToCallDidFinishLoading = YES;
-        return;
-    }
-
-    _resourceLoader->didFinishLoading(NetworkLoadMetrics { });
-}
-
-static inline bool isQuickLookPasswordError(NSError *error)
-{
-    return error.code == kQLReturnPasswordProtected && [error.domain isEqualToString:@"QuickLookErrorDomain"];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    if (!_resourceLoader)
-        return;
-
-    ASSERT_UNUSED(connection, !connection);
-    if (_resourceLoader->reachedTerminalState())
-        return;
-
-    if (!isQuickLookPasswordError(error)) {
-        _resourceLoader->didFail(error);
-        return;
-    }
-
-    if (!_client->supportsPasswordEntry()) {
-        _resourceLoader->didFail(_resourceLoader->cannotShowURLError());
-        return;
-    }
-
-    _client->didRequestPassword([self, retainedSelf = retainPtr(self)] (const String& password) {
-        _converter = makeUnique<PreviewConverter>(self, _response, password);
-        [_converter->platformConverter() appendDataArray:_bufferedDataArray.get()];
-        [_converter->platformConverter() finishedAppendingData];
-    });
-}
-
-@end
-
-namespace WebCore {
-
-LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
-    : m_previewLoader { adoptNS([[WebPreviewLoader alloc] initWithResourceLoader:loader resourceResponse:response]) }
-{
-}
-
-LegacyPreviewLoader::~LegacyPreviewLoader()
-{
-}
-
-std::unique_ptr<LegacyPreviewLoader> LegacyPreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
-{
-    ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
-    return makeUnique<LegacyPreviewLoader>(loader, response);
-}
-
-bool LegacyPreviewLoader::didReceiveResponse(const ResourceResponse&)
-{
-    return ![m_previewLoader shouldDecidePolicyBeforeLoading];
-}
-
-bool LegacyPreviewLoader::didReceiveData(const char* data, unsigned length)
-{
-    if (m_finishedLoadingDataIntoConverter)
-        return false;
-
-    [m_previewLoader appendDataArray:@[ [NSData dataWithBytes:data length:length] ]];
-    return true;
+    if (auto client = testingClient())
+        return client.releaseNonNull();
+    if (auto client = loader.frameLoader()->client().createPreviewLoaderClient(previewFileName, previewType))
+        return client.releaseNonNull();
+    return emptyClient();
 }
 
 bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
@@ -290,7 +68,10 @@ bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
-    [m_previewLoader appendDataArray:buffer.createNSDataArray().get()];
+    LOG(Network, "LegacyPreviewLoader appending buffer with size %ld.", buffer.size());
+    m_originalData->append(buffer);
+    m_converter->updateMainResource();
+    m_client->didReceiveDataArray((__bridge CFArrayRef)buffer.createNSDataArray().get());
     return true;
 }
 
@@ -299,8 +80,10 @@ bool LegacyPreviewLoader::didFinishLoading()
     if (m_finishedLoadingDataIntoConverter)
         return false;
 
+    LOG(Network, "LegacyPreviewLoader finished appending data.");
     m_finishedLoadingDataIntoConverter = true;
-    [m_previewLoader finishedAppending];
+    m_converter->finishUpdating();
+    m_client->didFinishLoading();
     return true;
 }
 
@@ -309,9 +92,166 @@ void LegacyPreviewLoader::didFail()
     if (m_finishedLoadingDataIntoConverter)
         return;
 
+    LOG(Network, "LegacyPreviewLoader failed.");
     m_finishedLoadingDataIntoConverter = true;
-    [m_previewLoader failed];
-    m_previewLoader = nullptr;
+    m_converter->failedUpdating();
+    m_client->didFail();
+    m_converter = nullptr;
+}
+
+void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& converter)
+{
+    auto resourceLoader = m_resourceLoader.get();
+    if (!resourceLoader)
+        return;
+
+    if (resourceLoader->reachedTerminalState())
+        return;
+
+    ASSERT(!m_hasProcessedResponse);
+    m_originalData->clear();
+    resourceLoader->documentLoader()->setPreviewConverter(WTFMove(m_converter));
+    auto response { converter.previewResponse() };
+
+    if (m_shouldDecidePolicyBeforeLoading) {
+        m_hasProcessedResponse = true;
+        resourceLoader->didReceivePreviewResponse(response);
+        return;
+    }
+
+    resourceLoader->didReceiveResponse(response, [this, weakThis = makeWeakPtr(static_cast<PreviewConverterClient&>(*this)), converter = makeRef(converter)] {
+        if (!weakThis)
+            return;
+
+        m_hasProcessedResponse = true;
+
+        auto resourceLoader = m_resourceLoader.get();
+        if (!resourceLoader)
+            return;
+
+        if (resourceLoader->reachedTerminalState())
+            return;
+
+        if (!converter->previewData().isEmpty()) {
+            auto bufferSize = converter->previewData().size();
+            resourceLoader->didReceiveBuffer(converter->previewData().copy(), bufferSize, DataPayloadBytes);
+        }
+
+        if (resourceLoader->reachedTerminalState())
+            return;
+
+        if (m_needsToCallDidFinishLoading) {
+            m_needsToCallDidFinishLoading = false;
+            resourceLoader->didFinishLoading(NetworkLoadMetrics { });
+        }
+    });
+}
+
+void LegacyPreviewLoader::previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer& data)
+{
+    auto resourceLoader = m_resourceLoader.get();
+    if (!resourceLoader)
+        return;
+
+    if (resourceLoader->reachedTerminalState())
+        return;
+
+    if (data.isEmpty())
+        return;
+
+    if (!m_hasProcessedResponse)
+        return;
+
+    auto dataCopy = data.copy();
+    resourceLoader->didReceiveBuffer(WTFMove(dataCopy), dataCopy->size(), DataPayloadBytes);
+}
+
+void LegacyPreviewLoader::previewConverterDidFinishConverting(PreviewConverter&)
+{
+    auto resourceLoader = m_resourceLoader.get();
+    if (!resourceLoader)
+        return;
+
+    if (resourceLoader->reachedTerminalState())
+        return;
+
+    if (!m_hasProcessedResponse) {
+        m_needsToCallDidFinishLoading = true;
+        return;
+    }
+
+    resourceLoader->didFinishLoading(NetworkLoadMetrics { });
+}
+
+void LegacyPreviewLoader::previewConverterDidFailUpdating(PreviewConverter&)
+{
+    if (auto resourceLoader = m_resourceLoader.get())
+        resourceLoader->didFail(resourceLoader->cannotShowURLError());
+}
+
+void LegacyPreviewLoader::previewConverterDidFailConverting(PreviewConverter& converter)
+{
+    auto resourceLoader = m_resourceLoader.get();
+    if (!resourceLoader)
+        return;
+
+    if (resourceLoader->reachedTerminalState())
+        return;
+
+    resourceLoader->didFail(converter.previewError());
+}
+
+void LegacyPreviewLoader::providePasswordForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    ASSERT_UNUSED(converter, &converter == m_converter);
+
+    auto resourceLoader = m_resourceLoader.get();
+    if (!resourceLoader) {
+        completionHandler({ });
+        return;
+    }
+
+    if (resourceLoader->reachedTerminalState()) {
+        completionHandler({ });
+        return;
+    }
+
+    if (!m_client->supportsPasswordEntry()) {
+        completionHandler({ });
+        return;
+    }
+
+    m_client->didRequestPassword(WTFMove(completionHandler));
+}
+
+void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverter& converter, CompletionHandler<void(const SharedBuffer*)>&& completionHandler)
+{
+    ASSERT_UNUSED(converter, &converter == m_converter);
+    completionHandler(m_originalData.ptr());
+}
+
+LegacyPreviewLoader::~LegacyPreviewLoader() = default;
+
+LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
+    : m_converter { PreviewConverter::create(response, *this) }
+    , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
+    , m_originalData { SharedBuffer::create() }
+    , m_resourceLoader { makeWeakPtr(loader) }
+    , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
+{
+    ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
+    m_converter->addClient(*this);
+    LOG(Network, "LegacyPreviewLoader created with preview file name \"%s\".", m_converter->previewFileName().utf8().data());
+}
+
+bool LegacyPreviewLoader::didReceiveData(const char* data, unsigned length)
+{
+    return didReceiveBuffer(SharedBuffer::create(data, length).get());
+}
+
+bool LegacyPreviewLoader::didReceiveResponse(const ResourceResponse&)
+{
+    return !m_shouldDecidePolicyBeforeLoading;
 }
 
 void LegacyPreviewLoader::setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&& client)

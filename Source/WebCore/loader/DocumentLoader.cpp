@@ -2138,7 +2138,7 @@ void DocumentLoader::previewResponseReceived(CachedResource& resource, const Res
     m_response = response;
 }
 
-void DocumentLoader::setPreviewConverter(std::unique_ptr<PreviewConverter>&& previewConverter)
+void DocumentLoader::setPreviewConverter(RefPtr<PreviewConverter>&& previewConverter)
 {
     m_previewConverter = WTFMove(previewConverter);
 }

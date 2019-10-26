@@ -2985,6 +2985,8 @@
 		A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */; };
 		A19D934B1AA11B1E00B46C24 /* NetworkExtensionContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */; };
 		A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */ = {isa = PBXBuildFile; fileRef = A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */; };
+		A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */; };
+		A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */; };
 		A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */; };
 		A1AFEDE71F8BFF6D0087013F /* MockPaymentCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */; };
 		A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */; };
@@ -11314,6 +11316,9 @@
 		A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkExtensionContentFilter.mm; sourceTree = "<group>"; };
 		A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkExtensionContentFilter.h; sourceTree = "<group>"; };
 		A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContentFilterBlockedPage.html; sourceTree = "<group>"; };
+		A1ADAF792360EF6C009CB776 /* PreviewConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PreviewConverter.cpp; sourceTree = "<group>"; };
+		A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverterClient.h; sourceTree = "<group>"; };
+		A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverterProvider.h; sourceTree = "<group>"; };
 		A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentCoordinator.h; sourceTree = "<group>"; };
 		A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockPaymentCoordinator.cpp; sourceTree = "<group>"; };
 		A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilterSettings.cpp; sourceTree = "<group>"; };
@@ -25721,7 +25726,10 @@
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
+				A1ADAF792360EF6C009CB776 /* PreviewConverter.cpp */,
 				A1C150781E3F2B3E0032C98C /* PreviewConverter.h */,
+				A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */,
+				A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */,
 				51F645D21FECDBC800B54DED /* ProcessIdentifier.cpp */,
 				51F645D31FECDBC800B54DED /* ProcessIdentifier.h */,
 				F47A633C1FF6FD500081B3CC /* PromisedAttachmentInfo.h */,
@@ -31485,6 +31493,8 @@
 				46DBB6501AB8C96F00D9A813 /* PowerObserverMac.h in Headers */,
 				C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */,
 				A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */,
+				A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */,
+				A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */,
 				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				51F645D51FECDBCE00B54DED /* ProcessIdentifier.h in Headers */,

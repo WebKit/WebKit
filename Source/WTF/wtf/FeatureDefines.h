@@ -217,6 +217,12 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 #endif
 
+#if !defined(ENABLE_PREVIEW_CONVERTER)
+#if PLATFORM(IOS)
+#define ENABLE_PREVIEW_CONVERTER 1
+#endif
+#endif
+
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple WATCHOS port --------- */

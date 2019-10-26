@@ -352,7 +352,7 @@ public:
     URL documentURL() const;
 
 #if USE(QUICK_LOOK)
-    void setPreviewConverter(std::unique_ptr<PreviewConverter>&&);
+    void setPreviewConverter(RefPtr<PreviewConverter>&&);
     PreviewConverter* previewConverter() const;
 #endif
 
@@ -591,7 +591,7 @@ private:
 #endif
 
 #if USE(QUICK_LOOK)
-    std::unique_ptr<PreviewConverter> m_previewConverter;
+    RefPtr<PreviewConverter> m_previewConverter;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

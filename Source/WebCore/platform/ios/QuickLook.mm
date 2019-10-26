@@ -28,7 +28,6 @@
 
 #if USE(QUICK_LOOK)
 
-#import "PreviewConverter.h"
 #import "ResourceRequest.h"
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
@@ -83,12 +82,12 @@ RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString 
     if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
         RetainPtr<NSString> uti = adoptNS(PAL::softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
-        auto converter = makeUnique<PreviewConverter>(data, uti.get());
-        ResourceRequest previewRequest = converter->previewRequest();
+        auto converter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
+        ResourceRequest previewRequest = [converter previewRequest];
 
         // We use [request URL] here instead of url since it will be
         // the URL that the WebDataSource will see during -dealloc.
-        addQLPreviewConverterWithFileForURL(previewRequest.url(), converter->platformConverter(), nil);
+        addQLPreviewConverterWithFileForURL(previewRequest.url(), converter.get(), nil);
 
         return previewRequest.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     }

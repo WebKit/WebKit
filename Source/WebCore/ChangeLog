@@ -1,3 +1,122 @@
+2019-10-25  Andy Estes  <aestes@apple.com>
+
+        [Quick Look] Move the QLPreviewConverter delegate into PreviewConverter and vend a C++ client interface
+        https://bugs.webkit.org/show_bug.cgi?id=203396
+
+        Reviewed by Alex Christensen.
+
+        PreviewConverter existed as a thin wrapper around QLPreviewConverter for use by
+        LegacyPreviewLoader and Quick Look NSData loading in WebKitLegacy. This patch makes two
+        changes to this arrangement:
+
+        1. The QLPreviewConverter delegate and the bulk of the conversion state machine was moved
+        into PreviewConverter, which now vends a C++ client interface. LegacyPreviewLoader is now a
+        client of its PreviewConverter, retaining the responsiility of interacting with the
+        ResourceLoader and LegacyPreviewLoaderClient.
+
+        2. The Quick Look NSData loading code for WebKitLegacy now uses QLPreviewConverter API
+        directly rather than creating a PreviewConverter. This code path does not require a delegate
+        nor any of the other logic in PreviewConverter.
+
+        This change also organizes PreviewConverter into a cross-platform .cpp file and an
+        iOS-specific .mm file for the direct usage of QLPreviewConverter API. LegacyPreviewConverter
+        was also organized such that it can be changed from .mm to .cpp in a future patch.
+
+        No change in behavior. Covered by existing API and layout tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setPreviewConverter):
+        * loader/DocumentLoader.h: Changed m_previewConverter from std::unique_ptr to RefPtr.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Used makeUnique directly instead of
+        LegacyPreviewLoader::create().
+
+        * loader/ios/LegacyPreviewLoader.h: Privately inherited from PreviewConverterClient and
+        PreviewConverterProvider and migrated WebPreviewLoader ivars to member variables.
+
+        * loader/ios/LegacyPreviewLoader.mm:
+        (WebCore::makeClient):
+        (WebCore::LegacyPreviewLoader::didReceiveBuffer):
+        (WebCore::LegacyPreviewLoader::didFinishLoading):
+        (WebCore::LegacyPreviewLoader::didFail):
+        (WebCore::LegacyPreviewLoader::previewConverterDidStartConverting):
+        (WebCore::LegacyPreviewLoader::previewConverterDidReceiveData):
+        (WebCore::LegacyPreviewLoader::previewConverterDidFinishConverting):
+        (WebCore::LegacyPreviewLoader::previewConverterDidFailUpdating):
+        (WebCore::LegacyPreviewLoader::previewConverterDidFailConverting):
+        (WebCore::LegacyPreviewLoader::providePasswordForPreviewConverter):
+        (WebCore::LegacyPreviewLoader::provideMainResourceForPreviewConverter):
+        (WebCore::LegacyPreviewLoader::LegacyPreviewLoader):
+        (WebCore::LegacyPreviewLoader::didReceiveData):
+        (WebCore::LegacyPreviewLoader::didReceiveResponse):
+        (testingClient): Deleted.
+        (emptyClient): Deleted.
+        (-[WebPreviewLoader initWithResourceLoader:resourceResponse:]): Deleted.
+        (-[WebPreviewLoader appendDataArray:]): Deleted.
+        (-[WebPreviewLoader finishedAppending]): Deleted.
+        (-[WebPreviewLoader failed]): Deleted.
+        (-[WebPreviewLoader _loadPreviewIfNeeded]): Deleted.
+        (-[WebPreviewLoader connection:didReceiveData:lengthReceived:]): Deleted.
+        (-[WebPreviewLoader connectionDidFinishLoading:]): Deleted.
+        (isQuickLookPasswordError): Deleted.
+        (-[WebPreviewLoader connection:didFailWithError:]): Deleted.
+        (WebCore::LegacyPreviewLoader::~LegacyPreviewLoader): Deleted.
+        (WebCore::LegacyPreviewLoader::create): Deleted.
+
+        * platform/PreviewConverter.cpp: Added.
+        (WebCore::PreviewConverter::supportsMIMEType):
+        (WebCore::PreviewConverter::previewResponse const):
+        (WebCore::PreviewConverter::previewError const):
+        (WebCore::PreviewConverter::previewData const):
+        (WebCore::PreviewConverter::updateMainResource):
+        (WebCore::PreviewConverter::appendFromBuffer):
+        (WebCore::PreviewConverter::finishUpdating):
+        (WebCore::PreviewConverter::failedUpdating):
+        (WebCore::PreviewConverter::hasClient const):
+        (WebCore::PreviewConverter::addClient):
+        (WebCore::PreviewConverter::removeClient):
+        (WebCore::sharedPasswordForTesting):
+        (WebCore::PreviewConverter::passwordForTesting):
+        (WebCore::PreviewConverter::setPasswordForTesting):
+        (WebCore::PreviewConverter::iterateClients):
+        (WebCore::PreviewConverter::didAddClient):
+        (WebCore::PreviewConverter::didFailConvertingWithError):
+        (WebCore::PreviewConverter::didFailUpdating):
+        (WebCore::PreviewConverter::replayToClient):
+        (WebCore::PreviewConverter::delegateDidReceiveData):
+        (WebCore::PreviewConverter::delegateDidFinishLoading):
+        (WebCore::PreviewConverter::delegateDidFailWithError):
+        * platform/PreviewConverter.h:
+        (WebCore::PreviewConverter::PreviewConverter): Deleted.
+        (WebCore::PreviewConverter::platformConverter const): Deleted.
+        * platform/PreviewConverterClient.h: Copied from Source/WebCore/platform/PreviewConverter.h.
+        * platform/PreviewConverterProvider.h: Copied from Source/WebCore/platform/PreviewConverter.h.
+        * platform/ios/PreviewConverterIOS.mm:
+        (-[WebPreviewConverterDelegate initWithDelegate:]):
+        (-[WebPreviewConverterDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebPreviewConverterDelegate connectionDidFinishLoading:]):
+        (-[WebPreviewConverterDelegate connection:didFailWithError:]):
+        (WebCore::PreviewConverter::PreviewConverter):
+        (WebCore::PreviewConverter::platformSupportedMIMETypes):
+        (WebCore::PreviewConverter::safeRequest const):
+        (WebCore::PreviewConverter::platformPreviewResponse const):
+        (WebCore::PreviewConverter::platformAppend):
+        (WebCore::PreviewConverter::platformFinishedAppending):
+        (WebCore::PreviewConverter::platformFailedAppending):
+        (WebCore::PreviewConverter::isPlatformPasswordError const):
+        (WebCore::optionsWithPassword):
+        (WebCore::PreviewConverter::platformUnlockWithPassword):
+        (WebCore::PreviewConverter::supportsMIMEType): Deleted.
+        (WebCore::PreviewConverter::previewRequest const): Deleted.
+        (WebCore::PreviewConverter::previewResponse const): Deleted.
+
+        * platform/ios/QuickLook.mm:
+        (WebCore::registerQLPreviewConverterIfNeeded): Used QLPreviewConverter directly.
+
 2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: support emulateUserGesture parameter in Runtime.callFunctionOn

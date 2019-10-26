@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,115 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <objc/objc.h>
+#pragma once
+
+#if ENABLE(PREVIEW_CONVERTER)
+
+#include "ResourceError.h"
+#include "ResourceResponse.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS NSData;
 OBJC_CLASS QLPreviewConverter;
+OBJC_CLASS WebPreviewConverterDelegate;
 
 namespace WebCore {
 
+class ResourceError;
 class ResourceRequest;
-class ResourceResponse;
+class SharedBuffer;
+class SharedBufferDataView;
+struct PreviewConverterClient;
+struct PreviewConverterProvider;
 
-class PreviewConverter {
+struct PreviewPlatformDelegate : CanMakeWeakPtr<PreviewPlatformDelegate> {
+    virtual ~PreviewPlatformDelegate() = default;
+
+    virtual void delegateDidReceiveData(const SharedBuffer&) = 0;
+    virtual void delegateDidFinishLoading() = 0;
+    virtual void delegateDidFailWithError(const ResourceError&) = 0;
+};
+
+class PreviewConverter final : private PreviewPlatformDelegate, public RefCounted<PreviewConverter> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PreviewConverter);
 public:
-    PreviewConverter(id delegate, const ResourceResponse&, const String& password = { });
-    PreviewConverter(NSData *, const String& uti, const String& password = { });
+    static Ref<PreviewConverter> create(const ResourceResponse& response, PreviewConverterProvider& provider)
+    {
+        return adoptRef(*new PreviewConverter(response, provider));
+    }
 
     WEBCORE_EXPORT static bool supportsMIMEType(const String& mimeType);
 
-    QLPreviewConverter *platformConverter() const { return m_platformConverter.get(); }
+    ~PreviewConverter();
+
     ResourceRequest safeRequest(const ResourceRequest&) const;
-    ResourceRequest previewRequest() const;
     ResourceResponse previewResponse() const;
-    String previewFileName() const;
-    String previewUTI() const;
+    WEBCORE_EXPORT String previewFileName() const;
+    WEBCORE_EXPORT String previewUTI() const;
+    const ResourceError& previewError() const;
+    const SharedBuffer& previewData() const;
+
+    void failedUpdating();
+    void finishUpdating();
+    void updateMainResource();
+
+    bool hasClient(PreviewConverterClient&) const;
+    void addClient(PreviewConverterClient&);
+    void removeClient(PreviewConverterClient&);
+
+    WEBCORE_EXPORT static const String& passwordForTesting();
+    WEBCORE_EXPORT static void setPasswordForTesting(const String&);
 
 private:
+    static HashSet<String, ASCIICaseInsensitiveHash> platformSupportedMIMETypes();
+
+    PreviewConverter(const ResourceResponse&, PreviewConverterProvider&);
+
+    ResourceResponse platformPreviewResponse() const;
+    bool isPlatformPasswordError(const ResourceError&) const;
+
+    template<typename T> void iterateClients(T&& callback);
+    void appendFromBuffer(const SharedBuffer&);
+    void didAddClient(PreviewConverterClient&);
+    void didFailConvertingWithError(const ResourceError&);
+    void replayToClient(PreviewConverterClient&);
+
+    void platformAppend(const SharedBufferDataView&);
+    void platformFailedAppending();
+    void platformFinishedAppending();
+    void platformUnlockWithPassword(const String&);
+
+    // PreviewPlatformDelegate
+    void delegateDidReceiveData(const SharedBuffer&) final;
+    void delegateDidFinishLoading() final;
+    void delegateDidFailWithError(const ResourceError&) final;
+
+    enum class State : uint8_t {
+        Updating,
+        FailedUpdating,
+        Converting,
+        FailedConverting,
+        FinishedConverting,
+    };
+
+    Ref<SharedBuffer> m_previewData;
+    ResourceError m_previewError;
+    ResourceResponse m_originalResponse;
+    State m_state { State::Updating };
+    Vector<WeakPtr<PreviewConverterClient>, 1> m_clients;
+    WeakPtr<PreviewConverterProvider> m_provider;
+    bool m_isInClientCallback { false };
+    size_t m_lengthAppended { 0 };
+
+#if USE(QUICK_LOOK)
+    RetainPtr<WebPreviewConverterDelegate> m_platformDelegate;
     RetainPtr<QLPreviewConverter> m_platformConverter;
+#endif
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(PREVIEW_CONVERTER)

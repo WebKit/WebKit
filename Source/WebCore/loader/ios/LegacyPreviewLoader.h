@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include "PreviewConverterClient.h"
+#include "PreviewConverterProvider.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
-
-OBJC_CLASS WebPreviewLoader;
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,11 +39,11 @@ class ResourceLoader;
 class ResourceResponse;
 class SharedBuffer;
 
-class LegacyPreviewLoader {
+class LegacyPreviewLoader final : private PreviewConverterClient, private PreviewConverterProvider {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LegacyPreviewLoader);
 public:
-    static std::unique_ptr<LegacyPreviewLoader> create(ResourceLoader&, const ResourceResponse&);
+    LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);
     ~LegacyPreviewLoader();
 
     bool didReceiveResponse(const ResourceResponse&);
@@ -54,11 +55,27 @@ public:
     WEBCORE_EXPORT static void setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&&);
 
 private:
-    friend std::unique_ptr<LegacyPreviewLoader> std::make_unique<LegacyPreviewLoader>(ResourceLoader&, const ResourceResponse&);
-    LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);
+    // PreviewConverterClient
+    void previewConverterDidStartUpdating(PreviewConverter&) final { };
+    void previewConverterDidFinishUpdating(PreviewConverter&) final { };
+    void previewConverterDidFailUpdating(PreviewConverter&) final;
+    void previewConverterDidStartConverting(PreviewConverter&) final;
+    void previewConverterDidReceiveData(PreviewConverter&, const SharedBuffer&) final;
+    void previewConverterDidFinishConverting(PreviewConverter&) final;
+    void previewConverterDidFailConverting(PreviewConverter&) final;
 
-    RetainPtr<WebPreviewLoader> m_previewLoader;
+    // PreviewConverterProvider
+    void provideMainResourceForPreviewConverter(PreviewConverter&, CompletionHandler<void(const SharedBuffer*)>&&) final;
+    void providePasswordForPreviewConverter(PreviewConverter&, CompletionHandler<void(const String&)>&&) final;
+
+    RefPtr<PreviewConverter> m_converter;
+    Ref<LegacyPreviewLoaderClient> m_client;
+    Ref<SharedBuffer> m_originalData;
+    WeakPtr<ResourceLoader> m_resourceLoader;
     bool m_finishedLoadingDataIntoConverter { false };
+    bool m_hasProcessedResponse { false };
+    bool m_needsToCallDidFinishLoading { false };
+    bool m_shouldDecidePolicyBeforeLoading;
 };
 
 } // namespace WebCore
