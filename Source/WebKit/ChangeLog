@@ -1,3 +1,19 @@
+2019-10-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix sandbox violations seen while running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=203419
+
+        Reviewed by Brent Fulgham.
+
+        Deny mach lookup to 'com.apple.logd' and 'com.apple.logd.events' and suppress logs, since these are
+        believed to be unneeded in the WebContent process. Allow sysctl write to 'vm.footprint_suspend'.
+        Deny mach lookup to 'com.apple.system.notification_center' and suppress logs, since allowing this
+        is not believed to be needed in the WebContent process.
+
+        No new tests, covered by existing tests.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-25  Matt Lewis  <jlewis3@apple.com>
 
         Rolling out r251579,r251162,r251512,r251500, and r251498 for build failures
