@@ -1,5 +1,19 @@
 2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
+        [GTK] LayoutTests/inspector tests timeout
+        https://bugs.webkit.org/show_bug.cgi?id=147518
+
+        Reviewed by Devin Rousso.
+
+        Renable inspector/model tests on GTK.
+
+        * TestExpectations: There are two real issues that actually happen on all platforms,
+        filed separate bugs for each of them.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2019-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: support emulateUserGesture parameter in Runtime.callFunctionOn
         https://bugs.webkit.org/show_bug.cgi?id=200262
 
