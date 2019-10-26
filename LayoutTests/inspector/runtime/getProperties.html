@@ -3,6 +3,9 @@
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script src="resources/property-descriptor-utilities.js"></script>
 <script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
 function test()
 {
     let suite = ProtocolTest.createAsyncSuite("Runtime.getProperties");

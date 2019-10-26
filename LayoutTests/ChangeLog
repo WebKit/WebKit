@@ -1,3 +1,18 @@
+2019-10-25  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r251261?): Flaky Test: inspector/runtime/getProperties.html
+        https://bugs.webkit.org/show_bug.cgi?id=203271
+        <rdar://problem/56557216>
+
+        Reviewed by Devin Rousso.
+
+        r251261 was reverted and the test has become not so flaky, but the previous flakiness showed us a potential bug
+        in the test: it is possible that the console message for unhandled rejected promise gets dispatched after 
+        dumping the results. To make the test more robust, stop showing that message in console.
+
+        * inspector/runtime/getProperties-expected.txt:
+        * inspector/runtime/getProperties.html:
+
 2019-10-25  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing
