@@ -1,3 +1,21 @@
+2019-10-25  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION: fast/css/paint-order.html and fast/css/paint-order-shadow.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=203313
+        <rdar://problem/52557916>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Catalina introduced a regression, causing these tests to fail. This was not a regression related to the feature these
+        tests are testing, but a regression related to the rendering position and size of a specific glyph. Given this, the
+        tests are changed to take this into consideration, making them pass both on Catalina and previous versions of the OS.
+
+        * fast/css/paint-order-expected.html:
+        * fast/css/paint-order-shadow-expected.html:
+        * fast/css/paint-order-shadow.html:
+        * fast/css/paint-order.html:
+        * platform/mac/TestExpectations:
+
 2019-10-25  Truitt Savell  <tsavell@apple.com>
 
         Adding expectations for editing/pasteboard/smart-paste-paragraph-003.html

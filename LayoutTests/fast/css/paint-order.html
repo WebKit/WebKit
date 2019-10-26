@@ -4,28 +4,28 @@
 <head>
     <style>
         div {
-            position: absolute;
-            font-size: 80px;
+            font-size: 100px;
             color: gray;
+            width: 100px;
         }
 
         .test-stroke {
             text-shadow: none;
-            -webkit-text-stroke: 25px red;
+            -webkit-text-stroke: 60px red;
             
             /* Clip used to isolate the stroke */
-            -webkit-clip-path: inset(20px 55px 30px 15px);
+            -webkit-clip-path: inset(55px 35px 55px 35px);
         }
     </style>
 </head>
 <body>
 
-<div class="test-stroke" style="paint-order: fill; top: 0px">&#x25fc;</div>
-<div class="test-stroke" style="paint-order: fill markers; top: 100px">&#x25fc;</div>
-<div class="test-stroke" style="paint-order: stroke; top: 200px">&#x25fc;</div>
-<div class="test-stroke" style="paint-order: stroke markers; top: 300px">&#x25fc;</div>
-<div class="test-stroke" style="paint-order: markers; top: 400px">&#x25fc;</div>
-<div class="test-stroke" style="paint-order: markers stroke; top: 500px">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: fill;">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: fill markers;">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: stroke;">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: stroke markers;">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: markers;">&#x25fc;</div>
+<div class="test-stroke" style="paint-order: markers stroke;">&#x25fc;</div>
 
 </body>
 </html>
