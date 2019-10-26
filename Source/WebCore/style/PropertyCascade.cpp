@@ -26,6 +26,11 @@
 #include "config.h"
 #include "PropertyCascade.h"
 
+#include "CSSPaintImageValue.h"
+#include "CSSValuePool.h"
+#include "PaintWorkletGlobalScope.h"
+#include "StyleBuilder.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -90,6 +95,33 @@ static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
     default:
         break;
     }
+    return false;
+}
+
+static inline bool isValidVisitedLinkProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyCaretColor:
+    case CSSPropertyColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyColumnRuleColor:
+    case CSSPropertyTextDecorationColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyFill:
+    case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
+        return true;
+    default:
+        break;
+    }
+
     return false;
 }
 
@@ -404,7 +436,7 @@ void PropertyCascade::applyCustomProperty(const String& name)
         m_applyState.inProgressPropertiesCustom.add(name);
 
         if (WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
-            RefPtr<CSSValue> parsedValue = m_styleResolver.resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), *this);
+            RefPtr<CSSValue> parsedValue = resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
 
             if (m_applyState.appliedCustomProperties.contains(name))
                 return; // There was a cycle and the value was reset, so bail.
@@ -430,7 +462,7 @@ void PropertyCascade::applyCustomProperty(const String& name)
                 m_styleResolver.state().setApplyPropertyToRegularStyle(false);
                 m_styleResolver.state().setApplyPropertyToVisitedLinkStyle(true);
             }
-            m_styleResolver.applyProperty(CSSPropertyCustom, valueToApply.ptr(), *this, index);
+            applyProperty(CSSPropertyCustom, valueToApply.get(), index);
         }
     }
 
@@ -447,30 +479,30 @@ void PropertyCascade::applyCustomProperty(const String& name)
 
         if (inCycle && WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
             // Resolve this value so that we reset its dependencies.
-            m_styleResolver.resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), *this);
+            resolvedVariableValue(CSSPropertyCustom, valueToApply.get());
         }
     }
 }
 
-PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel cascadeLevel)
+const PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel cascadeLevel)
 {
     switch (cascadeLevel) {
     case CascadeLevel::Author:
         if (!m_authorRollbackCascade) {
             auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent, CascadeLevel::User };
-            m_authorRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
+            m_authorRollbackCascade = makeUnique<const PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
         }
         return m_authorRollbackCascade.get();
 
     case CascadeLevel::User:
         if (!m_userRollbackCascade) {
             auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent };
-            m_userRollbackCascade = makeUnique<PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
+            m_userRollbackCascade = makeUnique<const PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
         }
         return m_userRollbackCascade.get();
 
     case CascadeLevel::UserAgent:
-        break;
+        return nullptr;
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -485,7 +517,7 @@ inline void PropertyCascade::applyProperty(const Property& property)
     if (property.cssValue[SelectorChecker::MatchDefault]) {
         state.setApplyPropertyToRegularStyle(true);
         state.setApplyPropertyToVisitedLinkStyle(false);
-        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchDefault], *this, SelectorChecker::MatchDefault);
+        applyProperty(property.id, *property.cssValue[SelectorChecker::MatchDefault], SelectorChecker::MatchDefault);
     }
 
     if (state.style()->insideLink() == InsideLink::NotInside)
@@ -494,17 +526,128 @@ inline void PropertyCascade::applyProperty(const Property& property)
     if (property.cssValue[SelectorChecker::MatchLink]) {
         state.setApplyPropertyToRegularStyle(true);
         state.setApplyPropertyToVisitedLinkStyle(false);
-        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchLink], *this, SelectorChecker::MatchLink);
+        applyProperty(property.id, *property.cssValue[SelectorChecker::MatchLink], SelectorChecker::MatchLink);
     }
 
     if (property.cssValue[SelectorChecker::MatchVisited]) {
         state.setApplyPropertyToRegularStyle(false);
         state.setApplyPropertyToVisitedLinkStyle(true);
-        m_styleResolver.applyProperty(property.id, property.cssValue[SelectorChecker::MatchVisited], *this, SelectorChecker::MatchVisited);
+        applyProperty(property.id, *property.cssValue[SelectorChecker::MatchVisited], SelectorChecker::MatchVisited);
     }
 
     state.setApplyPropertyToRegularStyle(true);
     state.setApplyPropertyToVisitedLinkStyle(false);
+}
+
+void PropertyCascade::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask)
+{
+    ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
+
+    auto valueToApply = resolveValue(id, value);
+
+    if (CSSProperty::isDirectionAwareProperty(id)) {
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, m_direction, m_writingMode);
+        ASSERT(newId != id);
+        return applyProperty(newId, valueToApply.get(), linkMatchMask);
+    }
+
+    CSSCustomPropertyValue* customPropertyValue = nullptr;
+    CSSValueID customPropertyValueID = CSSValueInvalid;
+    CSSRegisteredCustomProperty* customPropertyRegistered = nullptr;
+
+    if (id == CSSPropertyCustom) {
+        customPropertyValue = downcast<CSSCustomPropertyValue>(valueToApply.ptr());
+        ASSERT(customPropertyValue->isResolved());
+        if (WTF::holds_alternative<CSSValueID>(customPropertyValue->value()))
+            customPropertyValueID = WTF::get<CSSValueID>(customPropertyValue->value());
+        auto& name = customPropertyValue->name();
+        customPropertyRegistered = m_styleResolver.document().getCSSRegisteredCustomPropertySet().get(name);
+    }
+
+    auto& state = m_styleResolver.state();
+    bool isInherit = state.parentStyle() ? valueToApply->isInheritedValue() || customPropertyValueID == CSSValueInherit : false;
+    bool isInitial = valueToApply->isInitialValue() || customPropertyValueID == CSSValueInitial || (!state.parentStyle() && (valueToApply->isInheritedValue() || customPropertyValueID == CSSValueInherit));
+
+    bool isUnset = valueToApply->isUnsetValue() || customPropertyValueID == CSSValueUnset;
+    bool isRevert = valueToApply->isRevertValue() || customPropertyValueID == CSSValueRevert;
+
+    if (isRevert) {
+        if (auto* rollback = propertyCascadeForRollback(state.cascadeLevel())) {
+            // With the rollback cascade built, we need to obtain the property and apply it. If the property is
+            // not present, then we behave like "unset." Otherwise we apply the property instead of
+            // our own.
+            if (customPropertyValue) {
+                if (customPropertyRegistered && customPropertyRegistered->inherits && rollback->hasCustomProperty(customPropertyValue->name())) {
+                    auto property = rollback->customProperty(customPropertyValue->name());
+                    if (property.cssValue[linkMatchMask])
+                        applyProperty(property.id, *property.cssValue[linkMatchMask], linkMatchMask);
+                    return;
+                }
+            } else if (rollback->hasProperty(id)) {
+                auto& property = rollback->property(id);
+                if (property.cssValue[linkMatchMask])
+                    applyProperty(property.id, *property.cssValue[linkMatchMask], linkMatchMask);
+                return;
+            }
+        }
+
+        isUnset = true;
+    }
+
+    if (isUnset) {
+        if (CSSProperty::isInheritedProperty(id))
+            isInherit = true;
+        else
+            isInitial = true;
+    }
+
+    ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
+
+    if (!state.applyPropertyToRegularStyle() && (!state.applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
+        // Limit the properties that can be applied to only the ones honored by :visited.
+        return;
+    }
+
+    if (isInherit && !CSSProperty::isInheritedProperty(id))
+        state.style()->setHasExplicitlyInheritedProperties();
+
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(valueToApply)) {
+        auto& name = downcast<CSSPaintImageValue>(valueToApply.get()).name();
+        if (auto* paintWorklet = m_styleResolver.document().paintWorkletGlobalScopeForName(name)) {
+            auto locker = holdLock(paintWorklet->paintDefinitionLock());
+            if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
+                for (auto& property : registration->inputProperties)
+                    state.style()->addCustomPaintWatchProperty(property);
+            }
+        }
+    }
+#endif
+
+    // Use the generated StyleBuilder.
+    StyleBuilder::applyProperty(id, m_styleResolver, valueToApply.get(), isInitial, isInherit, customPropertyRegistered);
+}
+
+Ref<CSSValue> PropertyCascade::resolveValue(CSSPropertyID propertyID, CSSValue& value)
+{
+    if (!value.hasVariableReferences())
+        return value;
+    
+    auto variableValue = resolvedVariableValue(propertyID, value);
+    // If the cascade has already applied this id, then we detected a cycle, and this value should be unset.
+    if (!variableValue || m_applyState.appliedProperties.get(propertyID)) {
+        if (CSSProperty::isInheritedProperty(propertyID))
+            return CSSValuePool::singleton().createInheritedValue();
+        return CSSValuePool::singleton().createExplicitInitialValue();
+    }
+
+    return *variableValue;
+}
+
+RefPtr<CSSValue> PropertyCascade::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value)
+{
+    CSSParser parser(m_styleResolver.document());
+    return parser.parseValueWithVariableReferences(propID, value, *this);
 }
 
 }

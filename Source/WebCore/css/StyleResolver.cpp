@@ -42,7 +42,6 @@
 #include "CSSImageValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
-#include "CSSPaintImageValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
@@ -93,7 +92,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedStringHash.h"
-#include "StyleBuilder.h"
 #include "StyleColor.h"
 #include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
@@ -1453,37 +1451,12 @@ void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std:
 
 void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* value)
 {
+    if (!value)
+        return;
     MatchResult matchResult;
     Style::PropertyCascade cascade(*this, matchResult, { }, { }, { });
     if (value)
-        applyProperty(id, value, cascade);
-}
-
-inline bool isValidVisitedLinkProperty(CSSPropertyID id)
-{
-    switch (id) {
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyBorderLeftColor:
-    case CSSPropertyBorderRightColor:
-    case CSSPropertyBorderTopColor:
-    case CSSPropertyBorderBottomColor:
-    case CSSPropertyCaretColor:
-    case CSSPropertyColor:
-    case CSSPropertyOutlineColor:
-    case CSSPropertyColumnRuleColor:
-    case CSSPropertyTextDecorationColor:
-    case CSSPropertyWebkitTextEmphasisColor:
-    case CSSPropertyWebkitTextFillColor:
-    case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyFill:
-    case CSSPropertyStroke:
-    case CSSPropertyStrokeColor:
-        return true;
-    default:
-        break;
-    }
-
-    return false;
+        cascade.applyProperty(id, *value);
 }
 
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
@@ -1503,119 +1476,6 @@ bool StyleResolver::useSVGZoomRules() const
 bool StyleResolver::useSVGZoomRulesForLength() const
 {
     return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
-}
-
-void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, Style::PropertyCascade& cascade, SelectorChecker::LinkMatchMask linkMatchMask)
-{
-    ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
-
-    State& state = m_state;
-
-    RefPtr<CSSValue> valueToApply = value;
-    if (value->hasVariableReferences()) {
-        valueToApply = resolvedVariableValue(id, *value, cascade);
-        // If the cascade has already applied this id, then we detected a cycle, and this value should be unset.
-        if (!valueToApply || cascade.hasAppliedProperty(id)) {
-            if (CSSProperty::isInheritedProperty(id))
-                valueToApply = CSSValuePool::singleton().createInheritedValue();
-            else
-                valueToApply = CSSValuePool::singleton().createExplicitInitialValue();
-        }
-    }
-
-    if (CSSProperty::isDirectionAwareProperty(id)) {
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, state.style()->direction(), state.style()->writingMode());
-        ASSERT(newId != id);
-        return applyProperty(newId, valueToApply.get(), cascade, linkMatchMask);
-    }
-
-    CSSValue* valueToCheckForInheritInitial = valueToApply.get();
-    CSSCustomPropertyValue* customPropertyValue = nullptr;
-    CSSValueID customPropertyValueID = CSSValueInvalid;
-
-    CSSRegisteredCustomProperty* customPropertyRegistered = nullptr;
-
-    if (id == CSSPropertyCustom) {
-        customPropertyValue = &downcast<CSSCustomPropertyValue>(*valueToApply);
-        ASSERT(customPropertyValue->isResolved());
-        if (WTF::holds_alternative<CSSValueID>(customPropertyValue->value()))
-            customPropertyValueID = WTF::get<CSSValueID>(customPropertyValue->value());
-        auto& name = customPropertyValue->name();
-        customPropertyRegistered = document().getCSSRegisteredCustomPropertySet().get(name);
-    }
-
-    bool isInherit = state.parentStyle() ? valueToCheckForInheritInitial->isInheritedValue() || customPropertyValueID == CSSValueInherit : false;
-    bool isInitial = valueToCheckForInheritInitial->isInitialValue() || customPropertyValueID == CSSValueInitial || (!state.parentStyle() && (valueToCheckForInheritInitial->isInheritedValue() || customPropertyValueID == CSSValueInherit));
-
-    bool isUnset = valueToCheckForInheritInitial->isUnsetValue() || customPropertyValueID == CSSValueUnset;
-    bool isRevert = valueToCheckForInheritInitial->isRevertValue() || customPropertyValueID == CSSValueRevert;
-
-    if (isRevert) {
-        if (state.cascadeLevel() == Style::CascadeLevel::UserAgent)
-            isUnset = true;
-        else {
-            auto* rollback = cascade.propertyCascadeForRollback(state.cascadeLevel());
-            ASSERT(rollback);
-
-            // With the cascade built, we need to obtain the property and apply it. If the property is
-            // not present, then we behave like "unset." Otherwise we apply the property instead of
-            // our own.
-            if (customPropertyValue) {
-                if (customPropertyRegistered && customPropertyRegistered->inherits && rollback->hasCustomProperty(customPropertyValue->name())) {
-                    auto property = rollback->customProperty(customPropertyValue->name());
-                    if (property.cssValue[linkMatchMask])
-                        applyProperty(property.id, property.cssValue[linkMatchMask], cascade, linkMatchMask);
-                    return;
-                }
-            } else if (rollback->hasProperty(id)) {
-                auto& property = rollback->property(id);
-                if (property.cssValue[linkMatchMask])
-                    applyProperty(property.id, property.cssValue[linkMatchMask], cascade, linkMatchMask);
-                return;
-            }
-
-            isUnset = true;
-        }
-    }
-
-    if (isUnset) {
-        if (CSSProperty::isInheritedProperty(id))
-            isInherit = true;
-        else
-            isInitial = true;
-    }
-
-    ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
-
-    if (!state.applyPropertyToRegularStyle() && (!state.applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
-        // Limit the properties that can be applied to only the ones honored by :visited.
-        return;
-    }
-
-    if (isInherit && !CSSProperty::isInheritedProperty(id))
-        state.style()->setHasExplicitlyInheritedProperties();
-
-#if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(*valueToApply)) {
-        auto& name = downcast<CSSPaintImageValue>(*valueToApply).name();
-        if (auto* paintWorklet = document().paintWorkletGlobalScopeForName(name)) {
-            auto locker = holdLock(paintWorklet->paintDefinitionLock());
-            if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
-                for (auto& property : registration->inputProperties)
-                    state.style()->addCustomPaintWatchProperty(property);
-            }
-        }
-    }
-#endif
-
-    // Use the generated StyleBuilder.
-    StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit, customPropertyRegistered);
-}
-
-RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSValue& value, Style::PropertyCascade& cascade) const
-{
-    CSSParser parser(document());
-    return parser.parseValueWithVariableReferences(propID, value, cascade);
 }
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)

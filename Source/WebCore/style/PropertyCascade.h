@@ -60,12 +60,10 @@ public:
     };
 
     bool hasProperty(CSSPropertyID) const;
-    Property& property(CSSPropertyID);
+    const Property& property(CSSPropertyID) const;
 
     bool hasCustomProperty(const String&) const;
     Property customProperty(const String&) const;
-
-    bool hasAppliedProperty(CSSPropertyID) const;
 
     void applyProperties(int firstProperty, int lastProperty);
     void applyDeferredProperties();
@@ -73,7 +71,7 @@ public:
     void applyCustomProperties();
     void applyCustomProperty(const String& name);
 
-    PropertyCascade* propertyCascadeForRollback(CascadeLevel);
+    void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
 
 private:
     bool addNormalMatches(CascadeLevel);
@@ -84,17 +82,22 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, ScopeOrdinal);
 
+    const PropertyCascade* propertyCascadeForRollback(CascadeLevel);
+
     enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
     template<CustomPropertyCycleTracking trackCycles>
     void applyPropertiesImpl(int firstProperty, int lastProperty);
     void applyProperty(const Property&);
 
-    StyleResolver& m_styleResolver;
-    const MatchResult& m_matchResult;
-    IncludedProperties m_includedProperties;
+    Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);
+    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
 
-    TextDirection m_direction;
-    WritingMode m_writingMode;
+    StyleResolver& m_styleResolver;
+
+    const MatchResult& m_matchResult;
+    const IncludedProperties m_includedProperties;
+    const TextDirection m_direction;
+    const WritingMode m_writingMode;
 
     Property m_properties[numCSSProperties + 2];
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;
@@ -113,8 +116,8 @@ private:
 
     ApplyState m_applyState;
 
-    std::unique_ptr<PropertyCascade> m_authorRollbackCascade;
-    std::unique_ptr<PropertyCascade> m_userRollbackCascade;
+    std::unique_ptr<const PropertyCascade> m_authorRollbackCascade;
+    std::unique_ptr<const PropertyCascade> m_userRollbackCascade;
 };
 
 inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
@@ -123,7 +126,7 @@ inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
     return m_propertyIsPresent[id];
 }
 
-inline PropertyCascade::Property& PropertyCascade::property(CSSPropertyID id)
+inline const PropertyCascade::Property& PropertyCascade::property(CSSPropertyID id) const
 {
     return m_properties[id];
 }
@@ -136,11 +139,6 @@ inline bool PropertyCascade::hasCustomProperty(const String& name) const
 inline PropertyCascade::Property PropertyCascade::customProperty(const String& name) const
 {
     return m_customProperties.get(name);
-}
-
-inline bool PropertyCascade::hasAppliedProperty(CSSPropertyID propertyID) const
-{
-    return m_applyState.appliedProperties.get(propertyID);
 }
 
 }

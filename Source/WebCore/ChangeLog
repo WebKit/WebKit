@@ -1,3 +1,30 @@
+2019-10-26  Antti Koivisto  <antti@apple.com>
+
+        Move StyleResolver::applyProperty to PropertyCascade
+        https://bugs.webkit.org/show_bug.cgi?id=203458
+
+        Reviewed by Zalan Bujtas.
+
+        Move the more of the property applying code out of StyleResolver.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle):
+        (WebCore::isValidVisitedLinkProperty): Deleted.
+        (WebCore::StyleResolver::applyProperty): Deleted.
+        (WebCore::StyleResolver::resolvedVariableValue const): Deleted.
+        * css/StyleResolver.h:
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::isValidVisitedLinkProperty):
+        (WebCore::Style::PropertyCascade::applyCustomProperty):
+        (WebCore::Style::PropertyCascade::propertyCascadeForRollback):
+        (WebCore::Style::PropertyCascade::applyProperty):
+        (WebCore::Style::PropertyCascade::resolveValue):
+        (WebCore::Style::PropertyCascade::resolvedVariableValue):
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::property const):
+        (WebCore::Style::PropertyCascade::property): Deleted.
+        (WebCore::Style::PropertyCascade::hasAppliedProperty const): Deleted.
+
 2019-10-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Completely collapsed runs should not have advance width

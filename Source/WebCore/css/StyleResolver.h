@@ -327,11 +327,7 @@ public:
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
-    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&, Style::PropertyCascade&) const;
-
     bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
-
-    void applyProperty(CSSPropertyID, CSSValue*, Style::PropertyCascade&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
 
 private:
     void cacheBorderAndBackground();
