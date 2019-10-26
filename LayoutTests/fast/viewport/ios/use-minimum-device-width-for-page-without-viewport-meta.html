@@ -28,17 +28,27 @@
         testRunner.waitUntilDone();
     }
 
-    async function runTest() {
+    async function waitForWidthToBecome(targetWidth) {
+        return new Promise(async resolve => {
+            do {
+                await UIHelper.ensurePresentationUpdate();
+            } while (innerWidth !== targetWidth)
+            resolve();
+        });
+    }
+
+    addEventListener("load", async function() {
         const appendOutput = message => {
             output.appendChild(document.createTextNode(message));
             output.appendChild(document.createElement("br"));
         };
 
-        for (let targetMinimumEffectiveWidth of [640, 768, 834, 980, 1024, 1112, 1280, 1336]) {
-            appendOutput(`setMinimumEffectiveWidth(${targetMinimumEffectiveWidth.toFixed(2)})`);
+        await UIHelper.ensureVisibleContentRectUpdate();
 
+        for (let targetMinimumEffectiveWidth of [0, 640, 768, 834, 980, 1024, 1112, 1280, 1336]) {
+            appendOutput(`setMinimumEffectiveWidth(${targetMinimumEffectiveWidth.toFixed(2)})`);
             await UIHelper.setMinimumEffectiveWidth(targetMinimumEffectiveWidth);
-            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+            await waitForWidthToBecome(Math.max(targetMinimumEffectiveWidth, screen.width));
             appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
             appendOutput(`square size: [${square.clientWidth}, ${square.clientHeight}]`);
             appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
@@ -46,11 +56,11 @@
         }
 
         testRunner.notifyDone();
-    }
+    });
     </script>
 </head>
 
-<body onload="runTest()">
+<body>
     <div id="square"></div>
     <pre id="output"></pre>
 </body>

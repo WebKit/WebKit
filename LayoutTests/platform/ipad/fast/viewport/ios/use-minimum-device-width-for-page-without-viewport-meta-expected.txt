@@ -1,3 +1,8 @@
+setMinimumEffectiveWidth(0.00)
+window size: [768, 1004]
+square size: [77, 100]
+zoom scale: 1.00
+
 setMinimumEffectiveWidth(640.00)
 window size: [768, 1004]
 square size: [77, 100]
