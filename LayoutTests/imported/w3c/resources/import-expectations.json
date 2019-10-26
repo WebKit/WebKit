@@ -2,6 +2,7 @@
     "apng": "import", 
     "css/css-values": "import", 
     "css/geometry": "import", 
+    "css/support": "import", 
     "custom-elements": "import", 
     "shadow-dom": "import", 
     "tools": "import", 

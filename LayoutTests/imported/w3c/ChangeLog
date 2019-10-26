@@ -1,3 +1,41 @@
+2019-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Update css/support directory in WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203452
+
+        Reviewed by Antti Koivisto.
+
+        Various WPT are relying on new functionality in css/support (e.g. test_shorthand_value).
+        In addition, the behavior for testing computed style of properties which don't exist has changed,
+        causing changes in test output.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-animations/parsing/animation-computed-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-images/inheritance-expected.txt:
+        * web-platform-tests/css/css-images/parsing/image-orientation-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/image-rendering-computed-expected.txt:
+        * web-platform-tests/css/css-images/parsing/object-fit-computed-expected.txt:
+        * web-platform-tests/css/css-masking/parsing/clip-path-computed-expected.txt:
+        * web-platform-tests/css/css-overflow/inheritance-expected.txt:
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed-expected.txt:
+        * web-platform-tests/css/css-overscroll-behavior/inheritance-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed-expected.txt:
+        * web-platform-tests/css/css-text/inheritance-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-shorthand-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-timing-function-computed-expected.txt:
+        * web-platform-tests/css/css-values/clamp-length-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * web-platform-tests/css/cssom-view/inheritance-expected.txt:
+        * web-platform-tests/css/support/computed-testcommon.js:
+        (test_computed_value):
+        * web-platform-tests/css/support/inheritance-testcommon.js:
+        (assert_initial):
+        * web-platform-tests/css/support/parsing-testcommon.js:
+        * web-platform-tests/css/support/w3c-import.log:
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

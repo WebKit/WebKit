@@ -1,6 +1,6 @@
 
-PASS Property image-orientation has initial value 0deg 
-PASS Property image-orientation inherits 
+FAIL Property image-orientation has initial value 0deg assert_true: image-orientation doesn't seem to be supported in the computed style expected true got false
+FAIL Property image-orientation inherits assert_true: image-orientation doesn't seem to be supported in the computed style expected true got false
 PASS Property image-rendering has initial value auto 
 PASS Property image-rendering inherits 
 PASS Property object-fit has initial value fill 

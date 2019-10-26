@@ -1,6 +1,6 @@
 
 PASS Property transition-timing-function value 'linear' computes to 'linear' 
-PASS Property transition-timing-function value '' computes to 'ease' 
+FAIL Property transition-timing-function value '' computes to 'ease' assert_true: '' is a supported value for transition-timing-function. expected true got false
 PASS Property transition-timing-function value 'initial' computes to 'ease' 
 PASS Property transition-timing-function value 'ease' computes to 'ease' 
 PASS Property transition-timing-function value 'ease-in' computes to 'ease-in' 
@@ -14,9 +14,9 @@ FAIL Property transition-timing-function value 'step-end' computes to 'steps(1)'
 FAIL Property transition-timing-function value 'steps(4)' computes to 'steps(4)' assert_equals: expected "steps(4)" but got "steps(4, end)"
 PASS Property transition-timing-function value 'steps(4, start)' computes to 'steps(4, start)' 
 FAIL Property transition-timing-function value 'steps(2, end)' computes to 'steps(2)' assert_equals: expected "steps(2)" but got "steps(2, end)"
-FAIL Property transition-timing-function value 'steps(2, jump-start)' computes to 'steps(2, jump-start)' assert_equals: expected "steps(2, jump-start)" but got "ease"
-FAIL Property transition-timing-function value 'steps(2, jump-end)' computes to 'steps(2)' assert_equals: expected "steps(2)" but got "ease"
-FAIL Property transition-timing-function value 'steps(2, jump-both)' computes to 'steps(2, jump-both)' assert_equals: expected "steps(2, jump-both)" but got "ease"
-FAIL Property transition-timing-function value 'steps(2, jump-none)' computes to 'steps(2, jump-none)' assert_equals: expected "steps(2, jump-none)" but got "ease"
+FAIL Property transition-timing-function value 'steps(2, jump-start)' computes to 'steps(2, jump-start)' assert_true: 'steps(2, jump-start)' is a supported value for transition-timing-function. expected true got false
+FAIL Property transition-timing-function value 'steps(2, jump-end)' computes to 'steps(2)' assert_true: 'steps(2, jump-end)' is a supported value for transition-timing-function. expected true got false
+FAIL Property transition-timing-function value 'steps(2, jump-both)' computes to 'steps(2, jump-both)' assert_true: 'steps(2, jump-both)' is a supported value for transition-timing-function. expected true got false
+FAIL Property transition-timing-function value 'steps(2, jump-none)' computes to 'steps(2, jump-none)' assert_true: 'steps(2, jump-none)' is a supported value for transition-timing-function. expected true got false
 FAIL Property transition-timing-function value 'linear, ease, linear' computes to 'linear, ease, linear' assert_equals: expected "linear, ease, linear" but got "linear"
 
