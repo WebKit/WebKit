@@ -55,7 +55,7 @@ bool Line::Run::canBeExtended() const
     if (!isText())
         return false;
     // Non-collapsed text runs can be merged into one continuous run.
-    if (isVisuallyEmpty())
+    if (isCollapsedToZeroAdvanceWidth())
         return false;
     return !isCollapsed();
 }
@@ -120,7 +120,7 @@ bool Line::isVisuallyEmpty() const
                 return false;
             continue;
         }
-        if (!run->isText() || !run->isVisuallyEmpty())
+        if (!run->isText() || !run->isCollapsedToZeroAdvanceWidth())
             return false;
     }
     return true;
@@ -272,8 +272,9 @@ void Line::removeTrailingTrimmableContent()
     LayoutUnit trimmableWidth;
     for (auto* trimmableRun : m_trimmableContent) {
         ASSERT(trimmableRun->isText());
-        trimmableRun->setVisuallyIsEmpty();
+        // FIXME: We might need to be able to differentiate between trimmed and collapsed runs.
         trimmableWidth += trimmableRun->logicalRect().width();
+        trimmableRun->setCollapsesToZeroAdvanceWidth();
     }
     m_lineBox.shrinkHorizontally(trimmableWidth);
 }
@@ -296,10 +297,8 @@ void Line::moveLogicalRight(LayoutUnit delta)
 LayoutUnit Line::trailingTrimmableWidth() const
 {
     LayoutUnit trimmableWidth;
-    for (auto* trimmableRun : m_trimmableContent) {
-        ASSERT(!trimmableRun->isVisuallyEmpty());
+    for (auto* trimmableRun : m_trimmableContent)
         trimmableWidth += trimmableRun->logicalRect().width();
-    }
     return trimmableWidth;
 }
 
@@ -366,11 +365,13 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
             auto& run = m_runList[i];
             if (run->isBox())
                 return false;
-            // When the previous text run is collapsed, this collapsible run collapses completely.
+            // https://drafts.csswg.org/css-text-3/#white-space-phase-1
+            // Any collapsible space immediately following another collapsible space—even one outside the boundary of the inline containing that space,
+            // provided both spaces are within the same inline formatting context—is collapsed to have zero advance width.
+            // : "<span>  </span> " <- the trailing whitespace collapses completely.
+            // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run->isText())
                 return run->isCollapsed();
-            // Collapsing works across inline containers: "<span>  </span> " <- the trailing whitespace collapses completely.
-            // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around. 
             ASSERT(run->isContainerStart() || run->isContainerEnd());
         }
         return true;
@@ -388,20 +389,18 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto contentStart = inlineItem.start();
     auto contentLength =  collapseRun ? 1 : inlineItem.length();
     auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
-    auto lineItem = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
+    auto lineRun = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
 
-    auto isVisuallyEmpty = willCollapseCompletely();
-    if (collapseRun)
-        lineItem->setIsCollapsed();
-    if (isVisuallyEmpty)
-        lineItem->setVisuallyIsEmpty();
-    else if (isTrimmable)
-        m_trimmableContent.add(lineItem.get());
+    auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
+    if (collapsesToZeroAdvanceWidth)
+        lineRun->setCollapsesToZeroAdvanceWidth();
+    else if (collapseRun)
+        lineRun->setIsCollapsed();
+    if (isTrimmable)
+        m_trimmableContent.add(lineRun.get());
 
-    m_runList.append(WTFMove(lineItem));
-    // Collapsed line items don't contribute to the line width.
-    if (!isVisuallyEmpty)
-        m_lineBox.expandHorizontally(logicalWidth);
+    m_lineBox.expandHorizontally(lineRun->logicalRect().width());
+    m_runList.append(WTFMove(lineRun));
 }
 
 void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logicalWidth)

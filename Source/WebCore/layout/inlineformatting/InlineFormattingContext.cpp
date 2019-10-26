@@ -435,8 +435,8 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
         // Inline level containers (<span>) don't generate inline runs.
         if (lineRun->isContainerStart() || lineRun->isContainerEnd())
             continue;
-        // Collapsed line runs don't generate display runs.
-        if (lineRun->isVisuallyEmpty())
+        // Completely collapsed line runs don't generate display runs.
+        if (lineRun->isCollapsedToZeroAdvanceWidth())
             continue;
         formattingState.addInlineRun(lineRun->displayRun(), currentLine);
     }
@@ -490,15 +490,14 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayout::LineConte
             const Line::Run* previousLineRun = !index ? nullptr : lineRuns[index - 1].get();
             // FIXME take content breaking into account when part of the layout box is on the previous line.
             auto firstInlineRunForLayoutBox = !previousLineRun || &previousLineRun->layoutBox() != &layoutBox;
-            auto logicalWidth = lineRun->isVisuallyEmpty() ? LayoutUnit() : logicalRect.width();
             if (firstInlineRunForLayoutBox) {
                 // Setup display box for the associated layout box.
                 displayBox.setTopLeft(logicalRect.topLeft());
-                displayBox.setContentBoxWidth(logicalWidth);
+                displayBox.setContentBoxWidth(logicalRect.width());
                 displayBox.setContentBoxHeight(logicalRect.height());
             } else {
                 // FIXME fix it for multirun/multiline.
-                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalWidth);
+                displayBox.setContentBoxWidth(displayBox.contentBoxWidth() + logicalRect.width());
             }
             continue;
         }

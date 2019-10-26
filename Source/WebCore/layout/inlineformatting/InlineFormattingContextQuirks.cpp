@@ -50,7 +50,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const Line::Run
         if (run->isForcedLineBreak())
             return false;
         if (run->isText()) {
-            if (!run->isVisuallyEmpty())
+            if (!run->isCollapsedToZeroAdvanceWidth())
                 return false;
             continue;
         }
