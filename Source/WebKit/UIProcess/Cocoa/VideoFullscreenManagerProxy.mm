@@ -121,7 +121,7 @@
 
 #endif
 
-#define MESSAGE_CHECK_CONTEXTID(contextID) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(contextId), m_page->process().connection())
+#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(identifier), m_page->process().connection())
 
 namespace WebKit {
 using namespace WebCore;

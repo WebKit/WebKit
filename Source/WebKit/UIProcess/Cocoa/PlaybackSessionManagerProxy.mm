@@ -33,7 +33,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
-#define MESSAGE_CHECK_CONTEXTID(contextID) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(contextId), m_page->process().connection())
+#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(identifier), m_page->process().connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -368,7 +368,7 @@ void PlaybackSessionManagerProxy::removeClientForContext(uint64_t contextId)
 
 void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(uint64_t contextId)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     if (m_controlsManagerContextId == contextId)
         return;
 
@@ -394,19 +394,19 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
 
 void PlaybackSessionManagerProxy::currentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).currentTimeChanged(currentTime);
 }
 
 void PlaybackSessionManagerProxy::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).bufferedTimeChanged(bufferedTime);
 }
 
 void PlaybackSessionManagerProxy::seekableRangesVectorChanged(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
         ASSERT(isfinite(range.first));
@@ -420,37 +420,37 @@ void PlaybackSessionManagerProxy::seekableRangesVectorChanged(uint64_t contextId
 
 void PlaybackSessionManagerProxy::canPlayFastReverseChanged(uint64_t contextId, bool value)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).canPlayFastReverseChanged(value);
 }
 
 void PlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).audioMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).legibleMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).audioMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
 void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     PlaybackSessionModel::ExternalPlaybackTargetType type = static_cast<PlaybackSessionModel::ExternalPlaybackTargetType>(targetType);
     ASSERT(type == PlaybackSessionModel::TargetTypeAirPlay || type == PlaybackSessionModel::TargetTypeTVOut || type == PlaybackSessionModel::TargetTypeNone);
 
@@ -459,55 +459,55 @@ void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(uint64_t con
 
 void PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).wirelessVideoPlaybackDisabledChanged(disabled);
 }
 
 void PlaybackSessionManagerProxy::mutedChanged(uint64_t contextId, bool muted)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).mutedChanged(muted);
 }
 
 void PlaybackSessionManagerProxy::volumeChanged(uint64_t contextId, double volume)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).volumeChanged(volume);
 }
 
 void PlaybackSessionManagerProxy::durationChanged(uint64_t contextId, double duration)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).durationChanged(duration);
 }
 
 void PlaybackSessionManagerProxy::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).playbackStartedTimeChanged(playbackStartedTime);
 }
 
 void PlaybackSessionManagerProxy::rateChanged(uint64_t contextId, bool isPlaying, double rate)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).rateChanged(isPlaying, rate);
 }
 
 void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(uint64_t contextId, bool supported)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).pictureInPictureSupportedChanged(supported);
 }
 
 void PlaybackSessionManagerProxy::pictureInPictureActiveChanged(uint64_t contextId, bool active)
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureModel(contextId).pictureInPictureActiveChanged(active);
 }
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(uint64_t contextId, String identifier) const
 {
-    MESSAGE_CHECK_CONTEXTID(contextID);
+    MESSAGE_CHECK_CONTEXTID(contextId);
 #if PLATFORM(MAC)
     if (contextId == m_controlsManagerContextId)
         m_page->handleControlledElementIDResponse(identifier);

@@ -40,7 +40,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
-#define MESSAGE_CHECK_CONTEXTID(id) MESSAGE_CHECK_BASE(m_proxies.isValidKey(id), m_process.connection())
+#define MESSAGE_CHECK_CONTEXTID(identifier) MESSAGE_CHECK_BASE(m_proxies.isValidKey(identifier), m_process.connection())
 
 namespace WebKit {
 using namespace WebCore;

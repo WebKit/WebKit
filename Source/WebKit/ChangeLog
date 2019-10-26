@@ -1,3 +1,50 @@
+2019-10-25  David Kilzer  <ddkilzer@apple.com>
+
+        Unused arguments in MESSAGE_CHECK_CONTEXTID() macros
+        <https://webkit.org/b/203389>
+        <rdar://problem/55935374>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (#define MESSAGE_CHECK_CONTEXTID):
+        - Rename macro argument from `contextID` to `identifier`
+          and change `contextId`to `identifier` in the body of
+          the macro so that the argument is always used.
+        (WebKit::PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID):
+        (WebKit::PlaybackSessionManagerProxy::currentTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::bufferedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::seekableRangesVectorChanged):
+        (WebKit::PlaybackSessionManagerProxy::canPlayFastReverseChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged):
+        (WebKit::PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::PlaybackSessionManagerProxy::mutedChanged):
+        (WebKit::PlaybackSessionManagerProxy::volumeChanged):
+        (WebKit::PlaybackSessionManagerProxy::durationChanged):
+        (WebKit::PlaybackSessionManagerProxy::playbackStartedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureSupportedChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureActiveChanged):
+        (WebKit::PlaybackSessionManagerProxy::handleControlledElementIDResponse const):
+        - Change `contextID` to `contextId` to match local variable name
+          now that MESSAGE_CHECK_CONTEXTID() doesn't paper over this
+          typo for us.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (#define MESSAGE_CHECK_CONTEXTID):
+        - Rename macro argument from `contextID` to `identifier`
+          and change `contextId`to `identifier` in the body of
+          the macro so that the argument is always used.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (#define MESSAGE_CHECK_CONTEXTID):
+        - Rename macro argument and variable in the body of the
+          macro from `id` to `identifier` for consistency.
+
 2019-10-25  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violations seen while running layout tests
