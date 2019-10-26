@@ -161,21 +161,17 @@ void LayoutContext::runLayout(LayoutState& layoutState)
     layoutContext.layout();
 }
 
-void LayoutContext::runLayoutAndVerify(const RenderView& renderView)
+std::unique_ptr<LayoutState> LayoutContext::runLayoutAndVerify(const RenderView& renderView)
 {
-    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = LayoutState { *initialContainingBlock };
-    initializeLayoutState(layoutState, renderView);
-    runLayout(layoutState);
-    LayoutContext::verifyAndOutputMismatchingLayoutTree(layoutState, renderView);
+    auto layoutState = makeUnique<LayoutState>(TreeBuilder::createLayoutTree(renderView));
+    initializeLayoutState(*layoutState, renderView);
+    runLayout(*layoutState);
+    LayoutContext::verifyAndOutputMismatchingLayoutTree(*layoutState, renderView);
+    return layoutState;
 }
 
-void LayoutContext::runLayoutAndPaint(const RenderView& renderView, GraphicsContext& context)
+void LayoutContext::paint(const LayoutState& layoutState, GraphicsContext& context)
 {
-    auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = LayoutState { *initialContainingBlock };
-    initializeLayoutState(layoutState, renderView);
-    runLayout(layoutState);
     Display::Painter::paint(layoutState, context);
 }
 

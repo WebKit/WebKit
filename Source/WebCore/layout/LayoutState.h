@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutContainer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
@@ -41,14 +42,13 @@ class Box;
 namespace Layout {
 
 class Box;
-class Container;
 class FormattingContext;
 class FormattingState;
 
 class LayoutState {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(const Container& root);
+    LayoutState(std::unique_ptr<Container> root);
     ~LayoutState();
 
     FormattingState& createFormattingStateForFormattingRootIfNeeded(const Container& formattingContextRoot);
@@ -74,7 +74,8 @@ public:
     const Container& root() const { return *m_root; }
 
 private:
-    WeakPtr<const Container> m_root;
+    // FIXME: Figure out the ownership model for the layout tree.
+    std::unique_ptr<Container> m_root;
     HashMap<const Container*, std::unique_ptr<FormattingState>> m_formattingStates;
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;

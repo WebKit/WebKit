@@ -1,3 +1,32 @@
+2019-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Do not layout on every paint frame.
+        https://bugs.webkit.org/show_bug.cgi?id=203462
+        <rdar://problem/56646779>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for being able to run layout benchmarks.
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::runLayoutAndVerify):
+        (WebCore::Layout::LayoutContext::paint):
+        (WebCore::Layout::LayoutContext::runLayoutAndPaint): Deleted.
+        * layout/LayoutContext.h:
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutState.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+        (WebCore::FrameViewLayoutContext::layout):
+        (WebCore::layoutUsingFormattingContext): Deleted.
+        * page/FrameViewLayoutContext.h:
+        (WebCore::FrameViewLayoutContext::initialLayoutState const):
+
 2019-10-26  Rob Buis  <rbuis@igalia.com>
 
         Main implementation for lazy image loading

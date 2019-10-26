@@ -54,8 +54,8 @@ class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
     // FIXME: These are temporary entry points for LFC layout.
-    static void runLayoutAndVerify(const RenderView&);
-    static void runLayoutAndPaint(const RenderView&, GraphicsContext&);
+    static std::unique_ptr<LayoutState> runLayoutAndVerify(const RenderView&);
+    static void paint(const LayoutState&, GraphicsContext&);
 
     LayoutContext(LayoutState&);
     void layout();

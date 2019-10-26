@@ -401,11 +401,10 @@ void printLayoutTreeForLiveDocuments()
         fprintf(stderr, "%s\n", document->url().string().utf8().data());
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
-        auto initialContainingBlock = TreeBuilder::createLayoutTree(renderView);
-        auto layoutState = LayoutState { *initialContainingBlock };
+        auto layoutState = LayoutState { TreeBuilder::createLayoutTree(renderView) };
         layoutState.setQuirksMode(renderView.document().inLimitedQuirksMode() ? LayoutState::QuirksMode::Limited : (renderView.document().inQuirksMode() ? LayoutState::QuirksMode::Yes : LayoutState::QuirksMode::No));
         LayoutContext(layoutState).layout();
-        showLayoutTree(*initialContainingBlock, &layoutState);
+        showLayoutTree(layoutState.root(), &layoutState);
     }
 }
 #endif
