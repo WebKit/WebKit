@@ -1,3 +1,19 @@
+2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when multiple NFC tags present
+        https://bugs.webkit.org/show_bug.cgi?id=200932
+        <rdar://problem/54890736>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by new tests in existing test file.
+
+        * testing/MockWebAuthenticationConfiguration.h:
+        (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::encode const):
+        (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::decode):
+        * testing/MockWebAuthenticationConfiguration.idl:
+        Adds a new test option.
+
 2019-10-27  Antti Koivisto  <antti@apple.com>
 
         Move resolving direction and writing mode to PropertyCascade

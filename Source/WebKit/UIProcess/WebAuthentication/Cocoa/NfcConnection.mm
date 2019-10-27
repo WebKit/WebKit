@@ -45,20 +45,24 @@ inline bool compareVersion(NSData *data, const uint8_t version[], size_t version
 }
 } // namespace
 
+Ref<NfcConnection> NfcConnection::create(RetainPtr<NFReaderSession>&& session, NfcService& service)
+{
+    return adoptRef(*new NfcConnection(WTFMove(session), service));
+}
+
 NfcConnection::NfcConnection(RetainPtr<NFReaderSession>&& session, NfcService& service)
     : m_session(WTFMove(session))
     , m_delegate(adoptNS([[WKNFReaderSessionDelegate alloc] initWithConnection:*this]))
     , m_service(makeWeakPtr(service))
+    , m_retryTimer(RunLoop::main(), this, &NfcConnection::startPolling)
 {
     [m_session setDelegate:m_delegate.get()];
-    [m_session startPolling];
+    startPolling();
 }
 
 NfcConnection::~NfcConnection()
 {
-    [m_session disconnectTag];
-    [m_session stopPolling];
-    [m_session endSession];
+    stop();
 }
 
 Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
@@ -71,16 +75,33 @@ Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
     return response;
 }
 
-void NfcConnection::didDetectTags(NSArray *tags) const
+void NfcConnection::stop() const
 {
-    if (!m_service)
+    [m_session disconnectTag];
+    [m_session stopPolling];
+    [m_session endSession];
+}
+
+void NfcConnection::didDetectTags(NSArray *tags)
+{
+    if (!m_service || !tags.count)
         return;
 
-    // FIXME(200932): Warn users when multiple NFC tags present
-    for (NFTag *tag in tags) {
-        if (tag.type != NFTagTypeGeneric4A)
+    // A physical NFC tag could have multiple interfaces.
+    // Therefore, we use tagID to detect if there are multiple physical tags.
+    NSData *tagID = ((NFTag *)tags[0]).tagID;
+    for (NFTag *tag : tags) {
+        if ([tagID isEqualToData:tag.tagID])
             continue;
-        if (![m_session connectTag:tag])
+        m_service->didDetectMultipleTags();
+        restartPolling();
+        return;
+    }
+
+    // FIXME(203234): Tell users to switch to a different tag if the tag is not of type NFTagTypeGeneric4A
+    // or can't speak U2F/FIDO2.
+    for (NFTag *tag : tags) {
+        if (tag.type != NFTagTypeGeneric4A || ![m_session connectTag:tag])
             continue;
 
         // Confirm the FIDO applet is avaliable before return.
@@ -94,8 +115,25 @@ void NfcConnection::didDetectTags(NSArray *tags) const
         }
 
         m_service->didConnectTag();
-        break;
+        return;
     }
+    restartPolling();
+}
+
+// NearField polling is a one shot polling. It halts after tags are detected.
+// Therefore, a restart process is needed to resume polling after error.
+void NfcConnection::restartPolling()
+{
+    [m_session stopPolling];
+    m_retryTimer.startOneShot(1_s); // Magic number to give users enough time for reactions.
+}
+
+void NfcConnection::startPolling()
+{
+    NSError *error = nil;
+    [m_session startPollingWithError:&error];
+    if (error)
+        LOG_ERROR("Couldn't start NFC reader polling: %@", error);
 }
 
 } // namespace WebKit

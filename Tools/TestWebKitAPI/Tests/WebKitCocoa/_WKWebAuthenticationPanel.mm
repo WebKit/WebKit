@@ -42,6 +42,7 @@
 static bool webAuthenticationPanelRan = false;
 static bool webAuthenticationPanelFailed = false;
 static bool webAuthenticationPanelSucceded = false;
+static bool webAuthenticationPanelUpdateMultipleNFCTagsPresent = false;
 static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 static RetainPtr<_WKWebAuthenticationPanel> gPanel;
 
@@ -53,8 +54,14 @@ static RetainPtr<_WKWebAuthenticationPanel> gPanel;
 - (void)panel:(_WKWebAuthenticationPanel *)panel updateWebAuthenticationPanel:(_WKWebAuthenticationPanelUpdate)update
 {
     ASSERT_NE(panel, nil);
-    if (update == _WKWebAuthenticationPanelUpdateNoCredentialsFound)
+    if (update == _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent) {
+        webAuthenticationPanelUpdateMultipleNFCTagsPresent = true;
+        return;
+    }
+    if (update == _WKWebAuthenticationPanelUpdateNoCredentialsFound) {
         webAuthenticationPanelUpdateNoCredentialsFound = true;
+        return;
+    }
 }
 
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result
@@ -605,6 +612,25 @@ TEST(WebAuthenticationPanel, NullPanelHidCtapNoCredentialsFound)
     Util::run(&webAuthenticationPanelRan);
     [webView waitForMessage:@"Operation timed out."];
 }
+
+#if HAVE(NEAR_FIELD)
+TEST(WebAuthenticationPanel, PanelMultipleNFCTagsPresent)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-nfc-multiple-tags" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelRan);
+    Util::run(&webAuthenticationPanelUpdateMultipleNFCTagsPresent);
+}
+#endif
 
 } // namespace TestWebKitAPI
 

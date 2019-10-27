@@ -1,3 +1,76 @@
+2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when multiple NFC tags present
+        https://bugs.webkit.org/show_bug.cgi?id=200932
+        <rdar://problem/54890736>
+
+        Reviewed by Brent Fulgham.
+
+        This patch utilizes -[_WKWebAuthenticationPanelDelegate panel:updateWebAuthenticationPanel:] to
+        inform clients about multiple physical tags are presenting such that clients can instruct users
+        to select only one of them physically. Given a physical tag could have multiple different
+        interfaces, which NearField will treat them into different NFTags, the tagID is then used to
+        identify if there are actually multiple physical tags.
+
+        This patch also adds the ability to restart polling of a partiuclar NFReaderSession to NfcConnection
+        and the ability to restart the whole session to NfcService. The former is used to recover from errors
+        in the discovery stages, and the latter is used to recover from errors returned from authenticators
+        in the request stages. For the latter, given NfcConnection is not awared of the syntax of FIDO2/U2F
+        protocol, and CtapAuthenticator/U2fAuthenticator are not awared the transport of the underneath driver.
+        A generic restartDiscovery process is added to each service and it is up to the actual service to
+        implement the actual process such that AuthenticatorManager can arbitrarily call it after exceptions
+        are returned to restart the whole NFC session. To achieve restartDiscovery, NfcConnection is made
+        RefCounted as well such that both the NfcService and the CtapNfcDriver could hold it at the same time.
+        CtapNfcDriver uses the connection to complete requests as before while NfcService has the new capability
+        to use it to stop the current session when restartDiscovery kicks off.
+
+        * Platform/spi/Cocoa/NearFieldSPI.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::serviceStatusUpdated):
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::restartDiscovery):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+        (WebKit::AuthenticatorTransportService::startDiscovery):
+        (WebKit::AuthenticatorTransportService::restartDiscovery):
+        * UIProcess/WebAuthentication/AuthenticatorTransportService.h:
+        (WebKit::AuthenticatorTransportService::restartDiscoveryInternal):
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.h:
+        * UIProcess/WebAuthentication/Cocoa/NfcConnection.mm:
+        (WebKit::NfcConnection::create):
+        (WebKit::NfcConnection::NfcConnection):
+        (WebKit::NfcConnection::~NfcConnection):
+        (WebKit::NfcConnection::stop const):
+        (WebKit::NfcConnection::didDetectTags):
+        (WebKit::NfcConnection::restartPolling):
+        (WebKit::NfcConnection::startPolling):
+        (WebKit::NfcConnection::didDetectTags const): Deleted.
+        * UIProcess/WebAuthentication/Cocoa/NfcService.h:
+        * UIProcess/WebAuthentication/Cocoa/NfcService.mm:
+        (WebKit::NfcService::NfcService):
+        (WebKit::NfcService::didConnectTag):
+        (WebKit::NfcService::didDetectMultipleTags const):
+        (WebKit::NfcService::setConnection):
+        (WebKit::NfcService::restartDiscoveryInternal):
+        (WebKit::NfcService::platformStartDiscovery):
+        (WebKit::NfcService::setDriver): Deleted.
+        * UIProcess/WebAuthentication/Mock/MockNfcService.h:
+        * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+        (-[WKMockNFTag tagID]):
+        (-[WKMockNFTag initWithNFTag:]):
+        (-[WKMockNFTag dealloc]):
+        (-[WKMockNFTag initWithType:]):
+        (-[WKMockNFTag initWithType:tagID:]):
+        (WebKit::MockNfcService::receiveStopPolling):
+        (WebKit::MockNfcService::receiveStartPolling):
+        (WebKit::MockNfcService::platformStartDiscovery):
+        (WebKit::MockNfcService::detectTags):
+        (WebKit::MockNfcService::detectTags const): Deleted.
+        * UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp:
+        (WebKit::CtapNfcDriver::CtapNfcDriver):
+        * UIProcess/WebAuthentication/fido/CtapNfcDriver.h:
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+
 2019-10-26  youenn fablet  <youenn@apple.com>
 
         Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied

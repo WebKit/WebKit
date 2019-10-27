@@ -1,3 +1,15 @@
+2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Warn users when multiple NFC tags present
+        https://bugs.webkit.org/show_bug.cgi?id=200932
+        <rdar://problem/54890736>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html:
+        Adds new tests for multiple physical tags and service restart.
+
 2019-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Import css/css-position WPT
