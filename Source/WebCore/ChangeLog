@@ -1,3 +1,24 @@
+2019-10-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Painting] Use the dirty rect to decide what to paint
+        https://bugs.webkit.org/show_bug.cgi?id=203467
+        <rdar://problem/56653229>
+
+        Reviewed by Antti Koivisto.
+
+        This is a very basic dirty rect instersect check since we don't yet have layout overflow.
+        It enables us to not paint the entire content on every paint frame. 
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::paint):
+        * layout/LayoutContext.h:
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintBoxDecorationAndChildren):
+        (WebCore::Display::Painter::paint):
+        * layout/displaytree/DisplayPainter.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2019-10-26  youenn fablet  <youenn@apple.com>
 
         Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied

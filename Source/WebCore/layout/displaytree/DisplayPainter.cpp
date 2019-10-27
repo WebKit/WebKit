@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "InlineFormattingState.h"
 #include "InlineTextItem.h"
+#include "IntRect.h"
 #include "LayoutContainer.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutState.h"
@@ -145,38 +146,48 @@ static Box absoluteDisplayBox(const Layout::LayoutState& layoutState, const Layo
     return absoluteBox;
 }
 
-static void paintBoxDecorationAndChildren(GraphicsContext& context, const Layout::LayoutState& layoutState, const Layout::Box& layoutBox)
+static void paintBoxDecorationAndChildren(GraphicsContext& context, const Layout::LayoutState& layoutState, const Layout::Box& layoutBox, const IntRect& dirtyRect)
 {
-    if (!layoutBox.isAnonymous())
-        paintBoxDecoration(context, absoluteDisplayBox(layoutState, layoutBox), layoutBox.style(), layoutBox.isBodyBox());
+    if (!layoutBox.isAnonymous()) {
+        auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
+        if (dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
+            paintBoxDecoration(context, absoluteDisplayBox, layoutBox.style(), layoutBox.isBodyBox());
+    }
 
     if (!is<Layout::Container>(layoutBox))
         return;
     for (auto& childLayoutBox : Layout::childrenOfType<Layout::Box>(downcast<Layout::Container>(layoutBox))) {
         if (childLayoutBox.style().visibility() != Visibility::Visible)
             continue;
-        paintBoxDecorationAndChildren(context, layoutState, childLayoutBox);
+        paintBoxDecorationAndChildren(context, layoutState, childLayoutBox, dirtyRect);
     }
 }
 
-void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& context)
+void Painter::paint(const Layout::LayoutState& layoutState, GraphicsContext& context, const IntRect& dirtyRect)
 {
     auto& layoutRoot = layoutState.root();
-    auto& rootDisplayBox = layoutState.displayBoxForLayoutBox(layoutRoot);
-    context.fillRect({ FloatPoint { }, FloatSize { rootDisplayBox.borderBoxWidth(), rootDisplayBox.borderBoxHeight() } }, Color::white);
     if (!layoutRoot.firstChild())
         return;
+    // Fill the entire content area.
+    auto rootRect = LayoutRect { layoutState.displayBoxForLayoutBox(layoutRoot).rect() };
+    for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot))
+        rootRect.uniteIfNonZero(Display::absoluteDisplayBox(layoutState, layoutBox).rect());
+    context.fillRect(rootRect, Color::white);
 
     // 1. Paint box decoration (both block and inline).
-    paintBoxDecorationAndChildren(context, layoutState, *layoutRoot.firstChild());
+    paintBoxDecorationAndChildren(context, layoutState, *layoutRoot.firstChild(), dirtyRect);
 
     // 2. Paint content
     for (auto& layoutBox : Layout::descendantsOfType<Layout::Box>(layoutRoot)) {
+        auto absoluteDisplayBox = Display::absoluteDisplayBox(layoutState, layoutBox);
+        // FIXME: This is the best we can do with no layout overflow support.
+        if (!dirtyRect.intersects(snappedIntRect(absoluteDisplayBox.rect())))
+            continue;
         if (layoutBox.style().visibility() != Visibility::Visible)
             continue;
         if (layoutBox.establishesInlineFormattingContext()) {
             auto& container = downcast<Layout::Container>(layoutBox);
-            paintInlineContent(context, absoluteDisplayBox(layoutState, container), downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
+            paintInlineContent(context, absoluteDisplayBox, downcast<Layout::InlineFormattingState>(layoutState.establishedFormattingState(container)));
             continue;
         }
     }

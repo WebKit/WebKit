@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class GraphicsContext;
+class IntRect;
 class RenderView;
 
 namespace Layout {
@@ -55,7 +56,7 @@ class LayoutContext {
 public:
     // FIXME: These are temporary entry points for LFC layout.
     static std::unique_ptr<LayoutState> runLayoutAndVerify(const RenderView&);
-    static void paint(const LayoutState&, GraphicsContext&);
+    static void paint(const LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 
     LayoutContext(LayoutState&);
     void layout();

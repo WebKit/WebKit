@@ -4181,7 +4181,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled()) {
         if (auto* layoutState = layoutContext().initialLayoutState())
-            Layout::LayoutContext::paint(*layoutState, context);
+            Layout::LayoutContext::paint(*layoutState, context, dirtyRect);
         return;
     }
 #endif

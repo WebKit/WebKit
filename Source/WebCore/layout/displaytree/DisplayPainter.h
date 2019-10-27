@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class GraphicsContext;
+class IntRect;
 
 namespace Layout {
 class LayoutState;
@@ -39,7 +40,7 @@ namespace Display {
 
 class Painter {
 public:
-    static void paint(const Layout::LayoutState&, GraphicsContext&);
+    static void paint(const Layout::LayoutState&, GraphicsContext&, const IntRect& dirtyRect);
 };
 
 }

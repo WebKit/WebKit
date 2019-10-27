@@ -170,9 +170,9 @@ std::unique_ptr<LayoutState> LayoutContext::runLayoutAndVerify(const RenderView&
     return layoutState;
 }
 
-void LayoutContext::paint(const LayoutState& layoutState, GraphicsContext& context)
+void LayoutContext::paint(const LayoutState& layoutState, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    Display::Painter::paint(layoutState, context);
+    Display::Painter::paint(layoutState, context, dirtyRect);
 }
 
 }
