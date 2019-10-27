@@ -1,3 +1,14 @@
+2019-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Import css/css-position WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203446
+
+        Reviewed by Antti Koivisto.
+
+        Import css/css-position from WPT at 5eebc927c57ec8c5e234fef8e4cc480ac339462c (Mon Oct 21 20:23:09 2019 +0100).
+
+        * TestExpectations:
+
 2019-10-26  youenn fablet  <youenn@apple.com>
 
         Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied

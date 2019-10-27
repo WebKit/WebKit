@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/bottom-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/bottom-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/bottom-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-after-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-after-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-after-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-before-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-before-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-before-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-end-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-end-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-end-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-start-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-start-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/inset-start-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/left-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/left-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/left-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/position-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/right-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/right-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/right-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/top-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/top-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/top-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/parsing/z-index-valid.html
