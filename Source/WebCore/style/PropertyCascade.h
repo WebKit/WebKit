@@ -47,7 +47,9 @@ class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum IncludedProperties { All, InheritedOnly };
-    PropertyCascade(StyleResolver&, const MatchResult&, OptionSet<CascadeLevel>, TextDirection, WritingMode, IncludedProperties = IncludedProperties::All);
+    PropertyCascade(StyleResolver&, const MatchResult&, OptionSet<CascadeLevel>, IncludedProperties = IncludedProperties::All);
+    PropertyCascade(const PropertyCascade&, OptionSet<CascadeLevel>);
+
     ~PropertyCascade();
 
     StyleResolver& styleResolver() { return m_styleResolver; }
@@ -74,6 +76,7 @@ public:
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
 
 private:
+    void buildCascade(OptionSet<CascadeLevel>);
     bool addNormalMatches(CascadeLevel);
     void addImportantMatches(CascadeLevel);
     bool addMatch(const MatchedProperties&, CascadeLevel, bool important);
@@ -92,12 +95,15 @@ private:
     Ref<CSSValue> resolveValue(CSSPropertyID, CSSValue&);
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSValue&);
 
+    void resolveDirectionAndWritingMode();
+
     StyleResolver& m_styleResolver;
 
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
-    const TextDirection m_direction;
-    const WritingMode m_writingMode;
+    
+    TextDirection m_direction;
+    WritingMode m_writingMode;
 
     Property m_properties[numCSSProperties + 2];
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;

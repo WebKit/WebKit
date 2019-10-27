@@ -27,6 +27,7 @@
 #include "PropertyCascade.h"
 
 #include "CSSPaintImageValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
 #include "PaintWorkletGlobalScope.h"
 #include "StyleBuilder.h"
@@ -172,12 +173,31 @@ static inline bool isValidCueStyleProperty(CSSPropertyID id)
 }
 #endif
 
-PropertyCascade::PropertyCascade(StyleResolver& styleResolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, TextDirection direction, WritingMode writingMode, IncludedProperties includedProperties)
+PropertyCascade::PropertyCascade(StyleResolver& styleResolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, IncludedProperties includedProperties)
     : m_styleResolver(styleResolver)
     , m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
-    , m_direction(direction)
-    , m_writingMode(writingMode)
+{
+    // Directional properties (*-before/after) are aliases that depend on the TextDirection and WritingMode.
+    // These must be resolved before we can begin building the property cascade.
+    resolveDirectionAndWritingMode();
+
+    buildCascade(cascadeLevels);
+}
+
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, OptionSet<CascadeLevel> cascadeLevels)
+    : m_styleResolver(parent.m_styleResolver)
+    , m_matchResult(parent.m_matchResult)
+    , m_includedProperties(parent.m_includedProperties)
+    , m_direction(parent.m_direction)
+    , m_writingMode(parent.m_writingMode)
+{
+    buildCascade(cascadeLevels);
+}
+
+PropertyCascade::~PropertyCascade() = default;
+
+void PropertyCascade::buildCascade(OptionSet<CascadeLevel> cascadeLevels)
 {
     OptionSet<CascadeLevel> cascadeLevelsWithImportant;
 
@@ -193,8 +213,6 @@ PropertyCascade::PropertyCascade(StyleResolver& styleResolver, const MatchResult
         addImportantMatches(cascadeLevel);
     }
 }
-
-PropertyCascade::~PropertyCascade() = default;
 
 void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, ScopeOrdinal styleScopeOrdinal)
 {
@@ -490,14 +508,14 @@ const PropertyCascade* PropertyCascade::propertyCascadeForRollback(CascadeLevel 
     case CascadeLevel::Author:
         if (!m_authorRollbackCascade) {
             auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent, CascadeLevel::User };
-            m_authorRollbackCascade = makeUnique<const PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
+            m_authorRollbackCascade = makeUnique<const PropertyCascade>(*this, cascadeLevels);
         }
         return m_authorRollbackCascade.get();
 
     case CascadeLevel::User:
         if (!m_userRollbackCascade) {
             auto cascadeLevels = OptionSet<CascadeLevel> { CascadeLevel::UserAgent };
-            m_userRollbackCascade = makeUnique<const PropertyCascade>(m_styleResolver, m_matchResult, cascadeLevels, m_direction, m_writingMode, m_includedProperties);
+            m_userRollbackCascade = makeUnique<const PropertyCascade>(*this, cascadeLevels);
         }
         return m_userRollbackCascade.get();
 
@@ -648,6 +666,43 @@ RefPtr<CSSValue> PropertyCascade::resolvedVariableValue(CSSPropertyID propID, co
 {
     CSSParser parser(m_styleResolver.document());
     return parser.parseValueWithVariableReferences(propID, value, *this);
+}
+
+void PropertyCascade::resolveDirectionAndWritingMode()
+{
+    auto& style = *m_styleResolver.style();
+
+    m_direction = style.direction();
+    m_writingMode = style.writingMode();
+
+    bool hadImportantWritingMode = false;
+    bool hadImportantDirection = false;
+
+    for (auto cascadeLevel : { CascadeLevel::UserAgent, CascadeLevel::User, CascadeLevel::Author }) {
+        for (const auto& matchedProperties : declarationsForCascadeLevel(m_matchResult, cascadeLevel)) {
+            for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
+                auto property = matchedProperties.properties->propertyAt(i);
+                if (!property.value()->isPrimitiveValue())
+                    continue;
+                switch (property.id()) {
+                case CSSPropertyWritingMode:
+                    if (!hadImportantWritingMode || property.isImportant()) {
+                        m_writingMode = downcast<CSSPrimitiveValue>(*property.value());
+                        hadImportantWritingMode = property.isImportant();
+                    }
+                    break;
+                case CSSPropertyDirection:
+                    if (!hadImportantDirection || property.isImportant()) {
+                        m_direction = downcast<CSSPrimitiveValue>(*property.value());
+                        hadImportantDirection = property.isImportant();
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
 }
 
 }

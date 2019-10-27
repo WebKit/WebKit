@@ -118,8 +118,6 @@ using namespace HTMLNames;
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
-static void extractDirectionAndWritingMode(const RenderStyle&, const MatchResult&, TextDirection&, WritingMode&);
-
 inline void StyleResolver::State::cacheBorderAndBackground()
 {
     m_hasUAAppearance = m_style->hasAppearance();
@@ -366,11 +364,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(*elementStyle));
 
-    TextDirection direction;
-    WritingMode writingMode;
-    extractDirectionAndWritingMode(*state.style(), result, direction, writingMode);
-
-    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author }, direction, writingMode);
+    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author });
 
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
@@ -570,11 +564,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     auto& result = collector.matchResult();
 
-    TextDirection direction;
-    WritingMode writingMode;
-    extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
-
-    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author }, direction, writingMode);
+    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author });
 
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
@@ -1304,41 +1294,6 @@ static bool isCacheableInMatchedPropertiesCache(const Element& element, const Re
     return true;
 }
 
-void extractDirectionAndWritingMode(const RenderStyle& style, const MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
-{
-    direction = style.direction();
-    writingMode = style.writingMode();
-
-    bool hadImportantWritingMode = false;
-    bool hadImportantDirection = false;
-
-    for (auto* matchedDeclarations : { &matchResult.userAgentDeclarations, &matchResult.userDeclarations, &matchResult.authorDeclarations }) {
-        for (const auto& matchedProperties : *matchedDeclarations) {
-            for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
-                auto property = matchedProperties.properties->propertyAt(i);
-                if (!property.value()->isPrimitiveValue())
-                    continue;
-                switch (property.id()) {
-                case CSSPropertyWritingMode:
-                    if (!hadImportantWritingMode || property.isImportant()) {
-                        writingMode = downcast<CSSPrimitiveValue>(*property.value());
-                        hadImportantWritingMode = property.isImportant();
-                    }
-                    break;
-                case CSSPropertyDirection:
-                    if (!hadImportantDirection || property.isImportant()) {
-                        direction = downcast<CSSPrimitiveValue>(*property.value());
-                        hadImportantDirection = property.isImportant();
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-}
-
 void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
 {
     State& state = m_state;
@@ -1365,18 +1320,12 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         includedProperties = Style::PropertyCascade::IncludedProperties::InheritedOnly;
     }
 
-    // Directional properties (*-before/after) are aliases that depend on the TextDirection and WritingMode.
-    // These must be resolved before we can begin the property cascade.
-    TextDirection direction;
-    WritingMode writingMode;
-    extractDirectionAndWritingMode(*state.style(), matchResult, direction, writingMode);
-
     if (elementTypeHasAppearanceFromUAStyle(*state.element())) {
         // FIXME: This is such a hack.
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        Style::PropertyCascade cascade(*this, matchResult, { Style::CascadeLevel::UserAgent }, direction, writingMode, includedProperties);
+        Style::PropertyCascade cascade(*this, matchResult, { Style::CascadeLevel::UserAgent }, includedProperties);
 
         cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
         adjustStyleForInterCharacterRuby();
@@ -1399,7 +1348,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         state.cacheBorderAndBackground();
     }
 
-    Style::PropertyCascade cascade(*this, matchResult, Style::allCascadeLevels(), direction, writingMode, includedProperties);
+    Style::PropertyCascade cascade(*this, matchResult, Style::allCascadeLevels(), includedProperties);
 
     cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     adjustStyleForInterCharacterRuby();
@@ -1454,7 +1403,7 @@ void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* valu
     if (!value)
         return;
     MatchResult matchResult;
-    Style::PropertyCascade cascade(*this, matchResult, { }, { }, { });
+    Style::PropertyCascade cascade(*this, matchResult, { });
     if (value)
         cascade.applyProperty(id, *value);
 }
