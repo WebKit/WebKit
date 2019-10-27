@@ -43,23 +43,6 @@ Line::Run::Run(const InlineItem& inlineItem, const Display::Run& displayRun)
 {
 }
 
-bool Line::Run::isWhitespace() const
-{
-    if (!isText())
-        return false;
-    return downcast<InlineTextItem>(m_inlineItem).isWhitespace();
-}
-
-bool Line::Run::canBeExtended() const
-{
-    if (!isText())
-        return false;
-    // Non-collapsed text runs can be merged into one continuous run.
-    if (isCollapsedToZeroAdvanceWidth())
-        return false;
-    return !isCollapsed();
-}
-
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_initialStrut(initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->strut : WTF::nullopt)
@@ -138,10 +121,11 @@ Line::RunList Line::close()
             continue;
         }
         auto& currentRun = m_runList[index];
-        if (!currentRun->isText() || &currentRun->layoutBox() != &previousRun->layoutBox()) {
-            // Do not merge runs from different boxes (<span>foo</span><span>bar</span>)
-            // or within the same layout box but with preserved \n
-            // (<span>text\n<span <- both the "text" and "\" belong to the same layout box)
+        // Do not merge runs from different boxes (<span>foo</span><span>bar</span>)
+        // or within the same layout box but with preserved \n
+        // (<span>text\n<span <- both the "text" and "\" belong to the same layout box)
+        auto canAppendToPreviousRun = currentRun->isText() && &currentRun->layoutBox() ==  &previousRun->layoutBox();
+        if (!canAppendToPreviousRun) {
             ++index;
             continue;
         }

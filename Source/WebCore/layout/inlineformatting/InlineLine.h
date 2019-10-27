@@ -90,7 +90,7 @@ public:
 
         void expand(const Run&);
 
-        void setIsCollapsed() { m_isCollapsed = true; }
+        void setIsCollapsed();
         void setCollapsesToZeroAdvanceWidth();
 
         bool isWhitespace() const;
@@ -100,6 +100,7 @@ public:
         Display::Run m_displayRun;
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };
+        bool m_hasTrailingCollapsedContent { false };
     };
     using RunList = Vector<std::unique_ptr<Run>>;
     RunList close();
@@ -155,10 +156,29 @@ inline void Line::Run::expand(const Run& other)
     ASSERT(isText());
     ASSERT(other.isText());
     ASSERT(!isCollapsedToZeroAdvanceWidth());
+    ASSERT(!m_hasTrailingCollapsedContent);
 
     auto& otherDisplayRun = other.displayRun();
     m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
     m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
+    m_hasTrailingCollapsedContent = other.isCollapsed();
+}
+
+inline bool Line::Run::isWhitespace() const
+{
+    return isText() && downcast<InlineTextItem>(m_inlineItem).isWhitespace();
+}
+
+inline void Line::Run::setIsCollapsed()
+{
+    ASSERT(isWhitespace());
+    m_isCollapsed = true;
+    m_hasTrailingCollapsedContent = true;
+}
+
+inline bool Line::Run::canBeExtended() const
+{
+    return isText() && !m_hasTrailingCollapsedContent;
 }
 
 inline bool Line::Run::isCollapsedToZeroAdvanceWidth() const
@@ -169,8 +189,8 @@ inline bool Line::Run::isCollapsedToZeroAdvanceWidth() const
 
 inline void Line::Run::setCollapsesToZeroAdvanceWidth()
 {
+    setIsCollapsed();
     m_collapsedToZeroAdvanceWidth = true;
-    m_isCollapsed = true;
     m_displayRun.setLogicalWidth({ });
 }
 

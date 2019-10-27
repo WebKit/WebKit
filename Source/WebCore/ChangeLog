@@ -1,5 +1,27 @@
 2019-10-27  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Do not expand runs with collapsed trailing whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=203468
+        <rdar://problem/56653689>
+
+        Reviewed by Antti Koivisto.
+
+        Runs are supposed to be a continuous chunk of content. Runs with trailing
+        collapsed whitespace can't accommodate additional trailing content.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::Run::isWhitespace const): Deleted.
+        (WebCore::Layout::Line::Run::canBeExtended const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::Run::isWhitespace const):
+        (WebCore::Layout::Line::Run::setIsCollapsed):
+        (WebCore::Layout::Line::Run::canBeExtended const):
+        (WebCore::Layout::Line::Run::setCollapsesToZeroAdvanceWidth):
+
+2019-10-27  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Painting] Use the dirty rect to decide what to paint
         https://bugs.webkit.org/show_bug.cgi?id=203467
         <rdar://problem/56653229>
