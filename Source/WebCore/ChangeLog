@@ -1,3 +1,13 @@
+2019-10-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Test PublicSuffix.TopPrivatelyControlledDomain is failing since r250589
+        https://bugs.webkit.org/show_bug.cgi?id=203193
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/soup/PublicSuffixSoup.cpp:
+        (WebCore::topPrivatelyControlledDomain): Skip any leading dots before using libsoup TLD API.
+
 2019-10-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not expand runs with collapsed trailing whitespace

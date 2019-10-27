@@ -1,3 +1,13 @@
+2019-10-27  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Test PublicSuffix.TopPrivatelyControlledDomain is failing since r250589
+        https://bugs.webkit.org/show_bug.cgi?id=203193
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/PublicSuffix.cpp:
+        (TestWebKitAPI::TEST_F): Add a test for a domain consisting only of dots.
+
 2019-10-26  youenn fablet  <youenn@apple.com>
 
         Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied

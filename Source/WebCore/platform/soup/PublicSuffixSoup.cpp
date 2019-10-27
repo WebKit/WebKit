@@ -53,10 +53,18 @@ String topPrivatelyControlledDomain(const String& domain)
     if (lowercaseDomain == "localhost")
         return lowercaseDomain;
 
-    GUniqueOutPtr<GError> error;
     CString domainUTF8 = lowercaseDomain.utf8();
 
-    if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data(), &error.outPtr()))
+    // This function is expected to work with the format used by cookies, so skip any leading dots.
+    unsigned position = 0;
+    while (domainUTF8.data()[position] == '.')
+        position++;
+
+    if (position == domainUTF8.length())
+        return String();
+
+    GUniqueOutPtr<GError> error;
+    if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data() + position, &error.outPtr()))
         return String::fromUTF8(baseDomain);
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_INVALID_HOSTNAME) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN))
