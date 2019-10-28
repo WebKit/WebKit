@@ -192,7 +192,7 @@ FAIL HTMLElement interface: attribute oncopy assert_own_property: expected prope
 FAIL HTMLElement interface: attribute oncut assert_own_property: expected property "oncut" missing
 FAIL HTMLElement interface: attribute onpaste assert_own_property: expected property "onpaste" missing
 PASS HTMLElement interface: attribute contentEditable 
-FAIL HTMLElement interface: attribute enterKeyHint assert_true: The prototype object must have a property "enterKeyHint" expected true got false
+PASS HTMLElement interface: attribute enterKeyHint 
 PASS HTMLElement interface: attribute isContentEditable 
 PASS HTMLElement interface: attribute inputMode 
 PASS HTMLElement interface: attribute dataset 
@@ -282,7 +282,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncut" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onpaste" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "contentEditable" with the proper type 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "enterKeyHint" with the proper type assert_inherits: property "enterKeyHint" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "enterKeyHint" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "isContentEditable" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "inputMode" with the proper type 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "dataset" with the proper type 

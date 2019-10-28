@@ -34,6 +34,7 @@
 #include "DOMTokenList.h"
 #include "DocumentFragment.h"
 #include "ElementAncestorIterator.h"
+#include "EnterKeyHint.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -1117,6 +1118,21 @@ const AtomString& HTMLElement::inputMode() const
 void HTMLElement::setInputMode(const AtomString& value)
 {
     setAttributeWithoutSynchronization(inputmodeAttr, value);
+}
+
+EnterKeyHint HTMLElement::canonicalEnterKeyHint() const
+{
+    return enterKeyHintForAttributeValue(attributeWithoutSynchronization(enterkeyhintAttr));
+}
+
+String HTMLElement::enterKeyHint() const
+{
+    return attributeValueForEnterKeyHint(canonicalEnterKeyHint());
+}
+
+void HTMLElement::setEnterKeyHint(const String& value)
+{
+    setAttributeWithoutSynchronization(enterkeyhintAttr, value);
 }
 
 } // namespace WebCore

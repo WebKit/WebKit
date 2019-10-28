@@ -300,6 +300,12 @@
 #define DEFAULT_OFFSCREEN_CANVAS_ENABLED false
 #endif
 
+#if PLATFORM(COCOA)
+#define DEFAULT_ENTER_KEY_HINT_ENABLED true
+#else
+#define DEFAULT_ENTER_KEY_HINT_ENABLED false
+#endif
+
 namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();

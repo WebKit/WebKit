@@ -4890,6 +4890,7 @@
 		F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */ = {isa = PBXBuildFile; fileRef = F344C75211294D9D00F26EEE /* InspectorFrontendClientLocal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */ = {isa = PBXBuildFile; fileRef = F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */; };
 		F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSErrorHandler.h */; };
+		F403E7872363B58C00044550 /* EnterKeyHint.h in Headers */ = {isa = PBXBuildFile; fileRef = F403E7852363B58C00044550 /* EnterKeyHint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F440E77A233D94D70063F9AB /* NavigatorClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E76F233D94D30063F9AB /* NavigatorClipboard.h */; };
 		F440E77B233D94D70063F9AB /* ClipboardItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F440E770233D94D40063F9AB /* ClipboardItem.h */; };
@@ -15260,6 +15261,8 @@
 		F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentingAgents.h; sourceTree = "<group>"; };
 		F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorHandler.cpp; sourceTree = "<group>"; };
 		F3D461471161D53200CA0D09 /* JSErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorHandler.h; sourceTree = "<group>"; };
+		F403E7852363B58C00044550 /* EnterKeyHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnterKeyHint.h; sourceTree = "<group>"; };
+		F403E7862363B58C00044550 /* EnterKeyHint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnterKeyHint.cpp; sourceTree = "<group>"; };
 		F42CEB54214031EE002DCA72 /* FontAttributeChangesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FontAttributeChangesCocoa.mm; sourceTree = "<group>"; };
 		F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPasteboard.h; sourceTree = "<group>"; };
 		F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StaticPasteboard.cpp; sourceTree = "<group>"; };
@@ -21597,6 +21600,8 @@
 				2E37DFD912DBAFB800A6B233 /* DOMURL.idl */,
 				F55B3D871251F12D003EF269 /* EmailInputType.cpp */,
 				F55B3D881251F12D003EF269 /* EmailInputType.h */,
+				F403E7862363B58C00044550 /* EnterKeyHint.cpp */,
+				F403E7852363B58C00044550 /* EnterKeyHint.h */,
 				41A0829B22932EF4008426E0 /* FeaturePolicy.cpp */,
 				41A0829922932EF4008426E0 /* FeaturePolicy.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
@@ -29512,6 +29517,7 @@
 				B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */,
 				414DEDE71F9FE91E0047C40D /* EmptyFrameLoaderClient.h in Headers */,
 				515BE1901D54F5FB00DD7C68 /* EmptyGamepadProvider.h in Headers */,
+				F403E7872363B58C00044550 /* EnterKeyHint.h in Headers */,
 				1D2F8E042344751600993B68 /* EnterPictureInPictureEvent.h in Headers */,
 				FD31609312B026F700C1A359 /* EqualPowerPanner.h in Headers */,
 				8371AC3B1F509BE400FBF284 /* ErrorCallback.h in Headers */,

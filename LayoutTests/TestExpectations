@@ -69,6 +69,7 @@ compositing/layer-creation/clipping-scope [ Skip ]
 
 # WebKit2 only.
 printing/printing-events.html [ Skip ]
+fast/forms/enterkeyhint-attribute-values.html [ Skip ]
 
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Skip ]
 

@@ -65,6 +65,7 @@
     [CEReactions, Reflect] attribute DOMString webkitdropzone;
 
     attribute DOMString inputMode;
+    [EnabledBySetting=EnterKeyHint] attribute DOMString enterKeyHint;
 };
 
 HTMLElement implements ElementCSSInlineStyle;

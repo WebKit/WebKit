@@ -1,3 +1,49 @@
+2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add bindings support for the enterkeyhint HTML attribute
+        https://bugs.webkit.org/show_bug.cgi?id=203440
+
+        Reviewed by Ryosuke Niwa.
+
+        Work towards support for the enterkeyhint attribute. This patch introduces the new attribute to HTMLElement's
+        IDL; see https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-enterkeyhint-attribute
+        for more information. This version of the spec was last updated October 25, 2019 (at time of writing).
+
+        Test: fast/forms/enterkeyhint-attribute-values.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/EnterKeyHint.cpp: Added.
+
+        Add a new helper file that declares a new EnterKeyHint enum type, as well as helper functions to map between
+        attribute values and EnterKeyHint values.
+
+        (WebCore::enterKeyHintForAttributeValue):
+        (WebCore::attributeValueForEnterKeyHint):
+        * html/EnterKeyHint.h: Added.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::canonicalEnterKeyHint const):
+
+        Returns the canonical EnterKeyHint enum value, by inspecting the "enterkeyhint" attribute value.
+
+        (WebCore::HTMLElement::enterKeyHint const):
+        (WebCore::HTMLElement::setEnterKeyHint):
+
+        Implement enterKeyHint. Since enterkeyhint is a reflected HTML attribute with enumerated values, the setter sets
+        the attribute value and the getter returns the "canonicalized" attribute value.
+
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+
+        Add the new attribute. Note that this isn't marked as [Reflect] in IDL, since doing so would generate incorrect
+        bindings code. This is because we don't support reflection for enumerated attributes in our bindings generator
+        yet, so for now, we just match `HTMLInputElement.type` and `HTMLElement.inputMode`.
+
+        * page/Settings.yaml:
+
+        Add a new runtime switch to guard the enterkeyhint attribute.
+
 2019-10-28  Chris Dumez  <cdumez@apple.com>
 
         editing/firstPositionInNode-crash.html in crashing in Debug

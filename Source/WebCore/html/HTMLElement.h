@@ -37,6 +37,8 @@ class FormNamedItem;
 class HTMLCollection;
 class HTMLFormElement;
 
+enum class EnterKeyHint : uint8_t;
+
 class HTMLElement : public StyledElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLElement);
 public:
@@ -113,6 +115,10 @@ public:
     WEBCORE_EXPORT InputMode canonicalInputMode() const;
     const AtomString& inputMode() const;
     void setInputMode(const AtomString& value);
+
+    WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
+    String enterKeyHint() const;
+    void setEnterKeyHint(const String& value);
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);

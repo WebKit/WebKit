@@ -121,6 +121,7 @@ draggable
 webkitdropzone
 enctype
 end
+enterkeyhint
 event
 expanded
 exportparts

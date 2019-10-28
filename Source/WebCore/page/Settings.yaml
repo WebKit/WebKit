@@ -875,6 +875,9 @@ isThirdPartyCookieBlockingEnabled:
 isLoggedInAPIEnabled:
   initial: false
 
+enterKeyHintEnabled:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

@@ -1713,6 +1713,13 @@ AllowViewportShrinkToFitContent:
   category: internal
   condition: PLATFORM(IOS_FAMILY)
 
+EnterKeyHintEnabled:
+  type: bool
+  defaultValue: DEFAULT_ENTER_KEY_HINT_ENABLED
+  humanReadableName: "Enter Key Hint"
+  humanReadableDescription: "Enable the enterKeyHint HTML attribute"
+  category: internal
+
 ReferrerPolicyAttributeEnabled:
   type: bool
   defaultValue: false
