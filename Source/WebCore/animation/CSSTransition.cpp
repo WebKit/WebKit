@@ -72,6 +72,7 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     animationEffect->setFill(FillMode::Backwards);
     animationEffect->setDelay(delay);
     animationEffect->setIterationDuration(duration);
+    animationEffect->setTimingFunction(backingAnimation().timingFunction());
 
     unsuspendEffectInvalidation();
 }

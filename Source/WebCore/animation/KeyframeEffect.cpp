@@ -1065,6 +1065,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         return;
 
     bool isCSSAnimation = is<CSSAnimation>(animation());
+    bool isCSSTransition = is<CSSTransition>(animation());
 
     for (auto cssPropertyId : m_blendingKeyframes.properties()) {
         // 1. If iteration progress is unresolved abort this procedure.
@@ -1183,8 +1184,10 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
         // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
         //     passing interval distance as the input progress.
+        // We do not need to do this for CSS Transitions since the timing function is applied to the AnimationEffect as a whole and thus
+        // iterationProgress is already transformed.
         auto transformedDistance = intervalDistance;
-        if (startKeyframeIndex) {
+        if (!isCSSTransition && startKeyframeIndex) {
             if (auto duration = iterationDuration()) {
                 auto rangeDuration = (endOffset - startOffset) * duration.seconds();
                 if (auto* timingFunction = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value()))
