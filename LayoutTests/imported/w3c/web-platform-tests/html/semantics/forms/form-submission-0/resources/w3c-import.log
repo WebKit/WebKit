@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/resources/file-submission.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/resources/form-submission.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/resources/targetted-form.js

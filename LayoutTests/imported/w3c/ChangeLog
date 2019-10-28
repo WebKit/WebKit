@@ -1,3 +1,29 @@
+2019-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Update html/semantics/forms WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=203499
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-sync html/semantics/forms WPT tests from upstream 23c1462333cb99f.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-2.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit.html: Added.
+        * web-platform-tests/html/semantics/forms/form-submission-0/resources/form-submission.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/forms/form-submission-0/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html:
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value-expected.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html: Added.
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+
 2019-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Properties that take <position> should not accept 3 values

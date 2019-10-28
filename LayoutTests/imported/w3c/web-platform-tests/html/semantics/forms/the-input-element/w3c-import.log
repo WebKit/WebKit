@@ -64,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/required_attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/reset.html

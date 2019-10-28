@@ -3916,6 +3916,8 @@ webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-002.h
 webkit.org/b/203337 imported/w3c/web-platform-tests/css/css-values/vh-support-atviewport.html [ ImageOnlyFailure ]
 webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ ImageOnlyFailure ]
 
+webkit.org/b/202859 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
+
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
