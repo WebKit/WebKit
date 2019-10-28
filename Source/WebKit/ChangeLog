@@ -1,3 +1,25 @@
+2019-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused WKWebsiteDataStore setter SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203114
+
+        Reviewed by Anders Carlsson.
+
+        They have been replaced by _WKWebsiteDataStoreConfiguration SPI which was adopted in rdar://problem/56349165
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setBoundInterfaceIdentifier:]): Deleted.
+        (-[WKWebsiteDataStore _boundInterfaceIdentifier]): Deleted.
+        (-[WKWebsiteDataStore _setAllowsCellularAccess:]): Deleted.
+        (-[WKWebsiteDataStore _allowsCellularAccess]): Deleted.
+        (-[WKWebsiteDataStore _setProxyConfiguration:]): Deleted.
+        (-[WKWebsiteDataStore _proxyConfiguration]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::setBoundInterfaceIdentifier): Deleted.
+        (WebKit::WebsiteDataStore::setAllowsCellularAccess): Deleted.
+        (WebKit::WebsiteDataStore::setProxyConfiguration): Deleted.
+
 2019-10-28  Brady Eidson  <beidson@apple.com>
 
         Expose _printOperationWithPrintInfo: SPI as API

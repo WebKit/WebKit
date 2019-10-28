@@ -326,31 +326,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setServiceWorkerRegistrationDirectory(directory);
 }
 
-- (void)_setBoundInterfaceIdentifier:(NSString *)identifier
-{
-    _websiteDataStore->setBoundInterfaceIdentifier(identifier);
-}
-
-- (NSString *)_boundInterfaceIdentifier
-{
-    return _websiteDataStore->boundInterfaceIdentifier();
-}
-
-- (void)_setAllowsCellularAccess:(BOOL)allows
-{
-    _websiteDataStore->setAllowsCellularAccess(allows ? WebKit::AllowsCellularAccess::Yes : WebKit::AllowsCellularAccess::No);
-}
-
-- (BOOL)_allowsCellularAccess
-{
-    return _websiteDataStore->allowsCellularAccess() == WebKit::AllowsCellularAccess::Yes;
-}
-
-- (void)_setProxyConfiguration:(NSDictionary *)configuration
-{
-    _websiteDataStore->setProxyConfiguration((__bridge CFDictionaryRef)configuration);
-}
-
 - (NSString *)_sourceApplicationBundleIdentifier
 {
     return _websiteDataStore->sourceApplicationBundleIdentifier();
@@ -380,11 +355,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (BOOL)_allowsTLSFallback
 {
     return NO;
-}
-
-- (NSDictionary *)_proxyConfiguration
-{
-    return (__bridge NSDictionary *)_websiteDataStore->proxyConfiguration();
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory
