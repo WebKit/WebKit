@@ -34,10 +34,10 @@ NativeImagePtr ImageBackingStore::image() const
 {
     m_pixels->ref();
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(
-        reinterpret_cast<unsigned char*>(const_cast<uint32_t*>(m_pixels->data())),
+        reinterpret_cast<unsigned char*>(const_cast<uint32_t*>(m_pixelsPtr)),
         CAIRO_FORMAT_ARGB32, size().width(), size().height(), size().width() * sizeof(uint32_t)));
     static cairo_user_data_key_t s_surfaceDataKey;
-    cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, m_pixels.get(), [](void* data) { static_cast<RGBAPixelBufferThreadSafeRefCounted*>(data)->deref(); });
+    cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, m_pixels.get(), [](void* data) { static_cast<SharedBuffer*>(data)->deref(); });
 
     return surface;
 }
