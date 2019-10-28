@@ -1,3 +1,11 @@
+2019-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix for !ENABLE(MEDIA_STREAM) builds
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+        <rdar://problem/56648232>
+
+        * UIProcess/UserMediaPermissionRequestProxy.h: Enclosed isUserGesturePriviledged with #if ENABLE(MEDIA_STREAM).
+
 2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when multiple NFC tags present
