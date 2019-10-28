@@ -1,3 +1,46 @@
+2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] 3 editing/pasteboard/smart-paste-paragraph-* tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203264
+        <rdar://problem/56512107>
+
+        Reviewed by Tim Horton.
+
+        Fixes several flaky layout tests that exercise a corner case in our logic for caching position information
+        responses in the UI process. When focusing an element via a tap, we send a position information request for the
+        tap location in -_webTouchEventsRecognized:. After the web process computes the information and hands it back to
+        the UI process, we cache this in WKContentView's _positionInformation.
+
+        However, at the time of computing the request, the tapped element has not been focused yet, so the value of the
+        position information's nodeAtPositionIsFocusedElement flag is false. After the tap is recognized, we'll then
+        focus the element, such that if a subsequent position information request were to arrive at the same location,
+        it would have a nodeAtPositionIsFocusedElement flag set to true.
+
+        In this state, if the user taps _exactly_ at the same location again, UIKit (through text interaction gestures)
+        will ask us for information at the same point; we will end up using the cached information, for which
+        nodeAtPositionIsFocusedElement is false, causing us to incorrectly prevent the text interaction. In this
+        particular case, we fail to select text via a double tap gesture.
+
+        To address this, we invalidate the cached position information in the UI process whenever the focused element
+        rect changes (e.g. when the focused element changes); the only exception to this is when the previously cached
+        position information was not over the focused element, and the new focused element rect is empty, in which case
+        the value of nodeAtPositionIsFocusedElement is guaranteed to have not changed.
+
+        While this may potentially leads to an additional synchronous position information request when tapping at the
+        same location after focusing an element, this is very difficult to achieve in practice, since the tap location
+        would need to be _exactly_ at the same location.
+
+        No new test, since this is exercised by existing flaky layout tests.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+
+        Also, add a FIXME about how we clear out surprisingly little of _focusedElementInformation when blurring the
+        focused element.
+
+        (-[WKContentView _didChangeFocusedElementRect:toRect:]):
+
 2019-10-28  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make the API work with the experimental 3rd-party cookie blocking

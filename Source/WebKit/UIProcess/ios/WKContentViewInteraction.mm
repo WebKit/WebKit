@@ -5556,6 +5556,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (delegateImplementsWillStartInputSession)
         [inputDelegate _webView:_webView willStartInputSession:_formInputSession.get()];
 
+    auto previousElementRect = _isChangingFocus ? _focusedElementInformation.elementRect : WebCore::IntRect();
     BOOL isSelectable = mayContainSelectableText(information.elementType);
     BOOL editableChanged = [self setIsEditable:isSelectable];
     _focusedElementInformation = information;
@@ -5602,6 +5603,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     
     [_webView didStartFormControlInteraction];
+
+    [self _didChangeFocusedElementRect:previousElementRect toRect:_focusedElementInformation.elementRect];
 }
 
 - (void)_elementDidBlur
@@ -5625,7 +5628,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #endif
 
     BOOL editableChanged = [self setIsEditable:NO];
-
+    auto previousElementRect = _focusedElementInformation.elementRect;
+    // FIXME: We should completely invalidate _focusedElementInformation here, instead of a subset of individual members.
     _focusedElementInformation.elementType = WebKit::InputType::None;
     _focusedElementInformation.shouldSynthesizeKeyEventsForEditing = false;
     _focusedElementInformation.shouldAvoidResizingWhenInputViewBoundsChange = false;
@@ -5658,8 +5662,23 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         _page->setIsShowingInputViewForFocusedElement(false);
     }
 
-    if (!_isChangingFocus)
+    if (!_isChangingFocus) {
         _didAccessoryTabInitiateFocus = NO;
+        [self _didChangeFocusedElementRect:previousElementRect toRect:WebCore::IntRect()];
+    }
+}
+
+- (void)_didChangeFocusedElementRect:(const WebCore::IntRect&)previousRect toRect:(const WebCore::IntRect&)newRect
+{
+    if (previousRect == newRect)
+        return;
+
+    if (newRect.isEmpty() && !_positionInformation.nodeAtPositionIsFocusedElement)
+        return;
+
+    // If the focused element rect changed, the cached position information's nodeAtPositionIsFocusedElement may be stale.
+    _hasValidPositionInformation = NO;
+    _positionInformation = { };
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
