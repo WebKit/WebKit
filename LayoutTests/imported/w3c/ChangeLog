@@ -1,5 +1,18 @@
 2019-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Flaky Test: imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html
+        https://bugs.webkit.org/show_bug.cgi?id=203473
+        https://bugs.webkit.org/show_bug.cgi?id=203474
+
+        Unreviewed test gardening.
+        
+        Add missing results (missing because these tests assert in debug).
+
+        * web-platform-tests/css/css-position/position-absolute-container-dynamic-002-expected.txt: Added.
+        * web-platform-tests/css/css-position/position-absolute-crash-chrome-005-expected.txt: Added.
+
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Add support for the Q unit
         https://bugs.webkit.org/show_bug.cgi?id=203469
 
