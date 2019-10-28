@@ -72,7 +72,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     encoder << urlSchemesRegisteredAsLocal;
     encoder << urlSchemesRegisteredAsNoAccess;
-    encoder << urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle << shouldDisableServiceWorkerProcessTerminationDelay;
@@ -157,8 +156,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.urlSchemesRegisteredAsLocal))
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredAsNoAccess))
-        return false;
-    if (!decoder.decode(result.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest))
         return false;
 
 #if ENABLE(SERVICE_WORKER)

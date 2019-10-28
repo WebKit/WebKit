@@ -435,7 +435,6 @@ private:
     void registerURLSchemeAsLocal(const String&) const;
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
-    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
 
 #if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);

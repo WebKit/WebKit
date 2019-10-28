@@ -349,9 +349,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
         registerURLSchemeAsNoAccess(scheme);
-
-    for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
-        registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
     
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
@@ -2198,11 +2195,6 @@ void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
 void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
 {
     LegacySchemeRegistry::registerURLSchemeAsNoAccess(scheme);
-}
-
-void NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& scheme) const
-{
-    LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(scheme);
 }
 
 void NetworkProcess::didSyncAllCookies()

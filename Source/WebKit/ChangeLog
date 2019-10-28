@@ -1,3 +1,23 @@
+2019-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused NetworkProcessCreationParameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest
+        https://bugs.webkit.org/show_bug.cgi?id=203393
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest const): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest):
+
 2019-10-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Enable CSS typed OM

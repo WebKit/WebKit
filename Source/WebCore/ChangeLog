@@ -1,3 +1,15 @@
+2019-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused NetworkProcessCreationParameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest
+        https://bugs.webkit.org/show_bug.cgi?id=203393
+
+        Reviewed by Chris Dumez.
+
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::LegacySchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest):
+
 2019-10-28  Antoine Quint  <graouts@apple.com>
 
         CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times

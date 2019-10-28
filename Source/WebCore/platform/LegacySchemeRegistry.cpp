@@ -207,6 +207,7 @@ const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes()
 
 static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
+    ASSERT(!isInNetworkProcess());
     ASSERT(schemeRegistryLock.isHeld());
     static auto canDisplayOnlyIfCanRequestSchemes = makeNeverDestroyedSchemeSet(builtinCanDisplayOnlyIfCanRequestSchemes);
     return canDisplayOnlyIfCanRequestSchemes;
@@ -380,6 +381,7 @@ bool LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(const String&
 
 bool LegacySchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
 {
+    ASSERT(!isInNetworkProcess());
     if (scheme.isNull())
         return false;
 
@@ -389,6 +391,7 @@ bool LegacySchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
 
 void LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
 {
+    ASSERT(!isInNetworkProcess());
     if (scheme.isNull())
         return;
 

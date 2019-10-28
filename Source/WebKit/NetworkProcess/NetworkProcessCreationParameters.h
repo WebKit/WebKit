@@ -89,7 +89,6 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     Vector<String> urlSchemesRegisteredAsLocal;
     Vector<String> urlSchemesRegisteredAsNoAccess;
-    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
