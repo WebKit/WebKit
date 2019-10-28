@@ -59,15 +59,11 @@ public:
         if (size.isEmpty())
             return false;
 
-        Vector<char> buffer;
-        size_t bufferSize = size.area().unsafeGet() * sizeof(RGBA32);
+        m_pixels = RGBAPixelBufferThreadSafeRefCounted::create(size);
 
-        if (!buffer.tryReserveCapacity(bufferSize))
+        if (!m_pixels->isValid())
             return false;
 
-        buffer.grow(bufferSize);
-        m_pixels = SharedBuffer::create(WTFMove(buffer));
-        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
         clear();
@@ -86,7 +82,7 @@ public:
 
     void clear()
     {
-        memset(m_pixelsPtr, 0, (m_size.area() * sizeof(RGBA32)).unsafeGet());
+        m_pixels->zeroPixelData();
     }
 
     void clearRect(const IntRect& rect)
@@ -133,7 +129,7 @@ public:
     RGBA32* pixelAt(int x, int y) const
     {
         ASSERT(inBounds(IntPoint(x, y)));
-        return m_pixelsPtr + y * m_size.width() + x;
+        return m_pixels->pixelAt(x, y);
     }
 
     void setPixel(RGBA32* dest, unsigned r, unsigned g, unsigned b, unsigned a)
@@ -189,6 +185,27 @@ public:
     }
 
 private:
+    class RGBAPixelBufferThreadSafeRefCounted : public ThreadSafeRefCounted<RGBAPixelBufferThreadSafeRefCounted> {
+    public:
+        static Ref<RGBAPixelBufferThreadSafeRefCounted> create(const IntSize& initialSize) { return adoptRef(*new RGBAPixelBufferThreadSafeRefCounted(initialSize)); }
+        void zeroPixelData() { m_pixels.fill(0); }
+        RGBA32* pixelAt(int x, int y) const { return const_cast<unsigned*>(&m_pixels.data()[y * m_size.width() + x]); }
+        const RGBA32* data() const { return m_pixels.data(); }
+        bool isValid() const { return m_isValid; }
+    private:
+        RGBAPixelBufferThreadSafeRefCounted(const IntSize& initialSize)
+            : m_size(initialSize)
+        {
+            unsigned bufferSize = initialSize.area().unsafeGet();
+            m_isValid = m_pixels.tryReserveCapacity(bufferSize);
+            if (m_isValid)
+                m_pixels.resize(bufferSize);
+        }
+        IntSize m_size;
+        Vector<RGBA32> m_pixels;
+        bool m_isValid { false };
+    };
+
     ImageBackingStore(const IntSize& size, bool premultiplyAlpha = true)
         : m_premultiplyAlpha(premultiplyAlpha)
     {
@@ -201,8 +218,6 @@ private:
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        m_pixels = SharedBuffer::create(other.m_pixels->data(), other.m_pixels->size());
-        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
     }
 
     bool inBounds(const IntPoint& point) const
@@ -226,8 +241,8 @@ private:
         return makeRGBA(r, g, b, a);
     }
 
-    RefPtr<SharedBuffer> m_pixels;
-    RGBA32* m_pixelsPtr { nullptr };
+    RefPtr<RGBAPixelBufferThreadSafeRefCounted> m_pixels;
+
     IntSize m_size;
     IntRect m_frameRect; // This will always just be the entire buffer except for GIF and PNG frames
     bool m_premultiplyAlpha { true };

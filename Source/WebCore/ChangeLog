@@ -1,3 +1,43 @@
+2019-10-28  Charlie Turner  <cturner@igalia.com>
+
+        ImageDecoders: use a thread safe data buffer for Cairo backing store
+        https://bugs.webkit.org/show_bug.cgi?id=201727
+
+        Reviewed by Carlos Garcia Campos.
+
+        When an image resource gets cached and replaces an existing image,
+        CachedImage::didReplaceSharedBufferContents is called, which
+        destroys the decoder in the BitmapImage class. This decoder can be
+        initialized from any thread via
+        ImageSource::ensureDecoderAvailable. On GTK/WPE, this dispatches
+        to a ScalableImageDecoder, which contains a vector of
+        ScalableImageDecoderFrame's, which contain ImageBackingStore's,
+        which for reasons related to Cairo, contain a RefCounted
+        SharedBuffer of pixel data.
+
+        The problem is that the CachedImage's decoders can be
+        created/destroyed on different threads, so a thread-safe buffer
+        class is required to hold these data, and pass them safely into
+        cairo_image_surface_create_for_data rather than a SharedBuffer
+        which must be created/destroyed on the main-thread.
+
+        Covered by existing tests.
+
+        * platform/graphics/ImageBackingStore.h: Create a small
+        thread-safe utility class to hold the RGBA pixel data.
+        (WebCore::ImageBackingStore::setSize):
+        (WebCore::ImageBackingStore::clear):
+        (WebCore::ImageBackingStore::pixelAt const):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::create):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::zeroPixelData):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::pixelAt const):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::data const):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::isValid const):
+        (WebCore::ImageBackingStore::ThreadSafeRGBAPixelBuffer::RGBAPixelBufferThreadSafeRefCounted):
+        (WebCore::ImageBackingStore::ImageBackingStore):
+        * platform/image-decoders/cairo/ImageBackingStoreCairo.cpp:
+        (WebCore::ImageBackingStore::image const):
+
 2019-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify the Input Method implementation
