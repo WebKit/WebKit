@@ -83,6 +83,10 @@ function update_field($table, $prefix, $field_name, $new_value = NULL) {
     return TRUE;
 }
 
+function update_boolean_field($table, $prefix, $field_name) {
+    return update_field($table, $prefix, $field_name, Database::to_database_boolean(array_get($_POST, $field_name)));
+}
+
 function regenerate_manifest() {
     global $db;
 

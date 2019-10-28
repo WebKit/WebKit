@@ -13,7 +13,7 @@ if ($db) {
     } else if ($action == 'update') {
         if (update_field('build_triggerables', 'triggerable', 'name'))
             regenerate_manifest();
-        else if (update_field('build_triggerables', 'triggerable', 'disabled', Database::to_database_boolean(array_get($_POST, 'disabled'))))
+        else if (update_boolean_field('build_triggerables', 'triggerable', 'disabled'))
             regenerate_manifest();
         else
             notice('Invalid parameters.');
