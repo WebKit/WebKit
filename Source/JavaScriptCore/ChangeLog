@@ -1,3 +1,17 @@
+2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FTLOutput::callWithoutSideEffects if operation does not have side effects
+        https://bugs.webkit.org/show_bug.cgi?id=203485
+
+        Reviewed by Mark Lam.
+
+        This makes Call's Effect none, and encourages optimizations around it.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToB3::jsValueToStrictInt52):
+
 2019-10-28  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         dumpSpeculation in SpeculatedType.cpp prints to the wrong stream and has wrong capitalization for NaN

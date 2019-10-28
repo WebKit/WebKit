@@ -15295,7 +15295,7 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);
-        results.append(m_out.anchor(m_out.call(Int32, m_out.operation(operationToInt32), doubleValue)));
+        results.append(m_out.anchor(m_out.callWithoutSideEffects(Int32, operationToInt32, doubleValue)));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -15335,8 +15335,7 @@ private:
             rarely(slowPath), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
-        ValueFromBlock slowResult = m_out.anchor(
-            m_out.call(Int32, m_out.operation(operationToInt32SensibleSlow), doubleValue));
+        ValueFromBlock slowResult = m_out.anchor(m_out.callWithoutSideEffects(Int32, operationToInt32SensibleSlow, doubleValue));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -16029,8 +16028,7 @@ private:
             
         m_out.appendTo(doubleCase, continuation);
         
-        LValue possibleResult = m_out.call(
-            Int64, m_out.operation(operationConvertBoxedDoubleToInt52), boxedValue);
+        LValue possibleResult = m_out.callWithoutSideEffects(Int64, operationConvertBoxedDoubleToInt52, boxedValue);
         FTL_TYPE_CHECK(
             jsValueValue(boxedValue), edge, SpecInt32Only | SpecAnyIntAsDouble,
             m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
