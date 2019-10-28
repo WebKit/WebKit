@@ -195,11 +195,13 @@ function reject(reason)
     if (!@isObject(this))
         @throwTypeError("|this| is not an object");
 
-    var promiseCapability = @newPromiseCapability(this);
+    if (this === @Promise) {
+        var promise = @newPromise();
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason);
+        return promise;
+    }
 
-    promiseCapability.@reject.@call(@undefined, reason);
-
-    return promiseCapability.@promise;
+    return @promiseRejectSlow(this, reason);
 }
 
 function resolve(value)
@@ -215,11 +217,13 @@ function resolve(value)
             return value;
     }
 
-    var promiseCapability = @newPromiseCapability(this);
+    if (this === @Promise) {
+        var promise = @newPromise();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
+        return promise;
+    }
 
-    promiseCapability.@resolve.@call(@undefined, value);
-
-    return promiseCapability.@promise;
+    return @promiseResolveSlow(this, value);
 }
 
 @nakedConstructor
@@ -230,19 +234,20 @@ function Promise(executor)
     if (typeof executor !== "function")
         @throwTypeError("Promise constructor takes a function argument");
 
-    var promise = @createPromise(new.target, /* isInternalPromise */ false);
+    var promise = @createPromise(this, /* isInternalPromise */ false);
     var capturedPromise = promise;
 
-    function @resolve(resolution) {
-        return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
-    }
-
-    function @reject(reason) {
+    // FIXME: We should allow using function-declaration here.
+    // https://bugs.webkit.org/show_bug.cgi?id=203502
+    var @reject = function @reject(reason) {
         return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
-    }
+    };
 
     try {
-        executor(@resolve, @reject);
+        executor(
+            function @resolve(resolution) {
+                return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
+            }, @reject);
     } catch (error) {
         @reject(error);
     }
@@ -258,19 +263,20 @@ function InternalPromise(executor)
     if (typeof executor !== "function")
         @throwTypeError("InternalPromise constructor takes a function argument");
 
-    var promise = @createPromise(new.target, /* isInternalPromise */ true);
+    var promise = @createPromise(this, /* isInternalPromise */ true);
     var capturedPromise = promise;
 
-    function @resolve(resolution) {
-        return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
-    }
-
-    function @reject(reason) {
+    // FIXME: We should allow using function-declaration here.
+    // https://bugs.webkit.org/show_bug.cgi?id=203502
+    var @reject = function @reject(reason) {
         return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
-    }
+    };
 
     try {
-        executor(@resolve, @reject);
+        executor(
+            function @resolve(resolution) {
+                return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
+            }, @reject);
     } catch (error) {
         @reject(error);
     }

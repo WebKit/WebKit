@@ -1,3 +1,13 @@
+2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Promise runtime functions
+        https://bugs.webkit.org/show_bug.cgi?id=203454
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/promise-reject.js: Added.
+        * microbenchmarks/promise-resolve.js: Added.
+
 2019-10-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         test262-runner should be able to pass JSC a feature flag

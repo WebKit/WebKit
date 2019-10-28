@@ -34,26 +34,23 @@ function asyncFunctionResume(generator, promise, sentValue, resumeMode)
     var state = @getGeneratorInternalField(generator, @generatorFieldState);
     var value = @undefined;
 
-    if (state === @GeneratorStateCompleted || (resumeMode !== @GeneratorResumeModeNormal && resumeMode !== @GeneratorResumeModeThrow))
-        @throwTypeError("Async function illegally resumed");
-
     try {
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateExecuting);
         value = @getGeneratorInternalField(generator, @generatorFieldNext).@call(@getGeneratorInternalField(generator, @generatorFieldThis), generator, state, sentValue, resumeMode, @getGeneratorInternalField(generator, @generatorFieldFrame));
         if (@getGeneratorInternalField(generator, @generatorFieldState) === @GeneratorStateExecuting) {
-            @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateCompleted);
             @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value);
             return promise;
         }
     } catch (error) {
-        @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateCompleted);
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
         return promise;
     }
 
+    var capturedGenerator = generator;
+    var capturedPromise = promise;
     @resolveWithoutPromise(value,
-        function(value) { @asyncFunctionResume(generator, promise, value, @GeneratorResumeModeNormal); },
-        function(error) { @asyncFunctionResume(generator, promise, error, @GeneratorResumeModeThrow); });
+        function(value) { @asyncFunctionResume(capturedGenerator, capturedPromise, value, @GeneratorResumeModeNormal); },
+        function(error) { @asyncFunctionResume(capturedGenerator, capturedPromise, error, @GeneratorResumeModeThrow); });
 
     return promise;
 }

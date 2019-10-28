@@ -1,5 +1,46 @@
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Optimize Promise runtime functions
+        https://bugs.webkit.org/show_bug.cgi?id=203454
+
+        Reviewed by Keith Miller.
+
+        This patch optimizes Promise runtime functions a bit.
+
+        1. Add fast paths to Promise.resolve / Promise.reject.
+        2. Remove state check in async-functions. Unlike generators, async-function's next function is not exposed to users.
+           It is called by runtime so we can control state perfectly.
+        3. Add "enqueueJob" name to make sampling profiler work for this function.
+        4. Make Promise/InternalPromise constructor inlinable size
+
+                                              ToT                     Patched
+
+            promise-creation-many       25.5794+-0.3681     ^     22.5410+-0.3229        ^ definitely 1.1348x faster
+            promise-resolve             32.3793+-0.4252     ^      9.4219+-0.1114        ^ definitely 3.4366x faster
+            promise-reject             108.5968+-0.7741     ^     36.9383+-0.3770        ^ definitely 2.9400x faster
+
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * builtins/PromiseConstructor.js:
+        (reject):
+        (resolve):
+        (nakedConstructor.Promise.reject):
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise.reject):
+        (nakedConstructor.InternalPromise):
+        (nakedConstructor.Promise.resolve): Deleted.
+        (nakedConstructor.InternalPromise.resolve): Deleted.
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseCapability.resolve):
+        (globalPrivate.newPromiseCapability.reject):
+        (globalPrivate.newPromiseCapability):
+        (globalPrivate.promiseResolveSlow):
+        (globalPrivate.promiseRejectSlow):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Use FTLOutput::callWithoutSideEffects if operation does not have side effects
         https://bugs.webkit.org/show_bug.cgi?id=203485
 

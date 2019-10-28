@@ -27,8 +27,9 @@ CALL STACK:
 CALL STACK:
 0: [N] (anonymous function)
 1: [N] rejectPromise
-2: [N] reject
-3: [F] triggerUnhandledRejectionPromiseReject
+2: [N] rejectPromiseWithFirstResolvingFunctionCallCheck
+3: [N] reject
+4: [F] triggerUnhandledRejectionPromiseReject
 
 -- Running test case: Console.StackTrace.UnhandledPromiseRejection.ExplicitReject
 CALL STACK:

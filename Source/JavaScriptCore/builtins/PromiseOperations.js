@@ -82,12 +82,35 @@ function newPromiseCapability(constructor)
 
     if (constructor === @Promise) {
         var promise = @newPromise();
-        var resolvingFunctions = @createResolvingFunctions(promise);
-        @putByIdDirectPrivate(resolvingFunctions, "promise", promise);
-        return resolvingFunctions;
+        var capturedPromise = promise;
+        function @resolve(resolution) {
+            return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
+        }
+        function @reject(reason) {
+            return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
+        }
+        return { @resolve, @reject, @promise: promise };
     }
 
     return @newPromiseCapabilitySlow(constructor);
+}
+
+@globalPrivate
+function promiseResolveSlow(constructor, value)
+{
+    @assert(constructor !== @Promise);
+    var promiseCapability = @newPromiseCapabilitySlow(constructor);
+    promiseCapability.@resolve.@call(@undefined, value);
+    return promiseCapability.@promise;
+}
+
+@globalPrivate
+function promiseRejectSlow(constructor, reason)
+{
+    @assert(constructor !== @Promise);
+    var promiseCapability = @newPromiseCapabilitySlow(constructor);
+    promiseCapability.@reject.@call(@undefined, reason);
+    return promiseCapability.@promise;
 }
 
 @globalPrivate
