@@ -1,3 +1,12 @@
+2019-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove flaky debug log from WK1 expectations after r251582
+        https://bugs.webkit.org/show_bug.cgi?id=203383
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt:
+        The important part of this test is that there are 3 PASSes, not that the console log is consistent.
+
 2019-10-28  Antoine Quint  <graouts@apple.com>
 
         CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times
