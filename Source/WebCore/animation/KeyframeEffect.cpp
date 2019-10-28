@@ -587,9 +587,8 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
             BaseComputedKeyframe computedKeyframe;
             computedKeyframe.offset = keyframe.key();
             computedKeyframe.computedOffset = keyframe.key();
-            // For CSS transitions, there are only two keyframes and the second keyframe should always report "linear". In practice, this value
-            // has no bearing since, as the last keyframe, its value will never be used.
-            computedKeyframe.easing = is<CSSTransition>(animation()) && i == 1 ? "linear" : timingFunctionForKeyframeAtIndex(0)->cssText();
+            // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
+            computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForKeyframeAtIndex(i)->cssText();
 
             auto outputKeyframe = convertDictionaryToJS(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), computedKeyframe);
 

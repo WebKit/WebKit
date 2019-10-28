@@ -1,3 +1,15 @@
+2019-10-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] getKeyframes() doesn't return the right timing function for declarative animations
+        https://bugs.webkit.org/show_bug.cgi?id=203475
+
+        Reviewed by Dean Jackson.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+        * web-platform-tests/css/css-transitions/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2019-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix nth-child An+B serialization to match the spc
