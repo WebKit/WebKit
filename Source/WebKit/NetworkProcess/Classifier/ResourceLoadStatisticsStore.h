@@ -75,6 +75,7 @@ private:
 };
 
 enum class OperatingDatesWindow : bool { Long, Short };
+enum class CookieAccess : uint8_t { CannotRequest, BasedOnCookiePolicy, OnlyIfGranted };
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore : public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
@@ -160,6 +161,8 @@ public:
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
     void setPrevalentResourceForDebugMode(const RegistrableDomain&);
+    void setIsThirdPartyCookieBlockingEnabled(bool enabled) { m_thirdPartyCookieBlockingEnabled = enabled; };
+    bool isThirdPartyCookieBlockingEnabled() const { return m_thirdPartyCookieBlockingEnabled; };
 
     virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
     virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
@@ -267,6 +270,7 @@ private:
     const RegistrableDomain m_debugStaticPrevalentResource { URL { URL(), "https://3rdpartytestwebkit.org"_s } };
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };
+    bool m_thirdPartyCookieBlockingEnabled { false };
     bool m_dataRecordsBeingRemoved { false };
     ShouldIncludeLocalhost m_shouldIncludeLocalhost { ShouldIncludeLocalhost::Yes };
 };

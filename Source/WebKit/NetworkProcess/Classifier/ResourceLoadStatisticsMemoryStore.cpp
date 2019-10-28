@@ -212,18 +212,27 @@ void ResourceLoadStatisticsMemoryStore::syncStorageImmediately()
         m_persistentStorage->scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
 }
 
+CookieAccess ResourceLoadStatisticsMemoryStore::cookieAccess(const ResourceLoadStatistics& resourceStatistic) const
+{
+    if (!isThirdPartyCookieBlockingEnabled() && !resourceStatistic.isPrevalentResource)
+        return CookieAccess::BasedOnCookiePolicy;
+
+    if (!resourceStatistic.hadUserInteraction)
+        return CookieAccess::CannotRequest;
+    
+    return CookieAccess::OnlyIfGranted;
+}
+
 void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    // Return false if this domain cannot ask for storage access.
-    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
+    switch (cookieAccess(subFrameStatistic)) {
+    case CookieAccess::CannotRequest:
         completionHandler(false);
         return;
-    }
-
-    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
+    case CookieAccess::BasedOnCookiePolicy:
         RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->hasCookies(subFrameDomain, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)](bool result) mutable {
                 store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
@@ -232,6 +241,9 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
             });
         });
         return;
+    case CookieAccess::OnlyIfGranted:
+        // Handled below.
+        break;
     }
 
     RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -248,16 +260,18 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& su
     ASSERT(!RunLoop::isMain());
 
     auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    if (shouldBlockAndPurgeCookies(subFrameStatistic)) {
+    switch (cookieAccess(subFrameStatistic)) {
+    case CookieAccess::CannotRequest:
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Cannot grant storage access to %{public}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
-    }
-
-    if (!shouldBlockAndKeepCookies(subFrameStatistic)) {
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "No need to grant storage access to %{public}s since its cookies are not blocked in third-party contexts.", subFrameDomain.string().utf8().data());
+    case CookieAccess::BasedOnCookiePolicy:
+        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "No need to grant storage access to %{public}s since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::HasAccess);
         return;
+    case CookieAccess::OnlyIfGranted:
+        // Handled below.
+        break;
     }
 
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatistic, topFrameDomain);
@@ -283,13 +297,6 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener(DomainIn
     ASSERT(!RunLoop::isMain());
 
     if (domainInNeedOfStorageAccess == openerDomain)
-        return;
-
-    auto& domainInNeedOfStorageAccessStatistic = ensureResourceStatisticsForRegistrableDomain(domainInNeedOfStorageAccess);
-    auto cookiesBlockedAndPurged = shouldBlockAndPurgeCookies(domainInNeedOfStorageAccessStatistic);
-
-    // The domain already has access if its cookies are not blocked.
-    if (!cookiesBlockedAndPurged && !shouldBlockAndKeepCookies(domainInNeedOfStorageAccessStatistic))
         return;
 
     RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "[Temporary combatibility fix] Storage access was granted for %{public}s under opener page from %{public}s, with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().data(), openerDomain.string().utf8().data());

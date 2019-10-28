@@ -1255,8 +1255,8 @@ void NetworkProcess::setShouldDowngradeReferrerForTesting(bool enabled, Completi
 
 void NetworkProcess::setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto* networkStorageSession = storageSession(sessionID))
-        networkStorageSession->setIsThirdPartyCookieBlockingEnabled(enabled);
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setIsThirdPartyCookieBlockingEnabled(enabled);
     else
         ASSERT_NOT_REACHED();
     completionHandler();

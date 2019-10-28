@@ -1,3 +1,16 @@
+2019-10-28  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make the API work with the experimental 3rd-party cookie blocking
+        https://bugs.webkit.org/show_bug.cgi?id=203428
+        <rdar://problem/56626949>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback):
+        (WTR::TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback):
+            Both of these were missing resets of their m_hasSet*Callback booleans.
+
 2019-10-28  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Report more descriptive configurations for non-Apple ports

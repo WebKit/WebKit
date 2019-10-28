@@ -446,6 +446,25 @@ void WebResourceLoadStatisticsStore::hasCookies(const RegistrableDomain& domain,
     completionHandler(false);
 }
 
+void WebResourceLoadStatisticsStore::setIsThirdPartyCookieBlockingEnabled(bool enabled)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->setIsThirdPartyCookieBlockingEnabled(enabled);
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    postTask([this, enabled]() {
+        if (!m_statisticsStore)
+            return;
+
+        m_statisticsStore->setIsThirdPartyCookieBlockingEnabled(enabled);
+    });
+}
+
 void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
 {
     ASSERT(RunLoop::isMain());

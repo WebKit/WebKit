@@ -193,8 +193,7 @@ private:
 
     bool predicateValueForDomain(WebCore::SQLiteStatement&, const RegistrableDomain&) const;
 
-    enum class CookieTreatmentResult { Allow, BlockAndKeep, BlockAndPurge };
-    CookieTreatmentResult cookieTreatmentForOrigin(const RegistrableDomain&) const;
+    CookieAccess cookieAccess(const RegistrableDomain&) const;
     
     void setPrevalentResource(const RegistrableDomain&, ResourceLoadPrevalence);
     unsigned recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(unsigned primaryDomainID, StdSet<unsigned>& nonPrevalentRedirectionSources, unsigned numberOfRecursiveCalls);

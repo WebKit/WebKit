@@ -1193,16 +1193,21 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
 
     ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
 
-    switch (cookieTreatmentForOrigin(subFrameDomain)) {
-    case CookieTreatmentResult::BlockAndPurge:
+    switch (cookieAccess(subFrameDomain)) {
+    case CookieAccess::CannotRequest:
         completionHandler(false);
         return;
-    case CookieTreatmentResult::Allow:
-        // We should only return true if the context has asked for and been granted access.
-        completionHandler(false);
+    case CookieAccess::BasedOnCookiePolicy:
+        RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+            store->hasCookies(subFrameDomain, [store = store.copyRef(), completionHandler = WTFMove(completionHandler)](bool result) mutable {
+                store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
+                    completionHandler(result);
+                });
+            });
+        });
         return;
-    case CookieTreatmentResult::BlockAndKeep:
-        // Do nothing. The below dispatch will complete the task.
+    case CookieAccess::OnlyIfGranted:
+        // Handled below.
         break;
     };
 
@@ -1220,18 +1225,19 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
     ASSERT(!RunLoop::isMain());
 
     auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-    auto cookieTreatmentResult = cookieTreatmentForOrigin(subFrameDomain);
     
-    if (cookieTreatmentResult == CookieTreatmentResult::BlockAndPurge) {
+    switch (cookieAccess(subFrameDomain)) {
+    case CookieAccess::CannotRequest:
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "Cannot grant storage access to %{private}s since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
-    }
-    
-    if (cookieTreatmentResult != CookieTreatmentResult::BlockAndKeep) {
-        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "No need to grant storage access to %{private}s since its cookies are not blocked in third-party contexts.", subFrameDomain.string().utf8().data());
+    case CookieAccess::BasedOnCookiePolicy:
+        RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "No need to grant storage access to %{private}s since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8().data());
         completionHandler(StorageAccessStatus::HasAccess);
         return;
+    case CookieAccess::OnlyIfGranted:
+        // Handled below.
+        break;
     }
 
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain);
@@ -1264,10 +1270,6 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(Domain
     ASSERT(!RunLoop::isMain());
 
     if (domainInNeedOfStorageAccess == openerDomain)
-        return;
-
-    ensureResourceStatisticsForRegistrableDomain(domainInNeedOfStorageAccess);
-    if (cookieTreatmentForOrigin(domainInNeedOfStorageAccess) == CookieTreatmentResult::Allow)
         return;
 
     RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ITPDebug, "[Temporary combatibility fix] Storage access was granted for %{private}s under opener page from %{private}s, with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().data(), openerDomain.string().utf8().data());
@@ -1788,28 +1790,35 @@ void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& comp
     updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 
-ResourceLoadStatisticsDatabaseStore::CookieTreatmentResult ResourceLoadStatisticsDatabaseStore::cookieTreatmentForOrigin(const RegistrableDomain& domain) const
+CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const RegistrableDomain& domain) const
 {
     ASSERT(!RunLoop::isMain());
 
     SQLiteStatement statement(m_database, "SELECT isPrevalent, hadUserInteraction FROM ObservedDomains WHERE registrableDomain = ?");
     if (statement.prepare() != SQLITE_OK
         || statement.bindText(1, domain.string()) != SQLITE_OK) {
-        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::cookieTreatmentForOrigin failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::cookieAccess failed to bind, error message: %{private}s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
     
-    if (statement.step() != SQLITE_ROW)
-        return CookieTreatmentResult::Allow;
-    
+    bool hasNoEntry = statement.step() != SQLITE_ROW;
+    if (hasNoEntry) {
+        if (isThirdPartyCookieBlockingEnabled())
+            return CookieAccess::OnlyIfGranted;
+        return CookieAccess::BasedOnCookiePolicy;
+    }
+
     bool isPrevalent = !!statement.getColumnInt(0);
-    if (!isPrevalent)
-        return CookieTreatmentResult::Allow;
+    if (!isPrevalent && !isThirdPartyCookieBlockingEnabled())
+        return CookieAccess::BasedOnCookiePolicy;
 
     bool hadUserInteraction = statement.getColumnInt(1) ? true : false;
-    return hadUserInteraction ? CookieTreatmentResult::BlockAndKeep : CookieTreatmentResult::BlockAndPurge;
+    if (!hadUserInteraction)
+        return CookieAccess::CannotRequest;
+
+    return CookieAccess::OnlyIfGranted;
 }
-    
+
 StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt(unsigned requestingDomainID, const RegistrableDomain& firstPartyDomain) const
 {
     ASSERT(!RunLoop::isMain());

@@ -1,3 +1,95 @@
+2019-10-28  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make the API work with the experimental 3rd-party cookie blocking
+        https://bugs.webkit.org/show_bug.cgi?id=203428
+        <rdar://problem/56626949>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking.html
+               http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking.html
+               http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie.html
+               http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie.html
+
+        This patch adds Storage Access API support for the experimental 3rd-party cookie blocking that
+        landed in <https://trac.webkit.org/changeset/251467>.
+
+        There are three policies at play because it can be changed with the experimental setting:
+        1. The underlying cookie policy.
+        2. Shipping ITP.
+        3. The off by default, experimental 3rd-party cookie blocking.
+
+        To support them all, a CookieAccess enum was added to encode how the API should respond.
+        The enum has these values:
+        CannotRequest - This third-party cannot request storage access based on the current policy.
+        BasedOnCookiePolicy – This third-party should be treated according to the underlying cookie policy.
+        OnlyIfGranted – This third-party can and must get access through the Storage Access API.
+
+        Here's the truth table I used to work through the logic for both
+        document.hasStorageAccess() and document.requestStorageAccess():
+
+        Access  | Is        | User        | Has    | 3rd-party    |        |
+        granted | prevalent | interaction | cookie | cookie block | RESULT |
+        -------------------------------------------------------------------
+        |       |           |             |        |              | false  |
+        -------------------------------------------------------------------
+        |       |           |             |        | true         | false  |
+        -------------------------------------------------------------------
+        |       |           |             | true   |              | true   |
+        -------------------------------------------------------------------
+        |       |           |             | true   | true         | false  |
+        -------------------------------------------------------------------
+        |       |           | true        |        |              | false  |
+        -------------------------------------------------------------------
+        |       |           | true        |        | true         | false  |
+        -------------------------------------------------------------------
+        |       |           | true        | true   |              | true   |
+        -------------------------------------------------------------------
+        |       |           | true        | true   | true         | false  |
+        -------------------------------------------------------------------
+        |       | true      | !care       | !care  | !care        | false  |
+        -------------------------------------------------------------------
+        | true  | !care     | !care       | !care  | !care        | true   |
+        -------------------------------------------------------------------
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+            Extra checks removed since there's no harm in granting access
+            to a third-party that already has access by way of the underlying
+            cookie policy. Also, this is a temporary compatibility fix.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::cookieAccess const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener):
+            Extra checks removed since there's no harm in granting access
+            to a third-party that already has access by way of the underlying
+            cookie policy. Also, this is a temporary compatibility fix.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::setIsThirdPartyCookieBlockingEnabled):
+        (WebKit::ResourceLoadStatisticsStore::isThirdPartyCookieBlockingEnabled const):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setIsThirdPartyCookieBlockingEnabled):
+            This is now the single path to control this setting in both ITP
+            and the network storage session. See comment below.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setShouldBlockThirdPartyCookiesForTesting):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::setIsThirdPartyCookieBlockingEnabled):
+            Restructured these so that they are initiated like the rest of the
+            parameters and only have a single path for changes so that a
+            reset to consistent state resets all the state.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2019-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused NetworkProcessCreationParameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest

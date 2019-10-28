@@ -97,6 +97,7 @@ public:
 
     void calculateAndSubmitTelemetry() const override;
 
+    CookieAccess cookieAccess(const ResourceLoadStatistics&) const;
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) override;
     void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(StorageAccessStatus)>&&) override;
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) override;

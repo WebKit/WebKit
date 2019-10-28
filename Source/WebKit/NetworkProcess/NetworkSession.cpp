@@ -170,6 +170,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     // This should always be forwarded since debug mode may be enabled at runtime.
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
+    m_resourceLoadStatistics->setIsThirdPartyCookieBlockingEnabled(m_thirdPartyCookieBlockingEnabled);
 }
 
 void NetworkSession::recreateResourceLoadStatisticStore()
@@ -218,6 +219,13 @@ bool NetworkSession::shouldDowngradeReferrer() const
     return m_downgradeReferrer;
 }
 
+void NetworkSession::setIsThirdPartyCookieBlockingEnabled(bool enabled)
+{
+    ASSERT(m_resourceLoadStatistics);
+    m_thirdPartyCookieBlockingEnabled = enabled;
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->setIsThirdPartyCookieBlockingEnabled(m_thirdPartyCookieBlockingEnabled);
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)

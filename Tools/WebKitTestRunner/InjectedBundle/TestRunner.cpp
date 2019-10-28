@@ -2207,6 +2207,7 @@ void TestRunner::setStatisticsShouldDowngradeReferrer(bool value, JSValueRef com
 void TestRunner::statisticsCallDidSetShouldDowngradeReferrerCallback()
 {
     callTestRunnerCallback(StatisticsDidSetShouldDowngradeReferrerCallbackID);
+    m_hasSetDowngradeReferrerCallback = false;
 }
 
 void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRef completionHandler)
@@ -2224,6 +2225,7 @@ void TestRunner::setStatisticsShouldBlockThirdPartyCookies(bool value, JSValueRe
 void TestRunner::statisticsCallDidSetShouldBlockThirdPartyCookiesCallback()
 {
     callTestRunnerCallback(StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID);
+    m_hasSetBlockThirdPartyCookiesCallback = false;
 }
 
 void TestRunner::statisticsCallClearThroughWebsiteDataRemovalCallback()

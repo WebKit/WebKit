@@ -97,7 +97,7 @@ public:
     virtual void clearIsolatedSessions() { }
     void setShouldDowngradeReferrerForTesting(bool);
     bool shouldDowngradeReferrer() const;
-    void setShouldBlockThirdPartyCookiesForTesting(bool);
+    void setIsThirdPartyCookieBlockingEnabled(bool);
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
     void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -142,6 +142,7 @@ protected:
     WebCore::RegistrableDomain m_resourceLoadStatisticsManualPrevalentResource;
     bool m_enableResourceLoadStatisticsLogTestingEvent;
     bool m_downgradeReferrer { true };
+    bool m_thirdPartyCookieBlockingEnabled { false };
 #endif
     UniqueRef<AdClickAttributionManager> m_adClickAttribution;
 
