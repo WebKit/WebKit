@@ -1,3 +1,42 @@
+2019-10-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203491
+        <rdar://problem/56674176>
+
+        Reviewed by Chris Dumez.
+
+        No new tests, this change is tested by the existing resourceLoadStatistics
+        tests.
+
+        This test started flaking when a new memory store was being created
+        between tests to maintain consistency. The call to grandfatherExistingWebsiteData
+        from populateMemoryStoreFromDisk in the persistent storage was
+        async, causing a race condition that led to occasional failures.
+        Adding a completion handler and changing the callsite of
+        populateMemoryStoreFromDisk should fix this problem.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        The persistent store in the databaseEnabled case was never being used
+        and is unnecessary.
+
+        (WebKit::WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk):
+        Since persistent storage only exists when using the memory store,
+        populateMemoryStoreFromDisk should check if
+        m_persistentStorage has been initialized.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setUseITPDatabase):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        * NetworkProcess/NetworkSession.h:
+
 2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] 3 editing/pasteboard/smart-paste-paragraph-* tests are flaky

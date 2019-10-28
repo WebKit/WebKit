@@ -164,6 +164,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
         return;
 
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
+    m_resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
 
     if (m_enableResourceLoadStatisticsDebugMode == EnableResourceLoadStatisticsDebugMode::Yes)
         m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(true, [] { });
@@ -173,10 +174,11 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     m_resourceLoadStatistics->setIsThirdPartyCookieBlockingEnabled(m_thirdPartyCookieBlockingEnabled);
 }
 
-void NetworkSession::recreateResourceLoadStatisticStore()
+void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
 {
     destroyResourceLoadStatistics();
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
+    m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
 }
 
 bool NetworkSession::isResourceLoadStatisticsEnabled() const

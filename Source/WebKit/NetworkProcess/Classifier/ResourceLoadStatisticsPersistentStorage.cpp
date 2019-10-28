@@ -64,7 +64,6 @@ ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage
 
     m_memoryStore.setPersistentStorage(*this);
 
-    populateMemoryStoreFromDisk();
     startMonitoringDisk();
 }
 

@@ -665,9 +665,9 @@ void NetworkProcess::setUseITPDatabase(PAL::SessionID sessionID, bool value, Com
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (m_isITPDatabaseEnabled != value) {
             m_isITPDatabaseEnabled = value;
-            networkSession->recreateResourceLoadStatisticStore();
-        }
-        completionHandler();
+            networkSession->recreateResourceLoadStatisticStore(WTFMove(completionHandler));
+        } else
+            completionHandler();
     } else {
         ASSERT_NOT_REACHED();
         completionHandler();
