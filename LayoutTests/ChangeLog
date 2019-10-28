@@ -1,3 +1,13 @@
+2019-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2019-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix nth-child An+B serialization to match the spc
