@@ -1,3 +1,47 @@
+2019-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify the Input Method implementation
+        https://bugs.webkit.org/show_bug.cgi?id=203149
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Shared/NativeWebKeyboardEvent.h: Stop using WebCore::CompositionResults.
+        (WebKit::NativeWebKeyboardEvent::text const):
+        (WebKit::NativeWebKeyboardEvent::handledByInputMethod const):
+        (WebKit::NativeWebKeyboardEvent::fakedForComposition const):
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp: Ditto.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Ditto.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Updated to use the new name.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Stop using WebCore::CompositionResults.
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Remove unused function.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setComposition): Use EditingRange instead of two integers and remove replacement range
+        that is unused.
+        (WebKit::WebPageProxy::confirmComposition): Remove unused selection range parameters.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::handleKeyboardEvent):
+        (WebKit::InputMethodFilter::handleKeyboardEventWithCompositionResults):
+        (WebKit::InputMethodFilter::confirmComposition):
+        (WebKit::InputMethodFilter::updatePreedit):
+        (WebKit::InputMethodFilter::confirmCurrentComposition):
+        (WebKit::InputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventForTesting):
+        (WebKit::InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting):
+        * UIProcess/gtk/InputMethodFilter.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::targetFrameForEditing): Receive a reference instead of a pointer.
+        (WebKit::WebPage::confirmComposition): Remove the unused code to handle the selection range.
+        (WebKit::WebPage::setComposition): Remove the unused code to handle the replacement range.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-10-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix for !ENABLE(MEDIA_STREAM) builds

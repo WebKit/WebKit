@@ -411,9 +411,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetCanRunModal(bool canRunModal)
 
 #if PLATFORM(GTK)
-    SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
-    ConfirmComposition(String text, int64_t selectionStart, int64_t selectionLength)
-    CancelComposition()
+    SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange)
+    ConfirmComposition(String text)
 
     CollapseSelectionInFrame(WebCore::FrameIdentifier frameID)
 

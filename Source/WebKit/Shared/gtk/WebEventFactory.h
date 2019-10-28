@@ -24,11 +24,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#pragma once
 
 #include "WebEvent.h"
-#include <WebCore/CompositionResults.h>
 
 typedef union _GdkEvent GdkEvent;
 
@@ -39,12 +37,10 @@ public:
     static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&, Vector<String>&& commands);
+    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const String&, bool handledByInputMethod, Vector<String>&& commands);
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif
 };
 
 } // namespace WebKit
-
-#endif // WebEventFactory_h

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef InputMethodFilter_h
-#define InputMethodFilter_h
+#pragma once
 
 #include <WebCore/IntPoint.h>
 #include <wtf/Function.h>
@@ -30,7 +29,6 @@ typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GtkIMContext GtkIMContext;
 
 namespace WebCore {
-struct CompositionResults;
 class IntRect;
 }
 
@@ -41,9 +39,13 @@ class WebPageProxy;
 class InputMethodFilter {
     WTF_MAKE_NONCOPYABLE(InputMethodFilter);
 public:
-    enum EventFakedForComposition {
-        EventFaked,
-        EventNotFaked
+    enum class EventFakedForComposition {
+        No,
+        Yes
+    };
+    enum class EventHandledByInputMethod {
+        No,
+        Yes
     };
 
     InputMethodFilter();
@@ -56,7 +58,7 @@ public:
     void setEnabled(bool);
     void setCursorRect(const WebCore::IntRect&);
 
-    using FilterKeyEventCompletionHandler = Function<void(const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition)>;
+    using FilterKeyEventCompletionHandler = Function<void(const String&, EventHandledByInputMethod, EventFakedForComposition)>;
     void filterKeyEvent(GdkEventKey*, FilterKeyEventCompletionHandler&& = nullptr);
     void notifyFocusedIn();
     void notifyFocusedOut();
@@ -84,8 +86,8 @@ private:
     void handlePreeditStart();
     void handlePreeditEnd();
 
-    void handleKeyboardEvent(GdkEventKey*, const String& eventString = String(), EventFakedForComposition = EventNotFaked);
-    void handleKeyboardEventWithCompositionResults(GdkEventKey*, ResultsToSend = PreeditAndComposition, EventFakedForComposition = EventNotFaked);
+    void handleKeyboardEvent(GdkEventKey*, const String& eventString = String(), EventFakedForComposition = EventFakedForComposition::No);
+    void handleKeyboardEventWithCompositionResults(GdkEventKey*, ResultsToSend = PreeditAndComposition, EventFakedForComposition = EventFakedForComposition::No);
 
     void sendCompositionAndPreeditWithFakeKeyEvents(ResultsToSend);
     void confirmComposition();
@@ -126,4 +128,3 @@ private:
 
 } // namespace WebKit
 
-#endif // InputMethodFilter_h

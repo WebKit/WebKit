@@ -1,3 +1,19 @@
+2019-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify the Input Method implementation
+        https://bugs.webkit.org/show_bug.cgi?id=203149
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove CompositionResults and remove dead code in PlatformKeyboardEventGtk.
+
+        * PlatformGTK.cmake:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gtk/CompositionResults.h: Removed.
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+
 2019-10-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] getKeyframes() doesn't return the right timing function for declarative animations

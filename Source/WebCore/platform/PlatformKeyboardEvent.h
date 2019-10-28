@@ -40,11 +40,6 @@ OBJC_CLASS NSEvent;
 OBJC_CLASS WebEvent;
 #endif
 
-#if PLATFORM(GTK)
-typedef struct _GdkEventKey GdkEventKey;
-#include "CompositionResults.h"
-#endif
-
 namespace WebCore {
 
     class PlatformKeyboardEvent : public PlatformEvent {
@@ -56,9 +51,6 @@ namespace WebCore {
             , m_autoRepeat(false)
             , m_isKeypad(false)
             , m_isSystemKey(false)
-#if PLATFORM(GTK)
-            , m_gdkEventKey(0)
-#endif
         {
         }
 
@@ -150,10 +142,6 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GTK)
-        PlatformKeyboardEvent(GdkEventKey*, const CompositionResults&);
-        GdkEventKey* gdkEventKey() const { return m_gdkEventKey; }
-        const CompositionResults& compositionResults() const { return m_compositionResults; }
-
         // Used by WebKit2
         static String keyValueForGdkKeyCode(unsigned);
         static String keyCodeForHardwareKeyCode(unsigned);
@@ -203,11 +191,6 @@ namespace WebCore {
         RetainPtr<::WebEvent> m_Event;
 #endif
 #endif
-#if PLATFORM(GTK)
-        GdkEventKey* m_gdkEventKey;
-        CompositionResults m_compositionResults;
-#endif
-        
         // The modifier state is optional, since it is not needed in the UI process or in legacy WebKit.
         static Optional<OptionSet<Modifier>> s_currentModifiers;
     };

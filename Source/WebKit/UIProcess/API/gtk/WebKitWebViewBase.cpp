@@ -784,9 +784,11 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
 
     // We need to copy the event as otherwise it could be destroyed before we reach the lambda body.
     GUniquePtr<GdkEvent> event(gdk_event_copy(reinterpret_cast<GdkEvent*>(keyEvent)));
-    priv->inputMethodFilter.filterKeyEvent(keyEvent, [priv, event = WTFMove(event)](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), compositionResults, faked,
-            !compositionResults.compositionUpdated() ? priv->keyBindingTranslator.commandsForKeyEvent(&event->key) : Vector<String>()));
+    priv->inputMethodFilter.filterKeyEvent(keyEvent, [priv, event = WTFMove(event)](const String& text, InputMethodFilter::EventHandledByInputMethod handled, InputMethodFilter::EventFakedForComposition faked) {
+        auto handledByInputMethod = handled == InputMethodFilter::EventHandledByInputMethod::Yes ? NativeWebKeyboardEvent::HandledByInputMethod::Yes : NativeWebKeyboardEvent::HandledByInputMethod::No;
+        auto fakedForComposition = faked == InputMethodFilter::EventFakedForComposition::Yes ? NativeWebKeyboardEvent::FakedForComposition::Yes : NativeWebKeyboardEvent::FakedForComposition::No;
+        auto commands = handled == InputMethodFilter::EventHandledByInputMethod::Yes ? Vector<String>() : priv->keyBindingTranslator.commandsForKeyEvent(&event->key);
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), text, handledByInputMethod, fakedForComposition, WTFMove(commands)));
     });
 
     return GDK_EVENT_STOP;
@@ -804,8 +806,10 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
 
     // We need to copy the event as otherwise it could be destroyed before we reach the lambda body.
     GUniquePtr<GdkEvent> event(gdk_event_copy(reinterpret_cast<GdkEvent*>(keyEvent)));
-    priv->inputMethodFilter.filterKeyEvent(keyEvent, [priv, event = WTFMove(event)](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), compositionResults, faked, { }));
+    priv->inputMethodFilter.filterKeyEvent(keyEvent, [priv, event = WTFMove(event)](const String& text, InputMethodFilter::EventHandledByInputMethod handled, InputMethodFilter::EventFakedForComposition faked) {
+        auto handledByInputMethod = handled == InputMethodFilter::EventHandledByInputMethod::Yes ? NativeWebKeyboardEvent::HandledByInputMethod::Yes : NativeWebKeyboardEvent::HandledByInputMethod::No;
+        auto fakedForComposition = faked == InputMethodFilter::EventFakedForComposition::Yes ? NativeWebKeyboardEvent::FakedForComposition::Yes : NativeWebKeyboardEvent::FakedForComposition::No;
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), text, handledByInputMethod, fakedForComposition, { }));
     });
 
     return GDK_EVENT_STOP;
@@ -1453,11 +1457,6 @@ WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration& configu
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, nullptr));
     webkitWebViewBaseCreateWebPage(webkitWebViewBase, configuration.copy());
     return webkitWebViewBase;
-}
-
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase)
-{
-    return webkitWebViewBase->priv->inputMethodFilter.context();
 }
 
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)

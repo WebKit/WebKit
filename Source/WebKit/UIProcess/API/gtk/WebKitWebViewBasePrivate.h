@@ -39,7 +39,6 @@
 #include "WebPageProxy.h"
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfiguration>&&);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);

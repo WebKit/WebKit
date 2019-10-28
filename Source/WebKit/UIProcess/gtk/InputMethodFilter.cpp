@@ -23,7 +23,6 @@
 #include "NativeWebKeyboardEvent.h"
 #include "WebPageProxy.h"
 #include <WebCore/Color.h>
-#include <WebCore/CompositionResults.h>
 #include <WebCore/Editor.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/IntRect.h>
@@ -145,10 +144,12 @@ void InputMethodFilter::handleKeyboardEvent(GdkEventKey* event, const String& si
 #endif
 
     if (m_filterKeyEventCompletionHandler) {
-        m_filterKeyEventCompletionHandler(CompositionResults(simpleString), faked);
+        m_filterKeyEventCompletionHandler(simpleString, EventHandledByInputMethod::No, faked);
         m_filterKeyEventCompletionHandler = nullptr;
-    } else
-        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), CompositionResults(simpleString), faked, Vector<String>()));
+    } else {
+        auto fakedForComposition = faked == InputMethodFilter::EventFakedForComposition::Yes ? NativeWebKeyboardEvent::FakedForComposition::Yes : NativeWebKeyboardEvent::FakedForComposition::No;
+        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), simpleString, NativeWebKeyboardEvent::HandledByInputMethod::No, fakedForComposition, Vector<String>()));
+    }
 }
 
 void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition faked)
@@ -161,16 +162,19 @@ void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* e
 #endif
 
     if (m_filterKeyEventCompletionHandler) {
-        m_filterKeyEventCompletionHandler(CompositionResults(CompositionResults::WillSendCompositionResultsSoon), faked);
+        m_filterKeyEventCompletionHandler({ }, EventHandledByInputMethod::Yes, faked);
         m_filterKeyEventCompletionHandler = nullptr;
-    } else
-        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), CompositionResults(CompositionResults::WillSendCompositionResultsSoon), faked, Vector<String>()));
+    } else {
+        auto fakedForComposition = faked == InputMethodFilter::EventFakedForComposition::Yes ? NativeWebKeyboardEvent::FakedForComposition::Yes : NativeWebKeyboardEvent::FakedForComposition::No;
+        m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), { }, NativeWebKeyboardEvent::HandledByInputMethod::Yes, fakedForComposition, Vector<String>()));
+    }
+
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())
-        m_page->confirmComposition(m_confirmedComposition, -1, 0);
+        m_page->confirmComposition(m_confirmedComposition);
 
     if (resultsToSend & Preedit && !m_preedit.isNull()) {
         m_page->setComposition(m_preedit, Vector<CompositionUnderline> { CompositionUnderline(0, m_preedit.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false) },
-            m_cursorOffset, m_cursorOffset, 0 /* replacement start */, 0 /* replacement end */);
+            EditingRange(m_cursorOffset, 1));
     }
 }
 
@@ -267,7 +271,7 @@ void InputMethodFilter::confirmComposition()
         return;
     }
 #endif
-    m_page->confirmComposition(m_confirmedComposition, -1, 0);
+    m_page->confirmComposition(m_confirmedComposition);
     m_confirmedComposition = String();
 }
 
@@ -281,7 +285,7 @@ void InputMethodFilter::updatePreedit()
 #endif
     // FIXME: We should parse the PangoAttrList that we get from the IM context here.
     m_page->setComposition(m_preedit, Vector<CompositionUnderline> { CompositionUnderline(0, m_preedit.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false) },
-        m_cursorOffset, m_cursorOffset, 0 /* replacement start */, 0 /* replacement end */);
+        EditingRange(m_cursorOffset, 1));
     m_preeditChanged = false;
 }
 
@@ -340,7 +344,7 @@ void InputMethodFilter::confirmCurrentComposition()
     }
 #endif
 
-    m_page->confirmComposition(String(), -1, 0);
+    m_page->confirmComposition({ });
     m_composingTextCurrently = false;
 }
 
@@ -368,14 +372,14 @@ void InputMethodFilter::sendCompositionAndPreeditWithFakeKeyEvents(ResultsToSend
     GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
     event->key.time = GDK_CURRENT_TIME;
     event->key.keyval = compositionEventKeyCode;
-    handleKeyboardEventWithCompositionResults(&event->key, resultsToSend, EventFaked);
+    handleKeyboardEventWithCompositionResults(&event->key, resultsToSend, EventFakedForComposition::Yes);
 
     m_confirmedComposition = String();
     if (resultsToSend & Composition)
         m_composingTextCurrently = false;
 
     event->type = GDK_KEY_RELEASE;
-    handleKeyboardEvent(&event->key, String(), EventFaked);
+    handleKeyboardEvent(&event->key, String(), EventFakedForComposition::Yes);
     m_justSentFakeKeyUp = true;
 }
 
@@ -450,7 +454,7 @@ void InputMethodFilter::logHandleKeyboardEventForTesting(GdkEventKey* event, con
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
     const char* eventType = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event)) == GDK_KEY_RELEASE ? "release" : "press";
-    const char* fakedString = faked == EventFaked ? " (faked)" : "";
+    const char* fakedString = faked == EventFakedForComposition::Yes ? " (faked)" : "";
     if (!eventString.isNull())
         m_events.append(makeString("sendSimpleKeyEvent type=", eventType, " keycode=", hex(keyval), " text='", eventString, '\'', fakedString));
     else
@@ -462,7 +466,7 @@ void InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting(G
     guint keyval;
     gdk_event_get_keyval(reinterpret_cast<GdkEvent*>(event), &keyval);
     const char* eventType = gdk_event_get_event_type(reinterpret_cast<GdkEvent*>(event)) == GDK_KEY_RELEASE ? "release" : "press";
-    const char* fakedString = faked == EventFaked ? " (faked)" : "";
+    const char* fakedString = faked == EventFakedForComposition::Yes ? " (faked)" : "";
     m_events.append(makeString("sendKeyEventWithCompositionResults type=", eventType, " keycode=", hex(keyval), fakedString));
 
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())

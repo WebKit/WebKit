@@ -8020,29 +8020,21 @@ RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot()
 #endif
 
 #if PLATFORM(GTK)
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+void WebPageProxy::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange)
 {
     // FIXME: We need to find out how to proper handle the crashes case.
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), m_webPageID);
+    process().send(Messages::WebPage::SetComposition(text, underlines, selectionRange), m_webPageID);
 }
 
-void WebPageProxy::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)
+void WebPageProxy::confirmComposition(const String& compositionString)
 {
     if (!hasRunningProcess())
         return;
 
-    process().send(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), m_webPageID);
-}
-
-void WebPageProxy::cancelComposition()
-{
-    if (!hasRunningProcess())
-        return;
-
-    process().send(Messages::WebPage::CancelComposition(), m_webPageID);
+    process().send(Messages::WebPage::ConfirmComposition(compositionString), m_webPageID);
 }
 #endif // PLATFORM(GTK)
 

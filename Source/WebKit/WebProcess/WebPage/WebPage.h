@@ -773,9 +773,8 @@ public:
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
 
 #if PLATFORM(GTK)
-    void setComposition(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeLength);
-    void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
-    void cancelComposition();
+    void setComposition(const String&, const Vector<WebCore::CompositionUnderline>&, const EditingRange& selectionRange);
+    void confirmComposition(const String& text);
 
     void collapseSelectionInFrame(WebCore::FrameIdentifier);
     void showEmojiPicker(WebCore::Frame&);

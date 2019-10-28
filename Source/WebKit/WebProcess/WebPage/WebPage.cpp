@@ -5291,9 +5291,9 @@ void WebPage::confirmCompositionAsync()
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(GTK)
-static Frame* targetFrameForEditing(WebPage* page)
+static Frame* targetFrameForEditing(WebPage& page)
 {
-    Frame& targetFrame = page->corePage()->focusController().focusedOrMainFrame();
+    Frame& targetFrame = page.corePage()->focusController().focusedOrMainFrame();
 
     Editor& editor = targetFrame.editor();
     if (!editor.canEdit())
@@ -5312,62 +5312,20 @@ static Frame* targetFrameForEditing(WebPage* page)
     return &targetFrame;
 }
 
-void WebPage::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)
+void WebPage::confirmComposition(const String& compositionString)
 {
-    Frame* targetFrame = targetFrameForEditing(this);
-    if (!targetFrame) {
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
-        return;
-    }
-
-    targetFrame->editor().confirmComposition(compositionString);
-
-    if (selectionStart == -1) {
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
-        return;
-    }
-
-    Element* scope = targetFrame->selection().selection().rootEditableElement();
-    RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
-    ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
-
-    if (selectionRange) {
-        VisibleSelection selection(*selectionRange, SEL_DEFAULT_AFFINITY);
-        targetFrame->selection().setSelection(selection);
-    }
-    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+    if (auto* targetFrame = targetFrameForEditing(*this))
+        targetFrame->editor().confirmComposition(compositionString);
 }
 
-void WebPage::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, uint64_t selectionStart, uint64_t selectionLength, uint64_t replacementStart, uint64_t replacementLength)
+void WebPage::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const EditingRange& selectionRange)
 {
-    Frame* targetFrame = targetFrameForEditing(this);
-    if (!targetFrame || !targetFrame->selection().selection().isContentEditable()) {
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+    Frame* targetFrame = targetFrameForEditing(*this);
+    if (!targetFrame || !targetFrame->selection().selection().isContentEditable())
         return;
-    }
 
     Ref<Frame> protector(*targetFrame);
-
-    if (replacementLength > 0) {
-        // The layout needs to be uptodate before setting a selection
-        targetFrame->document()->updateLayout();
-
-        Element* scope = targetFrame->selection().selection().rootEditableElement();
-        RefPtr<Range> replacementRange = TextIterator::rangeFromLocationAndLength(scope, replacementStart, replacementLength);
-        targetFrame->editor().setIgnoreSelectionChanges(true);
-        targetFrame->selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
-        targetFrame->editor().setIgnoreSelectionChanges(false);
-    }
-
-    targetFrame->editor().setComposition(text, underlines, selectionStart, selectionStart + selectionLength);
-    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
-}
-
-void WebPage::cancelComposition()
-{
-    if (Frame* targetFrame = targetFrameForEditing(this))
-        targetFrame->editor().cancelComposition();
-    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+    targetFrame->editor().setComposition(text, underlines, selectionRange.location, selectionRange.location + selectionRange.length);
 }
 #endif
 

@@ -249,7 +249,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
         wallTimeForEvent(event));
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const WebCore::CompositionResults& compositionResults, Vector<String>&& commands)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const String& text, bool handledByInputMethod, Vector<String>&& commands)
 {
     guint keyval;
     gdk_event_get_keyval(event, &keyval);
@@ -259,13 +259,13 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
 
     return WebKeyboardEvent(
         type == GDK_KEY_RELEASE ? WebEvent::KeyUp : WebEvent::KeyDown,
-        compositionResults.simpleString.length() ? compositionResults.simpleString : PlatformKeyboardEvent::singleCharacterString(keyval),
+        text.isNull() ? PlatformKeyboardEvent::singleCharacterString(keyval) : text,
         PlatformKeyboardEvent::keyValueForGdkKeyCode(keyval),
         PlatformKeyboardEvent::keyCodeForHardwareKeyCode(keycode),
         PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyval),
         PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(keyval),
         static_cast<int>(keyval),
-        compositionResults.compositionUpdated(),
+        handledByInputMethod,
         WTFMove(commands),
         isGdkKeyCodeFromKeyPad(keyval),
         modifiersForEvent(event),

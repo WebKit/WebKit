@@ -48,7 +48,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/x11/XUniquePtr.h
     platform/graphics/x11/XUniqueResource.h
 
-    platform/gtk/CompositionResults.h
     platform/gtk/GRefPtrGtk.h
     platform/gtk/GUniquePtrGtk.h
     platform/gtk/GtkUtilities.h

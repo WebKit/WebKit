@@ -32,21 +32,22 @@
 #include <gdk/gdk.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults, WTFMove(commands)))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, HandledByInputMethod handledByInputMethod, FakedForComposition fakedForComposition, Vector<String>&& commands)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
-    , m_compositionResults(compositionResults)
-    , m_fakeEventForComposition(faked == InputMethodFilter::EventFaked)
+    , m_text(text)
+    , m_handledByInputMethod(handledByInputMethod)
+    , m_fakedForComposition(fakedForComposition)
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.compositionResults(), Vector<String>(event.commands())))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event.nativeEvent(), event.text(), event.handledByInputMethod(), Vector<String>(event.commands())))
     , m_nativeEvent(gdk_event_copy(event.nativeEvent()))
-    , m_compositionResults(event.compositionResults())
-    , m_fakeEventForComposition(event.isFakeEventForComposition())
+    , m_text(event.text())
+    , m_handledByInputMethod(event.handledByInputMethod() ? HandledByInputMethod::Yes : HandledByInputMethod::No)
+    , m_fakedForComposition(event.fakedForComposition() ? FakedForComposition::Yes : FakedForComposition::No)
 {
 }
 
