@@ -190,7 +190,7 @@ body.window-inactive .tab-bar > .item.selected {
 
     transition-property: background-color, opacity;
     transition-duration: 250ms, 500ms;
-    transition-delay: 0, 50ms;
+    transition-delay: 0s, 50ms;
 
     -webkit-margin-end: 4px;
 }

@@ -1,3 +1,16 @@
+2019-10-28  Antoine Quint  <graouts@apple.com>
+
+        CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times
+        https://bugs.webkit.org/show_bug.cgi?id=203484
+
+        Reviewed by Antti Koivisto.
+
+        Mark WPT progressions.
+
+        * web-platform-tests/css/css-animations/parsing/animation-delay-invalid-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-duration-invalid-expected.txt:
+        * web-platform-tests/css/css-transitions/parsing/transition-delay-invalid-expected.txt:
+
 2019-10-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] The easing property for a CSSTransition effect is always "linear"

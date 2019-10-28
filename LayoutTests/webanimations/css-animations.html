@@ -91,7 +91,7 @@ targetTest(target => {
 
     assert_equals(target.getAnimations()[0].effect.getTiming().delay, -1000, "The animation's delay matches the initial animation-delay property.");
 
-    target.style.animationDelay = 0;
+    target.style.animationDelay = "0s";
     assert_equals(target.getAnimations()[0].effect.getTiming().delay, 0, "The animation's delay matches the updated animation-delay property.");
 }, "Web Animations should reflect the animation-delay property.");
 
@@ -221,7 +221,7 @@ function runAnimationCompletionTest(finalAssertionCallback, description)
 runAnimationCompletionTest(animation => animation.finish(), "Calling finish() on the animation");
 runAnimationCompletionTest(animation => animation.currentTime = animation.effect.getTiming().duration, "Seeking the animation to its end time");
 runAnimationCompletionTest(animation => animation.effect.target.style.animationName = "none", "Setting the target's animation-name to none");
-runAnimationCompletionTest(animation => animation.effect.target.style.animationDuration = 0, "Setting the target's animation-duration to 0");
+runAnimationCompletionTest(animation => animation.effect.target.style.animationDuration = "0s", "Setting the target's animation-duration to 0s");
 
 </script>
 </body>

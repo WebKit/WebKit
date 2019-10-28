@@ -447,7 +447,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
 {
     const CSSParserToken& token = range.peek();
     CSSPrimitiveValue::UnitType unit = token.unitType();
-    bool acceptUnitless = token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless);
+    bool acceptUnitless = token.type() == NumberToken && unitless == UnitlessQuirk::Allow && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless);
     if (acceptUnitless)
         unit = CSSPrimitiveValue::UnitType::CSS_MS;
     if (token.type() == DimensionToken || acceptUnitless) {

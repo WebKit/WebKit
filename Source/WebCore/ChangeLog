@@ -1,3 +1,17 @@
+2019-10-28  Antoine Quint  <graouts@apple.com>
+
+        CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times
+        https://bugs.webkit.org/show_bug.cgi?id=203484
+
+        Reviewed by Antti Koivisto.
+
+        The CSS specification does not allow for "0" as a valid time (https://drafts.csswg.org/css-values-3/#time).
+        We change the way we parse time values to only allow for "0" if the UnitlessQuirk is set to Allow, which is
+        only the case for the -webkit-marquee-speed property.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+
 2019-10-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] The easing property for a CSSTransition effect is always "linear"

@@ -52,7 +52,7 @@
 }
 
 .no-find-banner-transition:matches(.find-banner, .supports-find-banner) {
-    transition-duration: 0 !important;
+    transition-duration: 0s !important;
 }
 
 .supports-find-banner {
