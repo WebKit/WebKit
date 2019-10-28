@@ -130,12 +130,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c))"
 PASS successfullyParsed is true
 
 TEST COMPLETE

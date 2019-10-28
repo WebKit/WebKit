@@ -1,3 +1,19 @@
+2019-10-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix nth-child An+B serialization to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203464
+
+        Reviewed by Antti Koivisto.
+
+        The spec says to expand "odd" and "even" to "2n+1" and "2n", and to simplify
+        things like "1n+1" and "0n"
+
+        Tested by existing tests.
+
+        * css/CSSSelector.cpp:
+        (WebCore::outputNthChildAnPlusB):
+        (WebCore::CSSSelector::selectorText const):
+
 2019-10-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Warn users when multiple NFC tags present

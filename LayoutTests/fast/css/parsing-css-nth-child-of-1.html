@@ -10,7 +10,8 @@
 <script>
 description('Test the parsing of :nth-child(of) for querySelector and style.');
 
-function testValidSelector(selectorString, expectedSerializedSelector) {
+function testValidSelector(selectorString, expectedSerializedSelector)
+{
     shouldNotThrow('document.querySelector(":nth-child(' + selectorString.replace(/\\/g, '\\\\') + ')")');
 
     var styleContainer = document.getElementById('style-container');
@@ -39,9 +40,25 @@ var validNthAnPlusB = [
     "-3n-5",
 ];
 
+var expectedNthAnPlusB = [
+    "2n",
+    "2n+1",
+    "n",
+    "-n",
+    "3",
+    "-3",
+    "n",
+    "n",
+    "0",
+    "3n+5",
+    "-3n+5",
+    "3n-5",
+    "-3n-5",
+];
+
 debug("Basic valid cases without [of selectors]");
 for (var i = 0; i < validNthAnPlusB.length; ++i)
-    testValidSelector(validNthAnPlusB[i], validNthAnPlusB[i]);
+    testValidSelector(validNthAnPlusB[i], expectedNthAnPlusB[i]);
 
 var validRightSide = [
     // Basic types.
@@ -76,8 +93,9 @@ debug("Basic cases with [of selectors]");
 for (var leftSideIndex = 0; leftSideIndex < validNthAnPlusB.length; ++leftSideIndex) {
     for (var rightSideIndex = 0; rightSideIndex < validRightSide.length; ++rightSideIndex) {
         var selectorString = validNthAnPlusB[leftSideIndex] + " of " + validRightSide[rightSideIndex];
-        testValidSelector(selectorString);
-        testValidSelector(selectorString + "    ", selectorString);
+        var expectedSelectorString = expectedNthAnPlusB[leftSideIndex] + " of " + validRightSide[rightSideIndex];
+        testValidSelector(selectorString, expectedSelectorString);
+        testValidSelector(selectorString + "    ", expectedSelectorString);
     }
 }
 

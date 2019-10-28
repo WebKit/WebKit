@@ -130,12 +130,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(*, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :not(:link))"
-PASS document.querySelector(":matches(*, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(*, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(*, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(*, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(*, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(foobar, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, *)"
@@ -262,12 +262,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(foobar, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :not(:link))"
-PASS document.querySelector(":matches(foobar, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(foobar, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(foobar, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(#id, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, *)"
@@ -394,12 +394,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(#id, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :not(:link))"
-PASS document.querySelector(":matches(#id, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(#id, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(#id, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(.class, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, *)"
@@ -526,12 +526,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(.class, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :not(:link))"
-PASS document.querySelector(":matches(.class, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(.class, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(.class, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(:first-child, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, *)"
@@ -658,12 +658,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:first-child, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :not(:link))"
-PASS document.querySelector(":matches(:first-child, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:first-child, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:first-child, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:first-child, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:first-child, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(:last-child, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, *)"
@@ -790,12 +790,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:last-child, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :not(:link))"
-PASS document.querySelector(":matches(:last-child, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:last-child, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:last-child, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(:visited, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, *)"
@@ -922,12 +922,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:visited, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :not(:link))"
-PASS document.querySelector(":matches(:visited, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:visited, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:visited, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:visited, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:visited, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(::first-letter, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, *)"
@@ -1054,12 +1054,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::first-letter, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :not(:link))"
-PASS document.querySelector(":matches(::first-letter, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(::first-letter, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(::first-line, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, *)"
@@ -1186,12 +1186,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::first-line, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :not(:link))"
-PASS document.querySelector(":matches(::first-line, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(::first-line, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(::first-line, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-line, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-line, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(::before, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, *)"
@@ -1318,12 +1318,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::before, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :not(:link))"
-PASS document.querySelector(":matches(::before, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(::before, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(::before, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(::after, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, *)"
@@ -1450,12 +1450,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(::after, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :not(:link))"
-PASS document.querySelector(":matches(::after, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(::after, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(::after, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::after, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::after, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(foobar#id.class, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, *)"
@@ -1582,12 +1582,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(foobar#id.class, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :not(:link))"
-PASS document.querySelector(":matches(foobar#id.class, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(foobar#id.class, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(.class:not(.notclass), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), *)"
@@ -1714,12 +1714,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(.class:not(.notclass), :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :not(:link))"
-PASS document.querySelector(":matches(.class:not(.notclass), :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(.class:not(.notclass), :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(.class:not(.notclass), :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class:not(.notclass), :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class:not(.notclass), :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(#id:empty, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, *)"
@@ -1846,12 +1846,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(#id:empty, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :not(:link))"
-PASS document.querySelector(":matches(#id:empty, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(#id:empty, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(#id:empty, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(a > b, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, *)"
@@ -1978,12 +1978,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a > b, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :not(:link))"
-PASS document.querySelector(":matches(a > b, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(a > b, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(a > b, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a > b, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a > b, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(a b, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, *)"
@@ -2110,12 +2110,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a b, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :not(:link))"
-PASS document.querySelector(":matches(a b, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(a b, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(a b, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(a + b, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, *)"
@@ -2242,12 +2242,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a + b, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :not(:link))"
-PASS document.querySelector(":matches(a + b, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(a + b, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(a + b, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a + b, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(a ~ b, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, *)"
@@ -2374,12 +2374,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a ~ b, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :not(:link))"
-PASS document.querySelector(":matches(a ~ b, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(a ~ b, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(a + b > c ~ d e + g, *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, *)"
@@ -2506,12 +2506,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(a + b > c ~ d e + g, :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :not(:link))"
-PASS document.querySelector(":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a + b > c ~ d e + g, :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a + b > c ~ d e + g, :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), *)"
@@ -2638,12 +2638,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :not(:link))"
-PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
 PASS document.querySelector(":matches(:not(:link), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), *)"
@@ -2770,144 +2770,144 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":matches(:not(:link), :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :not(:link))"
-PASS document.querySelector(":matches(:not(:link), :nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":matches(:not(:link), :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:not(:link), :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:not(:link), :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), *)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:not(:link), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), *)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), *)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), *    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), *)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), *    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), *)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), foobar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), *)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), foobar)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), foobar    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), foobar)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), foobar    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), foobar)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), #id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), foobar)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), #id)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), #id)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), #id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), #id)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), #id    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), #id)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), #id)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), .class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), .class)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), .class)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), .class    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), .class)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), .class)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :first-child)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :first-child)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :first-child)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :first-child    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :first-child)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :first-child)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :last-child)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :last-child)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :last-child)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :last-child    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :last-child)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :last-child)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :visited)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :visited)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :visited)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :visited    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :visited)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :visited)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::first-letter)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::first-letter)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::first-letter)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::first-letter    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::first-letter)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::first-line)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::first-letter)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::first-line)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::first-line)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::first-line    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::first-line)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::first-line    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::first-line)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::first-line)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::before)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::before)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::before)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::before    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::before)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::after)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::before)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::after)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::after)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), ::after    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::after)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), ::after    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), ::after)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), ::after)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), foobar#id.class)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), foobar#id.class)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), foobar#id.class)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), foobar#id.class    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), foobar#id.class)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), .class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), foobar#id.class)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), .class:not(.notclass))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), .class:not(.notclass))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), .class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), .class:not(.notclass))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), .class:not(.notclass)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), .class:not(.notclass))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), .class:not(.notclass))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), #id:empty)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), #id:empty)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), #id:empty)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), #id:empty    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), #id:empty)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), #id:empty)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a > b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a > b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a > b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a > b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a > b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a > b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a + b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a + b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a + b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a + b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a + b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a + b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a ~ b)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a ~ b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a ~ b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a ~ b    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a ~ b)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a ~ b)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a + b > c ~ d e + g)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), a + b > c ~ d e + g    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), a + b > c ~ d e + g)"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), a + b > c ~ d e + g)"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :not(:link))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :not(:link))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :not(:link))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :not(:link))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :nth-child(even of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :not(:link))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :nth-child(even of a, b, c))"
-PASS document.querySelector(":matches(:nth-child(even of a, b, c), :nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(even of a, b, c), :nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
 PASS successfullyParsed is true
 
 TEST COMPLETE

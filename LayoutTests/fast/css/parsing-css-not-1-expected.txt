@@ -112,12 +112,12 @@ PASS document.getElementById('style-container').sheet.cssRules[0].selectorText i
 PASS document.querySelector(":not(:not(:link)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:not(:link))"
-PASS document.querySelector(":not(:nth-child(even of a, b, c))") did not throw exception.
+PASS document.querySelector(":not(:nth-child(2n of a, b, c))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(even of a, b, c))"
-PASS document.querySelector(":not(:nth-child(even of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:nth-child(2n of a, b, c)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(even of a, b, c))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c))"
 PASS successfullyParsed is true
 
 TEST COMPLETE

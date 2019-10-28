@@ -30,13 +30,13 @@ div span#foo.test div:hover#bar a
 :disabled
 :checked
 :indeterminate
-:nth-child(odd)
-:nth-child(even)
+:nth-child(2n+1)
+:nth-child(2n)
 :nth-child(2n)
 :nth-child(2n+1)
 :nth-child(-n+6)
-:nth-last-child(odd)
-:nth-last-child(even)
+:nth-last-child(2n+1)
+:nth-last-child(2n)
 :nth-last-child(2n)
 :nth-last-child(2n+1)
 :nth-last-child(-n+6)

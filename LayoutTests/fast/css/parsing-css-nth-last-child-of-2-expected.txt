@@ -33,28 +33,28 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of n + n)"
 PASS document.querySelector(":nth-last-child(even of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even Of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even oF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even OF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(odd of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd Of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd oF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd OF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(n of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
@@ -105,40 +105,40 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(-3 of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 Of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 oF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 OF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 Of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 oF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 OF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(0n of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n Of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n oF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n OF .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(3n+5 of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(3n+5 of .foobar)"
@@ -189,82 +189,82 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(-3n-5 of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\00006ff  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even o\\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\00006F \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\00004f \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\00006F \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\00004f \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\6f f .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even o\\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\6F \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\4f \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\6F \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(even \\4f \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(even of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\00006ff  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd o\\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\00006F \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\00004f \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\00006F \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\00004f \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\6f f .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd o\\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\6F \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\4f \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\6F \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(odd \\4f \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(odd of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of .foobar)"
 PASS document.querySelector(":nth-last-child(n \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
@@ -423,121 +423,121 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(-3 of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\00006ff  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 o\\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\00006F \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\00004f \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\00006F \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\00004f \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\6f f .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 o\\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\6F \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\4f \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\6F \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n+0 \\4f \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n+0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\00006ff  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 o\\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\00006F \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\00004f \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\00006F \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\00004f \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\6f f .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 o\\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\6F \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\4f \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\6F \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(n-0 \\4f \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n-0 of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(n of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\00006ff  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n o\\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\00006F \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\00004f \\000066  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\00006F \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\00004f \\000046  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\6f f .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n o\\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\6F \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\4f \\66  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\6F \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(0n \\4f \\46  .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0n of .foobar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(0 of .foobar)"
 PASS document.querySelector(":nth-last-child(3n+5 \\of .foobar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(3n+5 of .foobar)"

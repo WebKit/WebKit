@@ -51,6 +51,11 @@ function expectedSerializedLangSelector(selector)
     return expected;
 }
 
+function testSelectorSerialization(selector, expectedSelector)
+{
+    shouldBe("setThenReadSelectorText('" + selector + "')", "'" + expectedSelector + "'");
+}
+
 function testSelectorRoundTrip(selector, expectFailure)
 {
     var expected = selector.indexOf(":lang") == 0 ? expectedSerializedLangSelector(selector) : selector;
@@ -158,8 +163,8 @@ testSelectorRoundTrip(':not(:any-link)');
 
 debug('');
 
-testSelectorRoundTrip(":nth-child(odd)");
-testSelectorRoundTrip(":nth-child(even)");
+testSelectorSerialization(":nth-child(odd)", ":nth-child(2n+1)");
+testSelectorSerialization(":nth-child(even)", ":nth-child(2n)");
 testSelectorRoundTrip(":nth-child(n)");
 testSelectorRoundTrip(":nth-child(-n)");
 testSelectorRoundTrip(":nth-child(5)");
@@ -171,29 +176,29 @@ testSelectorRoundTrip(":nth-child(-5n-7)");
 
 debug('');
 
-testSelectorRoundTrip(":nth-child(odd of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(even of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(n of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(-n of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(5 of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(-5 of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(5n+7 of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(-5n+7 of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(5n-7 of .foo, :nth-child(odd))");
-testSelectorRoundTrip(":nth-child(-5n-7 of .foo, :nth-child(odd))");
+testSelectorSerialization(":nth-child(odd of .foo, :nth-child(odd))", ":nth-child(2n+1 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(even of .foo, :nth-child(odd))", ":nth-child(2n of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(n of .foo, :nth-child(odd))", ":nth-child(n of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(-n of .foo, :nth-child(odd))", ":nth-child(-n of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(5 of .foo, :nth-child(odd))", ":nth-child(5 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(-5 of .foo, :nth-child(odd))", ":nth-child(-5 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(5n+7 of .foo, :nth-child(odd))", ":nth-child(5n+7 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(-5n+7 of .foo, :nth-child(odd))", ":nth-child(-5n+7 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(5n-7 of .foo, :nth-child(odd))", ":nth-child(5n-7 of .foo, :nth-child(2n+1))");
+testSelectorSerialization(":nth-child(-5n-7 of .foo, :nth-child(odd))", ":nth-child(-5n-7 of .foo, :nth-child(2n+1))");
 
 debug('');
 
-testSelectorRoundTrip(":nth-last-child(odd of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(even of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(n of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(-n of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(5 of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(-5 of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(5n+7 of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(-5n+7 of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(5n-7 of .foo, :nth-last-child(odd))");
-testSelectorRoundTrip(":nth-last-child(-5n-7 of .foo, :nth-last-child(odd))");
+testSelectorSerialization(":nth-last-child(odd of .foo, :nth-last-child(odd))", ":nth-last-child(2n+1 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(even of .foo, :nth-last-child(odd))", ":nth-last-child(2n of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(n of .foo, :nth-last-child(odd))", ":nth-last-child(n of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(-n of .foo, :nth-last-child(odd))", ":nth-last-child(-n of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(5 of .foo, :nth-last-child(odd))", ":nth-last-child(5 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(-5 of .foo, :nth-last-child(odd))", ":nth-last-child(-5 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n+7 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(-5n+7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n+7 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(5n-7 of .foo, :nth-last-child(2n+1))");
+testSelectorSerialization(":nth-last-child(-5n-7 of .foo, :nth-last-child(odd))", ":nth-last-child(-5n-7 of .foo, :nth-last-child(2n+1))");
 
 debug('');
 

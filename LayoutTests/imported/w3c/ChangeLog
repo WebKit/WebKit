@@ -1,5 +1,19 @@
 2019-10-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix nth-child An+B serialization to match the spc
+        https://bugs.webkit.org/show_bug.cgi?id=203464
+
+        Reviewed by Antti Koivisto.
+        
+        New passing results.
+
+        * web-platform-tests/css/css-syntax/anb-parsing-expected.txt:
+        * web-platform-tests/css/css-syntax/anb-serialization-expected.txt:
+        * web-platform-tests/css/cssom/selectorSerialize-expected.txt:
+        * web-platform-tests/css/selectors/anplusb-selector-parsing-expected.txt:
+
+2019-10-27  Simon Fraser  <simon.fraser@apple.com>
+
         Import css/css-position WPT
         https://bugs.webkit.org/show_bug.cgi?id=203446
 
