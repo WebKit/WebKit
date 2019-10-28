@@ -4633,6 +4633,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // ENABLE(DRAG_SUPPORT)
 
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo
+{
+    if (auto webFrameProxy = _page->mainFrame())
+        return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
+    return nil;
+}
+
 #endif // PLATFORM(MAC)
 
 #if HAVE(TOUCH_BAR)
@@ -6745,9 +6752,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo
 {
-    if (auto webFrameProxy = _page->mainFrame())
-        return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
-    return nil;
+    return [self printOperationWithPrintInfo:printInfo];
 }
 
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle

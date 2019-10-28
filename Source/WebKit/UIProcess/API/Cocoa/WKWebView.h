@@ -300,6 +300,12 @@ If the data is written to a file the resulting file is a valid PDF document.
  */
 + (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+#if !TARGET_OS_IPHONE
+/* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
+@param printInfo The print info object used to configure the resulting print operation.
+*/
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
 @end
 
 #if !TARGET_OS_IPHONE

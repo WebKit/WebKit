@@ -644,7 +644,7 @@ static NSSet *dataTypes()
 
 - (IBAction)printWebView:(id)sender
 {
-    [[_webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
+    [[_webView printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
 }
 
 #pragma mark WKNavigationDelegate
