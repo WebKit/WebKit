@@ -1,3 +1,13 @@
+2019-10-28  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        dumpSpeculation in SpeculatedType.cpp prints to the wrong stream and has wrong capitalization for NaN
+        https://bugs.webkit.org/show_bug.cgi?id=203486
+
+        Reviewed by Antti Koivisto.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+
 2019-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Windows][Clang] error LNK2001: unresolved external symbol "void * __cdecl JSC::allocateCell<class JSC::JSGenericTypedArrayView<struct JSC::Float32Adaptor> >(class JSC::Heap &,unsigned __int64)"

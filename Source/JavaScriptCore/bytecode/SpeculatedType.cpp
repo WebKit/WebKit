@@ -268,13 +268,13 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             isTop = false;
         
         if (value & SpecDoublePureNaN)
-            strOut.print("DoublePureNan");
+            strOut.print("DoublePureNaN");
         else
             isTop = false;
     }
     
     if (value & SpecDoubleImpureNaN)
-        out.print("DoubleImpureNan");
+        strOut.print("DoubleImpureNaN");
     
     if (value & SpecBoolean)
         strOut.print("Bool");
