@@ -197,9 +197,6 @@ fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 # ENABLE_DARK_MODE_CSS is OFF in WPE.
 css-dark-mode [ Skip ]
 
-# ENABLE(CSS_TYPED_OM) is disabled.
-webkit.org/b/192875 css-typedom [ Skip ]
-
 # ENABLE(CSS_PAINTING_API) is disabled
 webkit.org/b/190710 fast/css-custom-paint [ Skip ]
 

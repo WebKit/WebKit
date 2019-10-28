@@ -1388,7 +1388,7 @@ CSSPaintingAPIEnabled:
 
 CSSTypedOMEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_CSS_TYPED_OM_ENABLED
   humanReadableName: "CSS Typed OM"
   humanReadableDescription: "Enable the CSS Typed OM"
   webcoreBinding: RuntimeEnabledFeatures

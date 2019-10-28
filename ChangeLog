@@ -1,3 +1,15 @@
+2019-10-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Enable CSS typed OM
+        https://bugs.webkit.org/show_bug.cgi?id=192875
+
+        Reviewed by Carlos Garcia Campos.
+
+        This enables the feature when building with experimental features enabled.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag
