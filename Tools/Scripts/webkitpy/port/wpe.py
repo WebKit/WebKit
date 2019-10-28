@@ -118,3 +118,8 @@ class WPEPort(Port):
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, target_host=None):
         return GDBCrashLogGenerator(self._executive, name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
+
+    def configuration_for_upload(self, host=None):
+        configuration = super(WPEPort, self).configuration_for_upload(host=host)
+        configuration['platform'] = 'WPE'
+        return configuration

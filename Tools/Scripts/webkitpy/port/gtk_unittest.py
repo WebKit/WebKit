@@ -33,6 +33,7 @@ import unittest
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
 from webkitpy.port import port_testcase
@@ -76,3 +77,13 @@ class GtkPortTest(port_testcase.PortTestCase):
     def test_get_crash_log(self):
         # This function tested in linux_get_crash_log_unittest.py
         pass
+
+    def test_default_upload_configuration(self):
+        clear_cached_configuration()
+        port = self.make_port()
+        configuration = port.configuration_for_upload()
+        self.assertEqual(configuration['architecture'], port.architecture())
+        self.assertEqual(configuration['is_simulator'], False)
+        self.assertEqual(configuration['platform'], 'GTK')
+        self.assertEqual(configuration['style'], 'release')
+        self.assertEqual(configuration['version_name'], 'Xvfb')

@@ -495,6 +495,11 @@ class WinCairoPort(WinPort):
 
         return paths
 
+    def configuration_for_upload(self, host=None):
+        configuration = super(WinCairoPort, self).configuration_for_upload(host=host)
+        configuration['platform'] = self.port_name
+        return configuration
+
 
 class FTWPort(WinPort):
     port_name = "ftw"

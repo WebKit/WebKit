@@ -1,3 +1,26 @@
+2019-10-28  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Report more descriptive configurations for non-Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=203490
+        <rdar://problem/56658244>
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort):
+        (GtkPort.configuration_for_upload): Return use GTK as the platform.
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest):
+        (GtkPortTest.test_default_upload_configuration):
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort.configuration_for_upload): Use wincairo as the platform.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort):
+        (WPEPort.configuration_for_upload): Use WPE as the platform.
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        (WPEPortTest):
+        (WPEPortTest.test_default_upload_configuration):
+
 2019-10-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve summary for CompileWebKit and CompileJSC build step

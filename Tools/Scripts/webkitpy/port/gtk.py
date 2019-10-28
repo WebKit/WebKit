@@ -250,3 +250,9 @@ class GtkPort(Port):
         command = super(GtkPort, self).run_webkit_tests_command()
         command.append("--gtk")
         return command
+
+    def configuration_for_upload(self, host=None):
+        configuration = super(GtkPort, self).configuration_for_upload(host=host)
+        configuration['platform'] = 'GTK'
+        configuration['version_name'] = self._display_server.capitalize() if self._display_server else 'Xvfb'
+        return configuration
