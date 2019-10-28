@@ -52,7 +52,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     [configuration setAlwaysRevalidatedURLSchemes:@[ @"afp", @"smb" ]];
     [configuration setShouldCaptureAudioInUIProcess:YES];
 #if PLATFORM(IOS_FAMILY)
-    [configuration setCTDataConnectionServiceType:@"best"];
     [configuration setAlwaysRunsAtBackgroundPriority:YES];
     [configuration setShouldTakeUIBackgroundAssertion:YES];
 #endif
@@ -62,7 +61,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     [configuration setProcessSwapsOnWindowOpenWithOpener:YES];
     [configuration setPrewarmsProcessesAutomatically:YES];
     [configuration setPageCacheEnabled:YES];
-    [configuration setSuppressesConnectionTerminationOnSystemChange:YES];
 
     auto copy = adoptNS([configuration copy]);
 
@@ -77,7 +75,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_TRUE([[configuration alwaysRevalidatedURLSchemes] isEqual:[copy alwaysRevalidatedURLSchemes]]);
     EXPECT_EQ([configuration shouldCaptureAudioInUIProcess], [copy shouldCaptureAudioInUIProcess]);
 #if PLATFORM(IOS_FAMILY)
-    EXPECT_TRUE([[configuration CTDataConnectionServiceType] isEqual:[copy CTDataConnectionServiceType]]);
     EXPECT_EQ([configuration alwaysRunsAtBackgroundPriority], [copy alwaysRunsAtBackgroundPriority]);
     EXPECT_EQ([configuration shouldTakeUIBackgroundAssertion], [copy shouldTakeUIBackgroundAssertion]);
 #endif
@@ -87,7 +84,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration processSwapsOnWindowOpenWithOpener], [copy processSwapsOnWindowOpenWithOpener]);
     EXPECT_EQ([configuration prewarmsProcessesAutomatically], [copy prewarmsProcessesAutomatically]);
     EXPECT_EQ([configuration pageCacheEnabled], [copy pageCacheEnabled]);
-    EXPECT_EQ([configuration suppressesConnectionTerminationOnSystemChange], [copy suppressesConnectionTerminationOnSystemChange]);
 }
 
 TEST(WKProcessPool, JavaScriptConfiguration)

@@ -59,11 +59,8 @@ public:
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
-    // Must be called before any NetworkSession has been created.
-    // FIXME: Move this to NetworkSessionCreationParameters.
 #if PLATFORM(IOS_FAMILY)
-    const String& ctDataConnectionServiceType() const;
-    static void setCTDataConnectionServiceType(const String&);
+    const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
 #endif
 
     NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
@@ -138,6 +135,7 @@ private:
     bool m_shouldLogCookieInformation { false };
     Seconds m_loadThrottleLatency;
     bool m_fastServerTrustEvaluationEnabled { false };
+    String m_dataConnectionServiceType;
 };
 
 } // namespace WebKit

@@ -1,5 +1,44 @@
 2019-10-28  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused _WKProcessPoolConfiguration SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203066
+
+        Reviewed by Youenn Fablet.
+
+        After rdar://problem/56260478 this is not used, so away it goes!
+
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::suppressesConnectionTerminationOnSystemChange const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::globalCTDataConnectionServiceType): Deleted.
+        (WebKit::NetworkSessionCocoa::ctDataConnectionServiceType const): Deleted.
+        (WebKit::NetworkSessionCocoa::setCTDataConnectionServiceType): Deleted.
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration suppressesConnectionTerminationOnSystemChange]): Deleted.
+        (-[_WKProcessPoolConfiguration setSuppressesConnectionTerminationOnSystemChange:]): Deleted.
+        (-[_WKProcessPoolConfiguration CTDataConnectionServiceType]): Deleted.
+        (-[_WKProcessPoolConfiguration setCTDataConnectionServiceType:]): Deleted.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorCTDataConnectionServiceType):
+
+2019-10-28  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WKWebsiteDataStore setter SPI
         https://bugs.webkit.org/show_bug.cgi?id=203114
 

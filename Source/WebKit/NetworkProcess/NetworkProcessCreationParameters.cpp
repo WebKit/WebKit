@@ -53,12 +53,8 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
     encoder << uiProcessSDKVersion;
-#if PLATFORM(IOS_FAMILY)
-    encoder << ctDataConnectionServiceType;
-#endif
     IPC::encode(encoder, networkATSContext.get());
     encoder << storageAccessAPIEnabled;
-    encoder << suppressesConnectionTerminationOnSystemChange;
 #endif
     encoder << defaultDataStoreParameters;
 #if USE(SOUP)
@@ -120,15 +116,9 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.uiProcessSDKVersion))
         return false;
-#if PLATFORM(IOS_FAMILY)
-    if (!decoder.decode(result.ctDataConnectionServiceType))
-        return false;
-#endif
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
     if (!decoder.decode(result.storageAccessAPIEnabled))
-        return false;
-    if (!decoder.decode(result.suppressesConnectionTerminationOnSystemChange))
         return false;
 #endif
 

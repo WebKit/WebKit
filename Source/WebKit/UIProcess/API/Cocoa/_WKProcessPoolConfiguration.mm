@@ -331,11 +331,6 @@
     _processPoolConfiguration->setUsesSingleWebProcess(enabled);
 }
 
-- (BOOL)suppressesConnectionTerminationOnSystemChange
-{
-    return _processPoolConfiguration->suppressesConnectionTerminationOnSystemChange();
-}
-
 - (BOOL)isJITEnabled
 {
     return _processPoolConfiguration->isJITEnabled();
@@ -360,22 +355,7 @@
     return [NSURL fileURLWithPath:WebKit::LegacyGlobalSettings::singleton().hstsStorageDirectory() isDirectory:YES];
 }
 
-- (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
-{
-    _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);
-}
-
 #if PLATFORM(IOS_FAMILY)
-- (NSString *)CTDataConnectionServiceType
-{
-    return _processPoolConfiguration->ctDataConnectionServiceType();
-}
-
-- (void)setCTDataConnectionServiceType:(NSString *)ctDataConnectionServiceType
-{
-    _processPoolConfiguration->setCTDataConnectionServiceType(ctDataConnectionServiceType);
-}
-
 - (BOOL)alwaysRunsAtBackgroundPriority
 {
     return _processPoolConfiguration->alwaysRunsAtBackgroundPriority();

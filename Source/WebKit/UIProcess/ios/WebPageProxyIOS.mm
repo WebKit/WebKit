@@ -1290,10 +1290,10 @@ UIViewController *WebPageProxy::paymentCoordinatorPresentingViewController(const
 
 const String& WebPageProxy::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
-    return process().processPool().configuration().ctDataConnectionServiceType();
+    return websiteDataStore().configuration().dataConnectionServiceType();
 }
 
-#endif
+#endif // ENABLE(APPLE_PAY)
 
 static bool desktopClassBrowsingSupported()
 {

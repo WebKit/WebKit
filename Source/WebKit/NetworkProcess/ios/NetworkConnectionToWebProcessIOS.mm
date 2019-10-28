@@ -62,7 +62,7 @@ const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIde
 const String& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))
-        return session->ctDataConnectionServiceType();
+        return session->dataConnectionServiceType();
     return emptyString();
 }
 
