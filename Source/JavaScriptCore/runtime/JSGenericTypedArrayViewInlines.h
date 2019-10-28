@@ -30,6 +30,7 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArrayBuffer.h"
+#include "JSCellInlines.h"
 #include "JSGenericTypedArrayView.h"
 #include "TypeError.h"
 #include "TypedArrays.h"
