@@ -1569,6 +1569,28 @@ RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
     return Range::commonAncestorContainer(nodeA, nodeB);
 }
 
+Position positionInParentBeforeNode(Node* node)
+{
+    auto* ancestor = node->parentNode();
+    while (ancestor && editingIgnoresContent(*ancestor)) {
+        node = ancestor;
+        ancestor = ancestor->parentNode();
+    }
+    ASSERT(ancestor);
+    return Position(ancestor, node->computeNodeIndex(), Position::PositionIsOffsetInAnchor);
+}
+
+Position positionInParentAfterNode(Node* node)
+{
+    auto* ancestor = node->parentNode();
+    while (ancestor && editingIgnoresContent(*ancestor)) {
+        node = ancestor;
+        ancestor = ancestor->parentNode();
+    }
+    ASSERT(ancestor);
+    return Position(ancestor, node->computeNodeIndex() + 1, Position::PositionIsOffsetInAnchor);
+}
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
