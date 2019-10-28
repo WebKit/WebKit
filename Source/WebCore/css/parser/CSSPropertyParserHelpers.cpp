@@ -844,15 +844,25 @@ static Ref<CSSPrimitiveValue> createPrimitiveValuePair(Args&&... args)
 }
 }
 
-static bool positionFromThreeOrFourValues(CSSPrimitiveValue** values, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
+// https://drafts.csswg.org/css-backgrounds-3/#propdef-background-position
+// background-position has special parsing rules, allowing a 3-value syntax:
+// <bg-position> =  [ left | center | right | top | bottom | <length-percentage> ]
+// |
+//   [ left | center | right | <length-percentage> ]
+//   [ top | center | bottom | <length-percentage> ]
+// |
+//   [ center | [ left | right ] <length-percentage>? ] &&
+//   [ center | [ top | bottom ] <length-percentage>? ]
+//
+static bool backgroundPositionFromThreeValues(const std::array<CSSPrimitiveValue*, 5>& values, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
 {
     CSSPrimitiveValue* center = nullptr;
     for (int i = 0; values[i]; i++) {
         CSSPrimitiveValue* currentValue = values[i];
         if (!currentValue->isValueID())
             return false;
-        CSSValueID id = currentValue->valueID();
 
+        CSSValueID id = currentValue->valueID();
         if (id == CSSValueCenter) {
             if (center)
                 return false;
@@ -892,9 +902,52 @@ static bool positionFromThreeOrFourValues(CSSPrimitiveValue** values, RefPtr<CSS
     return true;
 }
 
+// https://drafts.csswg.org/css-values-4/#typedef-position
+// <position> = [
+//   [ left | center | right ] || [ top | center | bottom ]
+// |
+//   [ left | center | right | <length-percentage> ]
+//   [ top | center | bottom | <length-percentage> ]?
+// |
+//   [ [ left | right ] <length-percentage> ] &&
+//   [ [ top | bottom ] <length-percentage> ]
+//
+static bool positionFromFourValues(const std::array<CSSPrimitiveValue*, 5>& values, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
+{
+    for (int i = 0; values[i]; i++) {
+        CSSPrimitiveValue* currentValue = values[i];
+        if (!currentValue->isValueID())
+            return false;
+
+        CSSValueID id = currentValue->valueID();
+        if (id == CSSValueCenter)
+            return false;
+
+        RefPtr<CSSPrimitiveValue> result;
+        if (values[i + 1] && !values[i + 1]->isValueID())
+            result = CSSPropertyParserHelpersInternal::createPrimitiveValuePair(currentValue, values[++i]);
+        else
+            result = currentValue;
+
+        if (id == CSSValueLeft || id == CSSValueRight) {
+            if (resultX)
+                return false;
+            resultX = result;
+        } else {
+            ASSERT(id == CSSValueTop || id == CSSValueBottom);
+            if (resultY)
+                return false;
+            resultY = result;
+        }
+    }
+
+    ASSERT(resultX && resultY);
+    return true;
+}
+
 // FIXME: This may consume from the range upon failure. The background
 // shorthand works around it, but we should just fix it here.
-bool consumePosition(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
+bool consumePosition(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax, RefPtr<CSSPrimitiveValue>& resultX, RefPtr<CSSPrimitiveValue>& resultY)
 {
     RefPtr<CSSPrimitiveValue> value1 = consumePositionComponent(range, cssParserMode, unitless);
     if (!value1)
@@ -911,20 +964,28 @@ bool consumePosition(CSSParserTokenRange& range, CSSParserMode cssParserMode, Un
         return positionFromTwoValues(*value1, *value2, resultX, resultY);
 
     RefPtr<CSSPrimitiveValue> value4 = consumePositionComponent(range, cssParserMode, unitless);
-    CSSPrimitiveValue* values[5];
+    
+    std::array<CSSPrimitiveValue*, 5> values;
     values[0] = value1.get();
     values[1] = value2.get();
     values[2] = value3.get();
     values[3] = value4.get();
     values[4] = nullptr;
-    return positionFromThreeOrFourValues(values, resultX, resultY);
+    
+    if (value4)
+        return positionFromFourValues(values, resultX, resultY);
+    
+    if (positionSyntax != PositionSyntax::BackgroundPosition)
+        return false;
+    
+    return backgroundPositionFromThreeValues(values, resultX, resultY);
 }
 
-RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax)
 {
     RefPtr<CSSPrimitiveValue> resultX;
     RefPtr<CSSPrimitiveValue> resultY;
-    if (consumePosition(range, cssParserMode, unitless, resultX, resultY))
+    if (consumePosition(range, cssParserMode, unitless, positionSyntax, resultX, resultY))
         return CSSPropertyParserHelpersInternal::createPrimitiveValuePair(resultX.releaseNonNull(), resultY.releaseNonNull());
     return nullptr;
 }
@@ -1219,7 +1280,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
     RefPtr<CSSPrimitiveValue> centerY;
     if (args.peek().id() == CSSValueAt) {
         args.consumeIncludingWhitespace();
-        consumePosition(args, cssParserMode, UnitlessQuirk::Forbid, centerX, centerY);
+        consumePosition(args, cssParserMode, UnitlessQuirk::Forbid, PositionSyntax::Position, centerX, centerY);
         if (!(centerX && centerY))
             return nullptr;
         
@@ -1289,7 +1350,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
         if (consumeIdent<CSSValueAt>(args)) {
             RefPtr<CSSPrimitiveValue> centerX;
             RefPtr<CSSPrimitiveValue> centerY;
-            consumePosition(args, context.mode, UnitlessQuirk::Forbid, centerX, centerY);
+            consumePosition(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position, centerX, centerY);
             if (!(centerX && centerY))
                 return nullptr;
             

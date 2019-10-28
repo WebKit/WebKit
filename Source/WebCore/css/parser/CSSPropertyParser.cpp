@@ -400,7 +400,7 @@ bool CSSPropertyParser::consumePerspectiveOrigin(bool important)
 {
     RefPtr<CSSPrimitiveValue> resultX;
     RefPtr<CSSPrimitiveValue> resultY;
-    if (consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid, resultX, resultY)) {
+    if (consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position, resultX, resultY)) {
         addProperty(CSSPropertyPerspectiveOriginX, CSSPropertyPerspectiveOrigin, resultX.releaseNonNull(), important);
         addProperty(CSSPropertyPerspectiveOriginY, CSSPropertyPerspectiveOrigin, resultY.releaseNonNull(), important);
         return true;
@@ -2371,7 +2371,7 @@ static RefPtr<CSSBasicShapeCircle> consumeBasicShapeCircle(CSSParserTokenRange& 
     if (consumeIdent<CSSValueAt>(args)) {
         RefPtr<CSSPrimitiveValue> centerX;
         RefPtr<CSSPrimitiveValue> centerY;
-        if (!consumePosition(args, context.mode, UnitlessQuirk::Forbid, centerX, centerY))
+        if (!consumePosition(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position, centerX, centerY))
             return nullptr;
         shape->setCenterX(centerX.releaseNonNull());
         shape->setCenterY(centerY.releaseNonNull());
@@ -2394,7 +2394,7 @@ static RefPtr<CSSBasicShapeEllipse> consumeBasicShapeEllipse(CSSParserTokenRange
     if (consumeIdent<CSSValueAt>(args)) {
         RefPtr<CSSPrimitiveValue> centerX;
         RefPtr<CSSPrimitiveValue> centerY;
-        if (!consumePosition(args, context.mode, UnitlessQuirk::Forbid, centerX, centerY))
+        if (!consumePosition(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position, centerX, centerY))
             return nullptr;
         shape->setCenterX(centerX.releaseNonNull());
         shape->setCenterY(centerY.releaseNonNull());
@@ -3929,7 +3929,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeTouchAction(m_range);
 #endif
     case CSSPropertyObjectPosition:
-        return consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid);
+        return consumePosition(m_range, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
     case CSSPropertyWebkitLineClamp:
         return consumeLineClamp(m_range);
     case CSSPropertyWebkitFontSizeDelta:
@@ -5089,7 +5089,7 @@ static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParse
     do {
         RefPtr<CSSPrimitiveValue> positionX;
         RefPtr<CSSPrimitiveValue> positionY;
-        if (!consumePosition(range, context.mode, unitless, positionX, positionY))
+        if (!consumePosition(range, context.mode, unitless, PositionSyntax::BackgroundPosition, positionX, positionY))
             return false;
         addBackgroundValue(resultX, positionX.releaseNonNull());
         addBackgroundValue(resultY, positionY.releaseNonNull());
@@ -5167,7 +5167,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     CSSParserTokenRange rangeCopy = m_range;
                     RefPtr<CSSPrimitiveValue> primitiveValue;
                     RefPtr<CSSPrimitiveValue> primitiveValueY;
-                    if (!consumePosition(rangeCopy, m_context.mode, UnitlessQuirk::Forbid, primitiveValue, primitiveValueY))
+                    if (!consumePosition(rangeCopy, m_context.mode, UnitlessQuirk::Forbid, PositionSyntax::BackgroundPosition, primitiveValue, primitiveValueY))
                         continue;
                     value = primitiveValue;
                     valueY = primitiveValueY;

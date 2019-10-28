@@ -7,6 +7,26 @@
 
         * platform/mac-wk1/TestExpectations:
 
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Properties that take <position> should not accept 3 values
+        https://bugs.webkit.org/show_bug.cgi?id=189142
+
+        Reviewed by Antti Koivisto.
+
+        Land some FAIL results for these shapes tests. They should get removed when
+        the css/css-shapes WPT are imported (webkit.org/b/203441), though the WPT
+        haven't been updated for the new syntax either.
+
+        * css3/shapes/shape-outside/values/shape-outside-circle-002-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-circle-004-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-002-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-004-expected.txt:
+        * fast/css/object-position/parsing-object-position-expected.txt:
+        * fast/css/object-position/parsing-object-position.html: Remove the invalid position test.
+        * fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * fast/shapes/parsing/parsing-test-utils.js:  Remove the invalid position tests.
+
 2019-10-28  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make the API work with the experimental 3rd-party cookie blocking

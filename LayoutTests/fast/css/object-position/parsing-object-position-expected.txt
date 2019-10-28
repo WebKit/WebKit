@@ -15,7 +15,6 @@ PASS test("object-position: right 10px bottom 15px;") is "right 10px bottom 15px
 PASS testComputedStyle("object-position: bottom 20%;") is "50% 50%"
 PASS testComputedStyle("object-position: right 20%;") is "100% 20%"
 PASS testComputedStyle("object-position: right") is "100% 50%"
-PASS testComputedStyle("object-position: center bottom 20%;") is "50% 80%"
 PASS testComputedStyle("object-position: right bottom") is "100% 100%"
 PASS testComputedStyle("object-position: left 10px top 15px;") is "10px 15px"
 PASS testComputedStyle("object-position: right 10px bottom 15px;") is "calc(100% - 10px) calc(100% - 15px)"
