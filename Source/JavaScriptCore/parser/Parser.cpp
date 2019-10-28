@@ -4003,9 +4003,9 @@ namedProperty:
         JSToken identToken = m_token;
 
         if (complete || (wasIdent && !isGeneratorMethodParseMode(parseMode)  && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set)))
-            nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
+            nextExpectIdentifier(LexerFlags::IgnoreReservedWords);
         else
-            nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+            nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
 
         if (!isGeneratorMethodParseMode(parseMode) && !isAsyncMethodParseMode(parseMode) && match(COLON)) {
             next();
@@ -4849,7 +4849,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             case DOT: {
                 m_parserState.nonTrivialExpressionCount++;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+                nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
                 matchOrFail(IDENT, "Expected a property name after ", optionalChainBase ? "'?.'" : "'.'");
                 base = context.createDotAccess(startLocation, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
                 if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))

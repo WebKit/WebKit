@@ -927,11 +927,11 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
 #endif
     
 template <>
-template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     tokenData->escaped = false;
     const ptrdiff_t remaining = m_codeEnd - m_code;
-    if ((remaining >= maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) {
+    if ((remaining >= maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
         if (keyword != IDENT) {
             ASSERT((!shouldCreateIdentifier) || tokenData->ident);
@@ -975,7 +975,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
     } else
         tokenData->ident = nullptr;
 
-    if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) && !isPrivateName) {
+    if (UNLIKELY((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) && !isPrivateName) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
             const HashTableValue* entry = JSC::mainTable.entry(*ident);
@@ -992,11 +992,11 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
 }
 
 template <>
-template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::parseIdentifier(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     tokenData->escaped = false;
     const ptrdiff_t remaining = m_codeEnd - m_code;
-    if ((remaining >= maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) {
+    if ((remaining >= maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
         if (keyword != IDENT) {
             ASSERT((!shouldCreateIdentifier) || tokenData->ident);
@@ -1053,7 +1053,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     } else
         tokenData->ident = nullptr;
     
-    if (UNLIKELY((remaining < maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) && !isPrivateName) {
+    if (UNLIKELY((remaining < maxTokenLength) && !lexerFlags.contains(LexerFlags::IgnoreReservedWords)) && !isPrivateName) {
         ASSERT(shouldCreateIdentifier);
         if (remaining < maxTokenLength) {
             const HashTableValue* entry = JSC::mainTable.entry(*ident);
@@ -1069,7 +1069,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     return IDENT;
 }
 
-template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
+template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     tokenData->escaped = true;
     auto identifierStart = currentSourcePtr();
@@ -1119,7 +1119,7 @@ template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenTy
 
     m_buffer16.shrink(0);
 
-    if (LIKELY(!(lexerFlags & LexerFlagsIgnoreReservedWords))) {
+    if (LIKELY(!lexerFlags.contains(LexerFlags::IgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
         const HashTableValue* entry = JSC::mainTable.entry(*ident);
         if (!entry)
@@ -1859,7 +1859,7 @@ void Lexer<T>::fillTokenInfo(JSToken* tokenRecord, JSTokenType token, int lineNu
 }
 
 template <typename T>
-JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
+JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
@@ -2379,7 +2379,7 @@ start:
         break;
     case CharacterQuote: {
         StringParseResult result = StringCannotBeParsed;
-        if (lexerFlags & LexerFlagsDontBuildStrings)
+        if (lexerFlags.contains(LexerFlags::DontBuildStrings))
             result = parseString<false>(tokenData, strictMode);
         else
             result = parseString<true>(tokenData, strictMode);
@@ -2397,7 +2397,7 @@ start:
         FALLTHROUGH;
     case CharacterBackSlash:
         parseIdent:
-        if (lexerFlags & LexexFlagsDontBuildKeywords)
+        if (lexerFlags.contains(LexerFlags::DontBuildKeywords))
             token = parseIdentifier<false>(tokenData, lexerFlags, strictMode);
         else
             token = parseIdentifier<true>(tokenData, lexerFlags, strictMode);

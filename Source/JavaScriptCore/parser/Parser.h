@@ -1355,7 +1355,7 @@ private:
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
     bool isFunctionMetadataNode(FunctionMetadataNode*) { return true; }
 
-    ALWAYS_INLINE void next(unsigned lexerFlags = 0)
+    ALWAYS_INLINE void next(OptionSet<LexerFlags> lexerFlags = { })
     {
         int lastLine = m_token.m_location.line;
         int lastTokenEnd = m_token.m_location.endOffset;
@@ -1365,7 +1365,7 @@ private:
         m_token.m_type = m_lexer->lex(&m_token, lexerFlags, strictMode());
     }
 
-    ALWAYS_INLINE void nextWithoutClearingLineTerminator(unsigned lexerFlags = 0)
+    ALWAYS_INLINE void nextWithoutClearingLineTerminator(OptionSet<LexerFlags> lexerFlags = { })
     {
         int lastLine = m_token.m_location.line;
         int lastTokenEnd = m_token.m_location.endOffset;
@@ -1375,7 +1375,7 @@ private:
         m_token.m_type = m_lexer->lexWithoutClearingLineTerminator(&m_token, lexerFlags, strictMode());
     }
 
-    ALWAYS_INLINE void nextExpectIdentifier(unsigned lexerFlags = 0)
+    ALWAYS_INLINE void nextExpectIdentifier(OptionSet<LexerFlags> lexerFlags = { })
     {
         int lastLine = m_token.m_location.line;
         int lastTokenEnd = m_token.m_location.endOffset;
@@ -1396,7 +1396,7 @@ private:
         return m_lexer->nextTokenIsColon();
     }
 
-    ALWAYS_INLINE bool consume(JSTokenType expected, unsigned flags = 0)
+    ALWAYS_INLINE bool consume(JSTokenType expected, OptionSet<LexerFlags> flags = { })
     {
         bool result = m_token.m_type == expected;
         if (result)

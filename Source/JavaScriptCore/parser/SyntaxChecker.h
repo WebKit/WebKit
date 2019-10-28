@@ -143,8 +143,8 @@ public:
     static constexpr bool CreatesAST = false;
     static constexpr bool NeedsFreeVariableInfo = false;
     static constexpr bool CanUseFunctionCache = true;
-    static constexpr unsigned DontBuildKeywords = LexexFlagsDontBuildKeywords;
-    static constexpr unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
+    static constexpr OptionSet<LexerFlags> DontBuildKeywords = LexerFlags::DontBuildKeywords;
+    static constexpr OptionSet<LexerFlags> DontBuildStrings = LexerFlags::DontBuildStrings;
 
     int createSourceElements() { return SourceElementsResult; }
     ExpressionType makeFunctionCallNode(const JSTokenLocation&, ExpressionType, bool, int, int, int, int, size_t, bool) { return CallExpr; }

@@ -32,10 +32,10 @@
 
 namespace JSC {
 
-enum LexerFlags {
-    LexerFlagsIgnoreReservedWords = 1, 
-    LexerFlagsDontBuildStrings = 2,
-    LexexFlagsDontBuildKeywords = 4
+enum class LexerFlags : uint8_t {
+    IgnoreReservedWords = 1 << 0, 
+    DontBuildStrings = 1 << 1,
+    DontBuildKeywords = 1 << 2
 };
 
 enum class LexerEscapeParseMode { Template, String };
@@ -64,8 +64,8 @@ public:
     void setIsReparsingFunction() { m_isReparsingFunction = true; }
     bool isReparsingFunction() const { return m_isReparsingFunction; }
 
-    JSTokenType lex(JSToken*, unsigned, bool strictMode);
-    JSTokenType lexWithoutClearingLineTerminator(JSToken*, unsigned, bool strictMode);
+    JSTokenType lex(JSToken*, OptionSet<LexerFlags>, bool strictMode);
+    JSTokenType lexWithoutClearingLineTerminator(JSToken*, OptionSet<LexerFlags>, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
     ALWAYS_INLINE int currentOffset() const { return offsetFromSourcePtr(m_code); }
@@ -116,7 +116,7 @@ public:
         m_hasLineTerminatorBeforeToken = terminator;
     }
 
-    JSTokenType lexExpectIdentifier(JSToken*, unsigned, bool strictMode);
+    JSTokenType lexExpectIdentifier(JSToken*, OptionSet<LexerFlags>, bool strictMode);
 
     ALWAYS_INLINE StringView getToken(const JSToken& token)
     {
@@ -164,8 +164,8 @@ private:
 
     template <int shiftAmount> void internalShift();
     template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
-    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned lexerFlags, bool strictMode);
-    template <bool shouldBuildIdentifiers> NEVER_INLINE JSTokenType parseIdentifierSlowCase(JSTokenData*, unsigned lexerFlags, bool strictMode);
+    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, OptionSet<LexerFlags>, bool strictMode);
+    template <bool shouldBuildIdentifiers> NEVER_INLINE JSTokenType parseIdentifierSlowCase(JSTokenData*, OptionSet<LexerFlags>, bool strictMode);
     enum StringParseResult {
         StringParsedSuccessfully,
         StringUnterminated,
@@ -340,11 +340,11 @@ bool isSafeBuiltinIdentifier(VM&, const Identifier*);
 #endif
 
 template <typename T>
-ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
+ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
-    ASSERT((lexerFlags & LexerFlagsIgnoreReservedWords));
+    ASSERT(lexerFlags.contains(LexerFlags::IgnoreReservedWords));
     const T* start = m_code;
     const T* ptr = start;
     const T* end = m_codeEnd;
@@ -374,7 +374,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, un
     ASSERT(currentOffset() >= currentLineStartOffset());
 
     // Create the identifier if needed
-    if (lexerFlags & LexexFlagsDontBuildKeywords
+    if (lexerFlags.contains(LexerFlags::DontBuildKeywords)
 #if !ASSERT_DISABLED
         && !m_parsingBuiltinFunction
 #endif
@@ -405,7 +405,7 @@ slowCase:
 }
 
 template <typename T>
-ALWAYS_INLINE JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
+ALWAYS_INLINE JSTokenType Lexer<T>::lex(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     m_hasLineTerminatorBeforeToken = false;
     return lexWithoutClearingLineTerminator(tokenRecord, lexerFlags, strictMode);

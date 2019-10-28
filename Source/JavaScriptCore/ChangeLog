@@ -1,3 +1,32 @@
+2019-10-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Lexer flags should be an OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=203032
+
+        Reviewed by Yusuke Suzuki.
+
+        LexerFlags has an annoyingly misspelled value LexexFlagsDontBuildKeywords;
+        let's use this as an opportunity to modernize this enum.
+
+        * parser/ASTBuilder.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        * parser/Lexer.h:
+        (JSC::Lexer<T>::lexExpectIdentifier):
+        (JSC::Lexer<T>::lex):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::next):
+        (JSC::Parser::nextWithoutClearingLineTerminator):
+        (JSC::Parser::nextExpectIdentifier):
+        (JSC::Parser::consume):
+        * parser/SyntaxChecker.h:
+
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Promise runtime functions
