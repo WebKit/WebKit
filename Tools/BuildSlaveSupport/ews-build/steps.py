@@ -828,6 +828,11 @@ class CompileWebKit(shell.Compile):
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
 
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': u'Failed to compile WebKit'}
+        return shell.Compile.getResultSummary(self)
+
 
 class CompileWebKitToT(CompileWebKit):
     name = 'compile-webkit-tot'
@@ -883,6 +888,11 @@ class CompileJSC(CompileWebKit):
     def start(self):
         self.setProperty('group', 'jsc')
         return CompileWebKit.start(self)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {u'step': u'Failed to compile JSC'}
+        return shell.Compile.getResultSummary(self)
 
 
 class CompileJSCToT(CompileJSC):

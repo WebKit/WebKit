@@ -831,7 +831,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Compiled WebKit (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.runStep()
 
 
@@ -871,7 +871,7 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Compiled WebKit (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.runStep()
 
     def test_skip(self):
@@ -944,7 +944,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Compiled JSC (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to compile JSC')
         return self.runStep()
 
 
@@ -983,7 +983,7 @@ class TestCompileJSCToT(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Compiled JSC (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to compile JSC')
         return self.runStep()
 
 
