@@ -80,24 +80,24 @@ typedef Vector<Ref<CSSRuleSourceData>> RuleSourceDataList;
 typedef Vector<SourceRange> SelectorRangeList;
 
 struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
-    static Ref<CSSRuleSourceData> create(StyleRule::Type type)
+    static Ref<CSSRuleSourceData> create(StyleRuleType type)
     {
         return adoptRef(*new CSSRuleSourceData(type));
     }
 
     static Ref<CSSRuleSourceData> createUnknown()
     {
-        return adoptRef(*new CSSRuleSourceData(StyleRule::Unknown));
+        return adoptRef(*new CSSRuleSourceData(StyleRuleType::Unknown));
     }
 
-    CSSRuleSourceData(StyleRule::Type type)
+    CSSRuleSourceData(StyleRuleType type)
         : type(type)
     {
-        if (type == StyleRule::Style || type == StyleRule::FontFace || type == StyleRule::Page)
+        if (type == StyleRuleType::Style || type == StyleRuleType::FontFace || type == StyleRuleType::Page)
             styleSourceData = CSSStyleSourceData::create();
     }
 
-    StyleRule::Type type;
+    StyleRuleType type;
 
     // Range of the selector list in the enclosing source.
     SourceRange ruleHeaderRange;

@@ -17,7 +17,7 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'bolder'}).weight i
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'lighter'}).weight is "200"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'weight': 'inherit'}).weight threw exception SyntaxError: The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'stretch': 'ultra-expanded'}).stretch is "ultra-expanded"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+26'}).unicodeRange is "U+26-26"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+26'}).unicodeRange is "U+26"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+0-7F'}).unicodeRange is "U+0-7f"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'variant_name'}).variant threw exception SyntaxError: The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps'}).variant is "small-caps"
@@ -26,7 +26,7 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {'featureSettings': '\'titl\''
 PASS everything.style is "italic"
 PASS everything.weight is "bold"
 PASS everything.stretch is "extra-expanded"
-PASS everything.unicodeRange is "U+26-26"
+PASS everything.unicodeRange is "U+26"
 PASS everything.variant is "small-caps"
 PASS everything.featureSettings is "\"titl\""
 PASS everything.family is "other_family_name"

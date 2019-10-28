@@ -327,8 +327,7 @@ CSSParserToken CSSTokenizer::asciiDigit(UChar cc)
 CSSParserToken CSSTokenizer::letterU(UChar cc)
 {
     if (m_input.peekWithoutReplacement(0) == '+'
-        && (isASCIIHexDigit(m_input.peekWithoutReplacement(1))
-            || m_input.peekWithoutReplacement(1) == '?')) {
+        && (isASCIIHexDigit(m_input.peekWithoutReplacement(1)) || m_input.peekWithoutReplacement(1) == '?')) {
         m_input.advance();
         return consumeUnicodeRange();
     }

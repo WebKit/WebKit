@@ -33,7 +33,7 @@ class CSSParserTokenRange;
 class CSSParserObserver {
 public:
     virtual ~CSSParserObserver() { };
-    virtual void startRuleHeader(StyleRule::Type, unsigned offset) = 0;
+    virtual void startRuleHeader(StyleRuleType, unsigned offset) = 0;
     virtual void endRuleHeader(unsigned offset) = 0;
     virtual void observeSelector(unsigned startOffset, unsigned endOffset) = 0;
     virtual void startRuleBody(unsigned offset) = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSUnicodeRangeValue.h"
-
-#include <wtf/HexNumber.h>
+#pragma once
 
 namespace WebCore {
 
-String CSSUnicodeRangeValue::customCSSText() const
-{
-    if (m_from == m_to)
-        return makeString("U+", hex(m_from, Lowercase));
+enum class StyleRuleType : uint8_t {
+    Unknown, // Not used.
+    Style,
+    Charset, // Not used. These are internally strings owned by the style sheet.
+    Import,
+    Media,
+    FontFace,
+    Page,
+    Keyframes,
+    Keyframe, // Not used. These are internally non-rule StyleRuleKeyframe objects.
+    Namespace = 10,
+    Supports = 12,
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    Viewport = 15,
+#endif
+};
 
-    return makeString("U+", hex(m_from, Lowercase), '-', hex(m_to, Lowercase));
-}
-
-bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const
-{
-    return m_from == other.m_from && m_to == other.m_to;
-}
-
-}
+} // namespace WebCore

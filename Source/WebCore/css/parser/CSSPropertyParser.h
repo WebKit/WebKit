@@ -42,7 +42,7 @@ class CSSPropertyParser {
 public:
     static bool parseValue(CSSPropertyID, bool important,
         const CSSParserTokenRange&, const CSSParserContext&,
-        Vector<CSSProperty, 256>&, StyleRule::Type);
+        Vector<CSSProperty, 256>&, StyleRuleType);
 
     // Parses a non-shorthand CSS property
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const CSSParserTokenRange&, const CSSParserContext&);

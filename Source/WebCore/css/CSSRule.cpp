@@ -36,8 +36,19 @@ struct SameSizeAsCSSRule : public RefCounted<SameSizeAsCSSRule> {
 
 COMPILE_ASSERT(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), CSSRule_should_stay_small);
 
+COMPILE_ASSERT(StyleRuleType::Unknown == static_cast<StyleRuleType>(CSSRule::Type::UNKNOWN_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Style == static_cast<StyleRuleType>(CSSRule::Type::STYLE_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Charset == static_cast<StyleRuleType>(CSSRule::Type::CHARSET_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Import == static_cast<StyleRuleType>(CSSRule::Type::IMPORT_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Media == static_cast<StyleRuleType>(CSSRule::Type::MEDIA_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::FontFace == static_cast<StyleRuleType>(CSSRule::Type::FONT_FACE_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Page == static_cast<StyleRuleType>(CSSRule::Type::PAGE_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Keyframes == static_cast<StyleRuleType>(CSSRule::Type::KEYFRAMES_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Keyframe == static_cast<StyleRuleType>(CSSRule::Type::KEYFRAME_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Namespace == static_cast<StyleRuleType>(CSSRule::Type::NAMESPACE_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::Supports == static_cast<StyleRuleType>(CSSRule::Type::SUPPORTS_RULE), enums_should_match);
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-COMPILE_ASSERT(StyleRuleBase::Viewport == static_cast<StyleRuleBase::Type>(CSSRule::WEBKIT_VIEWPORT_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleBase::Viewport == static_cast<StyleRuleType>(CSSRule::WEBKIT_VIEWPORT_RULE), enums_should_match);
 #endif
 
 ExceptionOr<void> CSSRule::setCssText(const String&)

@@ -259,7 +259,7 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<
         addProperty(longhands[i], property, value.copyRef(), important);
 }
 
-bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRule::Type ruleType)
+bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType)
 {
     int parsedPropertiesSize = parsedProperties.size();
 
@@ -267,11 +267,11 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     bool parseSuccess;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (ruleType == StyleRule::Viewport)
+    if (ruleType == StyleRuleType::Viewport)
         parseSuccess = parser.parseViewportDescriptor(propertyID, important);
     else
 #endif
-    if (ruleType == StyleRule::FontFace)
+    if (ruleType == StyleRuleType::FontFace)
         parseSuccess = parser.parseFontFaceDescriptor(propertyID);
     else
         parseSuccess = parser.parseValueStart(propertyID, important);

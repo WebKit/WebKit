@@ -1,3 +1,18 @@
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't change @font-face descriptors from fontFaceRule.style.setProperty()
+        https://bugs.webkit.org/show_bug.cgi?id=177975
+        <rdar://problem/56648761>
+
+        Reviewed by Antti Koivisto.
+
+        Fix tests for the urange serialization fix.
+
+        * fast/text/font-face-javascript-expected.txt:
+        * fast/text/font-face-javascript.html:
+        * fast/text/unicode-range-javascript-expected.txt:
+        * fast/text/unicode-range-javascript.html:
+
 2019-10-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests

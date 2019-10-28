@@ -335,6 +335,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/Rect.h
     css/StyleColor.h
     css/StyleProperties.h
+    css/StyleRuleType.h
     css/StyleSheet.h
     css/StyleSheetContents.h
     css/StyleSheetList.h

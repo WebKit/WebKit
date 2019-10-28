@@ -72,14 +72,14 @@ class ImportedStyleSheetClient final : public CachedStyleSheetClient {
 
     StyleRuleImport(const String& href, Ref<MediaQuerySet>&&);
 
-    StyleSheetContents* m_parentStyleSheet;
+    StyleSheetContents* m_parentStyleSheet { nullptr };
 
     ImportedStyleSheetClient m_styleSheetClient;
     String m_strHref;
     RefPtr<MediaQuerySet> m_mediaQueries;
     RefPtr<StyleSheetContents> m_styleSheet;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
-    bool m_loading;
+    bool m_loading { false };
 };
 
 } // namespace WebCore

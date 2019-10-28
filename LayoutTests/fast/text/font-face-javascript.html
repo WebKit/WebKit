@@ -25,7 +25,7 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight':
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'lighter'}).weight", "200");
 shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'inherit'}).weight");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'stretch': 'ultra-expanded'}).stretch", "ultra-expanded");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26-26");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+0-7F'}).unicodeRange", "U+0-7f");
 shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'variant_name'}).variant");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps'}).variant", "small-caps");
@@ -36,7 +36,7 @@ var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic'
 shouldBeEqualToString("everything.style", "italic");
 shouldBeEqualToString("everything.weight", "bold");
 shouldBeEqualToString("everything.stretch", "extra-expanded");
-shouldBeEqualToString("everything.unicodeRange", "U+26-26");
+shouldBeEqualToString("everything.unicodeRange", "U+26");
 shouldBeEqualToString("everything.variant", "small-caps");
 shouldBeEqualToString("everything.featureSettings", "\"titl\"");
 

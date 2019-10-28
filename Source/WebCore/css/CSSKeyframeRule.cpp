@@ -35,13 +35,13 @@
 namespace WebCore {
 
 StyleRuleKeyframe::StyleRuleKeyframe(Ref<StyleProperties>&& properties)
-    : StyleRuleBase(Keyframe)
+    : StyleRuleBase(StyleRuleType::Keyframe)
     , m_properties(WTFMove(properties))
 {
 }
 
 StyleRuleKeyframe::StyleRuleKeyframe(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
-    : StyleRuleBase(Keyframe)
+    : StyleRuleBase(StyleRuleType::Keyframe)
     , m_properties(WTFMove(properties))
     , m_keys(*keys)
 {

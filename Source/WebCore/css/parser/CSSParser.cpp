@@ -199,7 +199,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         Vector<CSSParserToken> resolvedTokens = resolvedData->tokens();
         
         ParsedPropertyVector parsedProperties;
-        if (!CSSPropertyParser::parseValue(shorthandID, false, resolvedTokens, m_context, parsedProperties, StyleRule::Style))
+        if (!CSSPropertyParser::parseValue(shorthandID, false, resolvedTokens, m_context, parsedProperties, StyleRuleType::Style))
             return nullptr;
         
         for (auto& property : parsedProperties) {

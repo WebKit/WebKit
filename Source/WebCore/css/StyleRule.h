@@ -24,6 +24,7 @@
 #include "CSSSelectorList.h"
 #include "CompiledSelector.h"
 #include "StyleProperties.h"
+#include "StyleRuleType.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueArray.h>
@@ -42,38 +43,21 @@ class StyleRuleKeyframes;
 class StyleRuleBase : public WTF::RefCountedBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Type {
-        Unknown, // Not used.
-        Style,
-        Charset, // Not used. These are internally strings owned by the style sheet.
-        Import,
-        Media,
-        FontFace,
-        Page,
-        Keyframes,
-        Keyframe, // Not used. These are internally non-rule StyleRuleKeyframe objects.
-        Namespace,
-        Supports = 12,
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-        Viewport = 15,
-#endif
-    };
-
-    Type type() const { return static_cast<Type>(m_type); }
+    StyleRuleType type() const { return static_cast<StyleRuleType>(m_type); }
     
-    bool isCharsetRule() const { return type() == Charset; }
-    bool isFontFaceRule() const { return type() == FontFace; }
-    bool isKeyframesRule() const { return type() == Keyframes; }
-    bool isKeyframeRule() const { return type() == Keyframe; }
-    bool isNamespaceRule() const { return type() == Namespace; }
-    bool isMediaRule() const { return type() == Media; }
-    bool isPageRule() const { return type() == Page; }
-    bool isStyleRule() const { return type() == Style; }
-    bool isSupportsRule() const { return type() == Supports; }
+    bool isCharsetRule() const { return type() == StyleRuleType::Charset; }
+    bool isFontFaceRule() const { return type() == StyleRuleType::FontFace; }
+    bool isKeyframesRule() const { return type() == StyleRuleType::Keyframes; }
+    bool isKeyframeRule() const { return type() == StyleRuleType::Keyframe; }
+    bool isNamespaceRule() const { return type() == StyleRuleType::Namespace; }
+    bool isMediaRule() const { return type() == StyleRuleType::Media; }
+    bool isPageRule() const { return type() == StyleRuleType::Page; }
+    bool isStyleRule() const { return type() == StyleRuleType::Style; }
+    bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-    bool isViewportRule() const { return type() == Viewport; }
+    bool isViewportRule() const { return type() == StyleRuleType::Viewport; }
 #endif
-    bool isImportRule() const { return type() == Import; }
+    bool isImportRule() const { return type() == StyleRuleType::Import; }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -88,8 +72,8 @@ public:
     Ref<CSSRule> createCSSOMWrapper(CSSRule* parentRule) const;
 
 protected:
-    StyleRuleBase(Type type, bool hasDocumentSecurityOrigin = false)
-        : m_type(type)
+    StyleRuleBase(StyleRuleType type, bool hasDocumentSecurityOrigin = false)
+        : m_type(static_cast<unsigned>(type))
         , m_hasDocumentSecurityOrigin(hasDocumentSecurityOrigin)
     {
     }
@@ -110,7 +94,7 @@ private:
     
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
-    unsigned m_type : 5;
+    unsigned m_type : 5; // StyleRuleType
     // This is only needed to support getMatchedCSSRules.
     unsigned m_hasDocumentSecurityOrigin : 1;
 };
@@ -241,8 +225,8 @@ public:
     void wrapperRemoveRule(unsigned);
     
 protected:
-    StyleRuleGroup(Type, Vector<RefPtr<StyleRuleBase>>&);
-    StyleRuleGroup(Type, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&);
+    StyleRuleGroup(StyleRuleType, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleGroup(const StyleRuleGroup&);
     
 private:

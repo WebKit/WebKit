@@ -426,26 +426,26 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         if (handler(*rule))
             return true;
         switch (rule->type()) {
-        case StyleRuleBase::Media: {
+        case StyleRuleType::Media: {
             auto* childRules = downcast<StyleRuleMedia>(*rule).childRulesWithoutDeferredParsing();
             if (childRules && traverseRulesInVector(*childRules, handler))
                 return true;
             break;
         }
-        case StyleRuleBase::Import:
+        case StyleRuleType::Import:
             ASSERT_NOT_REACHED();
             break;
-        case StyleRuleBase::Style:
-        case StyleRuleBase::FontFace:
-        case StyleRuleBase::Page:
-        case StyleRuleBase::Keyframes:
-        case StyleRuleBase::Namespace:
-        case StyleRuleBase::Unknown:
-        case StyleRuleBase::Charset:
-        case StyleRuleBase::Keyframe:
-        case StyleRuleBase::Supports:
+        case StyleRuleType::Style:
+        case StyleRuleType::FontFace:
+        case StyleRuleType::Page:
+        case StyleRuleType::Keyframes:
+        case StyleRuleType::Namespace:
+        case StyleRuleType::Unknown:
+        case StyleRuleType::Charset:
+        case StyleRuleType::Keyframe:
+        case StyleRuleType::Supports:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        case StyleRuleBase::Viewport:
+        case StyleRuleType::Viewport:
 #endif
             break;
         }
@@ -469,26 +469,26 @@ bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const Ca
 {
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
-        case StyleRuleBase::Style: {
+        case StyleRuleType::Style: {
             auto* properties = downcast<StyleRule>(rule).propertiesWithoutDeferredParsing();
             return properties && properties->traverseSubresources(handler);
         }
-        case StyleRuleBase::FontFace:
+        case StyleRuleType::FontFace:
             return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
-        case StyleRuleBase::Import:
+        case StyleRuleType::Import:
             if (auto* cachedResource = downcast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
             return false;
-        case StyleRuleBase::Media:
-        case StyleRuleBase::Page:
-        case StyleRuleBase::Keyframes:
-        case StyleRuleBase::Namespace:
-        case StyleRuleBase::Unknown:
-        case StyleRuleBase::Charset:
-        case StyleRuleBase::Keyframe:
-        case StyleRuleBase::Supports:
+        case StyleRuleType::Media:
+        case StyleRuleType::Page:
+        case StyleRuleType::Keyframes:
+        case StyleRuleType::Namespace:
+        case StyleRuleType::Unknown:
+        case StyleRuleType::Charset:
+        case StyleRuleType::Keyframe:
+        case StyleRuleType::Supports:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
-        case StyleRuleBase::Viewport:
+        case StyleRuleType::Viewport:
 #endif
             return false;
         };

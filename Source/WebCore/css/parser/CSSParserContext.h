@@ -26,8 +26,10 @@
 #pragma once
 
 #include "CSSParserMode.h"
+#include "StyleRuleType.h"
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
@@ -39,12 +41,14 @@ class Document;
 struct CSSParserContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
 
     URL baseURL;
     String charset;
     CSSParserMode mode { HTMLStandardMode };
+    Optional<StyleRuleType> enclosingRuleType;
     bool isHTMLDocument { false };
 #if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };

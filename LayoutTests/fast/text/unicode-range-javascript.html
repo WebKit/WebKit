@@ -53,17 +53,17 @@ var faces;
 document.fonts.load("14px WebFont", "A").then(function(facesArgument) {
     faces = facesArgument;
     shouldBe("faces.length", "1");
-    shouldBeEqualToString("faces[0].unicodeRange", "U+41-41");
+    shouldBeEqualToString("faces[0].unicodeRange", "U+41");
     shouldBeTrue("document.fonts.check('14px WebFont', 'A')");
     return document.fonts.load("14px WebFont, WebFont2", "A");
 }, failure).then(function(facesArgument) {
     faces = facesArgument;
     shouldBe("faces.length", "1");
     shouldBeEqualToString("faces[0].family", "WebFont");
-    shouldBeEqualToString("faces[0].unicodeRange", "U+41-41");
+    shouldBeEqualToString("faces[0].unicodeRange", "U+41");
     shouldBeFalse("document.fonts.check('14px WebFont3', 'A')");
     for (let f of document.fonts) {
-        if (f.family == "WebFont3" && f.unicodeRange == "U+41-41")
+        if (f.family == "WebFont3" && f.unicodeRange == "U+41")
             return f.load();
     }
     testFailed("Should find font.");

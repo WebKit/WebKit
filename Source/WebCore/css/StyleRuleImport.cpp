@@ -42,13 +42,10 @@ Ref<StyleRuleImport> StyleRuleImport::create(const String& href, Ref<MediaQueryS
 }
 
 StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media)
-    : StyleRuleBase(Import)
-    , m_parentStyleSheet(0)
+    : StyleRuleBase(StyleRuleType::Import)
     , m_styleSheetClient(this)
     , m_strHref(href)
     , m_mediaQueries(WTFMove(media))
-    , m_cachedSheet(0)
-    , m_loading(false)
 {
     if (!m_mediaQueries)
         m_mediaQueries = MediaQuerySet::create(String(), MediaQueryParserContext());

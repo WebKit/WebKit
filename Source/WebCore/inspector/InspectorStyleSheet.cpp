@@ -101,11 +101,11 @@ void ParsedStyleSheet::setText(const String& text)
 static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& target)
 {
     for (auto& data : dataList) {
-        if (data->type == WebCore::StyleRule::Style)
+        if (data->type == WebCore::StyleRuleType::Style)
             target.append(data.copyRef());
-        else if (data->type == WebCore::StyleRule::Media)
+        else if (data->type == WebCore::StyleRuleType::Media)
             flattenSourceData(data->childRules, target);
-        else if (data->type == WebCore::StyleRule::Supports)
+        else if (data->type == WebCore::StyleRuleType::Supports)
             flattenSourceData(data->childRules, target);
     }
 }
@@ -154,7 +154,7 @@ public:
     }
     
 private:
-    void startRuleHeader(StyleRule::Type, unsigned) override;
+    void startRuleHeader(StyleRuleType, unsigned) override;
     void endRuleHeader(unsigned) override;
     void observeSelector(unsigned startOffset, unsigned endOffset) override;
     void startRuleBody(unsigned) override;
@@ -174,7 +174,7 @@ private:
     RuleSourceDataList* m_ruleSourceDataResult { nullptr };
 };
 
-void StyleSheetHandler::startRuleHeader(StyleRule::Type type, unsigned offset)
+void StyleSheetHandler::startRuleHeader(StyleRuleType type, unsigned offset)
 {
     // Pop off data for a previous invalid rule.
     if (m_currentRuleData)
@@ -1568,7 +1568,7 @@ const String& InspectorStyleSheetForInlineStyle::elementStyleText() const
 Ref<CSSRuleSourceData> InspectorStyleSheetForInlineStyle::ruleSourceData() const
 {
     if (m_styleText.isEmpty()) {
-        auto result = CSSRuleSourceData::create(StyleRule::Style);
+        auto result = CSSRuleSourceData::create(StyleRuleType::Style);
         result->ruleBodyRange.start = 0;
         result->ruleBodyRange.end = 0;
         return result;

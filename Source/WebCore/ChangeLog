@@ -1,3 +1,111 @@
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't change @font-face descriptors from fontFaceRule.style.setProperty()
+        https://bugs.webkit.org/show_bug.cgi?id=177975
+        <rdar://problem/56648761>
+
+        Reviewed by Antti Koivisto.
+
+        When parsing properties via PropertySetCSSStyleDeclaration::setProperty() (called from
+        script as rule.style.setProperty()), CSSPropertyParser::parseValue() needs to know if
+        we're parsing properties in a @font-face or @viewport rule, since some properties are
+        only allowed in these contexts.
+
+        Achieve this by adding to CSSParserContext an Optional<enclosingRuleType>, which gets set
+        for font-face and viewport rules. This gets set by StyleRuleCSSStyleDeclaration::cssParserContext()
+        based on the type of the parent rule.
+
+        Moved StyleRule::Type to its own header so CSSParserContext can use it. Added compile-time asserts
+        that the values match CSSRule::Type (fixing one of them).
+
+        Also fix <urange> serialization when start and end values are the same.
+
+        Test: web-platform-tests/css/css-syntax/urange-parsing.html
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleRuleKeyframe::StyleRuleKeyframe):
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::StyleRuleKeyframes):
+        * css/CSSPropertySourceData.h:
+        (WebCore::CSSRuleSourceData::create):
+        (WebCore::CSSRuleSourceData::createUnknown):
+        (WebCore::CSSRuleSourceData::CSSRuleSourceData):
+        * css/CSSRule.cpp:
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::customCSSText const):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleRuleCSSStyleDeclaration::cssParserContext const):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy const):
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRulePage::StyleRulePage):
+        (WebCore::StyleRuleFontFace::StyleRuleFontFace):
+        (WebCore::StyleRuleGroup::StyleRuleGroup):
+        (WebCore::StyleRuleMedia::StyleRuleMedia):
+        (WebCore::StyleRuleSupports::StyleRuleSupports):
+        (WebCore::StyleRuleViewport::StyleRuleViewport):
+        (WebCore::StyleRuleCharset::StyleRuleCharset):
+        (WebCore::StyleRuleNamespace::StyleRuleNamespace):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::type const):
+        (WebCore::StyleRuleBase::isCharsetRule const):
+        (WebCore::StyleRuleBase::isFontFaceRule const):
+        (WebCore::StyleRuleBase::isKeyframesRule const):
+        (WebCore::StyleRuleBase::isKeyframeRule const):
+        (WebCore::StyleRuleBase::isNamespaceRule const):
+        (WebCore::StyleRuleBase::isMediaRule const):
+        (WebCore::StyleRuleBase::isPageRule const):
+        (WebCore::StyleRuleBase::isStyleRule const):
+        (WebCore::StyleRuleBase::isSupportsRule const):
+        (WebCore::StyleRuleBase::isViewportRule const):
+        (WebCore::StyleRuleBase::isImportRule const):
+        (WebCore::StyleRuleBase::StyleRuleBase):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::StyleRuleImport):
+        * css/StyleRuleImport.h:
+        * css/StyleRuleType.h: Copied from Source/WebCore/css/CSSUnicodeRangeValue.cpp.
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseRulesInVector):
+        (WebCore::StyleSheetContents::traverseSubresources const):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseValue):
+        (WebCore::CSSParserImpl::parseInlineStyleDeclaration):
+        (WebCore::CSSParserImpl::parseDeferredDeclaration):
+        (WebCore::CSSParserImpl::parseDeclarationList):
+        (WebCore::CSSParserImpl::supportsDeclaration):
+        (WebCore::CSSParserImpl::parseDeclarationListForInspector):
+        (WebCore::CSSParserImpl::consumeImportRule):
+        (WebCore::CSSParserImpl::consumeMediaRule):
+        (WebCore::CSSParserImpl::consumeSupportsRule):
+        (WebCore::CSSParserImpl::consumeViewportRule):
+        (WebCore::CSSParserImpl::consumeFontFaceRule):
+        (WebCore::CSSParserImpl::consumeKeyframesRule):
+        (WebCore::CSSParserImpl::consumePageRule):
+        (WebCore::CSSParserImpl::consumeKeyframeStyleRule):
+        (WebCore::observeSelectors):
+        (WebCore::CSSParserImpl::consumeStyleRule):
+        (WebCore::CSSParserImpl::consumeDeclarationList):
+        (WebCore::CSSParserImpl::consumeDeclaration):
+        (WebCore::CSSParserImpl::consumeDeclarationValue):
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSParserObserver.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseValue):
+        * css/parser/CSSPropertyParser.h:
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::CSSTokenizer::letterU):
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        (WebCore::StyleSheetHandler::startRuleHeader):
+        (WebCore::InspectorStyleSheetForInlineStyle::ruleSourceData const):
+
 2019-10-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r251651.
