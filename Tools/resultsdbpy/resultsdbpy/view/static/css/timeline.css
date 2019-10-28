@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.dot.warning {
+    background-color: var(--orangeDark);
+}
+
 .dot.timedout {
     background-color: var(--orangeLight);
 }

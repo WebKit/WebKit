@@ -1,3 +1,21 @@
+2019-10-28  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Show results which are missing expectations
+        https://bugs.webkit.org/show_bug.cgi?id=203494
+        <rdar://problem/56436643>
+
+        Reviewed by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/view/static/css/timeline.css:
+        (.dot.warning): Add warning dot with dark-orange color.
+        * resultsdbpy/resultsdbpy/view/static/js/expectations.js:
+        (Expectations.colorMap): Add warning.
+        (Expectations.failureTypes): Ditto.
+        (Expectations.failureTypeMap): Ditto.
+        (Expectations.symbolMap): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (Legend): Add warning bubble.
+
 2019-10-28  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make the API work with the experimental 3rd-party cookie blocking

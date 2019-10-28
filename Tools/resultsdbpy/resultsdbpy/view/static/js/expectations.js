@@ -27,6 +27,7 @@ class Expectations
         const computedStyle = getComputedStyle(document.body);
         return {
             success: computedStyle.getPropertyValue('--greenLight').trim(),
+            warning: computedStyle.getPropertyValue('--orangeDark').trim(),
             failed: computedStyle.getPropertyValue('--redLight').trim(),
             timedout: computedStyle.getPropertyValue('--orangeLight').trim(),
             crashed: computedStyle.getPropertyValue('--purpleLight').trim(),
@@ -87,8 +88,9 @@ Expectations.stateToIdMap = {
     WARNING: 0x38,
     PASS: 0x40,
 };
-Expectations.failureTypes = ['failed', 'timedout', 'crashed'];
+Expectations.failureTypes = ['warning', 'failed', 'timedout', 'crashed'];
 Expectations.failureTypeMap = {
+    warning: 'WARNING',
     failed: 'ERROR',
     timedout: 'TIMEOUT',
     crashed: 'CRASH',
@@ -100,6 +102,7 @@ timeoutImage.toString = function () {
 }
 Expectations.symbolMap = {
     success: '✓',
+    warning: '?',
     failed: '𝖷',
     timedout: timeoutImage,
     crashed: '!',

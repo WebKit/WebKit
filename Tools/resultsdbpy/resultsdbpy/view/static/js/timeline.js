@@ -829,6 +829,10 @@ function Legend(callback=null, plural=false) {
             expected: plural ? 'No unexpected results' : 'Result expected',
             unexpected: plural ? 'All tests passed' : 'Test passed',
         },
+        warning: {
+            expected: plural ? 'Some tests unexpectedly reported warnings' : 'Unexpected warning',
+            unexpected: plural ? 'Some tests reported warnings' : 'Test warning',
+        },
         failed: {
             expected: plural ? 'Some tests unexpectedly failed' : 'Unexpectedly failed',
             unexpected: plural ? 'Some tests failed' : 'Test failed',
