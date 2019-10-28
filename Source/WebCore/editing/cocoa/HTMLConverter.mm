@@ -722,6 +722,9 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
     case CSSPrimitiveValue::CSS_MM:
         result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC) / 25.4;
         return true;
+    case CSSPrimitiveValue::CSS_Q:
+        result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_PC) / (25.4 * 4.0);
+        return true;
     case CSSPrimitiveValue::CSS_IN:
         result = 96 * primitiveValue.floatValue(CSSPrimitiveValue::CSS_IN);
         return true;

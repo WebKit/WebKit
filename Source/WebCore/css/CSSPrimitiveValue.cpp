@@ -58,7 +58,6 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_DEG:
     case CSSPrimitiveValue::CSS_DIMENSION:
     case CSSPrimitiveValue::CSS_EMS:
-    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_FR:
     case CSSPrimitiveValue::CSS_GRAD:
@@ -72,6 +71,8 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_PERCENTAGE:
     case CSSPrimitiveValue::CSS_PT:
     case CSSPrimitiveValue::CSS_PX:
+    case CSSPrimitiveValue::CSS_Q:
+    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_RAD:
     case CSSPrimitiveValue::CSS_REMS:
     case CSSPrimitiveValue::CSS_S:
@@ -134,7 +135,6 @@ static inline bool isStringType(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_DPI:
     case CSSPrimitiveValue::CSS_DPPX:
     case CSSPrimitiveValue::CSS_EMS:
-    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_FONT_FAMILY:
     case CSSPrimitiveValue::CSS_FR:
@@ -152,7 +152,9 @@ static inline bool isStringType(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_PROPERTY_ID:
     case CSSPrimitiveValue::CSS_PT:
     case CSSPrimitiveValue::CSS_PX:
+    case CSSPrimitiveValue::CSS_Q:
     case CSSPrimitiveValue::CSS_QUAD:
+    case CSSPrimitiveValue::CSS_QUIRKY_EMS:
     case CSSPrimitiveValue::CSS_RAD:
     case CSSPrimitiveValue::CSS_RECT:
     case CSSPrimitiveValue::CSS_REMS:
@@ -191,6 +193,7 @@ CSSPrimitiveValue::UnitCategory CSSPrimitiveValue::unitCategory(CSSPrimitiveValu
     case CSS_IN:
     case CSS_PT:
     case CSS_PC:
+    case CSS_Q:
         return ULength;
     case CSS_MS:
     case CSS_S:
@@ -525,6 +528,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_DPI:
     case CSS_DPCM:
     case CSS_FR:
+    case CSS_Q:
     case CSS_IDENT:
     case CSS_UNKNOWN:
     case CSS_UNICODE_RANGE:
@@ -601,6 +605,10 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
     return computeNonCalcLengthDouble(conversionData, static_cast<UnitType>(primitiveType()), m_value.num);
 }
 
+static constexpr double mmPerInch = 25.4;
+static constexpr double cmPerInch = 2.54;
+static constexpr double QPerInch = 25.4 * 4.0;
+
 double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, UnitType primitiveType, double value)
 {
     double factor;
@@ -636,10 +644,13 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         factor = 1.0;
         break;
     case CSS_CM:
-        factor = cssPixelsPerInch / 2.54; // (2.54 cm/in)
+        factor = cssPixelsPerInch / cmPerInch;
         break;
     case CSS_MM:
-        factor = cssPixelsPerInch / 25.4;
+        factor = cssPixelsPerInch / mmPerInch;
+        break;
+    case CSS_Q:
+        factor = cssPixelsPerInch / QPerInch;
         break;
     case CSS_IN:
         factor = cssPixelsPerInch;
@@ -709,13 +720,13 @@ double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(UnitType unitTyp
     case CSS_HZ:
         break;
     case CSS_CM:
-        factor = cssPixelsPerInch / 2.54; // (2.54 cm/in)
+        factor = cssPixelsPerInch / cmPerInch;
         break;
     case CSS_DPCM:
-        factor = 2.54 / cssPixelsPerInch; // (2.54 cm/in)
+        factor = cmPerInch / cssPixelsPerInch; // (2.54 cm/in)
         break;
     case CSS_MM:
-        factor = cssPixelsPerInch / 25.4;
+        factor = cssPixelsPerInch / mmPerInch;
         break;
     case CSS_IN:
         factor = cssPixelsPerInch;
@@ -969,6 +980,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return formatNumberValue("turn");
     case CSS_FR:
         return formatNumberValue("fr");
+    case CSS_Q:
+        return formatNumberValue("q");
     case CSS_DIMENSION:
         // FIXME: We currently don't handle CSS_DIMENSION properly as we don't store
         // the actual dimension, just the numeric value as a string.
@@ -1090,6 +1103,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_VH:
     case CSS_VMIN:
     case CSS_FR:
+    case CSS_Q:
         return m_value.num == other.m_value.num;
     case CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);

@@ -1,3 +1,20 @@
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for the Q unit
+        https://bugs.webkit.org/show_bug.cgi?id=203469
+
+        Reviewed by Antti Koivisto.
+
+        Add support for the CSS "Q" unit (quater-millimeter):
+        <https://drafts.csswg.org/css-values-4/#Q>
+
+        * web-platform-tests/css/css-values/absolute-length-units-001-expected.txt:
+        * web-platform-tests/css/css-values/calc-serialization-002-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-serialize-expected.txt:
+
 2019-10-28  Antoine Quint  <graouts@apple.com>
 
         CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times

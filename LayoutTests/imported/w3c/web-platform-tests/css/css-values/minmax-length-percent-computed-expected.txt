@@ -2,7 +2,7 @@
 PASS Property margin-left value 'min(1px + 1%)' computes to '5px' 
 PASS Property margin-left value 'min(1cm + 1%)' computes to '41.78125px' 
 PASS Property margin-left value 'min(1mm + 1%)' computes to '7.765625px' 
-FAIL Property margin-left value 'min(1Q + 1%)' computes to '0px' assert_true: 'min(1Q + 1%)' is a supported value for margin-left. expected true got false
+PASS Property margin-left value 'min(1Q + 1%)' computes to '4.9375px' 
 PASS Property margin-left value 'min(1in + 1%)' computes to '100px' 
 PASS Property margin-left value 'min(1pc + 1%)' computes to '20px' 
 PASS Property margin-left value 'min(1pt + 1%)' computes to '5.328125px' 
@@ -17,7 +17,7 @@ PASS Property margin-left value 'min(1vmax + 1%)' computes to '12px'
 PASS Property margin-left value 'max(1px + 1%)' computes to '5px' 
 PASS Property margin-left value 'max(1cm + 1%)' computes to '41.78125px' 
 PASS Property margin-left value 'max(1mm + 1%)' computes to '7.765625px' 
-FAIL Property margin-left value 'max(1Q + 1%)' computes to '0px' assert_true: 'max(1Q + 1%)' is a supported value for margin-left. expected true got false
+PASS Property margin-left value 'max(1Q + 1%)' computes to '4.9375px' 
 PASS Property margin-left value 'max(1in + 1%)' computes to '100px' 
 PASS Property margin-left value 'max(1pc + 1%)' computes to '20px' 
 PASS Property margin-left value 'max(1pt + 1%)' computes to '5.328125px' 

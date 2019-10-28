@@ -47,6 +47,8 @@ CSSPrimitiveValue::UnitType cssPrimitiveValueUnitFromTrie(const CharacterType* d
     switch (length) {
     case 1:
         switch (toASCIILower(data[0])) {
+        case 'q':
+            return CSSPrimitiveValue::UnitType::CSS_Q;
         case 's':
             return CSSPrimitiveValue::UnitType::CSS_S;
         }

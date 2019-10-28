@@ -7,6 +7,23 @@
         * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt:
         The important part of this test is that there are 3 PASSes, not that the console log is consistent.
 
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for the Q unit
+        https://bugs.webkit.org/show_bug.cgi?id=203469
+
+        Reviewed by Antti Koivisto.
+
+        More tests now pass.
+
+        * TestExpectations:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt:
+
 2019-10-28  Antoine Quint  <graouts@apple.com>
 
         CSS Transitions and CSS Animations properties should treat unitless 0 as an invalid value for times

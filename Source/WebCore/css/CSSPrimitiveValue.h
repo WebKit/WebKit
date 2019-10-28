@@ -110,6 +110,7 @@ public:
         CSS_DPI = 31,
         CSS_DPCM = 32,
         CSS_FR = 33,
+        CSS_Q = 34,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
         CSS_UNICODE_RANGE = 102,
 
@@ -359,6 +360,7 @@ inline bool CSSPrimitiveValue::isLength(UnitType type)
     return (type >= CSS_EMS && type <= CSS_PC)
         || type == CSS_REMS
         || type == CSS_CHS
+        || type == CSS_Q
         || isViewportPercentageLength(type)
         || type == CSS_QUIRKY_EMS;
 }

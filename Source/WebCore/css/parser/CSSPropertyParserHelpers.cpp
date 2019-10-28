@@ -296,6 +296,7 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         case CSSPrimitiveValue::UnitType::CSS_VH:
         case CSSPrimitiveValue::UnitType::CSS_VMIN:
         case CSSPrimitiveValue::UnitType::CSS_VMAX:
+        case CSSPrimitiveValue::UnitType::CSS_Q:
             break;
         default:
             return nullptr;

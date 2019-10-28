@@ -3882,8 +3882,6 @@ webkit.org/b/203357 imported/w3c/web-platform-tests/css/css-transitions/event-di
 
 # wpt css-values failures
 webkit.org/b/203320 imported/w3c/web-platform-tests/css/css-values/percentage-rem-low.html [ ImageOnlyFailure ]
-webkit.org/b/203321 imported/w3c/web-platform-tests/css/css-values/q-unit-case-insensitivity-001.html [ ImageOnlyFailure ]
-webkit.org/b/203321 imported/w3c/web-platform-tests/css/css-values/q-unit-case-insensitivity-002.html [ ImageOnlyFailure ]
 webkit.org/b/203322 imported/w3c/web-platform-tests/css/css-values/attr-color-invalid-cast.html [ ImageOnlyFailure ]
 webkit.org/b/203323 imported/w3c/web-platform-tests/css/css-values/attr-color-valid.html [ ImageOnlyFailure ]
 webkit.org/b/203324 imported/w3c/web-platform-tests/css/css-values/attr-in-max.html [ ImageOnlyFailure ]

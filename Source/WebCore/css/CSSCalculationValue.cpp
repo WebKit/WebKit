@@ -65,6 +65,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_IN:
     case CSSPrimitiveValue::CSS_PT:
     case CSSPrimitiveValue::CSS_PC:
+    case CSSPrimitiveValue::CSS_Q:
     case CSSPrimitiveValue::CSS_REMS:
     case CSSPrimitiveValue::CSS_CHS:
     case CSSPrimitiveValue::CSS_VW:
@@ -93,7 +94,6 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitType type)
 static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
 {
     switch (type) {
-    case CSSPrimitiveValue::CSS_FR:
     case CSSPrimitiveValue::CSS_NUMBER:
     case CSSPrimitiveValue::CSS_PERCENTAGE:
     case CSSPrimitiveValue::CSS_EMS:
@@ -122,6 +122,8 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_DPPX:
     case CSSPrimitiveValue::CSS_DPI:
     case CSSPrimitiveValue::CSS_DPCM:
+    case CSSPrimitiveValue::CSS_FR:
+    case CSSPrimitiveValue::CSS_Q:
         return true;
     case CSSPrimitiveValue::CSS_UNKNOWN:
     case CSSPrimitiveValue::CSS_STRING:
