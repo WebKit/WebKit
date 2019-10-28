@@ -149,6 +149,9 @@ WI.ColorSquare = class ColorSquare
 
     _handleMousedown(event)
     {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
         this._updateColorForMouseEvent(event);
