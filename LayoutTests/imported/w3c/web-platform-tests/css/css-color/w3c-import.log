@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,7 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/LICENSE
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/border-bottom-color-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/border-bottom-color.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/border-left-color-expected.xht
@@ -34,6 +34,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/composited-filters-under-opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/currentcolor-002-expected.html
@@ -79,6 +81,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/hsla-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/hsla-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/htaccess
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-002-expected.html
@@ -109,6 +112,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/rgb-002-expected.html

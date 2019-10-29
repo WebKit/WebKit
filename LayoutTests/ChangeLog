@@ -26,6 +26,15 @@
 
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Update css/css-color WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203585
+
+        Reviewed by Zalan Bujtas.
+
+        * tests-options.json:
+
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
         Flaky Test: imported/w3c/web-platform-tests/css/css-values/absolute_length_units.html
         https://bugs.webkit.org/show_bug.cgi?id=203581
 

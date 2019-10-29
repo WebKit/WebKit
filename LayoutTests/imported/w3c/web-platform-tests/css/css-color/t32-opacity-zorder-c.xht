@@ -25,12 +25,12 @@
 		<p>Each of the following boxes should have a green or
 		very-nearly-green square inside of it:</p>
 		<table><tr>
-			<!--  baseline  -->
+			<!-- baseline -->
 			<td>
 				<div class="red"></div>
 				<div class="up green"></div>
 			</td>
-			<!--  z-index auto or 0 is in positioned elements layer  -->
+			<!-- z-index auto or 0 is in positioned elements layer -->
 			<td>
 				<div class="pos red"></div>
 				<div class="up opc green"></div>
@@ -61,7 +61,7 @@
 				<div class="up pos green"></div>
 				<div class="up red"></div>
 			</td>
-			<!--  baseline: make sure z-index: auto works  -->
+			<!-- baseline: make sure z-index: auto works -->
 			<td>
 				<div class="pos">
 					<div class="pos green z1"></div>
@@ -71,7 +71,7 @@
 				<div class="up pos red"></div>
 				<div class="up red"></div>
 			</td>
-			<!--  baseline: make sure z-index: 0 works  -->
+			<!-- baseline: make sure z-index: 0 works -->
 			<td>
 				<div class="pos z0">
 					<div class="pos red z1"></div>
@@ -80,7 +80,7 @@
 				<div class="up pos green"></div>
 				<div class="up red"></div>
 			</td>
-			<!--  make sure opacity acts like z-index: 0, not auto  -->
+			<!-- make sure opacity acts like z-index: 0, not auto -->
 			<td>
 				<div class="opc">
 					<div class="pos red z1"></div>
@@ -89,14 +89,14 @@
 				<div class="up pos green"></div>
 				<div class="up red"></div>
 			</td>
-			<!--  make sure z-index does not apply to elements with opacity if they aren't positioned  -->
+			<!-- make sure z-index does not apply to elements with opacity if they aren't positioned -->
 			<td>
 				<div class="opc z1 red"></div>
 				<div class="up opc red"></div>
 				<div class="up opc z0 red"></div>
 				<div class="up opc zm1 green"></div>
 			</td>
-			<!--  ... but that it does if they are positioned  -->
+			<!-- ... but that it does if they are positioned -->
 			<td>
 				<div class="pos opc z1 green"></div>
 				<div class="up pos opc red"></div>

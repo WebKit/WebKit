@@ -1,5 +1,46 @@
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Update css/css-color WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203585
+
+        Reviewed by Zalan Bujtas.
+        
+        Updated to e68120da0fb52f010f206f3ecc63cfa09885b0f4 (Wed Oct 23 13:18:06 2019 -0700).
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-color/META.yml: Added.
+        * web-platform-tests/css/css-color/OWNERS: Removed.
+        * web-platform-tests/css/css-color/animation/color-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-color/animation/color-interpolation.html: Added.
+        * web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-color/animation/opacity-interpolation.html: Added.
+        * web-platform-tests/css/css-color/animation/w3c-import.log: Added.
+        * web-platform-tests/css/css-color/composited-filters-under-opacity-expected.html: Added.
+        * web-platform-tests/css/css-color/composited-filters-under-opacity.html: Added.
+        * web-platform-tests/css/css-color/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-color/inheritance.html: Added.
+        * web-platform-tests/css/css-color/opacity-overlapping-letters-expected.html: Added.
+        * web-platform-tests/css/css-color/opacity-overlapping-letters.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-computed.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-invalid.html: Added.
+        * web-platform-tests/css/css-color/parsing/color-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/color-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-computed-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-computed.html: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-invalid.html: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-valid-expected.txt: Added.
+        * web-platform-tests/css/css-color/parsing/opacity-valid.html: Added.
+        * web-platform-tests/css/css-color/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-color/t31-color-text-a-expected.xht:
+        * web-platform-tests/css/css-color/t32-opacity-zorder-c.xht:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
         Import css/css-box WPT
         https://bugs.webkit.org/show_bug.cgi?id=203584
 

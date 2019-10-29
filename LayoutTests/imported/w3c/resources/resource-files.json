@@ -12,6 +12,11 @@
         "web-platform-tests/tools"
     ],
     "files": [
+        "css/css-color/t32-opacity-basic-0.6-a.xht",
+        "css/css-color/t32-opacity-zorder-c.xht",
+        "css/css-color/t421-rgb-hex3-expand-b.xht",
+        "css/css-color/t422-rgba-a0.6-a.xht",
+        "css/css-color/t425-hsla-basic-a.xht",
         "css/css-multicol/multicol-rule-large-002.xht",
         "css/css-shapes/test-plan/index.html",
         "css/css-sizing/support/dynamic-available-size-iframe.html",
