@@ -1,3 +1,16 @@
+2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Layout Test http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html is flaky (183093)
+        <https://bugs.webkit.org/show_bug.cgi?id=183093>
+        <rdar://problem/37964600>
+
+        Reviewed by John Wilander.
+
+        Flakiness no longer reproducible. 
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
         Import css/css-sizing WPT
