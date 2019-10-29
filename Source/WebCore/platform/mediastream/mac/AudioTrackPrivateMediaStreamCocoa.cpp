@@ -47,6 +47,15 @@ AudioTrackPrivateMediaStreamCocoa::AudioTrackPrivateMediaStreamCocoa(MediaStream
 
 AudioTrackPrivateMediaStreamCocoa::~AudioTrackPrivateMediaStreamCocoa()
 {
+    clear();
+}
+
+void AudioTrackPrivateMediaStreamCocoa::clear()
+{
+    if (m_isCleared)
+        return;
+
+    m_isCleared = true;
     streamTrack().source().removeObserver(*this);
 
     if (m_dataSource)

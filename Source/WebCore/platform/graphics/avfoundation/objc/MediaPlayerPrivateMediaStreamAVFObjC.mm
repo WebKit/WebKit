@@ -210,7 +210,10 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 
     destroyLayers();
 
-    m_audioTrackMap.clear();
+    auto audioTrackMap = WTFMove(m_audioTrackMap);
+    for (auto& track : audioTrackMap.values())
+        track->clear();
+
     m_videoTrackMap.clear();
 }
 
@@ -1014,6 +1017,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
         switch (state) {
         case TrackState::Remove:
             track.streamTrack().removeObserver(*this);
+            track.clear();
             m_player->removeAudioTrack(track);
             break;
         case TrackState::Add:
