@@ -3942,8 +3942,6 @@ webkit.org/b/203336 imported/w3c/web-platform-tests/css/css-values/lh-unit-002.h
 webkit.org/b/203337 imported/w3c/web-platform-tests/css/css-values/vh-support-atviewport.html [ ImageOnlyFailure ]
 webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ ImageOnlyFailure ]
 
-webkit.org/b/202859 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
-
 # wpt css-sizing failures
 webkit.org/b/203509 imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203510 imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size.html [ ImageOnlyFailure ]

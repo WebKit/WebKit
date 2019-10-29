@@ -1,3 +1,15 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        <input type="range">.setAttribute("value") does not update the value
+        https://bugs.webkit.org/show_bug.cgi?id=202859
+        <rdar://problem/56204271>
+
+        Reviewed by Frédéric Wang.
+
+        Unskip ref test that is no longer failing.
+
+        * TestExpectations:
+
 2019-10-29  Russell Epstein  <repstein@apple.com>
 
         (r251242) [ iOS ]: fast/scrolling/ios/touch-scroll-visibility-hidden.html is a Flaky Timeout.

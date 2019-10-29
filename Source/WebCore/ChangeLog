@@ -1,3 +1,19 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        <input type="range">.setAttribute("value") does not update the value
+        https://bugs.webkit.org/show_bug.cgi?id=202859
+        <rdar://problem/56204271>
+
+        Reviewed by Frédéric Wang.
+
+        Make sure the position of the range input element's slider gets updated whenever
+        the element's 'value' attribute changes.
+
+        No new tests, unskipped existing test.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::attributeChanged):
+
 2019-10-29  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251639.
