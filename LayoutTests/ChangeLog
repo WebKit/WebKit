@@ -1,3 +1,12 @@
+2019-10-29  Russell Epstein  <repstein@apple.com>
+
+        [iOS] fast/forms/contenteditable-font-optical-size.html landed flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=203371
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Layout Test http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html is flaky (183093)
