@@ -7,9 +7,9 @@
 // PBufferSurfaceCGL.cpp: an implementation of PBuffers created from IOSurfaces using
 //                        EGL_ANGLE_iosurface_client_buffer
 
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_OSX
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_MACOS)
 
 #include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 
@@ -335,5 +335,4 @@ bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
 
 }  // namespace rx
 
-#endif  // TARGET_OS_OSX
-#endif  // __APPLE__
+#endif  // defined(ANGLE_PLATFORM_MACOS)

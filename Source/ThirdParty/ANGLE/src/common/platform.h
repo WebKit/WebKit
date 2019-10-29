@@ -111,4 +111,13 @@
 #    endif  // defined(__GNUC__) || defined(__clang__)
 #endif      // !defined(ANGLE_LIKELY) || !defined(ANGLE_UNLIKELY)
 
+#ifdef ANGLE_PLATFORM_APPLE
+#    include <TargetConditionals.h>
+#    if TARGET_OS_OSX
+#        define ANGLE_PLATFORM_MACOS 1
+#    elif TARGET_OS_IOS
+#        define ANGLE_PLATFORM_IOS 1
+#    endif
+#endif
+
 #endif  // COMMON_PLATFORM_H_

@@ -6,9 +6,9 @@
 
 // RendererCGL.mm: Implements the class methods for RendererCGL.
 
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_OSX
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_MACOS)
 
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 #include "libANGLE/renderer/gl/cgl/RendererCGL.h"
@@ -31,5 +31,4 @@ WorkerContext *RendererCGL::createWorkerContext(std::string *infoLog)
 
 }  // namespace rx
 
-#endif  // TARGET_OS_OSX
-#endif  // __APPLE__
+#endif  // defined(ANGLE_PLATFORM_MACOS)

@@ -7,9 +7,9 @@
 // PBufferSurfaceCGL.cpp: an implementation of egl::Surface for PBuffers for the CLG backend,
 //                      currently implemented using renderbuffers
 
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_OSX
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_MACOS)
 
 #include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 
@@ -146,5 +146,4 @@ FramebufferImpl *PbufferSurfaceCGL::createDefaultFramebuffer(const gl::Context *
 
 }  // namespace rx
 
-#endif  // TARGET_OS_OSX
-#endif  // __APPLE__
+#endif  // defined(ANGLE_PLATFORM_MACOS)

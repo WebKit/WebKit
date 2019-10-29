@@ -6,9 +6,9 @@
 
 // WindowSurfaceCGL.cpp: CGL implementation of egl::Surface for windows
 
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_OSX
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_MACOS)
 
 #import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
@@ -338,5 +338,4 @@ FramebufferImpl *WindowSurfaceCGL::createDefaultFramebuffer(const gl::Context *c
 
 }  // namespace rx
 
-#endif  // TARGET_OS_OSX
-#endif  // __APPLE__
+#endif  // defined(ANGLE_PLATFORM_MACOS)

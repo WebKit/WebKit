@@ -6,9 +6,9 @@
 
 // DeviceCGL.cpp: CGL implementation of egl::Device
 
-#if defined(__APPLE__)
-#include <TargetConditionals.h>
-#if TARGET_OS_OSX
+#import "common/platform.h"
+
+#if defined(ANGLE_PLATFORM_MACOS)
 
 #include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
 
@@ -59,5 +59,4 @@ void DeviceCGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 
 }  // namespace rx
 
-#endif  // TARGET_OS_OSX
-#endif  // __APPLE__
+#endif  // defined(ANGLE_PLATFORM_MACOS)
