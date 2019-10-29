@@ -1,3 +1,179 @@
+2019-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Update css/css-text-decor WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203532
+
+        Reviewed by Tim Horton.
+        
+        Import css/css-text-decor at e68120da0fb52f010f206f3ecc63cfa09885b0f4 (Wed Oct 23 13:18:06 2019 -0700)
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-text-decor/META.yml: Added.
+        * web-platform-tests/css/css-text-decor/OWNERS: Removed.
+        * web-platform-tests/css/css-text-decor/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/inheritance.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-color-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-line-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-shorthand.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-skip-ink-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-style-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-decoration-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-shadow-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/parsing/text-underline-position-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-010-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-010.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-011-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-011.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-012-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-012.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-013-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-013.xht:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-recalc-expected.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-line.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-serialization.tentative-expected.txt:
+        * web-platform-tests/css/css-text-decor/text-decoration-serialization.tentative.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-shorthands-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-shorthands-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-shorthands-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-shorthands-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-003-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-003.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-004-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-004.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewayslr-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewayslr-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewayslr-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewayslr-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewaysrl-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewaysrl-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewaysrl-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewaysrl-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-initial-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-initial.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-horizontal-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-horizontal.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html: Added.
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-001-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-001-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-002-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-001-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002-expected.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-006-expected.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-007-expected.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-008-expected.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-008.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-010-expected.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-style-021-expected.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-unrepresentable-characters-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-emphasis-unrepresentable-characters.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-computed-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-computed.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-initial-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-initial.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-invalid.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-scroll-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-scroll-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-valid-expected.txt: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-valid.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-002-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-002.html: Added.
+        * web-platform-tests/css/css-text-decor/w3c-import.log:
+
 2019-10-28  Chris Dumez  <cdumez@apple.com>
 
         Update html/semantics/forms WPT tests from upstream

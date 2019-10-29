@@ -3919,6 +3919,18 @@ webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refres
 
 webkit.org/b/202859 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
 
+# wpt css-text-decor failures
+webkit.org/b/203530 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html [ ImageOnlyFailure ]
+webkit.org/b/203531 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html [ ImageOnlyFailure ]
+webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html [ ImageOnlyFailure ]
+webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html [ ImageOnlyFailure ]
+
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
@@ -3961,4 +3973,3 @@ webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-posi
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html [ ImageOnlyFailure ]
-

@@ -2,6 +2,7 @@
     "apng": "import", 
     "css/css-position": "import", 
     "css/css-syntax": "import", 
+    "css/css-text-decor": "import", 
     "css/css-values": "import", 
     "css/geometry": "import", 
     "css/support": "import", 
