@@ -1,3 +1,11 @@
+2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add missing platform-specific test expectations after r251686
+
+        Revert changes to these test expectations.
+
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2019-10-28  Chris Dumez  <cdumez@apple.com>
 
         Update html/semantics/forms WPT tests from upstream

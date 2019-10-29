@@ -1,3 +1,12 @@
+2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add missing platform-specific test expectations after r251686
+
+        Add mac-wk2-specific baselines.
+
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https.html: Removed.
+
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test gardening; new iOS results for these now passing tests.
