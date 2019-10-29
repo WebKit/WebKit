@@ -1,0 +1,47 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/float-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/float-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/float-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/height-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-height-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-height-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-height-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/min-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/overflow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/padding-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/padding-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/padding-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/padding-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/visibility-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/visibility-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/visibility-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/width-valid.html
