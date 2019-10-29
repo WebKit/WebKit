@@ -34,7 +34,9 @@
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
 #import "WebPopupItem.h"
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/system/mac/PopupMenu.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
@@ -101,11 +103,16 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSFont *font;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     if (data.fontInfo.fontAttributeDictionary) {
         PlatformFontDescriptor *fontDescriptor = fontDescriptorWithFontAttributes(static_cast<NSDictionary *>(data.fontInfo.fontAttributeDictionary.get()));
         font = [NSFont fontWithDescriptor:fontDescriptor size:((pageScaleFactor != 1) ? [fontDescriptor pointSize] * pageScaleFactor : 0)];
     } else
         font = [NSFont menuFontOfSize:0];
+    
+    END_BLOCK_OBJC_EXCEPTIONS
 
     populate(items, font, textDirection);
 

@@ -1,5 +1,56 @@
 2019-10-24  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r250640. rdar://problem/56237433
+
+    REGRESSION (r245672): <select> dropdown with text-rendering: optimizeLegibility freezes Safari
+    https://bugs.webkit.org/show_bug.cgi?id=202198
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    NSFont has a bug where passing "auto" to kCTFontOpticalSizeAttribute
+    causes an exception to be thrown. We don't catch the exception, so we
+    pop up back to the runloop, which confuses the UI process.
+    
+    The solution is twofold: 1) Workaround the bug by passing the font size
+    to kCTFontOpticalSizeAttribute instead, and 2) catch any exceptions that
+    this part of the code might throw.
+    
+    * UIProcess/mac/WebPopupMenuProxyMac.mm:
+    (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    
+    LayoutTests:
+    
+    * fast/forms/select-font-optical-size-expected.txt: Added.
+    * fast/forms/select-font-optical-size.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250640 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION (r245672): <select> dropdown with text-rendering: optimizeLegibility freezes Safari
+            https://bugs.webkit.org/show_bug.cgi?id=202198
+
+            Reviewed by Tim Horton.
+
+            NSFont has a bug where passing "auto" to kCTFontOpticalSizeAttribute
+            causes an exception to be thrown. We don't catch the exception, so we
+            pop up back to the runloop, which confuses the UI process.
+
+            The solution is twofold: 1) Workaround the bug by passing the font size
+            to kCTFontOpticalSizeAttribute instead, and 2) catch any exceptions that
+            this part of the code might throw.
+
+            * UIProcess/mac/WebPopupMenuProxyMac.mm:
+            (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
+2019-10-24  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r251370. rdar://problem/56579672
 
     Add more release logging for "Unexpectedly resumed" assertion
