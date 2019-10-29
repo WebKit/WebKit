@@ -41,7 +41,6 @@
 #include "JSMediaDeviceInfo.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceSettings.h"
-#include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
 #include <wtf/IsoMallocInlines.h>
@@ -105,20 +104,7 @@ static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackCon
     );
 }
 
-bool MediaDevices::computeUserGesturePriviledge(GestureAllowedRequest requestType)
-{
-    auto* currentGestureToken = UserGestureIndicator::currentUserGesture().get();
-    if (m_currentGestureToken != currentGestureToken) {
-        m_currentGestureToken = currentGestureToken;
-        m_requestTypesForCurrentGesture = { };
-    }
-
-    bool isUserGesturePriviledged = m_currentGestureToken && !m_requestTypesForCurrentGesture.contains(requestType);
-    m_requestTypesForCurrentGesture.add(requestType);
-    return isUserGesturePriviledged;
-}
-
-void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise)
+void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
     if (!document)
@@ -126,34 +112,25 @@ void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& 
 
     auto audioConstraints = createMediaConstraints(constraints.audio);
     auto videoConstraints = createMediaConstraints(constraints.video);
-
-    bool isUserGesturePriviledged = false;
-
-    if (audioConstraints.isValid)
-        isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Microphone);
-
-    if (videoConstraints.isValid) {
-        isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Camera);
+    if (videoConstraints.isValid)
         videoConstraints.setDefaultVideoConstraints();
-    }
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), isUserGesturePriviledged }, WTFMove(promise));
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints) }, WTFMove(promise));
     request->start();
 }
 
-void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise)
+void MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
     if (!document)
         return;
 
-    bool isUserGesturePriviledged = computeUserGesturePriviledge(GestureAllowedRequest::Display);
-    if (!m_disableGetDisplayMediaUserGestureConstraint && !isUserGesturePriviledged) {
+    if (!m_disableGetDisplayMediaUserGestureConstraint && !UserGestureIndicator::processingUserGesture()) {
         promise.reject(Exception { InvalidAccessError, "getDisplayMedia must be called from a user gesture handler."_s });
         return;
     }
 
-    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video), isUserGesturePriviledged }, WTFMove(promise));
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, { }, createMediaConstraints(constraints.video) }, WTFMove(promise));
     request->start();
 }
 

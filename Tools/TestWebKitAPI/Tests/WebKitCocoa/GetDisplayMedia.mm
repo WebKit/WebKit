@@ -180,7 +180,8 @@ TEST_F(GetDisplayMediaTest, PromptOnceAfterDenial)
     shouldDeny = true;
     promptForCapture(@"{ video: true }", false);
     shouldDeny = false;
-    promptForCapture(@"{ video: true }", true);
+    promptForCapture(@"{ video: true }", false);
+    promptForCapture(@"{ video: true }", false);
 }
 
 } // namespace TestWebKitAPI

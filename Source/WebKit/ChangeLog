@@ -1,5 +1,18 @@
 2019-10-29  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, rolling out r251639.
+
+        Caused flakey API failures for GetDisplayMediaTest.Constraints
+
+        Reverted changeset:
+
+        "Enforce user gesture for getUserMedia in case a previous
+        getUserMedia call was denied"
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+        https://trac.webkit.org/changeset/251639
+
+2019-10-29  Truitt Savell  <tsavell@apple.com>
+
         Unreviewed, rolling out r251646.
 
         Caused flakey API failures for GetDisplayMediaTest.Constraints
