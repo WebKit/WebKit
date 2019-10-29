@@ -153,7 +153,7 @@
            (global-name "com.apple.coremedia.capturesession")      ; Actually for video capture
            (global-name "com.apple.coremedia.capturesource")       ; Also for video capture (<rdar://problem/15794291>).
            (global-name "com.apple.coremedia.cpeprotector.xpc")
-           (global-name "com.apple.coremedia.customurlloader.xpc")
+           (global-name "com.apple.coremedia.customurlloader.xpc") ; Needed for custom media loading
            (global-name "com.apple.coremedia.endpoint.xpc")
            (global-name "com.apple.coremedia.figcpecryptor")
            (global-name "com.apple.coremedia.figcontentkeysession.xpc")
@@ -170,25 +170,75 @@
            (global-name "com.apple.coremedia.systemcontroller.xpc")
            (global-name "com.apple.coremedia.sts")
            (global-name "com.apple.coremedia.volumecontroller.xpc"))
+
     (mobile-preferences-read
         "com.apple.avfoundation"
         "com.apple.coreaudio"
         "com.apple.coremedia"
-        "com.apple.corevideo")
+        "com.apple.corevideo"
+        "com.apple.itunesstored" ; Needed by MediaPlayer framework
+        "com.apple.mobileipod" ; Ditto
+    )
+
     ;; Required by the MediaPlayer framework.
     (allow mach-lookup
-           (global-name "com.apple.airplay.apsynccontroller.xpc")
-           (global-name "com.apple.audio.AudioSession"))
-    (mobile-preferences-read "com.apple.mobileipod")
-    ;; Needed by the MediaPlayer framework:
-    (mobile-preferences-read "com.apple.itunesstored"))
+        (global-name "com.apple.airplay.apsynccontroller.xpc")
+        (global-name "com.apple.audio.AudioSession"))
+
+    ;; Allow mediaserverd to issue file extensions for the purposes of reading media
+    (allow file-issue-extension (require-all
+        (extension "com.apple.app-sandbox.read")
+        (extension-class "com.apple.mediaserverd.read")))
+)
 
 (define-once (media-remote)
     (mobile-preferences-read
         "com.apple.mediaremote"
         "com.apple.mobileipod")
     (allow mach-lookup
-           (global-name "com.apple.mediaremoted.xpc")))
+           (global-name "com.apple.mediaremoted.xpc"))
+)
+
+(define-once (media-capture-support)
+    ;; Media capture, microphone access
+    (with-filter (extension "com.apple.webkit.microphone")
+        (allow device-microphone))
+
+    ;; Media capture, camera access
+    (with-filter (extension "com.apple.webkit.camera")
+        (allow user-preference-read
+            (preference-domain "com.apple.coremedia"))
+        (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+        (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+        (allow device-camera))
+
+    ;; Support incoming video connections
+    (allow mach-lookup
+        (global-name "com.apple.coremedia.compressionsession")
+        (global-name "com.apple.coremedia.decompressionsession")
+        (global-name "com.apple.coremedia.videoqueue"))
+)
+
+(define-once (accessibility-support)
+    (allow mach-register
+        (local-name "com.apple.iphone.axserver"))
+    (mobile-preferences-read "com.apple.Accessibility")
+    
+    ;; <rdar://problem/10809394>
+    (deny file-write-create
+        (home-prefix "/Library/Preferences/com.apple.Accessibility.plist")
+        (with no-report))
+)
+
+(define-once (media-accessibility-support)
+    ;; <rdar://problem/12801477>
+    (allow mach-lookup
+        (global-name "com.apple.accessibility.mediaaccessibilityd"))
+
+    ;; <rdar://problem/12250145>
+    (mobile-preferences-read "com.apple.mediaaccessibility")
+    (mobile-preferences-read-write "com.apple.mediaaccessibility.public")
+)
 
 (define-once (url-translation)
     ;; For translating http:// & https:// URLs referencing itms:// URLs.
@@ -214,16 +264,29 @@
                 "IOAccelContext2"
                 "IOAccelDevice2"
                 "IOAccelSharedUserClient2"))
+
+    (allow iokit-get-properties
+        (iokit-property "IOGLBundleName")
+        (iokit-property "IOGLESBundleName")
+        (iokit-property "IOGLESDefaultUseMetal")
+        (iokit-property "IOGLESMetalBundleName")
+        (iokit-property "MetalPluginClassName")
+        (iokit-property "MetalPluginName")
+    )
+
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
+
     (allow mach-lookup
-           (xpc-service-name-prefix "com.apple.AGXCompilerService"))
-
-    ;; <rdar://problem/25535471>
-    (mobile-preferences-read "com.apple.Metal")
-
-    ;; <rdar://problem/23321675>
-    (mobile-preferences-read "com.apple.opengl"))
+       (xpc-service-name-prefix "com.apple.AGXCompilerService")
+       ;; <rdar://problem/47268166>
+       (xpc-service-name "com.apple.MTLCompilerService"))
+    
+    (mobile-preferences-read
+        "com.apple.Metal" ;; <rdar://problem/25535471>
+        "com.apple.opengl" ;; <rdar://problem/23321675>
+    )
+)
 
 (define-once (debugging-support)
         (allow file-read* file-map-executable
@@ -309,6 +372,100 @@
            "/private/etc/passwd"
            "/private/etc/protocols"
            "/private/etc/services"))
+
+(define-once (speech-synthesis-and-voiceover)
+    ;; Speak Selection & VoiceOver
+    ;; <rdar://problem/12030530> AX: Sandbox violation with changing Language while VO is on
+    ;; and <rdar://problem/13071747>
+    (mobile-preferences-read
+        "com.apple.SpeakSelection" ; Needed for WebSpeech
+        "com.apple.VoiceOverTouch" ; Needed for non-US english language synthesis
+        "com.apple.voiceservices") ; Ditto
+
+    ;; <rdar://problem/14555119> Access to high quality speech voices
+    ;; Needed for WebSpeech
+    (allow file-read*
+        (home-subpath "/Library/VoiceServices/Assets")
+        (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
+)
+
+(define-once (core-motion)
+    ;; CoreMotion
+    (mobile-preferences-read "com.apple.CoreMotion")
+
+    ;; CoreMotion’s deviceMotion API
+    (with-filter
+        (require-any
+            (iokit-registry-entry-class "AppleOscarNub")
+            (iokit-registry-entry-class "AppleSPUHIDInterface"))
+        (allow iokit-get-properties
+            (iokit-property "gyro-interrupt-calibration")))
+    (with-filter
+        (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
+        (allow iokit-open)
+        (allow iokit-get-properties iokit-set-properties
+            (iokit-property "interval"
+                            "mode"
+                            "QueueSize"
+                            "useMag"))
+        (allow iokit-get-properties
+            (iokit-property "client")))
+)
+
+;; Things required by UIKit
+(define-once (uikit-requirements)
+    (mobile-preferences-read
+        "com.apple.UIKit"
+        "com.apple.WebUI"
+        "com.apple.airplay"
+        "com.apple.avkit"
+        "com.apple.coreanimation"
+        "com.apple.mt"
+        "com.apple.preferences.sounds")
+
+    (allow mach-lookup
+        (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
+        (global-name-regex #"^com\.apple\.uikit\.viewservice\..+")
+        (xpc-service-name-regex #"\.apple-extension-service$") ;; <rdar://problem/19525887>
+        (xpc-service-name-regex #"\.viewservice$") ;; <rdar://problem/31252371>
+        (global-name "com.apple.CARenderServer")
+        (global-name "com.apple.iohideventsystem")
+    )
+
+    ; UIKit-required IOKit nodes.
+    (allow iokit-open
+        (iokit-user-client-class "AppleJPEGDriverUserClient")
+        (iokit-user-client-class "IOSurfaceAcceleratorClient")
+        (iokit-user-client-class "IOSurfaceSendRight")
+        ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
+        (iokit-user-client-class "IOSurfaceRootUserClient"))
+
+    ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
+    ;; <rdar://problem/13796537>
+    (deny file-write-create
+        (home-prefix "/Library/Preferences/com.apple.UIKit.plist")
+        (with no-report))
+)
+
+(define-once (dictionary-support)
+    ; Dictionary Services used by UITextFields.
+    ; <rdar://problem/9386926>
+    (allow-create-directory
+        (home-literal "/Library/Caches/com.apple.DictionaryServices"))
+
+    ; <rdar://problem/8548856> Sub-TLF: Sandbox change for apps for read-only access to the dictionary directory/data
+    (allow file-read*
+        ; XXX - /Library ought to be allowed in all UI profiles but isn't (CF, MobileSafari)
+        (subpath "/Library/Dictionaries")
+        (home-subpath "/Library/Dictionaries"))
+)
+
+(define-once (network-extensions-support)
+    ;; Network Extensions / VPN helper.
+    (allow mach-lookup
+        (global-name "com.apple.nehelper")
+        (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
+)
 
 (deny file-map-executable)
 
@@ -523,28 +680,18 @@
 (with-filter (apple-signed-executable?)
     (mobile-preferences-read "com.apple.demo-settings"))
 
-(with-filter (uid 0)
-    (allow file-read*
-           (literal "/private/etc/master.passwd")))
-
-(mobile-preferences-read "com.apple.Accessibility")
-
 ;;;
 ;;; End common.sb content
 ;;;
 
 (deny mach-lookup (xpc-service-name-prefix ""))
-
+(deny iokit-get-properties (with partial-symbolication))
 (deny lsopen)
 
 ;;;
 ;;; The following rules were originally contained in 'UIKit-apps.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
 ;;;
-
-(allow mach-lookup
-    (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
-    (global-name-regex #"^com\.apple\.uikit\.viewservice\..+"))
 
 ;; Any app can play audio & movies.
 (play-audio)
@@ -561,38 +708,15 @@
 
 (mobile-preferences-read "com.apple.da")
 
-;; Speak Selection & VoiceOver
-;; <rdar://problem/12030530> AX: Sandbox violation with changing Language while VO is on
-;; and <rdar://problem/13071747>
-(mobile-preferences-read
-    "com.apple.SpeakSelection" ; Needed for WebSpeech
-    "com.apple.VoiceOverTouch" ; Needed for non-US english language synthesis
-    "com.apple.voiceservices") ; Ditto
+(speech-synthesis-and-voiceover)
 
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 
-(allow mach-register
-    (local-name "com.apple.iphone.axserver")) ; Needed for Application Accessibility
-
-;; <rdar://problem/14555119> Access to high quality speech voices
-;; Needed for WebSpeech
-(allow file-read*
-    (home-subpath "/Library/VoiceServices/Assets")
-    (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
-
-;; MediaAccessibility (captions)
-;; <rdar://problem/12801477>
-(mobile-preferences-read "com.apple.mediaaccessibility")
-(allow mach-lookup (global-name "com.apple.accessibility.mediaaccessibilityd"))
-
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
 
-;; Network Extensions / VPN helper.
-(allow mach-lookup
-    (global-name "com.apple.nehelper")
-    (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
+(network-extensions-support)
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
@@ -601,11 +725,6 @@
 ;; Access the keyboards
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
-
-;; <rdar://problem/19525887>
-(allow mach-lookup (xpc-service-name-regex #"\.apple-extension-service$"))
-;; <rdar://problem/31252371>
-(allow mach-lookup (xpc-service-name-regex #"\.viewservice$"))
 
 ;; Power logging
 (allow mach-lookup
@@ -639,80 +758,21 @@
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 
-;; Common mach services needed by UIKit.
-(allow mach-lookup
-    (global-name "com.apple.CARenderServer")
-    (global-name "com.apple.iohideventsystem")
-    (global-name "com.apple.frontboard.systemappservices"))
-
-;; <rdar://problem/47268166>
-(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
-
 (allow-preferences-common)
 
-;; CoreMotion
-(mobile-preferences-read "com.apple.CoreMotion")
-
-;; CoreMotion’s deviceMotion API
-(with-filter
-    (require-any
-        (iokit-registry-entry-class "AppleOscarNub")
-        (iokit-registry-entry-class "AppleSPUHIDInterface"))
-    (allow iokit-get-properties
-        (iokit-property "gyro-interrupt-calibration")))
-(with-filter
-    (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
-    (allow iokit-open)
-    (allow iokit-get-properties iokit-set-properties
-        (iokit-property "interval"
-                        "mode"
-                        "QueueSize"
-                        "useMag"))
-    (allow iokit-get-properties
-        (iokit-property "client")))
+(core-motion)
 
 ;; Home Button
 (with-filter (iokit-registry-entry-class "IOPlatformDevice")
     (allow iokit-get-properties
         (iokit-property "home-button-type")))
 
-;; Common preferences read by UIKit.
-(mobile-preferences-read "com.apple.Accessibility"
-    "com.apple.UIKit"
-    "com.apple.WebUI"
-    "com.apple.airplay"
-    "com.apple.avkit"
-    "com.apple.coreanimation"
-    "com.apple.mt"
-    "com.apple.preferences.sounds")
-
-;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
-;; <rdar://problem/13796537>
-(deny file-write-create
-    (home-prefix "/Library/Preferences/com.apple.UIKit.plist")
-    (with no-report))
-
-;; <rdar://problem/10809394>
-(deny file-write-create
-    (home-prefix "/Library/Preferences/com.apple.Accessibility.plist")
-    (with no-report))
+(uikit-requirements)
 
 ;; <rdar://problem/9404009>
 (mobile-preferences-read "kCFPreferencesAnyApplication")
 
-;; <rdar://problem/12250145>
-(mobile-preferences-read "com.apple.mediaaccessibility")
-
-; Dictionary Services used by UITextFields.
-; <rdar://problem/9386926>
-(allow-create-directory
-    (home-literal "/Library/Caches/com.apple.DictionaryServices"))
-
-; <rdar://problem/8548856> Sub-TLF: Sandbox change for apps for read-only access to the dictionary directory/data
-(allow file-read*
-    ; XXX - /Library ought to be allowed in all UI profiles but isn't (CF, MobileSafari)
-    (subpath "/Library/Dictionaries")
-    (home-subpath "/Library/Dictionaries"))
+(dictionary-support)
 
 ; <rdar://problem/8440231>
 (allow file-read*
@@ -721,14 +781,6 @@
 (deny file-write*
     (home-literal "/Library/Caches/DateFormats.plist")
     (with no-log))
-
-; UIKit-required IOKit nodes.
-(allow iokit-open
-    (iokit-user-client-class "AppleJPEGDriverUserClient")
-    (iokit-user-client-class "IOSurfaceAcceleratorClient")
-    (iokit-user-client-class "IOSurfaceSendRight")
-    ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
-    (iokit-user-client-class "IOSurfaceRootUserClient"))
 
 (framebuffer-access)
 
@@ -775,7 +827,6 @@
         "kern.secure_kernel"
         "vm.footprint_suspend"))
 
-(deny iokit-get-properties (with partial-symbolication))
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
     (iokit-property "APTDevice")
@@ -784,13 +835,10 @@
     (iokit-property "BaseAddressAlignmentRequirement")
     (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
     (iokit-property "HEVCSupported")
-    (iokit-property-regex #"^IOGL(|ES(|Metal))BundleName")
-    (iokit-property "IOGLESDefaultUseMetal")
     (iokit-property-regex #"IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler)")
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOPlatformUUID")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
-    (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
     (iokit-property "Protocol Characteristics")
     (iokit-property "als-colorCfg") ;; <rdar://problem/52903475>
     (iokit-property "artwork-device-idiom") ;; <rdar://problem/49497720>
@@ -829,7 +877,6 @@
 (mobile-preferences-read
     "com.apple.LaunchServices"
     "com.apple.WebFoundation"
-    "com.apple.mobileipod"
     "com.apple.avfoundation.frecents" ;; <rdar://problem/33137029>
     "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
     "com.apple.voiceservices.logging")
@@ -850,14 +897,13 @@
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
 ;; Access to client's cache folder & re-vending to CFNetwork.
-;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
 (allow file-issue-extension (require-all
     (extension "com.apple.app-sandbox.read-write")
     (extension-class "com.apple.nsurlstorage.extension-cache")))
 
-;; MediaAccessibility
-(mobile-preferences-read "com.apple.mediaaccessibility")
-(mobile-preferences-read-write "com.apple.mediaaccessibility.public")
+(accessibility-support)
+
+(media-accessibility-support)
 
 ;; Remote Web Inspector
 (allow mach-lookup
@@ -884,34 +930,9 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
-;; Allow mediaserverd to issue file extensions for the purposes of reading media
-(allow file-issue-extension (require-all
-    (extension "com.apple.app-sandbox.read")
-    (extension-class "com.apple.mediaserverd.read")))
-
-;; Allow CoreMedia to communicate with mediaserverd in order to implement custom media loading
-(allow mach-lookup
-    (global-name "com.apple.coremedia.customurlloader.xpc"))
-
-;; Media capture, microphone access
-(with-filter (extension "com.apple.webkit.microphone")
-    (allow device-microphone))
-
-;; Media capture, camera access
-(with-filter (extension "com.apple.webkit.camera")
-    (allow user-preference-read
-        (preference-domain "com.apple.coremedia"))
-    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-    (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
-    (allow device-camera))
-
-;; Support incoming video connections
-(allow mach-lookup
-    (global-name "com.apple.coremedia.compressionsession")
-    (global-name "com.apple.coremedia.decompressionsession")
-    (global-name "com.apple.coremedia.videoqueue"))
-
 (allow mach-lookup (extension "com.apple.webkit.extension.mach"))
+
+(media-capture-support)
 
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
