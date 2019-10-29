@@ -3,10 +3,12 @@
  <head>
   <title>CSS Multi-column Layout Test: 'column-gap' with large value</title>
   <link rel="author" title="Opera Software ASA" href="http://www.opera.com/" />
-  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!--  2013-08-06  -->
+  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!-- 2013-08-06 -->
   <link rel="help" href="http://www.w3.org/TR/css3-multicol/#column-gap" title="4.1 'column-gap" />
   <link rel="match" href="multicol-gap-large-002-ref.xht" />
   <meta name="flags" content="ahem" />
+  <meta name="assert" content="This test checks that a large column-gap is supported. We should have two 3.5em columns with a 4em gap between them." />
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
   <style type="text/css"><![CDATA[
   div
   {

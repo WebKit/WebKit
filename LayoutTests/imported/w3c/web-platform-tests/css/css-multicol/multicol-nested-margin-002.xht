@@ -3,18 +3,19 @@
  <head>
   <title>CSS Multi-column Layout Test: nested multicolumns and vertical margin (complex)</title>
   <link rel="author" title="Opera Software ASA" href="http://www.opera.com/" />
-  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" />  <!--  2013-08-14  -->
+  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" />  <!-- 2013-08-14 -->
   <link rel="help" href="http://www.w3.org/TR/css3-multicol/#the-multi-column-model" title="2. The multi-column model" />
   <link rel="match" href="multicol-nested-margin-002-ref.xht" />
   <meta name="flags" content="ahem" />
   <meta name="assert" content="This test checks that when an inner nested multi-column element is preceded by a soft column break (caused by an unforced column-break), then the used margin-top of such inner nested multi-column element is '0'." />
 
-  <!-- 
+  <!--
   More info:
   Re: [css3-multicol] vertical margins rendering in nested multi-columns
   http://lists.w3.org/Archives/Public/www-style/2013Aug/0146.html
-   -->
+  -->
 
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
   <style type="text/css"><![CDATA[
   body {margin: 0;}
 

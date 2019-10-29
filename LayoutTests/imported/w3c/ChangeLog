@@ -1,5 +1,509 @@
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Update css/css-multicol WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203551
+
+        Reviewed by Zalan Bujtas.
+        
+        Import css-multicol tests from WPT at e68120da0fb52f010f206f3ecc63cfa09885b0f4 (Wed Oct 23 13:18:06 2019 -0700).
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-multicol/META.yml: Added.
+        * web-platform-tests/css/css-multicol/OWNERS: Removed.
+        * web-platform-tests/css/css-multicol/abspos-in-multicol-with-spanner-crash-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/abspos-in-multicol-with-spanner-crash.html: Added.
+        * web-platform-tests/css/css-multicol/animation/column-count-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/animation/column-count-interpolation.html: Added.
+        * web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation.html: Added.
+        * web-platform-tests/css/css-multicol/animation/column-rule-width-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/animation/column-rule-width-interpolation.html: Added.
+        * web-platform-tests/css/css-multicol/animation/column-width-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/animation/column-width-interpolation.html: Added.
+        * web-platform-tests/css/css-multicol/animation/w3c-import.log: Added.
+        * web-platform-tests/css/css-multicol/balance-table-with-fractional-height-row-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/balance-table-with-fractional-height-row.html: Added.
+        * web-platform-tests/css/css-multicol/columnfill-auto-max-height-001-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html: Added.
+        * web-platform-tests/css/css-multicol/columnfill-auto-max-height-002-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html: Added.
+        * web-platform-tests/css/css-multicol/composited-under-clip-under-multicol-expected.html: Added.
+        * web-platform-tests/css/css-multicol/composited-under-clip-under-multicol.html: Added.
+        * web-platform-tests/css/css-multicol/extremely-tall-multicol-with-extremely-tall-child-crash.html:
+        * web-platform-tests/css/css-multicol/filter-with-abspos-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/filter-with-abspos.html: Added.
+        * web-platform-tests/css/css-multicol/float-with-line-after-spanner-expected.html: Added.
+        * web-platform-tests/css/css-multicol/float-with-line-after-spanner.html: Added.
+        * web-platform-tests/css/css-multicol/going-out-of-flow-after-spanner.html:
+        * web-platform-tests/css/css-multicol/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/inheritance.html: Added.
+        * web-platform-tests/css/css-multicol/inline-block-and-column-span-all-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/inline-block-and-column-span-all.html: Added.
+        * web-platform-tests/css/css-multicol/intrinsic-size-001-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/intrinsic-size-001.html: Added.
+        * web-platform-tests/css/css-multicol/large-actual-column-count-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/large-actual-column-count.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-basic-001-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-001.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-002-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-002.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-003-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-003.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-004-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-basic-004.html:
+        * web-platform-tests/css/css-multicol/multicol-block-no-clip-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-block-no-clip-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-block-no-clip-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-block-no-clip-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-break-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-break-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-break-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-break-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-breaking-000-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-000.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-001-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-001.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001-expected.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001-expected.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001-expected.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html:
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001-expected.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001-expected.html.
+        * web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html.
+        * web-platform-tests/css/css-multicol/multicol-clip-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-clip-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-clip-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-clip-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-collapsing-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-collapsing-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-004-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-004.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-005-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-005.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-006-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-006.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-007-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-007.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-invalid-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-invalid-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-invalid-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-invalid-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-toolong-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-columns-toolong-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-containing-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-containing-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-containing-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-containing-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-004-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-004.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-005-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-computed-005.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-negative-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-negative-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-negative-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-negative-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-count-non-integer-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-dynamic-add-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-dynamic-add-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-fill-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-fill-balance-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-balance-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-fraction-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-fraction-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-large-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-large-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-large-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-large-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-negative-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-negative-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-gap-percentage-001.html:
+        * web-platform-tests/css/css-multicol/multicol-height-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-height-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-height-block-child-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-height-block-child-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-list-item-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-list-item-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-margin-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-margin-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-margin-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-margin-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-margin-child-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-margin-child-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-005-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-005.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-006-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/multicol-nested-006.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-nested-column-rule-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-column-rule-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-004-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-005-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht:
+        * web-platform-tests/css/css-multicol/multicol-overflow-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-overflow-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-overflow-clip-positioned-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-overflow-clip-positioned.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-overflowing-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-overflowing-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-reduce-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-reduce-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-004.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-inherit-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-inherit-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-inherit-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-color-inherit-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-dashed-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-dashed-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-dotted-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-dotted-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-double-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-double-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-groove-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-groove-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-hidden-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-hidden-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-inset-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-inset-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-large-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-large-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-large-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-rule-none-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-none-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-outset-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-outset-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-percent-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-percent-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-px-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-px-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-ridge-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-ridge-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-samelength-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-samelength-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-2-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-solid-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-solid-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-stacking-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-shorthand-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-shorthand-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-000-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-000.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-005-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-005.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-006-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-006.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-007-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-007.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-008-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-008.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-009-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-009.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-010-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-010.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-011-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-011.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-button-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-004a-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-004a.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-004b-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-004b.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-005-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-005.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-006-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-006.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-007-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-007.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-008-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-children-height-008.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-005-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-005.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-006-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-006.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-007-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-007.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-008-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-008.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-009-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-009.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-010-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-010.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-011-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-011.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-012-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-012.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-013-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-add-013.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-005-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-005.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-006-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-006.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-007-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-dynamic-remove-007.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-fieldset-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-list-item-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-list-item-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-list-item-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-list-item-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-bottom-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-bottom-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-002-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-002.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-003-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-003.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-restyle-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-rule-001-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-span-float-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-float-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-none-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-none-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-height-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-height-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-height-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-height-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-vertical-align-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-vertical-align-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-width-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-004-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-width-004.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-width-005-expected.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-width-005.html: Added.
+        * web-platform-tests/css/css-multicol/multicol-width-ch-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-ch-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-count-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-count-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-count-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-count-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-invalid-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-invalid-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-large-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-large-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-large-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-large-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-negative-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-negative-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-small-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-width-small-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-zero-height-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-zero-height-001.xht:
+        * web-platform-tests/css/css-multicol/nested-with-padding-and-spanner-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/nested-with-padding-and-spanner.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-count-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-fill-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-color-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-shorthand.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-style-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-rule-width-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-span-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-computed-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-computed.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/column-width-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/columns-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/columns-invalid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/columns-valid-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/parsing/columns-valid.html: Added.
+        * web-platform-tests/css/css-multicol/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-multicol/support/w3c-import.log:
+        * web-platform-tests/css/css-multicol/w3c-import.log:
+        * web-platform-tests/css/css-multicol/with-custom-layout-on-same-element-crash.https-expected.txt: Added.
+        * web-platform-tests/css/css-multicol/with-custom-layout-on-same-element-crash.https.html: Added.
+        * web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004-expected.xht.
+        * web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html: Added.
+
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
         Import css/css-sizing WPT
         https://bugs.webkit.org/show_bug.cgi?id=203517
 

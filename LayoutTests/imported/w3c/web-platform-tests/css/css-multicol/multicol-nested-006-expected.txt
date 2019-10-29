@@ -1,0 +1,11 @@
+There should be three columns below. The text in each column should match the column number that the text actually ends up in.
+
+1
+1
+2
+2
+3
+3
+
+PASS Check that orphans and widows don't make a multicol container taller than necessary 
+

@@ -43,6 +43,15 @@
 
 2019-10-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Update css/css-multicol WPT
+        https://bugs.webkit.org/show_bug.cgi?id=203551
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
         Import css/css-sizing WPT
         https://bugs.webkit.org/show_bug.cgi?id=203517
 

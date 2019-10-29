@@ -1,0 +1,16 @@
+
+PASS Property column-count has initial value auto 
+PASS Property column-count does not inherit 
+PASS Property column-fill has initial value balance 
+PASS Property column-fill does not inherit 
+FAIL Property column-rule-color has initial value rgba(42, 53, 64, 0.75) assert_equals: expected "rgba(42, 53, 64, 0.75)" but got "rgba(42, 53, 64, 0.74902)"
+FAIL Property column-rule-color does not inherit assert_equals: expected "rgba(2, 3, 5, 0.5)" but got "rgba(2, 3, 5, 0.498039)"
+PASS Property column-rule-style has initial value none 
+PASS Property column-rule-style does not inherit 
+PASS Property column-rule-width has initial value 3px 
+PASS Property column-rule-width does not inherit 
+PASS Property column-span has initial value none 
+PASS Property column-span does not inherit 
+PASS Property column-width has initial value auto 
+PASS Property column-width does not inherit 
+

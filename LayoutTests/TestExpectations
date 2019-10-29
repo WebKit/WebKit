@@ -2010,56 +2010,87 @@ webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-1.html [
 webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-2.html [ Failure ]
 webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgba-4.html [ Failure ]
 
-# Many CSS WG multicol-1 tests fail with 1px differences
-webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-large-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-large-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-computed-002.xht [ ImageOnlyFailure ]
+# Causes the following test to be flaky.
+webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
+
+# wpt css-multicol
 # http://www.w3.org/TR/css3-multicol/#column-span0
 # A spanning element takes up more space than the element would take up otherwise.
 # When space is limited, it may be impossible to find room for the spanning element.
 # In these cases, user agents may treat the element as if ‘none’ had been specified on this property.
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-child-002.xht [ WontFix ]
 
-webkit.org/b/148818 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar
+imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
+imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
+imported/w3c/web-platform-tests/css/css-multicol/large-actual-column-count.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-000.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-004.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-005.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-000.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-count-computed-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-count-computed-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-count-large-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-count-large-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar webkit.org/b/148818 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-002.xht [ ImageOnlyFailure ]
 webkit.org/b/148816 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148823 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]
-
-# Causes the following test to be flaky.
-webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
-
-imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html [ Pass Failure ]
-
-# FIXME: The following failures need individual bugs.
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-bottom-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-computed-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ems-001.xht [ ImageOnlyFailure ] # Could be a bad test?
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto.xht [ ImageOnlyFailure ]
-webkit.org/b/148805 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-child-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-color-inherit-002.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-none-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002.html [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-003.html [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-004.html [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-002.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-px-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-shorthand-001.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
-webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-color-inherit-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-003.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-004.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-px-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-shorthand-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-004.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-010.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-001.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-002.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-button-003.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-child-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-005.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-008.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-bottom-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-none-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-under-vertical-rl-scroll.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-004.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ems-001.xht [ ImageOnlyFailure ] # Could be a bad test?
+imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
+imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
@@ -3531,14 +3562,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-table-cell-between
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-table-row-between-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-property-whitelist.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element.html [ ImageOnlyFailure ]

@@ -3,12 +3,13 @@
  <head>
   <title>CSS Multi-column Layout Test: narrow column-width</title>
   <link rel="author" title="Opera Software ASA" href="http://www.opera.com/" />
-  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!--  2013-08-24  -->
-  <link rel="help" href="http://www.w3.org/TR/css3-multicol/#overflow-inside-multicol-elements" title="8.1. Overflow inside multicol elements" />
+  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!-- 2013-08-24 -->
+  <link rel="help" href="https://www.w3.org/TR/css-multicol-1/#overflow-inside-multicol-elements" title="8.1. Overflow inside multicol elements" />
   <link rel="help" href="http://www.w3.org/TR/css3-multicol/#cw" title="3.1. 'column-width'" />
   <link rel="match" href="multicol-width-small-001-ref.xht" />
   <meta name="flags" content="ahem" />
   <meta name="assert" content="This test checks that a set 'column-width' which is small with regards to width of multi-column element." />
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
   <style type="text/css"><![CDATA[
   body > div
   {
@@ -29,6 +30,7 @@
   ]]></style>
  </head>
  <body>
+  <p>This test passes is it is idential to the reference.</p>
   <div>
     <div>
       Bl ac
@@ -42,7 +44,7 @@
     </div>
   </div>
 
-  <!-- 
+  <!--
 
   Expected results
 
@@ -50,7 +52,7 @@
   *B|a|b|u|b|u|B|a| | | | *
   *************************
 
-   -->
+  -->
 
  </body>
 </html>

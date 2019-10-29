@@ -1,0 +1,5 @@
+
+PASS Property column-rule-width value 'calc(10px + 0.5em)' computes to '30px' 
+PASS Property column-rule-width value 'calc(10px - 0.5em)' computes to '0px' 
+PASS column-rule-width is 0 when column-rule-style is none or hidden 
+

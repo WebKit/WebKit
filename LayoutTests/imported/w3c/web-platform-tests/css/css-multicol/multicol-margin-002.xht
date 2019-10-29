@@ -3,11 +3,12 @@
  <head>
   <title>CSS Multi-column Layout Test: multi-column and margin collapsing of first child (basic)</title>
   <link rel="author" title="Opera Software ASA" href="http://www.opera.com/" />
-  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!--  2013-08-10  -->
+  <link rel="reviewer" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/" /> <!-- 2013-08-10 -->
   <link rel="help" href="http://www.w3.org/TR/css3-multicol/#pseudo-algorithm" title="3.4 Pseudo-algorithm" />
   <link rel="match" href="../reference/ref-filled-green-100px-square.xht" />
   <meta name="flags" content="ahem" />
   <meta name="assert" content="This test checks that the margin-top of the first child (an inline-block) of a multi-column element (with column-fill: balance) does not collapse with its parent." />
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
   <style type="text/css"><![CDATA[
   div#test-multi-column-red
   {
@@ -52,7 +53,7 @@
 
   <div id="reference-overlapping-green"></div>
 
-  <!-- 
+  <!--
 
   Expected result (before the overlapping):
 
@@ -68,7 +69,7 @@
   |         |         |
   *********************
 
-   -->
+  -->
 
  </body>
 </html>
