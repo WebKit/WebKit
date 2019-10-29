@@ -317,6 +317,7 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
 
     // We were awakened from suspension unexpectedly. Notify the WebProcessProxy, but take a process assertion on our parent PID
     // to ensure that it too is awakened.
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Taking 'Unexpectedly resumed' assertion", this);
     m_unexpectedlyResumedUIAssertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:parentProcessConnection()->remoteProcessID() flags:BKSProcessAssertionPreventTaskSuspend reason:BKSProcessAssertionReasonFinishTask name:@"Unexpectedly resumed" withHandler:nil]);
 
     auto releaseAssertion = [this] {
@@ -324,6 +325,7 @@ void WebProcess::processTaskStateDidChange(ProcessTaskStateObserver::TaskState t
         if (!m_unexpectedlyResumedUIAssertion)
             return;
 
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processTaskStateChanged() Releasing 'Unexpectedly resumed' assertion due to time out", this);
         [m_unexpectedlyResumedUIAssertion invalidate];
         m_unexpectedlyResumedUIAssertion = nullptr;
     };
