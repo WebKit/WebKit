@@ -1,3 +1,38 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r251637 as it caused http/tests/lazyload/scroll-element-removed-from-document.html to crash
+        https://bugs.webkit.org/show_bug.cgi?id=203566
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+        * html/LazyLoadImageObserver.cpp: Removed.
+        * html/LazyLoadImageObserver.h: Removed.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/ImageLoader.h:
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+        (WebCore::CachedResourceLoader::clientDefersImage const):
+        (WebCore::CachedResourceLoader::shouldDeferImageLoad const):
+        (WebCore::CachedResourceLoader::reloadImagesIfNotDeferred):
+        * loader/cache/CachedResourceLoader.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+
 2019-10-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Optimize blending for CSS Transitions

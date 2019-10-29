@@ -152,9 +152,6 @@ http/tests/intersection-observer [ Skip ]
 imported/w3c/web-platform-tests/intersection-observer [ Skip ]
 intersection-observer [ Skip ]
 
-http/tests/lazyload [ Skip ]
-imported/w3c/web-platform-tests/loading/lazyload [ Skip ]
-
 # testRunner.queueLoad() does not support loading data URLs in Mac WK1
 http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
 

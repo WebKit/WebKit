@@ -39,11 +39,9 @@
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
-#include "LazyLoadImageObserver.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO)
@@ -199,16 +197,8 @@ void ImageLoader::updateFromElement()
             newImage->setLoading(true);
             document.cachedResourceLoader().m_documentResources.set(newImage->url(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
-        } else {
-            if (m_lazyImageLoadState == LazyImageLoadState::None) {
-                if (is<HTMLImageElement>(element())) {
-                    auto& imageElement = downcast<HTMLImageElement>(element());
-                    if (imageElement.isLazyLoadable() && RuntimeEnabledFeatures::sharedFeatures().lazyImageLoadingEnabled())
-                        m_lazyImageLoadState = LazyImageLoadState::Deferred;
-                }
-            }
-            newImage = document.cachedResourceLoader().requestImage(WTFMove(request), (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate).value_or(nullptr);
-        }
+        } else
+            newImage = document.cachedResourceLoader().requestImage(WTFMove(request)).value_or(nullptr);
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred, or that the image was blocked via Content
@@ -260,9 +250,6 @@ void ImageLoader::updateFromElement()
                     beforeLoadEventSender().dispatchEventSoon(*this);
             } else
                 updateRenderer();
-
-            if (m_lazyImageLoadState == LazyImageLoadState::Deferred)
-                LazyLoadImageObserver::observe(element());
 
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire. Ensure this happens after beforeload is
@@ -319,11 +306,6 @@ void ImageLoader::notifyFinished(CachedResource& resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
-
-    if (m_lazyImageLoadState == LazyImageLoadState::Deferred) {
-        LazyLoadImageObserver::unobserve(element());
-        m_lazyImageLoadState = LazyImageLoadState::FullImage;
-    }
 
     m_imageComplete = true;
     if (!hasPendingBeforeLoadEvent())
@@ -576,14 +558,6 @@ void ImageLoader::elementDidMoveToNewDocument()
 inline void ImageLoader::clearFailedLoadURL()
 {
     m_failedLoadURL = nullAtom();
-}
-
-void ImageLoader::loadDeferredImage()
-{
-    if (m_lazyImageLoadState != LazyImageLoadState::Deferred)
-        return;
-    m_lazyImageLoadState = LazyImageLoadState::FullImage;
-    updateFromElement();
 }
 
 }

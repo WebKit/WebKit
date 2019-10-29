@@ -1,5 +1,0 @@
-
-
-
-PASS Test that images with loading='lazy' load once they enter the viewport. 
-

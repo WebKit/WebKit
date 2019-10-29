@@ -75,17 +75,11 @@ public:
     static void dispatchPendingLoadEvents();
     static void dispatchPendingErrorEvents();
 
-    void loadDeferredImage();
-
-    bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred; }
-
 protected:
     explicit ImageLoader(Element&);
     void notifyFinished(CachedResource&) override;
 
 private:
-    enum class LazyImageLoadState { None, Deferred, FullImage };
-
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomString&) const = 0;
 
@@ -120,7 +114,6 @@ private:
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
-    LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 
 }

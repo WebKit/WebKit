@@ -1,4 +1,0 @@
-
-
-PASS Test that <img> below viewport is not loaded when moved to another document and then scrolled to 
-

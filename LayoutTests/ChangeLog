@@ -1,3 +1,33 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r251637 as it caused http/tests/lazyload/scroll-element-removed-from-document.html to crash
+        https://bugs.webkit.org/show_bug.cgi?id=203566
+
+        * TestExpectations:
+        * http/tests/lazyload/attribute-expected.txt: Removed.
+        * http/tests/lazyload/attribute.html: Removed.
+        * http/tests/lazyload/invisible-image-expected.txt: Removed.
+        * http/tests/lazyload/invisible-image.html: Removed.
+        * http/tests/lazyload/js-image-expected.txt: Removed.
+        * http/tests/lazyload/js-image.html: Removed.
+        * http/tests/lazyload/lazy-expected.txt: Removed.
+        * http/tests/lazyload/lazy-image-load-in-iframes-scripting-disabled-expected.txt: Removed.
+        * http/tests/lazyload/lazy-image-load-in-iframes-scripting-disabled.html: Removed.
+        * http/tests/lazyload/lazy-image-load-in-iframes-scripting-enabled-expected.txt: Removed.
+        * http/tests/lazyload/lazy-image-load-in-iframes-scripting-enabled.html: Removed.
+        * http/tests/lazyload/lazy.html: Removed.
+        * http/tests/lazyload/lazy2-expected.txt: Removed.
+        * http/tests/lazyload/placeholder.js: Removed.
+        * http/tests/lazyload/resources/lazy-load-in-iframe.html: Removed.
+        * http/tests/lazyload/scroll-element-moved-from-document-expected.txt: Removed.
+        * http/tests/lazyload/scroll-element-moved-from-document.html: Removed.
+        * http/tests/lazyload/scroll-element-removed-from-document-expected.txt: Removed.
+        * http/tests/lazyload/scroll-element-removed-from-document.html: Removed.
+        * http/tests/lazyload/scroll-expected.txt: Removed.
+        * http/tests/lazyload/scroll.html: Removed.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, add missing platform-specific test expectations after r251686

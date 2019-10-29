@@ -1,3 +1,11 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert r251637 as it caused http/tests/lazyload/scroll-element-removed-from-document.html to crash
+        https://bugs.webkit.org/show_bug.cgi?id=203566
+
+        * web-platform-tests/loading/lazyload/image-loading-lazy.tentative-expected.txt: Removed.
+        * web-platform-tests/loading/lazyload/image-loading-lazy.tentative.html:
+
 2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, add missing platform-specific test expectations after r251686

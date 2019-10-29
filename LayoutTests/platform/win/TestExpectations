@@ -4468,7 +4468,3 @@ webkit.org/b/202951 fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-
 webkit.org/b/202952 http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 
 webkit.org/b/202953 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-https-with-embedded-http-with-embedded-https.https.html [ Timeout ]
-
-# IntersectionObserver is off by default
-http/tests/lazyload [ Skip ]
-imported/w3c/web-platform-tests/loading/lazyload [ Skip ]
