@@ -141,6 +141,7 @@ private:
     KeyframeEffect(Element*);
 
     enum class AcceleratedAction : uint8_t { Play, Pause, Seek, Stop };
+    enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
 
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
@@ -151,6 +152,7 @@ private:
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();
+    void clearBlendingKeyframes();
     void updateBlendingKeyframes(RenderStyle&);
     void computeCSSAnimationBlendingKeyframes();
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
@@ -170,6 +172,7 @@ private:
     RefPtr<Element> m_target;
 
     AcceleratedAction m_lastRecordedAcceleratedAction { AcceleratedAction::Stop };
+    BlendingKeyframesSource m_blendingKeyframesSource { BlendingKeyframesSource::WebAnimation };
     IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     bool m_shouldRunAccelerated { false };

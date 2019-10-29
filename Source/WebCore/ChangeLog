@@ -1,3 +1,29 @@
+2019-10-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Optimize blending for CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=203561
+
+        Reviewed by Simon Fraser.
+
+        The work performed in KeyframeEffect::setAnimatedPropertiesInStyle() has a level of complexity warranted by the
+        flexibility of how keyframes can be specified via the Web Animations JS API. However, in the case of CSS Transitions,
+        we already know that there are only two keyframes, one where offset=0 and one where offset=1, and that only a single
+        CSS property is specified so we can simplify the process greatly.
+
+        To ensure we only perform this quicker blending operation for keyframes computed for a CSS Transition and that no
+        modification to the keyframes have been applied via the Web Animations JS API after the fact, we now keep track
+        of whether the blending keyframes (KeyframeList) were generated for a CSS Transition or a CSS Animation and only
+        use this information to decide whether we're blending for declarative animations.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::processKeyframes):
+        (WebCore::KeyframeEffect::clearBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSTransitionBlendingKeyframes):
+        (WebCore::KeyframeEffect::setTarget):
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+        * animation/KeyframeEffect.h:
+
 2019-10-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix non-unified build after r251691

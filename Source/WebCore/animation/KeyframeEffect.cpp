@@ -726,7 +726,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
 
     m_parsedKeyframes = WTFMove(parsedKeyframes);
 
-    m_blendingKeyframes.clear();
+    clearBlendingKeyframes();
 
     return { };
 }
@@ -770,6 +770,13 @@ bool KeyframeEffect::forceLayoutIfNeeded()
 
     frameView->forceLayout();
     return true;
+}
+
+
+void KeyframeEffect::clearBlendingKeyframes()
+{
+    m_blendingKeyframesSource = BlendingKeyframesSource::WebAnimation;
+    m_blendingKeyframes.clear();
 }
 
 void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
@@ -909,6 +916,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes()
             Style::loadPendingResources(*style, m_target->document(), m_target.get());
     }
 
+    m_blendingKeyframesSource = BlendingKeyframesSource::CSSAnimation;
     setBlendingKeyframes(keyframeList);
 }
 
@@ -936,6 +944,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
     toKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(toKeyframeValue));
 
+    m_blendingKeyframesSource = BlendingKeyframesSource::CSSTransition;
     setBlendingKeyframes(keyframeList);
 }
 
@@ -988,7 +997,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     if (auto* effectAnimation = animation())
         effectAnimation->effectTargetDidChange(previousTarget.get(), m_target.get());
 
-    m_blendingKeyframes.clear();
+    clearBlendingKeyframes();
 
     // We need to invalidate the effect now that the target has changed
     // to ensure the effect's styles are applied to the new target right away.
@@ -1054,6 +1063,15 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
 
 void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress)
 {
+    // In the case of CSS Transitions we already know that there are only two keyframes, one where offset=0 and one where offset=1,
+    // and only a single CSS property so we can simply blend based on the style available on those keyframes with the provided iteration
+    // progress which already accounts for the transition's timing function.
+    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition) {
+        ASSERT(is<CSSTransition>(animation()));
+        CSSPropertyAnimation::blendProperties(this, downcast<CSSTransition>(animation())->property(), &targetStyle, m_blendingKeyframes[0].style(), m_blendingKeyframes[1].style(), iterationProgress);
+        return;
+    }
+
     // 4.4.3. The effect value of a keyframe effect
     // https://drafts.csswg.org/web-animations-1/#the-effect-value-of-a-keyframe-animation-effect
     //
@@ -1063,9 +1081,6 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     updateBlendingKeyframes(targetStyle);
     if (m_blendingKeyframes.isEmpty())
         return;
-
-    bool isCSSAnimation = is<CSSAnimation>(animation());
-    bool isCSSTransition = is<CSSTransition>(animation());
 
     for (auto cssPropertyId : m_blendingKeyframes.properties()) {
         // 1. If iteration progress is unresolved abort this procedure.
@@ -1085,7 +1100,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
             if (!keyframe.containsProperty(cssPropertyId)) {
                 // If we're dealing with a CSS animation, we consider the first and last keyframes to always have the property listed
                 // since the underlying style was provided and should be captured.
-                if (!isCSSAnimation || (offset && offset < 1))
+                if (m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation || (offset && offset < 1))
                     continue;
             }
             if (!offset)
@@ -1184,10 +1199,8 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
         // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
         //     passing interval distance as the input progress.
-        // We do not need to do this for CSS Transitions since the timing function is applied to the AnimationEffect as a whole and thus
-        // iterationProgress is already transformed.
         auto transformedDistance = intervalDistance;
-        if (!isCSSTransition && startKeyframeIndex) {
+        if (startKeyframeIndex) {
             if (auto duration = iterationDuration()) {
                 auto rangeDuration = (endOffset - startOffset) * duration.seconds();
                 if (auto* timingFunction = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value()))
