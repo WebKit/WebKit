@@ -94,7 +94,6 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     data.type = m_type;
     data.tainting = m_tainting;
     data.isRedirected = m_isRedirected;
-    data.isRangeRequested = m_isRangeRequested;
 
     return data;
 }
@@ -117,7 +116,6 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_type = data.type;
     response.m_tainting = data.tainting;
     response.m_isRedirected = data.isRedirected;
-    response.m_isRangeRequested = data.isRangeRequested;
 
     return response;
 }

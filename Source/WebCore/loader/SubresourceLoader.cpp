@@ -351,12 +351,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     }
 #endif
 
-    if (auto error = validateRangeRequestedFlag(request(), response)) {
-        RELEASE_LOG_IF_ALLOWED("didReceiveResponse: canceling load because receiving a range requested response for a non-range request (frame = %p, frameLoader = %p, resourceID = %lu)", frame(), frameLoader(), identifier());
-        cancel(WTFMove(*error));
-        return;
-    }
-
     // We want redirect responses to be processed through willSendRequestInternal. Exceptions are
     // redirection with no Location headers and fetch in manual redirect mode. Or in rare circumstances,
     // cases of too many redirects from CFNetwork (<rdar://problem/30610988>).

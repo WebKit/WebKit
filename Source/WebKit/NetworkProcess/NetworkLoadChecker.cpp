@@ -101,7 +101,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
 {
     ASSERT(!isChecking());
 
-    auto error = validateResponse(request, redirectResponse);
+    auto error = validateResponse(redirectResponse);
     if (!error.isNull()) {
         handler(redirectionError(redirectResponse, makeString("Cross-origin redirection to ", redirectRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", error.localizedDescription())));
         return;
@@ -143,7 +143,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     });
 }
 
-ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& request, ResourceResponse& response)
+ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
 {
     if (m_redirectCount)
         response.setRedirected(true);
@@ -157,9 +157,6 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
         response.setTainting(ResourceResponse::Tainting::Basic);
         return { };
     }
-
-    if (request.hasHTTPHeaderField(HTTPHeaderName::Range))
-        response.setAsRangeRequested();
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
         if (auto error = validateCrossOriginResourcePolicy(*m_origin, m_url, response))

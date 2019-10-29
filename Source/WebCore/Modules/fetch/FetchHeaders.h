@@ -78,7 +78,6 @@ public:
     };
     Iterator createIterator() { return Iterator { *this }; }
 
-    void setInternalHeaders(HTTPHeaderMap&& headers) { m_headers = WTFMove(headers); }
     const HTTPHeaderMap& internalHeaders() const { return m_headers; }
 
     void setGuard(Guard);
@@ -86,7 +85,7 @@ public:
 
 private:
     FetchHeaders(Guard, HTTPHeaderMap&&);
-    explicit FetchHeaders(const FetchHeaders&);
+    FetchHeaders(const FetchHeaders&);
 
     Guard m_guard;
     HTTPHeaderMap m_headers;

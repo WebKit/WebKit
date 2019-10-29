@@ -71,6 +71,5 @@ WEBCORE_EXPORT bool passesAccessControlCheck(const ResourceResponse&, StoredCred
 WEBCORE_EXPORT bool validatePreflightResponse(const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
 
 WEBCORE_EXPORT Optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin&, const URL&, const ResourceResponse&);
-Optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
 
 } // namespace WebCore

@@ -862,30 +862,6 @@ bool isForbiddenHeaderName(const String& name)
     return startsWithLettersIgnoringASCIICase(name, "sec-") || startsWithLettersIgnoringASCIICase(name, "proxy-");
 }
 
-// Implements <https://fetch.spec.whatwg.org/#no-cors-safelisted-request-header-name>.
-bool isNoCORSSafelistedRequestHeaderName(const String& name)
-{
-    HTTPHeaderName headerName;
-    if (findHTTPHeaderName(name, headerName)) {
-        switch (headerName) {
-        case HTTPHeaderName::Accept:
-        case HTTPHeaderName::AcceptLanguage:
-        case HTTPHeaderName::ContentLanguage:
-        case HTTPHeaderName::ContentType:
-            return true;
-        default:
-            break;
-        }
-    }
-    return false;
-}
-
-// Implements <https://fetch.spec.whatwg.org/#privileged-no-cors-request-header-name>.
-bool isPriviledgedNoCORSRequestHeaderName(const String& name)
-{
-    return equalLettersIgnoringASCIICase(name, "range");
-}
-
 // Implements <https://fetch.spec.whatwg.org/#forbidden-response-header-name>.
 bool isForbiddenResponseHeaderName(const String& name)
 {
