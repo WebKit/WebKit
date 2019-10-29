@@ -1,3 +1,62 @@
+2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Replace InteractionInformationAtPosition.nodeAtPositionIsFocusedElement with an element context
+        https://bugs.webkit.org/show_bug.cgi?id=203498
+
+        Reviewed by Tim Horton.
+
+        Refactors InteractionInformationAtPosition, such that it doesn't need a special flag to indicate whether there
+        is a focused element at the position. This is a followup to webkit.org/b/203264; no new tests, as there should
+        be no change in behavior.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Add an elementContext to FocusedElementInformation to represent the focused element; then, instead of checking
+        whether there is a focused element underneath the request position, simply check that the position information's
+        element context matches the FocusedElementInformation's element context.
+
+        Additionally, rename elementRect in FocusedElementInformation to interactionRect, to draw a distinction between
+        this rect and the new ElementContext's boundingRect.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Remove the nodeAtPositionIsFocusedElement flag.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:nodeHasBuiltInClickHandling:]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _selectionClipRect]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        In various places that consult nodeAtPositionIsFocusedElement, instead check that the position information's
+        hit-tested element context is the same as the focused element, via FocusedElementInformation.
+
+        (-[WKContentView _didCommitLoadForMainFrame]):
+
+        Nuke the cached position information data upon navigation; without this tweak, we will fail when running several
+        iOS layout tests back-to-back, that tap in exactly the same location.
+
+        (rectToRevealWhenZoomingToFocusedElement):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView rectForFocusedFormControlView:]):
+        (-[WKContentView _didChangeFocusedElementRect:toRect:]): Deleted.
+
+        Remove code to invalidate cached position information when changing the focused element rect.
+
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover presentPopoverAnimated:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix various non-unified build issues introduced since r251436

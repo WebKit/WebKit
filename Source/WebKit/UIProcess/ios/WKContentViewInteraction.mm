@@ -1696,7 +1696,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
-    if (hasFocusedElement(_focusedElementInformation) && _positionInformation.nodeAtPositionIsFocusedElement)
+    if (hasFocusedElement(_focusedElementInformation) && _positionInformation.elementContext == _focusedElementInformation.elementContext)
         return;
 
     _isTapHighlightIDValid = NO;
@@ -1871,7 +1871,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
     // Zooming above the page's default scale factor should only happen when the user performs it.
-    [self _zoomToFocusRect:_focusedElementInformation.elementRect
+    [self _zoomToFocusRect:_focusedElementInformation.interactionRect
         selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : rectToRevealWhenZoomingToFocusedElement(_focusedElementInformation, _page->editorState())
         insideFixed:_focusedElementInformation.insideFixedPosition
         fontSize:_focusedElementInformation.nodeFontSize
@@ -1922,7 +1922,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         return CGRectNull;
 
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
-        return _focusedElementInformation.elementRect;
+        return _focusedElementInformation.interactionRect;
 
     return _page->editorState().postLayoutData().focusedElementRect;
 }
@@ -2268,7 +2268,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             // If the focused element is the same, prevent the gesture.
             if (![self ensurePositionInformationIsUpToDate:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(point))])
                 return NO;
-            if (_positionInformation.nodeAtPositionIsFocusedElement)
+            if (_positionInformation.elementContext == _focusedElementInformation.elementContext)
                 return NO;
         }
     }
@@ -2314,7 +2314,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
         if (hasFocusedElement(_focusedElementInformation)) {
             // Prevent the gesture if it is the same node.
-            if (_positionInformation.nodeAtPositionIsFocusedElement)
+            if (_positionInformation.elementContext == _focusedElementInformation.elementContext)
                 return NO;
         } else {
             // Prevent the gesture if there is no action for the node.
@@ -2449,7 +2449,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     // If we're currently focusing an editable element, only allow the selection to move within that focused element.
     if (self.isFocusingElement)
-        return _positionInformation.nodeAtPositionIsFocusedElement;
+        return _positionInformation.elementContext == _focusedElementInformation.elementContext;
 
     // If we're selecting something, don't activate highlight.
     if (gesture == UIWKGestureLoupe && [self hasSelectablePositionAtPoint:point])
@@ -4150,6 +4150,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _cancelLongPressGestureRecognizer];
     [self _hideContextMenuHintContainer];
     [_webView _didCommitLoadForMainFrame];
+
+    _hasValidPositionInformation = NO;
+    _positionInformation = { };
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -5401,7 +5404,7 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
 static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
 {
     WebCore::IntRect elementInteractionRect;
-    if (elementInfo.elementRect.contains(elementInfo.lastInteractionLocation))
+    if (elementInfo.interactionRect.contains(elementInfo.lastInteractionLocation))
         elementInteractionRect = { elementInfo.lastInteractionLocation, { 1, 1 } };
 
     if (!mayContainSelectableText(elementInfo.elementType))
@@ -5423,7 +5426,7 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     } else
         selectionBoundingRect = postLayoutData.caretRectAtStart;
 
-    selectionBoundingRect.intersect(elementInfo.elementRect);
+    selectionBoundingRect.intersect(elementInfo.interactionRect);
     return selectionBoundingRect;
 }
 
@@ -5524,7 +5527,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     // FIXME: We should remove this check when we manage to send ElementDidFocus from the WebProcess
     // only when it is truly time to show the keyboard.
-    if (_focusedElementInformation.elementType == information.elementType && _focusedElementInformation.elementRect == information.elementRect) {
+    if (_focusedElementInformation.elementType == information.elementType && _focusedElementInformation.interactionRect == information.interactionRect) {
         if (_inputPeripheral) {
             if (!self.isFirstResponder)
                 [self becomeFirstResponder];
@@ -5556,7 +5559,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (delegateImplementsWillStartInputSession)
         [inputDelegate _webView:_webView willStartInputSession:_formInputSession.get()];
 
-    auto previousElementRect = _isChangingFocus ? _focusedElementInformation.elementRect : WebCore::IntRect();
     BOOL isSelectable = mayContainSelectableText(information.elementType);
     BOOL editableChanged = [self setIsEditable:isSelectable];
     _focusedElementInformation = information;
@@ -5603,8 +5605,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     
     [_webView didStartFormControlInteraction];
-
-    [self _didChangeFocusedElementRect:previousElementRect toRect:_focusedElementInformation.elementRect];
 }
 
 - (void)_elementDidBlur
@@ -5628,7 +5628,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #endif
 
     BOOL editableChanged = [self setIsEditable:NO];
-    auto previousElementRect = _focusedElementInformation.elementRect;
     // FIXME: We should completely invalidate _focusedElementInformation here, instead of a subset of individual members.
     _focusedElementInformation.elementType = WebKit::InputType::None;
     _focusedElementInformation.shouldSynthesizeKeyEventsForEditing = false;
@@ -5662,23 +5661,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         _page->setIsShowingInputViewForFocusedElement(false);
     }
 
-    if (!_isChangingFocus) {
+    if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
-        [self _didChangeFocusedElementRect:previousElementRect toRect:WebCore::IntRect()];
-    }
-}
-
-- (void)_didChangeFocusedElementRect:(const WebCore::IntRect&)previousRect toRect:(const WebCore::IntRect&)newRect
-{
-    if (previousRect == newRect)
-        return;
-
-    if (newRect.isEmpty() && !_positionInformation.nodeAtPositionIsFocusedElement)
-        return;
-
-    // If the focused element rect changed, the cached position information's nodeAtPositionIsFocusedElement may be stale.
-    _hasValidPositionInformation = NO;
-    _positionInformation = { };
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
@@ -5989,7 +5973,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (CGRect)rectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    return [self convertRect:_focusedElementInformation.elementRect toView:view];
+    return [self convertRect:_focusedElementInformation.interactionRect toView:view];
 }
 
 - (CGRect)nextRectForFocusedFormControlView:(WKFocusedFormControlView *)view

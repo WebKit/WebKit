@@ -29,6 +29,7 @@
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/Color.h>
+#include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
@@ -96,7 +97,8 @@ struct OptionItem {
 using FocusedElementIdentifier = uint64_t;
 
 struct FocusedElementInformation {
-    WebCore::IntRect elementRect;
+    WebCore::IntRect interactionRect;
+    WebCore::ElementContext elementContext;
     WebCore::IntPoint lastInteractionLocation;
     double minimumScaleFactor { -INFINITY };
     double maximumScaleFactor { INFINITY };

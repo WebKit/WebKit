@@ -2780,7 +2780,6 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     FloatPoint adjustedPoint;
     auto* nodeRespondingToClickEvents = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
-    info.nodeAtPositionIsFocusedElement = nodeRespondingToClickEvents == m_focusedElement;
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
     info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
@@ -2905,9 +2904,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     layoutIfNeeded();
 
     information.lastInteractionLocation = m_lastInteractionLocation;
+    if (auto elementContext = contextForElement(*m_focusedElement))
+        information.elementContext = WTFMove(*elementContext);
 
     if (auto* renderer = m_focusedElement->renderer()) {
-        information.elementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
+        information.interactionRect = rootViewInteractionBoundsForElement(*m_focusedElement);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
@@ -2915,7 +2916,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == TextDirection::RTL;
     } else
-        information.elementRect = IntRect();
+        information.interactionRect = { };
 
     if (is<HTMLElement>(m_focusedElement))
         information.isSpellCheckingEnabled = downcast<HTMLElement>(*m_focusedElement).spellcheck();

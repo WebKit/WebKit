@@ -63,7 +63,8 @@ Optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
 
 void FocusedElementInformation::encode(IPC::Encoder& encoder) const
 {
-    encoder << elementRect;
+    encoder << interactionRect;
+    encoder << elementContext;
     encoder << lastInteractionLocation;
     encoder << minimumScaleFactor;
     encoder << maximumScaleFactor;
@@ -113,7 +114,10 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
 {
-    if (!decoder.decode(result.elementRect))
+    if (!decoder.decode(result.interactionRect))
+        return false;
+
+    if (!decoder.decode(result.elementContext))
         return false;
 
     if (!decoder.decode(result.lastInteractionLocation))
