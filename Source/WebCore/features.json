@@ -131,6 +131,21 @@
         "category": "css"
     },
     {
+        "name": "CSS Masking Level 1",
+        "url": "https://drafts.fxtf.org/css-masking-1/",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "keywords": ["css masking", "clip-path", "clipping", "masking", "mask"],
+        "category": "css",
+        "contact": {
+            "name": "Dirk Schulze",
+            "twitter": "@dirkschulze",
+            "email": "dschulze@adobe.com"
+        }
+    },
+    {
         "name": "CSS Layout API Level 1",
         "status": {
             "status": "Under Consideration"
@@ -562,6 +577,21 @@
             "name": "Joseph Pecoraro",
             "email": "joepeck@webkit.org",
             "twitter": "@JosephPecoraro"
+        }
+    },
+    {
+        "name": "SVG 2",
+        "url": "https://svgwg.org/svg2-draft/",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "keywords": ["svg"],
+        "category": "svg",
+        "contact": {
+            "name": "Dirk Schulze",
+            "twitter": "@dirkschulze",
+            "email": "dschulze@adobe.com"
         }
     },
     {
