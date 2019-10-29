@@ -58,7 +58,7 @@ public:
     void close();
     bool isClosed() const { return m_isClosed; }
 
-    bool hasPendingTasks() const { return m_pendingTasks.isEmpty(); }
+    bool hasPendingTasks() const { return !m_pendingTasks.isEmpty(); }
 
 private:
     friend UniqueRef<SuspendableTaskQueue> WTF::makeUniqueRefWithoutFastMallocCheck<SuspendableTaskQueue, WebCore::ScriptExecutionContext*&>(WebCore::ScriptExecutionContext*&);

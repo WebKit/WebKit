@@ -4,9 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 The iframe has finished loading.
-The iframe has been destroyed.
-PASS internals.numberOfLiveDocuments() is numberOfLiveDocumentsAfterIframeLoaded - 1
-
+PASS The document was destroyed
 PASS successfullyParsed is true
 
 TEST COMPLETE

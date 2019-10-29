@@ -346,19 +346,4 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
         m_eventQueue->enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
 }
 
-void DeclarativeAnimation::stop()
-{
-    WebAnimation::stop();
-}
-
-void DeclarativeAnimation::suspend(ReasonForSuspension reason)
-{
-    WebAnimation::suspend(reason);
-}
-
-void DeclarativeAnimation::resume()
-{
-    WebAnimation::resume();
-}
-
 } // namespace WebCore

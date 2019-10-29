@@ -67,6 +67,7 @@ WebAnimation::WebAnimation(Document& document)
     : ActiveDOMObject(document)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve))
     , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
+    , m_taskQueue(SuspendableTaskQueue::create(document))
 {
     m_readyPromise->resolve(*this);
     suspendIfNeeded();
@@ -613,9 +614,8 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optiona
         downcast<DocumentTimeline>(*m_timeline).enqueueAnimationPlaybackEvent(WTFMove(event));
     } else {
         // Otherwise, queue a task to dispatch event at animation. The task source for this task is the DOM manipulation task source.
-        callOnMainThread([this, pendingActivity = makePendingActivity(*this), event = WTFMove(event)]() {
-            if (!m_isStopped)
-                this->dispatchEvent(event);
+        m_taskQueue->enqueueTask([this, event = WTFMove(event)] {
+            dispatchEvent(event);
         });
     }
 }
@@ -1157,26 +1157,27 @@ const char* WebAnimation::activeDOMObjectName() const
     return "Animation";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool WebAnimation::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+void WebAnimation::suspend(ReasonForSuspension)
 {
-    // Use the base class's implementation of hasPendingActivity() since we wouldn't want the custom implementation
-    // in this class designed to keep JS wrappers alive to interfere with the ability for a page using animations
-    // to enter the back/forward cache.
-    return ActiveDOMObject::hasPendingActivity();
+    setSuspended(true);
+}
+
+void WebAnimation::resume()
+{
+    setSuspended(false);
 }
 
 void WebAnimation::stop()
 {
+    m_taskQueue->cancelAllTasks();
     ActiveDOMObject::stop();
-    m_isStopped = true;
     removeAllEventListeners();
 }
 
 bool WebAnimation::hasPendingActivity() const
 {
     // Keep the JS wrapper alive if the animation is considered relevant or could become relevant again by virtue of having a timeline.
-    return m_timeline || m_isRelevant || ActiveDOMObject::hasPendingActivity();
+    return m_timeline || m_isRelevant || m_taskQueue->hasPendingTasks() || ActiveDOMObject::hasPendingActivity();
 }
 
 void WebAnimation::updateRelevance()

@@ -81,11 +81,6 @@ private:
     void enqueueDOMEvent(const AtomString&, Seconds);
     void remove() final;
 
-    // ActiveDOMObject.
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-    void stop() final;
-
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 

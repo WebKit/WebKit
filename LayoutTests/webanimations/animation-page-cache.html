@@ -1,0 +1,58 @@
+<!doctype html><!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<html>
+<script>
+
+let suspended = false;
+let restored = false;
+
+function finish(msg)
+{
+    document.getElementById("result").textContent = msg;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("pagehide", event => {
+    suspended = event.persisted;
+    if (!suspended)
+        finish("FAIL: event.persisted was false for pagehide event.")
+});
+
+window.addEventListener("pageshow", event => {
+    // If we haven't been suspended, then this is the initial page load, not the back navigation.
+    if (!suspended)
+        return;
+
+    restored = event.persisted;
+    if (!restored)
+        finish("FAIL: event.persisted was false for pageshow event.")
+});
+
+window.addEventListener("DOMContentLoaded", event => {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    // We start an animation that is just long enough that it would finish while the page is hidden.
+    document.body.animate({ backgroundColor: "red" }, 500).finished.then(() => {
+        if (!suspended)
+            finish("FAIL: Animation finished but prevented the page from being suspended.");
+        else if (!restored)
+            finish("FAIL: Animation finished but prevented the page from being restored.");
+        else
+            finish("PASS.");
+    });
+
+    requestAnimationFrame(() => {
+        // Load a new page, and let it go back after 250ms.
+        window.location.href = "data:text/html,<body onload='setTimeout(() => history.back(), 250)'></body>";
+    });
+});
+
+</script>
+<body>
+This test verifies that the page cache suspends and resumes Web Animations from the page cache. The test starts an animation, then navigates away, waits a bit, navigates back, confirming that the timeline froze at a given time and resumed in the same spot, advancing the animation. If successful, it outputs 'PASS' below.
+<div id="result"></div>
+</body>
+</html>

@@ -29,6 +29,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
+#include "SuspendableTaskQueue.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
@@ -140,8 +141,6 @@ public:
 protected:
     explicit WebAnimation(Document&);
 
-    void stop() override;
-
 private:
     enum class DidSeek : uint8_t { Yes, No };
     enum class SynchronouslyNotify : uint8_t { Yes, No };
@@ -176,6 +175,7 @@ private:
     RefPtr<AnimationTimeline> m_timeline;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
+    UniqueRef<SuspendableTaskQueue> m_taskQueue;
     Markable<Seconds, Seconds::MarkableTraits> m_previousCurrentTime;
     Markable<Seconds, Seconds::MarkableTraits> m_startTime;
     Markable<Seconds, Seconds::MarkableTraits> m_holdTime;
@@ -185,7 +185,6 @@ private:
 
     int m_suspendCount { 0 };
 
-    bool m_isStopped { false };
     bool m_isSuspended { false };
     bool m_finishNotificationStepsMicrotaskPending;
     bool m_isRelevant;
@@ -197,7 +196,9 @@ private:
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    void stop() final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }

@@ -1,3 +1,17 @@
+2019-10-29  Antoine Quint  <graouts@apple.com>
+
+        WebAnimation should never prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203088
+        <rdar://problem/56374249>
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test that checks that an Animation that would run past a page's navigation is correctly suspended
+        and resumed as it enters and leaves the back/forward cache.
+
+        * webanimations/animation-page-cache-expected.txt: Added.
+        * webanimations/animation-page-cache.html: Added.
+
 2019-10-29  Megan Gardner  <megan_gardner@apple.com>
 
         Update autocorrect test to have correctly focused contenteditable
