@@ -1,3 +1,17 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Notification permissions are not remembered for origins without port
+        https://bugs.webkit.org/show_bug.cgi?id=203537
+        <rdar://problem/55281080>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/WKSecurityOrigin.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
 
        Removed duplicate email address.

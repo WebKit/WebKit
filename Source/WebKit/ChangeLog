@@ -1,3 +1,26 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        Notification permissions are not remembered for origins without port
+        https://bugs.webkit.org/show_bug.cgi?id=203537
+        <rdar://problem/55281080>
+
+        Reviewed by Brady Eidson.
+
+        When WKSecurityOriginCreate() gets called with a port that is invalid, then pass
+        WTF::nullopt to construct the security origin instead of the invalid port.
+
+        The issue is that the port for security origins is optional internally. However,
+        our API (WKSecurityOriginGetPort() & WKSecurityOrigin.port) will return 0 when
+        there is no port. As a result, clients such as Safari sometimes pass 0 as port to construct
+        a new WKSecurityOriginRef().
+
+        This was causing issues with regards to notifications because Safari would construct
+        origins whose string representation looks like "https://www.apple.com:0" and it would
+        not match the "https://www.apple.com" we expect internally.
+
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCreate):
+
 2019-10-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.2 release
