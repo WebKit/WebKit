@@ -80,7 +80,7 @@ PASS computedStyle("width", "calc(100% - 100px)") is "calc(100% - 100px)"
 PASS computedStyle("x", "calc(100% - 100px)") is "calc(100% - 100px)"
 PASS computedStyle("y", "calc(100% - 100px)") is "calc(100% - 100px)"
 PASS computedStyle("stroke-miterlimit", "calc(500 - 400)") is "100"
-PASS computedStyle("flood-opacity", "calc(500 - 400)") is "100"
+PASS computedStyle("flood-opacity", "calc(0.75 - 0.25)") is "0.5"
 PASS successfullyParsed is true
 
 TEST COMPLETE

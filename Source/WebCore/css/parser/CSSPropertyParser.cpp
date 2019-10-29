@@ -4091,6 +4091,12 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyStopOpacity:
     case CSSPropertyFloodOpacity:
     case CSSPropertyOpacity:
+    {
+        RefPtr<CSSValue> parsedValue = consumeNumber(m_range, ValueRangeAll);
+        if (parsedValue)
+            return parsedValue;
+        return consumePercent(m_range, ValueRangeAll);
+    }
     case CSSPropertyWebkitBoxFlex:
         return consumeNumber(m_range, ValueRangeAll);
     case CSSPropertyBaselineShift:

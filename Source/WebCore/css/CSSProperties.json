@@ -3144,6 +3144,7 @@
         },
         "opacity": {
             "codegen-properties": {
+                "converter": "Opacity",
                 "aliases": [
                     "-webkit-opacity"
                 ]

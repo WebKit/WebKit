@@ -1456,7 +1456,7 @@ inline float StyleBuilderConverter::convertOpacity(StyleResolver&, const CSSValu
     float opacity = primitiveValue.floatValue();
     if (primitiveValue.isPercentage())
         opacity /= 100.0f;
-    return opacity;
+    return std::max(0.0f, std::min(1.0f, opacity));
 }
 
 inline String StyleBuilderConverter::convertSVGURIReference(StyleResolver& styleResolver, const CSSValue& value)
