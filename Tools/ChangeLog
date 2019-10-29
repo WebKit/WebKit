@@ -1,5 +1,11 @@
 2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
 
+       Removed duplicate email address.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
+
         Edited email address for commiting.
 
         * Scripts/webkitpy/common/config/contributors.json:
