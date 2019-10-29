@@ -1,3 +1,16 @@
+2019-10-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-w* are flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=196269
+        <rdar://problem/49288612>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Flakiness no longer reproducible.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove JSPromiseDeferred
