@@ -83,10 +83,7 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
         std::vector<CGLPixelFormatAttribute> attribs;
         attribs.push_back(kCGLPFAOpenGLProfile);
         attribs.push_back(static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core));
-        if (mSupportsGPUSwitching)
-        {
-            attribs.push_back(kCGLPFAAllowOfflineRenderers);
-        }
+        attribs.push_back(kCGLPFAAllowOfflineRenderers);
         attribs.push_back(static_cast<CGLPixelFormatAttribute>(0));
         GLint nVirtualScreens = 0;
         CGLChoosePixelFormat(attribs.data(), &mPixelFormat, &nVirtualScreens);

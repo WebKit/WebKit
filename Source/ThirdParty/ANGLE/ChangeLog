@@ -1,3 +1,18 @@
+2019-10-29  Dean Jackson  <dino@apple.com>
+
+        [ANGLE] Window Server blocking stops single GPU systems from creating a CGLPixelFormat
+        https://bugs.webkit.org/show_bug.cgi?id=203522
+        <rdar://problem/56685302>
+
+        Reviewed by Alex Christensen.
+
+        The Web Content Process blocks access to the Window Server. For that reason, we
+        must create all CGLPixelFormats with the "offline renderer" flag, even if we're
+        not on a dual-GPU system.
+
+        * src/libANGLE/renderer/gl/cgl/DisplayCGL.mm: Always enable kCGLPFAAllowOfflineRenderers.
+        (rx::DisplayCGL::initialize):
+
 2019-10-23  Dean Jackson  <dino@apple.com>
 
         [ANGLE] Improve compile-time macOS guards and avoid ObjC if possible
