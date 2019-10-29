@@ -3984,6 +3984,7 @@ webkit.org/b/203514 imported/w3c/web-platform-tests/css/css-sizing/range-percent
 webkit.org/b/203514 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html [ ImageOnlyFailure ]
 webkit.org/b/203515 imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ ImageOnlyFailure ]
 webkit.org/b/203516 imported/w3c/web-platform-tests/css/css-sizing/whitespace-and-break.html [ ImageOnlyFailure ]
+webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html [ Pass Failure ]
 
 # wpt css-text-decor failures
 webkit.org/b/203530 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html [ ImageOnlyFailure ]

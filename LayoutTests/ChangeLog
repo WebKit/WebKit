@@ -1,3 +1,12 @@
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=203583
+
+        Unreviewed Test Gardening. Mark as flakey.
+
+        * TestExpectations:
+
 2019-10-29  Chris Dumez  <cdumez@apple.com>
 
         <input type="range">.setAttribute("value") does not update the value
