@@ -862,6 +862,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setSecureContextChecksEnabled(enabled);
 }
 
+- (BOOL)_remotePlaybackEnabled
+{
+    return _preferences->remotePlaybackEnabled();
+}
+
+- (void)_setRemotePlaybackEnabled:(BOOL)enabled
+{
+    _preferences->setRemotePlaybackEnabled(enabled);
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

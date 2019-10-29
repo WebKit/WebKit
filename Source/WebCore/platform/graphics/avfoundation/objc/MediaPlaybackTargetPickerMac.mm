@@ -105,19 +105,22 @@ AVOutputDeviceMenuController *MediaPlaybackTargetPickerMac::devicePicker()
     return m_outputDeviceMenuController.get();
 }
 
-void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute, bool useDarkAppearance)
+void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
 {
     if (!client() || m_showingMenu)
         return;
 
-    LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
+    LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - hasActiveRoute = %i", (int)hasActiveRoute);
 
     m_showingMenu = true;
 
-    if ([devicePicker() showMenuForRect:location appearanceName:(useDarkAppearance ? NSAppearanceNameVibrantDark : NSAppearanceNameVibrantLight) allowReselectionOfSelectedOutputDevice:!checkActiveRoute]) {
-        if (!checkActiveRoute)
-            currentDeviceDidChange();
-    }
+    bool targetSelected = [devicePicker() showMenuForRect:location appearanceName:(useDarkAppearance ? NSAppearanceNameVibrantDark : NSAppearanceNameVibrantLight) allowReselectionOfSelectedOutputDevice:!hasActiveRoute];
+
+    if (targetSelected != hasActiveRoute)
+        currentDeviceDidChange();
+    else if (!targetSelected && !hasActiveRoute)
+        playbackTargetPickerWasDismissed();
+
     m_showingMenu = false;
 }
 

@@ -166,6 +166,7 @@ public:
     void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override { }
     void externalOutputDeviceAvailableDidChange(bool) override { }
     void setShouldPlayToPlaybackTarget(bool) override { }
+    void playbackTargetPickerWasDismissed() override { }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -250,6 +251,7 @@ public:
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void setShouldPlayToPlaybackTarget(bool) { }
+    virtual void playbackTargetPickerWasDismissed() { }
 
     virtual bool isPlayingOnSecondScreen() const { return false; }
 

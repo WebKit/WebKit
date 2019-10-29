@@ -2168,3 +2168,13 @@ bool WKPreferencesGetLazyImageLoadingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->lazyImageLoadingEnabled();
 }
+
+bool WKPreferencesGetRemotePlaybackEnabled(WKPreferencesRef preferencesRef)
+{
+    return WebKit::toImpl(preferencesRef)->remotePlaybackEnabled();
+}
+
+void WKPreferencesSetRemotePlaybackEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    WebKit::toImpl(preferencesRef)->setRemotePlaybackEnabled(enabled);
+}

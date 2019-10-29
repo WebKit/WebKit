@@ -120,6 +120,15 @@ void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlay
     }
 }
 
+void MediaPlaybackTargetPickerMock::dismissPopup()
+{
+    if (!m_showingMenu)
+        return;
+
+    m_showingMenu = false;
+    currentDeviceDidChange();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

@@ -1362,3 +1362,6 @@ webkit.org/b/203371 fast/forms/contenteditable-font-optical-size.html [ Pass Fai
 # <rdar://problem/56714139> (r251242) [ iOS ]: fast/scrolling/ios/touch-scroll-visibility-hidden.html is a Flaky Timeout (203577)
 webkit.org/b/203577 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Pass Timeout ]
 
+# Timeout running prompt() because mock implementation is absent.
+webkit.org/b/203572 media/remoteplayback-prompt.html [ Skip ]
+webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]

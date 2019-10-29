@@ -2552,6 +2552,11 @@ void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlayba
     chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
 }
 
+void Page::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    chrome().client().mockMediaPlaybackTargetPickerDismissPopup();
+}
+
 void Page::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -2576,6 +2581,15 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
         if (!frame->document())
             continue;
         frame->document()->setShouldPlayToPlaybackTarget(clientId, shouldPlay);
+    }
+}
+
+void Page::playbackTargetPickerWasDismissed(uint64_t clientId)
+{
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+        frame->document()->playbackTargetPickerWasDismissed(clientId);
     }
 }
 #endif

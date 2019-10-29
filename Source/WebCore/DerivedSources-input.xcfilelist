@@ -251,6 +251,9 @@ $(PROJECT_DIR)/Modules/quota/StorageQuota.idl
 $(PROJECT_DIR)/Modules/quota/StorageQuotaCallback.idl
 $(PROJECT_DIR)/Modules/quota/StorageUsageCallback.idl
 $(PROJECT_DIR)/Modules/quota/WorkerNavigatorStorageQuota.idl
+$(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElementRemotePlayback.idl
+$(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
+$(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 $(PROJECT_DIR)/Modules/speech/DOMWindowSpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesis.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisEvent.idl

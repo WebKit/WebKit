@@ -8569,6 +8569,11 @@ void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, Web
     pageClient().mediaSessionManager().setMockMediaPlaybackTargetPickerState(name, state);
 }
 
+void WebPageProxy::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    pageClient().mediaSessionManager().mockMediaPlaybackTargetPickerDismissPopup();
+}
+
 void WebPageProxy::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
 {
     if (!hasRunningProcess())
@@ -8591,6 +8596,14 @@ void WebPageProxy::setShouldPlayToPlaybackTarget(uint64_t contextId, bool should
         return;
 
     m_process->send(Messages::WebPage::SetShouldPlayToPlaybackTarget(contextId, shouldPlay), m_webPageID);
+}
+
+void WebPageProxy::playbackTargetPickerWasDismissed(uint64_t contextId)
+{
+    if (!hasRunningProcess())
+        return;
+
+    m_process->send(Messages::WebPage::PlaybackTargetPickerWasDismissed(contextId), m_webPageID);
 }
 #endif
 

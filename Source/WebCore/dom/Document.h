@@ -1376,6 +1376,7 @@ public:
     void setPlaybackTarget(uint64_t, Ref<MediaPlaybackTarget>&&);
     void playbackTargetAvailabilityDidChange(uint64_t, bool);
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
+    void playbackTargetPickerWasDismissed(uint64_t);
 #endif
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;

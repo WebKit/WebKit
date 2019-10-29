@@ -1046,6 +1046,11 @@ void WebPage::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
 {
     m_page->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
 }
+
+void WebPage::playbackTargetPickerWasDismissed(uint64_t contextId)
+{
+    m_page->playbackTargetPickerWasDismissed(contextId);
+}
 #endif
 
 } // namespace WebKit

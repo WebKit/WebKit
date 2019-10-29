@@ -129,6 +129,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "RemotePlayback.h"
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 #endif
 
@@ -465,6 +466,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_haveVisibleTextTrack(false)
     , m_processingPreferenceChange(false)
 #endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    , m_remote(RemotePlayback::create(*this))
+#endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -591,7 +595,7 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
         updateMediaState();
@@ -5633,7 +5637,7 @@ void HTMLMediaElement::clearMediaPlayer()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(false);
 
@@ -5872,6 +5876,9 @@ void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
+    bool hasTargets = m_mediaSession->hasWirelessPlaybackTargets();
+    m_remote->availabilityChanged(hasTargets);
+
     enqueuePlaybackTargetAvailabilityChangedEvent();
 }
 
@@ -5886,7 +5893,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
         if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
             return;
         m_isPlayingToWirelessTarget = m_player && m_player->isCurrentPlaybackTargetWireless();
-
+        m_remote->isPlayingToRemoteTargetChanged(m_isPlayingToWirelessTarget);
         ALWAYS_LOG(LOGIDENTIFIER, m_isPlayingToWirelessTarget);
         configureMediaControls();
         m_mediaSession->isPlayingToWirelessPlaybackTargetChanged(m_isPlayingToWirelessTarget);
@@ -5916,7 +5923,8 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
         return Node::addEventListener(eventType, WTFMove(listener), options);
 
-    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
+    bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
+
     if (!Node::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
@@ -5939,7 +5947,7 @@ bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventLis
     if (!Node::removeEventListener(eventType, listener, options))
         return false;
 
-    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
+    bool didRemoveLastAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) && !m_remote->hasAvailabilityCallbacks();
     INFO_LOG(LOGIDENTIFIER, "removed last listener = ", didRemoveLastAvailabilityChangedListener);
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
@@ -5963,8 +5971,11 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    bool hasActiveRoute = device->hasActiveRoute();
     if (m_player)
         m_player->setWirelessPlaybackTarget(WTFMove(device));
+
+    m_remote->shouldPlayToRemoteTargetChanged(hasActiveRoute);
 }
 
 void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -5975,6 +5986,22 @@ void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
         m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
+void HTMLMediaElement::playbackTargetPickerWasDismissed()
+{
+    m_remote->playbackTargetPickerWasDismissed();
+}
+
+void HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()
+{
+    bool hasListeners = hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks();
+    if (m_hasPlaybackTargetAvailabilityListeners == hasListeners)
+        return;
+
+    INFO_LOG(LOGIDENTIFIER, "hasListeners: ", hasListeners);
+    m_hasPlaybackTargetAvailabilityListeners = hasListeners;
+    m_mediaSession->setHasPlaybackTargetAvailabilityListeners(hasListeners);
+    scheduleUpdateMediaState();
+}
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
@@ -6706,7 +6733,7 @@ void HTMLMediaElement::createMediaPlayer()
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
+    if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent) || m_remote->hasAvailabilityCallbacks()) {
         m_hasPlaybackTargetAvailabilityListeners = true;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(true);
         enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.

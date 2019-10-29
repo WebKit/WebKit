@@ -1425,11 +1425,13 @@ public:
     void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
+    void mockMediaPlaybackTargetPickerDismissPopup();
 
     // WebMediaSessionManagerClient
     void setPlaybackTarget(uint64_t, Ref<WebCore::MediaPlaybackTarget>&&) override;
     void externalOutputDeviceAvailableDidChange(uint64_t, bool) override;
     void setShouldPlayToPlaybackTarget(uint64_t, bool) override;
+    void playbackTargetPickerWasDismissed(uint64_t) override;
 #endif
 
     void didChangeBackgroundColor();

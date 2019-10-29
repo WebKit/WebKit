@@ -503,6 +503,7 @@ messages -> WebPageProxy {
     PlaybackTargetPickerClientStateDidChange(uint64_t contextId, unsigned mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
     SetMockMediaPlaybackTargetPickerState(String name, unsigned pickerState)
+    MockMediaPlaybackTargetPickerDismissPopup()
 #endif
 
 #if ENABLE(POINTER_LOCK)

@@ -1,0 +1,14 @@
+
+Test that trying to watchAvailability on a video with the "disableremoteplayback" attribute set will generate an error.
+
+** create initial callback
+RUN(video.disableRemotePlayback = true)
+EXPECTED ERROR: InvalidStateError: The object is in an invalid state.
+** try again without disableRemotePlayback
+RUN(video.disableRemotePlayback = false)
+SUCCEEDED
+** set disableRemotePlayback and try to cancel callback
+RUN(video.disableRemotePlayback = true)
+EXPECTED ERROR: InvalidStateError: The object is in an invalid state.
+END OF TEST
+

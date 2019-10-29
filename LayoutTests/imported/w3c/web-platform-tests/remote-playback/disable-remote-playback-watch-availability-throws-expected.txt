@@ -1,0 +1,3 @@
+
+PASS Test that calling watchAvailability() when disableRemotePlayback attribute is set throws an exception. 
+

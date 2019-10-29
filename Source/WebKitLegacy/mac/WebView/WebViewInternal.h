@@ -312,6 +312,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_playbackTargetPickerClientStateDidChange:(uint64_t)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state;
+- (void)_mockMediaPlaybackTargetPickerDismissPopup;
 #endif
 
 - (void)prepareForMouseUp;

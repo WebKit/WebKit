@@ -3208,6 +3208,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setAllowMediaContentTypesRequiringHardwareSupportAsFallback(preferences.allowMediaContentTypesRequiringHardwareSupportAsFallback);
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    settings.setRemotePlaybackEnabled(preferences.remotePlaybackEnabled);
+#endif
+
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
         settings.setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);
@@ -9603,6 +9607,11 @@ bool LayerFlushController::flushLayers()
 - (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state
 {
     [self _devicePicker]->setMockMediaPlaybackTargetPickerState(name, state);
+}
+
+- (void)_mockMediaPlaybackTargetPickerDismissPopup
+{
+    [self _devicePicker]->mockMediaPlaybackTargetPickerDismissPopup();
 }
 #endif
 

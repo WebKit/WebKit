@@ -54,6 +54,7 @@ VPATH = \
     $(WebCore)/Modules/pictureinpicture \
     $(WebCore)/Modules/plugins \
     $(WebCore)/Modules/quota \
+	$(WebCore)/Modules/remoteplayback \
     $(WebCore)/Modules/speech \
     $(WebCore)/Modules/streams \
     $(WebCore)/Modules/webaudio \
@@ -321,6 +322,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/quota/StorageQuotaCallback.idl \
     $(WebCore)/Modules/quota/StorageUsageCallback.idl \
     $(WebCore)/Modules/quota/WorkerNavigatorStorageQuota.idl \
+	$(WebCore)/Modules/remoteplayback/HTMLMediaElementRemotePlayback.idl \
+	$(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
+	$(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
     $(WebCore)/Modules/speech/DOMWindowSpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \

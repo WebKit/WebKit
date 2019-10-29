@@ -112,6 +112,13 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String&
     mockPicker().setState(name, state);
 }
 
+void WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    LOG(Media, "WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup");
+
+    mockPicker().dismissPopup();
+}
+
 MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
     if (!m_pickerOverride)
@@ -269,6 +276,12 @@ void WebMediaSessionManager::externalOutputDeviceAvailableDidChange(bool availab
         state->client.externalOutputDeviceAvailableDidChange(state->contextId, available);
 }
 
+void WebMediaSessionManager::playbackTargetPickerWasDismissed()
+{
+    m_playbackTargetPickerDismissed = true;
+    scheduleDelayedTask(TargetClientsConfigurationTask);
+}
+
 void WebMediaSessionManager::configureNewClients()
 {
     for (auto& state : m_clientState) {
@@ -299,7 +312,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
 
         LOG(Media, "WebMediaSessionManager::configurePlaybackTargetClients %zu - client (%p + %llu) requestedPicker = %i, flags = %s", i, &state->client, state->contextId, state->requestedPicker, mediaProducerStateString(state->flags).utf8().data());
 
-        if (m_targetChanged && state->requestedPicker)
+        if ((m_targetChanged || m_playbackTargetPickerDismissed) && state->requestedPicker)
             indexOfClientThatRequestedPicker = i;
 
         if (indexOfClientWillPlayToTarget == notFound && flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
@@ -327,8 +340,11 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         if (i != indexOfClientWillPlayToTarget || !haveActiveRoute)
             state->client.setShouldPlayToPlaybackTarget(state->contextId, false);
 
+        if (state->requestedPicker && m_playbackTargetPickerDismissed)
+            state->client.playbackTargetPickerWasDismissed(state->contextId);
+
         state->configurationRequired = false;
-        if (m_targetChanged)
+        if ((m_targetChanged || m_playbackTargetPickerDismissed))
             state->requestedPicker = false;
     }
 

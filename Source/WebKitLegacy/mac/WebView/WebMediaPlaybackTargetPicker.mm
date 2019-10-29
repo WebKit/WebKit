@@ -71,6 +71,11 @@ void WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState(const S
     WebCore::WebMediaSessionManager::shared().setMockMediaPlaybackTargetPickerState(name, state);
 }
 
+void WebMediaPlaybackTargetPicker::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    WebCore::WebMediaSessionManager::shared().mockMediaPlaybackTargetPickerDismissPopup();
+}
+
 void WebMediaPlaybackTargetPicker::setPlaybackTarget(uint64_t contextId, Ref<WebCore::MediaPlaybackTarget>&& target)
 {
     if (!m_page)
@@ -93,6 +98,12 @@ void WebMediaPlaybackTargetPicker::setShouldPlayToPlaybackTarget(uint64_t contex
         return;
 
     m_page->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
+}
+
+void WebMediaPlaybackTargetPicker::playbackTargetPickerWasDismissed(uint64_t contextId)
+{
+    if (m_page)
+        m_page->playbackTargetPickerWasDismissed(contextId);
 }
 
 void WebMediaPlaybackTargetPicker::invalidate()

@@ -4185,6 +4185,14 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
     return { };
 }
 
+void Internals::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    auto* page = contextDocument()->frame()->page();
+    ASSERT(page);
+
+    page->mockMediaPlaybackTargetPickerDismissPopup();
+}
+
 #endif
 
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)

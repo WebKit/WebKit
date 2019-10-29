@@ -172,6 +172,7 @@ private:
     void setPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     void externalOutputDeviceAvailableDidChange(bool) override;
     void setShouldPlayToPlaybackTarget(bool) override;
+    void playbackTargetPickerWasDismissed() override;
 #endif
 #if PLATFORM(IOS_FAMILY)
     bool requiresPlaybackTargetRouteMonitoring() const override;

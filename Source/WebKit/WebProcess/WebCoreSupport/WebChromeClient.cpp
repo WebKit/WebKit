@@ -1300,6 +1300,10 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, 
     m_page.send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerState(name, state));
 }
 
+void WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    m_page.send(Messages::WebPageProxy::MockMediaPlaybackTargetPickerDismissPopup());
+}
 #endif
 
 void WebChromeClient::imageOrMediaDocumentSizeChanged(const IntSize& newSize)

@@ -59,6 +59,9 @@ void MediaPlaybackTargetPicker::pendingActionTimerFired()
 
     if (pendingActions & OutputDeviceAvailabilityChanged)
         m_client->externalOutputDeviceAvailableDidChange(externalOutputDeviceAvailable());
+
+    if (pendingActions & PlaybackTargetPickerWasDismissed)
+        m_client->playbackTargetPickerWasDismissed();
 }
 
 void MediaPlaybackTargetPicker::addPendingAction(PendingActionFlags action)

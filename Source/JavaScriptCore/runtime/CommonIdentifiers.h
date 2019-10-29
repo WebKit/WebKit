@@ -49,6 +49,7 @@
     macro(Promise) \
     macro(Reflect) \
     macro(RegExp) \
+    macro(RemotePlayback) \
     macro(Set) \
     macro(SharedArrayBuffer) \
     macro(String) \

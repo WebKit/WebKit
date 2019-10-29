@@ -493,6 +493,10 @@ allowsAirPlayForMediaPlayback:
   initial: true
   conditional: WIRELESS_PLAYBACK_TARGET
 
+remotePlaybackEnabled:
+  initial: true
+  conditional: WIRELESS_PLAYBACK_TARGET
+
 shouldConvertPositionStyleOnCopy:
   initial: false
 

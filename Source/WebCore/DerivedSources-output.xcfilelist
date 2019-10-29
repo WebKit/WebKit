@@ -785,6 +785,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElementMediaSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElementMediaSession.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElementRemotePlayback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMediaElementRemotePlayback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLMenuItemElement.cpp
@@ -1385,6 +1387,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReadableStreamSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserver.cpp

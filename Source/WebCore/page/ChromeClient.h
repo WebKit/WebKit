@@ -473,6 +473,7 @@ public:
     virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
     virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State) { }
+    virtual void mockMediaPlaybackTargetPickerDismissPopup() { }
 #endif
 
     virtual void imageOrMediaDocumentSizeChanged(const IntSize&) { }

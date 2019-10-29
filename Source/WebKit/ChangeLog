@@ -1,3 +1,31 @@
+2019-10-07  Jer Noble  <jer.noble@apple.com>
+
+        Implement the Remote Playback API.
+        https://bugs.webkit.org/show_bug.cgi?id=162971
+
+        Reviewed by Youenn Fablet.
+
+        Add a preference to enable the Remote Playback API. Pass the playbackTargetPickerWasDismissed()
+        notification on to Page.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetRemotePlaybackEnabled):
+        (WKPreferencesSetRemotePlaybackEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::playbackTargetPickerWasDismissed):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetPickerWasDismissed):
+
 2019-10-29  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION: WebContent getting killed due to syscall filter violation

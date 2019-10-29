@@ -1,3 +1,20 @@
+2019-10-07  Jer Noble  <jer.noble@apple.com>
+
+        Implement the Remote Playback API.
+        https://bugs.webkit.org/show_bug.cgi?id=162971
+
+        Reviewed by Youenn Fablet.
+
+        * media/remoteplayback-cancel-invalid-expected.txt: Added.
+        * media/remoteplayback-cancel-invalid.html: Added.
+        * media/remoteplayback-prompt-expected.txt: Added.
+        * media/remoteplayback-prompt.html: Added.
+        * media/remoteplayback-target-availability-expected.txt: Added.
+        * media/remoteplayback-target-availability.html: Added.
+        * media/remoteplayback-watch-disableremoteplayback-expected.txt: Added.
+        * media/remoteplayback-watch-disableremoteplayback.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
 2019-10-29  Truitt Savell  <tsavell@apple.com>
 
         imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html is flakey

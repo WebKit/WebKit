@@ -1,3 +1,117 @@
+2019-10-07  Jer Noble  <jer.noble@apple.com>
+
+        Implement the Remote Playback API.
+        https://bugs.webkit.org/show_bug.cgi?id=162971
+
+        Reviewed by Youenn Fablet.
+
+        Tests: media/remoteplayback-cancel-invalid.html
+               media/remoteplayback-prompt.html
+               media/remoteplayback-target-availability.html
+               media/remoteplayback-watch-disableremoteplayback.html
+               imported/w3c/web-platform-tests/remote-playback/cancel-watch-availability.html
+               imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-cancel-watch-availability-throws.html
+               imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-prompt-throws.html
+               imported/w3c/web-platform-tests/remote-playback/disable-remote-playback-watch-availability-throws.html
+               imported/w3c/web-platform-tests/remote-playback/idlharness.window.html
+               imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html
+
+        The Remote Playback API <https://w3c.github.io/remote-playback> allows page authors
+        to control the presentation of <audio> and <video> elements to remote playback devices
+        such as the Apple TV or Chromecast. WebKit already exposes a non-standardized API to
+        initiate remote playback, and the Remote Playback API is largely congruent with the
+        webkitShowPlaybackTargetPicker() API et. al.
+
+        One addition provided by the Remote Playback API is an event in the case the user
+        dismisses the picker UI without making a choice, so this concept needs to be plumbed
+        through from the ChromeClient to the PlatformMediaSession.
+
+        * DerivedSources.make:
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::mockMediaPlaybackTargetPickerDismissPopup):
+        (WebCore::WebMediaSessionManager::playbackTargetPickerWasDismissed):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetClients):
+        * Modules/mediasession/WebMediaSessionManager.h:
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+        * Modules/remoteplayback/HTMLMediaElementRemotePlayback.h: Added.
+        (WebCore::HTMLMediaElementRemotePlayback::remote):
+        (WebCore::HTMLMediaElementRemotePlayback::hasAttributeWithoutSynchronization):
+        (WebCore::HTMLMediaElementRemotePlayback::setBooleanAttribute):
+        * Modules/remoteplayback/HTMLMediaElementRemotePlayback.idl: Added.
+        * Modules/remoteplayback/RemotePlayback.cpp: Added.
+        (WebCore::RemotePlayback::create):
+        (WebCore::RemotePlayback::RemotePlayback):
+        (WebCore::RemotePlayback::~RemotePlayback):
+        (WebCore::RemotePlayback::watchAvailability):
+        (WebCore::RemotePlayback::cancelWatchAvailability):
+        (WebCore::RemotePlayback::prompt):
+        (WebCore::RemotePlayback::shouldPlayToRemoteTargetChanged):
+        (WebCore::RemotePlayback::setState):
+        (WebCore::RemotePlayback::establishConnection):
+        (WebCore::RemotePlayback::disconnect):
+        (WebCore::RemotePlayback::updateAvailability):
+        (WebCore::RemotePlayback::playbackTargetPickerWasDismissed):
+        (WebCore::RemotePlayback::isPlayingToRemoteTargetChanged):
+        (WebCore::RemotePlayback::hasAvailabilityCallbacks):
+        (WebCore::RemotePlayback::availabilityChanged):
+        (WebCore::RemotePlayback::invalidate):
+        (WebCore::RemotePlayback::activeDOMObjectName):
+        (WebCore::RemotePlayback::canSuspendForDocumentSuspension):
+        (WebCore::RemotePlayback::stop):
+        * Modules/remoteplayback/RemotePlayback.h: Added.
+        (WebCore::RemotePlayback::state):
+        * Modules/remoteplayback/RemotePlayback.idl: Added.
+        * Modules/remoteplayback/RemotePlaybackAvailabilityCallback.h: Added.
+        (WebCore::RemotePlaybackAvailabilityCallback::~RemotePlaybackAvailabilityCallback):
+        * Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setRemotePlaybackEnabled):
+        (WebCore::RuntimeEnabledFeatures::remotePlaybackEnabled):
+        * dom/Document.cpp:
+        (WebCore::Document::playbackTargetPickerWasDismissed):
+        * dom/Document.h:
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::wirelessRoutesAvailableDidChange):
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        (WebCore::HTMLMediaElement::setWirelessPlaybackTarget):
+        (WebCore::HTMLMediaElement::playbackTargetPickerWasDismissed):
+        (WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::remote):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaElementSession::playbackTargetPickerWasDismissed):
+        * html/MediaElementSession.h:
+        * page/Page.cpp:
+        (WebCore::Page::mockMediaPlaybackTargetPickerDismissPopup):
+        (WebCore::Page::playbackTargetPickerWasDismissed):
+        * page/Page.h:
+        * page/Settings.in:
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSessionClient::playbackTargetPickerWasDismissed):
+        * platform/graphics/MediaPlaybackTargetClient.h:
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+        (WebCore::MediaPlaybackTargetPicker::playbackTargetPickerWasDismissed):
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::dismissPopup):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::mockMediaPlaybackTargetPickerDismissPopup):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add enterkeyhint support

@@ -48,6 +48,7 @@ public:
     void invalidatePlaybackTargets() override;
 
     void setState(const String&, MediaPlaybackTargetContext::State);
+    void dismissPopup();
 
 private:
     bool externalOutputDeviceAvailable() override;

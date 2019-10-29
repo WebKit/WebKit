@@ -1806,6 +1806,14 @@ PictureInPictureAPIEnabled:
   category: experimental
   condition: ENABLE(PICTURE_IN_PICTURE_API)
 
+RemotePlaybackEnabled:
+  category: experimental
+  condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
+  type: bool
+  defaultValue: false
+  humanReadableName: "Remote Playback API"
+  humanReadableDescription: "Enable Remote Playback API"
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

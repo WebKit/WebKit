@@ -507,6 +507,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PlaybackTargetSelected(uint64_t contextId, WebCore::MediaPlaybackTargetContext target)
     PlaybackTargetAvailabilityDidChange(uint64_t contextId, bool available)
     SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
+    PlaybackTargetPickerWasDismissed(uint64_t contextId);
 #endif
 
 #if ENABLE(POINTER_LOCK)

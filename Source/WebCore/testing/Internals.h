@@ -631,6 +631,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setMockMediaPlaybackTargetPickerEnabled(bool);
     ExceptionOr<void> setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState);
+    void mockMediaPlaybackTargetPickerDismissPopup();
 #endif
 
 #if ENABLE(WEB_AUDIO)

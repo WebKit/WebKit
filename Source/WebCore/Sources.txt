@@ -209,6 +209,8 @@ Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
 
+Modules/remoteplayback/RemotePlayback.cpp
+
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
@@ -3620,5 +3622,12 @@ JSWorkerNavigatorStorageQuota.cpp
 JSUserMessageHandler.cpp
 JSUserMessageHandlersNamespace.cpp
 JSWebKitNamespace.cpp
+
+#endif
+
+#if ENABLE_WIRELESS_PLAYBACK_TARGET
+
+JSRemotePlayback.cpp
+JSRemotePlaybackAvailabilityCallback.cpp
 
 #endif

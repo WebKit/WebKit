@@ -50,10 +50,10 @@ public:
 private:
     ~WebChromeClient();
 
-    void didInsertMenuElement(WebCore::HTMLMenuElement&);
-    void didRemoveMenuElement(WebCore::HTMLMenuElement&);
-    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
-    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
+    void didInsertMenuElement(WebCore::HTMLMenuElement&) final;
+    void didRemoveMenuElement(WebCore::HTMLMenuElement&) final;
+    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&) final;
+    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&) final;
 
     void chromeDestroyed() final;
     
@@ -355,6 +355,7 @@ private:
     void playbackTargetPickerClientStateDidChange(uint64_t, WebCore::MediaProducer::MediaStateFlags) final;
     void setMockMediaPlaybackTargetPickerEnabled(bool) final;
     void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State) final;
+    void mockMediaPlaybackTargetPickerDismissPopup() final;
 #endif
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;

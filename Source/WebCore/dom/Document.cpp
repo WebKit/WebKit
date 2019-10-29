@@ -7196,6 +7196,14 @@ void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
     it->value->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
+void Document::playbackTargetPickerWasDismissed(uint64_t clientId)
+{
+    auto it = m_idToClientMap.find(clientId);
+    if (it == m_idToClientMap.end())
+        return;
+
+    it->value->playbackTargetPickerWasDismissed();
+}
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #if ENABLE(MEDIA_SESSION)

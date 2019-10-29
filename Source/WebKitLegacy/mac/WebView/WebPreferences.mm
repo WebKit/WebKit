@@ -3554,6 +3554,15 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitCSSShadowPartsEnabledPreferenceKey];
 }
 
+- (BOOL)remotePlaybackEnabled
+{
+    return [self _boolValueForKey:WebKitRemotePlaybackEnabledPreferenceKey];
+}
+
+- (void)setRemotePlaybackEnabled:(BOOL)remotePlaybackEnabled
+{
+    [self _setBoolValue:remotePlaybackEnabled forKey:WebKitRemotePlaybackEnabledPreferenceKey];
+}
 @end
 
 @implementation WebPreferences (WebInternal)

@@ -4104,6 +4104,9 @@
 		CDC224281F756966005F077B /* CDMInstanceFairPlayStreamingAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD78A2EC1F75648600DE371B /* CDMInstanceFairPlayStreamingAVFObjC.mm */; };
 		CDC26B40160A8CC60026757B /* LegacyMockCDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC26B3C160A62B00026757B /* LegacyMockCDM.cpp */; };
 		CDC26B41160A8CCE0026757B /* LegacyMockCDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC26B3D160A62B00026757B /* LegacyMockCDM.h */; };
+		CDC312E922FCD7C0001204EC /* RemotePlayback.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC312E122FCD0B0001204EC /* RemotePlayback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDC312EA22FCD7C6001204EC /* HTMLMediaElementRemotePlayback.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC312E522FCD0B0001204EC /* HTMLMediaElementRemotePlayback.h */; };
+		CDC312EB22FCD7C9001204EC /* RemotePlaybackAvailabilityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC312E722FCD0B0001204EC /* RemotePlaybackAvailabilityCallback.h */; };
 		CDC48AC92149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC48AC72149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h */; };
 		CDC675221EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC675201EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm */; };
 		CDC675231EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC675211EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h */; };
@@ -13766,6 +13769,10 @@
 		CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackMediaSource.h; sourceTree = "<group>"; };
 		CD8B5A4A180E17A3008B8E65 /* AudioTrackMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioTrackMediaSource.idl; sourceTree = "<group>"; };
 		CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackMediaSource.h; sourceTree = "<group>"; };
+		CD8C6C2622FDDA8F00A720AB /* JSRemotePlayback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemotePlayback.cpp; sourceTree = "<group>"; };
+		CD8C6C2722FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemotePlaybackAvailabilityCallback.cpp; sourceTree = "<group>"; };
+		CD8C6C2822FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRemotePlaybackAvailabilityCallback.h; sourceTree = "<group>"; };
+		CD8C6C2922FDDA9100A720AB /* JSRemotePlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRemotePlayback.h; sourceTree = "<group>"; };
 		CD92F50F2260FFEE00F87BB3 /* DocumentFullscreen.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentFullscreen.idl; sourceTree = "<group>"; };
 		CD92F5102260FFEE00F87BB3 /* DocumentFullscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentFullscreen.h; sourceTree = "<group>"; };
 		CD92F5162261038200F87BB3 /* FullscreenManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FullscreenManager.h; sourceTree = "<group>"; };
@@ -13869,6 +13876,13 @@
 		CDC1DD4117CC2C48008CB55D /* mediaControlsApple.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = mediaControlsApple.css; sourceTree = "<group>"; };
 		CDC26B3C160A62B00026757B /* LegacyMockCDM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyMockCDM.cpp; sourceTree = "<group>"; };
 		CDC26B3D160A62B00026757B /* LegacyMockCDM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyMockCDM.h; sourceTree = "<group>"; };
+		CDC312E122FCD0B0001204EC /* RemotePlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePlayback.h; sourceTree = "<group>"; };
+		CDC312E222FCD0B0001204EC /* HTMLMediaElementRemotePlayback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLMediaElementRemotePlayback.idl; sourceTree = "<group>"; };
+		CDC312E322FCD0B0001204EC /* RemotePlayback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePlayback.cpp; sourceTree = "<group>"; };
+		CDC312E422FCD0B0001204EC /* RemotePlaybackAvailabilityCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemotePlaybackAvailabilityCallback.idl; sourceTree = "<group>"; };
+		CDC312E522FCD0B0001204EC /* HTMLMediaElementRemotePlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementRemotePlayback.h; sourceTree = "<group>"; };
+		CDC312E622FCD0B0001204EC /* RemotePlayback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemotePlayback.idl; sourceTree = "<group>"; };
+		CDC312E722FCD0B0001204EC /* RemotePlaybackAvailabilityCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePlaybackAvailabilityCallback.h; sourceTree = "<group>"; };
 		CDC48AC72149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaEngineConfigurationFactoryCocoa.h; sourceTree = "<group>"; };
 		CDC48AC82149CF2A0024FD59 /* MediaEngineConfigurationFactoryCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEngineConfigurationFactoryCocoa.cpp; sourceTree = "<group>"; };
 		CDC675201EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AVAudioSessionCaptureDeviceManager.mm; sourceTree = "<group>"; };
@@ -16728,6 +16742,7 @@
 				A9D247F90D757E4100FDF959 /* Plugins */,
 				89F60B17157F6A020075E157 /* Quota */,
 				BC9854460CD3DA5F00069BC1 /* Ranges */,
+				CD8C6C2422FDDA6400A720AB /* RemotePlayback */,
 				5182C24C1F3142090059BA7C /* ServiceWorkers */,
 				AA7FEE9B16A491A1004C0C33 /* Speech */,
 				A83B79150CCB0078000B0825 /* Storage */,
@@ -22101,6 +22116,7 @@
 				A1F76B0E1F44C0CF0014C318 /* paymentrequest */,
 				1DEF06A2233C32DB00EE228D /* pictureinpicture */,
 				072AE1DE183C0513000A5988 /* plugins */,
+				CDC312E022FCD0B0001204EC /* remoteplayback */,
 				89F60B08157F68350075E157 /* quota */,
 				AA2A5AB716A485A400975A25 /* speech */,
 				41A023EA1A39DB7900F722CF /* streams */,
@@ -26017,6 +26033,17 @@
 			path = iso;
 			sourceTree = "<group>";
 		};
+		CD8C6C2422FDDA6400A720AB /* RemotePlayback */ = {
+			isa = PBXGroup;
+			children = (
+				CD8C6C2622FDDA8F00A720AB /* JSRemotePlayback.cpp */,
+				CD8C6C2922FDDA9100A720AB /* JSRemotePlayback.h */,
+				CD8C6C2722FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.cpp */,
+				CD8C6C2822FDDA9000A720AB /* JSRemotePlaybackAvailabilityCallback.h */,
+			);
+			name = RemotePlayback;
+			sourceTree = "<group>";
+		};
 		CD94A5CB1F71CB4600F525C5 /* encryptedmedia */ = {
 			isa = PBXGroup;
 			children = (
@@ -26193,6 +26220,20 @@
 				CDBD3D281FE85CB80012C545 /* VideoConfiguration.idl */,
 			);
 			path = mediacapabilities;
+			sourceTree = "<group>";
+		};
+		CDC312E022FCD0B0001204EC /* remoteplayback */ = {
+			isa = PBXGroup;
+			children = (
+				CDC312E522FCD0B0001204EC /* HTMLMediaElementRemotePlayback.h */,
+				CDC312E222FCD0B0001204EC /* HTMLMediaElementRemotePlayback.idl */,
+				CDC312E322FCD0B0001204EC /* RemotePlayback.cpp */,
+				CDC312E122FCD0B0001204EC /* RemotePlayback.h */,
+				CDC312E622FCD0B0001204EC /* RemotePlayback.idl */,
+				CDC312E722FCD0B0001204EC /* RemotePlaybackAvailabilityCallback.h */,
+				CDC312E422FCD0B0001204EC /* RemotePlaybackAvailabilityCallback.idl */,
+			);
+			path = remoteplayback;
 			sourceTree = "<group>";
 		};
 		CDC6751F1EAEA99600727C84 /* ios */ = {
@@ -29108,6 +29149,7 @@
 				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
 				6B1F48112298A37E00DE8B82 /* CrossSiteNavigationDataTransfer.h in Headers */,
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
+				CDC312E922FCD7C0001204EC /* RemotePlayback.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */,
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
@@ -29806,6 +29848,7 @@
 				A8EA79FA0A1916DF00A8EF5F /* HTMLDirectoryElement.h in Headers */,
 				A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */,
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
+				CDC312EB22FCD7C9001204EC /* RemotePlaybackAvailabilityCallback.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
@@ -31851,6 +31894,7 @@
 				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				8A413AE01207BBA50082016E /* ScriptRunner.h in Headers */,
 				934CC10A0EDB223900A658F2 /* ScriptSourceCode.h in Headers */,
+				CDC312EA22FCD7C6001204EC /* HTMLMediaElementRemotePlayback.h in Headers */,
 				41C760B10EDE03D300C1655F /* ScriptState.h in Headers */,
 				228C284510D82500009D0D0E /* ScriptWrappable.h in Headers */,
 				1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */,

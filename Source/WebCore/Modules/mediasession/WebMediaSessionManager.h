@@ -49,6 +49,7 @@ public:
 
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State);
+    WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
 
     WEBCORE_EXPORT uint64_t addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
     WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
@@ -71,6 +72,7 @@ private:
     // MediaPlaybackTargetPicker::Client
     void setPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) override;
     void externalOutputDeviceAvailableDidChange(bool) override;
+    void playbackTargetPickerWasDismissed() override;
 
     size_t find(WebMediaSessionManagerClient*, uint64_t);
 
@@ -104,6 +106,7 @@ private:
     Seconds m_currentWatchdogInterval;
     bool m_externalOutputDeviceAvailable { false };
     bool m_targetChanged { false };
+    bool m_playbackTargetPickerDismissed { false };
     bool m_mockPickerEnabled { false };
 };
 

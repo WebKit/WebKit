@@ -1118,6 +1118,10 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, 
     [m_webView _setMockMediaPlaybackTargetPickerName:name state:state];
 }
 
+void WebChromeClient::mockMediaPlaybackTargetPickerDismissPopup()
+{
+    [m_webView _mockMediaPlaybackTargetPickerDismissPopup];
+}
 #endif
 
 String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
