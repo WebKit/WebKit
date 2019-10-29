@@ -1,3 +1,12 @@
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=203571
+        New Layout Test web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-crash.html is Missing Expectations
+        
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-crash-expected.txt: Added.
+
 2019-10-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r251594.
