@@ -1,0 +1,99 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-fit-content-as-initial-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-fit-content-as-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-image-percentage-max-height-inside-inline-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/block-image-percentage-max-height-inside-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/button-min-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/clone-nowrap-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/fit-content-percentage-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-percentage-max-height-in-anonymous-block-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-percentage-max-height-in-anonymous-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/inheritance-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/inheritance-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/min-max-content-orthogonal-flow-crash-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/orthogonal-writing-mode-float-in-inline-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/orthogonal-writing-mode-float-in-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-replaced-content-in-auto-cb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/percentage-min-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-nowrap-intrinsic-size-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-nowrap-intrinsic-size-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-nowrap-intrinsic-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/slice-nowrap-intrinsic-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-max-width-beside-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-min-width-below-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/table-percentage-min-width-beside-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/whitespace-and-break-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/whitespace-and-break.html
