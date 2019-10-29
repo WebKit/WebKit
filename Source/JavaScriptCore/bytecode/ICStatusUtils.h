@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeIndex.h"
 #include "ExitFlag.h"
 
 namespace JSC {

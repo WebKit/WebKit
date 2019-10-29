@@ -33,6 +33,7 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
+#include "DocumentRuleSets.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
 #include "SVGElement.h"
@@ -40,6 +41,7 @@
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
+#include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
 #include <wtf/SetForScope.h>

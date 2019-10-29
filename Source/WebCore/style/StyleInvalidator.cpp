@@ -31,6 +31,7 @@
 #include "ElementIterator.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
+#include "RuleSet.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"

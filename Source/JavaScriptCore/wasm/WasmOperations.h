@@ -27,10 +27,14 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "IndexingType.h"
+#include "JSCJSValue.h"
 #include "SlowPathReturnType.h"
+#include "WasmExceptionType.h"
 
 namespace JSC {
 
+class JSArray;
 class JSWebAssemblyInstance;
 
 namespace Probe {
@@ -39,6 +43,7 @@ class Context;
 namespace Wasm {
 
 class Instance;
+class Signature;
 
 void JIT_OPERATION operationWasmTriggerOSREntryNow(Probe::Context&) WTF_INTERNAL;
 void JIT_OPERATION operationWasmTriggerTierUpNow(Instance*, uint32_t functionIndex) WTF_INTERNAL;

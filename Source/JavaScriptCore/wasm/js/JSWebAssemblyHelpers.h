@@ -27,7 +27,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "Error.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSCJSValue.h"
 #include "JSSourceCode.h"
 #include "WebAssemblyFunction.h"

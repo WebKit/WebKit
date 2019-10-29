@@ -31,6 +31,8 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"
+#include "JSCJSValueInlines.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"

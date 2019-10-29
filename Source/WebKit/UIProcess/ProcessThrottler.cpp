@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "ProcessThrottlerClient.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
     

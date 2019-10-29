@@ -1,3 +1,34 @@
+2019-10-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix various non-unified build issues introduced since r251436
+        https://bugs.webkit.org/show_bug.cgi?id=203492
+
+        Reviewed by Alex Christensen and Mark Lam.
+
+        * bytecode/BytecodeIndex.cpp: Add missing inclusion of wtf/PrintStream.h
+        * bytecode/ICStatusUtils.h: Add missing inclusion if BytecodeIndex.h
+        * bytecode/InstructionStream.h: Ditto.
+        * debugger/DebuggerLocation.cpp: Add missing inclusion of JSCellInlines.h
+        * dfg/DFGLazyJSValue.h: Add missing inclusion of GPRInfo.h
+        * ftl/FTLOSREntry.h: Add missing inclusion of BytecodeIndex.h
+        * heap/CompleteSubspaceInlines.h: Add missing inclusions of CompleteSubspace.h and VM.h
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::thisValue const): Prepend namespace to the JSC::VM type.
+        * jit/JITDisassembler.h: Add missing inclusion of BytecodeIndex.h
+        * jit/JITWorklist.h: Ditto.
+        * runtime/JSImmutableButterfly.cpp: Add missing inclusion of ButterflyInlines.h
+        * runtime/ObjectInitializationScope.h: Add missing inclusion of VM.h
+        * runtime/StringRecursionChecker.h: Add missing inclusion of GetVM.h
+        * runtime/VMTraps.cpp: Add missing inclusion of CallFrameInlines.h
+        * tools/Integrity.cpp: Add missing inclusion of Integrity.h, HeapCellInlines.h, and
+        JSCellInlines.h
+        * wasm/WasmOperations.cpp: Add missing inclusion of JSCJSValueInlines.h and
+        JSGlobalObjectInlines.h
+        * wasm/WasmOperations.h: Add missing inclusion of IndexingType.h, JSCJSValue.h, and
+        WasmExceptionType.h; add forward declarations for JSArrray and Wasm::Signature.
+        * wasm/js/JSWebAssembly.cpp: Add missing inclusion of WasmOperations.h
+        * wasm/js/JSWebAssemblyHelpers.h: Add missing inclusion of Error.h and JSArrayBufferView.h
+
 2019-10-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Lexer flags should be an OptionSet

@@ -29,6 +29,7 @@
 
 #include "DFGCommon.h"
 #include "DFGFrozenValue.h"
+#include "GPRInfo.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

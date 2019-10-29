@@ -20,6 +20,7 @@
 #pragma once
 
 #include "CallFrame.h"
+#include "GetVM.h"
 #include "VMInlines.h"
 #include <wtf/StackStats.h>
 

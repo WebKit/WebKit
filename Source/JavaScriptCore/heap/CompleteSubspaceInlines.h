@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "CompleteSubspace.h"
+#include "VM.h"
+
 namespace JSC {
 
 ALWAYS_INLINE void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)

@@ -30,6 +30,7 @@
 #include "DOMFileSystem.h"
 #include "Document.h"
 #include "ErrorCallback.h"
+#include "File.h"
 #include "FileCallback.h"
 #include "WindowEventLoop.h"
 

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "BytecodeIndex.h"
 #include "Instruction.h"
 #include <wtf/Vector.h>
 

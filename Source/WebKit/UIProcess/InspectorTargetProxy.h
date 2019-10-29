@@ -31,6 +31,7 @@
 
 namespace WebKit {
 
+class ProvisionalPageProxy;
 class WebPageProxy;
 
 // NOTE: This UIProcess side InspectorTarget doesn't care about the frontend channel, since

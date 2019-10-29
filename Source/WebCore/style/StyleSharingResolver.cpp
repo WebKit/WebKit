@@ -35,6 +35,7 @@
 #include "RenderStyle.h"
 #include "SVGElement.h"
 #include "ShadowRoot.h"
+#include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleUpdate.h"
 #include "StyledElement.h"

@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "BytecodeIndex.h"
 #include <wtf/AutomaticThread.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>

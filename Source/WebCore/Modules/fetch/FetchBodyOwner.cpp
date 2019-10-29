@@ -29,6 +29,7 @@
 #include "config.h"
 #include "FetchBodyOwner.h"
 
+#include "Document.h"
 #include "FetchLoader.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "BytecodeIndex.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 

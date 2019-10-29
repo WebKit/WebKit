@@ -27,6 +27,7 @@
 #include "WebPageInspectorTargetController.h"
 
 #include "WebPage.h"
+#include "WebPageInspectorTargetFrontendChannel.h"
 #include "WebPageProxyMessages.h"
 
 namespace WebKit {

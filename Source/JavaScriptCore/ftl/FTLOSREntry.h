@@ -27,6 +27,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "BytecodeIndex.h"
+
 namespace JSC {
 
 class CallFrame;

@@ -27,6 +27,7 @@
 
 #include "DeferGC.h"
 #include "DisallowVMReentry.h"
+#include "VM.h"
 
 namespace JSC {
 

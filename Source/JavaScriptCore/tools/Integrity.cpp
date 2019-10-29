@@ -24,8 +24,11 @@
  */
 
 #include "config.h"
-#include "IntegrityInlines.h"
+#include "Integrity.h"
 
+#include "HeapCellInlines.h"
+#include "IntegrityInlines.h"
+#include "JSCellInlines.h"
 #include "Options.h"
 #include "VMInspectorInlines.h"
 

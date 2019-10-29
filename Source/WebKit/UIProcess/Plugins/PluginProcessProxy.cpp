@@ -36,6 +36,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 

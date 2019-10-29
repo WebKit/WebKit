@@ -45,6 +45,7 @@
 #include "StrongInlines.h"
 #include "ThrowScope.h"
 #include "WasmBBQPlan.h"
+#include "WasmOperations.h"
 #include "WasmToJS.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyInstanceConstructor.h"

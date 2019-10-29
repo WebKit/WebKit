@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Document;
+class Frame;
 class Page;
 
 class PageDebuggerAgent final : public WebDebuggerAgent {

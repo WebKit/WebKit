@@ -30,6 +30,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyMessagesReplies.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/WeakPtr.h>
 

@@ -1,3 +1,19 @@
+2019-10-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix various non-unified build issues introduced since r251436
+        https://bugs.webkit.org/show_bug.cgi?id=203492
+
+        Reviewed by Alex Christensen and Mark Lam.
+
+        * UIProcess/InspectorTargetProxy.h: Add forward declaration of ProvisionalPageProxy.
+        * UIProcess/Plugins/PluginProcessProxy.cpp: Add missin inclusion of
+        WebProcessProxyMessages.h
+        * UIProcess/ProcessThrottler.cpp: Add missing inclusion of wtf/CompletionHandler.h
+        * UIProcess/ProvisionalPageProxy.h: Add missing inclusion of WebCore/FrameIdentifier.h
+        * UIProcess/WebPageInspectorController.h: Add missing inclusion of WebCore/PageIdentifier.h
+        * WebProcess/WebPage/WebPageInspectorTargetController.cpp: Add missing inclusion of
+        WebPageInspectorTargetFrontendChannel.h
+
 2019-10-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violations
