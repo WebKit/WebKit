@@ -541,6 +541,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/CollectionType.h
     html/DOMTokenList.h
     html/DataListSuggestionInformation.h
+    html/EnterKeyHint.h
     html/FeaturePolicy.h
     html/FormAssociatedElement.h
     html/FormNamedItem.h

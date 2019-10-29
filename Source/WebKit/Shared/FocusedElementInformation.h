@@ -30,6 +30,7 @@
 #include <WebCore/Autofill.h>
 #include <WebCore/Color.h>
 #include <WebCore/ElementContext.h>
+#include <WebCore/EnterKeyHint.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
@@ -118,6 +119,7 @@ struct FocusedElementInformation {
     AutocapitalizeType autocapitalizeType { AutocapitalizeTypeDefault };
     InputType elementType { InputType::None };
     WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };
+    WebCore::EnterKeyHint enterKeyHint { WebCore::EnterKeyHint::Unspecified };
     String formAction;
     Vector<OptionItem> selectOptions;
     int selectedIndex { -1 };

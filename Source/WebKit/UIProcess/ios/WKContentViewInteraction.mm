@@ -4709,8 +4709,30 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [_traits setSecureTextEntry:_focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry]];
     [_traits setShortcutConversionType:_focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault];
 
-    if (!_focusedElementInformation.formAction.isEmpty())
-        [_traits setReturnKeyType:(_focusedElementInformation.elementType == WebKit::InputType::Search) ? UIReturnKeySearch : UIReturnKeyGo];
+    switch (_focusedElementInformation.enterKeyHint) {
+    case WebCore::EnterKeyHint::Enter:
+        [_traits setReturnKeyType:UIReturnKeyDefault];
+        break;
+    case WebCore::EnterKeyHint::Done:
+        [_traits setReturnKeyType:UIReturnKeyDone];
+        break;
+    case WebCore::EnterKeyHint::Go:
+        [_traits setReturnKeyType:UIReturnKeyGo];
+        break;
+    case WebCore::EnterKeyHint::Next:
+        [_traits setReturnKeyType:UIReturnKeyNext];
+        break;
+    case WebCore::EnterKeyHint::Search:
+        [_traits setReturnKeyType:UIReturnKeySearch];
+        break;
+    case WebCore::EnterKeyHint::Send:
+        [_traits setReturnKeyType:UIReturnKeySend];
+        break;
+    default: {
+        if (!_focusedElementInformation.formAction.isEmpty())
+            [_traits setReturnKeyType:_focusedElementInformation.elementType == WebKit::InputType::Search ? UIReturnKeySearch : UIReturnKeyGo];
+    }
+    }
 
     if (_focusedElementInformation.elementType == WebKit::InputType::Password || _focusedElementInformation.elementType == WebKit::InputType::Email || _focusedElementInformation.elementType == WebKit::InputType::URL || _focusedElementInformation.formAction.contains("login")) {
         [_traits setAutocapitalizationType:UITextAutocapitalizationTypeNone];

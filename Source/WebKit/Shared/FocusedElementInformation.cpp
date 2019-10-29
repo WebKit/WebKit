@@ -79,6 +79,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(autocapitalizeType);
     encoder.encodeEnum(elementType);
     encoder.encodeEnum(inputMode);
+    encoder.encodeEnum(enterKeyHint);
     encoder << formAction;
     encoder << selectOptions;
     encoder << selectedIndex;
@@ -160,6 +161,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decodeEnum(result.inputMode))
+        return false;
+
+    if (!decoder.decodeEnum(result.enterKeyHint))
         return false;
 
     if (!decoder.decode(result.formAction))

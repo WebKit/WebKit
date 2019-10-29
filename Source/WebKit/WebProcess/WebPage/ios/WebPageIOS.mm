@@ -2987,6 +2987,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
         information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
         information.inputMode = element.canonicalInputMode();
+        information.enterKeyHint = element.canonicalEnterKeyHint();
     } else if (is<HTMLInputElement>(*m_focusedElement)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_focusedElement);
         HTMLFormElement* form = element.form();
@@ -3048,6 +3049,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         information.hasSuggestions = !!element.list();
 #endif
         information.inputMode = element.canonicalInputMode();
+        information.enterKeyHint = element.canonicalEnterKeyHint();
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
@@ -3062,6 +3064,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.isAutocorrect = focusedElement.shouldAutocorrect();
             information.autocapitalizeType = focusedElement.autocapitalizeType();
             information.inputMode = focusedElement.canonicalInputMode();
+            information.enterKeyHint = focusedElement.canonicalEnterKeyHint();
             information.shouldSynthesizeKeyEventsForEditing = focusedElement.document().settings().syntheticEditingCommandsEnabled();
         } else {
             information.isAutocorrect = true;

@@ -1,3 +1,36 @@
+2019-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add enterkeyhint support
+        https://bugs.webkit.org/show_bug.cgi?id=189546
+        <rdar://problem/51021148>
+
+        Reviewed by Tim Horton.
+
+        This patch adds support for the enterkeyhint HTML attribute on iOS.
+
+        Tests:  EnterKeyHintTests.EnterKeyHintInContentEditableElement
+                EnterKeyHintTests.EnterKeyHintInTextInput
+                EnterKeyHintTests.EnterKeyHintInTextArea
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Add a new flag to FocusedElementInformation to indicate the EnterKeyHint type that should be used when bringing
+        up an input view for the focused element.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInputTraits]):
+
+        Map the given EnterKeyHint type to a UIReturnKeyType. If an unsupported (i.e. "previous") or default
+        EnterKeyHint value is used, then we fall back to existing behavior which deduces the default enterkeyhint value
+        from the input type if the focused element is inside an actionable form; otherwise, we avoid setting any value
+        for the `returnKeyType`, defaulting to `UIReturnKeyDefault`.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html is a flaky failure

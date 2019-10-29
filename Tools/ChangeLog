@@ -1,3 +1,23 @@
+2019-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add enterkeyhint support
+        https://bugs.webkit.org/show_bug.cgi?id=189546
+        <rdar://problem/51021148>
+
+        Reviewed by Tim Horton.
+
+        Add new API tests to check the resulting UIReturnKeyType that gets set on text input traits in the UI process,
+        given the different values for "enterkeyhint". Also verifies that the default behaviors of search fields and
+        text input fields inside actionable form elements is to show "Search" or "Go" as the return key by default,
+        unless a different value for "enterkeyhint" is specified.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/EnterKeyHintTests.mm: Added.
+        (-[TestWKWebView test:enterKeyHint:returnKeyType:]):
+        (TestWebKitAPI::enterKeyHintTestCases):
+        (TestWebKitAPI::createWebViewAndInputDelegateForTesting):
+        (TestWebKitAPI::TEST):
+
 2019-10-29  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251639.
