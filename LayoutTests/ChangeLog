@@ -1,3 +1,18 @@
+2019-10-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Update autocorrect test to have correctly focused contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=203552
+        <rdar://problem/51690426>
+
+        Reviewed by Wenson Hsieh.
+
+        Autocorrection bails when we are not first responder after 
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        Therefore, this test must be written to first focus the 
+        contenteditable, and then apply the autocorrection.
+
+        * fast/events/ios/autocorrect-with-range-selection.html:
+
 2019-10-07  Jer Noble  <jer.noble@apple.com>
 
         Implement the Remote Playback API.

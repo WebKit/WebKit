@@ -2,28 +2,26 @@
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
 
-        function runTest()
+        async function runTest()
         {
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
             var inputEl = document.getElementById("editable");
+            await UIHelper.activateElementAndWaitForInputSession(inputEl);
             window.getSelection().setBaseAndExtent(inputEl, 0, inputEl, 2);
-
-            testRunner.runUIScript(`(function() {
-                uiController.applyAutocorrection("To", "Ti", function() {
-                    uiController.uiScriptComplete();
-                });
-            })();`, function () {
-                testRunner.notifyDone()
-            });
+            await UIHelper.applyAutocorrection("To", "Ti");
+            testRunner.notifyDone();
         }
+
+        window.addEventListener('load', runTest, false);
     </script>
 </head>
 
