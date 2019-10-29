@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.27.2
+=================
+
+  - Add user messages API for the communication with the web extension.
+  - Enable service workers by default.
+  - Fix the build with WebDriver disabled.
+  - Show also client EGL extensions in about:gpu.
+  - Fix the build with unified sources disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.27.1
 =================
 

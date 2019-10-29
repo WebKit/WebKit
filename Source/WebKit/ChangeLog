@@ -1,3 +1,9 @@
+2019-10-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.27.2 release
+
+        * wpe/NEWS: Add release notes for 2.27.2.
+
 2019-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace InteractionInformationAtPosition.nodeAtPositionIsFocusedElement with an element context
