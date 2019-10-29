@@ -1402,8 +1402,6 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     
     if (isPrevalentResource(fromDomain))
         setIsScheduledForAllButCookieDataRemoval(toDomain, true);
-    
-    scheduleStatisticsProcessingRequestIfNecessary();
 }
 
 void ResourceLoadStatisticsDatabaseStore::setUserInteraction(const RegistrableDomain& domain, bool hadUserInteraction, WallTime mostRecentInteraction)

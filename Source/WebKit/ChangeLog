@@ -1,3 +1,19 @@
+2019-10-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Layout Test http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-database.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203542#add_comment
+        <rdar://problem/56689764>
+
+        Reviewed by John Wilander.
+
+        This test was a flaky failure due to its calling
+        scheduleStatisticsProcessingRequestIfNecessary() after logging a cross
+        site load with link decoration. This call is currently unecessary
+        because this function is not yet used to classify resources, and is
+        causing the test to execute a callback before it is ready.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+
 2019-10-29  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251639.
