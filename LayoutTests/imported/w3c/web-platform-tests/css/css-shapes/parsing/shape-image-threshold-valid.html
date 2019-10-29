@@ -8,12 +8,17 @@
 <meta name="assert" content="shape-image-threshold supports the full grammar '<number>'.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="resources/parsing-testcommon.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
 </head>
 <body>
 <script>
 test_valid_value("shape-image-threshold", "12.5");
 test_valid_value("shape-image-threshold", "-7");
+
+// https://github.com/w3c/csswg-drafts/issues/4102
+test_valid_value("shape-image-threshold", "-100%", "-1");
+test_valid_value("shape-image-threshold", "50%", "0.5");
+test_valid_value("shape-image-threshold", "300%", "3");
 </script>
 </body>
 </html>

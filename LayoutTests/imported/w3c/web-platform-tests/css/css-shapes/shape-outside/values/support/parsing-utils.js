@@ -446,28 +446,32 @@ function each(object, func) {
     }
 }
 
-function setupFonts(func) {
-    return function () {
-        var fontProperties = {
-            'font-family': 'Ahem',
-            'font-size': '16px',
-            'line-height': '1'
-        };
-        var savedValues = { };
-        each(fontProperties, function (key, value) {
-            savedValues[key] = document.body.style.getPropertyValue(key);
-            document.body.style.setProperty(key, value);
-        });
-        func.apply(this, arguments);
-        each(fontProperties, function (key, value) {
-            if (value) {
-                document.body.style.setProperty(key, value);
-            }
-            else {
-                document.body.style.removeProperty(key);
-            }
-        });
+/// For saving and restoring font properties
+var savedFontValues = { };
+
+function setupFonts() {
+    var fontProperties = {
+        'font-family': 'Ahem',
+        'font-size': '16px',
+        'line-height': '1'
     };
+    savedFontValues = { };
+    each(fontProperties, function (key, value) {
+        savedFontValues[key] = document.body.style.getPropertyValue(key);
+        document.body.style.setProperty(key, value);
+    });
+}
+
+function restoreFonts() {
+    each(savedFontValues, function (key, value) {
+        if (value) {
+            document.body.style.setProperty(key, value);
+        }
+        else {
+            document.body.style.removeProperty(key);
+        }
+    });
+    savedFontValues = { };
 }
 
 var validUnits = [
@@ -811,16 +815,16 @@ var calcTestValues = [
     // of a dimension and a percentage.
     // http://www.w3.org/TR/css3-values/#calc-notation
     ["calc(25%*3 - 10in)", "calc(75% - 10in)", ["calc(75% - 960px)", "calc(-960px + 75%)"]],
-    ["calc((12.5%*6 + 10in) / 4)", "calc((75% + 10in) / 4)", ["calc((75% + 960px) / 4)", "calc(240px + 18.75%)"]]
+    ["calc((12.5%*6 + 10in) / 4)", "calc((75% + 10in) / 4)", ["calc((75% + 960px) / 4)", "calc(18.75% + 240px)"]]
 ]
 
 return {
     testInlineStyle: testInlineStyle,
-    testComputedStyle: setupFonts(testComputedStyle),
+    testComputedStyle: testComputedStyle,
     testShapeMarginInlineStyle: testShapeMarginInlineStyle,
-    testShapeMarginComputedStyle: setupFonts(testShapeMarginComputedStyle),
+    testShapeMarginComputedStyle: testShapeMarginComputedStyle,
     testShapeThresholdInlineStyle: testShapeThresholdInlineStyle,
-    testShapeThresholdComputedStyle: setupFonts(testShapeThresholdComputedStyle),
+    testShapeThresholdComputedStyle: testShapeThresholdComputedStyle,
     buildTestCases: buildTestCases,
     buildRadiiTests: buildRadiiTests,
     buildPositionTests: buildPositionTests,
@@ -831,6 +835,7 @@ return {
     validUnits: validUnits,
     calcTestValues: calcTestValues,
     roundResultStr: roundResultStr,
-    setupFonts: setupFonts
+    setupFonts: setupFonts,
+    restoreFonts: restoreFonts,
 }
 })();

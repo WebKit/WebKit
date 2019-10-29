@@ -2607,7 +2607,7 @@ webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
 webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
-webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes [ Skip ]
+webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
 
 webkit.org/b/5991 imported/w3c/web-platform-tests/css/cssom-view/scrolling-quirks-vs-nonquirks.html [ Failure ]
 

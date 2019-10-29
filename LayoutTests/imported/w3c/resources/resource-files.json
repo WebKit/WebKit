@@ -12,6 +12,7 @@
         "web-platform-tests/tools"
     ],
     "files": [
+        "css/css-shapes/test-plan/index.html",
         "css/css-syntax/charset/page-utf16-css-bomless-utf16be.html",
         "css/css-syntax/charset/page-utf16-css-no-decl-ascii-only.html",
         "css/css-text-decor/text-decoration-visibility-001.xht",
