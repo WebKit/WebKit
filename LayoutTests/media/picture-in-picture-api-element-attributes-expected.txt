@@ -1,0 +1,12 @@
+This tests that two picture-in-picture API related properties (autoPictureInPicture and disablePictureInPicture) of video element works.
+
+EXPECTED (video.autoPictureInPicture == 'true') OK
+EXPECTED (video.autoPictureInPicture == 'false') OK
+EXPECTED (video.getAttribute('autopictureinpicture') == '') OK
+EXPECTED (video.getAttribute('autopictureinpicture') == 'null') OK
+EXPECTED (video.disablePictureInPicture == 'true') OK
+EXPECTED (video.disablePictureInPicture == 'false') OK
+EXPECTED (video.getAttribute('disablepictureinpicture') == '') OK
+EXPECTED (video.getAttribute('disablepictureinpicture') == 'null') OK
+END OF TEST
+
