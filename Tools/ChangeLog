@@ -1,3 +1,50 @@
+2019-10-24  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r250863. rdar://problem/56579654
+
+    Copying white text from dark mode WebKit apps and pasting in a light mode app results in white (invisible) text.
+    https://bugs.webkit.org/show_bug.cgi?id=202662
+    rdar://problem/48677354
+    
+    Reviewed by Megan Gardner.
+    
+    Source/WebCore:
+    
+    Covered by new API tests.
+    
+    HTMLConverter needs to strip white text colors when the document is in dark mode, like it does for black in light mode.
+    
+    * editing/cocoa/HTMLConverter.mm:
+    (normalizedColor): Handle dark mode and ignore white.
+    (HTMLConverterCaches::colorPropertyValueForNode): Pass element to normalizedColor.
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/CopyRTF.mm: Added.
+    (readRTFDataFromPasteboard):
+    (copyAttributedStringFromHTML):
+    (checkColor):
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250863 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-08  Timothy Hatcher  <timothy@apple.com>
+
+            Copying white text from dark mode WebKit apps and pasting in a light mode app results in white (invisible) text.
+            https://bugs.webkit.org/show_bug.cgi?id=202662
+            rdar://problem/48677354
+
+            Reviewed by Megan Gardner.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/CopyRTF.mm: Added.
+            (readRTFDataFromPasteboard):
+            (copyAttributedStringFromHTML):
+            (checkColor):
+            (TEST):
+
 2019-10-21  Dean Jackson  <dino@apple.com>
 
         Cherry-pick r251390. rdar://56579651
