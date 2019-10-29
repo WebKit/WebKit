@@ -1,3 +1,13 @@
+2019-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add fast path for String#localeCompare
+        https://bugs.webkit.org/show_bug.cgi?id=202676
+
+        Reviewed by Mark Lam.
+
+        * stress/locale-compare-bits.js: Added.
+        (shouldBe):
+
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Promise runtime functions

@@ -971,4 +971,13 @@ TEST(WTF, StringViewStripLeadingAndTrailingMatchedCharacters)
     EXPECT_TRUE(nullView.stripLeadingAndTrailingMatchedCharacters(isA) == nullView);
 }
 
+TEST(WTF, StringViewIsAllASCII)
+{
+    EXPECT_TRUE(StringView(String("Hello")).isAllASCII());
+    EXPECT_TRUE(StringView(String("Cocoa")).isAllASCII());
+    EXPECT_FALSE(StringView(String("📱")).isAllASCII());
+    EXPECT_FALSE(StringView(String("\u0080")).isAllASCII());
+    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"))).isAllASCII());
+}
+
 } // namespace TestWebKitAPI

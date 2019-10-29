@@ -92,6 +92,8 @@ public:
     const LChar* characters8() const;
     const UChar* characters16() const;
 
+    bool isAllASCII() const;
+
     String toString() const;
     String toStringWithoutCopying() const;
     AtomString toAtomString() const;
@@ -401,6 +403,13 @@ inline const UChar* StringView::characters16() const
     ASSERT(!is8Bit());
     ASSERT(underlyingStringIsValid());
     return static_cast<const UChar*>(m_characters);
+}
+
+inline bool StringView::isAllASCII() const
+{
+    if (is8Bit())
+        return charactersAreAllASCII(characters8(), length());
+    return charactersAreAllASCII(characters16(), length());
 }
 
 class StringView::UpconvertedCharacters {

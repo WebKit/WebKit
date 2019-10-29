@@ -1,3 +1,13 @@
+2019-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add fast path for String#localeCompare
+        https://bugs.webkit.org/show_bug.cgi?id=202676
+
+        Reviewed by Mark Lam.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::isAllASCII const):
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

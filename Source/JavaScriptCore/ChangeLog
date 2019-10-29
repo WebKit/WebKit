@@ -1,3 +1,30 @@
+2019-10-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add fast path for String#localeCompare
+        https://bugs.webkit.org/show_bug.cgi?id=202676
+
+        Reviewed by Mark Lam.
+
+        When String#localeCompare is invoked, we are setting up UCharIterator to iterate code points.
+        But this is too slow since its implementation is invoking function pointer for each code point
+        to get next code point. Strings have many code points typically. Invoking function pointer so many times
+        takes too much time just for locale-aware comparison.
+
+        This patch revises the implementation by adding 2 fast path and 1 slow path. The slow path requires extra memory,
+        but it is soon released (not GC-managed).
+
+        1. If both strings are ASCII (not Latin1), we use ucol_strcollUTF8.
+        2. If both strings are 16-bit, we use ucol_strcoll.
+        3. Otherwise, we convert strings to 16-bit strings, and then we use ucol_strcoll.
+
+        JetStream2/cdjs is improved from 56 to 85 on iMac Pro (50%).
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::compareStrings):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionMake16BitStringIfPossible):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove JSPromiseDeferred

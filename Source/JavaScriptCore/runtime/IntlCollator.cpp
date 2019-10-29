@@ -342,9 +342,24 @@ JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x,
     }
 
     UErrorCode status = U_ZERO_ERROR;
-    UCharIterator iteratorX = createIterator(x);
-    UCharIterator iteratorY = createIterator(y);
-    auto result = ucol_strcollIter(m_collator.get(), &iteratorX, &iteratorY, &status);
+    UCollationResult result = UCOL_EQUAL;
+    if (x.is8Bit() && y.is8Bit() && x.isAllASCII() && y.isAllASCII())
+        result = ucol_strcollUTF8(m_collator.get(), bitwise_cast<const char*>(x.characters8()), x.length(), bitwise_cast<const char*>(y.characters8()), y.length(), &status);
+    else {
+        auto getCharacters = [&] (const StringView& view, Vector<UChar>& buffer) -> const UChar* {
+            if (!view.is8Bit())
+                return view.characters16();
+            buffer.resize(view.length());
+            StringImpl::copyCharacters(buffer.data(), view.characters8(), view.length());
+            return buffer.data();
+        };
+
+        Vector<UChar> xBuffer;
+        Vector<UChar> yBuffer;
+        const UChar* xCharacters = getCharacters(x, xBuffer);
+        const UChar* yCharacters = getCharacters(y, yBuffer);
+        result = ucol_strcoll(m_collator.get(), xCharacters, x.length(), yCharacters, y.length());
+    }
     if (U_FAILURE(status))
         return throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
     return jsNumber(result);

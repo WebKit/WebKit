@@ -2555,6 +2555,21 @@ static EncodedJSValue JSC_HOST_CALL functionIsWasmSupported(JSGlobalObject*, Cal
 #endif
 }
 
+static EncodedJSValue JSC_HOST_CALL functionMake16BitStringIfPossible(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    String string = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!string.is8Bit())
+        return JSValue::encode(jsString(vm, WTFMove(string)));
+    Vector<UChar> buffer;
+    buffer.resize(string.length());
+    StringImpl::copyCharacters(buffer.data(), string.characters8(), string.length());
+    return JSValue::encode(jsString(vm, String::adopt(WTFMove(buffer))));
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
@@ -2677,6 +2692,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "parseCount", functionParseCount, 0);
 
     addFunction(vm, "isWasmSupported", functionIsWasmSupported, 0);
+    addFunction(vm, "make16BitStringIfPossible", functionMake16BitStringIfPossible, 1);
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)
