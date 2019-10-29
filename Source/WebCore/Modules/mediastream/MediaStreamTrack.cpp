@@ -464,12 +464,12 @@ MediaProducer::MediaStateFlags MediaStreamTrack::captureState()
     return state;
 }
 
-void MediaStreamTrack::muteCapture()
+void MediaStreamTrack::pageMutedStateDidChange(MediaProducer::MutedStateFlags flags)
 {
     if (auto* source = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource())
-        source->setMuted(true);
+        source->setMuted((flags & MediaProducer::AudioAndVideoCaptureIsMuted) || (flags & MediaProducer::AudioIsMuted));
     if (auto* source = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource())
-        source->setMuted(true);
+        source->setMuted(flags & MediaProducer::AudioAndVideoCaptureIsMuted);
 }
 #endif
 

@@ -203,6 +203,7 @@
 		4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */; };
 		414AD6862285D1C000777F2D /* StorageQuota.mm in Sources */ = {isa = PBXBuildFile; fileRef = 414AD6852285D1B000777F2D /* StorageQuota.mm */; };
 		41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41882F0221010A70002FF288 /* ProcessPreWarming.mm */; };
+		419BA4A2235A120A00BD45AF /* GetUserMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 419BA4A1235A120500BD45AF /* GetUserMedia.mm */; };
 		44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */; };
 		4433A396208044140091ED57 /* SynchronousTimeoutTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */; };
 		44817A2F1F0486BF00003810 /* WKRequestActivatedElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */; };
@@ -1683,6 +1684,7 @@
 		414AD6852285D1B000777F2D /* StorageQuota.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageQuota.mm; sourceTree = "<group>"; };
 		41882F0221010A70002FF288 /* ProcessPreWarming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessPreWarming.mm; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
+		419BA4A1235A120500BD45AF /* GetUserMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMedia.mm; sourceTree = "<group>"; };
 		44077BB0231449D200179E2D /* DataDetectorsTestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsTestIOS.mm; sourceTree = "<group>"; };
 		442BBF681C91CAD90017087F /* RefLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefLogger.cpp; sourceTree = "<group>"; };
 		4433A395208044130091ED57 /* SynchronousTimeoutTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynchronousTimeoutTests.mm; sourceTree = "<group>"; };
@@ -3476,6 +3478,7 @@
 				26F52EAA182872600023D412 /* Geolocation.cpp */,
 				F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */,
 				F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */,
+				419BA4A1235A120500BD45AF /* GetUserMedia.mm */,
 				07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */,
 				07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */,
 				4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */,
@@ -4773,6 +4776,7 @@
 				52D673EE1AFB127300FA19FE /* WKPageCopySessionStateWithFiltering.cpp in Sources */,
 				7CCE7F1F1A411AE600447C4C /* WKPageGetScaleFactorNotZero.cpp in Sources */,
 				7CCE7F201A411AE600447C4C /* WKPageIsPlayingAudio.cpp in Sources */,
+				419BA4A2235A120A00BD45AF /* GetUserMedia.mm in Sources */,
 				A14AAB631E78D7DE00C1ADC2 /* WKPDFView.mm in Sources */,
 				2D00065F1C1F589A0088E6A7 /* WKPDFViewResizeCrash.mm in Sources */,
 				2D21FE591F04642900B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm in Sources */,

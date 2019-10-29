@@ -4031,7 +4031,7 @@ void Document::pageMutedStateDidChange()
         audioProducer.pageMutedStateDidChange();
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
-    MediaStreamTrack::muteCapture();
+    MediaStreamTrack::pageMutedStateDidChange(page()->mutedState());
 #endif
 }
 

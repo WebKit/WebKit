@@ -70,7 +70,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     static MediaProducer::MediaStateFlags captureState();
-    static void muteCapture();
+    static void pageMutedStateDidChange(MediaProducer::MutedStateFlags);
 #endif
 
     virtual bool isCanvas() const { return false; }
