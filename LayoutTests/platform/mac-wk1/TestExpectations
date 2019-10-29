@@ -818,3 +818,5 @@ webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-ble
 
 webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/203501 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
+
+webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
