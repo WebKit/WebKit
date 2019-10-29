@@ -3930,6 +3930,7 @@ webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properti
 webkit.org/b/203357 imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
 
 # wpt css-values failures
+webkit.org/b/203581 imported/w3c/web-platform-tests/css/css-values/absolute_length_units.html [ Pass Failure ]
 webkit.org/b/203320 imported/w3c/web-platform-tests/css/css-values/percentage-rem-low.html [ ImageOnlyFailure ]
 webkit.org/b/203322 imported/w3c/web-platform-tests/css/css-values/attr-color-invalid-cast.html [ ImageOnlyFailure ]
 webkit.org/b/203323 imported/w3c/web-platform-tests/css/css-values/attr-color-valid.html [ ImageOnlyFailure ]
