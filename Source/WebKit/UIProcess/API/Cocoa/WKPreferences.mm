@@ -713,6 +713,17 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setShouldAllowUserInstalledFonts(_shouldAllowUserInstalledFonts);
 }
 
+- (BOOL)_shouldAllowDesignSystemUIFonts
+{
+    // These fonts are always enabled. This function only exists for binary compatibility.
+    return YES;
+}
+
+- (void)_setShouldAllowDesignSystemUIFonts:(BOOL)_shouldAllowDesignSystemUIFonts
+{
+    // These fonts are always enabled. This function only exists for binary compatibility.
+}
+
 static _WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)
 {
     switch (behavior) {
