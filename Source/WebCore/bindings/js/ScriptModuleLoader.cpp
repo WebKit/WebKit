@@ -215,7 +215,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
 
 static JSC::JSInternalPromise* rejectPromise(JSDOMGlobalObject& globalObject, ExceptionCode ec, ASCIILiteral message)
 {
-    auto* jsPromise = JSInternalPromise::create(globalObject.vm(), globalObject.internalPromiseStructure());
+    auto* jsPromise = JSC::JSInternalPromise::create(globalObject.vm(), globalObject.internalPromiseStructure());
     RELEASE_ASSERT(jsPromise);
     auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     deferred->reject(ec, WTFMove(message));
