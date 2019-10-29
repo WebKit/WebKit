@@ -1,3 +1,16 @@
+2019-10-28  Daniel Bates  <dabates@apple.com>
+
+        Remove unnecessary #include <limits.h> header from Timer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=203504
+
+        Reviewed by Alex Christensen.
+
+        Timer.cpp includes both <limits> and <limits.h>. The latter was added to fix a build issue in r30193 that
+        effected GCC 4.3 when Timer.cpp referenced UINT_MAX. Timer.cpp no longer references this constant and instead
+        uses the C++ std::numeric_limits equivalent. So, remove the #include <limits.h>.
+
+        * platform/Timer.cpp:
+
 2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove JSPromiseDeferred

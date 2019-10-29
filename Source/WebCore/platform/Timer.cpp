@@ -31,7 +31,6 @@
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
-#include <limits.h>
 #include <limits>
 #include <math.h>
 #include <wtf/MainThread.h>
