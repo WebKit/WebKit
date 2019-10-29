@@ -29,11 +29,12 @@
 
 namespace JSC {
 
+class JSPromiseConstructor;
 class JSPromise : public JSInternalFieldObjectImpl<2> {
 public:
     using Base = JSInternalFieldObjectImpl<2>;
 
-    static JSPromise* create(VM&, Structure*);
+    JS_EXPORT_PRIVATE static JSPromise* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -57,13 +58,28 @@ public:
     JS_EXPORT_PRIVATE JSValue result(VM&) const;
     JS_EXPORT_PRIVATE bool isHandled(VM&) const;
 
-    JS_EXPORT_PRIVATE static JSPromise* resolve(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
+
+    JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
+
+    struct DeferredData {
+        WTF_FORBID_HEAP_ALLOCATION;
+    public:
+        JSPromise* promise { nullptr };
+        JSFunction* resolve { nullptr };
+        JSFunction* reject { nullptr };
+    };
+    static DeferredData createDeferredData(JSGlobalObject*, JSPromiseConstructor*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:
     JSPromise(VM&, Structure*);
     void finishCreation(VM&);
+
+    uint32_t flags() const;
 };
 
 } // namespace JSC

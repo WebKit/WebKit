@@ -175,7 +175,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
 }
 
 // https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
-static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromiseDeferred& promiseDeferred)
+static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromise& promise)
 {
     auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
 
@@ -191,12 +191,12 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
     }
 
     if (registry.findInterface(localName)) {
-        DeferredPromise::create(globalObject, promiseDeferred)->resolve();
-        return promiseDeferred.promise();
+        DeferredPromise::create(globalObject, promise)->resolve();
+        return &promise;
     }
 
     auto result = registry.promiseMap().ensure(localName, [&] {
-        return DeferredPromise::create(globalObject, promiseDeferred);
+        return DeferredPromise::create(globalObject, promise);
     });
 
     return result.iterator->value->promise();
@@ -207,14 +207,13 @@ JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject
     auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
 
     ASSERT(globalObject());
-    auto promiseDeferred = JSPromiseDeferred::tryCreate(globalObject());
-    RELEASE_ASSERT(promiseDeferred);
-    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), wrapped(), *promiseDeferred);
+    auto* result = JSPromise::create(lexicalGlobalObject.vm(), lexicalGlobalObject.promiseStructure());
+    JSValue promise = whenDefinedPromise(lexicalGlobalObject, callFrame, *globalObject(), wrapped(), *result);
 
     if (UNLIKELY(scope.exception())) {
-        rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *globalObject(), *promiseDeferred);
+        rejectPromiseWithExceptionIfAny(lexicalGlobalObject, *globalObject(), *result);
         scope.assertNoException();
-        return promiseDeferred->promise();
+        return result;
     }
 
     return promise;

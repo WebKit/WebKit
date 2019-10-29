@@ -29,7 +29,7 @@
 
 #include "CallLinkInfo.h"
 #include "JSCast.h"
-#include "PromiseDeferredTimer.h"
+#include "PromiseTimer.h"
 #include "Structure.h"
 #include "WasmCallee.h"
 #include "WasmFormat.h"

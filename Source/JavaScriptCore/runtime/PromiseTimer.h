@@ -34,43 +34,43 @@
 
 namespace JSC {
 
-class JSPromiseDeferred;
+class JSPromise;
 class VM;
 class JSCell;
 
-class PromiseDeferredTimer : public JSRunLoopTimer {
+class PromiseTimer : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
     void doWork(VM&) override;
 
-    void addPendingPromise(VM&, JSPromiseDeferred*, Vector<Strong<JSCell>>&& dependencies);
-    JS_EXPORT_PRIVATE bool hasPendingPromise(JSPromiseDeferred* ticket);
-    JS_EXPORT_PRIVATE bool hasDependancyInPendingPromise(JSPromiseDeferred* ticket, JSCell* dependency);
-    // JSPromiseDeferred should handle canceling when the promise is resolved or rejected.
-    bool cancelPendingPromise(JSPromiseDeferred*);
+    void addPendingPromise(VM&, JSPromise*, Vector<Strong<JSCell>>&& dependencies);
+    JS_EXPORT_PRIVATE bool hasPendingPromise(JSPromise* ticket);
+    JS_EXPORT_PRIVATE bool hasDependancyInPendingPromise(JSPromise* ticket, JSCell* dependency);
+    // JSPromise should handle canceling when the promise is resolved or rejected.
+    bool cancelPendingPromise(JSPromise*);
 
     using Task = Function<void()>;
-    void scheduleWorkSoon(JSPromiseDeferred*, Task&&);
+    void scheduleWorkSoon(JSPromise*, Task&&);
 
     void stopRunningTasks() { m_runTasks = false; }
 
     JS_EXPORT_PRIVATE void runRunLoop();
 
-    static Ref<PromiseDeferredTimer> create(VM& vm)
+    static Ref<PromiseTimer> create(VM& vm)
     {
-        return adoptRef(*new PromiseDeferredTimer(vm));
+        return adoptRef(*new PromiseTimer(vm));
     }
 
 private:
-    PromiseDeferredTimer(VM&);
+    PromiseTimer(VM&);
 
-    HashMap<JSPromiseDeferred*, Vector<Strong<JSCell>>> m_pendingPromises;
+    HashMap<JSPromise*, Vector<Strong<JSCell>>> m_pendingPromises;
     Lock m_taskLock;
     bool m_runTasks { true };
     bool m_shouldStopRunLoopWhenAllPromisesFinish { false };
     bool m_currentlyRunningTask { false };
-    Vector<std::tuple<JSPromiseDeferred*, Task>> m_tasks;
+    Vector<std::tuple<JSPromise*, Task>> m_tasks;
 };
 
 } // namespace JSC

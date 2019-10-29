@@ -1,3 +1,80 @@
+2019-10-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove JSPromiseDeferred
+        https://bugs.webkit.org/show_bug.cgi?id=203400
+
+        Reviewed by Keith Miller.
+
+        This patch removes PromiseExecutionScope. This assumed that promise operation cannot fail in main thread. But this is
+        wrong since any JS call can fail due to stack-overflow error. This patch makes things more robust by handling errors correctly.
+        And we remove JSPromiseDeferred and use JSPromise instead.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::whenDefinedPromise):
+        (WebCore::JSCustomElementRegistry::whenDefined):
+        * bindings/js/JSDOMConvertPromise.h:
+        (WebCore::Converter<IDLPromise<T>>::convert):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMOperationReturningPromise.h:
+        (WebCore::IDLOperationReturningPromise::call):
+        (WebCore::IDLOperationReturningPromise::callStatic):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::promise const):
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::whenSettled):
+        (WebCore::rejectPromiseWithExceptionIfAny):
+        (WebCore::createDeferredPromise):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::create):
+        (WebCore::DeferredPromise::DeferredPromise):
+        (WebCore::DeferredPromise::deferred const):
+        (WebCore::DeferredPromise::resolve):
+        (WebCore::DeferredPromise::reject):
+        (WebCore::DOMPromiseDeferredBase::DOMPromiseDeferredBase):
+        (WebCore::DOMPromiseDeferredBase::operator=):
+        (WebCore::DOMPromiseDeferredBase::reject):
+        (WebCore::DOMPromiseDeferredBase::rejectType):
+        (WebCore::DOMPromiseDeferredBase::promise const):
+        (WebCore::DOMPromiseDeferredBase::whenSettled):
+        (WebCore::DOMPromiseDeferred::resolve):
+        (WebCore::DOMPromiseDeferred<void>::resolve):
+        (WebCore::callPromiseFunction):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::moduleLoaderFetch):
+        (WebCore::JSDOMWindowBase::moduleLoaderImportModule):
+        (WebCore::tryAllocate):
+        (WebCore::isResponseCorrect):
+        (WebCore::handleResponseOnStreamingAction):
+        (WebCore::JSDOMWindowBase::compileStreaming):
+        (WebCore::JSDOMWindowBase::instantiateStreaming):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch):
+        (WebCore::rejectPromise):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::addTimerSetNotification):
+        (WebCore::WorkerScriptController::removeTimerSetNotification):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOperationTrampolineDefinition):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectInstanceFunctionCalculateSecretResult):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodePrototypeFunctionTestWorkerPromise):
+        (WebCore::jsTestNodePrototypeFunctionCalculateSecretResult):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionCalculateSecretResult):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunction):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithException):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument):
+        (WebCore::jsTestObjPrototypeFunctionTestPromiseOverloadedFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException):
+        (WebCore::jsTestObjPrototypeFunctionTestCustomPromiseFunction):
+        (WebCore::jsTestObjConstructorFunctionTestStaticCustomPromiseFunction):
+        * workers/WorkerRunLoop.cpp:
+        * worklets/WorkletScriptController.cpp:
+
 2019-10-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix various non-unified build issues introduced since r251436

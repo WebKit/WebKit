@@ -33,7 +33,7 @@
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
 #include "JSGlobalLexicalEnvironment.h"
-#include "JSPromiseDeferred.h"
+#include "JSPromise.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "LazyProperty.h"
@@ -226,10 +226,10 @@ struct GlobalObjectMethodTable {
     typedef String (*DefaultLanguageFunctionPtr)();
     DefaultLanguageFunctionPtr defaultLanguage;
 
-    typedef void (*CompileStreamingPtr)(JSGlobalObject*, JSPromiseDeferred*, JSValue);
+    typedef void (*CompileStreamingPtr)(JSGlobalObject*, JSPromise*, JSValue);
     CompileStreamingPtr compileStreaming;
 
-    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, JSPromiseDeferred*, JSValue, JSObject*);
+    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, JSPromise*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
 };
 
@@ -305,10 +305,12 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
+    WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
+    WriteBarrier<JSFunction> m_resolvePromiseFunction;
+    WriteBarrier<JSFunction> m_rejectPromiseFunction;
     WriteBarrier<JSFunction> m_promiseProtoThenFunction;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_numberProtoToStringFunction;
-    WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
     WriteBarrier<JSObject> m_regExpProtoExec;
@@ -620,11 +622,13 @@ public:
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* iteratorProtocolFunction() const { return m_iteratorProtocolFunction.get(this); }
+    JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
     JSFunction* promiseResolveFunction() const { return m_promiseResolveFunction.get(this); }
+    JSFunction* resolvePromiseFunction() const { return m_resolvePromiseFunction.get(); }
+    JSFunction* rejectPromiseFunction() const { return m_rejectPromiseFunction.get(); }
     JSFunction* promiseProtoThenFunction() const { return m_promiseProtoThenFunction.get(); }
     JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.get(); }
-    JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSObject* regExpProtoExecFunction() const { return m_regExpProtoExec.get(); }
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }

@@ -35,7 +35,6 @@
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSInternalPromise.h"
-#include "JSInternalPromiseDeferred.h"
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -262,21 +261,20 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
         RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, parameters, referrer));
 
-    auto* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto moduleNameString = moduleName->value(globalObject);
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception()->value();
         catchScope.clearException();
-        deferred->reject(globalObject, exception);
+        promise->reject(globalObject, exception);
         catchScope.clearException();
-        return deferred->promise();
+        return promise;
     }
-    deferred->reject(globalObject, createError(globalObject, makeString("Could not import the module '", moduleNameString, "'.")));
+    promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '", moduleNameString, "'.")));
     catchScope.clearException();
-    return deferred->promise();
+    return promise;
 }
 
 Identifier JSModuleLoader::resolveSync(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
@@ -292,10 +290,8 @@ Identifier JSModuleLoader::resolveSync(JSGlobalObject* globalObject, JSValue nam
 JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
@@ -303,13 +299,13 @@ JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception();
         catchScope.clearException();
-        auto result = deferred->reject(globalObject, exception);
+        promise->reject(globalObject, exception);
         catchScope.clearException();
-        return result;
+        return promise;
     }
-    auto result = deferred->resolve(globalObject, identifierToJSValue(vm, moduleKey));
+    promise->resolve(globalObject, identifierToJSValue(vm, moduleKey));
     catchScope.clearException();
-    return result;
+    return promise;
 }
 
 JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, JSValue parameters, JSValue scriptFetcher)
@@ -323,8 +319,7 @@ JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue k
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
         RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, parameters, scriptFetcher));
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
@@ -332,13 +327,13 @@ JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue k
     if (UNLIKELY(catchScope.exception())) {
         JSValue exception = catchScope.exception()->value();
         catchScope.clearException();
-        deferred->reject(globalObject, exception);
+        promise->reject(globalObject, exception);
         catchScope.clearException();
-        return deferred->promise();
+        return promise;
     }
-    deferred->reject(globalObject, createError(globalObject, makeString("Could not open the module '", moduleKey, "'.")));
+    promise->reject(globalObject, createError(globalObject, makeString("Could not open the module '", moduleKey, "'.")));
     catchScope.clearException();
-    return deferred->promise();
+    return promise;
 }
 
 JSObject* JSModuleLoader::createImportMetaProperties(JSGlobalObject* globalObject, JSValue key, JSModuleRecord* moduleRecord, JSValue scriptFetcher)
@@ -385,17 +380,15 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(JSGlobalObject
 EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue rejectionReason) {
         catchScope.clearException();
-        auto result = deferred->reject(globalObject, rejectionReason);
+        promise->reject(globalObject, rejectionReason);
         catchScope.clearException();
-        return JSValue::encode(result);
+        return JSValue::encode(promise);
     };
 
     const Identifier moduleKey = callFrame->argument(0).toPropertyKey(globalObject);
@@ -408,7 +401,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
-        return JSValue::encode(JSWebAssembly::instantiate(globalObject, deferred, moduleKey, jsSourceCode));
+        return JSValue::encode(JSWebAssembly::instantiate(globalObject, promise, moduleKey, jsSourceCode));
 #endif
 
     CodeProfiling profile(sourceCode);
@@ -425,9 +418,9 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(JSGlobalObject* globalObjec
     if (UNLIKELY(catchScope.exception()))
         return reject(catchScope.exception());
 
-    auto result = deferred->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
+    promise->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
     catchScope.clearException();
-    return JSValue::encode(result);
+    return JSValue::encode(promise);
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderRequestedModules(JSGlobalObject* globalObject, CallFrame* callFrame)

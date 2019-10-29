@@ -98,8 +98,8 @@ private:
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
 #if ENABLE(WEBASSEMBLY)
-    static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromiseDeferred*, JSC::JSValue);
-    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromiseDeferred*, JSC::JSValue, JSC::JSObject*);
+    static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue);
+    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, JSC::JSObject*);
 #endif
 
     RefPtr<DOMWindow> m_wrapped;

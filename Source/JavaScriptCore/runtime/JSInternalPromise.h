@@ -43,7 +43,7 @@ class JSInternalPromise final : public JSPromise {
 public:
     typedef JSPromise Base;
 
-    static JSInternalPromise* create(VM&, Structure*);
+    JS_EXPORT_PRIVATE static JSInternalPromise* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;

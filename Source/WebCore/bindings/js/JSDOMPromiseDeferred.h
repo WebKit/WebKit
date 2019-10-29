@@ -29,13 +29,13 @@
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
 #include <JavaScriptCore/CatchScope.h>
-#include <JavaScriptCore/JSPromiseDeferred.h>
+#include <JavaScriptCore/JSPromise.h>
 
 namespace WebCore {
 
 class JSDOMWindow;
 
-class DeferredPromise : public DOMGuarded<JSC::JSPromiseDeferred> {
+class DeferredPromise : public DOMGuarded<JSC::JSPromise> {
 public:
     enum class Mode {
         ClearPromiseOnResolve,
@@ -44,13 +44,13 @@ public:
 
     static RefPtr<DeferredPromise> create(JSDOMGlobalObject& globalObject, Mode mode = Mode::ClearPromiseOnResolve)
     {
-        auto* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
-        if (!promiseDeferred)
-            return nullptr;
-        return adoptRef(new DeferredPromise(globalObject, *promiseDeferred, mode));
+        JSC::VM& vm = JSC::getVM(&globalObject);
+        auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+        ASSERT(promise);
+        return adoptRef(new DeferredPromise(globalObject, *promise, mode));
     }
 
-    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode = Mode::ClearPromiseOnResolve)
+    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromise& deferred, Mode mode = Mode::ClearPromiseOnResolve)
     {
         return adoptRef(*new DeferredPromise(globalObject, deferred, mode));
     }
@@ -149,18 +149,19 @@ public:
     void whenSettled(Function<void()>&&);
 
 private:
-    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode)
-        : DOMGuarded<JSC::JSPromiseDeferred>(globalObject, deferred)
+    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& deferred, Mode mode)
+        : DOMGuarded<JSC::JSPromise>(globalObject, deferred)
         , m_mode(mode)
     {
     }
 
-    JSC::JSPromiseDeferred* deferred() const { return guarded(); }
+    JSC::JSPromise* deferred() const { return guarded(); }
 
-    WEBCORE_EXPORT void callFunction(JSC::JSGlobalObject&, JSC::JSValue function, JSC::JSValue resolution);
+    enum class ResolveMode { Resolve, Reject };
+    WEBCORE_EXPORT void callFunction(JSC::JSGlobalObject&, ResolveMode, JSC::JSValue resolution);
 
-    void resolve(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, deferred()->resolve(), resolution); }
-    void reject(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, deferred()->reject(), resolution); }
+    void resolve(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, ResolveMode::Resolve, resolution); }
+    void reject(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue resolution) { callFunction(lexicalGlobalObject, ResolveMode::Reject, resolution); }
 
     Mode m_mode;
 };
@@ -169,58 +170,58 @@ class DOMPromiseDeferredBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     DOMPromiseDeferredBase(Ref<DeferredPromise>&& genericPromise)
-        : m_promiseDeferred(WTFMove(genericPromise))
+        : m_promise(WTFMove(genericPromise))
     {
     }
 
     DOMPromiseDeferredBase(DOMPromiseDeferredBase&& promise)
-        : m_promiseDeferred(WTFMove(promise.m_promiseDeferred))
+        : m_promise(WTFMove(promise.m_promise))
     {
     }
 
     DOMPromiseDeferredBase(const DOMPromiseDeferredBase& other)
-        : m_promiseDeferred(other.m_promiseDeferred.copyRef())
+        : m_promise(other.m_promise.copyRef())
     {
     }
 
     DOMPromiseDeferredBase& operator=(const DOMPromiseDeferredBase& other)
     {
-        m_promiseDeferred = other.m_promiseDeferred.copyRef();
+        m_promise = other.m_promise.copyRef();
         return *this;
     }
 
     DOMPromiseDeferredBase& operator=(DOMPromiseDeferredBase&& other)
     {
-        m_promiseDeferred = WTFMove(other.m_promiseDeferred);
+        m_promise = WTFMove(other.m_promise);
         return *this;
     }
 
     void reject()
     {
-        m_promiseDeferred->reject();
+        m_promise->reject();
     }
 
     template<typename... ErrorType> 
     void reject(ErrorType&&... error)
     {
-        m_promiseDeferred->reject(std::forward<ErrorType>(error)...);
+        m_promise->reject(std::forward<ErrorType>(error)...);
     }
 
     template<typename IDLType>
     void rejectType(typename IDLType::ParameterType value)
     {
-        m_promiseDeferred->reject<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+        m_promise->reject<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 
-    JSC::JSValue promise() const { return m_promiseDeferred->promise(); };
+    JSC::JSValue promise() const { return m_promise->promise(); };
 
     void whenSettled(Function<void()>&& function)
     {
-        m_promiseDeferred->whenSettled(WTFMove(function));
+        m_promise->whenSettled(WTFMove(function));
     }
 
 protected:
-    Ref<DeferredPromise> m_promiseDeferred;
+    Ref<DeferredPromise> m_promise;
 };
 
 template<typename IDLType> 
@@ -233,7 +234,7 @@ public:
 
     void resolve(typename IDLType::ParameterType value)
     { 
-        m_promiseDeferred->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+        m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
 
     void settle(ExceptionOr<typename IDLType::ParameterType>&& result)
@@ -255,7 +256,7 @@ public:
 
     void resolve()
     { 
-        m_promiseDeferred->resolve();
+        m_promise->resolve();
     }
 
     void settle(ExceptionOr<void>&& result)
@@ -274,53 +275,49 @@ Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow&);
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
-WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
 
 using PromiseFunction = void(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&);
 
-enum class PromiseExecutionScope { WindowOnly, WindowOrWorker };
-
-template<PromiseFunction promiseFunction, PromiseExecutionScope executionScope>
+template<PromiseFunction promiseFunction>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
+    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise);
 
-    // promiseDeferred can be null when terminating a Worker abruptly.
-    if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
-        return JSC::jsUndefined();
+    promiseFunction(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
-    promiseFunction(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promiseDeferred));
-
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promiseDeferred);
-    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
-    return promiseDeferred->promise();
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise);
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+    return promise;
 }
 
-template<PromiseExecutionScope executionScope, typename PromiseFunctor>
+template<typename PromiseFunctor>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromiseFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&globalObject);
+    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise);
 
-    // promiseDeferred can be null when terminating a Worker abruptly.
-    if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
-        return JSC::jsUndefined();
+    functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
-    functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promiseDeferred));
-
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promiseDeferred);
-    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
-    return promiseDeferred->promise();
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise);
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+    return promise;
 }
 
 using BindingPromiseFunction = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, Ref<DeferredPromise>&&);
@@ -330,10 +327,10 @@ inline void bindingPromiseFunctionAdapter(JSC::JSGlobalObject& lexicalGlobalObje
     bindingFunction(&lexicalGlobalObject, &callFrame, WTFMove(promise));
 }
 
-template<BindingPromiseFunction bindingPromiseFunction, PromiseExecutionScope executionScope>
+template<BindingPromiseFunction bindingPromiseFunction>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
-    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>, executionScope>(lexicalGlobalObject, callFrame);
+    return callPromiseFunction<bindingPromiseFunctionAdapter<bindingPromiseFunction>>(lexicalGlobalObject, callFrame);
 }
 
 } // namespace WebCore

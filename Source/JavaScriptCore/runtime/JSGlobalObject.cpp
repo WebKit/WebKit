@@ -543,7 +543,6 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSFunction::create(init.vm, promiseConstructorResolveCodeGenerator(init.vm), init.owner));
         });
 
-    m_newPromiseCapabilityFunction.set(vm, this, JSFunction::create(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_throwTypeErrorGetterSetter.initLater(
         [] (const Initializer<GetterSetter>& init) {
@@ -979,6 +978,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     JSObject* setIteratorPrototype = SetIteratorPrototype::create(vm, this, SetIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
     setIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, setIteratorPrototype);
+
+    m_newPromiseCapabilityFunction.set(vm, this, newPromiseCapabilityPrivateFunction);
+    m_resolvePromiseFunction.set(vm, this, resolvePromisePrivateFunction);
+    m_rejectPromiseFunction.set(vm, this, rejectPromisePrivateFunction);
 
     GlobalPropertyInfo staticGlobals[] = {
 #define INIT_PRIVATE_GLOBAL(varName, funcName, code) GlobalPropertyInfo(vm.propertyNames->builtinNames().funcName ## PrivateName(), varName ## PrivateFunction, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
@@ -1706,10 +1709,12 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_evalFunction.visit(visitor);
     thisObject->m_iteratorProtocolFunction.visit(visitor);
     thisObject->m_promiseResolveFunction.visit(visitor);
+    visitor.append(thisObject->m_newPromiseCapabilityFunction);
+    visitor.append(thisObject->m_resolvePromiseFunction);
+    visitor.append(thisObject->m_rejectPromiseFunction);
     visitor.append(thisObject->m_promiseProtoThenFunction);
     visitor.append(thisObject->m_objectProtoValueOfFunction);
     visitor.append(thisObject->m_numberProtoToStringFunction);
-    visitor.append(thisObject->m_newPromiseCapabilityFunction);
     visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
     visitor.append(thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);

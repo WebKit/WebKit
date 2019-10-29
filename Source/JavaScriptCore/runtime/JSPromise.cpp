@@ -32,6 +32,7 @@
 #include "JSInternalFieldObjectImplInlines.h"
 #include "JSPromiseConstructor.h"
 #include "Microtask.h"
+#include "PromiseTimer.h"
 
 namespace JSC {
 
@@ -83,30 +84,107 @@ JSValue JSPromise::result(VM& vm) const
     return internalField(static_cast<unsigned>(Field::ReactionsOrResult)).get();
 }
 
-bool JSPromise::isHandled(VM&) const
+uint32_t JSPromise::flags() const
 {
     JSValue value = internalField(static_cast<unsigned>(Field::Flags)).get();
-    uint32_t flags = value.asUInt32AsAnyInt();
-    return flags & isHandledFlag;
+    return value.asUInt32AsAnyInt();
 }
 
-JSPromise* JSPromise::resolve(JSGlobalObject* globalObject, JSValue value)
+bool JSPromise::isHandled(VM&) const
 {
-    auto& vm = globalObject->vm();
+    return flags() & isHandledFlag;
+}
+
+JSPromise::DeferredData JSPromise::createDeferredData(JSGlobalObject* globalObject, JSPromiseConstructor* promiseConstructor)
+{
+    VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* promiseResolveFunction = globalObject->promiseResolveFunction();
+    JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
     CallData callData;
-    auto callType = JSC::getCallData(vm, promiseResolveFunction, callData);
+    CallType callType = JSC::getCallData(globalObject->vm(), newPromiseCapabilityFunction, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(promiseConstructor);
+    ASSERT(!arguments.hasOverflowed());
+    JSValue deferred = call(globalObject, newPromiseCapabilityFunction, callType, callData, jsUndefined(), arguments);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    DeferredData result;
+    result.promise = jsCast<JSPromise*>(deferred.get(globalObject, vm.propertyNames->builtinNames().promisePrivateName()));
+    RETURN_IF_EXCEPTION(scope, { });
+    result.resolve = jsCast<JSFunction*>(deferred.get(globalObject, vm.propertyNames->builtinNames().resolvePrivateName()));
+    RETURN_IF_EXCEPTION(scope, { });
+    result.reject = jsCast<JSFunction*>(deferred.get(globalObject, vm.propertyNames->builtinNames().rejectPrivateName()));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return result;
+}
+
+JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSFunction* function = globalObject->promiseResolveFunction();
+    CallData callData;
+    CallType callType = JSC::getCallData(vm, function, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);
-    ASSERT(!arguments.hasOverflowed());
-    auto result = call(globalObject, promiseResolveFunction, callType, callData, globalObject->promiseConstructor(), arguments);
+    auto result = call(globalObject, function, callType, callData, globalObject->promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(result.inherits<JSPromise>(vm));
     return jsCast<JSPromise*>(result);
+}
+
+static inline void callFunction(JSGlobalObject* globalObject, JSValue function, JSPromise* promise, JSValue value)
+{
+    CallData callData;
+    CallType callType = getCallData(globalObject->vm(), function, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(promise);
+    arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
+
+    call(globalObject, function, callType, callData, jsUndefined(), arguments);
+}
+
+void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    uint32_t flags = this->flags();
+    if (!(flags & isFirstResolvingFunctionCalledFlag)) {
+        internalField(static_cast<unsigned>(Field::Flags)).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
+        JSGlobalObject* globalObject = this->globalObject(vm);
+        callFunction(lexicalGlobalObject, globalObject->resolvePromiseFunction(), this, value);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+    vm.promiseTimer->cancelPendingPromise(this);
+}
+
+void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    uint32_t flags = this->flags();
+    if (!(flags & isFirstResolvingFunctionCalledFlag)) {
+        internalField(static_cast<unsigned>(Field::Flags)).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
+        JSGlobalObject* globalObject = this->globalObject(vm);
+        callFunction(lexicalGlobalObject, globalObject->rejectPromiseFunction(), this, value);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+    vm.promiseTimer->cancelPendingPromise(this);
+}
+
+void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, Exception* reason)
+{
+    reject(lexicalGlobalObject, reason->value());
 }
 
 } // namespace JSC

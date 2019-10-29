@@ -47,7 +47,6 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSPromise.h"
-#include "JSPromiseDeferred.h"
 #include "JSRetainPtr.h"
 #include "JSString.h"
 #include "JSValueRef.h"
@@ -289,7 +288,7 @@ JSObjectRef JSObjectMakeDeferredPromise(JSContextRef ctx, JSObjectRef* resolve, 
     JSLockHolder locker(globalObject);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    JSPromiseDeferred::DeferredData data = JSPromiseDeferred::createDeferredData(globalObject, globalObject->promiseConstructor());
+    JSPromise::DeferredData data = JSPromise::createDeferredData(globalObject, globalObject->promiseConstructor());
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 

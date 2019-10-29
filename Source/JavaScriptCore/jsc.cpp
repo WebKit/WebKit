@@ -47,7 +47,6 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInternalPromise.h"
-#include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
 #include "JSModuleLoader.h"
 #include "JSNativeStdFunction.h"
@@ -61,7 +60,7 @@
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
-#include "PromiseDeferredTimer.h"
+#include "PromiseTimer.h"
 #include "ProtoCallFrame.h"
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
@@ -826,15 +825,14 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue rejectionReason) {
         catchScope.clearException();
-        auto result = deferred->reject(globalObject, rejectionReason);
+        promise->reject(globalObject, rejectionReason);
         catchScope.clearException();
-        return result;
+        return promise;
     };
 
     if (sourceOrigin.isNull())
@@ -1161,16 +1159,14 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector& buffe
 JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
+    JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue rejectionReason) {
         catchScope.clearException();
-        auto result = deferred->reject(globalObject, rejectionReason);
+        promise->reject(globalObject, rejectionReason);
         catchScope.clearException();
-        return result;
+        return promise;
     };
 
     String moduleKey = key.toWTFString(globalObject);
@@ -1192,18 +1188,18 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
             catchScope.releaseAssertNoException();
             auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
             catchScope.releaseAssertNoException();
-            auto result = deferred->resolve(globalObject, sourceCode);
+            promise->resolve(globalObject, sourceCode);
             catchScope.clearException();
-            return result;
+            return promise;
         }
     }
 #endif
 
     auto sourceCode = JSSourceCode::create(vm, jscSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, WTFMove(moduleURL), TextPosition(), SourceProviderSourceType::Module));
     catchScope.releaseAssertNoException();
-    auto result = deferred->resolve(globalObject, sourceCode);
+    promise->resolve(globalObject, sourceCode);
     catchScope.clearException();
-    return result;
+    return promise;
 }
 
 JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSModuleRecord*, JSValue)
@@ -3003,7 +2999,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         func(vm, globalObject, success);
         vm.drainMicrotasks();
     }
-    vm.promiseDeferredTimer->runRunLoop();
+    vm.promiseTimer->runRunLoop();
     {
         JSLockHolder locker(vm);
         if (options.m_interactive && success)

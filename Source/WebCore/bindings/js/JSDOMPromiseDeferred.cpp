@@ -40,30 +40,24 @@ using namespace JSC;
 JSC::JSValue DeferredPromise::promise() const
 {
     ASSERT(deferred());
-    return deferred()->promise();
+    return deferred();
 }
 
-void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, JSValue function, JSValue resolution)
+void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveMode mode, JSValue resolution)
 {
     if (!canInvokeCallback())
         return;
 
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    CallData callData;
-    CallType callType = getCallData(vm, function, callData);
-    ASSERT(callType != CallType::None);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(resolution);
-    ASSERT(!arguments.hasOverflowed());
-
-    call(&lexicalGlobalObject, function, callType, callData, jsUndefined(), arguments);
-
-    // DeferredPromise should only be used by internal implementations that are well behaved.
-    // In practice, the only exception we should ever see here is the TerminatedExecutionException.
-    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(vm, scope.exception()));
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    switch (mode) {
+    case ResolveMode::Resolve:
+        deferred()->resolve(&lexicalGlobalObject, resolution);
+        break;
+    case ResolveMode::Reject:
+        deferred()->reject(&lexicalGlobalObject, resolution);
+        break;
+    }
 
     if (m_mode == Mode::ClearPromiseOnResolve)
         clear();
@@ -71,7 +65,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, JSValue 
 
 void DeferredPromise::whenSettled(Function<void()>&& callback)
 {
-    DOMPromise::whenPromiseIsSettled(globalObject(), deferred()->promise(), WTFMove(callback));
+    DOMPromise::whenPromiseIsSettled(globalObject(), deferred(), WTFMove(callback));
 }
 
 void DeferredPromise::reject()
@@ -175,7 +169,7 @@ void DeferredPromise::reject(const JSC::PrivateName& privateName)
     reject(*lexicalGlobalObject, JSC::Symbol::create(lexicalGlobalObject->vm(), privateName.uid()));
 }
 
-void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromiseDeferred& promiseDeferred)
+void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromise& promise)
 {
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -186,15 +180,14 @@ void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, J
     JSValue error = scope.exception()->value();
     scope.clearException();
 
-    DeferredPromise::create(globalObject, promiseDeferred)->reject<IDLAny>(error);
+    DeferredPromise::create(globalObject, promise)->reject<IDLAny>(error);
 }
 
 Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow& domWindow)
 {
-    JSC::JSPromiseDeferred* deferred = JSC::JSPromiseDeferred::tryCreate(&domWindow);
-    // deferred can only be null in workers.
-    RELEASE_ASSERT(deferred);
-    return DeferredPromise::create(domWindow, *deferred);
+    auto* promise = JSPromise::create(domWindow.vm(), domWindow.promiseStructure());
+    RELEASE_ASSERT(promise);
+    return DeferredPromise::create(domWindow, *promise);
 }
 
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const String& errorMessage, RejectedPromiseWithTypeErrorCause cause)

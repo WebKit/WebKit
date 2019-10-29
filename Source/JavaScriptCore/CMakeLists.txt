@@ -874,7 +874,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
-    runtime/JSInternalPromiseDeferred.h
     runtime/JSMicrotask.h
     runtime/JSLock.h
     runtime/JSMap.h
@@ -888,7 +887,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSObjectInlines.h
     runtime/JSPromise.h
     runtime/JSPromiseConstructor.h
-    runtime/JSPromiseDeferred.h
     runtime/JSPropertyNameEnumerator.h
     runtime/JSProxy.h
     runtime/JSRunLoopTimer.h
@@ -931,7 +929,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ParseInt.h
     runtime/PrivateName.h
     runtime/ProgramExecutable.h
-    runtime/PromiseDeferredTimer.h
+    runtime/PromiseTimer.h
     runtime/PropertyDescriptor.h
     runtime/PropertyMapHashTable.h
     runtime/PropertyName.h

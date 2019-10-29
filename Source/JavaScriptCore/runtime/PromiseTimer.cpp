@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "PromiseDeferredTimer.h"
+#include "PromiseTimer.h"
 
-#include "JSPromiseDeferred.h"
+#include "JSPromise.h"
 #include "StrongInlines.h"
 #include "VM.h"
 #include <wtf/Locker.h>
@@ -34,16 +34,16 @@
 
 namespace JSC {
 
-namespace PromiseDeferredTimerInternal {
+namespace PromiseTimerInternal {
 static constexpr bool verbose = false;
 }
 
-PromiseDeferredTimer::PromiseDeferredTimer(VM& vm)
+PromiseTimer::PromiseTimer(VM& vm)
     : Base(vm)
 {
 }
 
-void PromiseDeferredTimer::doWork(VM& vm)
+void PromiseTimer::doWork(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
     m_taskLock.lock();
@@ -55,7 +55,7 @@ void PromiseDeferredTimer::doWork(VM& vm)
 
     while (!m_tasks.isEmpty()) {
         auto [ticket, task] = m_tasks.takeLast();
-        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Doing work on promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseTimerInternal::verbose, "Doing work on promise: ", RawPointer(ticket));
 
         // We may have already canceled these promises.
         if (m_pendingPromises.contains(ticket)) {
@@ -82,7 +82,7 @@ void PromiseDeferredTimer::doWork(VM& vm)
     m_taskLock.unlock();
 }
 
-void PromiseDeferredTimer::runRunLoop()
+void PromiseTimer::runRunLoop()
 {
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
 #if USE(CF)
@@ -98,7 +98,7 @@ void PromiseDeferredTimer::runRunLoop()
     }
 }
 
-void PromiseDeferredTimer::addPendingPromise(VM& vm, JSPromiseDeferred* ticket, Vector<Strong<JSCell>>&& dependencies)
+void PromiseTimer::addPendingPromise(VM& vm, JSPromise* ticket, Vector<Strong<JSCell>>&& dependencies)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
     for (unsigned i = 0; i < dependencies.size(); ++i)
@@ -106,26 +106,22 @@ void PromiseDeferredTimer::addPendingPromise(VM& vm, JSPromiseDeferred* ticket, 
 
     auto result = m_pendingPromises.add(ticket, Vector<Strong<JSCell>>());
     if (result.isNewEntry) {
-        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Adding new pending promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseTimerInternal::verbose, "Adding new pending promise: ", RawPointer(ticket));
         dependencies.append(Strong<JSCell>(vm, ticket));
         result.iterator->value = WTFMove(dependencies);
     } else {
-        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseTimerInternal::verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
         result.iterator->value.appendVector(dependencies);
     }
-
-#ifndef NDEBUG
-    ticket->promiseAsyncPending();
-#endif
 }
 
-bool PromiseDeferredTimer::hasPendingPromise(JSPromiseDeferred* ticket)
+bool PromiseTimer::hasPendingPromise(JSPromise* ticket)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
     return m_pendingPromises.contains(ticket);
 }
 
-bool PromiseDeferredTimer::hasDependancyInPendingPromise(JSPromiseDeferred* ticket, JSCell* dependency)
+bool PromiseTimer::hasDependancyInPendingPromise(JSPromise* ticket, JSCell* dependency)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
     ASSERT(m_pendingPromises.contains(ticket));
@@ -134,18 +130,18 @@ bool PromiseDeferredTimer::hasDependancyInPendingPromise(JSPromiseDeferred* tick
     return result.contains(dependency);
 }
 
-bool PromiseDeferredTimer::cancelPendingPromise(JSPromiseDeferred* ticket)
+bool PromiseTimer::cancelPendingPromise(JSPromise* ticket)
 {
     ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
     bool result = m_pendingPromises.remove(ticket);
 
     if (result)
-        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Canceling promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseTimerInternal::verbose, "Canceling promise: ", RawPointer(ticket));
 
     return result;
 }
 
-void PromiseDeferredTimer::scheduleWorkSoon(JSPromiseDeferred* ticket, Task&& task)
+void PromiseTimer::scheduleWorkSoon(JSPromise* ticket, Task&& task)
 {
     LockHolder locker(m_taskLock);
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));

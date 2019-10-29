@@ -35,10 +35,10 @@ public:
     using Operation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, ClassParameter, Ref<DeferredPromise>&&, JSC::ThrowScope&);
     using StaticOperation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
-    template<Operation operation, PromiseExecutionScope executionScope, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
+    template<Operation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
-        return JSC::JSValue::encode(callPromiseFunction<executionScope>(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
+        return JSC::JSValue::encode(callPromiseFunction(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
             
             auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
@@ -71,10 +71,10 @@ public:
         return operation(&lexicalGlobalObject, &callFrame, thisObject, throwScope);
     }
 
-    template<StaticOperation operation, PromiseExecutionScope executionScope, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
+    template<StaticOperation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue callStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char*)
     {
-        return JSC::JSValue::encode(callPromiseFunction<executionScope>(lexicalGlobalObject, callFrame, [] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
+        return JSC::JSValue::encode(callPromiseFunction(lexicalGlobalObject, callFrame, [] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
             
             // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject.

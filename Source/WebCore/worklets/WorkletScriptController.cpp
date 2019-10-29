@@ -41,7 +41,7 @@
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/PromiseDeferredTimer.h>
+#include <JavaScriptCore/PromiseTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {

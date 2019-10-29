@@ -49,10 +49,9 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSInternalPromise.h>
-#include <JavaScriptCore/JSInternalPromiseDeferred.h>
 #include <JavaScriptCore/JSWebAssembly.h>
 #include <JavaScriptCore/Microtask.h>
-#include <JavaScriptCore/PromiseDeferredTimer.h>
+#include <JavaScriptCore/PromiseTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
@@ -317,9 +316,10 @@ JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderFetch(JSC::JSGlobalObject* 
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
         RELEASE_AND_RETURN(scope, document->moduleLoader().fetch(globalObject, moduleLoader, moduleKey, parameters, scriptFetcher));
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, deferred->reject(globalObject, jsUndefined()));
+    JSC::JSInternalPromise* promise = JSC::JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    scope.release();
+    promise->reject(globalObject, jsUndefined());
+    return promise;
 }
 
 JSC::JSValue JSDOMWindowBase::moduleLoaderEvaluate(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, JSC::JSValue scriptFetcher)
@@ -337,9 +337,10 @@ JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalO
     JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
     if (RefPtr<Document> document = thisObject->wrapped().document())
         RELEASE_AND_RETURN(scope, document->moduleLoader().importModule(globalObject, moduleLoader, moduleName, parameters, sourceOrigin));
-    JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, deferred->reject(globalObject, jsUndefined()));
+    JSC::JSInternalPromise* promise = JSC::JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    scope.release();
+    promise->reject(globalObject, jsUndefined());
+    return promise;
 }
 
 JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject* globalObject, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSModuleRecord* moduleRecord, JSC::JSValue scriptFetcher)
@@ -351,7 +352,7 @@ JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGl
 }
 
 #if ENABLE(WEBASSEMBLY)
-static Optional<Vector<uint8_t>> tryAllocate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSPromiseDeferred* promise, const char* data, size_t byteSize)
+static Optional<Vector<uint8_t>> tryAllocate(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSPromise* promise, const char* data, size_t byteSize)
 {
     Vector<uint8_t> arrayBuffer;
     if (!arrayBuffer.tryReserveCapacity(byteSize)) {
@@ -365,7 +366,7 @@ static Optional<Vector<uint8_t>> tryAllocate(JSC::JSGlobalObject* lexicalGlobalO
     return arrayBuffer;
 }
 
-static bool isResponseCorrect(JSC::JSGlobalObject* lexicalGlobalObject, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise)
+static bool isResponseCorrect(JSC::JSGlobalObject* lexicalGlobalObject, FetchResponse* inputResponse, JSC::JSPromise* promise)
 {
     bool isResponseCorsSameOrigin = inputResponse->type() == ResourceResponse::Type::Basic || inputResponse->type() == ResourceResponse::Type::Cors || inputResponse->type() == ResourceResponse::Type::Default;
 
@@ -388,7 +389,7 @@ static bool isResponseCorrect(JSC::JSGlobalObject* lexicalGlobalObject, FetchRes
     return true;
 }
 
-static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, FetchResponse* inputResponse, JSC::JSPromiseDeferred* promise, Function<void(JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize)>&& actionCallback)
+static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, FetchResponse* inputResponse, JSC::JSPromise* promise, Function<void(JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize)>&& actionCallback)
 {
     if (!isResponseCorrect(globalObject, inputResponse, promise))
         return;
@@ -433,14 +434,14 @@ static void handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, F
     });
 }
 
-void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromiseDeferred* promise, JSC::JSValue source)
+void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source)
 {
     ASSERT(source);
 
     VM& vm = globalObject->vm();
 
-    ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
-    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
+    ASSERT(vm.promiseTimer->hasPendingPromise(promise));
+    ASSERT(vm.promiseTimer->hasDependancyInPendingPromise(promise, globalObject));
 
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
         handleResponseOnStreamingAction(globalObject, inputResponse, promise, [promise] (JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize) mutable {
@@ -451,15 +452,15 @@ void JSDOMWindowBase::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::J
         promise->reject(globalObject, createTypeError(globalObject, "first argument must be an Response or Promise for Response"_s));
 }
 
-void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromiseDeferred* promise, JSC::JSValue source, JSC::JSObject* importedObject)
+void JSDOMWindowBase::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSPromise* promise, JSC::JSValue source, JSC::JSObject* importedObject)
 {
     ASSERT(source);
 
     VM& vm = globalObject->vm();
 
-    ASSERT(vm.promiseDeferredTimer->hasPendingPromise(promise));
-    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, globalObject));
-    ASSERT(vm.promiseDeferredTimer->hasDependancyInPendingPromise(promise, importedObject));
+    ASSERT(vm.promiseTimer->hasPendingPromise(promise));
+    ASSERT(vm.promiseTimer->hasDependancyInPendingPromise(promise, globalObject));
+    ASSERT(vm.promiseTimer->hasDependancyInPendingPromise(promise, importedObject));
 
     if (auto inputResponse = JSFetchResponse::toWrapped(vm, source)) {
         handleResponseOnStreamingAction(globalObject, inputResponse, promise, [promise, importedObject] (JSC::JSGlobalObject* lexicalGlobalObject, const char* data, size_t byteSize) mutable {

@@ -85,11 +85,11 @@
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
-#include "JSInternalPromiseDeferred.h"
+#include "JSInternalPromise.h"
 #include "JSLock.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
-#include "JSPromiseDeferred.h"
+#include "JSPromise.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScriptFetchParameters.h"
 #include "JSScriptFetcher.h"
@@ -120,7 +120,7 @@
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "ProgramExecutable.h"
-#include "PromiseDeferredTimer.h"
+#include "PromiseTimer.h"
 #include "PropertyMapHashTable.h"
 #include "ProxyRevoke.h"
 #include "RandomizingFuzzerAgent.h"
@@ -294,7 +294,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , clientData(0)
     , topEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
-    , promiseDeferredTimer(PromiseDeferredTimer::create(*this))
+    , promiseTimer(PromiseTimer::create(*this))
     , m_atomStringTable(vmType == Default ? Thread::current().atomStringTable() : new AtomStringTable)
     , propertyNames(nullptr)
     , emptyList(new ArgList)
@@ -379,8 +379,6 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
-    promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
-    internalPromiseDeferredStructure.set(*this, JSInternalPromiseDeferred::createStructure(*this, 0, jsNull()));
     nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));
     programCodeBlockStructure.set(*this, ProgramCodeBlock::createStructure(*this, 0, jsNull()));
     moduleProgramCodeBlockStructure.set(*this, ModuleProgramCodeBlock::createStructure(*this, 0, jsNull()));
@@ -490,7 +488,7 @@ VM::~VM()
     auto destructionLocker = holdLock(s_destructionLock.read());
     
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
-    promiseDeferredTimer->stopRunningTasks();
+    promiseTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::Worklist* worklist = Wasm::existingWorklistOrNull())
         worklist->stopAllPlansForContext(wasmContext);

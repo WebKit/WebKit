@@ -5197,7 +5197,6 @@ sub GenerateOperationTrampolineDefinition
 
     my @callFunctionTemplateArguments = ();
     push(@callFunctionTemplateArguments, $functionBodyName);
-    push(@callFunctionTemplateArguments, "PromiseExecutionScope::${exposureScope}") if $hasPromiseReturnType && !$operation->extendedAttributes->{ReturnsOwnPromise};
     push(@callFunctionTemplateArguments, "CastedThisErrorBehavior::Assert") if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
 
     push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${functionName}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");

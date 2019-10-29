@@ -34,7 +34,6 @@
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
-#include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
 #include "JSModuleLoader.h"
 #include "JSModuleRecord.h"
@@ -193,11 +192,9 @@ static JSInternalPromise* rejectPromise(JSGlobalObject* globalObject)
     scope.assertNoException();
     JSValue exception = scope.exception()->value();
     scope.clearException();
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(globalObject);
-    scope.releaseAssertNoException();
-    deferred->reject(globalObject, exception);
-    scope.releaseAssertNoException();
-    return deferred->promise();
+    JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
+    promise->reject(globalObject, exception);
+    return promise;
 }
 
 JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, Symbol* moduleId, JSValue parameters, JSValue scriptFetcher)

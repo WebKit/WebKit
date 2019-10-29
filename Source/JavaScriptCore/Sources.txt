@@ -833,7 +833,6 @@ runtime/JSGlobalObjectFunctions.cpp
 runtime/JSImmutableButterfly.cpp
 runtime/JSInternalPromise.cpp
 runtime/JSInternalPromiseConstructor.cpp
-runtime/JSInternalPromiseDeferred.cpp
 runtime/JSInternalPromisePrototype.cpp
 runtime/JSLexicalEnvironment.cpp
 runtime/JSLock.cpp
@@ -850,7 +849,6 @@ runtime/JSONObject.cpp
 runtime/JSObject.cpp
 runtime/JSPromise.cpp
 runtime/JSPromiseConstructor.cpp
-runtime/JSPromiseDeferred.cpp
 runtime/JSPromisePrototype.cpp
 runtime/JSPropertyNameEnumerator.cpp
 runtime/JSProxy.cpp
@@ -907,7 +905,7 @@ runtime/ObjectToStringAdaptiveStructureWatchpoint.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
 runtime/ProgramExecutable.cpp
-runtime/PromiseDeferredTimer.cpp
+runtime/PromiseTimer.cpp
 runtime/PropertyDescriptor.cpp
 runtime/PropertySlot.cpp
 runtime/PropertyTable.cpp

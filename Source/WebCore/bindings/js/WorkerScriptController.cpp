@@ -42,7 +42,7 @@
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/PromiseDeferredTimer.h>
+#include <JavaScriptCore/PromiseTimer.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
@@ -250,7 +250,7 @@ void WorkerScriptController::addTimerSetNotification(JSC::JSRunLoopTimer::TimerN
 
     processTimer(m_vm->heap.fullActivityCallback());
     processTimer(m_vm->heap.edenActivityCallback());
-    processTimer(m_vm->promiseDeferredTimer.ptr());
+    processTimer(m_vm->promiseTimer.ptr());
 }
 
 void WorkerScriptController::removeTimerSetNotification(JSC::JSRunLoopTimer::TimerNotificationCallback callback)
@@ -263,7 +263,7 @@ void WorkerScriptController::removeTimerSetNotification(JSC::JSRunLoopTimer::Tim
 
     processTimer(m_vm->heap.fullActivityCallback());
     processTimer(m_vm->heap.edenActivityCallback());
-    processTimer(m_vm->promiseDeferredTimer.ptr());
+    processTimer(m_vm->promiseTimer.ptr());
 }
 
 void WorkerScriptController::attachDebugger(JSC::Debugger* debugger)

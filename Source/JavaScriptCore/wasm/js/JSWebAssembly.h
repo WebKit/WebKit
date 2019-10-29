@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSObject.h"
-#include "JSPromiseDeferred.h"
+#include "JSPromise.h"
 
 namespace JSC {
 
@@ -42,9 +42,9 @@ public:
 
     DECLARE_INFO;
 
-    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromiseDeferred*, Vector<uint8_t>&&);
-    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(JSGlobalObject*, JSPromiseDeferred*, Vector<uint8_t>&&, JSObject*);
-    static JSValue instantiate(JSGlobalObject*, JSPromiseDeferred*, const Identifier&, JSValue);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&);
+    JS_EXPORT_PRIVATE static void webAssemblyModuleInstantinateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&, JSObject*);
+    static JSValue instantiate(JSGlobalObject*, JSPromise*, const Identifier&, JSValue);
 
 protected:
     void finishCreation(VM&, JSGlobalObject*);

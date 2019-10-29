@@ -132,7 +132,7 @@ class JSWebAssemblyCodeBlockHeapCellType;
 class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
-class PromiseDeferredTimer;
+class PromiseTimer;
 class RegExp;
 class RegExpCache;
 class Register;
@@ -536,8 +536,6 @@ public:
     Strong<Structure> propertyTableStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
-    Strong<Structure> promiseDeferredStructure;
-    Strong<Structure> internalPromiseDeferredStructure;
     Strong<Structure> nativeStdFunctionCellStructure;
     Strong<Structure> programCodeBlockStructure;
     Strong<Structure> moduleProgramCodeBlockStructure;
@@ -556,7 +554,7 @@ public:
     Strong<JSCell> m_sentinelSetBucket;
     Strong<JSCell> m_sentinelMapBucket;
 
-    Ref<PromiseDeferredTimer> promiseDeferredTimer;
+    Ref<PromiseTimer> promiseTimer;
     
     JSCell* currentlyDestructingCallbackObject;
     const ClassInfo* currentlyDestructingCallbackObjectClassInfo { nullptr };

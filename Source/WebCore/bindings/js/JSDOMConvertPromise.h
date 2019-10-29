@@ -46,7 +46,7 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
 
         // 1. Let resolve be the original value of %Promise%.resolve.
         // 2. Let promise be the result of calling resolve with %Promise% as the this value and V as the single argument value.
-        auto* promise = JSC::JSPromise::resolve(globalObject, value);
+        auto* promise = JSC::JSPromise::resolvedPromise(globalObject, value);
         if (scope.exception()) {
             exceptionThrower(lexicalGlobalObject, scope);
             return nullptr;

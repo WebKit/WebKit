@@ -39,7 +39,6 @@
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
 #include "JSPromise.h"
-#include "JSPromiseDeferred.h"
 #include "JSString.h"
 #include "Lexer.h"
 #include "LiteralParser.h"
@@ -807,17 +806,15 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(JSGlobalObject* globalObj
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto* promise = JSPromiseDeferred::tryCreate(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto reject = [&] (JSValue rejectionReason) {
         catchScope.clearException();
         promise->reject(globalObject, rejectionReason);
         catchScope.clearException();
-        return JSValue::encode(promise->promise());
+        return JSValue::encode(promise);
     };
 
     auto sourceOrigin = callFrame->callerSourceOrigin(vm);
@@ -835,7 +832,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(JSGlobalObject* globalObject
     promise->resolve(globalObject, internalPromise);
 
     catchScope.clearException();
-    return JSValue::encode(promise->promise());
+    return JSValue::encode(promise);
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(JSGlobalObject* globalObject, CallFrame* callFrame)
