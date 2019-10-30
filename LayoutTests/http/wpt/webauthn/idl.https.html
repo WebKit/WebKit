@@ -62,6 +62,9 @@ promise_test(async () => {
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         }
     };
+    // A mock attestation object
+    if (window.internals)
+        internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64] } });
     createdCredential = await navigator.credentials.create(creationOptions);
 
 
@@ -70,6 +73,8 @@ promise_test(async () => {
             challenge: Base64URL.parse("MTIzNDU2"),
         }
     };
+    if (window.internals)
+        internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testAssertionMessageBase64] } });
     requestedCredential = await navigator.credentials.get(requestOptions);
 
     idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});

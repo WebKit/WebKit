@@ -3608,11 +3608,6 @@ void TestController::sendDisplayConfigurationChangedMessageForTesting()
     WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
 }
 
-void TestController::setWebAuthenticationMockConfiguration(WKDictionaryRef configuration)
-{
-    WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKContextGetWebsiteDataStore(platformContext()), configuration);
-}
-
 struct AdClickAttributionStringResultCallbackContext {
     explicit AdClickAttributionStringResultCallbackContext(TestController& controller)
         : testController(controller)

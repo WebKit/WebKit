@@ -1,3 +1,182 @@
+2019-10-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r250940. rdar://problem/56598350
+
+    [WebAuthn] Move the mock testing entrance to Internals
+    https://bugs.webkit.org/show_bug.cgi?id=202560
+    <rdar://problem/55973793>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    This patch moves TestRunner.setWebAuthenticationMockConfiguration to
+    Internals.setMockWebAuthenticationConfiguration and removes the old
+    entrance. The purpose of this patch is to allow API tests to use
+    the same mock infrastructure that is used by layout tests.
+    
+    No new tests, covered by updates on existing tests.
+    
+    * DerivedSources-input.xcfilelist:
+    * DerivedSources-output.xcfilelist:
+    * DerivedSources.make:
+    * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+    * WebCore.xcodeproj/project.pbxproj:
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::setMockWebAuthenticationConfiguration):
+    * testing/Internals.cpp:
+    (WebCore::Internals::setMockWebAuthenticationConfiguration):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    * testing/MockWebAuthenticationConfiguration.h: Added.
+    (WebCore::MockWebAuthenticationConfiguration::LocalConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::LocalConfiguration::decode):
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::HidConfiguration::decode):
+    (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::NfcConfiguration::decode):
+    (WebCore::MockWebAuthenticationConfiguration::encode const):
+    (WebCore::MockWebAuthenticationConfiguration::decode):
+    * testing/MockWebAuthenticationConfiguration.idl: Added.
+    
+    Source/WebKit:
+    
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration): Deleted.
+    * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+    * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+    (WebKit::AuthenticatorTransportService::createMock):
+    * UIProcess/WebAuthentication/AuthenticatorTransportService.h:
+    * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+    (WebKit::MockAuthenticatorManager::MockAuthenticatorManager):
+    * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.h:
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+    (WebKit::MockHidConnection::send):
+    (WebKit::MockHidConnection::registerDataReceivedCallbackInternal):
+    (WebKit::MockHidConnection::parseRequest):
+    (WebKit::MockHidConnection::feedReports):
+    (WebKit::MockHidConnection::shouldContinueFeedReports):
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+    * UIProcess/WebAuthentication/Mock/MockHidService.cpp:
+    (WebKit::MockHidService::MockHidService):
+    * UIProcess/WebAuthentication/Mock/MockHidService.h:
+    * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+    * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+    (WebKit::MockLocalConnection::MockLocalConnection):
+    * UIProcess/WebAuthentication/Mock/MockLocalService.h:
+    * UIProcess/WebAuthentication/Mock/MockLocalService.mm:
+    (WebKit::MockLocalService::MockLocalService):
+    * UIProcess/WebAuthentication/Mock/MockNfcService.h:
+    * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+    (WebKit::MockNfcService::MockNfcService):
+    (WebKit::MockNfcService::platformStartDiscovery):
+    (WebKit::MockNfcService::detectTags const):
+    * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h: Removed.
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setMockWebAuthenticationConfiguration):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::setMockWebAuthenticationConfiguration):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setWebAuthenticationMockConfiguration): Deleted.
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setWebAuthenticationMockConfiguration): Deleted.
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    * http/wpt/webauthn/ctap-hid-failure.https.html:
+    * http/wpt/webauthn/ctap-hid-success.https.html:
+    * http/wpt/webauthn/ctap-nfc-failure.https.html:
+    * http/wpt/webauthn/idl.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure.https.html:
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+    * http/wpt/webauthn/public-key-credential-create-success-nfc.https.html:
+    * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-local.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+    * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+    * http/wpt/webauthn/public-key-credential-get-success-nfc.https.html:
+    * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html:
+    * http/wpt/webauthn/resources/public-key-credential-ip-address.https.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@250940 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Move the mock testing entrance to Internals
+            https://bugs.webkit.org/show_bug.cgi?id=202560
+            <rdar://problem/55973793>
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+            (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration): Deleted.
+            * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+            * UIProcess/WebAuthentication/AuthenticatorTransportService.cpp:
+            (WebKit::AuthenticatorTransportService::createMock):
+            * UIProcess/WebAuthentication/AuthenticatorTransportService.h:
+            * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+            (WebKit::MockAuthenticatorManager::MockAuthenticatorManager):
+            * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.h:
+            * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+            (WebKit::MockHidConnection::send):
+            (WebKit::MockHidConnection::registerDataReceivedCallbackInternal):
+            (WebKit::MockHidConnection::parseRequest):
+            (WebKit::MockHidConnection::feedReports):
+            (WebKit::MockHidConnection::shouldContinueFeedReports):
+            * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+            * UIProcess/WebAuthentication/Mock/MockHidService.cpp:
+            (WebKit::MockHidService::MockHidService):
+            * UIProcess/WebAuthentication/Mock/MockHidService.h:
+            * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+            * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+            (WebKit::MockLocalConnection::MockLocalConnection):
+            * UIProcess/WebAuthentication/Mock/MockLocalService.h:
+            * UIProcess/WebAuthentication/Mock/MockLocalService.mm:
+            (WebKit::MockLocalService::MockLocalService):
+            * UIProcess/WebAuthentication/Mock/MockNfcService.h:
+            * UIProcess/WebAuthentication/Mock/MockNfcService.mm:
+            (WebKit::MockNfcService::MockNfcService):
+            (WebKit::MockNfcService::platformStartDiscovery):
+            (WebKit::MockNfcService::detectTags const):
+            * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h: Removed.
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setMockWebAuthenticationConfiguration):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::setMockWebAuthenticationConfiguration):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2019-10-24  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r250640. rdar://problem/56237433

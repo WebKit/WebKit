@@ -28,8 +28,8 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "HidConnection.h"
-#include "MockWebAuthenticationConfiguration.h"
 #include <WebCore/FidoHidMessage.h>
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -45,7 +45,7 @@ namespace WebKit {
 // According to different combinations of error and stages, error will manifest differently.
 class MockHidConnection final : public CanMakeWeakPtr<MockHidConnection>, public HidConnection {
 public:
-    MockHidConnection(IOHIDDeviceRef, const MockWebAuthenticationConfiguration&);
+    MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
     void send(Vector<uint8_t>&& data, DataSentCallback&&) final;
@@ -60,10 +60,10 @@ private:
     void shouldContinueFeedReports();
     void continueFeedReports();
 
-    MockWebAuthenticationConfiguration m_configuration;
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
     Optional<fido::FidoHidMessage> m_requestMessage;
-    MockWebAuthenticationConfiguration::Hid::Stage m_stage { MockWebAuthenticationConfiguration::Hid::Stage::Info };
-    MockWebAuthenticationConfiguration::Hid::SubStage m_subStage { MockWebAuthenticationConfiguration::Hid::SubStage::Init };
+    WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { MockWebAuthenticationConfiguration::HidStage::Info };
+    WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { MockWebAuthenticationConfiguration::HidSubStage::Init };
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };
     bool m_requireResidentKey { false };
     bool m_requireUserVerification  { false };

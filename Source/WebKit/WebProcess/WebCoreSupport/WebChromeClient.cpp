@@ -98,6 +98,10 @@
 #include "PrinterListGtk.h"
 #endif
 
+#if ENABLE(WEB_AUTHN)
+#include <WebCore/MockWebAuthenticationConfiguration.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
@@ -1361,5 +1365,12 @@ void WebChromeClient::setUserIsInteracting(bool userIsInteracting)
 {
     m_page.setUserIsInteracting(userIsInteracting);
 }
+
+#if ENABLE(WEB_AUTHN)
+void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration& configuration)
+{
+    m_page.send(Messages::WebPageProxy::SetMockWebAuthenticationConfiguration(configuration));
+}
+#endif
 
 } // namespace WebKit

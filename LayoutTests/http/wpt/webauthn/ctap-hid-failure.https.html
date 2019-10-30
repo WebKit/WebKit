@@ -21,50 +21,50 @@
     };
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "data-not-sent" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "data-not-sent" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with init sub stage data not sent error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with init sub stage empty report error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with init sub stage wrong channel id error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with init sub stage wrong nonce error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "msg", error: "data-not-sent" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "msg", error: "data-not-sent" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with msg sub stage data not sent error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "msg", error: "empty-report" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "msg", error: "empty-report" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with msg sub stage empty report error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "msg", error: "wrong-channel-id" } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "info", subStage: "msg", error: "wrong-channel-id" } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP HID with msg sub stage wrong channel id error in a mock hid authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "wrong-channel-id", payloadBase64:[testDummyMessagePayloadBase64] } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "wrong-channel-id", payloadBase64:[testDummyMessagePayloadBase64] } });
         return promiseRejects(t, "UnknownError", navigator.credentials.create(defaultOptions), "Unknown internal error. Error code: 18");
     }, "CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator.");
 </script>

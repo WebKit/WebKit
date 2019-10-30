@@ -28,21 +28,19 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "LocalService.h"
-#include "MockWebAuthenticationConfiguration.h"
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 
 namespace WebKit {
 
-struct MockWebAuthenticationConfiguration;
-
 class MockLocalService final : public LocalService {
 public:
-    MockLocalService(Observer&, const MockWebAuthenticationConfiguration&);
+    MockLocalService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
     bool platformStartDiscovery() const final;
     UniqueRef<LocalConnection> createLocalConnection() const final;
 
-    MockWebAuthenticationConfiguration m_configuration;
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
 };
 
 } // namespace WebKit

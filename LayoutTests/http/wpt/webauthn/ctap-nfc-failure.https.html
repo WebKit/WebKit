@@ -21,14 +21,14 @@
     };
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, ""] } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, ""] } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP NFC with empty apdu response in a mock nfc authenticator.");
 
     promise_test(function(t) {
-        if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, testU2fApduWrongDataOnlyResponseBase64] } });
+        if (window.internals)
+            internals.setMockWebAuthenticationConfiguration({ nfc: { error: "malicious-payload", payloadBase64:[testNfcU2fVersionBase64, testU2fApduWrongDataOnlyResponseBase64] } });
         return promiseRejects(t, "NotAllowedError", navigator.credentials.create(defaultOptions), "Operation timed out.");
     }, "CTAP NFC with wrong data error in a mock nfc authenticator.");
 </script>

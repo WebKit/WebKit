@@ -288,7 +288,6 @@ public:
     
     void sendDisplayConfigurationChangedMessageForTesting();
 
-    void setWebAuthenticationMockConfiguration(WKDictionaryRef);
     void addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64);
     void cleanUpKeychain(const String& attrLabel);
     bool keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64);

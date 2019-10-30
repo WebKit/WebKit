@@ -38,7 +38,7 @@
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
-using MockHid = MockWebAuthenticationConfiguration::Hid;
+using Mock = WebCore::MockWebAuthenticationConfiguration;
 using namespace WebCore;
 using namespace cbor;
 using namespace fido;
@@ -82,7 +82,7 @@ void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback
             weakThis->assembleRequest(WTFMove(data));
 
             auto sent = DataSent::Yes;
-            if (weakThis->stagesMatch() && weakThis->m_configuration.hid->error == MockHid::Error::DataNotSent)
+            if (weakThis->stagesMatch() && weakThis->m_configuration.hid->error == Mock::HidError::DataNotSent)
                 sent = DataSent::No;
             callback(sent);
         });
@@ -92,7 +92,7 @@ void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback
 
 void MockHidConnection::registerDataReceivedCallbackInternal()
 {
-    if (stagesMatch() && m_configuration.hid->error == MockHid::Error::EmptyReport) {
+    if (stagesMatch() && m_configuration.hid->error == Mock::HidError::EmptyReport) {
         receiveReport({ });
         shouldContinueFeedReports();
         return;
@@ -123,14 +123,14 @@ void MockHidConnection::parseRequest()
     // Set stages.
     if (m_requestMessage->cmd() == FidoHidDeviceCommand::kInit) {
         auto previousSubStage = m_subStage;
-        m_subStage = MockHid::SubStage::Init;
-        if (previousSubStage == MockHid::SubStage::Msg)
-            m_stage = MockHid::Stage::Request;
+        m_subStage = Mock::HidSubStage::Init;
+        if (previousSubStage == Mock::HidSubStage::Msg)
+            m_stage = Mock::HidStage::Request;
     }
     if (m_requestMessage->cmd() == FidoHidDeviceCommand::kCbor || m_requestMessage->cmd() == FidoHidDeviceCommand::kMsg)
-        m_subStage = MockHid::SubStage::Msg;
+        m_subStage = Mock::HidSubStage::Msg;
 
-    if (m_stage == MockHid::Stage::Request && m_subStage == MockHid::SubStage::Msg) {
+    if (m_stage == Mock::HidStage::Request && m_subStage == Mock::HidSubStage::Msg) {
         // Make sure we issue different msg cmd for CTAP and U2F.
         if (m_configuration.hid->canDowngrade && !m_configuration.hid->isU2f)
             m_configuration.hid->isU2f = m_requestMessage->cmd() == FidoHidDeviceCommand::kMsg;
@@ -176,7 +176,7 @@ void MockHidConnection::parseRequest()
     }
 
     // Store nonce.
-    if (m_subStage == MockHid::SubStage::Init) {
+    if (m_subStage == Mock::HidSubStage::Init) {
         m_nonce = m_requestMessage->getMessagePayload();
         ASSERT(m_nonce.size() == kHidInitNonceLength);
     }
@@ -191,17 +191,17 @@ void MockHidConnection::feedReports()
 {
     using namespace MockHidConnectionInternal;
 
-    if (m_subStage == MockHid::SubStage::Init) {
+    if (m_subStage == Mock::HidSubStage::Init) {
         Vector<uint8_t> payload;
         payload.reserveInitialCapacity(kHidInitResponseSize);
         payload.appendVector(m_nonce);
         size_t writePosition = payload.size();
-        if (stagesMatch() && m_configuration.hid->error == MockHid::Error::WrongNonce)
+        if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongNonce)
             payload[0]--;
         payload.grow(kHidInitResponseSize);
         cryptographicallyRandomValues(payload.data() + writePosition, CtapChannelIdSize);
         auto channel = kHidBroadcastChannel;
-        if (stagesMatch() && m_configuration.hid->error == MockHid::Error::WrongChannelId)
+        if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             channel--;
         FidoHidInitPacket initPacket(channel, FidoHidDeviceCommand::kInit, WTFMove(payload), payload.size());
         receiveReport(initPacket.getSerializedData());
@@ -210,14 +210,14 @@ void MockHidConnection::feedReports()
     }
 
     Optional<FidoHidMessage> message;
-    if (m_stage == MockHid::Stage::Info && m_subStage == MockHid::SubStage::Msg) {
+    if (m_stage == Mock::HidStage::Info && m_subStage == Mock::HidSubStage::Msg) {
         Vector<uint8_t> infoData;
         if (m_configuration.hid->canDowngrade)
             infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, Vector<uint8_t>(aaguidLength, 0u)));
         else
             infoData = encodeAsCBOR(AuthenticatorGetInfoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u)));
         infoData.insert(0, static_cast<uint8_t>(CtapDeviceResponseCode::kSuccess)); // Prepend status code.
-        if (stagesMatch() && m_configuration.hid->error == MockHid::Error::WrongChannelId)
+        if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             message = FidoHidMessage::create(m_currentChannel - 1, FidoHidDeviceCommand::kCbor, infoData);
         else {
             if (!m_configuration.hid->isU2f)
@@ -227,7 +227,7 @@ void MockHidConnection::feedReports()
         }
     }
 
-    if (m_stage == MockHid::Stage::Request && m_subStage == MockHid::SubStage::Msg) {
+    if (m_stage == Mock::HidStage::Request && m_subStage == Mock::HidSubStage::Msg) {
         if (m_configuration.hid->keepAlive) {
             m_configuration.hid->keepAlive = false;
             FidoHidInitPacket initPacket(m_currentChannel, FidoHidDeviceCommand::kKeepAlive, { CtapKeepAliveStatusProcessing }, 1);
@@ -235,7 +235,7 @@ void MockHidConnection::feedReports()
             continueFeedReports();
             return;
         }
-        if (stagesMatch() && m_configuration.hid->error == MockHid::Error::UnsupportedOptions && (m_requireResidentKey || m_requireUserVerification))
+        if (stagesMatch() && m_configuration.hid->error == Mock::HidError::UnsupportedOptions && (m_requireResidentKey || m_requireUserVerification))
             message = FidoHidMessage::create(m_currentChannel, FidoHidDeviceCommand::kCbor, { static_cast<uint8_t>(CtapDeviceResponseCode::kCtap2ErrUnsupportedOption) });
         else {
             Vector<uint8_t> payload;
@@ -254,7 +254,7 @@ void MockHidConnection::feedReports()
     bool isFirst = true;
     while (message->numPackets()) {
         auto report = message->popNextPacket();
-        if (!isFirst && stagesMatch() && m_configuration.hid->error == MockHid::Error::WrongChannelId)
+        if (!isFirst && stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             report = FidoHidContinuationPacket(m_currentChannel - 1, 0, { }).getSerializedData();
         // Packets are feed asynchronously to mimic actual data transmission.
         RunLoop::main().dispatch([report = WTFMove(report), weakThis = makeWeakPtr(*this)]() mutable {
@@ -276,7 +276,7 @@ void MockHidConnection::shouldContinueFeedReports()
     if (!m_configuration.hid->continueAfterErrorData)
         return;
     m_configuration.hid->continueAfterErrorData = false;
-    m_configuration.hid->error = MockHid::Error::Success;
+    m_configuration.hid->error = Mock::HidError::Success;
     continueFeedReports();
 }
 

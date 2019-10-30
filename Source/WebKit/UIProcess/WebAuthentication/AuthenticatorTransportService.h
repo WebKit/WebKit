@@ -31,11 +31,13 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+struct MockWebAuthenticationConfiguration;
+}
+
 namespace WebKit {
 
 class Authenticator;
-
-struct MockWebAuthenticationConfiguration;
 
 class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -49,7 +51,7 @@ public:
     };
 
     static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, Observer&);
-    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, Observer&, const MockWebAuthenticationConfiguration&);
+    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, Observer&, const WebCore::MockWebAuthenticationConfiguration&);
 
     virtual ~AuthenticatorTransportService() = default;
 

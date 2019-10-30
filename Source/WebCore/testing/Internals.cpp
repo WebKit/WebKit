@@ -5170,4 +5170,17 @@ Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range
     return indicator->data();
 }
 
+#if ENABLE(WEB_AUTHN)
+void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration& configuration)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+    auto* page = document->page();
+    if (!page)
+        return;
+    page->chrome().client().setMockWebAuthenticationConfiguration(configuration);
+}
+#endif
+
 } // namespace WebCore
