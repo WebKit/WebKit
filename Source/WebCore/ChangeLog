@@ -1,3 +1,33 @@
+2019-10-30  Daniel Bates  <dabates@apple.com>
+
+        Move tracking and computation of timer heap current insertion order to ThreadTimers
+        https://bugs.webkit.org/show_bug.cgi?id=203519
+
+        Reviewed by Jer Noble.
+
+        Each thread maintains its own heap of timers. So, they should also maintain the running insertion count.
+        The running insertion count is used to ensure timers with the same firing time are ordered by when
+        they were inserted into the heap. This is important to ensure that code like:
+
+                window.setTimeout(a, 0)
+                window.setTimeout(b, 0)
+
+        schedule a() to be called before b() even though both has the same firing time.
+
+        Currently the insertion count is process-wide. That is, it is globally unique across all threads. The
+        current width of the count is sizeof(unsigned) and so the more threads that increment it the faster it
+        approaches the point of wrapping around. The current code can only ensure correct timer ordering in a
+        window of sizeof(unsigned) / 2 timers (see TimerHeapLessThanFunction::compare(MonotonicTime, unsigned, MonotonicTime, unsigned)).
+        We could simply leave it process-wide and increases the width to 64-bits, but I felt it made more
+        sense conceptually to move the count to the thread local storage and be with the timer heap itself
+        despite the extra 4 bytes per thread that it adds.
+
+        * dom/ActiveDOMObject.h:
+        * platform/ThreadTimers.h:
+        (WebCore::ThreadTimers::nextHeapInsertionCount): Added.
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::setNextFireTime):
+
 2019-10-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the argument 'resultElement' from the SVG animation functions

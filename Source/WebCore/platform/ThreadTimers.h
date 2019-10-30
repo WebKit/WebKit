@@ -56,6 +56,8 @@ public:
     void updateSharedTimer();
     void fireTimersInNestedEventLoop();
 
+    unsigned nextHeapInsertionCount() { return m_currentHeapInsertionOrder++; }
+
 private:
     void sharedTimerFiredInternal();
     void fireTimersInNestedEventLoopInternal();
@@ -63,6 +65,7 @@ private:
     ThreadTimerHeap m_timerHeap;
     SharedTimer* m_sharedTimer { nullptr }; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
     bool m_firingTimers { false }; // Reentrancy guard.
+    unsigned m_currentHeapInsertionOrder { 0 };
     MonotonicTime m_pendingSharedTimerFireTime;
 };
 

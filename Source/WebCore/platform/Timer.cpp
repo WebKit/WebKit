@@ -480,9 +480,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
     }
 
     if (oldTime != newTime) {
-        // FIXME: This should be part of ThreadTimers, or another per-thread structure.
-        static std::atomic<unsigned> currentHeapInsertionOrder;
-        auto newOrder = currentHeapInsertionOrder++;
+        auto newOrder = threadGlobalData().threadTimers().nextHeapInsertionCount();
 
         if (!m_heapItem)
             m_heapItem = ThreadTimerHeapItem::create(*this, newTime, 0);
