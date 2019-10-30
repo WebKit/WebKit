@@ -1,5 +1,12 @@
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix reversed assertion landed in r251778.
+
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::Activity::invalidate):
+
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix WatchOS build after r251778.
 
         * UIProcess/WebProcessProxy.h:

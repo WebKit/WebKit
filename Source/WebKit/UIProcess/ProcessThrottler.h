@@ -75,7 +75,7 @@ public:
 
         void invalidate()
         {
-            ASSERT(!m_throttler);
+            ASSERT(isValid());
             RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler Ending %{public}s activity %p / '%{public}s'", m_throttler->m_processIdentifier, m_throttler, type == ActivityType::Foreground ? "foreground" : "background", this, m_name.characters());
             m_throttler->removeActivity(*this);
             m_throttler = nullptr;
