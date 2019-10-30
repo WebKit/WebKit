@@ -3542,7 +3542,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return counterToCSSValue(style, propertyID);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style, propertyID);
-        case CSSPropertyWebkitClipPath: {
+        case CSSPropertyClipPath: {
             auto* operation = style.clipPath();
             if (!operation)
                 return cssValuePool.createIdentifierValue(CSSValueNone);
@@ -3843,7 +3843,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 #endif
 
         case CSSPropertyBufferedRendering:
-        case CSSPropertyClipPath:
         case CSSPropertyClipRule:
         case CSSPropertyMask:
         case CSSPropertyEnableBackground:

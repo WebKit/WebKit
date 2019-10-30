@@ -1,3 +1,19 @@
+2019-10-30  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Unprefix -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=187888
+
+        Reviewed by Simon Fraser.
+
+        Test started passing. Updating test results.
+
+        * web-platform-tests/css/css-masking/parsing/clip-path-computed-expected.txt:
+        * web-platform-tests/css/css-masking/parsing/clip-path-valid-expected.txt:
+        * web-platform-tests/css/css-shapes/basic-shape-circle-ellipse-serialization-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative-expected.html:
+                Test result is incorrect: Doesn't test the shifing of content when shape-outside is set.
+        * web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative.html:
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip imported/w3c/web-platform-tests/cors/credentials-flag.htm

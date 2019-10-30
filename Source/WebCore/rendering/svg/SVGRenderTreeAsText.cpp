@@ -563,10 +563,12 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             ts << " " << masker->resourceBoundingBox(renderer) << "\n";
         }
     }
-    if (!svgStyle.clipperResource().isEmpty()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.document(), svgStyle.clipperResource())) {
+    if (style.clipPath() && is<ReferenceClipPathOperation>(style.clipPath())) {
+        auto resourceClipPath = downcast<ReferenceClipPathOperation>(style.clipPath());
+        AtomString id = resourceClipPath->fragment();
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.document(), id)) {
             ts << indent << " ";
-            writeNameAndQuotedValue(ts, "clipPath", svgStyle.clipperResource());
+            writeNameAndQuotedValue(ts, "clipPath", resourceClipPath->fragment());
             ts << " ";
             writeStandardPrefix(ts, *clipper, behavior, WriteIndentOrNot::No);
             ts << " " << clipper->resourceBoundingBox(renderer) << "\n";

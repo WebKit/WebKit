@@ -217,14 +217,12 @@ bool StyleShadowSVGData::operator==(const StyleShadowSVGData& other) const
 }
 
 StyleResourceData::StyleResourceData()
-    : clipper(SVGRenderStyle::initialClipperResource())
-    , masker(SVGRenderStyle::initialMaskerResource())
+    : masker(SVGRenderStyle::initialMaskerResource())
 {
 }
 
 inline StyleResourceData::StyleResourceData(const StyleResourceData& other)
     : RefCounted<StyleResourceData>()
-    , clipper(other.clipper)
     , masker(other.masker)
 {
 }
@@ -236,8 +234,7 @@ Ref<StyleResourceData> StyleResourceData::copy() const
 
 bool StyleResourceData::operator==(const StyleResourceData& other) const
 {
-    return clipper == other.clipper
-        && masker == other.masker;
+    return masker == other.masker;
 }
 
 StyleInheritedResourceData::StyleInheritedResourceData()
@@ -508,7 +505,6 @@ TextStream& operator<<(TextStream& ts, const StyleShadowSVGData& data)
 
 TextStream& operator<<(TextStream& ts, const StyleResourceData& data)
 {
-    ts.dumpProperty("clipper", data.clipper);
     ts.dumpProperty("masker", data.masker);
     return ts;
 }

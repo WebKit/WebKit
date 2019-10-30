@@ -76,7 +76,7 @@ bool RenderSVGResourceClipper::applyResource(RenderElement& renderer, const Rend
 bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox)
 {
     // If the current clip-path gets clipped itself, we have to fallback to masking.
-    if (!style().svgStyle().clipperResource().isEmpty())
+    if (style().clipPath())
         return false;
     WindRule clipRule = WindRule::NonZero;
     Path clipPath = Path();
@@ -101,7 +101,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
              continue;
         const SVGRenderStyle& svgStyle = style.svgStyle();
         // Current shape in clip-path gets clipped too. Fallback to masking.
-        if (!svgStyle.clipperResource().isEmpty())
+        if (style.clipPath())
             return false;
         // Fallback to masking, if there is more than one clipping path.
         if (clipPath.isEmpty()) {

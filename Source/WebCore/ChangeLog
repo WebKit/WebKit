@@ -1,3 +1,43 @@
+2019-10-30  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Unprefix -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=187888
+
+        Reviewed by Simon Fraser.
+
+        Unprefix -webkit-clip-path. Make clip-path alias the prefixed version.
+
+        We already have a wide variaty of pre-/unprexied clip-path tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialShadow):
+        (WebCore::SVGRenderStyle::y const):
+        (WebCore::SVGRenderStyle::initialClipperResource): Deleted.
+        (WebCore::SVGRenderStyle::clipperResource const): Deleted.
+        (WebCore::SVGRenderStyle::hasClipper const): Deleted.
+        (WebCore::SVGRenderStyle::setClipperResource): Deleted.
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleResourceData::StyleResourceData):
+        (WebCore::StyleResourceData::operator== const):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeResources):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::buildCachedResources):
+
 2019-10-30  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r249428): [GStreamer] VP9 video rendered green

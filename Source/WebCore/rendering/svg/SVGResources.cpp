@@ -215,13 +215,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
 
     bool foundResources = false;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (svgStyle.hasClipper()) {
-            AtomString id(svgStyle.clipperResource());
-            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
-                foundResources = true;
-            else
-                registerPendingResource(extensions, id, element);
-        } else if (is<ReferenceClipPathOperation>(style.clipPath())) {
+        if (is<ReferenceClipPathOperation>(style.clipPath())) {
             // FIXME: -webkit-clip-path should support external resources
             // https://bugs.webkit.org/show_bug.cgi?id=127032
             auto& clipPath = downcast<ReferenceClipPathOperation>(*style.clipPath());

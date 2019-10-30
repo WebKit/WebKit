@@ -120,10 +120,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return CSSPrimitiveValue::create(svgStyle.dominantBaseline());
     case CSSPropertyTextAnchor:
         return CSSPrimitiveValue::create(svgStyle.textAnchor());
-    case CSSPropertyClipPath:
-        if (!svgStyle.clipperResource().isEmpty())
-            return CSSPrimitiveValue::create(svgStyle.clipperResource(), CSSPrimitiveValue::CSS_URI);
-        return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyMask:
         if (!svgStyle.maskerResource().isEmpty())
             return CSSPrimitiveValue::create(svgStyle.maskerResource(), CSSPrimitiveValue::CSS_URI);

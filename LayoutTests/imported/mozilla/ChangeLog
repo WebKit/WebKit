@@ -1,3 +1,24 @@
+2019-10-30  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Unprefix -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=187888
+
+        Reviewed by Simon Fraser.
+
+        Integrated test expectations do not match the actual expected
+        behavior. The reason is that the expectation files reference
+        resources from different documents - which is not supported by
+        WebKit. Since unprefixed clip-path wasn't supported either
+        the test passed.
+
+        * svg/svg-integration/clipPath-html-01-expected.xhtml:
+        * svg/svg-integration/clipPath-html-02-expected.xhtml:
+        * svg/svg-integration/clipPath-html-02.xhtml:
+        * svg/svg-integration/clipPath-html-03-expected.xhtml:
+        * svg/svg-integration/clipPath-html-04-expected.xhtml:
+        * svg/svg-integration/clipPath-html-05-expected.xhtml:
+        * svg/svg-integration/clipPath-html-06-expected.xhtml:
+
 2019-10-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests

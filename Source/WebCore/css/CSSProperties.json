@@ -2123,20 +2123,12 @@
                 "url": "https://www.w3.org/TR/CSS22/visufx.html#propdef-clip"
             }
         },
-        "-webkit-clip-path": {
-            "codegen-properties": {
-                "converter": "ClipPath"
-            }
-        },
         "clip-path": {
             "codegen-properties": {
-                "name-for-methods": "ClipperResource",
-                "converter": "SVGURIReference",
-                "svg": true
-            },
-            "specification": {
-                "category": "css-masking",
-                "url": "https://www.w3.org/TR/css-masking-1/#the-clip-path"
+                "aliases": [
+                    "-webkit-clip-path"
+                ],
+                "converter": "ClipPath"
             }
         },
         "clip-rule": {

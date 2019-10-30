@@ -286,7 +286,6 @@ public:
         return !(*this == other);
     }
 
-    String clipper;
     String masker;
 
 private:

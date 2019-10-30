@@ -76,7 +76,6 @@ public:
     static Color initialFloodColor() { return Color(0, 0, 0); }
     static Color initialLightingColor() { return Color(255, 255, 255); }
     static ShadowData* initialShadow() { return nullptr; }
-    static String initialClipperResource() { return String(); }
     static String initialMaskerResource() { return String(); }
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
@@ -126,7 +125,6 @@ public:
     void setShadow(std::unique_ptr<ShadowData>&& data) { m_shadowData.access().shadow = WTFMove(data); }
 
     // Setters for non-inherited resources
-    void setClipperResource(const String&);
     void setMaskerResource(const String&);
 
     // Setters for inherited resources
@@ -174,7 +172,6 @@ public:
     const Length& ry() const { return m_layoutData->ry; }
     const Length& x() const { return m_layoutData->x; }
     const Length& y() const { return m_layoutData->y; }
-    const String& clipperResource() const { return m_nonInheritedResourceData->clipper; }
     const String& maskerResource() const { return m_nonInheritedResourceData->masker; }
     const String& markerStartResource() const { return m_inheritedResourceData->markerStart; }
     const String& markerMidResource() const { return m_inheritedResourceData->markerMid; }
@@ -189,7 +186,6 @@ public:
     const String& visitedLinkStrokePaintUri() const { return m_strokeData->visitedLinkPaintUri; }
 
     // convenience
-    bool hasClipper() const { return !clipperResource().isEmpty(); }
     bool hasMasker() const { return !maskerResource().isEmpty(); }
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaintType() != SVGPaintType::None; }
@@ -402,12 +398,6 @@ inline void SVGRenderStyle::setBaselineShiftValue(const SVGLengthValue& shiftVal
 {
     if (!(m_miscData->baselineShiftValue == shiftValue))
         m_miscData.access().baselineShiftValue = shiftValue;
-}
-
-inline void SVGRenderStyle::setClipperResource(const String& resource)
-{
-    if (!(m_nonInheritedResourceData->clipper == resource))
-        m_nonInheritedResourceData.access().clipper = resource;
 }
 
 inline void SVGRenderStyle::setMaskerResource(const String& resource)

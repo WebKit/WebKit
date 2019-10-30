@@ -6,13 +6,10 @@
      xmlns:svg="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
 <body style="margin:0">
-  <div style="clip-path: url(clipPath-html-03.xhtml#c1); width:500px; height:200px; background:lime;">
-    <div style="height:200px;"/>
-    <div style="height:200px; background:blue;"/>
-  </div>
-  <svg:svg height="0">
-    <!-- use an empty g to force clipPath-html-03.xhtml to load before onload -->
-    <svg:use xlink:href="clipPath-html-03.xhtml#empty" />
+  <svg:svg width="200" height="300">
+    <svg:rect width="200" height="150" fill="lime"/>
+    <svg:rect x="100" y="150" width="100" height="50" fill="lime"/>
+    <svg:rect x="100" y="200" width="100" height="100" fill="blue"/>
   </svg:svg>
 </body>
 </html>
