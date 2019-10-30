@@ -1,3 +1,22 @@
+2019-10-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Opacity slider background doesn't update when when hue slider moves
+        https://bugs.webkit.org/show_bug.cgi?id=203593
+        <rdar://problem/56723629>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker.prototype.set color):
+        (WI.ColorPicker.prototype.colorSquareColorDidChange):
+        Remove unused function arguments.
+
+        (WI.ColorPicker.prototype.sliderValueDidChange):
+        Update the background of the opacity slider when the hue slider changes.
+
+        (WI.ColorPicker.prototype._updateOpacitySlider): Renamed from _updateSliders.
+        Drive-by: replace `var` with `let`.
+
 2019-10-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Right-clicking in color picker should not select color

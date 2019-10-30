@@ -123,7 +123,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._hueSlider.value = this._color.hsl[0] / 360;
 
         this._opacitySlider.value = this._color.alpha;
-        this._updateSliders(this._colorSquare.rawColor, this._color);
+        this._updateOpacitySlider();
 
         this._showColorComponentInputs();
 
@@ -143,7 +143,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     colorSquareColorDidChange(colorSquare)
     {
         this._updateColor();
-        this._updateSliders(this._colorSquare.rawColor, this._colorSquare.tintedColor);
+        this._updateOpacitySlider();
     }
 
     sliderValueDidChange(slider, value)
@@ -153,6 +153,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         else if (slider === this._hueSlider) {
             this._colorSquare.hue = value * 360;
             this._updateColor();
+            this._updateOpacitySlider();
         }
     }
 
@@ -189,11 +190,11 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             this._handleFormatChange();
     }
 
-    _updateSliders(rawColor, tintedColor)
+    _updateOpacitySlider()
     {
-        var rgb = this._colorSquare.tintedColor.rgb;
-        var opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
-        var transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
+        let rgb = this._colorSquare.tintedColor.rgb;
+        let opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
+        let transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
         this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
 
