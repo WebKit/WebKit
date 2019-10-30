@@ -1,5 +1,13 @@
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip imported/w3c/web-platform-tests/cors/credentials-flag.htm
+
+        The test is not flaky if we don't dump JS console messages in the output.
+
+        * TestExpectations:
+
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip 3 WPT tests that are timing out since they were imported.
 
         It unnecessarily slows down our test runs.

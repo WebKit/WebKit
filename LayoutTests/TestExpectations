@@ -1097,7 +1097,6 @@ webkit.org/b/175588 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/sc
 
 # Tests that are flaky due to console log / error messages
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure Pass ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-origin.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight-2.htm [ Failure ]
@@ -1206,6 +1205,7 @@ imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.h
 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/request/request-init-stream.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/response/response-error-from-stream.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/cors/credentials-flag.htm [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/test_resource_timing.https.html [ Pass Failure ]
