@@ -1,3 +1,19 @@
+2019-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ImageDecoders: use a thread safe data buffer for Cairo backing store
+        https://bugs.webkit.org/show_bug.cgi?id=201727
+        <rdar://problem/56665041>
+
+        Reviewed by Fujii Hironori.
+
+        Use SharedBuffer::dataSegment which is ThreadSafeRefCounted.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::setSize):
+        (WebCore::ImageBackingStore::ImageBackingStore):
+        * platform/image-decoders/cairo/ImageBackingStoreCairo.cpp:
+        (WebCore::ImageBackingStore::image const):
+
 2019-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove HTMLMediaElementDestructorScope
