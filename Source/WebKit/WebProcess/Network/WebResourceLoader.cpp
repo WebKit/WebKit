@@ -27,6 +27,7 @@
 #include "WebResourceLoader.h"
 
 #include "DataReference.h"
+#include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoaderMessages.h"
@@ -92,9 +93,12 @@ void WebResourceLoader::detachFromCoreLoader()
     m_coreLoader = nullptr;
 }
 
-void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, ResourceResponse&& redirectResponse)
+void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse)
 {
     Ref<WebResourceLoader> protectedThis(*this);
+
+    // Make the request whole again as we do not normally encode the request's body when sending it over IPC, for performance reasons.
+    proposedRequest.setHTTPBody(proposedRequestBody.takeData());
 
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().latin1().data());
     RELEASE_LOG_IF_ALLOWED("willSendRequest: (webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID);

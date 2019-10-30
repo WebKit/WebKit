@@ -1,3 +1,30 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r238252): HTTP POST is losing application/x-www-form-urlencoded body if there's a redirect to different host
+        https://bugs.webkit.org/show_bug.cgi?id=201950
+        <rdar://problem/55577782>
+
+        Reviewed by Alex Christensen.
+
+        The resource request body was getting lost on cross-site redirects. This was caused by the fact that a cross-site
+        redirect would cause a process-swap and the request to start again from a new process. This would work fine if
+        the request does not have a body. However, we have an optimization in place which avoids encoding the request body
+        whenever it is sent over IPC. Because the WebResourceLoader::WillSendRequest IPC would not encode the request body,
+        any decision to process swap as a result of this IPC (i.e. redirect) would cause the new request in the new process
+        to be missing its body. To address the issue, we now make sure to pass the request body in the WillSendRequest IPC
+        and reconsile the request with its body on the recipient side.
+
+        Test: http/tests/misc/form-submit-file-cross-site-redirect.html
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2019-10-30  Jer Noble  <jer.noble@apple.com>
 
         Enable Remote Playback API by default

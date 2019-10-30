@@ -723,7 +723,9 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     if (adClickConversion && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
         networkSession->handleAdClickAttributionConversion(WTFMove(*adClickConversion), request.url(), redirectRequest);
 
-    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
+    // We send the request body separately because the ResourceRequest body normally does not get encoded when sent over IPC, as an optimization.
+    // However, we really need the body here because a redirect cross-site may cause a process-swap and the request to start again in a new WebContent process.
+    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 
 void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)

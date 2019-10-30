@@ -37,6 +37,7 @@
 
 namespace IPC {
 class DataReference;
+class FormDataReference;
 }
 
 namespace WebCore {
@@ -79,7 +80,7 @@ private:
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
-    void willSendRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&);
+    void willSendRequest(WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&&);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);

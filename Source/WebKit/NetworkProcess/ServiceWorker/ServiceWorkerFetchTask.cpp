@@ -111,7 +111,7 @@ void ServiceWorkerFetchTask::didReceiveRedirectResponse(ResourceResponse&& respo
     response.setSource(ResourceResponse::Source::ServiceWorker);
     auto newRequest = m_currentRequest.redirectedRequest(response, m_loader.parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
 
-    sendToClient(Messages::WebResourceLoader::WillSendRequest { newRequest, response });
+    sendToClient(Messages::WebResourceLoader::WillSendRequest { newRequest, IPC::FormDataReference { newRequest.httpBody() }, response });
 }
 
 void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, bool needsContinueDidReceiveResponseMessage)
