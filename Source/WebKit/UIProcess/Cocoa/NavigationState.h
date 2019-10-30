@@ -83,8 +83,8 @@ public:
     void didFirstPaint();
 
 #if PLATFORM(IOS_FAMILY)
-    enum class NetworkActivityTokenReleaseReason { LoadCompleted, ScreenLocked };
-    void releaseNetworkActivityToken(NetworkActivityTokenReleaseReason);
+    enum class NetworkActivityReleaseReason { LoadCompleted, ScreenLocked };
+    void releaseNetworkActivity(NetworkActivityReleaseReason);
 #endif
 
 private:
@@ -184,7 +184,7 @@ private:
     void didSwapWebProcesses() override;
 
 #if PLATFORM(IOS_FAMILY)
-    void releaseNetworkActivityTokenAfterLoadCompletion() { releaseNetworkActivityToken(NetworkActivityTokenReleaseReason::LoadCompleted); }
+    void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }
 #endif
 
     WKWebView *m_webView;
@@ -258,8 +258,8 @@ private:
     } m_historyDelegateMethods;
 
 #if PLATFORM(IOS_FAMILY)
-    ProcessThrottler::BackgroundActivityToken m_activityToken;
-    RunLoop::Timer<NavigationState> m_releaseActivityTimer;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
+    RunLoop::Timer<NavigationState> m_releaseNetwrokActivityTimer;
 #endif
 };
 

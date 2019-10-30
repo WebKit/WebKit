@@ -48,7 +48,7 @@ void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocati
 
     if (auto* replyInfo = invocation.replyInfo()) {
         ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
-        m_pendingReplies.add(replyInfo->replyID, takeBackgroundActivityToken());
+        m_pendingReplies.add(replyInfo->replyID, backgroundActivity("RemoteObjectRegistry invocation"_s));
     }
 
     messageSender().send(Messages::RemoteObjectRegistry::InvokeMethod(invocation), messageDestinationID());

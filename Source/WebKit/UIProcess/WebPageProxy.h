@@ -2289,7 +2289,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
     bool m_alwaysRunsAtForegroundPriority { false };
-    ProcessThrottler::ForegroundActivityToken m_activityToken;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isAudibleActivity;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isCapturingActivity;
+    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_alwaysRunsAtForegroundPriorityActivity;
 #endif
     bool m_initialCapitalizationEnabled { false };
     Optional<double> m_cpuLimit;

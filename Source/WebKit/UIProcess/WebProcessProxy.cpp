@@ -372,7 +372,7 @@ void WebProcessProxy::shutDown()
 
     m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
-    m_tokenForHoldingLockedFiles = nullptr;
+    m_activityForHoldingLockedFiles = nullptr;
 
     for (auto& frame : copyToVector(m_frameMap.values()))
         frame->webProcessWillShutDown();
@@ -1013,10 +1013,10 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto token = throttler().backgroundActivityToken();
+    auto activity = throttler().backgroundActivity("WebProcessProxy::fetchWebsiteData"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = makeRef(*this), token, completionHandler = WTFMove(completionHandler)] (auto reply) mutable {
+    connection()->sendWithAsyncReply(Messages::WebProcess::FetchWebsiteData(dataTypes), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] (auto reply) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1030,10 +1030,10 @@ void WebProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Webs
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto token = throttler().backgroundActivityToken();
+    auto activity = throttler().backgroundActivity("WebProcessProxy::deleteWebsiteData"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteData(dataTypes, modifiedSince), [this, protectedThis = makeRef(*this), token, completionHandler = WTFMove(completionHandler)] () mutable {
+    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteData(dataTypes, modifiedSince), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1047,10 +1047,10 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Opti
     ASSERT(canSendMessage());
     ASSERT_UNUSED(sessionID, sessionID == this->sessionID());
 
-    auto token = throttler().backgroundActivityToken();
+    auto activity = throttler().backgroundActivity("WebProcessProxy::deleteWebsiteDataForOrigins"_s);
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
 
-    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(dataTypes, origins), [this, protectedThis = makeRef(*this), token, completionHandler = WTFMove(completionHandler)] () mutable {
+    connection()->sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(dataTypes, origins), [this, protectedThis = makeRef(*this), activity = WTFMove(activity), completionHandler = WTFMove(completionHandler)] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -1292,12 +1292,12 @@ void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
-        m_tokenForHoldingLockedFiles = nullptr;
+        m_activityForHoldingLockedFiles = nullptr;
         return;
     }
-    if (!m_tokenForHoldingLockedFiles) {
+    if (!m_activityForHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the WebContent process is holding locked files");
-        m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
+        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s);
     }
 }
 
@@ -1518,21 +1518,21 @@ void WebProcessProxy::plugInDidReceiveUserInteraction(uint32_t hash)
 
 #if PLATFORM(WATCHOS)
 
-void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()
+void WebProcessProxy::startBackgroundActivityForFullscreenInput()
 {
-    if (m_backgroundActivityTokenForFullscreenFormControls)
+    if (m_backgroundActivityForFullscreenFormControls)
         return;
 
-    m_backgroundActivityTokenForFullscreenFormControls = m_throttler.backgroundActivityToken();
+    m_backgroundActivityForFullscreenFormControls = m_throttler.backgroundActivity("Fullscreen input"_s);
     RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because it is presenting fullscreen UI for form controls.");
 }
 
-void WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput()
+void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 {
-    if (!m_backgroundActivityTokenForFullscreenFormControls)
+    if (!m_backgroundActivityForFullscreenFormControls)
         return;
 
-    m_backgroundActivityTokenForFullscreenFormControls = nullptr;
+    m_backgroundActivityForFullscreenFormControls = nullptr;
     RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because it has dismissed fullscreen UI for form controls.");
 }
 

@@ -43,17 +43,54 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_foregroundCounter([this](RefCounterEvent) { updateAssertionIfNeeded(); })
-    , m_backgroundCounter([this](RefCounterEvent) { updateAssertionIfNeeded(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
+}
+
+ProcessThrottler::~ProcessThrottler()
+{
+    invalidateAllActivities();
+}
+
+void ProcessThrottler::addActivity(ForegroundActivity& activity)
+{
+    m_foregroundActivities.add(&activity);
+    updateAssertionIfNeeded();
+}
+
+void ProcessThrottler::addActivity(BackgroundActivity& activity)
+{
+    m_backgroundActivities.add(&activity);
+    updateAssertionIfNeeded();
+}
+
+void ProcessThrottler::removeActivity(ForegroundActivity& activity)
+{
+    m_foregroundActivities.remove(&activity);
+    updateAssertionIfNeeded();
+}
+
+void ProcessThrottler::removeActivity(BackgroundActivity& activity)
+{
+    m_backgroundActivities.remove(&activity);
+    updateAssertionIfNeeded();
+}
+
+void ProcessThrottler::invalidateAllActivities()
+{
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::invalidateAllActivities() BEGIN", m_processIdentifier, this);
+    while (!m_foregroundActivities.isEmpty())
+        (*m_foregroundActivities.begin())->invalidate();
+    while (!m_backgroundActivities.isEmpty())
+        (*m_backgroundActivities.begin())->invalidate();
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::invalidateAllActivities() END", m_processIdentifier, this);
 }
     
 AssertionState ProcessThrottler::expectedAssertionState()
 {
-    if (m_foregroundCounter.value())
+    if (!m_foregroundActivities.isEmpty())
         return AssertionState::Foreground;
-    if (m_backgroundCounter.value())
+    if (!m_backgroundActivities.isEmpty())
         return AssertionState::Background;
     return AssertionState::Suspended;
 }
@@ -69,7 +106,7 @@ void ProcessThrottler::setAssertionState(AssertionState newState)
     if (m_assertion->state() == newState)
         return;
 
-    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::setAssertionState() Updating process assertion state to %u (foregroundActivities: %lu, backgroundActivities: %lu)", m_processIdentifier, this, newState, m_foregroundCounter.value(), m_backgroundCounter.value());
+    RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::setAssertionState() Updating process assertion state to %u (foregroundActivities: %u, backgroundActivities: %u)", m_processIdentifier, this, newState, m_foregroundActivities.size(), m_backgroundActivities.size());
     m_assertion->setState(newState);
     m_process.didSetAssertionState(newState);
 }
@@ -164,6 +201,7 @@ void ProcessThrottler::uiAssertionWillExpireImminently()
 {
     RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler::uiAssertionWillExpireImminently()", m_processIdentifier, this);
     sendPrepareToSuspendIPC(IsSuspensionImminent::Yes);
+    invalidateAllActivities();
     m_prepareToSuspendTimeoutTimer.stop();
 }
 

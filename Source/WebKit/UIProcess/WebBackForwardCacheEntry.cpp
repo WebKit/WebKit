@@ -50,7 +50,7 @@ WebBackForwardCacheEntry::~WebBackForwardCacheEntry()
 {
     if (m_backForwardItemID && !m_suspendedPage) {
         auto& process = this->process();
-        process.sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(m_backForwardItemID), [token = process.throttler().backgroundActivityToken()] { });
+        process.sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(m_backForwardItemID), [activity = process.throttler().backgroundActivity("Clearing back/forward cache entry"_s)] { });
     }
 }
 

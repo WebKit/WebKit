@@ -63,7 +63,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_request(request)
     , m_processSwapRequestedByClient(processSwapRequestedByClient)
 #if PLATFORM(IOS_FAMILY)
-    , m_suspensionToken(m_process->throttler().foregroundActivityToken())
+    , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: pageProxyID=%" PRIu64 " webPageID=%" PRIu64 " navigationID=%" PRIu64 " suspendedPage: %p", m_page.identifier().toUInt64(), m_webPageID.toUInt64(), navigationID, suspendedPage.get());

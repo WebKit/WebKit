@@ -67,7 +67,7 @@ private:
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
 #if PLATFORM(IOS_FAMILY) && USE(SYSTEM_PREVIEW)
-    ProcessThrottler::BackgroundActivityToken m_activityToken { nullptr };
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
 #endif
 
     struct {

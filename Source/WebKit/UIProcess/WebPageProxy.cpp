@@ -1055,7 +1055,10 @@ void WebPageProxy::close()
 
 #if PLATFORM(IOS_FAMILY)
     // Make sure we don't hold a process assertion after getting closed.
-    m_activityToken = nullptr;
+    m_isVisibleActivity = nullptr;
+    m_isAudibleActivity = nullptr;
+    m_isCapturingActivity = nullptr;
+    m_alwaysRunsAtForegroundPriorityActivity = nullptr;
 #endif
 
     stopAllURLSchemeTasks();
@@ -1929,23 +1932,46 @@ void WebPageProxy::updateThrottleState()
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS_FAMILY)
-    bool isCapturingMedia = m_activityState.contains(ActivityState::IsCapturingMedia);
-    bool isAudible = m_activityState.contains(ActivityState::IsAudible);
-    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia && !isAudible) {
-        if (m_activityToken) {
-            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because the view is no longer visible");
-            m_activityToken = nullptr;
-        }
-    } else if (!m_activityToken) {
-        if (isViewVisible())
+    if (isViewVisible()) {
+        if (!m_isVisibleActivity || !m_isVisibleActivity->isValid()) {
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because the view is visible");
-        else if (isAudible)
+            m_isVisibleActivity = m_process->throttler().foregroundActivity("View is visible"_s);
+        }
+    } else if (m_isVisibleActivity) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because the view is no longer visible");
+        m_isVisibleActivity = nullptr;
+    }
+
+    bool isAudible = m_activityState.contains(ActivityState::IsAudible);
+    if (isAudible) {
+        if (!m_isAudibleActivity || !m_isAudibleActivity->isValid()) {
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because we are playing audio");
-        else if (isCapturingMedia)
+            m_isAudibleActivity = m_process->throttler().foregroundActivity("View is playing audio"_s);
+        }
+    } else if (m_isAudibleActivity) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
+        m_isAudibleActivity = nullptr;
+    }
+
+    bool isCapturingMedia = m_activityState.contains(ActivityState::IsCapturingMedia);
+    if (isCapturingMedia) {
+        if (!m_isCapturingActivity || !m_isCapturingActivity->isValid()) {
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because media capture is active");
-        else
-            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion even though the view is not visible because m_alwaysRunsAtForegroundPriority is true");
-        m_activityToken = m_process->throttler().foregroundActivityToken();
+            m_isCapturingActivity = m_process->throttler().foregroundActivity("View is capturing media"_s);
+        }
+    } else if (m_isCapturingActivity) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because media capture is no longer active");
+        m_isCapturingActivity = nullptr;
+    }
+
+    if (m_alwaysRunsAtForegroundPriority) {
+        if (!m_alwaysRunsAtForegroundPriorityActivity || !m_alwaysRunsAtForegroundPriorityActivity->isValid()) {
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because m_alwaysRunsAtForegroundPriority is true");
+            m_alwaysRunsAtForegroundPriorityActivity = m_process->throttler().foregroundActivity("View always runs at foreground priority"_s);
+        }
+    } else if (m_alwaysRunsAtForegroundPriorityActivity) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because m_alwaysRunsAtForegroundPriority is no longer true");
+        m_alwaysRunsAtForegroundPriorityActivity = nullptr;
     }
 #endif
 }
@@ -1985,7 +2011,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
 #if PLATFORM(IOS_FAMILY)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
-    if (!m_activityToken) {
+    if (!m_isVisibleActivity) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -2008,7 +2034,7 @@ void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, cons
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::setInitialFocus"_s));
     m_process->send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent, callbackID), m_webPageID);
 }
 
@@ -2033,7 +2059,7 @@ void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::validateCommand"_s));
     m_process->send(Messages::WebPage::ValidateCommand(commandName, callbackID), m_webPageID);
 }
 
@@ -2131,7 +2157,7 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::executeEditCommand"_s));
     m_process->send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument, callbackID), m_webPageID);
 }
     
@@ -2155,7 +2181,7 @@ void WebPageProxy::requestFontAttributesAtSelectionStart(Function<void(const Web
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::requestFontAttributesAtSelectionStart"_s));
     m_process->send(Messages::WebPage::RequestFontAttributesAtSelectionStart(callbackID), m_webPageID);
 }
 
@@ -3713,7 +3739,7 @@ void WebPageProxy::replaceMatches(Vector<uint32_t>&& matchIndices, const String&
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::replaceMatches"_s));
     m_process->send(Messages::WebPage::ReplaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, callbackID), m_webPageID);
 }
 
@@ -3738,14 +3764,14 @@ void WebPageProxy::runJavaScriptInMainFrameScriptWorld(const String& script, boo
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInMainFrameScriptWorld"_s));
     m_process->send(Messages::WebPage::RunJavaScriptInMainFrameScriptWorld(script, forceUserGesture, worldName, callbackID), m_webPageID);
 }
 
 void WebPageProxy::runJavaScriptInFrame(FrameIdentifier frameID, const String& script, bool forceUserGesture, WTF::Function<void(API::SerializedScriptValue*, bool hadException, const ExceptionDetails&, CallbackBase::Error)>&& callbackFunction)
 {
     ASSERT(mainFrame()->frameID() != frameID);
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::runJavaScriptInFrame"_s));
     m_process->send(Messages::WebPage::RunJavaScriptInFrame(frameID, script, forceUserGesture, callbackID), m_webPageID);
 }
 
@@ -3756,7 +3782,7 @@ void WebPageProxy::getRenderTreeExternalRepresentation(WTF::Function<void (const
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getRenderTreeExternalRepresentation"_s));
     m_process->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_webPageID);
 }
 
@@ -3767,7 +3793,7 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, WTF::Function<void (c
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSourceForFrame"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_webPageID);
 }
@@ -3779,7 +3805,7 @@ void WebPageProxy::getContentsAsString(WTF::Function<void (const String&, Callba
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getContentsAsString"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_webPageID);
 }
@@ -3803,7 +3829,7 @@ void WebPageProxy::getBytecodeProfile(WTF::Function<void (const String&, Callbac
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getBytecodeProfile"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_webPageID);
 }
@@ -3815,7 +3841,7 @@ void WebPageProxy::getSamplingProfilerOutput(WTF::Function<void (const String&, 
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSamplingProfilerOutput"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetSamplingProfilerOutput(callbackID), m_webPageID);
 }
@@ -3828,7 +3854,7 @@ void WebPageProxy::getContentsAsMHTMLData(Function<void (API::Data*, CallbackBas
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getContentsAsMHTMLData"_s));
     m_process->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID), m_webPageID);
 }
 #endif
@@ -3840,7 +3866,7 @@ void WebPageProxy::getSelectionOrContentsAsString(WTF::Function<void (const Stri
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionOrContentsAsString"_s));
     m_process->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_webPageID);
 }
 
@@ -3851,7 +3877,7 @@ void WebPageProxy::getSelectionAsWebArchiveData(Function<void (API::Data*, Callb
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionAsWebArchiveData"_s));
     m_process->send(Messages::WebPage::GetSelectionAsWebArchiveData(callbackID), m_webPageID);
 }
 
@@ -3862,7 +3888,7 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, Function<voi
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getMainResourceDataOfFrame"_s));
     m_process->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_webPageID);
 }
 
@@ -3873,7 +3899,7 @@ void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, API::URL* reso
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getResourceDataFromFrame"_s));
     m_process->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_webPageID);
 }
 
@@ -3884,7 +3910,7 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, Function<void (API
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getWebArchiveOfFrame"_s));
     m_process->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_webPageID);
 }
 
@@ -3917,7 +3943,7 @@ void WebPageProxy::forceRepaint(RefPtr<VoidCallback>&& callback)
         });
     };
 
-    auto callbackID = m_callbacks.put(WTFMove(didForceRepaintCallback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(didForceRepaintCallback), m_process->throttler().backgroundActivity("WebPageProxy::forceRepaint"_s));
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
     m_process->send(Messages::WebPage::ForceRepaint(callbackID), m_webPageID);
 }
@@ -7209,7 +7235,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #if PLATFORM(IOS_FAMILY)
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
     m_deferredElementDidFocusArguments = nullptr;
-    m_activityToken = nullptr;
+
+    m_isVisibleActivity = nullptr;
+    m_isAudibleActivity = nullptr;
+    m_isCapturingActivity = nullptr;
+    m_alwaysRunsAtForegroundPriorityActivity = nullptr;
 #endif
 
     m_pageIsUserObservableCount = nullptr;
@@ -7828,7 +7858,7 @@ void WebPageProxy::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>&
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::drawToPDF"_s));
     m_process->send(Messages::WebPage::DrawToPDF(frameID, rect, callbackID), m_webPageID);
 }
 
@@ -8160,7 +8190,7 @@ void WebPageProxy::getMarkedRangeAsync(WTF::Function<void (EditingRange, Callbac
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getMarkedRangeAsync"_s));
     process().send(Messages::WebPage::GetMarkedRangeAsync(callbackID), m_webPageID);
 }
 
@@ -8171,7 +8201,7 @@ void WebPageProxy::getSelectedRangeAsync(WTF::Function<void (EditingRange, Callb
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectedRangeAsync"_s));
     process().send(Messages::WebPage::GetSelectedRangeAsync(callbackID), m_webPageID);
 }
 
@@ -8182,7 +8212,7 @@ void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, W
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::characterIndexForPointAsync"_s));
     process().send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID), m_webPageID);
 }
 
@@ -8193,7 +8223,7 @@ void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, WT
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::firstRectForCharacterRangeAsync"_s));
     process().send(Messages::WebPage::FirstRectForCharacterRangeAsync(range, callbackID), m_webPageID);
 }
 
@@ -8237,7 +8267,7 @@ void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOption
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::takeSnapshot"_s));
     m_process->send(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options, callbackID), m_webPageID);
 }
 
@@ -8513,7 +8543,7 @@ void WebPageProxy::installActivityStateChangeCompletionHandler(Function<void()>&
 
     auto voidCallback = VoidCallback::create([completionHandler = WTFMove(completionHandler)] (auto) {
         completionHandler();
-    }, m_process->throttler().backgroundActivityToken());
+    }, m_process->throttler().backgroundActivity("WebPageProxy::installActivityStateChangeCompletionHandler"_s));
     auto callbackID = m_callbacks.put(WTFMove(voidCallback));
     m_nextActivityStateChangeCallbacks.append(callbackID);
 }
@@ -8670,7 +8700,7 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
         }
 
         bool decision = (bool)callbackFunction;
-        auto newCallbackIdentifier = decision ? OptionalCallbackID(m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken())) : OptionalCallbackID();
+        auto newCallbackIdentifier = decision ? OptionalCallbackID(m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getLoadDecisionForIcon"_s))) : OptionalCallbackID();
 
         m_process->send(Messages::WebPage::DidGetLoadDecisionForIcon(decision, loadIdentifier, newCallbackIdentifier), m_webPageID);
     });
@@ -8887,7 +8917,7 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Function<
     }
 
     auto attachmentIdentifier = attachment->identifier();
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::insertAttachment"_s));
     m_process->send(Messages::WebPage::InsertAttachment(attachmentIdentifier, attachment->fileSizeForDisplay(), attachment->fileName(), attachment->contentType(), callbackID), m_webPageID);
     m_attachmentIdentifierToAttachmentMap.set(attachmentIdentifier, WTFMove(attachment));
 }
@@ -8903,7 +8933,7 @@ void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment,
     if (auto data = attachment.enclosingImageData())
         dataReference = { *data };
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::updateAttachmentAttributes"_s));
     m_process->send(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), WTFMove(dataReference), callbackID), m_webPageID);
 }
 
@@ -9062,7 +9092,7 @@ void WebPageProxy::getApplicationManifest(Function<void(const Optional<WebCore::
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getApplicationManifest"_s));
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetApplicationManifest(callbackID), m_webPageID);
 }

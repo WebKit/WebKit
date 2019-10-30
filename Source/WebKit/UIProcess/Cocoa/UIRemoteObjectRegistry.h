@@ -40,7 +40,7 @@ public:
 private:
     IPC::MessageSender& messageSender() final;
     uint64_t messageDestinationID() final;
-    ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() final;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
     WebPageProxy& m_page;
 };

@@ -1,3 +1,175 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] [WK2] Improve process assertion-related logging to help identify causes of leaked assertions
+        https://bugs.webkit.org/show_bug.cgi?id=203438
+
+        Reviewed by Antti Koivisto.
+
+        Improve process assertion-related logging to help identify causes of leaked assertions. Previously,
+        whenever our code needed to prevent suspension of a child process due to some kind of activity, it
+        would simply grab a "token" from the child process' ProcessThrottler. This, in-turn, would cause
+        the ProcessThrottler to take the right kind of ProcessAssertion or release it when nobody holds
+        any tokens any more.
+
+        We frequently have issues where the UIProcess keeps its assertions around for too long after getting
+        backgrounding. This causes the assertions to get invalidated and the UIProcess will usually suspend
+        (albeit with a delay, which is bad for power). Sometimes though, we get killed because our invalidation
+        handler does not get a chance to release the assertion in time.
+
+        Finding out why we're keeping around assertions is currently very difficult because we cannot easily
+        see in the logs who is still holding ProcessThrottler tokens. To make such debugging easier, clients
+        now notify the ProcessThrottler when they start some activity and provide a user-readable description
+        of the activity. The client then gets a ForegroundActivity or BackgroundActivity object instead of
+        simply a token. As a result, we are now able to log when a given activity that prevents suspension
+        begins and ends, with a user-friendly string. Also, when the assertion gets invalidated, it will
+        invalidate all these pending activities and we'll see in the logs the name of the activities that
+        were still going on upon invalidation.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        (WebKit::RemoteObjectRegistry::backgroundActivity):
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::sendInvocation):
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::takeActivityToken):
+        (WebKit::DownloadClient::releaseActivityTokenIfNecessary):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::releaseNetworkActivity):
+        (WebKit::NavigationState::didChangeIsLoading):
+        (WebKit::NavigationState::didSwapWebProcesses):
+        * UIProcess/Cocoa/UIRemoteObjectRegistry.cpp:
+        (WebKit::UIRemoteObjectRegistry::backgroundActivity):
+        * UIProcess/Cocoa/UIRemoteObjectRegistry.h:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasResumed):
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::CallbackBase):
+        (WebKit::GenericCallback::create):
+        (WebKit::GenericCallback::GenericCallback):
+        (WebKit::CallbackMap::put):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles):
+        (WebKit::NetworkProcessProxy::syncAllCookies):
+        (WebKit::NetworkProcessProxy::didSyncAllCookies):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler):
+        (WebKit::ProcessThrottler::~ProcessThrottler):
+        (WebKit::ProcessThrottler::addActivity):
+        (WebKit::ProcessThrottler::removeActivity):
+        (WebKit::ProcessThrottler::invalidateAllActivities):
+        (WebKit::ProcessThrottler::expectedAssertionState):
+        (WebKit::ProcessThrottler::setAssertionState):
+        (WebKit::ProcessThrottler::uiAssertionWillExpireImminently):
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::Activity::Activity):
+        (WebKit::ProcessThrottler::Activity::~Activity):
+        (WebKit::ProcessThrottler::Activity::isValid const):
+        (WebKit::ProcessThrottler::Activity::invalidate):
+        (WebKit::ProcessThrottler::shouldBeRunnable const):
+        (WebKit::ProcessThrottler::foregroundActivity):
+        (WebKit::ProcessThrottler::backgroundActivity):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebBackForwardCacheEntry.cpp:
+        (WebKit::WebBackForwardCacheEntry::~WebBackForwardCacheEntry):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::updateThrottleState):
+        (WebKit::WebPageProxy::waitForDidUpdateActivityState):
+        (WebKit::WebPageProxy::setInitialFocus):
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPageProxy::replaceMatches):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld):
+        (WebKit::WebPageProxy::runJavaScriptInFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getSamplingProfilerOutput):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::drawToPDF):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+        (WebKit::WebPageProxy::installActivityStateChangeCompletionHandler):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::insertAttachment):
+        (WebKit::WebPageProxy::updateAttachmentAttributes):
+        (WebKit::WebPageProxy::getApplicationManifest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::reinstateNetworkProcessAssertionState):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles):
+        (WebKit::WebProcessProxy::startBackgroundActivityForFullscreenInput):
+        (WebKit::WebProcessProxy::endBackgroundActivityForFullscreenInput):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentViewControllerForCurrentFocusedElement]):
+        (-[WKContentView dismissAllInputViewControllers:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestFocusedElementInformation):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::applyAutocorrection):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::beginSelectionInDirection):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPageProxy::requestDictationContext):
+        (WebKit::WebPageProxy::getSelectionContext):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+        (WebKit::WebPageProxy::requestRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPageProxy::requestRectsAtSelectionOffsetWithText):
+        (WebKit::WebPageProxy::moveSelectionByOffset):
+        (WebKit::WebPageProxy::focusNextFocusedElement):
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+
 2019-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(2.27.2): [GTK] Overview item remove button broken

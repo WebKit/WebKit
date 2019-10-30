@@ -246,8 +246,8 @@ public:
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
 #if PLATFORM(WATCHOS)
-    void takeBackgroundActivityTokenForFullscreenInput();
-    void releaseBackgroundActivityTokenForFullscreenInput();
+    void startBackgroundActivityForFullscreenInput();
+    void endBackgroundActivityForFullscreenInput();
 #endif
 
     bool isPrewarmed() const { return m_isPrewarmed; }
@@ -479,7 +479,7 @@ private:
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
     ProcessThrottler m_throttler;
-    ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
 #if PLATFORM(IOS_FAMILY)
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
@@ -512,7 +512,7 @@ private:
     bool m_hasAudibleWebPage { false };
 
 #if PLATFORM(WATCHOS)
-    ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
+    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_backgroundActivityForFullscreenFormControls;
 #endif
 
 #if PLATFORM(COCOA)

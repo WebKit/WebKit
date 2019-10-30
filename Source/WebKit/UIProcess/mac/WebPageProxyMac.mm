@@ -222,7 +222,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::attributedSubstringForCharacterRangeAsync"_s));
 
     process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_webPageID);
 }
@@ -248,7 +248,7 @@ void WebPageProxy::fontAtSelection(Function<void(const FontInfo&, double, bool, 
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::fontAtSelection"_s));
     process().send(Messages::WebPage::FontAtSelection(callbackID), m_webPageID);
 }
 

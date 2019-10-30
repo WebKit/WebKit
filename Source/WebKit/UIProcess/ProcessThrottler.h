@@ -26,8 +26,8 @@
 #ifndef ProcessThrottler_h
 #define ProcessThrottler_h
 
+#include "Logging.h"
 #include "ProcessAssertion.h"
-
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
@@ -47,20 +47,52 @@ class ProcessThrottlerClient;
 
 class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler>, private ProcessAssertion::Client {
 public:
-    enum ForegroundActivityCounterType { };
-    typedef RefCounter<ForegroundActivityCounterType> ForegroundActivityCounter;
-    typedef ForegroundActivityCounter::Token ForegroundActivityToken;
-    enum BackgroundActivityCounterType { };
-    typedef RefCounter<BackgroundActivityCounterType> BackgroundActivityCounter;
-    typedef BackgroundActivityCounter::Token BackgroundActivityToken;
-
     ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
+    ~ProcessThrottler();
 
-    ForegroundActivityToken foregroundActivityToken() const;
-    BackgroundActivityToken backgroundActivityToken() const;
+    enum class ActivityType { Background, Foreground };
+    template<ActivityType type> class Activity {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        Activity(ProcessThrottler& throttler, ASCIILiteral name)
+            : m_throttler(&throttler)
+            , m_name(name)
+        {
+            throttler.addActivity(*this);
+            RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler Starting %{public}s activity %p / '%{public}s'", m_throttler->m_processIdentifier, m_throttler, type == ActivityType::Foreground ? "foreground" : "background", this, m_name.characters());
+        }
+
+        ~Activity()
+        {
+            if (isValid())
+                invalidate();
+        }
+
+        bool isValid() const { return !!m_throttler; }
+
+    private:
+        friend class ProcessThrottler;
+
+        void invalidate()
+        {
+            ASSERT(!m_throttler);
+            RELEASE_LOG(ProcessSuspension, "[PID: %d] %p - ProcessThrottler Ending %{public}s activity %p / '%{public}s'", m_throttler->m_processIdentifier, m_throttler, type == ActivityType::Foreground ? "foreground" : "background", this, m_name.characters());
+            m_throttler->removeActivity(*this);
+            m_throttler = nullptr;
+        }
+
+        ProcessThrottler* m_throttler { nullptr };
+        ASCIILiteral m_name;
+    };
+
+    using ForegroundActivity = Activity<ActivityType::Foreground>;
+    std::unique_ptr<ForegroundActivity> foregroundActivity(ASCIILiteral name);
+
+    using BackgroundActivity = Activity<ActivityType::Background>;
+    std::unique_ptr<BackgroundActivity> backgroundActivity(ASCIILiteral name);
     
     void didConnectToProcess(ProcessID);
-    bool shouldBeRunnable() const { return m_foregroundCounter.value() || m_backgroundCounter.value(); }
+    bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
 
 private:
     AssertionState expectedAssertionState();
@@ -71,6 +103,12 @@ private:
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
 
+    void addActivity(ForegroundActivity&);
+    void addActivity(BackgroundActivity&);
+    void removeActivity(ForegroundActivity&);
+    void removeActivity(BackgroundActivity&);
+    void invalidateAllActivities();
+
     // ProcessAssertionClient
     void uiAssertionWillExpireImminently() override;
 
@@ -80,22 +118,22 @@ private:
     ProcessID m_processIdentifier { 0 };
     std::unique_ptr<ProcessAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_prepareToSuspendTimeoutTimer;
-    ForegroundActivityCounter m_foregroundCounter;
-    BackgroundActivityCounter m_backgroundCounter;
+    HashSet<ForegroundActivity*> m_foregroundActivities;
+    HashSet<BackgroundActivity*> m_backgroundActivities;
     Optional<uint64_t> m_pendingRequestToSuspendID;
     bool m_shouldTakeUIBackgroundAssertion;
 };
 
-inline ProcessThrottler::ForegroundActivityToken ProcessThrottler::foregroundActivityToken() const
+inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> std::unique_ptr<ForegroundActivity>
 {
-    return ForegroundActivityToken(m_foregroundCounter.count());
+    return makeUnique<ForegroundActivity>(*this, name);
 }
 
-inline ProcessThrottler::BackgroundActivityToken ProcessThrottler::backgroundActivityToken() const
+inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> std::unique_ptr<BackgroundActivity>
 {
-    return BackgroundActivityToken(m_backgroundCounter.count());
+    return makeUnique<BackgroundActivity>(*this, name);
 }
-    
-}
+
+} // namespace WebKit
 
 #endif // ProcessThrottler_h

@@ -916,12 +916,12 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
 void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
-    auto initializationActivityToken = process.throttler().backgroundActivityToken();
-    auto scopeExit = makeScopeExit([&process, initializationActivityToken] {
+    auto initializationActivity = process.throttler().backgroundActivity("WebProcess initialization"_s);
+    auto scopeExit = makeScopeExit([&process, initializationActivity = WTFMove(initializationActivity)]() mutable {
         // Round-trip to the Web Content process before releasing the
-        // initialization activity token, so that we're sure that all
+        // initialization activity, so that we're sure that all
         // messages sent from this function have been handled.
-        process.isResponsive([initializationActivityToken] (bool) { });
+        process.isResponsive([initializationActivity = WTFMove(initializationActivity)] (bool) { });
     });
 
     ensureNetworkProcess();
@@ -2047,24 +2047,24 @@ void WebProcessPool::updateProcessAssertions()
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
                 auto registrableDomain = serviceWorkerProcess->registrableDomain();
-                if (!m_foregroundTokensForServiceWorkerProcesses.contains(registrableDomain))
-                    m_foregroundTokensForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().foregroundActivityToken());
+                if (!m_foregroundActivitiesForServiceWorkerProcesses.contains(registrableDomain))
+                    m_foregroundActivitiesForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().foregroundActivity("Service Worker for visible view(s)"_s));
             }
-            m_backgroundTokensForServiceWorkerProcesses.clear();
+            m_backgroundActivitiesForServiceWorkerProcesses.clear();
             return;
         }
         if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
                 auto registrableDomain = serviceWorkerProcess->registrableDomain();
-                if (!m_backgroundTokensForServiceWorkerProcesses.contains(registrableDomain))
-                    m_backgroundTokensForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().backgroundActivityToken());
+                if (!m_backgroundActivitiesForServiceWorkerProcesses.contains(registrableDomain))
+                    m_backgroundActivitiesForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().backgroundActivity("Service Worker for background view(s)"_s));
             }
-            m_foregroundTokensForServiceWorkerProcesses.clear();
+            m_foregroundActivitiesForServiceWorkerProcesses.clear();
             return;
         }
-        m_foregroundTokensForServiceWorkerProcesses.clear();
-        m_backgroundTokensForServiceWorkerProcesses.clear();
+        m_foregroundActivitiesForServiceWorkerProcesses.clear();
+        m_backgroundActivitiesForServiceWorkerProcesses.clear();
     };
     updateServiceWorkerProcessAssertion();
 #endif
@@ -2073,23 +2073,23 @@ void WebProcessPool::updateProcessAssertions()
         auto& networkProcess = ensureNetworkProcess();
 
         if (m_foregroundWebProcessCounter.value()) {
-            if (!m_foregroundTokenForNetworkProcess) {
-                m_foregroundTokenForNetworkProcess = networkProcess.throttler().foregroundActivityToken();
+            if (!m_foregroundActivityForNetworkProcess) {
+                m_foregroundActivityForNetworkProcess = networkProcess.throttler().foregroundActivity("Networking for foreground view(s)"_s);
                 networkProcess.sendProcessDidTransitionToForeground();
             }
-            m_backgroundTokenForNetworkProcess = nullptr;
+            m_backgroundActivityForNetworkProcess = nullptr;
             return;
         }
         if (m_backgroundWebProcessCounter.value()) {
-            if (!m_backgroundTokenForNetworkProcess) {
-                m_backgroundTokenForNetworkProcess = networkProcess.throttler().backgroundActivityToken();
+            if (!m_backgroundActivityForNetworkProcess) {
+                m_backgroundActivityForNetworkProcess = networkProcess.throttler().backgroundActivity("Networking for foreground background view(s)"_s);
                 networkProcess.sendProcessDidTransitionToBackground();
             }
-            m_foregroundTokenForNetworkProcess = nullptr;
+            m_foregroundActivityForNetworkProcess = nullptr;
             return;
         }
-        m_foregroundTokenForNetworkProcess = nullptr;
-        m_backgroundTokenForNetworkProcess = nullptr;
+        m_foregroundActivityForNetworkProcess = nullptr;
+        m_backgroundActivityForNetworkProcess = nullptr;
     };
     updateNetworkProcessAssertion();
 #endif
@@ -2098,11 +2098,11 @@ void WebProcessPool::updateProcessAssertions()
 void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
 {
 #if PLATFORM(IOS_FAMILY)
-    // The network process crashed; take new tokens for the new network process.
-    if (m_backgroundTokenForNetworkProcess)
-        m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();
-    else if (m_foregroundTokenForNetworkProcess)
-        m_foregroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivityToken();
+    // The network process crashed; take new activities for the new network process.
+    if (m_backgroundActivityForNetworkProcess)
+        m_backgroundActivityForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivity("Networking for background view(s)"_s);
+    else if (m_foregroundActivityForNetworkProcess)
+        m_foregroundActivityForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivity("Networking for foreground view(s)"_s);
 #else
     UNUSED_PARAM(newNetworkProcessProxy);
 #endif

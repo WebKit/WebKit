@@ -56,7 +56,7 @@ protected:
     explicit RemoteObjectRegistry(_WKRemoteObjectRegistry *);
     
 private:
-    virtual ProcessThrottler::BackgroundActivityToken takeBackgroundActivityToken() { return nullptr; }
+    virtual std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) { return nullptr; }
     virtual IPC::MessageSender& messageSender() = 0;
     virtual uint64_t messageDestinationID() = 0;
 
@@ -69,7 +69,7 @@ private:
     void releaseUnusedReplyBlock(uint64_t replyID);
 
     WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
-    HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
+    HashMap<uint64_t, std::unique_ptr<ProcessThrottler::BackgroundActivity>> m_pendingReplies;
 };
 
 } // namespace WebKit

@@ -200,7 +200,7 @@ void WebPageProxy::requestFocusedElementInformation(Function<void(const FocusedE
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::requestFocusedElementInformation"_s));
     m_process->send(Messages::WebPage::RequestFocusedElementInformation(callbackID), m_webPageID);
 }
 
@@ -431,7 +431,7 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectWithGesture"_s));
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, isInteractingWithFocusedElement, callbackID), m_webPageID);
 }
 
@@ -442,7 +442,7 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uin
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithTouches"_s));
     m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_webPageID);
 }
     
@@ -472,7 +472,7 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::applyAutocorrection"_s));
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_webPageID);
 }
 
@@ -490,7 +490,7 @@ void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint poin
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectTextWithGranularityAtPoint"_s));
     m_process->send(Messages::WebPage::SelectTextWithGranularityAtPoint(point, static_cast<uint32_t>(granularity), isInteractingWithFocusedElement, callbackID), m_webPageID);
 }
 
@@ -501,7 +501,7 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s));
     m_process->send(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), isInteractingWithFocusedElement, callbackID), m_webPageID);
 }
 
@@ -512,7 +512,7 @@ void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::moveSelectionAtBoundaryWithDirection"_s));
     m_process->send(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), callbackID), m_webPageID);
 }
     
@@ -523,7 +523,7 @@ void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isI
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectPositionAtPoint"_s));
     m_process->send(Messages::WebPage::SelectPositionAtPoint(point, isInteractingWithFocusedElement, callbackID), m_webPageID);
 }
 
@@ -534,7 +534,7 @@ void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection directi
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::beginSelectionInDirection"_s));
     m_process->send(Messages::WebPage::BeginSelectionInDirection(direction, callbackID), m_webPageID);
 }
 
@@ -545,7 +545,7 @@ void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point,
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithExtentPoint"_s));
     m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithFocusedElement, callbackID), m_webPageID);
     
 }
@@ -557,7 +557,7 @@ void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntP
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithExtentPointAndBoundary"_s));
     m_process->send(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithFocusedElement, callbackID), m_webPageID);
     
 }
@@ -569,7 +569,7 @@ void WebPageProxy::requestDictationContext(WTF::Function<void (const String&, co
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestDictationContext"_s));
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_webPageID);
 }
 
@@ -590,7 +590,7 @@ void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const S
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionContext"_s));
     m_process->send(Messages::WebPage::GetSelectionContext(callbackID), m_webPageID);
 }
 
@@ -611,7 +611,7 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectWithTwoTouches"_s));
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_webPageID);
 }
 
@@ -657,7 +657,7 @@ void WebPageProxy::applicationDidEnterBackground()
     // We normally delay process suspension when the app is backgrounded until the current page load completes. However,
     // we do not want to do so when the screen is locked for power reasons.
     if (isSuspendedUnderLock)
-        NavigationState::fromWebPage(*this).releaseNetworkActivityToken(NavigationState::NetworkActivityTokenReleaseReason::ScreenLocked);
+        NavigationState::fromWebPage(*this).releaseNetworkActivity(NavigationState::NetworkActivityReleaseReason::ScreenLocked);
 #endif
     m_process->send(Messages::WebPage::ApplicationDidEnterBackground(isSuspendedUnderLock), m_webPageID);
 }
@@ -716,7 +716,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestRectsForGranularityWithSelectionOffset"_s));
     m_process->send(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(static_cast<uint32_t>(granularity), offset, callbackID), m_webPageID);
 }
 
@@ -727,7 +727,7 @@ void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const S
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestRectsAtSelectionOffsetWithText"_s));
     m_process->send(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text, callbackID), m_webPageID);
 }
 
@@ -753,7 +753,7 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, WTF::Function<void (Cal
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::moveSelectionByOffset"_s));
     m_process->send(Messages::WebPage::MoveSelectionByOffset(offset, callbackID), m_webPageID);
 }
 
@@ -1017,7 +1017,7 @@ void WebPageProxy::focusNextFocusedElement(bool isForward, WTF::Function<void(Ca
         return;
     }
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::focusNextFocusedElement"_s));
     process().send(Messages::WebPage::FocusNextFocusedElement(isForward, callbackID), m_webPageID);
 }
 
@@ -1096,7 +1096,7 @@ uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frame
     }
 
     uint32_t pageCount = 0;
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::computePagesForPrintingAndDrawToPDF"_s));
     using Message = Messages::WebPage::ComputePagesForPrintingAndDrawToPDF;
     process().sendSync(Message(frameID, printInfo, callbackID), Message::Reply(pageCount), m_webPageID, Seconds::infinity());
     return pageCount;

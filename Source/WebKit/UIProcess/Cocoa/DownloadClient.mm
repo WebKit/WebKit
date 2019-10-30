@@ -268,8 +268,8 @@ void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 #if PLATFORM(IOS_FAMILY)
     if (auto* webPage = downloadProxy.originatingPage()) {
         RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
-        ASSERT(!m_activityToken);
-        m_activityToken = webPage->process().throttler().backgroundActivityToken();
+        ASSERT(!m_activity);
+        m_activity = webPage->process().throttler().backgroundActivity("System preview download"_s);
     }
 #else
     UNUSED_PARAM(downloadProxy);
@@ -279,9 +279,9 @@ void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
 void DownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProxy)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (m_activityToken) {
+    if (m_activity) {
         RELEASE_LOG_IF(downloadProxy.originatingPage()->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
-        m_activityToken = nullptr;
+        m_activity = nullptr;
     }
 #else
     UNUSED_PARAM(downloadProxy);

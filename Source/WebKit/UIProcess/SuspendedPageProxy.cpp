@@ -102,7 +102,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_shouldDelayClosingUntilEnteringAcceleratedCompositingMode(shouldDelayClosingUntilEnteringAcceleratedCompositingMode)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if PLATFORM(IOS_FAMILY)
-    , m_suspensionToken(m_process->throttler().backgroundActivityToken())
+    , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s))
 #endif
 {
     allSuspendedPages().add(this);
@@ -218,7 +218,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
     m_suspensionTimeoutTimer.stop();
 
 #if PLATFORM(IOS_FAMILY)
-    m_suspensionToken = nullptr;
+    m_suspensionActivity = nullptr;
 #endif
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);

@@ -471,7 +471,7 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function
         return;
     }
 
-    send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), process().throttler().backgroundActivityToken())));
+    send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), process().throttler().backgroundActivity("RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing"_s))));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

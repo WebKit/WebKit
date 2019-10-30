@@ -31,9 +31,9 @@
 
 namespace WebKit {
 
-ProcessThrottler::BackgroundActivityToken UIRemoteObjectRegistry::takeBackgroundActivityToken()
+std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return m_page.process().throttler().backgroundActivityToken();
+    return m_page.process().throttler().backgroundActivity(name);
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)

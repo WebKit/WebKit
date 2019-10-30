@@ -205,7 +205,7 @@ void WebProcessProxy::processWasResumed()
     // The WebProcess was awakened by something other than the UIProcess. Take out an assertion for a
     // limited duration to allow whatever task needs to be accomplished time to complete.
     RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasResumed() Process was unexpectedly resumed, starting background activity", this);
-    auto backgroundActivityTimeoutHandler = [activityToken = m_throttler.backgroundActivityToken(), weakThis = makeWeakPtr(this)] {
+    auto backgroundActivityTimeoutHandler = [activity = m_throttler.backgroundActivity("WebProcess was unexpectedly resumed"_s), weakThis = makeWeakPtr(this)] {
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasResumed() - lambda, background activity timed out", weakThis.get());
     };
     m_unexpectedActivityTimer = makeUnique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);

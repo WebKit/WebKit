@@ -196,7 +196,7 @@ void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
     uint64_t callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is fetching Website data", this);
 
-    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] (WebsiteData websiteData) mutable {
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::fetchWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] (WebsiteData websiteData) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -213,7 +213,7 @@ void NetworkProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<
     auto callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data", this);
 
-    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -231,7 +231,7 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
     uint64_t callbackID = generateCallbackID();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data for several origins", this);
 
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteDataForOrigins"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(sessionID);
@@ -302,9 +302,9 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     m_customProtocolManagerProxy.invalidate();
 #endif
 
-    m_tokenForHoldingLockedFiles = nullptr;
+    m_activityForHoldingLockedFiles = nullptr;
     
-    m_syncAllCookiesToken = nullptr;
+    m_syncAllCookiesActivity = nullptr;
     m_syncAllCookiesCounter = 0;
 
     // This will cause us to be deleted.
@@ -1093,12 +1093,12 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the Network process is no longer holding locked files");
-        m_tokenForHoldingLockedFiles = nullptr;
+        m_activityForHoldingLockedFiles = nullptr;
         return;
     }
-    if (!m_tokenForHoldingLockedFiles) {
+    if (!m_activityForHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files");
-        m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
+        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s);
     }
 }
 
@@ -1107,11 +1107,11 @@ void NetworkProcessProxy::syncAllCookies()
     send(Messages::NetworkProcess::SyncAllCookies(), 0);
     
     ++m_syncAllCookiesCounter;
-    if (m_syncAllCookiesToken)
+    if (m_syncAllCookiesActivity)
         return;
     
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is syncing cookies", this);
-    m_syncAllCookiesToken = throttler().backgroundActivityToken();
+    m_syncAllCookiesActivity = throttler().backgroundActivity("Syncing cookies"_s);
 }
     
 void NetworkProcessProxy::didSyncAllCookies()
@@ -1121,7 +1121,7 @@ void NetworkProcessProxy::didSyncAllCookies()
     --m_syncAllCookiesCounter;
     if (!m_syncAllCookiesCounter) {
         RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done syncing cookies", this);
-        m_syncAllCookiesToken = nullptr;
+        m_syncAllCookiesActivity = nullptr;
     }
 }
 

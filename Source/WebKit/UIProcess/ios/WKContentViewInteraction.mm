@@ -5931,7 +5931,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         [presentingViewController presentViewController:_presentedFullScreenInputViewController.get() animated:YES completion:nil];
 
     // Presenting a fullscreen input view controller fully obscures the web view. Without taking this token, the web content process will get backgrounded.
-    _page->process().takeBackgroundActivityTokenForFullscreenInput();
+    _page->process().startBackgroundActivityForFullscreenInput();
 
     [presentingViewController.transitionCoordinator animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller = _presentedFullScreenInputViewController] (id <UIViewControllerTransitionCoordinatorContext>) {
         auto strongWebView = weakWebView.get();
@@ -5967,7 +5967,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
             [self becomeFirstResponder];
     }
 
-    _page->process().releaseBackgroundActivityTokenForFullscreenInput();
+    _page->process().endBackgroundActivityForFullscreenInput();
 }
 
 - (void)focusedFormControlViewDidSubmit:(WKFocusedFormControlView *)view

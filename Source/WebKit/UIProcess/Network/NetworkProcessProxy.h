@@ -277,8 +277,8 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
     ProcessThrottler m_throttler;
-    ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
-    ProcessThrottler::BackgroundActivityToken m_syncAllCookiesToken;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_syncAllCookiesActivity;
     
     unsigned m_syncAllCookiesCounter { 0 };
 
