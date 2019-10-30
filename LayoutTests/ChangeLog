@@ -1,3 +1,12 @@
+2019-10-30  Russell Epstein  <repstein@apple.com>
+
+        [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637).
+        https://bugs.webkit.org/show_bug.cgi?id=203637
+
+        Unreviewed Test Gardening.
+
+        * platform/ios-wk2/TestExpectations: Marked test as flaky.
+
 2019-10-30  Alex Christensen  <achristensen@webkit.org>
 
         WKContentRuleLists should block requests from service workers

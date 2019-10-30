@@ -1370,3 +1370,6 @@ webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]
 webkit.org/b/203567 http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Failure ]
 webkit.org/b/203567 http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Failure ]
 
+# <rdar://problem/56761171> [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637)
+webkit.org/b/203637 fast/css-custom-paint/simple-hidpi.html [ Pass ImageOnlyFailure ]
+
