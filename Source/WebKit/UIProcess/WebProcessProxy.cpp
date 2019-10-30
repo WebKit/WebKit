@@ -849,7 +849,7 @@ void WebProcessProxy::didDestroyFrame(uint64_t frameID)
 #if ENABLE(WEB_AUTHN)
     if (auto* frame = webFrame(frameID)) {
         if (auto* page = frame->page())
-            page->websiteDataStore().authenticatorManager().cancelRequest(page->pageID(), frameID);
+            page->websiteDataStore().authenticatorManager().cancelRequest(page->webPageID(), frameID);
     }
 #endif
     m_frameMap.remove(frameID);

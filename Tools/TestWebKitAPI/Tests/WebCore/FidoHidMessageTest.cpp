@@ -99,7 +99,7 @@ TEST(FidoHidMessageTest, TestPacketData2)
 {
     uint32_t channelId = 0xF5060708;
     Vector<uint8_t> data {10, 11};
-    auto initPacket = std::make_unique<FidoHidContinuationPacket>(channelId, 0, Vector<uint8_t>(data));
+    auto initPacket = makeUnique<FidoHidContinuationPacket>(channelId, 0, Vector<uint8_t>(data));
     size_t index = 0;
 
     Vector<uint8_t> serialized = initPacket->getSerializedData();

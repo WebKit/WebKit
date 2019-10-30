@@ -38,11 +38,6 @@
     return [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:className configureJSCForTesting:NO andCustomParameterClasses:nil];
 }
 
-+ (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value
-{
-    return [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:className configureJSCForTesting:value andCustomParameterClasses:nil];
-}
-
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value andCustomParameterClasses:(NSSet<Class> *)parameterClasses
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

@@ -1,24 +1,3 @@
-2019-10-30  Alex Christensen  <achristensen@webkit.org>
-
-        Branch build fix after r251754
-        https://bugs.webkit.org/show_bug.cgi?id=191523
-        <rdar://problem/56579665>
-
-        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
-        (WebKit::AuthenticatorManager::cancelRequest):
-        (WebKit::AuthenticatorManager::runPanel):
-        * UIProcess/WebAuthentication/AuthenticatorManager.h:
-        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
-        (WebKit::WebAuthenticatorCoordinatorProxy::makeCredential):
-        (WebKit::WebAuthenticatorCoordinatorProxy::getAssertion):
-        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
-        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
-        * UIProcess/WebPageProxy.cpp:
-        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
-        (WebKit::WebPageProxy::resetState):
-        * UIProcess/WebProcessProxy.cpp:
-        (WebKit::WebProcessProxy::didDestroyFrame):
-
 2019-10-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r251317. rdar://problem/56598357
