@@ -842,15 +842,6 @@ void FrameLoader::checkCompleted()
     // Have we completed before?
     if (m_isComplete)
         return;
-    
-#if ENABLE(VIDEO)
-    // FIXME: Remove this code once https://webkit.org/b/185284 is fixed.
-    if (HTMLMediaElement::isRunningDestructor()) {
-        ASSERT_NOT_REACHED();
-        scheduleCheckCompleted();
-        return;
-    }
-#endif
 
     // FIXME: It would be better if resource loads were kicked off after render tree update (or didn't complete synchronously).
     //        https://bugs.webkit.org/show_bug.cgi?id=171729

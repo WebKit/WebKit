@@ -166,8 +166,6 @@ public:
 
     WEBCORE_EXPORT static RefPtr<HTMLMediaElement> bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
 
-    static bool isRunningDestructor();
-
     WEBCORE_EXPORT void rewind(double timeDelta);
     WEBCORE_EXPORT void returnToRealtime() override;
 

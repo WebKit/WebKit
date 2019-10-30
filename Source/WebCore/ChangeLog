@@ -1,3 +1,23 @@
+2019-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove HTMLMediaElementDestructorScope
+        https://bugs.webkit.org/show_bug.cgi?id=203600
+
+        Reviewed by Chris Dumez.
+
+        Removed the workaround introduced in r231392 for the bug 185284 now that it's been fixed.
+
+        No new tests since this code should be dead code.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::isRunningDestructor): Deleted.
+        (WebCore::HTMLMediaElementDestructorScope::HTMLMediaElementDestructorScope): Deleted.
+        (WebCore::HTMLMediaElementDestructorScope::~HTMLMediaElementDestructorScope): Deleted.
+        * html/HTMLMediaElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+
 2019-10-29  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Clean up LegacyPreviewLoaderClients
