@@ -42,7 +42,7 @@ namespace WebCore {
 class CSSParserTokenRange;
 
 namespace Style {
-class PropertyCascade;
+class BuilderState;
 }
 
 class CSSVariableReferenceValue : public CSSValue {
@@ -55,7 +55,7 @@ public:
     bool equals(const CSSVariableReferenceValue& other) const { return m_data.get() == other.m_data.get(); }
     String customCSSText() const;
 
-    RefPtr<CSSVariableData> resolveVariableReferences(Style::PropertyCascade&) const;
+    RefPtr<CSSVariableData> resolveVariableReferences(Style::BuilderState&) const;
 
 private:
     CSSVariableReferenceValue(Ref<CSSVariableData>&& data)

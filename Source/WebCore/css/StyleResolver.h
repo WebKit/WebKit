@@ -28,7 +28,6 @@
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
 #include "MediaQueryEvaluator.h"
-#include "PropertyCascade.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
@@ -84,6 +83,10 @@ class SVGElement;
 class SVGSVGElement;
 class ViewportStyleResolver;
 struct ResourceLoaderOptions;
+
+namespace Style {
+class PropertyCascade;
+}
 
 // MatchOnlyUserAgentRules is used in media queries, where relative units
 // are interpreted according to the document root element style, and styled only
@@ -160,7 +163,7 @@ public:
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, std::unique_ptr<RenderStyle>);
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
-    void updateFont();
+    void updateFont(Style::PropertyCascade&);
     void initializeFontStyle();
 
     void setFontSize(FontCascadeDescription&, float size);
@@ -243,15 +246,6 @@ public:
         const RenderStyle* parentStyle() const { return m_parentStyle; }
         const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
-        InsideLink elementLinkState() const { return m_elementLinkState; }
-
-        void setApplyPropertyToRegularStyle(bool isApply) { m_applyPropertyToRegularStyle = isApply; }
-        void setApplyPropertyToVisitedLinkStyle(bool isApply) { m_applyPropertyToVisitedLinkStyle = isApply; }
-        bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
-        bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
-
-        void setFontDirty(bool isDirty) { m_fontDirty = isDirty; }
-        bool fontDirty() const { return m_fontDirty; }
         void setFontSizeHasViewportUnits(bool hasViewportUnits) { m_fontSizeHasViewportUnits = hasViewportUnits; }
         bool fontSizeHasViewportUnits() const { return m_fontSizeHasViewportUnits; }
 
@@ -261,22 +255,9 @@ public:
         FillLayer backgroundData() const { return m_backgroundData; }
         const Color& backgroundColor() const { return m_backgroundColor; }
 
-        const FontCascadeDescription& fontDescription() { return m_style->fontDescription(); }
-        const FontCascadeDescription& parentFontDescription() { return m_parentStyle->fontDescription(); }
-        void setFontDescription(FontCascadeDescription&& fontDescription) { m_fontDirty |= m_style->setFontDescription(WTFMove(fontDescription)); }
-        void setZoom(float f) { m_fontDirty |= m_style->setZoom(f); }
-        void setEffectiveZoom(float f) { m_fontDirty |= m_style->setEffectiveZoom(f); }
-        void setWritingMode(WritingMode writingMode) { m_fontDirty |= m_style->setWritingMode(writingMode); }
-        void setTextOrientation(TextOrientation textOrientation) { m_fontDirty |= m_style->setTextOrientation(textOrientation); }
-
         bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
 
         const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-
-        Style::CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
-        void setCascadeLevel(Style::CascadeLevel level) { m_cascadeLevel = level; }
-        Style::ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
-        void setStyleScopeOrdinal(Style::ScopeOrdinal styleScopeOrdinal) { m_styleScopeOrdinal = styleScopeOrdinal; }
 
         const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
@@ -297,14 +278,6 @@ public:
 
         CSSToLengthConversionData m_cssToLengthConversionData;
 
-        Style::ScopeOrdinal m_styleScopeOrdinal { Style::ScopeOrdinal::Element };
-
-        InsideLink m_elementLinkState { InsideLink::NotInside };
-        Style::CascadeLevel m_cascadeLevel { Style::CascadeLevel::UserAgent };
-
-        bool m_applyPropertyToRegularStyle { true };
-        bool m_applyPropertyToVisitedLinkStyle { false };
-        bool m_fontDirty { false };
         bool m_fontSizeHasViewportUnits { false };
         bool m_hasUAAppearance { false };
     };
@@ -314,18 +287,7 @@ public:
 
     RefPtr<StyleImage> styleImage(CSSValue&);
 
-    bool applyPropertyToRegularStyle() const { return m_state.applyPropertyToRegularStyle(); }
-    bool applyPropertyToVisitedLinkStyle() const { return m_state.applyPropertyToVisitedLinkStyle(); }
-
-    CSSToStyleMap* styleMap() { return &m_styleMap; }
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
-    const FontCascadeDescription& fontDescription() { return m_state.fontDescription(); }
-    const FontCascadeDescription& parentFontDescription() { return m_state.parentFontDescription(); }
-    void setFontDescription(FontCascadeDescription&& fontDescription) { m_state.setFontDescription(WTFMove(fontDescription)); }
-    void setZoom(float f) { m_state.setZoom(f); }
-    void setEffectiveZoom(float f) { m_state.setEffectiveZoom(f); }
-    void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
-    void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
 
     bool adjustRenderStyleForTextAutosizing(RenderStyle&, const Element&);
 
@@ -380,7 +342,6 @@ private:
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
 #endif
 
-    CSSToStyleMap m_styleMap;
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
     State m_state;

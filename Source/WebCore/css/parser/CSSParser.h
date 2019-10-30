@@ -42,7 +42,7 @@ class StyleSheetContents;
 class RenderStyle;
 
 namespace Style {
-class PropertyCascade;
+class BuilderState;
 }
 
 class CSSParser {
@@ -81,7 +81,7 @@ public:
 
     void parseSelector(const String&, CSSSelectorList&);
 
-    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::PropertyCascade&);
+    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
     static Color parseColor(const String&, bool strict = false);
     static Color parseSystemColor(const String&, const CSSParserContext*);

@@ -177,10 +177,10 @@ void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, co
     CSSParserImpl::parseDeclarationListForInspector(string, context, observer);
 }
 
-RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, Style::PropertyCascade& cascade)
+RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, Style::BuilderState& builderState)
 {
     ASSERT((propID == CSSPropertyCustom && value.isCustomPropertyValue()) || (propID != CSSPropertyCustom && !value.isCustomPropertyValue()));
-    auto& style = *cascade.styleResolver().style();
+    auto& style = builderState.style();
     auto direction = style.direction();
     auto writingMode = style.writingMode();
 
@@ -193,7 +193,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
             shorthandID = CSSProperty::resolveDirectionAwareProperty(shorthandID, direction, writingMode);
         CSSVariableReferenceValue* shorthandValue = pendingSubstitution.shorthandValue();
 
-        auto resolvedData = shorthandValue->resolveVariableReferences(cascade);
+        auto resolvedData = shorthandValue->resolveVariableReferences(builderState);
         if (!resolvedData)
             return nullptr;
         Vector<CSSParserToken> resolvedTokens = resolvedData->tokens();
@@ -212,7 +212,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
 
     if (value.isVariableReferenceValue()) {
         const CSSVariableReferenceValue& valueWithReferences = downcast<CSSVariableReferenceValue>(value);
-        auto resolvedData = valueWithReferences.resolveVariableReferences(cascade);
+        auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
         if (!resolvedData)
             return nullptr;
         return CSSPropertyParser::parseSingleValue(propID, resolvedData->tokens(), m_context);
@@ -222,9 +222,9 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     const auto& valueWithReferences = WTF::get<Ref<CSSVariableReferenceValue>>(customPropValue.value()).get();
 
     auto& name = downcast<CSSCustomPropertyValue>(value).name();
-    auto* registered = cascade.styleResolver().document().getCSSRegisteredCustomPropertySet().get(name);
+    auto* registered = builderState.document().getCSSRegisteredCustomPropertySet().get(name);
     auto& syntax = registered ? registered->syntax : "*";
-    auto resolvedData = valueWithReferences.resolveVariableReferences(cascade);
+    auto resolvedData = valueWithReferences.resolveVariableReferences(builderState);
 
     if (!resolvedData)
         return nullptr;
@@ -234,9 +234,9 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, false, dependencies, resolvedData->tokens(), m_context);
 
     for (auto id : dependencies)
-        cascade.applyProperties(id, id);
+        builderState.cascade().applyProperties(id, id);
 
-    return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), cascade.styleResolver(), m_context);
+    return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), builderState, m_context);
 }
 
 std::unique_ptr<Vector<double>> CSSParser::parseKeyframeKeyList(const String& selector)

@@ -98,6 +98,7 @@
 #include "StyleGeneratedImage.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
+#include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "TransformFunctions.h"
@@ -143,7 +144,6 @@ StyleResolver::StyleResolver(Document& document)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
 #endif
-    , m_styleMap(this)
     , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
 {
     Element* root = m_document.documentElement();
@@ -244,7 +244,6 @@ StyleResolver::State::State(const Element& element, const RenderStyle* parentSty
     : m_element(&element)
     , m_parentStyle(parentStyle)
     , m_selectorFilter(selectorFilter)
-    , m_elementLinkState(element.document().visitedLinkState().determineLinkState(element))
 {
     bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
     if (resetStyleInheritance)
@@ -308,7 +307,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     if (element.isLink()) {
         style.setIsLink(true);
-        InsideLink linkState = state.elementLinkState();
+        InsideLink linkState = document().visitedLinkState().determineLinkState(element);
         if (linkState != InsideLink::NotInside) {
             bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassVisited);
             if (forceVisited)
@@ -369,7 +368,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, update it now.
-    updateFont();
+    updateFont(cascade);
 
     // Now resolve remaining custom properties and the rest, in any order
     cascade.applyCustomProperties();
@@ -377,7 +376,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
 
     // If our font got dirtied by one of the non-essential font props, update it a second time.
-    updateFont();
+    updateFont(cascade);
 
     cascade.applyDeferredProperties();
 
@@ -569,7 +568,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, update it now.
-    updateFont();
+    updateFont(cascade);
 
     // Now resolve remaining custom properties and the rest, in any order
     cascade.applyCustomProperties();
@@ -1156,12 +1155,12 @@ static void checkForOrientationChange(RenderStyle& style)
     style.setFontDescription(WTFMove(newFontDescription));
 }
 
-void StyleResolver::updateFont()
+void StyleResolver::updateFont(Style::PropertyCascade& cascade)
 {
-    if (!m_state.fontDirty())
+    auto& style = *m_state.style();
+    if (!cascade.builderState().fontDirty() && style.fontCascade().fonts())
         return;
 
-    auto& style = *m_state.style();
 #if ENABLE(TEXT_AUTOSIZING)
     checkForTextSizeAdjust(style);
 #endif
@@ -1171,7 +1170,8 @@ void StyleResolver::updateFont()
     style.fontCascade().update(&document().fontSelector());
     if (m_state.fontSizeHasViewportUnits())
         style.setHasViewportUnits(true);
-    m_state.setFontDirty(false);
+
+    cascade.builderState().clearFontDirty();
 }
 
 Vector<RefPtr<StyleRule>> StyleResolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
@@ -1338,7 +1338,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
         // If our font got dirtied, update it now.
-        updateFont();
+        updateFont(cascade);
 
         // Now resolve remaining custom properties and the rest, in any order
         cascade.applyCustomProperties();
@@ -1365,7 +1365,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     // If our font got dirtied, update it now.
-    updateFont();
+    updateFont(cascade);
 
     // If the font changed, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->fontDescription() != state.style()->fontDescription())
@@ -1381,7 +1381,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     // so to preserve behavior, we queue them up during cascade and flush here.
     cascade.applyDeferredProperties();
 
-    ASSERT(!state.fontDirty());
+    ASSERT(!cascade.builderState().fontDirty());
 
     if (cacheItem || !cacheHash)
         return;
@@ -1402,10 +1402,11 @@ void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* valu
 {
     if (!value)
         return;
+
     MatchResult matchResult;
     Style::PropertyCascade cascade(*this, matchResult, { });
-    if (value)
-        cascade.applyProperty(id, *value);
+    cascade.applyProperty(id, *value);
+    updateFont(cascade);
 }
 
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
@@ -1516,7 +1517,7 @@ void StyleResolver::initializeFontStyle()
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
-    setFontDescription(WTFMove(fontDescription));
+    style()->setFontDescription(WTFMove(fontDescription));
 }
 
 void StyleResolver::setFontSize(FontCascadeDescription& fontDescription, float size)

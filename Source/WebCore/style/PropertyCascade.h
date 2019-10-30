@@ -25,23 +25,16 @@
 
 #pragma once
 
+#include "CascadeLevel.h"
 #include "ElementRuleCollector.h"
+#include "StyleBuilderState.h"
 #include <bitset>
-#include <wtf/Bitmap.h>
 
 namespace WebCore {
 
 class StyleResolver;
 
 namespace Style {
-
-enum class CascadeLevel : uint8_t {
-    UserAgent   = 1 << 0,
-    User        = 1 << 1,
-    Author      = 1 << 2
-};
-
-static constexpr OptionSet<CascadeLevel> allCascadeLevels() { return { Style::CascadeLevel::UserAgent, Style::CascadeLevel::User, Style::CascadeLevel::Author }; }
 
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
@@ -51,8 +44,6 @@ public:
     PropertyCascade(const PropertyCascade&, OptionSet<CascadeLevel>);
 
     ~PropertyCascade();
-
-    StyleResolver& styleResolver() { return m_styleResolver; }
 
     struct Property {
         CSSPropertyID id;
@@ -69,11 +60,11 @@ public:
 
     void applyProperties(int firstProperty, int lastProperty);
     void applyDeferredProperties();
-
     void applyCustomProperties();
     void applyCustomProperty(const String& name);
-
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault);
+
+    BuilderState& builderState() { return *m_builderState; }
 
 private:
     void buildCascade(OptionSet<CascadeLevel>);
@@ -97,11 +88,9 @@ private:
 
     void resolveDirectionAndWritingMode();
 
-    StyleResolver& m_styleResolver;
-
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
-    
+
     TextDirection m_direction;
     WritingMode m_writingMode;
 
@@ -111,19 +100,10 @@ private:
     Vector<Property, 8> m_deferredProperties;
     HashMap<AtomString, Property> m_customProperties;
 
-    // State to use when applying properties, to keep track of which custom and high-priority
-    // properties have been resolved.
-    struct ApplyState {
-        Bitmap<numCSSProperties> appliedProperties = { };
-        HashSet<String> appliedCustomProperties = { };
-        Bitmap<numCSSProperties> inProgressProperties = { };
-        HashSet<String> inProgressPropertiesCustom = { };
-    };
-
-    ApplyState m_applyState;
-
     std::unique_ptr<const PropertyCascade> m_authorRollbackCascade;
     std::unique_ptr<const PropertyCascade> m_userRollbackCascade;
+
+    Optional<BuilderState> m_builderState;
 };
 
 inline bool PropertyCascade::hasProperty(CSSPropertyID id) const

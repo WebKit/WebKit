@@ -45,29 +45,24 @@
 
 namespace WebCore {
 
-CSSToStyleMap::CSSToStyleMap(StyleResolver* resolver)
-    : m_resolver(resolver)
+CSSToStyleMap::CSSToStyleMap(Style::BuilderState& builderState)
+    : m_builderState(builderState)
 {
 }
 
 RenderStyle* CSSToStyleMap::style() const
 {
-    return m_resolver->style();
-}
-
-const RenderStyle* CSSToStyleMap::rootElementStyle() const
-{
-    return m_resolver->rootElementStyle();
+    return &m_builderState.style();
 }
 
 bool CSSToStyleMap::useSVGZoomRules() const
 {
-    return m_resolver->useSVGZoomRules();
+    return m_builderState.useSVGZoomRules();
 }
 
 RefPtr<StyleImage> CSSToStyleMap::styleImage(CSSValue& value)
 {
-    return m_resolver->styleImage(value);
+    return m_builderState.createStyleImage(value);
 }
 
 void CSSToStyleMap::mapFillAttachment(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -214,7 +209,7 @@ void CSSToStyleMap::mapFillSize(CSSPropertyID propertyID, FillLayer& layer, cons
         break;
     default:
         ASSERT(fillSize.type == FillSizeType::Size);
-        if (!convertToLengthSize(primitiveValue, m_resolver->state().cssToLengthConversionData(), fillSize.size))
+        if (!convertToLengthSize(primitiveValue, m_builderState.cssToLengthConversionData(), fillSize.size))
             return;
         break;
     }
@@ -236,9 +231,9 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
-        length = StyleBuilderConverter::convertLength(*m_resolver, *pair->second());
+        length = StyleBuilderConverter::convertLength(m_builderState, *pair->second());
     } else
-        length = StyleBuilderConverter::convertPositionComponentX(*m_resolver, value);
+        length = StyleBuilderConverter::convertPositionComponentX(m_builderState, value);
 
     layer.setXPosition(length);
     if (pair)
@@ -260,9 +255,9 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
-        length = StyleBuilderConverter::convertLength(*m_resolver, *pair->second());
+        length = StyleBuilderConverter::convertLength(m_builderState, *pair->second());
     } else
-        length = StyleBuilderConverter::convertPositionComponentY(*m_resolver, value);
+        length = StyleBuilderConverter::convertPositionComponentY(m_builderState, value);
     
     layer.setYPosition(length);
     if (pair)
@@ -409,7 +404,7 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
     if (primitiveValue.valueID() == CSSValueNone)
         layer.setIsNoneAnimation(true);
     else
-        layer.setName(primitiveValue.stringValue(), m_resolver->state().styleScopeOrdinal());
+        layer.setName(primitiveValue.stringValue(), m_builderState.styleScopeOrdinal());
 }
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)
@@ -593,7 +588,7 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
         return LengthBox();
 
     // Get our zoom value.
-    CSSToLengthConversionData conversionData = useSVGZoomRules() ? m_resolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : m_resolver->state().cssToLengthConversionData();
+    CSSToLengthConversionData conversionData = useSVGZoomRules() ? m_builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f) : m_builderState.cssToLengthConversionData();
 
     // Retrieve the primitive value.
     auto& borderWidths = downcast<CSSPrimitiveValue>(value);

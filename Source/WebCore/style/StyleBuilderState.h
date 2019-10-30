@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CSSToLengthConversionData.h"
+#include "CSSToStyleMap.h"
+#include "CascadeLevel.h"
+#include "RenderStyle.h"
+#include "SelectorChecker.h"
+#include <wtf/Bitmap.h>
+
+namespace WebCore {
+
+class StyleImage;
+class StyleResolver;
+
+namespace Style {
+
+class PropertyCascade;
+
+class BuilderState {
+public:
+    BuilderState(PropertyCascade&, StyleResolver&);
+
+    PropertyCascade& cascade() { return m_cascade; }
+    StyleResolver& styleResolver() { return m_styleResolver; }
+
+    RenderStyle& style() { return m_style; }
+    const RenderStyle& parentStyle() const { return m_parentStyle; }
+    const RenderStyle& rootElementStyle() const { return m_rootElementStyle; }
+
+    const Document& document() const { return m_document.get(); }
+    const Element* element() const { return m_element.get(); }
+
+    void setFontDescription(FontCascadeDescription&& fontDescription) { m_fontDirty |= m_style.setFontDescription(WTFMove(fontDescription)); }
+    void setFontSize(FontCascadeDescription&, float size);
+    void setZoom(float f) { m_fontDirty |= m_style.setZoom(f); }
+    void setEffectiveZoom(float f) { m_fontDirty |= m_style.setEffectiveZoom(f); }
+    void setWritingMode(WritingMode writingMode) { m_fontDirty |= m_style.setWritingMode(writingMode); }
+    void setTextOrientation(TextOrientation textOrientation) { m_fontDirty |= m_style.setTextOrientation(textOrientation); }
+
+    bool fontDirty() const { return m_fontDirty; }
+    void setFontDirty() { m_fontDirty = true; }
+    void clearFontDirty() { m_fontDirty = false; }
+
+    const FontCascadeDescription& fontDescription() { return m_style.fontDescription(); }
+    const FontCascadeDescription& parentFontDescription() { return m_parentStyle.fontDescription(); }
+
+    // FIXME: These are mutually exclusive, clean up the code to take that into account.
+    bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
+    bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch == SelectorChecker::MatchVisited; }
+
+    bool useSVGZoomRules() const;
+    bool useSVGZoomRulesForLength() const;
+    ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
+
+    RefPtr<StyleImage> createStyleImage(CSSValue&);
+    bool createFilterOperations(const CSSValue&, FilterOperations& outOperations);
+    Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
+
+    const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
+    CSSToStyleMap& styleMap() { return m_styleMap; }
+
+private:
+    friend class PropertyCascade;
+
+    PropertyCascade& m_cascade;
+
+    CSSToStyleMap m_styleMap;
+    CSSToLengthConversionData m_cssToLengthConversionData;
+
+    // FIXME: Remove.
+    StyleResolver& m_styleResolver;
+
+    RenderStyle& m_style;
+    const RenderStyle& m_parentStyle;
+    const RenderStyle& m_rootElementStyle;
+
+    Ref<const Document> m_document;
+    RefPtr<const Element> m_element;
+
+    Bitmap<numCSSProperties> m_appliedProperties;
+    HashSet<String> m_appliedCustomProperties;
+    Bitmap<numCSSProperties> m_inProgressProperties;
+    HashSet<String> m_inProgressPropertiesCustom;
+
+    CascadeLevel m_cascadeLevel { };
+    ScopeOrdinal m_styleScopeOrdinal { };
+    SelectorChecker::LinkMatchMask m_linkMatch { };
+
+    bool m_fontDirty { false };
+};
+
+}
+}

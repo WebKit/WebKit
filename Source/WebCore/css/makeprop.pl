@@ -579,21 +579,21 @@ sub getAutoGetter {
   my $name = shift;
   my $renderStyle = shift;
 
-  return $renderStyle . "->hasAuto" . getNameForMethods($name) . "()";
+  return $renderStyle . ".hasAuto" . getNameForMethods($name) . "()";
 }
 
 sub getAutoSetter {
   my $name = shift;
   my $renderStyle = shift;
 
-  return $renderStyle . "->setHasAuto" . getNameForMethods($name) . "()";
+  return $renderStyle . ".setHasAuto" . getNameForMethods($name) . "()";
 }
 
 sub getVisitedLinkSetter {
   my $name = shift;
   my $renderStyle = shift;
 
-  return $renderStyle . "->setVisitedLink" . getNameForMethods($name);
+  return $renderStyle . ".setVisitedLink" . getNameForMethods($name);
 }
 
 sub getClearFunction {
@@ -699,7 +699,7 @@ sub colorFromPrimitiveValue {
   my $primitiveValue = shift;
   my $forVisitedLink = @_ ? shift : NOT_FOR_VISITED_LINK;
 
-  return "styleResolver.colorFromPrimitiveValue(" . $primitiveValue . ", /* forVisitedLink */ " . ($forVisitedLink ? "true" : "false") . ")";
+  return "builderState.colorFromPrimitiveValue(" . $primitiveValue . ", /* forVisitedLink */ " . ($forVisitedLink ? "true" : "false") . ")";
 }
 
 use constant {
@@ -713,12 +713,12 @@ sub generateColorValueSetter {
   my $indent = shift;
   my $valueIsPrimitive = @_ ? shift : VALUE_IS_COLOR;
 
-  my $style = "styleResolver.style()";
-  my $setterContent .= $indent . "if (styleResolver.applyPropertyToRegularStyle())\n";
-  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"setter"};
+  my $style = "builderState.style()";
+  my $setterContent .= $indent . "if (builderState.applyPropertyToRegularStyle())\n";
+  my $setValue = $style . "." . $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $color = $valueIsPrimitive ? colorFromPrimitiveValue($value) : $value;
   $setterContent .= $indent . "    " . $setValue . "(" . $color . ");\n";
-  $setterContent .= $indent . "if (styleResolver.applyPropertyToVisitedLinkStyle())\n";
+  $setterContent .= $indent . "if (builderState.applyPropertyToVisitedLinkStyle())\n";
   $color = $valueIsPrimitive ? colorFromPrimitiveValue($value, FOR_VISITED_LINK) : $value;
   $setterContent .= $indent . "    " . getVisitedLinkSetter($name, $style) . "(" . $color . ");\n";
 
@@ -731,7 +731,7 @@ sub handleCurrentColorValue {
   my $indent = shift;
 
   my $code = $indent . "if (" . $primitiveValue . ".valueID() == CSSValueCurrentcolor) {\n";
-  $code .= $indent . "    applyInherit" . $nameToId{$name} . "(styleResolver);\n";
+  $code .= $indent . "    applyInherit" . $nameToId{$name} . "(builderState);\n";
   $code .= $indent . "    return;\n";
   $code .= $indent . "}\n";
   return $code;
@@ -742,7 +742,7 @@ sub generateAnimationPropertyInitialValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "AnimationList& list = styleResolver.style()->" . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "AnimationList& list = builderState.style()." . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
   $setterContent .= $indent . "if (list.isEmpty())\n";
   $setterContent .= $indent . "    list.append(Animation::create());\n";
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
@@ -762,8 +762,8 @@ sub generateAnimationPropertyInheritValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "auto& list = styleResolver.style()->" . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
-  $setterContent .= $indent . "auto* parentList = styleResolver.parentStyle()->" . getAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "auto& list = builderState.style()." . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "auto* parentList = builderState.parentStyle()." . getAnimationsOrTransitionsMethod($name) . "();\n";
   $setterContent .= $indent . "size_t i = 0, parentSize = parentList ? parentList->size() : 0;\n";
   $setterContent .= $indent . "for ( ; i < parentSize && parentList->animation(i)." . getTestFunction($name) . "(); ++i) {\n";
   $setterContent .= $indent . "    if (list.size() <= i)\n";
@@ -786,20 +786,20 @@ sub generateAnimationPropertyValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "AnimationList& list = styleResolver.style()->" . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "AnimationList& list = builderState.style()." . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
   $setterContent .= $indent . "size_t childIndex = 0;\n";
   $setterContent .= $indent . "if (is<CSSValueList>(value)) {\n";
   $setterContent .= $indent . "    /* Walk each value and put it into an animation, creating new animations as needed. */\n";
   $setterContent .= $indent . "    for (auto& currentValue : downcast<CSSValueList>(value)) {\n";
   $setterContent .= $indent . "        if (childIndex <= list.size())\n";
   $setterContent .= $indent . "            list.append(Animation::create());\n";
-  $setterContent .= $indent . "        styleResolver.styleMap()->" . getAnimationMapfunction($name) . "(list.animation(childIndex), currentValue);\n";
+  $setterContent .= $indent . "        builderState.styleMap()." . getAnimationMapfunction($name) . "(list.animation(childIndex), currentValue);\n";
   $setterContent .= $indent . "        ++childIndex;\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "} else {\n";
   $setterContent .= $indent . "    if (list.isEmpty())\n";
   $setterContent .= $indent . "        list.append(Animation::create());\n";
-  $setterContent .= $indent . "    styleResolver.styleMap()->" . getAnimationMapfunction($name) . "(list.animation(childIndex), value);\n";
+  $setterContent .= $indent . "    builderState.styleMap()." . getAnimationMapfunction($name) . "(list.animation(childIndex), value);\n";
   $setterContent .= $indent . "    childIndex = 1;\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= $indent . "for ( ; childIndex < list.size(); ++childIndex) {\n";
@@ -822,11 +822,11 @@ sub generateFillLayerPropertyInitialValueSetter {
 
   my $setterContent = "";
   $setterContent .= $indent . "// Check for (single-layer) no-op before clearing anything.\n";
-  $setterContent .= $indent . "auto& layers = styleResolver.style()->" . getLayersFunction($name) . "();\n";
+  $setterContent .= $indent . "auto& layers = builderState.style()." . getLayersFunction($name) . "();\n";
   $setterContent .= $indent . "if (!layers.next() && (!layers." . $testFunction . "() || layers." . $getter . "() == $initial))\n";
   $setterContent .= $indent . "    return;\n";
   $setterContent .= "\n";
-  $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
+  $setterContent .= $indent . "auto* child = &builderState.style()." . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "child->" . $setter . "(" . $initial . ");\n";
   $setterContent .= $indent . "for (child = child->next(); child; child = child->next())\n";
   $setterContent .= $indent . "    child->" . $clearFunction . "();\n";
@@ -845,12 +845,12 @@ sub generateFillLayerPropertyInheritValueSetter {
 
   my $setterContent = "";
   $setterContent .= $indent . "// Check for no-op before copying anything.\n";
-  $setterContent .= $indent . "if (styleResolver.parentStyle()->" . getLayersFunction($name) ."() == styleResolver.style()->" . getLayersFunction($name) . "())\n";
+  $setterContent .= $indent . "if (builderState.parentStyle()." . getLayersFunction($name) ."() == builderState.style()." . getLayersFunction($name) . "())\n";
   $setterContent .= $indent . "    return;\n";
   $setterContent .= "\n";
-  $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
+  $setterContent .= $indent . "auto* child = &builderState.style()." . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
-  $setterContent .= $indent . "for (auto* parent = &styleResolver.parentStyle()->" . getLayersFunction($name) . "(); parent && parent->" . $testFunction . "(); parent = parent->next()) {\n";
+  $setterContent .= $indent . "for (auto* parent = &builderState.parentStyle()." . getLayersFunction($name) . "(); parent && parent->" . $testFunction . "(); parent = parent->next()) {\n";
   $setterContent .= $indent . "    if (!child) {\n";
   $setterContent .= $indent . "        previousChild->setNext(makeUnique<FillLayer>(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "        child = previousChild->next();\n";
@@ -872,7 +872,7 @@ sub generateFillLayerPropertyValueSetter {
   my $CSSPropertyId = "CSSProperty" . $nameToId{$name};
 
   my $setterContent = "";
-  $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
+  $setterContent .= $indent . "auto* child = &builderState.style()." . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
   $setterContent .= $indent . "if (is<CSSValueList>(value) && !is<CSSImageSetValue>(value)) {\n";
   $setterContent .= $indent . "    // Walk each value and put it into a layer, creating new layers as needed.\n";
@@ -881,12 +881,12 @@ sub generateFillLayerPropertyValueSetter {
   $setterContent .= $indent . "            previousChild->setNext(makeUnique<FillLayer>(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "            child = previousChild->next();\n";
   $setterContent .= $indent . "        }\n";
-  $setterContent .= $indent . "        styleResolver.styleMap()->" . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, item);\n";
+  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, item);\n";
   $setterContent .= $indent . "        previousChild = child;\n";
   $setterContent .= $indent . "        child = child->next();\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "} else {\n";
-  $setterContent .= $indent . "    styleResolver.styleMap()->" . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, value);\n";
+  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, value);\n";
   $setterContent .= $indent . "    child = child->next();\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= $indent . "for (; child; child = child->next())\n";
@@ -902,7 +902,7 @@ sub generateSetValueStatement
 
   my $isSVG = exists $propertiesWithStyleBuilderOptions{$name}{"svg"};
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
-  return "styleResolver.style()->" .  ($isSVG ? "accessSVGStyle()." : "") . $setter . "(" . $value . ")";
+  return "builderState.style()." .  ($isSVG ? "accessSVGStyle()." : "") . $setter . "(" . $value . ")";
 }
 
 sub generateInitialValueSetter {
@@ -913,9 +913,9 @@ sub generateInitialValueSetter {
   my $initial = $propertiesWithStyleBuilderOptions{$name}{"initial"};
   my $isSVG = exists $propertiesWithStyleBuilderOptions{$name}{"svg"};
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  $setterContent .= $indent . "static void applyInitial" . $nameToId{$name} . "(Style::BuilderState& builderState)\n";
   $setterContent .= $indent . "{\n";
-  my $style = "styleResolver.style()";
+  my $style = "builderState.style()";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) {
     $setterContent .= $indent . "    " . getAutoSetter($name, $style) . ";\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
@@ -924,9 +924,9 @@ sub generateInitialValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {
     $setterContent .= generateAnimationPropertyInitialValueSetter($name, $indent . "    ");
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
-    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    auto fontDescription = builderState.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(FontCascadeDescription::" . $initial . "());\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
+    $setterContent .= $indent . "    builderState.setFontDescription(WTFMove(fontDescription));\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyInitialValueSetter($name, $indent . "    ");
   } else {
@@ -943,11 +943,11 @@ sub generateInheritValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  $setterContent .= $indent . "static void applyInherit" . $nameToId{$name} . "(Style::BuilderState& builderState)\n";
   $setterContent .= $indent . "{\n";
   my $isSVG = exists $propertiesWithStyleBuilderOptions{$name}{"svg"};
-  my $parentStyle = "styleResolver.parentStyle()";
-  my $style = "styleResolver.style()";
+  my $parentStyle = "builderState.parentStyle()";
+  my $style = "builderState.style()";
   my $getter = $propertiesWithStyleBuilderOptions{$name}{"getter"};
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
   my $didCallSetValue = 0;
@@ -957,10 +957,10 @@ sub generateInheritValueSetter {
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
-    $setterContent .= $indent . "    Color color = " . $parentStyle . "->" . $getter . "();\n";
+    $setterContent .= $indent . "    Color color = " . $parentStyle . "." . $getter . "();\n";
     if (!exists($propertiesWithStyleBuilderOptions{$name}{"no-default-color"})) {
       $setterContent .= $indent . "    if (!color.isValid())\n";
-      $setterContent .= $indent . "        color = " . $parentStyle . "->color();\n";
+      $setterContent .= $indent . "        color = " . $parentStyle . ".color();\n";
     }
     $setterContent .= generateColorValueSetter($name, "color", $indent . "    ");
     $didCallSetValue = 1;
@@ -968,16 +968,16 @@ sub generateInheritValueSetter {
     $setterContent .= generateAnimationPropertyInheritValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
-    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
-    $setterContent .= $indent . "    fontDescription." . $setter . "(styleResolver.parentFontDescription()." . $getter . "());\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
+    $setterContent .= $indent . "    auto fontDescription = builderState.fontDescription();\n";
+    $setterContent .= $indent . "    fontDescription." . $setter . "(builderState.parentFontDescription()." . $getter . "());\n";
+    $setterContent .= $indent . "    builderState.setFontDescription(WTFMove(fontDescription));\n";
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyInheritValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
   }
   if (!$didCallSetValue) {
-    my $inheritedValue = $parentStyle . "->" . ($isSVG ? "svgStyle()." : "") .  $getter . "()";
+    my $inheritedValue = $parentStyle . "." . ($isSVG ? "svgStyle()." : "") .  $getter . "()";
     $setterContent .= $indent . "    " . generateSetValueStatement($name, "forwardInheritedValue(" . $inheritedValue . ")") . ";\n";
   }
   $setterContent .= $indent . "}\n";
@@ -990,20 +990,20 @@ sub generateValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
+  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(Style::BuilderState& builderState, CSSValue& value)\n";
   $setterContent .= $indent . "{\n";
   my $convertedValue;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"converter"})) {
-    $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"converter"} . "(styleResolver, value)";
+    $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"converter"} . "(builderState, value)";
   } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"conditional-converter"})) {
-    $setterContent .= $indent . "    auto convertedValue = StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"conditional-converter"} . "(styleResolver, value);\n";
+    $setterContent .= $indent . "    auto convertedValue = StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"conditional-converter"} . "(builderState, value);\n";
     $convertedValue = "WTFMove(convertedValue.value())";
   } else {
     $convertedValue = "downcast<CSSPrimitiveValue>(value)";
   }
 
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"setter"};
-  my $style = "styleResolver.style()";
+  my $style = "builderState.style()";
   my $didCallSetValue = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"auto-functions"}) {
     $setterContent .= $indent . "    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto) {\n";
@@ -1022,9 +1022,9 @@ sub generateValueSetter {
     $setterContent .= generateAnimationPropertyValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"font-property"}) {
-    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    auto fontDescription = builderState.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(" . $convertedValue . ");\n";
-    $setterContent .= $indent . "    styleResolver.setFontDescription(WTFMove(fontDescription));\n";
+    $setterContent .= $indent . "    builderState.setFontDescription(WTFMove(fontDescription));\n";
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
     $setterContent .= generateFillLayerPropertyValueSetter($name, $indent . "    ");
@@ -1052,10 +1052,10 @@ print STYLEBUILDER << "EOF";
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "RenderStyle.h"
+#include "StyleBuilderState.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderCustom.h"
 #include "StylePropertyShorthand.h"
-#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -1083,7 +1083,7 @@ foreach my $name (@names) {
 print STYLEBUILDER << "EOF";
 };
 
-void StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
+void StyleBuilder::applyProperty(CSSPropertyID property, Style::BuilderState& builderState, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
 {
     switch (property) {
     case CSSPropertyInvalid:
@@ -1091,11 +1091,11 @@ void StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleRes
     case CSSPropertyCustom: {
         auto& customProperty = downcast<CSSCustomPropertyValue>(value);
         if (isInitial)
-            StyleBuilderCustom::applyInitialCustomProperty(styleResolver, registered, customProperty.name());
+            StyleBuilderCustom::applyInitialCustomProperty(builderState, registered, customProperty.name());
         else if (isInherit)
-            StyleBuilderCustom::applyInheritCustomProperty(styleResolver, registered, customProperty.name());
+            StyleBuilderCustom::applyInheritCustomProperty(builderState, registered, customProperty.name());
         else
-            StyleBuilderCustom::applyValueCustomProperty(styleResolver, registered, customProperty);
+            StyleBuilderCustom::applyValueCustomProperty(builderState, registered, customProperty);
         break;
     }
 EOF
@@ -1107,11 +1107,11 @@ foreach my $name (@names) {
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
   } elsif (!exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) {
     print STYLEBUILDER "        if (isInitial)\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Initial") . "::applyInitial" . $nameToId{$name} . "(styleResolver);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Initial") . "::applyInitial" . $nameToId{$name} . "(builderState);\n";
     print STYLEBUILDER "        else if (isInherit)\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit" . $nameToId{$name} . "(styleResolver);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit" . $nameToId{$name} . "(builderState);\n";
     print STYLEBUILDER "        else\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(builderState, value);\n";
   }
   print STYLEBUILDER "        break;\n";
 }

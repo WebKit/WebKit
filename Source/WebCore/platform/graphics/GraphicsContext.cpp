@@ -1133,7 +1133,7 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
     return FloatRect(origin, FloatSize(rect.width(), thickness));
 }
 
-void GraphicsContext::applyState(const GraphicsContextState& state)
+void GraphicsContext::builderState(const GraphicsContextState& state)
 {
     setPlatformShadow(state.shadowOffset, state.shadowBlur, state.shadowColor);
     setPlatformStrokeThickness(state.strokeThickness);

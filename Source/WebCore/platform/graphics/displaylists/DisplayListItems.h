@@ -316,7 +316,7 @@ public:
 
     void accumulate(GraphicsContextState&) const;
 
-    static void applyState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    static void builderState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
     static void dumpStateChanges(WTF::TextStream&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 private:

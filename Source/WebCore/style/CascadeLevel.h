@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +25,18 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
-
-class CSSValue;
-struct CSSRegisteredCustomProperty;
-
 namespace Style {
-class BuilderState;
-}
 
-class StyleBuilder {
-public:
-    static void applyProperty(CSSPropertyID, Style::BuilderState&, CSSValue&, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty*);
+enum class CascadeLevel : uint8_t {
+    UserAgent   = 1 << 0,
+    User        = 1 << 1,
+    Author      = 1 << 2
 };
 
-} // namespace WebCore
+static constexpr OptionSet<CascadeLevel> allCascadeLevels() { return { CascadeLevel::UserAgent, CascadeLevel::User, CascadeLevel::Author }; }
+
+}
+}
