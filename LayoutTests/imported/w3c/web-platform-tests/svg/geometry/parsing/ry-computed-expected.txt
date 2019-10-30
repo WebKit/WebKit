@@ -1,0 +1,9 @@
+
+PASS Property ry value 'auto' computes to 'auto' 
+PASS Property ry value '10px' computes to '10px' 
+PASS Property ry value '0.5em' computes to '20px' 
+PASS Property ry value 'calc(10px + 0.5em)' computes to '30px' 
+FAIL Property ry value 'calc(10px - 0.5em)' computes to '0px' assert_equals: expected "0px" but got "-10px"
+PASS Property ry value '40%' computes to '40%' 
+PASS Property ry value 'calc(50% + 60px)' computes to 'calc(50% + 60px)' 
+

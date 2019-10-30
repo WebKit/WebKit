@@ -1,0 +1,6 @@
+
+PASS e.style['stroke-dasharray'] = "auto" should not set the property value 
+PASS e.style['stroke-dasharray'] = "none 10px" should not set the property value 
+PASS e.style['stroke-dasharray'] = "20px / 30px" should not set the property value 
+PASS e.style['stroke-dasharray'] = "-40px" should not set the property value 
+

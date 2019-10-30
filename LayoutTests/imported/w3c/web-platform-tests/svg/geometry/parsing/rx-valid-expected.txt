@@ -1,6 +1,8 @@
-CONSOLE MESSAGE: line 96: TypeError: null is not an object (evaluating 'document.body.appendChild')
-#PID UNRESPONSIVE - WebKitTestRunner (pid 53737)
-FAIL: Timed out waiting for notifyDone to be called
 
-#EOF
-#EOF
+PASS e.style['rx'] = "auto" should set the property value 
+PASS e.style['rx'] = "0" should set the property value 
+PASS e.style['rx'] = "1px" should set the property value 
+PASS e.style['rx'] = "calc(2em + 3ex)" should set the property value 
+PASS e.style['rx'] = "4%" should set the property value 
+PASS e.style['rx'] = "5vw" should set the property value 
+

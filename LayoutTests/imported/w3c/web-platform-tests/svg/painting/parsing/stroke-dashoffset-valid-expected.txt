@@ -1,0 +1,8 @@
+
+PASS e.style['stroke-dashoffset'] = "0" should set the property value 
+PASS e.style['stroke-dashoffset'] = "10px" should set the property value 
+PASS e.style['stroke-dashoffset'] = "-20%" should set the property value 
+PASS e.style['stroke-dashoffset'] = "30" should set the property value 
+PASS e.style['stroke-dashoffset'] = "40Q" should set the property value 
+PASS e.style['stroke-dashoffset'] = "calc(2em + 3ex)" should set the property value 
+

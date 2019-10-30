@@ -1,0 +1,6 @@
+
+PASS e.style['stroke-dashoffset'] = "auto" should not set the property value 
+PASS e.style['stroke-dashoffset'] = "-10.px" should not set the property value 
+PASS e.style['stroke-dashoffset'] = "30deg" should not set the property value 
+PASS e.style['stroke-dashoffset'] = "40px 50%" should not set the property value 
+

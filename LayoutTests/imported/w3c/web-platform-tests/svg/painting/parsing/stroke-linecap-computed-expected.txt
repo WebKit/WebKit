@@ -1,0 +1,5 @@
+
+PASS Property stroke-linecap value 'butt' computes to 'butt' 
+PASS Property stroke-linecap value 'round' computes to 'round' 
+PASS Property stroke-linecap value 'square' computes to 'square' 
+

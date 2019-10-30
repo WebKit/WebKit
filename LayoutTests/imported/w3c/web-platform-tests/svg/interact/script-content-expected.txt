@@ -1,0 +1,3 @@
+
+PASS script element is in elements' content model 
+

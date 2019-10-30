@@ -1,0 +1,6 @@
+
+FAIL SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGLineElement). assert_equals: starting x expected 50 but got 40
+FAIL SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], less than zero (SVGPathElement). assert_equals: starting x expected 40 but got 30
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGLineElement). 
+PASS SVGGeometryElement.prototype.getPointAtLength clamps its argument to [0, length], greater than 'length' (SVGPathElement). 
+
