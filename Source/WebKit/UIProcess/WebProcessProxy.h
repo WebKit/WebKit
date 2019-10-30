@@ -512,7 +512,7 @@ private:
     bool m_hasAudibleWebPage { false };
 
 #if PLATFORM(WATCHOS)
-    std::unique_ptr<ProcessThrottler::BackgroundActivityToken> m_backgroundActivityForFullscreenFormControls;
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;
 #endif
 
 #if PLATFORM(COCOA)
