@@ -204,3 +204,57 @@ class TestSummaryProviders(unittest.TestCase):
         self.assertEqual(provider.get_child_at_index(0).GetValue(), '1')
         self.assertEqual(provider.get_child_at_index(1).GetName(), 'D')
         self.assertEqual(provider.get_child_at_index(1).GetValue(), '8')
+
+    # MARK: WTFCompactPointerTuple test cases
+
+    def serial_test_WTFCompactPointerTuple_SummaryProvider_empty(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleEmpty')
+        summary = lldb_webkit.WTFCompactPointerTuple_SummaryProvider(variable, {})
+        self.assertEqual(summary, "{ type = 0 }")
+
+    def serial_test_WTFCompactPointerTuple_SummaryProvider_simple(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleSimple')
+        summary = lldb_webkit.WTFCompactPointerTuple_SummaryProvider(variable, {})
+        self.assertEqual(summary, "{ type = 7 }")
+
+    def serial_test_WTFCompactPointerTuple_SummaryProvider_max_type_value(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleMaxTypeValue')
+        summary = lldb_webkit.WTFCompactPointerTuple_SummaryProvider(variable, {})
+        self.assertEqual(summary, "{ type = 255 }")
+
+    def serial_test_WTFCompactPointerTuple_SummaryProvider_bool(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleSimpleBool')
+        summary = lldb_webkit.WTFCompactPointerTuple_SummaryProvider(variable, {})
+        self.assertEqual(summary, "{ type = true }")
+
+    def serial_test_WTFCompactPointerTupleProvider_empty(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleEmpty')
+        provider = lldb_webkit.WTFCompactPointerTupleProvider(variable, {})
+        self.assertEqual(provider.get_child_at_index(0).GetName(), '[0]')
+        self.assertEqual(provider.get_child_at_index(0).GetValueAsUnsigned(), 0)
+        self.assertEqual(provider.get_child_at_index(1).GetName(), '[1]')
+        self.assertEqual(provider.get_child_at_index(1).GetValueAsUnsigned(), 0)
+
+    def serial_test_WTFCompactPointerTupleProvider_simple(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleSimple')
+        provider = lldb_webkit.WTFCompactPointerTupleProvider(variable, {})
+        self.assertEqual(provider.get_child_at_index(0).GetName(), '[0]')
+        self.assertNotEqual(provider.get_child_at_index(0).GetValueAsUnsigned(), 0)
+        self.assertEqual(provider.get_child_at_index(1).GetName(), '[1]')
+        self.assertEqual(provider.get_child_at_index(1).GetValueAsUnsigned(), 7)
+
+    def serial_test_WTFCompactPointerTupleProvider_max_type_value(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleMaxTypeValue')
+        provider = lldb_webkit.WTFCompactPointerTupleProvider(variable, {})
+        self.assertEqual(provider.get_child_at_index(0).GetName(), '[0]')
+        self.assertNotEqual(provider.get_child_at_index(0).GetValueAsUnsigned(), 0)
+        self.assertEqual(provider.get_child_at_index(1).GetName(), '[1]')
+        self.assertEqual(provider.get_child_at_index(1).GetValueAsUnsigned(), 255)
+
+    def serial_test_WTFCompactPointerTupleProvider_simple_bool(self):
+        variable = self._sbFrame.FindVariable('exampleCompactPointerTupleSimpleBool')
+        provider = lldb_webkit.WTFCompactPointerTupleProvider(variable, {})
+        self.assertEqual(provider.get_child_at_index(0).GetName(), '[0]')
+        self.assertNotEqual(provider.get_child_at_index(0).GetValueAsUnsigned(), 0)
+        self.assertEqual(provider.get_child_at_index(1).GetName(), '[1]')
+        self.assertEqual(provider.get_child_at_index(1).GetValue(), 'true')

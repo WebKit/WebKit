@@ -25,6 +25,7 @@
 
 #include "DumpClassLayoutTesting.h"
 #include <stdio.h>
+#include <wtf/CompactPointerTuple.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
@@ -85,6 +86,11 @@ static void testSummaryProviders()
     OptionSet<ExampleFlags> exampleFlagsEmpty;
     OptionSet<ExampleFlags> exampleFlagsSimple { ExampleFlags::A, ExampleFlags::D, ExampleFlags::C };
     OptionSet<ExampleFlags> exampleFlagsAliasedFlag { ExampleFlags::AAlias, ExampleFlags::D };
+
+    CompactPointerTuple<String*, uint8_t> exampleCompactPointerTupleEmpty;
+    CompactPointerTuple<String*, uint8_t> exampleCompactPointerTupleSimple { &an8BitString, 7 };
+    CompactPointerTuple<String*, uint8_t> exampleCompactPointerTupleMaxTypeValue { &an8BitString, 255 };
+    CompactPointerTuple<String*, bool> exampleCompactPointerTupleSimpleBool { &an8BitString, true };
 
     breakForTestingSummaryProviders();
 }

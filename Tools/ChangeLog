@@ -1,3 +1,54 @@
+2019-10-30  Daniel Bates  <dabates@apple.com>
+
+        Add pretty printer for CompactPointerTuple
+        https://bugs.webkit.org/show_bug.cgi?id=203495
+
+        Reviewed by Jer Noble.
+
+        Make it easy to see the state of a CompactPointerTuple. Now we will print something like:
+
+                (WTF::CompactPointerTuple<WTF::String *, unsigned char>) $0 = { type = 7 } {
+                  [0] = 0x00007ffeefbff220 { length = 8, contents = 'résumé' }
+                  [1] = 7
+                }
+
+        for aCompactPointerTuple defined like this:
+
+                String aString { "résumé" };
+                CompactPointerTuple<String*, uint8_t> aCompactPointerTuple { &aString, 7 };
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (__lldb_init_module.lldb_webkit):
+        (WTFCompactPointerTuple_SummaryProvider):
+        (WTFCompactPointerTupleProvider):
+        (WTFCompactPointerTupleProvider.__init__):
+
+        (WTFCompactPointerTupleProvider.type_as_string):
+        (WTFCompactPointerTupleProvider.is_human_readable_type):
+        The majority of the time CompactPointerTuple will be used with non-character type data. So,
+        I optimize for this use case and consider the integral value as more readable than than LLDB's
+        default summary provider that emits the character or equivalent C escape sequence.
+
+        (WTFCompactPointerTupleProvider.has_children):
+        (WTFCompactPointerTupleProvider.num_children):
+        (WTFCompactPointerTupleProvider.get_child_index):
+        (WTFCompactPointerTupleProvider.get_child_at_index):
+        (WTFCompactPointerTupleProvider.update):
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFOptionSetProvider_aliased_flag):
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTuple_SummaryProvider_empty):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTuple_SummaryProvider_simple):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTuple_SummaryProvider_max_type_value):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTuple_SummaryProvider_bool):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTupleProvider_empty):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTupleProvider_simple):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTupleProvider_max_type_value):
+        (TestSummaryProviders.serial_test_WTFCompactPointerTupleProvider_simple_bool):
+
 2019-10-30  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.port

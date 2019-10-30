@@ -26,6 +26,7 @@
 #pragma once
 
 #include <type_traits>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
