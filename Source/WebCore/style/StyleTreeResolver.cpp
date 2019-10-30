@@ -254,7 +254,7 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
 
-    auto pseudoStyle = scope().styleResolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, &scope().selectorFilter);
+    auto pseudoStyle = scope().styleResolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, parentBoxStyleForPseudo(elementUpdate), &scope().selectorFilter);
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()))
         return { };
 
@@ -274,8 +274,8 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
 const RenderStyle* TreeResolver::parentBoxStyle() const
 {
     // 'display: contents' doesn't generate boxes.
-    for (unsigned i = m_parentStack.size(); i; --i) {
-        auto& parent = m_parentStack[i - 1];
+    for (auto i = m_parentStack.size(); i--;) {
+        auto& parent = m_parentStack[i];
         if (parent.style.display() == DisplayType::None)
             return nullptr;
         if (parent.style.display() != DisplayType::Contents)
@@ -283,6 +283,18 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
     }
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& elementUpdate) const
+{
+    switch (elementUpdate.style->display()) {
+    case DisplayType::None:
+        return nullptr;
+    case DisplayType::Contents:
+        return parentBoxStyle();
+    default:
+        return elementUpdate.style.get();
+    }
 }
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
