@@ -477,14 +477,14 @@ void WebFrameLoaderClient::dispatchWillClose()
     notImplemented();
 }
 
-void WebFrameLoaderClient::dispatchDidExplicitOpen(const URL& url)
+void WebFrameLoaderClient::dispatchDidExplicitOpen(const URL& url, const String& mimeType)
 {
     auto* webPage = m_frame->page();
     if (!webPage)
         return;
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidExplicitOpenForFrame(m_frame->frameID(), url));
+    webPage->send(Messages::WebPageProxy::DidExplicitOpenForFrame(m_frame->frameID(), url, mimeType));
 }
 
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()

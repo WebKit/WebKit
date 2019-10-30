@@ -1,3 +1,18 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        WKFrameIsDisplayingMarkupDocument() should return true after a window.open/document.write
+        https://bugs.webkit.org/show_bug.cgi?id=203587
+        <rdar://problem/56717726>
+
+        Reviewed by Alex Christensen.
+
+        When doing a document.open(), we were propagating the document's URL to the UIProcess but not its
+        MIME type. WKFrameIsDisplayingMarkupDocument() was relying on this MIME type.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didExplicitOpen):
+        * loader/FrameLoaderClient.h:
+
 2019-10-30  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Precompute an animation effect's active duration and end time

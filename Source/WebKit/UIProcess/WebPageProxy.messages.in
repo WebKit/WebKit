@@ -142,7 +142,7 @@ messages -> WebPageProxy {
     DidDetectXSSForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, uint32_t type, URL url, WebKit::UserData userData)
     DidChangeMainDocument(WebCore::FrameIdentifier frameID)
-    DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url)
+    DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
     DidDestroyNavigation(uint64_t navigationID)
 
     HasInsecureContent() -> (enum:bool WebCore::HasInsecureContent hasInsecureContent) Synchronous

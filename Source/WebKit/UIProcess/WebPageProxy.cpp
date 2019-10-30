@@ -4132,7 +4132,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 #endif
 }
 
-void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url)
+void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url, String&& mimeType)
 {
     auto* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
@@ -4143,7 +4143,7 @@ void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url)
     if (frame->isMainFrame())
         m_pageLoadState.didExplicitOpen(transaction, url);
 
-    frame->didExplicitOpen(url);
+    frame->didExplicitOpen(WTFMove(url), WTFMove(mimeType));
 
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();

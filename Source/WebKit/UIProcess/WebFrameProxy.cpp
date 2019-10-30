@@ -146,9 +146,10 @@ void WebFrameProxy::didStartProvisionalLoad(const URL& url)
     m_frameLoadState.didStartProvisionalLoad(url);
 }
 
-void WebFrameProxy::didExplicitOpen(const URL& url)
+void WebFrameProxy::didExplicitOpen(URL&& url, String&& mimeType)
 {
-    m_frameLoadState.didExplicitOpen(url);
+    m_MIMEType = WTFMove(mimeType);
+    m_frameLoadState.didExplicitOpen(WTFMove(url));
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const URL& url)

@@ -595,7 +595,8 @@ void FrameLoader::didExplicitOpen()
     if (!m_stateMachine.committedFirstRealDocumentLoad())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
 
-    m_client.dispatchDidExplicitOpen(m_frame.document() ? m_frame.document()->url() : URL());
+    if (auto* document = m_frame.document())
+        m_client.dispatchDidExplicitOpen(document->url(), document->contentType());
     
     // Prevent window.open(url) -- eg window.open("about:blank") -- from blowing away results
     // from a subsequent window.document.open / window.document.write call. 

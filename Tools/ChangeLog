@@ -1,3 +1,20 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        WKFrameIsDisplayingMarkupDocument() should return true after a window.open/document.write
+        https://bugs.webkit.org/show_bug.cgi?id=203587
+        <rdar://problem/56717726>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::createNewPageThenClose):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::createNewPage):
+        * TestWebKitAPI/Tests/WebKit/window-open-then-document-open.html: Added.
+
 2019-10-29  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Clean up LegacyPreviewLoaderClients

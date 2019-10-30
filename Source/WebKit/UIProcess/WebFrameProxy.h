@@ -111,7 +111,7 @@ public:
     void getResourceData(API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
 
     void didStartProvisionalLoad(const URL&);
-    void didExplicitOpen(const URL&);
+    void didExplicitOpen(URL&&, String&& mimeType);
     void didReceiveServerRedirectForProvisionalLoad(const URL&);
     void didFailProvisionalLoad();
     void didCommitLoad(const String& contentType, WebCertificateInfo&, bool containsPluginDocument);
