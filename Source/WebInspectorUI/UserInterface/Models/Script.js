@@ -60,7 +60,7 @@ WI.Script = class Script extends WI.SourceCode
 
         if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
             // Assign a unique number to the script object so it will stay the same.
-            this._uniqueDisplayNameNumber = this.constructor._nextUniqueConsoleDisplayNameNumber++;
+            this._uniqueDisplayNameNumber = this._nextUniqueConsoleDisplayNameNumber();
         }
 
         if (this._sourceMappingURL)
@@ -69,10 +69,10 @@ WI.Script = class Script extends WI.SourceCode
 
     // Static
 
-    static resetUniqueDisplayNameNumbers()
+    static resetUniqueDisplayNameNumbers(target)
     {
-        WI.Script._nextUniqueDisplayNameNumber = 1;
-        WI.Script._nextUniqueConsoleDisplayNameNumber = 1;
+        if (WI.Script._uniqueDisplayNameNumbersForRootTargetMap)
+            WI.Script._uniqueDisplayNameNumbersForRootTargetMap.delete(target);
     }
 
     // Public
@@ -151,7 +151,7 @@ WI.Script = class Script extends WI.SourceCode
 
         // Assign a unique number to the script object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)
-            this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
+            this._uniqueDisplayNameNumber = this._nextUniqueDisplayNameNumber();
 
         return WI.UIString("Anonymous Script %d").format(this._uniqueDisplayNameNumber);
     }
@@ -247,6 +247,36 @@ WI.Script = class Script extends WI.SourceCode
 
     // Private
 
+    _nextUniqueDisplayNameNumber()
+    {
+        let numbers = this._uniqueDisplayNameNumbersForRootTarget();
+        return ++numbers.lastUniqueDisplayNameNumber;
+    }
+
+    _nextUniqueConsoleDisplayNameNumber()
+    {
+        let numbers = this._uniqueDisplayNameNumbersForRootTarget();
+        return ++numbers.lastUniqueConsoleDisplayNameNumber;
+    }
+
+    _uniqueDisplayNameNumbersForRootTarget()
+    {
+        if (!WI.Script._uniqueDisplayNameNumbersForRootTargetMap)
+            WI.Script._uniqueDisplayNameNumbersForRootTargetMap = new WeakMap();
+
+        console.assert(this._target);
+        let key = this._target.rootTarget;
+        let numbers = WI.Script._uniqueDisplayNameNumbersForRootTargetMap.get(key);
+        if (!numbers) {
+            numbers = {
+                lastUniqueDisplayNameNumber: 0,
+                lastUniqueConsoleDisplayNameNumber: 0
+            };
+            WI.Script._uniqueDisplayNameNumbersForRootTargetMap.set(key, numbers);
+        }
+        return numbers;
+    }
+
     _resolveResource()
     {
         // FIXME: We should be able to associate a Script with a Resource through identifiers,
@@ -320,6 +350,3 @@ WI.Script.SourceType = {
 WI.Script.TypeIdentifier = "script";
 WI.Script.URLCookieKey = "script-url";
 WI.Script.DisplayNameCookieKey = "script-display-name";
-
-WI.Script._nextUniqueDisplayNameNumber = 1;
-WI.Script._nextUniqueConsoleDisplayNameNumber = 1;

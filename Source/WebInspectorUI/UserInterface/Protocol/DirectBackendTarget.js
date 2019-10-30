@@ -30,9 +30,10 @@ WI.DirectBackendTarget = class DirectBackendTarget extends WI.Target
 {
     constructor()
     {
+        const parentTarget = null;
+        const targetId = "direct";
         let {type, displayName} = DirectBackendTarget.connectionInfoForDebuggable();
-
-        super("direct", displayName, type, InspectorBackend.backendConnection);
+        super(parentTarget, targetId, displayName, type, InspectorBackend.backendConnection);
 
         this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
         this._mainResource = null;

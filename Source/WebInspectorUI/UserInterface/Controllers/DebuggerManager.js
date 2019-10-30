@@ -721,11 +721,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         breakpoint.resolved = true;
     }
 
-    globalObjectCleared()
+    globalObjectCleared(target)
     {
         let wasPaused = this.paused;
 
-        WI.Script.resetUniqueDisplayNameNumbers();
+        WI.Script.resetUniqueDisplayNameNumbers(target);
 
         this._internalWebKitScripts = [];
         this._targetDebuggerDataMap.clear();

@@ -1,3 +1,54 @@
+2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: track WI.Script unique display name numbers per Page target
+        https://bugs.webkit.org/show_bug.cgi?id=203427
+
+        Reviewed by Devin Rousso.
+
+        WI.Script now keeps track of last unique numbers via a static weak map keyed by
+        the Script's root target. So whenever new Page target is created all its scripts
+        will get unique display numbers from a new namespace.
+
+        Parent target is now passed to each target constructor and allow to find host
+        page target for nested targets. Among other things WorkerConnection and
+        TargetConnection use parentTarget for dispatching events instead of creating
+        extra copy of the same data that is already stored in Target.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.globalObjectCleared):
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype.targetCreated):
+        (WI.TargetManager.prototype.didCommitProvisionalTarget):
+        (WI.TargetManager.prototype.targetDestroyed):
+        (WI.TargetManager.prototype.dispatchMessageFromTarget):
+        (WI.TargetManager.prototype._connectToTarget):
+        (WI.TargetManager.prototype._createTarget):
+        * UserInterface/Controllers/WorkerManager.js:
+        (WI.WorkerManager.prototype.workerCreated):
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+        (WI.Script.prototype.get displayName):
+        (WI.Script.prototype._nextUniqueDisplayNameNumber):
+        (WI.Script.prototype._nextUniqueConsoleDisplayNameNumber):
+        (WI.Script.prototype._uniqueDisplayNameNumbersForRootTarget):
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection.prototype.sendMessageToBackend):
+        (InspectorBackend.WorkerConnection):
+        (InspectorBackend.TargetConnection.prototype.sendMessageToBackend):
+        (InspectorBackend.TargetConnection):
+        * UserInterface/Protocol/DirectBackendTarget.js:
+        (WI.DirectBackendTarget):
+        * UserInterface/Protocol/MultiplexingBackendTarget.js:
+        (WI.MultiplexingBackendTarget):
+        * UserInterface/Protocol/PageTarget.js:
+        (WI.PageTarget):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target):
+        (WI.Target.prototype.get parentTarget):
+        (WI.Target.prototype.get rootTarget):
+        * UserInterface/Protocol/WorkerTarget.js:
+        (WI.WorkerTarget):
+
 2019-10-30  Eike Rathke  <erack@redhat.com>
 
         Covscan: remove stray semicolon

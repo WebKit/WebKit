@@ -44,8 +44,9 @@ WI.WorkerManager = class WorkerManager extends WI.Object
 
     workerCreated(target, workerId, url)
     {
-        let connection = new InspectorBackend.WorkerConnection(target, workerId);
-        let workerTarget = new WI.WorkerTarget(workerId, url, connection);
+        console.assert(target.hasCommand("Worker.sendMessageToWorker"));
+        let connection = new InspectorBackend.WorkerConnection;
+        let workerTarget = new WI.WorkerTarget(target, workerId, url, connection);
         workerTarget.initialize();
 
         WI.targetManager.addTarget(workerTarget);

@@ -120,19 +120,19 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     targetCreated(parentTarget, targetInfo)
     {
-        this._targetCreated(parentTarget, targetInfo);
+        this._connectToTarget(parentTarget, targetInfo);
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetCreated, {targetInfo});
     }
 
     didCommitProvisionalTarget(parentTarget, previousTargetId, newTargetId)
     {
-        this._targetDestroyed(previousTargetId);
+        this._destroyTarget(previousTargetId);
         let targetInfo = this._provisionalTargetInfos.get(newTargetId);
         console.assert(targetInfo);
         targetInfo.isProvisional = false;
         this._provisionalTargetInfos.delete(newTargetId);
-        this._targetCreated(parentTarget, targetInfo);
+        this._connectToTarget(parentTarget, targetInfo);
         console.assert(!this._swappedTargetIds.has(previousTargetId));
         this._swappedTargetIds.add(previousTargetId);
 
@@ -141,40 +141,9 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     targetDestroyed(targetId)
     {
-        this._targetDestroyed(targetId);
+        this._destroyTarget(targetId);
 
         this.dispatchEventToListeners(WI.TargetManager.Event.TargetDestroyed, {targetId});
-    }
-
-    _targetCreated(parentTarget, targetInfo)
-    {
-        console.assert(!this._provisionalTargetInfos.has(targetInfo.targetId));
-
-        // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` did not exist yet.
-        if (targetInfo.isProvisional) {
-            this._provisionalTargetInfos.set(targetInfo.targetId, targetInfo);
-            return;
-        }
-
-        let connection = new InspectorBackend.TargetConnection(parentTarget, targetInfo.targetId);
-        let subTarget = this._createTarget(targetInfo, connection);
-        this._checkAndHandlePageTargetTransition(subTarget);
-        subTarget.initialize();
-
-        this.addTarget(subTarget);
-    }
-
-    _targetDestroyed(targetId)
-    {
-        if (this._provisionalTargetInfos.delete(targetId))
-            return;
-
-        if (this._swappedTargetIds.delete(targetId))
-            return;
-
-        let target = this._targets.get(targetId);
-        this._checkAndHandlePageTargetTermination(target);
-        this.removeTarget(target);
     }
 
     dispatchMessageFromTarget(targetId, message)
@@ -192,18 +161,50 @@ WI.TargetManager = class TargetManager extends WI.Object
 
     // Private
 
-    _createTarget(targetInfo, connection)
+    _connectToTarget(parentTarget, targetInfo)
+    {
+        console.assert(!this._provisionalTargetInfos.has(targetInfo.targetId));
+
+        // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` did not exist yet.
+        if (targetInfo.isProvisional) {
+            this._provisionalTargetInfos.set(targetInfo.targetId, targetInfo);
+            return;
+        }
+
+        console.assert(parentTarget.hasCommand("Target.sendMessageToTarget"));
+        let connection = new InspectorBackend.TargetConnection;
+        let subTarget = this._createTarget(parentTarget, targetInfo, connection);
+        this._checkAndHandlePageTargetTransition(subTarget);
+        subTarget.initialize();
+
+        this.addTarget(subTarget);
+    }
+
+    _destroyTarget(targetId)
+    {
+        if (this._provisionalTargetInfos.delete(targetId))
+            return;
+
+        if (this._swappedTargetIds.delete(targetId))
+            return;
+
+        let target = this._targets.get(targetId);
+        this._checkAndHandlePageTargetTermination(target);
+        this.removeTarget(target);
+    }
+
+    _createTarget(parentTarget, targetInfo, connection)
     {
         let {targetId, type} = targetInfo;
 
         switch (type) {
         case InspectorBackend.Enum.Target.TargetInfoType.Page:
-            return new WI.PageTarget(targetId, WI.UIString("Page"), connection);
+            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection);
         case InspectorBackend.Enum.Target.TargetInfoType.Worker:
-            return new WI.WorkerTarget(targetId, WI.UIString("Worker"), connection);
+            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("Worker"), connection);
         case "serviceworker": // COMPATIBILITY (iOS 13): "serviceworker" was renamed to "service-worker".
         case InspectorBackend.Enum.Target.TargetInfoType.ServiceWorker:
-            return new WI.WorkerTarget(targetId, WI.UIString("ServiceWorker"), connection);
+            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("ServiceWorker"), connection);
         }
 
         throw "Unknown Target type: " + type;

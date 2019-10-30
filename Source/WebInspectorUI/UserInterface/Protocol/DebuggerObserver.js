@@ -36,7 +36,7 @@ WI.DebuggerObserver = class DebuggerObserver extends InspectorBackend.Dispatcher
 
     globalObjectCleared()
     {
-        WI.debuggerManager.globalObjectCleared();
+        WI.debuggerManager.globalObjectCleared(this._target);
     }
 
     scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL, isModule)

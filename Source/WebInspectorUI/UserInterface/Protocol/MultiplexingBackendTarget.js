@@ -32,7 +32,9 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
 {
     constructor()
     {
-        super("multi", WI.UIString("Web Page"), WI.TargetType.WebPage, InspectorBackend.backendConnection);
+        const parentTarget = null;
+        const targetId = "multi";
+        super(parentTarget, targetId, WI.UIString("Web Page"), WI.TargetType.WebPage, InspectorBackend.backendConnection);
 
         console.assert(Array.shallowEqual(Object.keys(this._agents), ["Target"]), "A WebPage target should only have a single agent.");
     }
