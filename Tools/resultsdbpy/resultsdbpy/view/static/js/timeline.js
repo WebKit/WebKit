@@ -155,7 +155,7 @@ function repositoriesForCommits(commits) {
     return repositories;
 }
 
-function xAxisFromScale(scale, repository, updatesArray, isTop=false)
+function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=null)
 {
     function scaleForRepository(scale) {
         return scale.map(node => {
@@ -197,6 +197,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false)
                     return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
                 }),
                 (event) => {return onScaleClick(node);},
+                viewport,
             );
         },
         onScaleLeave: (event, canvas) => {
@@ -342,7 +343,7 @@ function combineResults() {
 }
 
 class TimelineFromEndpoint {
-    constructor(endpoint, suite = null) {
+    constructor(endpoint, suite = null, viewport = null) {
         this.endpoint = endpoint;
         this.displayAllCommits = true;
 
@@ -355,6 +356,7 @@ class TimelineFromEndpoint {
         this.timelineUpdate = null;
         this.notifyRerender = () => {};
         this.repositories = [];
+        this.viewport = viewport;
 
         const self = this;
 
@@ -398,7 +400,7 @@ class TimelineFromEndpoint {
             let components = [];
 
             newRepositories.forEach(repository => {
-                components.push(xAxisFromScale(scale, repository, this.xaxisUpdates, top));
+                components.push(xAxisFromScale(scale, repository, this.xaxisUpdates, top, this.viewport));
                 top = false;
             });
 
@@ -591,6 +593,7 @@ class TimelineFromEndpoint {
                     agregateData[key] = data[key];
                 });
                 agregateData['configuration'] = new Configuration(partialConfiguration);
+                ToolTip.unset();
                 InvestigateDrawer.expand(self.suite, agregateData, allData);
             }
         }
@@ -658,6 +661,7 @@ class TimelineFromEndpoint {
                         return {x: canvas.x + point.x, y: canvas.y + scrollDelta + point.y};
                     }),
                     (event) => {onDotClickFactory(configuration)(data);},
+                    self.viewport,
                 );
             }
         }
@@ -778,7 +782,7 @@ class TimelineFromEndpoint {
         self.xaxisUpdates = [];
         this.repositories = repositoriesForCommits(commits);
         this.repositories.forEach(repository => {
-            const xAxisComponent = xAxisFromScale(scale, repository, self.xaxisUpdates, top);
+            const xAxisComponent = xAxisFromScale(scale, repository, self.xaxisUpdates, top, self.viewport);
             if (top)
                 children.unshift(xAxisComponent);
             else

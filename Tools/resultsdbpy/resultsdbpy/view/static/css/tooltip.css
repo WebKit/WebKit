@@ -24,7 +24,7 @@
  */
  
 .tooltip {
-    z-index: 50;
+    z-index: var(--topZIndex);
     position: absolute;
     opacity: 80%;
     width: 0;

@@ -222,7 +222,7 @@ onLayoutChange.action(() => {
 window.onpopstate = event => {view.reload();};
 window.onpushstate = event => {view.reload();};
 
-
+let viewport = null;
 DOM.inject(
     document.getElementById('app'),
     `${ToolTip}
@@ -242,7 +242,14 @@ DOM.inject(
     ], () => onLayoutChange.add())}
 
     <div class="main right-sidebar under-topbar-with-actions">
-        <div class="content">
+        <div class="content" ref=${REF.createRef({
+                onElementMount: (element) => {
+                    view.ref.state.children.forEach((child) => {
+                        child.timeline.viewport = element;
+                    });
+                    viewport = element;
+                }
+            })}>
             ${SearchBar(function () {
                 const splitURL = document.URL.split('?');
                 let params = queryToParams(splitURL[1]);
@@ -259,7 +266,7 @@ DOM.inject(
                     let child = {
                         suite: arguments[i].suite,
                         test: arguments[i].test,
-                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`),
+                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, null, viewport),
                     }
 
                     view.ref.setState({prepending: [child]});

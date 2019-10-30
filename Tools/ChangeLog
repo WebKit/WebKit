@@ -1,3 +1,28 @@
+2019-10-29  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Fix tooltip with drawer
+        https://bugs.webkit.org/show_bug.cgi?id=203527
+
+        Rubber-stamped by Aakash Jain.
+
+        The interaction between tooltips and drawers needs improvement, tooltips
+        are inconsistently under the drawer, do not treat the drawer as a boundary.
+
+        * resultsdbpy/resultsdbpy/view/static/css/tooltip.css:
+        (.tooltip): Use topZIndex variable.
+        * resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale): Pass viewport to ToolTip.
+        (TimelineFromEndpoint): Ditto.
+        (TimelineFromEndpoint.prototype.update): Ditto.
+        (TimelineFromEndpoint.prototype.render): Ditto.
+        (TimelineFromEndpoint.prototype.render.onDotEnterFactory): Ditto.
+        * resultsdbpy/resultsdbpy/view/static/js/tooltip.js:
+        (_ToolTip.prototype.toString): Use passed viewport instead of the document size.
+        (_ToolTip.prototype.setByElement): Set the viewport based on the passed viewport.
+        * resultsdbpy/resultsdbpy/view/templates/search.html: Define the viewport as the
+        content element.
+        * resultsdbpy/resultsdbpy/view/templates/suite_results.html: Ditto.
+
 2019-10-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add more information to _WKWebAuthenticationPanel

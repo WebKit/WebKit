@@ -43,7 +43,7 @@ class _ToolTip {
     toString() {
         const self = this;
         this.ref = REF.createRef({
-            state: {content: null, points: null},
+            state: {content: null, points: null, viewport: null},
             onElementMount: (element) => {
                 element.addEventListener('mouseleave', (event) => {
                     if (element.style.display === 'none')
@@ -61,7 +61,7 @@ class _ToolTip {
                     DOM.inject(element, '');
                 }
 
-                if (stateDiff.points) {
+                if (stateDiff.points || stateDiff.viewport) {
                     element.style.left = '0px';
                     element.style.top = '0px';
 
@@ -69,8 +69,6 @@ class _ToolTip {
                     const lowerPoint = stateDiff.points.length > 1 && stateDiff.points[1].y > stateDiff.points[0].y ? stateDiff.points[1] : stateDiff.points[0];
                     const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
                     const bounds = element.getBoundingClientRect();
-                    const viewportWitdh = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-                    const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
                     let direction = 'down';
                     let point = upperPoint;
@@ -83,7 +81,7 @@ class _ToolTip {
                         direction = 'left';
                         let tipX = leftPoint.x - 12 - bounds.width;
                         point = rightPoint;
-                        if (tipX < 0 || tipX + bounds.width + (rightPoint.x - leftPoint.x) / 2 < viewportWitdh / 2) {
+                        if (tipX < 0 || tipX + bounds.width + (rightPoint.x - leftPoint.x) / 2 < stateDiff.viewport.x + stateDiff.viewport.width / 2) {
                             direction = 'right';
                             tipX = rightPoint.x + 16;
                             point = rightPoint;
@@ -91,8 +89,8 @@ class _ToolTip {
                         element.style.left = `${tipX}px`;
 
                         let tipY = point.y - bounds.height / 2;
-                        if (tipY + bounds.height > scrollDelta + viewportHeight)
-                            tipY = scrollDelta + viewportHeight - bounds.height;
+                        if (tipY + bounds.height > scrollDelta + stateDiff.viewport.y + stateDiff.viewport.height)
+                            tipY = scrollDelta + stateDiff.viewport.y + stateDiff.viewport.height - bounds.height;
                         if (tipY < 0)
                             tipY = 0;
                         element.style.top = `${tipY}px`;
@@ -100,7 +98,7 @@ class _ToolTip {
                         // Make an effort to place the tooltip in the center of the viewport.
                         let tipY = upperPoint.y - 8 - bounds.height;
                         point = upperPoint;
-                        if (tipY < scrollDelta || tipY + bounds.height + (lowerPoint.y - upperPoint.y) / 2 < scrollDelta + viewportHeight / 2) {
+                        if (tipY < scrollDelta || tipY + bounds.height + (lowerPoint.y - upperPoint.y) / 2 < scrollDelta + stateDiff.viewport.y + stateDiff.viewport.height / 2) {
                             direction = 'up';
                             tipY = lowerPoint.y + 16;
                             point = lowerPoint;
@@ -108,8 +106,8 @@ class _ToolTip {
                         element.style.top = `${tipY}px`;
 
                         let tipX = point.x - bounds.width / 2;
-                        if (tipX + bounds.width > viewportWitdh)
-                            tipX = viewportWitdh - bounds.width;
+                        if (tipX + bounds.width > stateDiff.viewport.x + stateDiff.viewport.width)
+                            tipX = stateDiff.viewport.x + stateDiff.viewport.width - bounds.width;
                         if (tipX < 0)
                             tipX = 0;
                         element.style.left = `${tipX}px`;
@@ -168,7 +166,7 @@ class _ToolTip {
             <div class="tooltip-content" ref="${this.ref}">
             </div>`;
     }
-    set(content, points, onArrowClick = null) {
+    set(content, points, onArrowClick = null, viewport = null) {
         if (!this.ref) {
             console.error('Cannot set ToolTip content, no tooltip on the page');
             return;
@@ -178,9 +176,29 @@ class _ToolTip {
             return;
         }
         this.onArrowClick = onArrowClick;
-        this.ref.setState({content: content, points: points});
+
+        const windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        const windowHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        if (!viewport)
+            viewport = {
+                x: 0,
+                y: 0,
+                width: windowWidth,
+                height: windowHeight,
+            }
+        else {
+            let rect = viewport.getBoundingClientRect();
+            viewport = {
+                x: 0,
+                y: 0,
+                width: Math.min(windowWidth, rect.width),
+                height: Math.min(windowHeight, rect.height),
+            };
+        }
+        console.log(viewport);
+        this.ref.setState({content: content, points: points, viewport: viewport});
     }
-    setByElement(content, element, options) {
+    setByElement(content, element, options, viewport = null) {
         const bound = element.getBoundingClientRect();
         const orientation = options.orientation ? options.orientation : this.VERTICAL;
         const onArrowClick = options.onArrowClick ? options.onArrowClick : null;
@@ -194,12 +212,12 @@ class _ToolTip {
             this.set(content, [
                 {x: bound.right, y: (bound.top + bound.bottom) / 2 + scrollDelta},
                 {x: bound.left, y: (bound.top + bound.bottom) / 2 + scrollDelta},
-            ], onArrowClick);
+            ], onArrowClick, viewport);
         } else {
             this.set(content, [
                 {x: (bound.right + bound.left) / 2, y: bound.top + scrollDelta},
                 {x: (bound.right + bound.left) / 2, y: bound.bottom + scrollDelta},
-            ], onArrowClick);
+            ], onArrowClick, viewport);
         }
     }
     unset() {
