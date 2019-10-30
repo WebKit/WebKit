@@ -1427,7 +1427,7 @@ HDRMediaCapabilitiesEnabled:
 
 ResizeObserverEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Resize Observer"
   humanReadableDescription: "Enable Resize Observer support"
   category: experimental

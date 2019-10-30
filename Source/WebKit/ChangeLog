@@ -1,3 +1,15 @@
+2019-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn Resize Observer on by default
+        https://bugs.webkit.org/show_bug.cgi?id=203644
+        rdar://problem/56026799
+
+        Reviewed by Tim Horton.
+
+        Change the defaultValue of Resize Observer to true.
+
+        * Shared/WebPreferences.yaml:
+
 2019-10-30  Per Arne Vollan  <pvollan@apple.com>
 
         Lookup to mach services with the WebKit extension should list the allowed services
