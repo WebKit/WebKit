@@ -1894,14 +1894,11 @@ test/intl402/DateTimeFormat/prototype/formatToParts/related-year.js:
   default: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-dayPeriod.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hour, hourCycle, hour12, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
+  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, hour, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
+  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, hour, minute] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, dayPeriod, hour, minute] to have the same contents. '
 test/intl402/DateTimeFormat/prototype/resolvedOptions/order-fractionalSecondDigits.js:
   default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
   strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, minute, second] and [locale, calendar, numberingSystem, timeZone, minute, second, fractionalSecondDigits] to have the same contents. '
-test/intl402/DateTimeFormat/prototype/resolvedOptions/order.js:
-  default: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. '
-  strict mode: 'Test262Error: Expected [locale, calendar, numberingSystem, timeZone, weekday, era, year, month, day, hour, hourCycle, hour12, minute, second, timeZoneName] and [locale, calendar, numberingSystem, timeZone, hourCycle, hour12, weekday, era, year, month, day, hour, minute, second, timeZoneName] to have the same contents. '
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'
   strict mode: 'Test262Error: Expected SameValue(Â«cmnÂ», Â«zhÂ») to be true'

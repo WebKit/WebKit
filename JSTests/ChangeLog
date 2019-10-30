@@ -1,3 +1,13 @@
+2019-10-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Intl.DateTimeFormat returns resolvedOptions in the wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=203297
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        Mark two test cases as passing.
+
 2019-10-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         tryCachePutToScopeGlobal should hold the lock to update metadata.m_getPutInfo

@@ -853,6 +853,11 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
     options->putDirect(vm, vm.propertyNames->numberingSystem, jsNontrivialString(vm, m_numberingSystem));
     options->putDirect(vm, vm.propertyNames->timeZone, jsNontrivialString(vm, m_timeZone));
 
+    if (!m_hourCycle.isNull()) {
+        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(vm, m_hourCycle));
+        options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == "h11" || m_hourCycle == "h12"));
+    }
+
     if (m_weekday != Weekday::None)
         options->putDirect(vm, vm.propertyNames->weekday, jsNontrivialString(vm, weekdayString(m_weekday)));
 
@@ -870,11 +875,6 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject)
 
     if (m_hour != Hour::None)
         options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));
-
-    if (!m_hourCycle.isNull()) {
-        options->putDirect(vm, vm.propertyNames->hourCycle, jsNontrivialString(vm, m_hourCycle));
-        options->putDirect(vm, vm.propertyNames->hour12, jsBoolean(m_hourCycle == "h11" || m_hourCycle == "h12"));
-    }
 
     if (m_minute != Minute::None)
         options->putDirect(vm, vm.propertyNames->minute, jsNontrivialString(vm, minuteString(m_minute)));
