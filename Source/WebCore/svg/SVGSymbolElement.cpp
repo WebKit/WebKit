@@ -32,7 +32,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSymbolElement);
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , SVGFitToViewBox(this)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));
@@ -45,7 +45,7 @@ Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Doc
 
 void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    SVGElement::parseAttribute(name, value);
+    SVGGraphicsElement::parseAttribute(name, value);
     SVGFitToViewBox::parseAttribute(name, value);
 }
 

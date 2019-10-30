@@ -21,12 +21,12 @@
 
 #pragma once
 
-#include "SVGElement.h"
 #include "SVGFitToViewBox.h"
+#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
-class SVGSymbolElement final : public SVGElement, public SVGFitToViewBox {
+class SVGSymbolElement final : public SVGGraphicsElement, public SVGFitToViewBox {
     WTF_MAKE_ISO_ALLOCATED(SVGSymbolElement);
 public:
     static Ref<SVGSymbolElement> create(const QualifiedName&, Document&);
@@ -34,7 +34,7 @@ public:
 private:
     SVGSymbolElement(const QualifiedName&, Document&);
 
-    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGElement, SVGFitToViewBox>;
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;

@@ -511,14 +511,10 @@ PASS SVGElement interface: objects.title must inherit property "ownerSVGElement"
 PASS SVGElement interface: objects.title must inherit property "viewportElement" with the proper type 
 FAIL SVGElement interface: objects.title must inherit property "correspondingElement" with the proper type assert_inherits: property "correspondingElement" not found in prototype chain
 FAIL SVGElement interface: objects.title must inherit property "correspondingUseElement" with the proper type assert_inherits: property "correspondingUseElement" not found in prototype chain
-FAIL SVGSymbolElement interface: existence and properties of interface object assert_equals: prototype of SVGSymbolElement is not SVGGraphicsElement expected function "function SVGGraphicsElement() {
-    [native code]
-}" but got function "function SVGElement() {
-    [native code]
-}"
+PASS SVGSymbolElement interface: existence and properties of interface object 
 PASS SVGSymbolElement interface object length 
 PASS SVGSymbolElement interface object name 
-FAIL SVGSymbolElement interface: existence and properties of interface prototype object assert_equals: prototype of SVGSymbolElement.prototype is not SVGGraphicsElement.prototype expected object "[object SVGGraphicsElementPrototype]" but got object "[object SVGElementPrototype]"
+PASS SVGSymbolElement interface: existence and properties of interface prototype object 
 PASS SVGSymbolElement interface: existence and properties of interface prototype object's "constructor" property 
 PASS SVGSymbolElement interface: existence and properties of interface prototype object's @@unscopables property 
 PASS SVGSymbolElement interface: attribute viewBox 
@@ -527,13 +523,13 @@ PASS SVGSymbolElement must be primary interface of objects.symbol
 PASS Stringification of objects.symbol 
 PASS SVGSymbolElement interface: objects.symbol must inherit property "viewBox" with the proper type 
 PASS SVGSymbolElement interface: objects.symbol must inherit property "preserveAspectRatio" with the proper type 
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "transform" with the proper type assert_inherits: property "transform" not found in prototype chain
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type assert_inherits: property "getBBox" not found in prototype chain
-FAIL SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.symbol with too few arguments must throw TypeError assert_inherits: property "getBBox" not found in prototype chain
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "getCTM()" with the proper type assert_inherits: property "getCTM" not found in prototype chain
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "getScreenCTM()" with the proper type assert_inherits: property "getScreenCTM" not found in prototype chain
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "requiredExtensions" with the proper type assert_inherits: property "requiredExtensions" not found in prototype chain
-FAIL SVGGraphicsElement interface: objects.symbol must inherit property "systemLanguage" with the proper type assert_inherits: property "systemLanguage" not found in prototype chain
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "transform" with the proper type 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "getBBox(SVGBoundingBoxOptions)" with the proper type 
+PASS SVGGraphicsElement interface: calling getBBox(SVGBoundingBoxOptions) on objects.symbol with too few arguments must throw TypeError 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "getCTM()" with the proper type 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "getScreenCTM()" with the proper type 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "requiredExtensions" with the proper type 
+PASS SVGGraphicsElement interface: objects.symbol must inherit property "systemLanguage" with the proper type 
 PASS SVGElement interface: objects.symbol must inherit property "className" with the proper type 
 PASS SVGElement interface: objects.symbol must inherit property "ownerSVGElement" with the proper type 
 PASS SVGElement interface: objects.symbol must inherit property "viewportElement" with the proper type 

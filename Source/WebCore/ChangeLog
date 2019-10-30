@@ -1,3 +1,19 @@
+2019-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [SVG2] SVGSymbolElement should inherits SVGGraphicsElement
+        https://bugs.webkit.org/show_bug.cgi?id=203573
+
+        Reviewed by Simon Fraser.
+
+        The spec link is:
+            https://www.w3.org/TR/SVG2/struct.html#InterfaceSVGSymbolElement
+
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::SVGSymbolElement):
+        (WebCore::SVGSymbolElement::parseAttribute):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGSymbolElement.idl:
+
 2019-10-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add more information to _WKWebAuthenticationPanel
