@@ -1,3 +1,31 @@
+2019-10-29  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement PictureInPictureWindow
+        https://bugs.webkit.org/show_bug.cgi?id=202615
+
+        Reviewed by Eric Carlson.
+
+        Add layout test cases for the Picture-in-Picture API.
+
+        * TestExpectations:
+        * media/picture-in-picture-api-enter-pip-1-expected.txt: Added.
+        * media/picture-in-picture-api-enter-pip-1.html: Added.
+        * media/picture-in-picture-api-enter-pip-2-expected.txt: Added.
+        * media/picture-in-picture-api-enter-pip-2.html: Added.
+        * media/picture-in-picture-api-enter-pip-3-expected.txt: Added.
+        * media/picture-in-picture-api-enter-pip-3.html: Added.
+        * media/picture-in-picture-api-enter-pip-4-expected.txt: Added.
+        * media/picture-in-picture-api-enter-pip-4.html: Added.
+        * media/picture-in-picture-api-exit-pip-1-expected.txt: Added.
+        * media/picture-in-picture-api-exit-pip-1.html: Added.
+        * media/picture-in-picture-api-exit-pip-2-expected.txt: Added.
+        * media/picture-in-picture-api-exit-pip-2.html: Added.
+        * media/picture-in-picture-api-pip-events-expected.txt: Added.
+        * media/picture-in-picture-api-pip-events.html: Added.
+        * media/picture-in-picture-api-pip-window-expected.txt: Added.
+        * media/picture-in-picture-api-pip-window.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2019-10-29  Antoine Quint  <graouts@apple.com>
 
         WebAnimation should never prevent entering the back/forward cache

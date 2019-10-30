@@ -60,9 +60,9 @@ public:
 
     void exitPictureInPicture(Ref<DeferredPromise>&&);
 
-    void didEnterPictureInPicture(IntSize);
+    void didEnterPictureInPicture(const IntSize&);
     void didExitPictureInPicture();
-    void pictureInPictureWindowResized(IntSize);
+    void pictureInPictureWindowResized(const IntSize&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -78,6 +78,7 @@ private:
     bool m_disablePictureInPicture { false };
 
     HTMLVideoElement& m_videoElement;
+    RefPtr<PictureInPictureWindow> m_pictureInPictureWindow;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
 

@@ -1,0 +1,5 @@
+This tests that exit Picture-in-Picture rejects when there is no Picture-in-Picture video.
+
+EXPECTED (error.name == 'InvalidStateError') OK
+END OF TEST
+

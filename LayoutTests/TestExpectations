@@ -195,6 +195,14 @@ webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
 
 # PiP API tests are only relevant on mac and iPad
 media/picture-in-picture-api-element-attributes.html [ Skip ]
+media/picture-in-picture-api-enter-pip-1.html [ Skip ]
+media/picture-in-picture-api-enter-pip-2.html [ Skip ]
+media/picture-in-picture-api-enter-pip-3.html [ Skip ]
+media/picture-in-picture-api-enter-pip-4.html [ Skip ]
+media/picture-in-picture-api-exit-pip-1.html [ Skip ]
+media/picture-in-picture-api-exit-pip-2.html [ Skip ]
+media/picture-in-picture-api-pip-events.html [ Skip ]
+media/picture-in-picture-api-pip-window.html [ Skip ]
 
 # Shared Workers are unsupported
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]

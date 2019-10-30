@@ -31,6 +31,7 @@
 
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSPictureInPictureWindow.h"
 #include "Logging.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
@@ -42,6 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
 
 HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElement& videoElement)
     : m_videoElement(videoElement)
+    , m_pictureInPictureWindow(PictureInPictureWindow::create(videoElement.document()))
 #if !RELEASE_LOG_DISABLED
     , m_logger(videoElement.document().logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -70,11 +72,6 @@ HTMLVideoElementPictureInPicture* HTMLVideoElementPictureInPicture::from(HTMLVid
 
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
-    if (!videoElement.player() || !videoElement.player()->supportsPictureInPicture()) {
-        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode.");
-        return;
-    }
-
     if (videoElement.readyState() == HTMLMediaElementEnums::HAVE_NOTHING) {
         promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode.");
         return;
@@ -93,12 +90,12 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         return;
     }
 
+    auto videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (videoElement.document().pictureInPictureElement() == &videoElement) {
-        promise->reject(NotAllowedError, "The video element is already in the Picture-in-Picture mode.");
+        promise->resolve<IDLInterface<PictureInPictureWindow>>(*(videoElementPictureInPicture->m_pictureInPictureWindow));
         return;
     }
 
-    auto videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (videoElementPictureInPicture->m_enterPictureInPicturePromise || videoElementPictureInPicture->m_exitPictureInPicturePromise) {
         promise->reject(NotAllowedError, "The video element is processing a Picture-in-Picture request.");
         return;
@@ -143,17 +140,18 @@ void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>
     m_videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
 }
 
-void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(IntSize windowSize)
+void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& windowSize)
 {
     INFO_LOG(LOGIDENTIFIER);
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
+    m_pictureInPictureWindow->setSize(windowSize);
+
     if (m_enterPictureInPicturePromise) {
         EnterPictureInPictureEvent::Init initializer;
         initializer.bubbles = true;
-        initializer.pictureInPictureWindow = PictureInPictureWindow::create(m_videoElement.document(), windowSize.width(), windowSize.height());
+        initializer.pictureInPictureWindow = m_pictureInPictureWindow;
         m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
-
-        m_enterPictureInPicturePromise->resolve();
+        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
         m_enterPictureInPicturePromise = nullptr;
     }
 }
@@ -161,13 +159,25 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(IntSize windowSi
 void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 {
     INFO_LOG(LOGIDENTIFIER);
+    m_pictureInPictureWindow->close();
     m_videoElement.document().setPictureInPictureElement(nullptr);
+
     if (m_exitPictureInPicturePromise) {
         m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-
         m_exitPictureInPicturePromise->resolve();
         m_exitPictureInPicturePromise = nullptr;
     }
+}
+
+void HTMLVideoElementPictureInPicture::pictureInPictureWindowResized(const IntSize& windowSize)
+{
+    if (m_pictureInPictureWindow->width() == windowSize.width() && m_pictureInPictureWindow->height() == windowSize.height())
+        return;
+
+    m_pictureInPictureWindow->setSize(windowSize);
+    auto resizeEvent = Event::create(eventNames().resizeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
+    resizeEvent->setTarget(m_pictureInPictureWindow);
+    m_videoElement.scheduleEvent(WTFMove(resizeEvent));
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -176,10 +186,6 @@ WTFLogChannel& HTMLVideoElementPictureInPicture::logChannel() const
     return LogMedia;
 }
 #endif
-
-void HTMLVideoElementPictureInPicture::pictureInPictureWindowResized(IntSize)
-{
-}
 
 } // namespace WebCore
 

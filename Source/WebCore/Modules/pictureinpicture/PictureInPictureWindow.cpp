@@ -35,19 +35,27 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PictureInPictureWindow);
 
-Ref<PictureInPictureWindow> PictureInPictureWindow::create(ScriptExecutionContext& scriptExecutionContext, int width, int height)
+Ref<PictureInPictureWindow> PictureInPictureWindow::create(ScriptExecutionContext& scriptExecutionContext)
 {
-    return adoptRef(*new PictureInPictureWindow(scriptExecutionContext, width, height));
+    return adoptRef(*new PictureInPictureWindow(scriptExecutionContext));
 }
 
-PictureInPictureWindow::PictureInPictureWindow(ScriptExecutionContext& scriptExecutionContext, int width, int height)
+PictureInPictureWindow::PictureInPictureWindow(ScriptExecutionContext& scriptExecutionContext)
     : m_scriptExecutionContext(scriptExecutionContext)
-    , m_width(width)
-    , m_height(height)
 {
 }
 
 PictureInPictureWindow::~PictureInPictureWindow() = default;
+
+void PictureInPictureWindow::setSize(const IntSize& size)
+{
+    m_size = size;
+}
+
+void PictureInPictureWindow::close()
+{
+    m_size = { 0, 0 };
+}
 
 } // namespace WebCore
 

@@ -542,6 +542,14 @@ webkit.org/b/172998 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presenta
 webkit.org/b/173199 [ Sierra+ ] media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
 [ Sierra+ ] media/pip-video-going-into-fullscreen.html [ Pass ]
 [ Sierra+ ] media/picture-in-picture-api-element-attributes.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-enter-pip-1.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-enter-pip-2.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-enter-pip-3.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-enter-pip-4.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-exit-pip-1.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-exit-pip-2.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-pip-events.html [ Pass ]
+[ Sierra+ ] media/picture-in-picture-api-pip-window.html [ Pass ]
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
 webkit.org/b/179455 [ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]

@@ -38,17 +38,19 @@ class PictureInPictureWindow final
     , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(PictureInPictureWindow);
 public:
-    static Ref<PictureInPictureWindow> create(ScriptExecutionContext&, int, int);
+    static Ref<PictureInPictureWindow> create(ScriptExecutionContext&);
     virtual ~PictureInPictureWindow();
 
-    int width() const { return m_width; }
-    int height() const { return m_height; }
+    int width() const { return m_size.width(); }
+    int height() const { return m_size.height(); }
+    void setSize(const IntSize&);
+    void close();
 
     using RefCounted<PictureInPictureWindow>::ref;
     using RefCounted<PictureInPictureWindow>::deref;
 
 private:
-    PictureInPictureWindow(ScriptExecutionContext&, int, int);
+    PictureInPictureWindow(ScriptExecutionContext&);
 
     // EventTarget
     void refEventTarget() final { ref(); }
@@ -57,8 +59,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; };
 
     ScriptExecutionContext& m_scriptExecutionContext;
-    int m_width;
-    int m_height;
+    IntSize m_size;
 };
 
 } // namespace WebCore

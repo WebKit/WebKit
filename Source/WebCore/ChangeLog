@@ -1,3 +1,40 @@
+2019-10-29  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Implement PictureInPictureWindow
+        https://bugs.webkit.org/show_bug.cgi?id=202615
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/picture-in-picture-api-enter-pip-1.html
+               media/picture-in-picture-api-enter-pip-2.html
+               media/picture-in-picture-api-enter-pip-3.html
+               media/picture-in-picture-api-enter-pip-4.html
+               media/picture-in-picture-api-exit-pip-1.html
+               media/picture-in-picture-api-exit-pip-2.html
+               media/picture-in-picture-api-pip-events.html
+               media/picture-in-picture-api-pip-window.html
+
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didEnterPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::didExitPictureInPicture):
+        (WebCore::HTMLVideoElementPictureInPicture::pictureInPictureWindowResized):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.h:
+        * Modules/pictureinpicture/PictureInPictureWindow.cpp:
+        (WebCore::PictureInPictureWindow::create):
+        (WebCore::PictureInPictureWindow::PictureInPictureWindow):
+        (WebCore::PictureInPictureWindow::setSize):
+        (WebCore::PictureInPictureWindow::close):
+        * Modules/pictureinpicture/PictureInPictureWindow.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+        (WebCore::HTMLVideoElement::didBecomeFullscreenElement):
+        (WebCore::HTMLVideoElement::setPictureInPictureObserver):
+        (WebCore::HTMLVideoElement::setVideoFullscreenFrame):
+        * html/HTMLVideoElement.h:
+        * platform/PictureInPictureObserver.h:
+
 2019-10-29  Antoine Quint  <graouts@apple.com>
 
         WebAnimation should never prevent entering the back/forward cache

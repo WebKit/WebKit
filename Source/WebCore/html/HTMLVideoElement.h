@@ -137,6 +137,7 @@ private:
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     bool m_waitingForPictureInPictureWindowFrame { false };
+    bool m_isFullscreen { false };
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
 #endif
 };

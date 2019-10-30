@@ -492,8 +492,10 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
             HTMLVideoElement::VideoPresentationMode targetVideoPresentationMode = toPresentationMode(mode);
             HTMLVideoElement::VideoPresentationMode sourceVideoPresentationMode = toPresentationMode(fullscreenMode());
 
-            if (targetVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+            if (targetVideoPresentationMode != HTMLVideoElement::VideoPresentationMode::PictureInPicture && sourceVideoPresentationMode == HTMLVideoElement::VideoPresentationMode::PictureInPicture) {
                 m_pictureInPictureObserver->didExitPictureInPicture();
+                m_isFullscreen = false;
+            }
         }
 #endif
     }
@@ -507,6 +509,7 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
 #if ENABLE(PICTURE_IN_PICTURE_API)
 void HTMLVideoElement::didBecomeFullscreenElement()
 {
+    m_isFullscreen = true;
     m_waitingForPictureInPictureWindowFrame = true;
     HTMLMediaElement::didBecomeFullscreenElement();
 }
@@ -515,7 +518,6 @@ void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* obs
 {
     m_pictureInPictureObserver = observer;
 }
-
 #endif
 
 #endif
@@ -526,6 +528,11 @@ void HTMLVideoElement::setVideoFullscreenFrame(FloatRect frame)
     HTMLMediaElement::setVideoFullscreenFrame(frame);
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
+    // fullscreenMode() does not always provide the correct fullscreen mode
+    // when mode changing is happening (webkit.org/b/203443)
+    if (!m_isFullscreen)
+        return;
+
     if (toPresentationMode(fullscreenMode()) != VideoPresentationMode::PictureInPicture)
         return;
 
