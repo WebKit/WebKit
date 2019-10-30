@@ -1064,12 +1064,14 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
 
 void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress)
 {
+    auto& properties = m_blendingKeyframes.properties();
+
     // In the case of CSS Transitions we already know that there are only two keyframes, one where offset=0 and one where offset=1,
     // and only a single CSS property so we can simply blend based on the style available on those keyframes with the provided iteration
     // progress which already accounts for the transition's timing function.
     if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition) {
-        ASSERT(is<CSSTransition>(animation()));
-        CSSPropertyAnimation::blendProperties(this, downcast<CSSTransition>(animation())->property(), &targetStyle, m_blendingKeyframes[0].style(), m_blendingKeyframes[1].style(), iterationProgress);
+        ASSERT(properties.size() == 1);
+        CSSPropertyAnimation::blendProperties(this, *properties.begin(), &targetStyle, m_blendingKeyframes[0].style(), m_blendingKeyframes[1].style(), iterationProgress);
         return;
     }
 
@@ -1083,7 +1085,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     if (m_blendingKeyframes.isEmpty())
         return;
 
-    for (auto cssPropertyId : m_blendingKeyframes.properties()) {
+    for (auto cssPropertyId : properties) {
         // 1. If iteration progress is unresolved abort this procedure.
         // 2. Let target property be the longhand property for which the effect value is to be calculated.
         // 3. If animation type of the target property is not animatable abort this procedure since the effect cannot be applied.

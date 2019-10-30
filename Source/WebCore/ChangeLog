@@ -1,3 +1,18 @@
+2019-10-30  Antoine Quint  <graouts@apple.com>
+
+        [ Mac Debug ] (r251706) webanimations/empty-keyframes-crash.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=203588
+
+        Reviewed by Dean Jackson.
+
+        The KeyframeEffect for which the blending keyframes were generated for a CSS Transition could be applied to a different animation,
+        which is not a CSSTransition, which does not change the fact that we can blend the single CSS property with two fully-qualified
+        keyframes directly. So we can remove that assertion and simply check that we have a single CSS property instead and access the
+        single CSS property in the KeyframeList.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         WKFrameIsDisplayingMarkupDocument() should return true after a window.open/document.write
