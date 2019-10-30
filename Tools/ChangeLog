@@ -1,3 +1,16 @@
+2019-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        Branch build fix after r251754
+        https://bugs.webkit.org/show_bug.cgi?id=191523
+        <rdar://problem/56579665>
+
+        * TestWebKitAPI/Tests/WebCore/FidoHidMessageTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+        * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+        (+[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:configureJSCForTesting:]):
+
 2019-10-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r251317. rdar://problem/56598357
