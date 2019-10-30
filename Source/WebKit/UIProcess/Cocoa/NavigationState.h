@@ -122,7 +122,7 @@ private:
 
 #if USE(QUICK_LOOK)
         void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
-        void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
+        void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::SharedBuffer&) override;
 #endif
 
 #if PLATFORM(MAC)

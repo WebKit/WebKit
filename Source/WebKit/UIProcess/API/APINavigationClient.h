@@ -49,12 +49,12 @@ struct ContentRuleListResults;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class SharedBuffer;
 struct SecurityOriginData;
 }
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class QuickLookDocumentData;
 class WebBackForwardListItem;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
@@ -109,7 +109,7 @@ public:
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }
-    virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) { }
+    virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::SharedBuffer&) { }
 #endif
 
     virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)

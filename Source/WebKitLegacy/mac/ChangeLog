@@ -1,3 +1,13 @@
+2019-10-29  Andy Estes  <aestes@apple.com>
+
+        [Quick Look] Clean up LegacyPreviewLoaderClients
+        https://bugs.webkit.org/show_bug.cgi?id=203472
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPreviewLoaderClient):
+
 2019-10-26  Chris Lord  <clord@igalia.com>
 
         Put OffscreenCanvas behind a build flag

@@ -354,9 +354,9 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
 }
 
 #if USE(QUICK_LOOK)
-void ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName)
+void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    m_page.didRequestPasswordForQuickLookDocumentInMainFrameShared(m_process.copyRef(), fileName);
+    m_page.requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTFMove(completionHandler));
 }
 #endif
 
@@ -469,8 +469,8 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
     }
 
 #if USE(QUICK_LOOK)
-    if (decoder.messageName() == Messages::WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame>(decoder, this, &ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame);
+    if (decoder.messageName() == Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame::name()) {
+        IPC::handleMessageAsync<Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame>(connection, decoder, this, &ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame);
         return;
     }
 #endif

@@ -31,68 +31,61 @@
 #include "Logging.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/QuickLook.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-using PasswordCallbackMap = HashMap<WebCore::PageIdentifier, Function<void(const String&)>>;
-static PasswordCallbackMap& passwordCallbacks()
-{
-    static NeverDestroyed<PasswordCallbackMap> callbackMap;
-    return callbackMap.get();
-}
+using namespace WebCore;
 
-WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const String& uti, WebCore::PageIdentifier pageID)
+WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const String& uti, PageIdentifier pageID)
     : m_fileName { fileName }
     , m_uti { uti }
     , m_pageID { pageID }
+    , m_buffer { SharedBuffer::create() }
 {
 }
 
-WebPreviewLoaderClient::~WebPreviewLoaderClient()
-{
-    passwordCallbacks().remove(m_pageID);
-}
+WebPreviewLoaderClient::~WebPreviewLoaderClient() = default;
 
-void WebPreviewLoaderClient::didReceiveDataArray(CFArrayRef dataArray)
+void WebPreviewLoaderClient::didReceiveBuffer(const SharedBuffer& buffer)
 {
-    if (m_data.isEmpty())
-        WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
+    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    if (!webPage)
+        return;
 
-    CFArrayApplyFunction(dataArray, CFRangeMake(0, CFArrayGetCount(dataArray)), [](const void* value, void* context) {
-        ASSERT(CFGetTypeID(value) == CFDataGetTypeID());
-        static_cast<QuickLookDocumentData*>(context)->append((CFDataRef)value);
-    }, &m_data);    
+    if (m_buffer->isEmpty())
+        webPage->didStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti);
+
+    m_buffer->append(buffer);
 }
 
 void WebPreviewLoaderClient::didFinishLoading()
 {
-    WebProcess::singleton().send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(m_data), m_pageID);
-    m_data.clear();
+    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    if (!webPage)
+        return;
+
+    webPage->didFinishLoadForQuickLookDocumentInMainFrame(m_buffer.get());
+    m_buffer->clear();
 }
 
 void WebPreviewLoaderClient::didFail()
 {
-    m_data.clear();
+    m_buffer->clear();
 }
 
 void WebPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
 {
-    ASSERT(!passwordCallbacks().contains(m_pageID));
-    passwordCallbacks().add(m_pageID, WTFMove(completionHandler));
-    WebProcess::singleton().send(Messages::WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame(m_fileName), m_pageID);
-}
+    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    if (!webPage) {
+        completionHandler({ });
+        return;
+    }
 
-void WebPreviewLoaderClient::didReceivePassword(const String& password, WebCore::PageIdentifier pageID)
-{
-    ASSERT(passwordCallbacks().contains(pageID));
-    if (auto completionHandler = passwordCallbacks().take(pageID))
-        completionHandler(password);
-    else
-        RELEASE_LOG_ERROR(Loading, "Discarding a password for a page that did not request one in this process");
+    webPage->requestPasswordForQuickLookDocumentInMainFrame(m_fileName, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

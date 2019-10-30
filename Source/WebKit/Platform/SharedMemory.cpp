@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QuickLookDocumentData_h
-#define QuickLookDocumentData_h
+#include "config.h"
+#include "SharedMemory.h"
 
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 
-class QuickLookDocumentData {
-public:
-    void append(CFDataRef);
-    CFDataRef decodedData() const;
-    bool isEmpty() const;
-    void clear();
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, QuickLookDocumentData&);
+using namespace WebCore;
 
-private:
-    Vector<RetainPtr<CFDataRef>, 1> m_data;
-};
+RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
+{
+    if (buffer.isEmpty())
+        return nullptr;
+
+    auto sharedMemory = allocate(buffer.size());
+    if (!sharedMemory)
+        return nullptr;
+
+    char* const sharedMemoryPtr = reinterpret_cast<char*>(sharedMemory->data());
+    size_t position = 0;
+    while (buffer.size() > position) {
+        auto data = buffer.getSomeData(position);
+        auto result = memcpy(sharedMemoryPtr + position, data.data(), data.size());
+        ASSERT_UNUSED(result, result == sharedMemoryPtr + position);
+        position += data.size();
+    }
+
+    return sharedMemory;
+}
+
 } // namespace WebKit
-
-#endif // QuickLookDocumentData_h

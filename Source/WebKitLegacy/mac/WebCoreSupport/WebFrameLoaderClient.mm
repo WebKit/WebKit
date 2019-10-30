@@ -2206,9 +2206,10 @@ RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLo
         RetainPtr<NSString> m_filePath;
         RetainPtr<NSFileHandle> m_fileHandle;
 
-        void didReceiveDataArray(CFArrayRef dataArray) override
+        void didReceiveBuffer(const WebCore::SharedBuffer& buffer) override
         {
-            for (NSData *data in (NSArray *)dataArray)
+            auto dataArray = buffer.createNSDataArray();
+            for (NSData *data in dataArray.get())
                 [m_fileHandle writeData:data];
         }
 

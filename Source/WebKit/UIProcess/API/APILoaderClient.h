@@ -38,7 +38,6 @@ class ResourceError;
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class QuickLookDocumentData;
 class WebBackForwardListItem;
 class WebFrameProxy;
 class WebPageProxy;

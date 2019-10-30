@@ -467,8 +467,8 @@ messages -> WebPageProxy {
 
 #if USE(QUICK_LOOK)
     DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
-    DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::QuickLookDocumentData data)
-    DidRequestPasswordForQuickLookDocumentInMainFrame(String fileName)
+    DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::ShareableResource::Handle resource)
+    RequestPasswordForQuickLookDocumentInMainFrame(String fileName) -> (String password) Async
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

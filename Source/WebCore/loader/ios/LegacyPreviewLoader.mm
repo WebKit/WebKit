@@ -71,7 +71,7 @@ bool LegacyPreviewLoader::didReceiveBuffer(const SharedBuffer& buffer)
     LOG(Network, "LegacyPreviewLoader appending buffer with size %ld.", buffer.size());
     m_originalData->append(buffer);
     m_converter->updateMainResource();
-    m_client->didReceiveDataArray((__bridge CFArrayRef)buffer.createNSDataArray().get());
+    m_client->didReceiveBuffer(buffer);
     return true;
 }
 

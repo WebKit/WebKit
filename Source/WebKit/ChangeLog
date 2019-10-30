@@ -1,3 +1,58 @@
+2019-10-29  Andy Estes  <aestes@apple.com>
+
+        [Quick Look] Clean up LegacyPreviewLoaderClients
+        https://bugs.webkit.org/show_bug.cgi?id=203472
+
+        Reviewed by Brady Eidson.
+
+        Replaced QuickLookDocumentData with ShareableResource.
+
+        Removed messages WebPageProxy::DidRequestPasswordForQuickLookDocumentInMainFrame and
+        WebPage::DidReceivePasswordForQuickLookDocument, replacing them with async message
+        WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame.
+
+        * Shared/ios/QuickLookDocumentData.cpp: Removed.
+        * Shared/ios/QuickLookDocumentData.h: Removed.
+        * SourcesCocoa.txt:
+        * UIProcess/API/APILoaderClient.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        (WebKit::ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame): Deleted.
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame):
+        (WebKit::WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame):
+        (WebKit::WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared):
+        (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame): Deleted.
+        (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp:
+        (WebKit::WebPreviewLoaderClient::WebPreviewLoaderClient):
+        (WebKit::WebPreviewLoaderClient::didReceiveBuffer):
+        (WebKit::WebPreviewLoaderClient::didFinishLoading):
+        (WebKit::WebPreviewLoaderClient::didFail):
+        (WebKit::WebPreviewLoaderClient::didRequestPassword):
+        (WebKit::passwordCallbacks): Deleted.
+        (WebKit::WebPreviewLoaderClient::~WebPreviewLoaderClient): Deleted.
+        (WebKit::WebPreviewLoaderClient::didReceiveDataArray): Deleted.
+        (WebKit::WebPreviewLoaderClient::didReceivePassword): Deleted.
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didStartLoadForQuickLookDocumentInMainFrame):
+        (WebKit::WebPage::didFinishLoadForQuickLookDocumentInMainFrame):
+        (WebKit::WebPage::requestPasswordForQuickLookDocumentInMainFrame):
+        (WebKit::WebPage::didReceivePasswordForQuickLookDocument): Deleted.
+
 2019-10-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Add more information to _WKWebAuthenticationPanel

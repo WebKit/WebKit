@@ -42,6 +42,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "SandboxUtilities.h"
+#import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
@@ -3843,13 +3844,6 @@ void WebPage::updateStringForFind(const String& findString)
     send(Messages::WebPageProxy::UpdateStringForFind(findString));
 }
 
-#if USE(QUICK_LOOK)
-void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
-{
-    WebPreviewLoaderClient::didReceivePassword(password, m_identifier);
-}
-#endif
-
 bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
 {
 #if PLATFORM(WATCHOS)
@@ -4077,6 +4071,40 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     completionHandler(context);
 }
+
+#if USE(QUICK_LOOK)
+
+void WebPage::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+{
+    send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(fileName, uti));
+}
+
+void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const SharedBuffer& buffer)
+{
+    ASSERT(!buffer.isEmpty());
+
+    // FIXME: In some cases, buffer conains a single segment that wraps an existing ShareableResource.
+    // If we could create a handle from that existing resource then we could avoid this extra
+    // allocation and copy.
+
+    auto sharedMemory = SharedMemory::copyBuffer(buffer);
+    if (!sharedMemory)
+        return;
+
+    ShareableResource::Handle handle;
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
+    if (!shareableResource->createHandle(handle))
+        return;
+
+    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(handle));
+}
+
+void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame(fileName), WTFMove(completionHandler));
+}
+
+#endif
 
 } // namespace WebKit
 

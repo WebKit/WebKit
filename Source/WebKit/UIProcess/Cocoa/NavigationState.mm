@@ -83,10 +83,6 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
-#if USE(QUICK_LOOK)
-#import "QuickLookDocumentData.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -1083,7 +1079,7 @@ void NavigationState::NavigationClient::didStartLoadForQuickLookDocumentInMainFr
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:fileName uti:uti];
 }
 
-void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData& data)
+void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame(const SharedBuffer& buffer)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame)
         return;
@@ -1092,7 +1088,7 @@ void NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainF
     if (!navigationDelegate)
         return;
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)data.decodedData()];
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didFinishLoadForQuickLookDocumentInMainFrame:buffer.createNSData().get()];
 }
 #endif
 

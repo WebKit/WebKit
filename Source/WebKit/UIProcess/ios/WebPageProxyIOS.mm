@@ -47,6 +47,7 @@
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "ShareableResource.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "VersionChecks.h"
@@ -1249,7 +1250,7 @@ void WebPageProxy::didConcludeDrop()
 #endif
 
 #if USE(QUICK_LOOK)
-    
+
 void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
 {
     // Ensure that fileName isn't really a path name
@@ -1257,21 +1258,23 @@ void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fil
     m_navigationClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
 }
 
-void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData& data)
+void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const ShareableResource::Handle& handle)
 {
-    m_navigationClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
+    auto buffer = handle.tryWrapInSharedBuffer();
+    if (!buffer)
+        return;
+
+    m_navigationClient->didFinishLoadForQuickLookDocumentInMainFrame(*buffer);
 }
 
-void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName)
+void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    didRequestPasswordForQuickLookDocumentInMainFrameShared(m_process.copyRef(), fileName);
+    requestPasswordForQuickLookDocumentInMainFrameShared(fileName, WTFMove(completionHandler));
 }
 
-void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared(Ref<WebProcessProxy>&& process, const String& fileName)
+void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    pageClient().requestPasswordForQuickLookDocument(fileName, [process = WTFMove(process), webPageID = m_webPageID](const String& password) {
-        process->send(Messages::WebPage::DidReceivePasswordForQuickLookDocument(password), webPageID);
-    });
+    pageClient().requestPasswordForQuickLookDocument(fileName, WTFMove(completionHandler));
 }
 
 #endif

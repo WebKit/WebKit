@@ -44,6 +44,7 @@
 #include "SandboxExtension.h"
 #include "ShareSheetCallbackID.h"
 #include "ShareableBitmap.h"
+#include "ShareableResource.h"
 #include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "SystemPreviewController.h"
@@ -328,10 +329,6 @@ struct UserMessage;
 enum class ProcessSwapRequestedByClient;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
-
-#if USE(QUICK_LOOK)
-class QuickLookDocumentData;
-#endif
 
 typedef GenericCallback<API::Data*> DataCallback;
 typedef GenericCallback<uint64_t> UnsignedCallback;
@@ -1560,7 +1557,7 @@ public:
         FrameInfoData&&, Optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
 #if USE(QUICK_LOOK)
-    void didRequestPasswordForQuickLookDocumentInMainFrameShared(Ref<WebProcessProxy>&&, const String& fileName);
+    void requestPasswordForQuickLookDocumentInMainFrameShared(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&&, const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
@@ -2052,8 +2049,8 @@ private:
 
 #if USE(QUICK_LOOK)
     void didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti);
-    void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&);
-    void didRequestPasswordForQuickLookDocumentInMainFrame(const String& fileName);
+    void didFinishLoadForQuickLookDocumentInMainFrame(const ShareableResource::Handle&);
+    void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

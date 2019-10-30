@@ -1,3 +1,16 @@
+2019-10-29  Andy Estes  <aestes@apple.com>
+
+        [Quick Look] Clean up LegacyPreviewLoaderClients
+        https://bugs.webkit.org/show_bug.cgi?id=203472
+
+        Reviewed by Brady Eidson.
+
+        * loader/ios/LegacyPreviewLoader.mm:
+        (WebCore::LegacyPreviewLoader::didReceiveBuffer):
+        * platform/network/ios/LegacyPreviewLoaderClient.h:
+        (WebCore::LegacyPreviewLoaderClient::didReceiveBuffer):
+        (WebCore::LegacyPreviewLoaderClient::didReceiveDataArray): Deleted.
+
 2019-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] SVGSymbolElement should inherits SVGGraphicsElement

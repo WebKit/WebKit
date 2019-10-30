@@ -1234,6 +1234,12 @@ public:
     static WebCore::IntRect rootViewInteractionBoundsForElement(const WebCore::Element&);
 #endif // PLATFORM(IOS_FAMILY)
 
+#if USE(QUICK_LOOK)
+    void didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti);
+    void didFinishLoadForQuickLookDocumentInMainFrame(const WebCore::SharedBuffer&);
+    void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1594,10 +1600,6 @@ private:
     void setUserInterfaceLayoutDirection(uint32_t);
 
     bool canPluginHandleResponse(const WebCore::ResourceResponse&);
-
-#if USE(QUICK_LOOK)
-    void didReceivePasswordForQuickLookDocument(const String&);
-#endif
 
     void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 

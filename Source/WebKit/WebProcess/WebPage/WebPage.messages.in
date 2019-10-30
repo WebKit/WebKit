@@ -532,10 +532,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, bool shouldMakeGamepadsVisible)
 #endif
 
-#if USE(QUICK_LOOK)
-    DidReceivePasswordForQuickLookDocument(String password)
-#endif
-
     FrameBecameRemote(WebCore::FrameIdentifier frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
 
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
