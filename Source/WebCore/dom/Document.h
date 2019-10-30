@@ -88,6 +88,7 @@ class InputCursor;
 
 namespace WebCore {
 
+class AbstractEventLoop;
 class ApplicationStateChangeListener;
 class AXObjectCache;
 class Attr;
@@ -128,6 +129,7 @@ class FormController;
 class Frame;
 class FrameView;
 class FullscreenManager;
+class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLBodyElement;
 class HTMLCanvasElement;
@@ -205,7 +207,6 @@ class VisitedLinkState;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
-class GPUCanvasContext;
 class WindowEventLoop;
 class WindowProxy;
 class Worklet;
@@ -1061,7 +1062,7 @@ public:
 
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
-    WindowEventLoop& eventLoop();
+    AbstractEventLoop& eventLoop() final;
     WindowEventLoop* eventLoopIfExists() { return m_eventLoop.get(); }
 
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }

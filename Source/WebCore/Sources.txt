@@ -2500,6 +2500,7 @@ workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
 workers/Worker.cpp
 workers/WorkerConsoleClient.cpp
+workers/WorkerEventLoop.cpp
 workers/WorkerEventQueue.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp

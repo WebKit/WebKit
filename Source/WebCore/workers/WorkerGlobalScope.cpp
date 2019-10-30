@@ -42,6 +42,7 @@
 #include "SecurityOriginPolicy.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "WorkerEventLoop.h"
 #include "WorkerInspectorController.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
@@ -102,6 +103,14 @@ WorkerGlobalScope::~WorkerGlobalScope()
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
+}
+
+AbstractEventLoop& WorkerGlobalScope::eventLoop()
+{
+    ASSERT(isContextThread());
+    if (!m_eventLoop)
+        m_eventLoop = WorkerEventLoop::create(*this);
+    return *m_eventLoop;
 }
 
 String WorkerGlobalScope::origin() const

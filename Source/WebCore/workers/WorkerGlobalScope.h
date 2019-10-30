@@ -42,11 +42,13 @@
 
 namespace WebCore {
 
+class AbstractEventLoop;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class MicrotaskQueue;
 class Performance;
 class ScheduledAction;
+class WorkerEventLoop;
 class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
@@ -64,6 +66,8 @@ public:
 
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
     virtual bool isServiceWorkerGlobalScope() const { return false; }
+
+    AbstractEventLoop& eventLoop() final;
 
     const URL& url() const final { return m_url; }
     String origin() const final;
@@ -190,6 +194,8 @@ private:
     bool m_closing { false };
     bool m_isOnline;
     bool m_shouldBypassMainWorldContentSecurityPolicy;
+
+    RefPtr<WorkerEventLoop> m_eventLoop;
 
     mutable WorkerEventQueue m_eventQueue;
 

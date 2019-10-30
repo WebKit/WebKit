@@ -28,11 +28,11 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "Document.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
+#include "WorkerEventLoop.h"
 #include "WorkerEventQueue.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/RuntimeFlags.h>
@@ -41,8 +41,11 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class AbstractEventLoop;
+class Document;
+class WorkerEventLoop;
 class WorkletScriptController;
-class ScriptSourceCode;
 
 enum WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
@@ -56,6 +59,8 @@ public:
     WEBCORE_EXPORT static WorkletGlobalScopesSet& allWorkletGlobalScopesSet();
 
     virtual bool isPaintWorkletGlobalScope() const { return false; }
+
+    AbstractEventLoop& eventLoop() final;
 
     const URL& url() const final { return m_code.url(); }
     String origin() const final;
@@ -128,6 +133,8 @@ private:
     std::unique_ptr<WorkletScriptController> m_script;
 
     Ref<SecurityOrigin> m_topOrigin;
+
+    RefPtr<WorkerEventLoop> m_eventLoop;
 
     // FIXME: This is not implemented properly, it just satisfies the compiler.
     // https://bugs.webkit.org/show_bug.cgi?id=191136

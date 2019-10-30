@@ -24,69 +24,82 @@
  */
 
 #include "config.h"
-#include "WindowEventLoop.h"
+#include "WorkerEventLoop.h"
 
-#include "Document.h"
+#include "WorkerGlobalScope.h"
+#include "WorkletGlobalScope.h"
 
 namespace WebCore {
 
-Ref<WindowEventLoop> WindowEventLoop::create()
+Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerGlobalScope& context)
 {
-    return adoptRef(*new WindowEventLoop);
+    return adoptRef(*new WorkerEventLoop(context));
 }
 
-void WindowEventLoop::queueTask(TaskSource source, ScriptExecutionContext& context, TaskFunction&& task)
+#if ENABLE(CSS_PAINTING_API)
+Ref<WorkerEventLoop> WorkerEventLoop::create(WorkletGlobalScope& context)
 {
-    ASSERT(isMainThread());
-    ASSERT(is<Document>(context));
-    scheduleToRunIfNeeded();
-    m_tasks.append(Task { source, WTFMove(task), downcast<Document>(context).identifier() });
+    return adoptRef(*new WorkerEventLoop(context));
+}
+#endif
+
+WorkerEventLoop::WorkerEventLoop(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
+{
 }
 
-void WindowEventLoop::suspend(Document&)
+void WorkerEventLoop::queueTask(TaskSource source, ScriptExecutionContext& context, TaskFunction&& function)
 {
-    ASSERT(isMainThread());
-}
-
-void WindowEventLoop::resume(Document& document)
-{
-    ASSERT(isMainThread());
-    if (!m_documentIdentifiersForSuspendedTasks.contains(document.identifier()))
+    if (!scriptExecutionContext())
         return;
+    ASSERT(scriptExecutionContext()->isContextThread());
+    ASSERT_UNUSED(context, scriptExecutionContext() == &context);
+    m_tasks.append({ source, WTFMove(function) });
     scheduleToRunIfNeeded();
 }
 
-void WindowEventLoop::scheduleToRunIfNeeded()
+const char* WorkerEventLoop::activeDOMObjectName() const
 {
-    if (m_isScheduledToRun)
+    return "WorkerEventLoop";
+}
+
+void WorkerEventLoop::suspend(ReasonForSuspension)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WorkerEventLoop::resume()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WorkerEventLoop::stop()
+{
+    m_tasks.clear();
+}
+
+void WorkerEventLoop::scheduleToRunIfNeeded()
+{
+    auto* context = scriptExecutionContext();
+    ASSERT(context);
+    if (m_isScheduledToRun || m_tasks.isEmpty())
         return;
 
     m_isScheduledToRun = true;
-    callOnMainThread([eventLoop = makeRef(*this)] () {
+    context->postTask([eventLoop = makeRef(*this)] (ScriptExecutionContext&) {
         eventLoop->m_isScheduledToRun = false;
         eventLoop->run();
     });
 }
 
-void WindowEventLoop::run()
+void WorkerEventLoop::run()
 {
-    Vector<Task> tasks = WTFMove(m_tasks);
-    m_documentIdentifiersForSuspendedTasks.clear();
-    Vector<Task> remainingTasks;
-    for (auto& task : tasks) {
-        auto* document = Document::allDocumentsMap().get(task.documentIdentifier);
-        if (!document || document->activeDOMObjectsAreStopped())
-            continue;
-        if (document->activeDOMObjectsAreSuspended()) {
-            m_documentIdentifiersForSuspendedTasks.add(task.documentIdentifier);
-            remainingTasks.append(WTFMove(task));
-            continue;
-        }
-        task.task();
-    }
+    auto* context = scriptExecutionContext();
+    if (!context || context->activeDOMObjectsAreStopped() || context->activeDOMObjectsAreSuspended())
+        return;
     for (auto& task : m_tasks)
-        remainingTasks.append(WTFMove(task));
-    m_tasks = WTFMove(remainingTasks);
+        task.task();
 }
 
 } // namespace WebCore
+

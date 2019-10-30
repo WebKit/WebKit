@@ -35,6 +35,7 @@
 #include "PageConsoleClient.h"
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
+#include "WorkerEventLoop.h"
 #include "WorkletScriptController.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
@@ -87,6 +88,13 @@ auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
 {
     static NeverDestroyed<WorkletGlobalScopesSet> scopes;
     return scopes;
+}
+
+AbstractEventLoop& WorkletGlobalScope::eventLoop()
+{
+    if (!m_eventLoop)
+        m_eventLoop = WorkerEventLoop::create(*this);
+    return *m_eventLoop;
 }
 
 String WorkletGlobalScope::origin() const

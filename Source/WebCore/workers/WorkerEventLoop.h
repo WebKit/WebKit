@@ -25,29 +25,44 @@
 
 #pragma once
 
-#include <wtf/Function.h>
-#include <wtf/RefCounted.h>
+#include "AbstractEventLoop.h"
+#include "ActiveDOMObject.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
+class WorkerGlobalScope;
+class WorkletGlobalScope;
 
-enum class TaskSource : uint8_t {
-    IdleTask,
-    Networking,
-    UserInteraction
-};
-
-// https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
-class AbstractEventLoop : public RefCounted<AbstractEventLoop> {
+class WorkerEventLoop final : public AbstractEventLoop, private ActiveDOMObject {
 public:
-    virtual ~AbstractEventLoop() = default;
+    // Explicitly take WorkerGlobalScope and WorkletGlobalScope for documentation purposes.
+    static Ref<WorkerEventLoop> create(WorkerGlobalScope&);
 
-    typedef WTF::Function<void ()> TaskFunction;
-    virtual void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) = 0;
+#if ENABLE(CSS_PAINTING_API)
+    static Ref<WorkerEventLoop> create(WorkletGlobalScope&);
+#endif
 
-protected:
-    AbstractEventLoop() = default;
+    void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) override;
+
+private:
+    explicit WorkerEventLoop(ScriptExecutionContext&);
+
+    void scheduleToRunIfNeeded();
+    void run();
+
+    // ActiveDOMObject;
+    const char* activeDOMObjectName() const override;
+    void suspend(ReasonForSuspension) override;
+    void resume() override;
+    void stop() override;
+
+    struct Task {
+        TaskSource source;
+        TaskFunction task;
+    };
+
+    Vector<Task> m_tasks;
+    bool m_isScheduledToRun { false };
 };
 
 } // namespace WebCore

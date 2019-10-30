@@ -6128,11 +6128,12 @@ void Document::pendingTasksTimerFired()
         task.performTask(*this);
 }
 
-WindowEventLoop& Document::eventLoop()
+AbstractEventLoop& Document::eventLoop()
 {
+    ASSERT(isMainThread());
     if (!m_eventLoop) {
         if (m_contextDocument)
-            m_eventLoop = &m_contextDocument->eventLoop();
+            m_eventLoop = m_contextDocument->m_eventLoop;
         else // FIXME: Documents of similar origin should share the same event loop.
             m_eventLoop = WindowEventLoop::create();
     }

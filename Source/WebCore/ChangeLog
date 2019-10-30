@@ -1,3 +1,63 @@
+2019-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Introduce WorkerEventLoop and use it in FetchBodyOwner::runNetworkTaskWhenPossible
+        https://bugs.webkit.org/show_bug.cgi?id=203526
+
+        Reviewed by Chris Dumez.
+
+        Added WorkerEventLoop to implement the worker event loop:
+        https://html.spec.whatwg.org/multipage/webappapis.html#worker-event-loop-2
+
+        Each ScriptExecutionContext now returns an AbstractEventLoop so the code that may run in either
+        main thread or a worker thread can simply get the event loop object via ScriptExecutionContext.
+
+        For now, WorkerEventLoop also implements the worklet event loop:
+        https://html.spec.whatwg.org/multipage/webappapis.html#worklet-event-loop
+
+        WorkerEventLoop is an active DOM object since it's used by at most one ScriptExecutionContext
+        unlike WindowEventLoop, which can be shared by multiple documents and needs a custom logic to
+        suspend and resume a subset of tasks enqueued to the event loop.
+
+        No new tests since there should be no behavioral change for now.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::runNetworkTaskWhenPossible): Use WorkerEventLoop.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/AbstractEventLoop.h:
+        (WebCore::AbstractEventLoop::suspend): Removed since it's not needed for WorkerEventLoop.
+        (WebCore::AbstractEventLoop::resume): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::eventLoop): Returns AbstractEventLoop as it now overrides the abstract
+        member function defined in AbstractEventLoop.
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::suspend):
+        (WebCore::WindowEventLoop::resume):
+        * dom/WindowEventLoop.h:
+        * workers/WorkerEventLoop.cpp: Added.
+        (WebCore::WorkerEventLoop::create): Added.
+        (WebCore::WorkerEventLoop::WorkerEventLoop): Added.
+        (WebCore::WorkerEventLoop::queueTask): Added.
+        (WebCore::WorkerEventLoop::hasPendingActivity const): Added.
+        (WebCore::WorkerEventLoop::activeDOMObjectName const): Added.
+        (WebCore::WorkerEventLoop::suspend): Added.
+        (WebCore::WorkerEventLoop::resume): Added. Unlike WindowEventLoop, we only need to check
+        whether m_tasks is empty or not since WorkerEventLoop is associated with at most one
+        ScriptExecutionContext as noted above.
+        (WebCore::WorkerEventLoop::stop): Added. Clear m_tasks to free memory as early as possible.
+        (WebCore::WorkerEventLoop::scheduleToRunIfNeeded): Added.
+        (WebCore::WorkerEventLoop::run): Added.
+        * workers/WorkerEventLoop.h: Added.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::eventLoop): Added.
+        * workers/WorkerGlobalScope.h:
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::eventLoop): Added. It returns WorkerEventLoop for now since
+        there is no implementation difference.
+        * worklets/WorkletGlobalScope.h:
+
 2019-10-30  Antoine Quint  <graouts@apple.com>
 
         [ Mac Debug ] (r251706) webanimations/empty-keyframes-crash.html is crashing

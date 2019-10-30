@@ -45,15 +45,9 @@ void FetchBodyOwner::runNetworkTaskWhenPossible(Function<void()>&& task)
     if (!context || !scriptExecutionContext()->activeDOMObjectsAreSuspended())
         return task();
 
-    if (is<Document>(*context)) {
-        downcast<Document>(*context).eventLoop().queueTask(TaskSource::Networking, *context, [pendingActivity = makePendingActivity(*this), task = WTFMove(task)] {
-            task();
-        });
-    } else {
-        context->postTask([pendingActivity = makePendingActivity(*this), task = WTFMove(task)](ScriptExecutionContext&) {
-            task();
-        });
-    }
+    context->eventLoop().queueTask(TaskSource::Networking, *context, [pendingActivity = makePendingActivity(*this), task = WTFMove(task)] {
+        task();
+    });
 }
 
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
