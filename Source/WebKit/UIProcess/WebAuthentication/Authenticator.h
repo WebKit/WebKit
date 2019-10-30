@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "WebAuthenticationFlags.h"
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PublicKeyCredentialData.h>
@@ -45,6 +46,7 @@ public:
         virtual ~Observer() = default;
         virtual void respondReceived(Respond&&) = 0;
         virtual void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) = 0;
+        virtual void authenticatorStatusUpdated(WebAuthenticationStatus) = 0;
     };
 
     virtual ~Authenticator() = default;

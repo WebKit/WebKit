@@ -34,6 +34,7 @@
 #include <WebCore/DeviceRequestConverter.h>
 #include <WebCore/DeviceResponseConverter.h>
 #include <WebCore/ExceptionData.h>
+#include <WebCore/U2fCommandConstructor.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -94,6 +95,8 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
         auto error = getResponseCode(data);
         if (error != CtapDeviceResponseCode::kCtap2ErrInvalidCBOR && tryDowngrade())
             return;
+        if (error == CtapDeviceResponseCode::kCtap2ErrNoCredentials && observer())
+            observer()->authenticatorStatusUpdated(WebAuthenticationStatus::NoCredentialsFound);
         receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
@@ -103,6 +106,8 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
 bool CtapAuthenticator::tryDowngrade()
 {
     if (m_info.versions().find(ProtocolVersion::kU2f) == m_info.versions().end())
+        return false;
+    if (!isConvertibleToU2fSignCommand(WTF::get<PublicKeyCredentialRequestOptions>(requestData().options)))
         return false;
     if (!observer())
         return false;

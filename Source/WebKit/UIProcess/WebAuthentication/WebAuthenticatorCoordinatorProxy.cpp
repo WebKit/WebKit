@@ -30,7 +30,7 @@
 
 #include "AuthenticatorManager.h"
 #include "LocalService.h"
-#include "WebAuthenticationPanelFlags.h"
+#include "WebAuthenticationFlags.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"

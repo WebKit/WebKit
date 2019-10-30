@@ -11,7 +11,7 @@
         "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
         "QoJ1L7Fe64G9uBeQAA==";
     if (window.internals) {
-        internals.setMockWebAuthenticationConfiguration({ nfc: { payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testAssertionMessageApduBase64] } });
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, nfc: { payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testAssertionMessageApduBase64] } });
         internals.withUserGesture(() => { input.focus(); });
     }
 

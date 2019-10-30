@@ -40,6 +40,11 @@ enum class WebAuthenticationResult : bool {
     Failed
 };
 
+enum class WebAuthenticationStatus : bool {
+    MultipleNFCTagsPresent,
+    NoCredentialsFound
+};
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

@@ -78,13 +78,22 @@ static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 
 @end
 
+@interface TestWebAuthenticationPanelFakeDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
+@end
+
+@implementation TestWebAuthenticationPanelFakeDelegate
+@end
+
 @interface TestWebAuthenticationPanelUIDelegate : NSObject <WKUIDelegatePrivate>
 @property bool isRacy;
+@property bool isFake;
+@property bool isNull;
+
 - (instancetype)init;
 @end
 
 @implementation TestWebAuthenticationPanelUIDelegate {
-    RetainPtr<TestWebAuthenticationPanelDelegate> _delegate;
+    RetainPtr<NSObject<_WKWebAuthenticationPanelDelegate>> _delegate;
     BlockPtr<void(_WKWebAuthenticationPanelResult)> _callback;
     RetainPtr<WKFrameInfo> _frameInfo;
 }
@@ -104,7 +113,12 @@ static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
     webAuthenticationPanelRan = true;
     _frameInfo = frame;
 
-    _delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+    if (!_isNull) {
+        if (!_isFake)
+            _delegate = adoptNS([[TestWebAuthenticationPanelDelegate alloc] init]);
+        else
+            _delegate = adoptNS([[TestWebAuthenticationPanelFakeDelegate alloc] init]);
+    }
     ASSERT_NE(panel, nil);
     gPanel = panel;
     [gPanel setDelegate:_delegate.get()];

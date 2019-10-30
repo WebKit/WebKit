@@ -39,7 +39,7 @@ OBJC_CLASS UIViewController;
 #endif
 
 #if ENABLE(WEB_AUTHN)
-#include "WebAuthenticationPanelFlags.h"
+#include "WebAuthenticationFlags.h"
 #endif
 
 namespace WebCore {

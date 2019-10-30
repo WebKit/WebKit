@@ -28,7 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#import "WebAuthenticationPanelFlags.h"
+#import "WebAuthenticationFlags.h"
 #import "_WKWebAuthenticationPanel.h"
 
 namespace WebKit {
@@ -37,12 +37,35 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     : m_panel(panel)
     , m_delegate(delegate)
 {
+    m_delegateMethods.panelUpdateWebAuthenticationPanel = [delegate respondsToSelector:@selector(panel:updateWebAuthenticationPanel:)];
     m_delegateMethods.panelDismissWebAuthenticationPanelWithResult = [delegate respondsToSelector:@selector(panel:dismissWebAuthenticationPanelWithResult:)];
 }
 
 RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
 {
     return m_delegate.get();
+}
+
+static _WKWebAuthenticationPanelUpdate wkWebAuthenticationPanelUpdate(WebAuthenticationStatus status)
+{
+    if (status == WebAuthenticationStatus::MultipleNFCTagsPresent)
+        return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
+    if (status == WebAuthenticationStatus::NoCredentialsFound)
+        return _WKWebAuthenticationPanelUpdateNoCredentialsFound;
+    ASSERT_NOT_REACHED();
+    return _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent;
+}
+
+void WebAuthenticationPanelClient::updatePanel(WebAuthenticationStatus status) const
+{
+    if (!m_delegateMethods.panelUpdateWebAuthenticationPanel)
+        return;
+
+    auto delegate = m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate panel:m_panel updateWebAuthenticationPanel:wkWebAuthenticationPanelUpdate(status)];
 }
 
 static _WKWebAuthenticationResult wkWebAuthenticationResult(WebAuthenticationResult result)

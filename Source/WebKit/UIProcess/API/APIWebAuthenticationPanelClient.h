@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 namespace WebKit {
+enum class WebAuthenticationStatus : bool;
 enum class WebAuthenticationResult : bool;
 }
 
@@ -38,6 +39,7 @@ class WebAuthenticationPanelClient {
 public:
     virtual ~WebAuthenticationPanelClient() = default;
 
+    virtual void updatePanel(WebKit::WebAuthenticationStatus) const { }
     virtual void dismissPanel(WebKit::WebAuthenticationResult) const { }
 };
 

@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-class WebAuthenticationPanelClient : public API::WebAuthenticationPanelClient, public CanMakeWeakPtr<WebAuthenticationPanelClient> {
+class WebAuthenticationPanelClient final : public API::WebAuthenticationPanelClient, public CanMakeWeakPtr<WebAuthenticationPanelClient> {
 public:
     WebAuthenticationPanelClient(_WKWebAuthenticationPanel *, id <_WKWebAuthenticationPanelDelegate>);
 
@@ -47,12 +47,14 @@ public:
 
 private:
     // API::WebAuthenticationPanelClient
+    void updatePanel(WebAuthenticationStatus) const final;
     void dismissPanel(WebAuthenticationResult) const final;
 
     _WKWebAuthenticationPanel *m_panel;
     WeakObjCPtr<id <_WKWebAuthenticationPanelDelegate> > m_delegate;
 
     struct {
+        bool panelUpdateWebAuthenticationPanel : 1;
         bool panelDismissWebAuthenticationPanelWithResult : 1;
     } m_delegateMethods;
 };

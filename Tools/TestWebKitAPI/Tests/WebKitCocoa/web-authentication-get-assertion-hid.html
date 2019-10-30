@@ -7,7 +7,7 @@
         "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
         "QoJ1L7Fe64G9uBc=";
     if (window.internals) {
-        internals.setMockWebAuthenticationConfiguration({ hid: { payloadBase64: [testAssertionMessageBase64] } });
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, hid: { payloadBase64: [testAssertionMessageBase64] } });
         internals.withUserGesture(() => { input.focus(); });
     }
 
