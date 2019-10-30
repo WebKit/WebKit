@@ -37,8 +37,8 @@ public:
     
     void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
     
-    AccessibilityObject* incrementButton();
-    AccessibilityObject* decrementButton();
+    AXCoreObject* incrementButton();
+    AXCoreObject* decrementButton();
 
     void step(int amount);
     

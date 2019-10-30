@@ -276,7 +276,7 @@ static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, N
     NSAccessibilityPostNotificationWithUserInfo(object, notification, userInfo);
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
 {
     if (!obj)
         return;

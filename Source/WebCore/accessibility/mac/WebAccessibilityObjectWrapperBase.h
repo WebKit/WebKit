@@ -73,7 +73,7 @@ class VisiblePosition;
 - (BOOL)updateObjectBackingStore;
 
 // This can be either an AccessibilityObject or an AXIsolatedTreeNode
-- (WebCore::AccessibilityObjectInterface*)axBackingObject;
+- (WebCore::AXCoreObject*)axBackingObject;
 
 // These are pre-fixed with base so that AppKit does not end up calling into these directly (bypassing safety checks).
 - (NSString *)baseAccessibilityTitle;

@@ -98,19 +98,19 @@ void AXIsolatedTreeNode::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
         m_cachedTree = tree;
 }
 
-AccessibilityObjectInterface* AXIsolatedTreeNode::focusedUIElement() const
+AXCoreObject* AXIsolatedTreeNode::focusedUIElement() const
 {
     if (auto focusedElement = tree()->focusedUIElement())
         return focusedElement.get();
     return nullptr;
 }
     
-AccessibilityObjectInterface* AXIsolatedTreeNode::parentObjectInterfaceUnignored() const
+AXCoreObject* AXIsolatedTreeNode::parentObjectInterfaceUnignored() const
 {
     return tree()->nodeForID(parent()).get();
 }
 
-AccessibilityObjectInterface* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) const
+AXCoreObject* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) const
 {
     if (!relativeFrame().contains(point))
         return nullptr;

@@ -303,7 +303,7 @@ HRESULT AccessibleBase::get_uniqueID(_Out_ long* uniqueID)
     if (!m_object)
         return E_FAIL;
 
-    *uniqueID = static_cast<long>(m_object->axObjectID());
+    *uniqueID = static_cast<long>(m_object->objectID());
     return S_OK;
 }
 
@@ -358,7 +358,7 @@ HRESULT AccessibleBase::get_accParent(_COM_Outptr_opt_ IDispatch** parent)
     if (!m_object)
         return E_FAIL;
 
-    AccessibilityObject* parentObject = m_object->parentObjectUnignored();
+    AccessibilityObject* parentObject = dynamic_cast<AccessibilityObject*>(m_object->parentObjectUnignored());
     if (parentObject) {
         *parent = wrapper(parentObject);
         (*parent)->AddRef();
@@ -643,7 +643,7 @@ HRESULT AccessibleBase::accSelect(long selectionFlags, VARIANT vChild)
 
     if (selectionFlags & SELFLAG_TAKESELECTION) {
         if (is<AccessibilityListBox>(*parentObject)) {
-            Vector<RefPtr<AccessibilityObject> > selectedChildren(1);
+            Vector<RefPtr<AXCoreObject> > selectedChildren(1);
             selectedChildren[0] = childObject;
             downcast<AccessibilityListBox>(*parentObject).setSelectedChildren(selectedChildren);
         } else { // any element may be selectable by virtue of it having the aria-selected property
@@ -1045,7 +1045,7 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
 
         if (childIndex >= m_object->children().size())
             return E_FAIL;
-        childObj = m_object->children().at(childIndex).get();
+        childObj = dynamic_cast<AccessibilityObject*>(m_object->children().at(childIndex).get());
     }
 
     if (!childObj)

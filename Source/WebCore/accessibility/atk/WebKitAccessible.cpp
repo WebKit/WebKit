@@ -1165,7 +1165,7 @@ static bool roleIsTextType(AccessibilityRole role)
         || role == AccessibilityRole::ApplicationGroup;
 }
 
-static guint16 interfaceMaskFromObject(AccessibilityObject* coreObject)
+static guint16 interfaceMaskFromObject(AXCoreObject* coreObject)
 {
     guint16 interfaceMask = 0;
 

@@ -106,7 +106,7 @@ public:
     bool ariaRoleHasPresentationalChildren() const override;
     
     // Should be called on the root accessibility object to kick off a hit test.
-    AccessibilityObjectInterface* accessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
 
     Element* anchorElement() const override;
     
@@ -135,7 +135,7 @@ public:
     int textLength() const override;
     String selectedText() const override;
     const AtomString& accessKey() const override;
-    virtual const String& actionVerb() const;
+    const String& actionVerb() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     virtual void getDocumentLinks(AccessibilityChildrenVector&);
@@ -235,11 +235,11 @@ private:
     bool isTabItemSelected() const;
     LayoutRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
-    void addRadioButtonGroupChildren(AccessibilityObject*, AccessibilityChildrenVector&) const;
+    void addRadioButtonGroupChildren(AXCoreObject*, AccessibilityChildrenVector&) const;
     AccessibilityObject* internalLinkElement() const;
-    AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
+    AXCoreObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
-    AccessibilityObjectInterface* elementAccessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
@@ -250,7 +250,7 @@ private:
     void detachRemoteSVGRoot();
     enum CreationChoice { Create, Retrieve };
     AccessibilitySVGRoot* remoteSVGRootElement(CreationChoice createIfNecessary) const;
-    AccessibilityObjectInterface* remoteSVGElementHitTest(const IntPoint&) const;
+    AXCoreObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
     bool supportsPath() const override;
 

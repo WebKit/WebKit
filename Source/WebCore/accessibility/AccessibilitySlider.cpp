@@ -90,7 +90,7 @@ void AccessibilitySlider::addChildren()
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
     if (thumb.accessibilityIsIgnored())
-        cache->remove(thumb.axObjectID());
+        cache->remove(thumb.objectID());
     else
         m_children.append(&thumb);
 }
@@ -100,7 +100,7 @@ const AtomString& AccessibilitySlider::getAttribute(const QualifiedName& attribu
     return inputElement()->getAttribute(attribute);
 }
     
-AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
+AXCoreObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
 {
     if (m_children.size()) {
         ASSERT(m_children.size() == 1);

@@ -64,7 +64,6 @@ public:
 
     String helpText() const override;
     String valueDescription() const override;
-    const AtomString& getAttribute(const QualifiedName& attribute) const;
 
 private:
     explicit AccessibilityMediaTimeline(RenderObject*);

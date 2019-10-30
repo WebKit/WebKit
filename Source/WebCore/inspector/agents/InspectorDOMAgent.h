@@ -52,7 +52,7 @@ class JSValue;
 
 namespace WebCore {
 
-class AccessibilityObject;
+class AXCoreObject;
 class CharacterData;
 class DOMEditor;
 class Document;
@@ -225,7 +225,7 @@ private:
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomString& eventType, bool disabled, bool hasBreakpoint);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-    void processAccessibilityChildren(AccessibilityObject&, JSON::ArrayOf<int>&);
+    void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<int>&);
     
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);

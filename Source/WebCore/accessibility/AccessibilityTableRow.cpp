@@ -110,7 +110,7 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
     return nullptr;
 }
     
-AccessibilityObject* AccessibilityTableRow::headerObject()
+AXCoreObject* AccessibilityTableRow::headerObject()
 {
     if (!m_renderer || !m_renderer->isTableRow())
         return nullptr;
@@ -120,7 +120,7 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
         return nullptr;
     
     // check the first element in the row to see if it is a TH element
-    AccessibilityObject* cell = rowChildren[0].get();
+    AXCoreObject* cell = rowChildren[0].get();
     if (!is<AccessibilityTableCell>(*cell))
         return nullptr;
     

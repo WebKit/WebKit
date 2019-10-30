@@ -199,7 +199,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     return nullptr;
 }
 
-AccessibilityObjectInterface* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
+AXCoreObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
 {
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)

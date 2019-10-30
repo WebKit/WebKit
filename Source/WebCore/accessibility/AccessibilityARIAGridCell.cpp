@@ -55,7 +55,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // ARIA gridcells may have multiple levels of unignored ancestors that are not the parent table,
     // including rows and interactive rowgroups. In addition, poorly-formed grids may contain elements
     // which pass the tests for inclusion.
-    for (AccessibilityObject* parent = parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
+    for (auto* parent = parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
         if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
             return downcast<AccessibilityTable>(parent);
     }
@@ -65,7 +65,7 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     
 void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!parent)
         return;
 
@@ -103,7 +103,7 @@ unsigned AccessibilityARIAGridCell::axRowSpanWithRowIndex(unsigned rowIndex) con
         return std::max(static_cast<int>(range.second), 1);
     }
 
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!parent)
         return 1;
     
@@ -134,7 +134,7 @@ unsigned AccessibilityARIAGridCell::axRowSpanWithRowIndex(unsigned rowIndex) con
 
 void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!parent)
         return;
 

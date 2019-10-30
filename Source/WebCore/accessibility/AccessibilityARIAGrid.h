@@ -52,8 +52,8 @@ private:
     bool computeIsTableExposableThroughAccessibility() const override { return true; }
     bool isAriaTable() const override { return true; }
     
-    void addRowDescendant(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
-    bool addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+    void addRowDescendant(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+    bool addTableCellChild(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 
 } // namespace WebCore 

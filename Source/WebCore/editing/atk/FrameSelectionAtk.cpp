@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static void emitTextSelectionChange(AccessibilityObject* object, VisibleSelection selection, int offset)
+static void emitTextSelectionChange(AXCoreObject* object, VisibleSelection selection, int offset)
 {
     auto* axObject = object->wrapper();
     if (!axObject || !ATK_IS_TEXT(axObject))
@@ -52,12 +52,12 @@ static void emitTextSelectionChange(AccessibilityObject* object, VisibleSelectio
         g_signal_emit_by_name(axObject, "text-selection-changed");
 }
 
-static void maybeEmitTextFocusChange(RefPtr<AccessibilityObject>&& object)
+static void maybeEmitTextFocusChange(RefPtr<AXCoreObject>&& object)
 {
     // This static variable is needed to keep track of the old object
     // as per previous calls to this function, in order to properly
     // decide whether to emit some signals or not.
-    static NeverDestroyed<RefPtr<AccessibilityObject>> oldObject;
+    static NeverDestroyed<RefPtr<AXCoreObject>> oldObject;
 
     // Ensure the oldObject belongs to the same document that the
     // current object so further comparisons make sense. Otherwise,
@@ -106,7 +106,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
         return;
 
     int offset;
-    RefPtr<AccessibilityObject> object = objectFocusedAndCaretOffsetUnignored(accessibilityObject, offset);
+    RefPtr<AXCoreObject> object = objectFocusedAndCaretOffsetUnignored(accessibilityObject, offset);
     if (!object)
         return;
 

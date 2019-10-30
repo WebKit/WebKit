@@ -304,7 +304,7 @@ void AccessibilityTableCell::rowHeaders(AccessibilityChildrenVector& headers)
 
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!is<AccessibilityTableRow>(*parent))
         return nullptr;
     return downcast<AccessibilityTableRow>(parent);

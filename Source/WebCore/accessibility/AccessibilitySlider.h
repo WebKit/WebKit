@@ -45,7 +45,7 @@ protected:
 
 private:
     HTMLInputElement* inputElement() const;
-    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     AccessibilityRole roleValue() const override { return AccessibilityRole::Slider; }
     bool isSlider() const final { return true; }
@@ -55,7 +55,7 @@ private:
     void addChildren() override;
     
     bool canSetValueAttribute() const override { return true; }
-    const AtomString& getAttribute(const QualifiedName& attribute) const;
+    const AtomString& getAttribute(const QualifiedName&) const override;
     
     void setValue(const String&) override;
     float valueForRange() const override;

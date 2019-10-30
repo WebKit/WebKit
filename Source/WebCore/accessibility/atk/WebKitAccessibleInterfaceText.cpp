@@ -334,7 +334,7 @@ static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoor
     return extents;
 }
 
-static int offsetAdjustmentForListItem(const AccessibilityObject* object)
+static int offsetAdjustmentForListItem(const AXCoreObject* object)
 {
     // We need to adjust the offsets for the list item marker in
     // Left-To-Right text, since we expose it together with the text.
@@ -345,7 +345,7 @@ static int offsetAdjustmentForListItem(const AccessibilityObject* object)
     return 0;
 }
 
-static int webCoreOffsetToAtkOffset(const AccessibilityObject* object, int offset)
+static int webCoreOffsetToAtkOffset(const AXCoreObject* object, int offset)
 {
     if (!object->isListItem())
         return offset;
@@ -990,7 +990,7 @@ static gint webkitAccessibleTextGetCaretOffset(AtkText* text)
 
     // coreObject is the unignored object whose offset the caller is requesting.
     // focusedObject is the object with the caret. It is likely ignored -- unless it's a link.
-    AccessibilityObject* coreObject = core(text);
+    AXCoreObject* coreObject = core(text);
     if (!coreObject->isAccessibilityRenderObject())
         return 0;
 

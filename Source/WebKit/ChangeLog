@@ -1,3 +1,14 @@
+2019-10-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Create base class common to AccessibilityObject and AXIsolatedTreeNode.
+        https://bugs.webkit.org/show_bug.cgi?id=203408
+
+        Reviewed by Chris Fleizach.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityRootObject):
+        (WKAccessibilityFocusedObject):
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix reversed assertion landed in r251778.

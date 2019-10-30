@@ -1,3 +1,520 @@
+2019-10-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Create base class common to AccessibilityObject and AXIsolatedTreeNode.
+        https://bugs.webkit.org/show_bug.cgi?id=203408
+
+        Reviewed by Chris Fleizach.
+
+        No new tests needed since this doesn't change any functionality.
+
+        AXCoreObject is now a common base class for both AccessibilityObject and
+        AXIsolatedTreeNode. All client code should use AXCoreObject instead of
+        any of the derived classes. This will allow to seamlessly switch
+        between using AXIsolatedTreeNode in the secondary thread and
+        AccessibilityObject in the main thread when needed. This change also
+        allows for cleaner client code, encapsulating the decision whether
+        AXIsolatedTreeNode can respond to a request or need to resort to its
+        corresponding AccessibilityObject, and reducing the number of compile
+        time flag checks for ENABLE(ACCESSIBILITY_ISOLATED_TREE).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::getAXID):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::setTextMarkerDataWithCharacterOffset):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::textMarkerDataForFirstPositionInTextControl):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::childrenChanged):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        (WebCore::AccessibilityARIAGrid::addRowDescendant):
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable const):
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange const):
+        (WebCore::AccessibilityARIAGridCell::axRowSpanWithRowIndex const):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange const):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedRows):
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow const):
+        (WebCore::AccessibilityARIAGridRow::headerObject):
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityLabel.cpp:
+        (WebCore::AccessibilityLabel::insertChild):
+        * accessibility/AccessibilityLabel.h:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest const):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityMathMLElement.cpp:
+        (WebCore::AccessibilityMathMLElement::isMathScriptObject const):
+        (WebCore::AccessibilityMathMLElement::isMathMultiscriptObject const):
+        (WebCore::AccessibilityMathMLElement::mathRadicandObject):
+        (WebCore::AccessibilityMathMLElement::mathRootIndexObject):
+        (WebCore::AccessibilityMathMLElement::mathNumeratorObject):
+        (WebCore::AccessibilityMathMLElement::mathDenominatorObject):
+        (WebCore::AccessibilityMathMLElement::mathUnderObject):
+        (WebCore::AccessibilityMathMLElement::mathOverObject):
+        (WebCore::AccessibilityMathMLElement::mathBaseObject):
+        (WebCore::AccessibilityMathMLElement::mathSubscriptObject):
+        (WebCore::AccessibilityMathMLElement::mathSuperscriptObject):
+        * accessibility/AccessibilityMathMLElement.h:
+        * accessibility/AccessibilityMediaControls.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::childrenChanged):
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::selectedRadioButton):
+        (WebCore::AccessibilityNodeObject::selectedTabItem):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatch):
+        (WebCore::AccessibilityObject::isAccessibilityTextSearchMatch):
+        (WebCore::AccessibilityObject::containsText const):
+        (WebCore::AccessibilityObject::parentObjectUnignored const):
+        (WebCore::appendAccessibilityObject):
+        (WebCore::AccessibilityObject::insertChild):
+        (WebCore::AccessibilityObject::addChild):
+        (WebCore::appendChildrenToArray):
+        (WebCore::AccessibilityObject::objectMatchesSearchCriteriaWithResultLimit):
+        (WebCore::AccessibilityObject::findMatchingObjects):
+        (WebCore::AccessibilityObject::headingElementForNode):
+        (WebCore::AccessibilityObject::isDescendantOfObject const):
+        (WebCore::AccessibilityObject::isAncestorOfObject const):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest const):
+        (WebCore::AccessibilityObject::focusedUIElement const):
+        (WebCore::AccessibilityObject::isExpanded const):
+        (WebCore::AccessibilityObject::isOnScreen const):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored const):
+        (WebCore::AccessibilityObject::selectedListItem):
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+        (WebCore::AccessibilityObject::accessibilityObjectContainsText const): Deleted.
+        (WebCore::AccessibilityObject::isOnscreen const): Deleted.
+        * accessibility/AccessibilityObject.h:
+        (isType):
+        (WebCore::AccessibilityTextUnderElementMode::AccessibilityTextUnderElementMode): Deleted.
+        (WebCore::AccessibilityIsIgnoredFromParentData::AccessibilityIsIgnoredFromParentData): Deleted.
+        (WebCore::AccessibilityIsIgnoredFromParentData::isNull const): Deleted.
+        (WebCore::AccessibilitySearchCriteria::AccessibilitySearchCriteria): Deleted.
+        (WebCore::VisiblePositionRange::VisiblePositionRange): Deleted.
+        (WebCore::VisiblePositionRange::isNull const): Deleted.
+        (WebCore::PlainTextRange::PlainTextRange): Deleted.
+        (WebCore::PlainTextRange::isNull const): Deleted.
+        (WebCore::AccessibilitySearchTextCriteria::AccessibilitySearchTextCriteria): Deleted.
+        (WebCore::AccessibilityTextOperation::AccessibilityTextOperation): Deleted.
+        (WebCore::AccessibilityObject::setAXObjectID): Deleted.
+        (WebCore::AccessibilityObject::init): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilityNodeObject const): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilityRenderObject const): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilityScrollbar const): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilityScrollView const): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilitySVGRoot const): Deleted.
+        (WebCore::AccessibilityObject::isAccessibilitySVGElement const): Deleted.
+        (WebCore::AccessibilityObject::isAttachmentElement const): Deleted.
+        (WebCore::AccessibilityObject::isHeading const): Deleted.
+        (WebCore::AccessibilityObject::isImageMap const): Deleted.
+        (WebCore::AccessibilityObject::isNativeImage const): Deleted.
+        (WebCore::AccessibilityObject::isImageButton const): Deleted.
+        (WebCore::AccessibilityObject::isPasswordField const): Deleted.
+        (WebCore::AccessibilityObject::passwordFieldOrContainingPasswordField): Deleted.
+        (WebCore::AccessibilityObject::isNativeTextControl const): Deleted.
+        (WebCore::AccessibilityObject::isSearchField const): Deleted.
+        (WebCore::AccessibilityObject::isWebArea const): Deleted.
+        (WebCore::AccessibilityObject::isCheckbox const): Deleted.
+        (WebCore::AccessibilityObject::isRadioButton const): Deleted.
+        (WebCore::AccessibilityObject::isNativeListBox const): Deleted.
+        (WebCore::AccessibilityObject::isListBox const): Deleted.
+        (WebCore::AccessibilityObject::isListBoxOption const): Deleted.
+        (WebCore::AccessibilityObject::isMediaTimeline const): Deleted.
+        (WebCore::AccessibilityObject::isMenuRelated const): Deleted.
+        (WebCore::AccessibilityObject::isMenu const): Deleted.
+        (WebCore::AccessibilityObject::isMenuBar const): Deleted.
+        (WebCore::AccessibilityObject::isMenuButton const): Deleted.
+        (WebCore::AccessibilityObject::isMenuItem const): Deleted.
+        (WebCore::AccessibilityObject::isInputImage const): Deleted.
+        (WebCore::AccessibilityObject::isProgressIndicator const): Deleted.
+        (WebCore::AccessibilityObject::isSlider const): Deleted.
+        (WebCore::AccessibilityObject::isSliderThumb const): Deleted.
+        (WebCore::AccessibilityObject::isInputSlider const): Deleted.
+        (WebCore::AccessibilityObject::isControl const): Deleted.
+        (WebCore::AccessibilityObject::isLabel const): Deleted.
+        (WebCore::AccessibilityObject::isList const): Deleted.
+        (WebCore::AccessibilityObject::isTable const): Deleted.
+        (WebCore::AccessibilityObject::isDataTable const): Deleted.
+        (WebCore::AccessibilityObject::isTableRow const): Deleted.
+        (WebCore::AccessibilityObject::isTableColumn const): Deleted.
+        (WebCore::AccessibilityObject::isTableCell const): Deleted.
+        (WebCore::AccessibilityObject::isFieldset const): Deleted.
+        (WebCore::AccessibilityObject::isGroup const): Deleted.
+        (WebCore::AccessibilityObject::isARIATreeGridRow const): Deleted.
+        (WebCore::AccessibilityObject::isMenuList const): Deleted.
+        (WebCore::AccessibilityObject::isMenuListPopup const): Deleted.
+        (WebCore::AccessibilityObject::isMenuListOption const): Deleted.
+        (WebCore::AccessibilityObject::isSpinButton const): Deleted.
+        (WebCore::AccessibilityObject::isNativeSpinButton const): Deleted.
+        (WebCore::AccessibilityObject::isSpinButtonPart const): Deleted.
+        (WebCore::AccessibilityObject::isMockObject const): Deleted.
+        (WebCore::AccessibilityObject::isMediaObject const): Deleted.
+        (WebCore::AccessibilityObject::isSwitch const): Deleted.
+        (WebCore::AccessibilityObject::isToggleButton const): Deleted.
+        (WebCore::AccessibilityObject::isTabList const): Deleted.
+        (WebCore::AccessibilityObject::isTabItem const): Deleted.
+        (WebCore::AccessibilityObject::isRadioGroup const): Deleted.
+        (WebCore::AccessibilityObject::isComboBox const): Deleted.
+        (WebCore::AccessibilityObject::isTreeGrid const): Deleted.
+        (WebCore::AccessibilityObject::isListItem const): Deleted.
+        (WebCore::AccessibilityObject::isCheckboxOrRadio const): Deleted.
+        (WebCore::AccessibilityObject::isScrollView const): Deleted.
+        (WebCore::AccessibilityObject::isCanvas const): Deleted.
+        (WebCore::AccessibilityObject::isPopUpButton const): Deleted.
+        (WebCore::AccessibilityObject::isColorWell const): Deleted.
+        (WebCore::AccessibilityObject::isSplitter const): Deleted.
+        (WebCore::AccessibilityObject::isToolbar const): Deleted.
+        (WebCore::AccessibilityObject::isSummary const): Deleted.
+        (WebCore::AccessibilityObject::isChecked const): Deleted.
+        (WebCore::AccessibilityObject::isEnabled const): Deleted.
+        (WebCore::AccessibilityObject::isSelected const): Deleted.
+        (WebCore::AccessibilityObject::isFocused const): Deleted.
+        (WebCore::AccessibilityObject::isHovered const): Deleted.
+        (WebCore::AccessibilityObject::isIndeterminate const): Deleted.
+        (WebCore::AccessibilityObject::isLoaded const): Deleted.
+        (WebCore::AccessibilityObject::isMultiSelectable const): Deleted.
+        (WebCore::AccessibilityObject::isOffScreen const): Deleted.
+        (WebCore::AccessibilityObject::isPressed const): Deleted.
+        (WebCore::AccessibilityObject::isUnvisited const): Deleted.
+        (WebCore::AccessibilityObject::isVisited const): Deleted.
+        (WebCore::AccessibilityObject::isRequired const): Deleted.
+        (WebCore::AccessibilityObject::supportsRequiredAttribute const): Deleted.
+        (WebCore::AccessibilityObject::isLinked const): Deleted.
+        (WebCore::AccessibilityObject::isVisible const): Deleted.
+        (WebCore::AccessibilityObject::isCollapsed const): Deleted.
+        (WebCore::AccessibilityObject::setIsExpanded): Deleted.
+        (WebCore::AccessibilityObject::isSelectedOptionActive const): Deleted.
+        (WebCore::AccessibilityObject::hasBoldFont const): Deleted.
+        (WebCore::AccessibilityObject::hasItalicFont const): Deleted.
+        (WebCore::AccessibilityObject::hasPlainText const): Deleted.
+        (WebCore::AccessibilityObject::hasSameFont const): Deleted.
+        (WebCore::AccessibilityObject::hasSameFontColor const): Deleted.
+        (WebCore::AccessibilityObject::hasSameStyle const): Deleted.
+        (WebCore::AccessibilityObject::isStaticText const): Deleted.
+        (WebCore::AccessibilityObject::hasUnderline const): Deleted.
+        (WebCore::AccessibilityObject::canSetFocusAttribute const): Deleted.
+        (WebCore::AccessibilityObject::canSetTextRangeAttributes const): Deleted.
+        (WebCore::AccessibilityObject::canSetValueAttribute const): Deleted.
+        (WebCore::AccessibilityObject::canSetNumericValue const): Deleted.
+        (WebCore::AccessibilityObject::canSetSelectedAttribute const): Deleted.
+        (WebCore::AccessibilityObject::canSetSelectedChildrenAttribute const): Deleted.
+        (WebCore::AccessibilityObject::canSetExpandedAttribute const): Deleted.
+        (WebCore::AccessibilityObject::node const): Deleted.
+        (WebCore::AccessibilityObject::renderer const): Deleted.
+        (WebCore::AccessibilityObject::headingLevel const): Deleted.
+        (WebCore::AccessibilityObject::tableLevel const): Deleted.
+        (WebCore::AccessibilityObject::valueDescription const): Deleted.
+        (WebCore::AccessibilityObject::valueForRange const): Deleted.
+        (WebCore::AccessibilityObject::maxValueForRange const): Deleted.
+        (WebCore::AccessibilityObject::minValueForRange const): Deleted.
+        (WebCore::AccessibilityObject::stepValueForRange const): Deleted.
+        (WebCore::AccessibilityObject::selectedRadioButton): Deleted.
+        (WebCore::AccessibilityObject::selectedTabItem): Deleted.
+        (WebCore::AccessibilityObject::layoutCount const): Deleted.
+        (WebCore::AccessibilityObject::estimatedLoadingProgress const): Deleted.
+        (WebCore::AccessibilityObject::supportsARIAOwns const): Deleted.
+        (WebCore::AccessibilityObject::hasPopup const): Deleted.
+        (WebCore::AccessibilityObject::canvasHasFallbackContent const): Deleted.
+        (WebCore::AccessibilityObject::supportsARIADropping const): Deleted.
+        (WebCore::AccessibilityObject::supportsARIADragging const): Deleted.
+        (WebCore::AccessibilityObject::isARIAGrabbed): Deleted.
+        (WebCore::AccessibilityObject::setARIAGrabbed): Deleted.
+        (WebCore::AccessibilityObject::determineARIADropEffects): Deleted.
+        (WebCore::AccessibilityObject::firstChild const): Deleted.
+        (WebCore::AccessibilityObject::lastChild const): Deleted.
+        (WebCore::AccessibilityObject::previousSibling const): Deleted.
+        (WebCore::AccessibilityObject::nextSibling const): Deleted.
+        (WebCore::AccessibilityObject::parentObject const): Deleted.
+        (WebCore::AccessibilityObject::parentObjectIfExists const): Deleted.
+        (WebCore::AccessibilityObject::isDescendantOfBarrenParent const): Deleted.
+        (WebCore::AccessibilityObject::observableObject const): Deleted.
+        (WebCore::AccessibilityObject::linkedUIElements const): Deleted.
+        (WebCore::AccessibilityObject::titleUIElement const): Deleted.
+        (WebCore::AccessibilityObject::exposesTitleUIElement const): Deleted.
+        (WebCore::AccessibilityObject::correspondingLabelForControlElement const): Deleted.
+        (WebCore::AccessibilityObject::correspondingControlForLabelElement const): Deleted.
+        (WebCore::AccessibilityObject::scrollBar): Deleted.
+        (WebCore::AccessibilityObject::ariaRoleAttribute const): Deleted.
+        (WebCore::AccessibilityObject::isPresentationalChildOfAriaRole const): Deleted.
+        (WebCore::AccessibilityObject::ariaRoleHasPresentationalChildren const): Deleted.
+        (WebCore::AccessibilityObject::inheritsPresentationalRole const): Deleted.
+        (WebCore::AccessibilityObject::accessibilityText const): Deleted.
+        (WebCore::AccessibilityObject::setAccessibleName): Deleted.
+        (WebCore::AccessibilityObject::accessibilityDescription const): Deleted.
+        (WebCore::AccessibilityObject::title const): Deleted.
+        (WebCore::AccessibilityObject::helpText const): Deleted.
+        (WebCore::AccessibilityObject::isARIAStaticText const): Deleted.
+        (WebCore::AccessibilityObject::stringValue const): Deleted.
+        (WebCore::AccessibilityObject::textUnderElement const): Deleted.
+        (WebCore::AccessibilityObject::text const): Deleted.
+        (WebCore::AccessibilityObject::textLength const): Deleted.
+        (WebCore::AccessibilityObject::ariaLabeledByAttribute const): Deleted.
+        (WebCore::AccessibilityObject::ariaDescribedByAttribute const): Deleted.
+        (WebCore::AccessibilityObject::expandedTextValue const): Deleted.
+        (WebCore::AccessibilityObject::supportsExpandedTextValue const): Deleted.
+        (WebCore::AccessibilityObject::colorValue const): Deleted.
+        (WebCore::AccessibilityObject::axObjectID const): Deleted.
+        (WebCore::AccessibilityObject::anchorElement const): Deleted.
+        (WebCore::AccessibilityObject::actionElement const): Deleted.
+        (WebCore::AccessibilityObject::boundingBoxRect const): Deleted.
+        (WebCore::AccessibilityObject::pixelSnappedBoundingBoxRect const): Deleted.
+        (WebCore::AccessibilityObject::size const): Deleted.
+        (WebCore::AccessibilityObject::elementPath const): Deleted.
+        (WebCore::AccessibilityObject::supportsPath const): Deleted.
+        (WebCore::AccessibilityObject::selectedTextRange const): Deleted.
+        (WebCore::AccessibilityObject::selectionStart const): Deleted.
+        (WebCore::AccessibilityObject::selectionEnd const): Deleted.
+        (WebCore::AccessibilityObject::url const): Deleted.
+        (WebCore::AccessibilityObject::selection const): Deleted.
+        (WebCore::AccessibilityObject::selectedText const): Deleted.
+        (WebCore::AccessibilityObject::accessKey const): Deleted.
+        (WebCore::AccessibilityObject::widget const): Deleted.
+        (WebCore::AccessibilityObject::widgetForAttachmentView const): Deleted.
+        (WebCore::AccessibilityObject::hierarchicalLevel const): Deleted.
+        (WebCore::AccessibilityObject::setFocused): Deleted.
+        (WebCore::AccessibilityObject::setSelectedText): Deleted.
+        (WebCore::AccessibilityObject::setSelectedTextRange): Deleted.
+        (WebCore::AccessibilityObject::setValue): Deleted.
+        (WebCore::AccessibilityObject::setSelected): Deleted.
+        (WebCore::AccessibilityObject::setSelectedRows): Deleted.
+        (WebCore::AccessibilityObject::makeRangeVisible): Deleted.
+        (WebCore::AccessibilityObject::performDefaultAction): Deleted.
+        (WebCore::AccessibilityObject::increment): Deleted.
+        (WebCore::AccessibilityObject::decrement): Deleted.
+        (WebCore::AccessibilityObject::childrenChanged): Deleted.
+        (WebCore::AccessibilityObject::textChanged): Deleted.
+        (WebCore::AccessibilityObject::updateAccessibilityRole): Deleted.
+        (WebCore::AccessibilityObject::addChildren): Deleted.
+        (WebCore::AccessibilityObject::shouldIgnoreAttributeRole const): Deleted.
+        (WebCore::AccessibilityObject::canHaveChildren const): Deleted.
+        (WebCore::AccessibilityObject::hasChildren const): Deleted.
+        (WebCore::AccessibilityObject::setNeedsToUpdateChildren): Deleted.
+        (WebCore::AccessibilityObject::setNeedsToUpdateSubtree): Deleted.
+        (WebCore::AccessibilityObject::needsToUpdateChildren const): Deleted.
+        (WebCore::AccessibilityObject::detachFromParent): Deleted.
+        (WebCore::AccessibilityObject::isDetachedFromParent): Deleted.
+        (WebCore::AccessibilityObject::canHaveSelectedChildren const): Deleted.
+        (WebCore::AccessibilityObject::selectedChildren): Deleted.
+        (WebCore::AccessibilityObject::visibleChildren): Deleted.
+        (WebCore::AccessibilityObject::tabChildren): Deleted.
+        (WebCore::AccessibilityObject::shouldFocusActiveDescendant const): Deleted.
+        (WebCore::AccessibilityObject::activeDescendant const): Deleted.
+        (WebCore::AccessibilityObject::handleActiveDescendantChanged): Deleted.
+        (WebCore::AccessibilityObject::handleAriaExpandedChanged): Deleted.
+        (WebCore::AccessibilityObject::visiblePositionRange const): Deleted.
+        (WebCore::AccessibilityObject::visiblePositionRangeForLine const): Deleted.
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange const): Deleted.
+        (WebCore::AccessibilityObject::boundsForRange const): Deleted.
+        (WebCore::AccessibilityObject::setSelectedVisiblePositionRange const): Deleted.
+        (WebCore::AccessibilityObject::visiblePositionForPoint const): Deleted.
+        (WebCore::AccessibilityObject::nextVisiblePosition const): Deleted.
+        (WebCore::AccessibilityObject::previousVisiblePosition const): Deleted.
+        (WebCore::AccessibilityObject::visiblePositionForIndex const): Deleted.
+        (WebCore::AccessibilityObject::indexForVisiblePosition const): Deleted.
+        (WebCore::AccessibilityObject::index const): Deleted.
+        (WebCore::AccessibilityObject::lineBreaks const): Deleted.
+        (WebCore::AccessibilityObject::doAXRangeForLine const): Deleted.
+        (WebCore::AccessibilityObject::doAXRangeForIndex const): Deleted.
+        (WebCore::AccessibilityObject::doAXStringForRange const): Deleted.
+        (WebCore::AccessibilityObject::doAXBoundsForRange const): Deleted.
+        (WebCore::AccessibilityObject::doAXBoundsForRangeUsingCharacterOffset const): Deleted.
+        (WebCore::AccessibilityObject::stringValueForMSAA const): Deleted.
+        (WebCore::AccessibilityObject::stringRoleForMSAA const): Deleted.
+        (WebCore::AccessibilityObject::nameForMSAA const): Deleted.
+        (WebCore::AccessibilityObject::descriptionForMSAA const): Deleted.
+        (WebCore::AccessibilityObject::roleValueForMSAA const): Deleted.
+        (WebCore::AccessibilityObject::passwordFieldValue const): Deleted.
+        (WebCore::AccessibilityObject::liveRegionStatus const): Deleted.
+        (WebCore::AccessibilityObject::liveRegionRelevant const): Deleted.
+        (WebCore::AccessibilityObject::liveRegionAtomic const): Deleted.
+        (WebCore::AccessibilityObject::isBusy const): Deleted.
+        (WebCore::AccessibilityObject::speakAsProperty const): Deleted.
+        (WebCore::AccessibilityObject::isMathElement const): Deleted.
+        (WebCore::AccessibilityObject::isMathFraction const): Deleted.
+        (WebCore::AccessibilityObject::isMathFenced const): Deleted.
+        (WebCore::AccessibilityObject::isMathSubscriptSuperscript const): Deleted.
+        (WebCore::AccessibilityObject::isMathRow const): Deleted.
+        (WebCore::AccessibilityObject::isMathUnderOver const): Deleted.
+        (WebCore::AccessibilityObject::isMathRoot const): Deleted.
+        (WebCore::AccessibilityObject::isMathSquareRoot const): Deleted.
+        (WebCore::AccessibilityObject::isMathText const): Deleted.
+        (WebCore::AccessibilityObject::isMathNumber const): Deleted.
+        (WebCore::AccessibilityObject::isMathOperator const): Deleted.
+        (WebCore::AccessibilityObject::isMathFenceOperator const): Deleted.
+        (WebCore::AccessibilityObject::isMathSeparatorOperator const): Deleted.
+        (WebCore::AccessibilityObject::isMathIdentifier const): Deleted.
+        (WebCore::AccessibilityObject::isMathTable const): Deleted.
+        (WebCore::AccessibilityObject::isMathTableRow const): Deleted.
+        (WebCore::AccessibilityObject::isMathTableCell const): Deleted.
+        (WebCore::AccessibilityObject::isMathMultiscript const): Deleted.
+        (WebCore::AccessibilityObject::isMathToken const): Deleted.
+        (WebCore::AccessibilityObject::isMathScriptObject const): Deleted.
+        (WebCore::AccessibilityObject::isMathMultiscriptObject const): Deleted.
+        (WebCore::AccessibilityObject::mathRadicandObject): Deleted.
+        (WebCore::AccessibilityObject::mathRootIndexObject): Deleted.
+        (WebCore::AccessibilityObject::mathUnderObject): Deleted.
+        (WebCore::AccessibilityObject::mathOverObject): Deleted.
+        (WebCore::AccessibilityObject::mathNumeratorObject): Deleted.
+        (WebCore::AccessibilityObject::mathDenominatorObject): Deleted.
+        (WebCore::AccessibilityObject::mathBaseObject): Deleted.
+        (WebCore::AccessibilityObject::mathSubscriptObject): Deleted.
+        (WebCore::AccessibilityObject::mathSuperscriptObject): Deleted.
+        (WebCore::AccessibilityObject::mathFencedOpenString const): Deleted.
+        (WebCore::AccessibilityObject::mathFencedCloseString const): Deleted.
+        (WebCore::AccessibilityObject::mathLineThickness const): Deleted.
+        (WebCore::AccessibilityObject::isAnonymousMathOperator const): Deleted.
+        (WebCore::AccessibilityObject::mathPrescripts): Deleted.
+        (WebCore::AccessibilityObject::mathPostscripts): Deleted.
+        (WebCore::AccessibilityObject::isHidden const): Deleted.
+        (WebCore::AccessibilityObject::setWrapper): Deleted.
+        (WebCore::AccessibilityObject::overrideAttachmentParent): Deleted.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment const): Deleted.
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject const): Deleted.
+        (WebCore::AccessibilityObject::clearIsIgnoredFromParentData): Deleted.
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentData): Deleted.
+        (WebCore::AccessibilityObject::children): Deleted.
+        (WebCore::AccessibilityObject::updateBackingStore): Deleted.
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AccessibilitySearchCriteria::AccessibilitySearchCriteria):
+        (WebCore::AccessibilitySearchTextCriteria::AccessibilitySearchTextCriteria):
+        (WebCore::AccessibilityTextOperation::AccessibilityTextOperation):
+        (WebCore::AccessibilityTextUnderElementMode::AccessibilityTextUnderElementMode):
+        (WebCore::PlainTextRange::PlainTextRange):
+        (WebCore::PlainTextRange::isNull const):
+        (WebCore::VisiblePositionRange::VisiblePositionRange):
+        (WebCore::VisiblePositionRange::isNull const):
+        (WebCore::AccessibilityIsIgnoredFromParentData::AccessibilityIsIgnoredFromParentData):
+        (WebCore::AccessibilityIsIgnoredFromParentData::isNull const):
+        (WebCore::AccessibilityObjectInterface::isAccessibilityObject const): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupChildren const):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest const):
+        (WebCore::AccessibilityRenderObject::remoteSVGElementHitTest const):
+        (WebCore::AccessibilityRenderObject::elementAccessibilityHitTest const):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest const):
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::accessibilityHitTest const):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren):
+        (WebCore::AccessibilitySlider::elementAccessibilityHitTest const):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::incrementButton):
+        (WebCore::AccessibilitySpinButton::decrementButton):
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentRow const):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/AccessibilityTableRow.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::getListObject):
+        (WebCore::notifyChildrenSelectionChange):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        * accessibility/atk/WebKitAccessible.cpp:
+        (interfaceMaskFromObject):
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (rangeLengthForObject):
+        (webkitAccessibleHyperlinkGetStartIndex):
+        (webkitAccessibleHyperlinkGetEndIndex):
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        (webkitAccessibleHypertextGetLink):
+        (webkitAccessibleHypertextGetNLinks):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (listObjectForCoreSelection):
+        (optionFromList):
+        (optionFromSelection):
+        (webkitAccessibleSelectionAddSelection):
+        (webkitAccessibleSelectionRefSelection):
+        (webkitAccessibleSelectionIsChildSelected):
+        (webkitAccessibleSelectionRemoveSelection):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (offsetAdjustmentForListItem):
+        (webCoreOffsetToAtkOffset):
+        (webkitAccessibleTextGetCaretOffset):
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (objectFocusedAndCaretOffsetUnignored):
+        * accessibility/atk/WebKitAccessibleUtil.h:
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::overrideAttachmentParent):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AccessibilityUnignoredAncestor):
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[WebAccessibilityObjectWrapper accessibilityHeaderElements]):
+        (-[WebAccessibilityObjectWrapper accessibilityContainer]):
+        (-[WebAccessibilityObjectWrapper accessibilityLinkedElement]):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedTreeNode::focusedUIElement const):
+        (WebCore::AXIsolatedTreeNode::parentObjectInterfaceUnignored const):
+        (WebCore::AXIsolatedTreeNode::accessibilityHitTest const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::overrideAttachmentParent):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (addChildToArray):
+        (-[WebAccessibilityObjectWrapperBase initWithAccessibilityObject:]):
+        (-[WebAccessibilityObjectWrapperBase axBackingObject]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::emitTextSelectionChange):
+        (WebCore::maybeEmitTextFocusChange):
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * inspector/InspectorAuditAccessibilityObject.cpp:
+        (WebCore::accessiblityObjectForNode):
+        (WebCore::InspectorAuditAccessibilityObject::getElementsByComputedRole):
+        (WebCore::InspectorAuditAccessibilityObject::getActiveDescendant):
+        (WebCore::addChildren):
+        (WebCore::InspectorAuditAccessibilityObject::getChildNodes):
+        (WebCore::InspectorAuditAccessibilityObject::getComputedProperties):
+        (WebCore::InspectorAuditAccessibilityObject::getControlledNodes):
+        (WebCore::InspectorAuditAccessibilityObject::getFlowedNodes):
+        (WebCore::InspectorAuditAccessibilityObject::getMouseEventNode):
+        (WebCore::InspectorAuditAccessibilityObject::getOwnedNodes):
+        (WebCore::InspectorAuditAccessibilityObject::getParentNode):
+        (WebCore::InspectorAuditAccessibilityObject::getSelectedChildNodes):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::processAccessibilityChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * inspector/agents/InspectorDOMAgent.h:
+
 2019-10-30  Antti Koivisto  <antti@apple.com>
 
         Move style building state to a class of its own

@@ -912,7 +912,7 @@ bool AccessibilityNodeObject::isGroup() const
     return role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup || role == AccessibilityRole::ApplicationGroup || role == AccessibilityRole::ApplicationTextGroup;
 }
 
-AccessibilityObject* AccessibilityNodeObject::selectedRadioButton()
+AXCoreObject* AccessibilityNodeObject::selectedRadioButton()
 {
     if (!isRadioGroup())
         return nullptr;
@@ -925,14 +925,14 @@ AccessibilityObject* AccessibilityNodeObject::selectedRadioButton()
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityNodeObject::selectedTabItem()
+AXCoreObject* AccessibilityNodeObject::selectedTabItem()
 {
     if (!isTabList())
         return nullptr;
 
     // FIXME: Is this valid? ARIA tab items support aria-selected; not aria-checked.
     // Find the child tab item that is selected (ie. the intValue == 1).
-    AccessibilityObject::AccessibilityChildrenVector tabs;
+    AXCoreObject::AccessibilityChildrenVector tabs;
     tabChildren(tabs);
 
     for (const auto& child : children()) {

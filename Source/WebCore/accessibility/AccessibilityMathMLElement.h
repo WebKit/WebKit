@@ -77,23 +77,23 @@ private:
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
 
     // Generic components.
-    AccessibilityObject* mathBaseObject() override;
+    AXCoreObject* mathBaseObject() override;
 
     // Root components.
-    AccessibilityObject* mathRadicandObject() override;
-    AccessibilityObject* mathRootIndexObject() override;
+    AXCoreObject* mathRadicandObject() override;
+    AXCoreObject* mathRootIndexObject() override;
 
     // Fraction components.
-    AccessibilityObject* mathNumeratorObject() override;
-    AccessibilityObject* mathDenominatorObject() override;
+    AXCoreObject* mathNumeratorObject() override;
+    AXCoreObject* mathDenominatorObject() override;
 
     // Under over components.
-    AccessibilityObject* mathUnderObject() override;
-    AccessibilityObject* mathOverObject() override;
+    AXCoreObject* mathUnderObject() override;
+    AXCoreObject* mathOverObject() override;
 
     // Subscript/superscript components.
-    AccessibilityObject* mathSubscriptObject() override;
-    AccessibilityObject* mathSuperscriptObject() override;
+    AXCoreObject* mathSubscriptObject() override;
+    AXCoreObject* mathSuperscriptObject() override;
 
     // Fenced components.
     String mathFencedOpenString() const override;

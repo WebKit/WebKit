@@ -119,7 +119,7 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
     m_deferredDetachedWrapperList.clear();
 }
 
-static AccessibilityObject* getListObject(AccessibilityObject* object)
+static AXCoreObject* getListObject(AXCoreObject* object)
 {
     // Only list boxes and menu lists supported so far.
     if (!object->isListBox() && !object->isMenuList())
@@ -136,21 +136,21 @@ static AccessibilityObject* getListObject(AccessibilityObject* object)
     if (!children.size())
         return 0;
 
-    AccessibilityObject* listObject = children.at(0).get();
+    AXCoreObject* listObject = children.at(0).get();
     if (!listObject->isMenuListPopup())
         return 0;
 
     return listObject;
 }
 
-static void notifyChildrenSelectionChange(AccessibilityObject* object)
+static void notifyChildrenSelectionChange(AXCoreObject* object)
 {
     // This static variables are needed to keep track of the old
     // focused object and its associated list object, as per previous
     // calls to this function, in order to properly decide whether to
     // emit some signals or not.
-    static NeverDestroyed<RefPtr<AccessibilityObject>> oldListObject;
-    static NeverDestroyed<RefPtr<AccessibilityObject>> oldFocusedObject;
+    static NeverDestroyed<RefPtr<AXCoreObject>> oldListObject;
+    static NeverDestroyed<RefPtr<AXCoreObject>> oldFocusedObject;
 
     // Only list boxes and menu lists supported so far.
     if (!object || !(object->isListBox() || object->isMenuList()))
@@ -168,7 +168,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     HTMLSelectElement& select = downcast<HTMLSelectElement>(*node);
     int changedItemIndex = select.activeSelectionStartListIndex();
 
-    AccessibilityObject* listObject = getListObject(object);
+    AXCoreObject* listObject = getListObject(object);
     if (!listObject) {
         oldListObject.get() = nullptr;
         return;
@@ -177,7 +177,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     const AccessibilityObject::AccessibilityChildrenVector& items = listObject->children();
     if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
         return;
-    AccessibilityObject* item = items.at(changedItemIndex).get();
+    AXCoreObject* item = items.at(changedItemIndex).get();
 
     // Ensure the current list object is the same than the old one so
     // further comparisons make sense. Otherwise, just reset
@@ -211,7 +211,7 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     oldFocusedObject.get() = item;
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotification notification)
 {
     auto* axObject = ATK_OBJECT(coreObject->wrapper());
     if (!axObject)
@@ -293,7 +293,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         break;
 
     case AXActiveDescendantChanged:
-        if (AccessibilityObject* descendant = coreObject->activeDescendant())
+        if (AXCoreObject* descendant = coreObject->activeDescendant())
             platformHandleFocusedUIElementChanged(nullptr, descendant->node());
         break;
 
@@ -307,7 +307,7 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
     if (!object || text.isEmpty())
         return;
 
-    AccessibilityObject* parentObject = object->isNonNativeTextControl() ? object : object->parentObjectUnignored();
+    AXCoreObject* parentObject = object->isNonNativeTextControl() ? object : object->parentObjectUnignored();
     if (!parentObject)
         return;
 

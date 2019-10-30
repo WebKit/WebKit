@@ -40,9 +40,9 @@ public:
     virtual ~AccessibilityARIAGridRow();
     
     void disclosedRows(AccessibilityChildrenVector&);
-    AccessibilityObject* disclosedByRow() const;
+    AXCoreObject* disclosedByRow() const;
     
-    AccessibilityObject* headerObject() override;
+    AXCoreObject* headerObject() override;
     
 private:
     explicit AccessibilityARIAGridRow(RenderObject*);

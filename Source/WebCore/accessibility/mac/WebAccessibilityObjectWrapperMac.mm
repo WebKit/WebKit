@@ -2667,15 +2667,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         
         // Tree item (changed to AXRows) can only report the tree (AXOutline) as its parent.
         if (_axBackingObject->isTreeItem()) {
-            auto parent = _axBackingObject->parentObjectInterfaceUnignored();
+            auto parent = _axBackingObject->parentObjectUnignored();
             while (parent) {
                 if (parent->isTree())
                     return parent->wrapper();
-                parent = parent->parentObjectInterfaceUnignored();
+                parent = parent->parentObjectUnignored();
             }
         }
         
-        auto parent = _axBackingObject->parentObjectInterfaceUnignored();
+        auto parent = _axBackingObject->parentObjectUnignored();
         if (!parent)
             return nil;
         
@@ -2861,14 +2861,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         
         // radio groups return the selected radio button as the AXValue
         if (m_object->isRadioGroup()) {
-            AccessibilityObject* radioButton = m_object->selectedRadioButton();
+            AXCoreObject* radioButton = m_object->selectedRadioButton();
             if (!radioButton)
                 return nil;
             return radioButton->wrapper();
         }
         
         if (m_object->isTabList()) {
-            AccessibilityObject* tabItem = m_object->selectedTabItem();
+            AXCoreObject* tabItem = m_object->selectedTabItem();
             if (!tabItem)
                 return nil;
             return tabItem->wrapper();
@@ -3063,7 +3063,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return convertToNSArray(column.children());
         }
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AccessibilityObject* header = column.headerObject();
+            AXCoreObject* header = column.headerObject();
             if (!header)
                 return nil;
             return header->wrapper();
@@ -3168,7 +3168,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             }
             return nil;
         } else if (is<AccessibilityARIAGridRow>(*m_object)) {
-            AccessibilityObject* row = downcast<AccessibilityARIAGridRow>(*m_object).disclosedByRow();
+            AXCoreObject* row = downcast<AccessibilityARIAGridRow>(*m_object).disclosedByRow();
             if (!row)
                 return nil;
             return row->wrapper();
@@ -3511,7 +3511,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     
     _axBackingObject->updateChildrenIfNecessary();
-    AccessibilityObjectInterface* axObject = _axBackingObject->accessibilityHitTest(IntPoint(point));
+    AXCoreObject* axObject = _axBackingObject->accessibilityHitTest(IntPoint(point));
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
             return [axObject->wrapper() attachmentView];

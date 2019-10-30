@@ -59,7 +59,7 @@ private:
     AccessibilityObject* scrollBar(AccessibilityOrientation) override;
     void addChildren() override;
     void clearChildren() override;
-    AccessibilityObjectInterface* accessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
     void updateChildrenIfNecessary() override;
     void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
     void updateScrollbars();

@@ -264,7 +264,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     return array;
 }
 
-static void addChildToArray(AccessibilityObjectInterface& child, RetainPtr<NSMutableArray> array)
+static void addChildToArray(AXCoreObject& child, RetainPtr<NSMutableArray> array)
 {
     WebAccessibilityObjectWrapper *wrapper = child.wrapper();
     // We want to return the attachment view instead of the object representing the attachment,
@@ -306,7 +306,7 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
         return nil;
 
     m_object = axObject;
-    _identifier = m_object->axObjectID();
+    _identifier = m_object->objectID();
 
     return self;
 }
@@ -386,7 +386,7 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
     return _axBackingObject->titleAttributeValue();
 }
 
-- (WebCore::AccessibilityObjectInterface*)axBackingObject
+- (WebCore::AXCoreObject*)axBackingObject
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (_AXUIElementRequestServicedBySecondaryAXThread())

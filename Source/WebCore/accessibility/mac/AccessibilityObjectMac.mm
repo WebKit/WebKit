@@ -43,7 +43,7 @@ void AccessibilityObject::detachFromParent()
         overrideAttachmentParent(nullptr);
 }
 
-void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
+void AccessibilityObject::overrideAttachmentParent(AXCoreObject* parent)
 {
     if (!isAttachment())
         return;

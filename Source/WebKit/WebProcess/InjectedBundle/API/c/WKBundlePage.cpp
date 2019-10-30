@@ -56,7 +56,7 @@
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/AccessibilityObject.h>
+#include <WebCore/AccessibilityObjectInterface.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
@@ -248,7 +248,7 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
     
     WebCore::AXObjectCache::enableAccessibility();
 
-    WebCore::AccessibilityObject* root = core.document()->axObjectCache()->rootObject();
+    WebCore::AXCoreObject* root = core.document()->axObjectCache()->rootObject();
     if (!root)
         return 0;
     
@@ -271,7 +271,7 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 
     WebCore::AXObjectCache::enableAccessibility();
 
-    WebCore::AccessibilityObject* focusedObject = WebCore::AXObjectCache::focusedUIElementForPage(page);
+    WebCore::AXCoreObject* focusedObject = WebCore::AXObjectCache::focusedUIElementForPage(page);
     if (!focusedObject)
         return 0;
     

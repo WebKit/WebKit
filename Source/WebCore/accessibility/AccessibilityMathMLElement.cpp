@@ -202,7 +202,7 @@ bool AccessibilityMathMLElement::isMathTableCell() const
 
 bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjectType type) const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!parent)
         return false;
 
@@ -211,7 +211,7 @@ bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjec
 
 bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType type) const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
+    AXCoreObject* parent = parentObjectUnignored();
     if (!parent || !parent->isMathMultiscript())
         return false;
 
@@ -236,7 +236,7 @@ bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultis
     return false;
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathRadicandObject()
+AXCoreObject* AccessibilityMathMLElement::mathRadicandObject()
 {
     if (!isMathRoot())
         return nullptr;
@@ -250,7 +250,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathRadicandObject()
     return children[0].get();
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathRootIndexObject()
+AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
 {
     if (!isMathRoot() || isMathSquareRoot())
         return nullptr;
@@ -262,7 +262,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathRootIndexObject()
     return children[1].get();
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathNumeratorObject()
+AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
 {
     if (!isMathFraction())
         return nullptr;
@@ -274,7 +274,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathNumeratorObject()
     return children[0].get();
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathDenominatorObject()
+AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
 {
     if (!isMathFraction())
         return nullptr;
@@ -286,7 +286,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathDenominatorObject()
     return children[1].get();
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathUnderObject()
+AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
 {
     if (!isMathUnderOver() || !node())
         return nullptr;
@@ -301,7 +301,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathUnderObject()
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathOverObject()
+AXCoreObject* AccessibilityMathMLElement::mathOverObject()
 {
     if (!isMathUnderOver() || !node())
         return nullptr;
@@ -318,7 +318,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathOverObject()
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathBaseObject()
+AXCoreObject* AccessibilityMathMLElement::mathBaseObject()
 {
     if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return nullptr;
@@ -331,7 +331,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathBaseObject()
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathSubscriptObject()
+AXCoreObject* AccessibilityMathMLElement::mathSubscriptObject()
 {
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
@@ -346,7 +346,7 @@ AccessibilityObject* AccessibilityMathMLElement::mathSubscriptObject()
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityMathMLElement::mathSuperscriptObject()
+AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
 {
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;

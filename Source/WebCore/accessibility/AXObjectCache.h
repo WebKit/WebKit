@@ -148,7 +148,7 @@ public:
     explicit AXObjectCache(Document&);
     ~AXObjectCache();
 
-    WEBCORE_EXPORT static AccessibilityObject* focusedUIElementForPage(const Page*);
+    WEBCORE_EXPORT static AXCoreObject* focusedUIElementForPage(const Page*);
 
     // Returns the root object for the entire document.
     WEBCORE_EXPORT AccessibilityObject* rootObject();
@@ -177,7 +177,7 @@ public:
     void attachWrapper(AccessibilityObject*);
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
-    void childrenChanged(AccessibilityObject*);
+    void childrenChanged(AXCoreObject*);
     void checkedStateChanged(Node*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
@@ -307,7 +307,7 @@ public:
 
     void postNotification(RenderObject*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
     void postNotification(Node*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
-    void postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
+    void postNotification(AXCoreObject*, Document*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
 
 #ifndef NDEBUG
     void showIntent(const AXTextStateChangeIntent&);
@@ -356,7 +356,7 @@ public:
     
 
 protected:
-    void postPlatformNotification(AccessibilityObject*, AXNotification);
+    void postPlatformNotification(AXCoreObject*, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
     void platformPerformDeferredCacheUpdate();
@@ -458,7 +458,7 @@ private:
     HashSet<AXID> m_idsInUse;
 
     Timer m_notificationPostTimer;
-    Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
+    Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>> m_notificationsToPost;
 
     Timer m_passwordNotificationPostTimer;
 
@@ -477,7 +477,7 @@ private:
     ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
     ListHashSet<Element*> m_deferredSelectedChildredChangedList;
-    ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildredChangedList;
+    ListHashSet<RefPtr<AXCoreObject>> m_deferredChildrenChangedList;
     ListHashSet<Node*> m_deferredChildrenChangedNodeList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     HashMap<Element*, QualifiedName> m_deferredAttributeChange;
@@ -532,7 +532,7 @@ inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return
 inline Node* AXObjectCache::modalNode() { return nullptr; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
-inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
+inline void AXObjectCache::childrenChanged(AXCoreObject*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node*, Node*) { }

@@ -538,7 +538,7 @@ void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
     AccessibilityChildrenVector columnsCopy = m_columns;
     
     for (const auto& column : columnsCopy) {
-        if (AccessibilityObject* header = downcast<AccessibilityTableColumn>(*column).headerObject())
+        if (AXCoreObject* header = downcast<AccessibilityTableColumn>(*column).headerObject())
             headers.append(header);
     }
 }
@@ -554,7 +554,7 @@ void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
     AccessibilityChildrenVector rowsCopy = m_rows;
     
     for (const auto& row : rowsCopy) {
-        if (AccessibilityObject* header = downcast<AccessibilityTableRow>(*row).headerObject())
+        if (AXCoreObject* header = downcast<AccessibilityTableRow>(*row).headerObject())
             headers.append(header);
     }
 }
@@ -622,7 +622,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         // cell to determine which is the right one.
         for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {
             unsigned colIndex = colIndexCounter - 1;
-            AccessibilityObject* child = children[colIndex].get();
+            AXCoreObject* child = children[colIndex].get();
             ASSERT(is<AccessibilityTableCell>(*child));
             if (!is<AccessibilityTableCell>(*child))
                 continue;

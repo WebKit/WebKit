@@ -45,7 +45,7 @@ namespace WebCore {
 class AXIsolatedTree;
 class AccessibilityObject;
 
-class AXIsolatedTreeNode final : public AccessibilityObjectInterface, public ThreadSafeRefCounted<AXIsolatedTreeNode> {
+class AXIsolatedTreeNode final : public AXCoreObject, public ThreadSafeRefCounted<AXIsolatedTreeNode> {
 
 public:
     enum class AXPropertyName : uint8_t {
@@ -95,7 +95,7 @@ private:
     AXIsolatedTreeNode(const AccessibilityObject&);
     void initializeAttributeData(const AccessibilityObject&);
 
-    AccessibilityObjectInterface* accessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
     void updateChildrenIfNecessary() override { }
 
     bool isMediaControlLabel() const override { return boolAttributeValue(AXPropertyName::IsMediaControlLabel); }
@@ -106,7 +106,7 @@ private:
     bool isImage() const override { return boolAttributeValue(AXPropertyName::IsImage); }
     bool isFileUploadButton() const override { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
     bool accessibilityIsIgnored() const override { return boolAttributeValue(AXPropertyName::IsAccessibilityIgnored); }
-    AccessibilityObjectInterface* parentObjectInterfaceUnignored() const override;
+    AXCoreObject* parentObjectInterfaceUnignored() const override;
     bool isTree() const override { return boolAttributeValue(AXPropertyName::IsTree); }
     bool isTreeItem() const override { return boolAttributeValue(AXPropertyName::IsTreeItem); }
     bool isScrollbar() const override { return boolAttributeValue(AXPropertyName::IsScrollbar); }
@@ -115,7 +115,7 @@ private:
     String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
     String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::Title); }
-    AccessibilityObjectInterface* focusedUIElement() const override;
+    AXCoreObject* focusedUIElement() const override;
 
     using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, Optional<FloatRect>>;
     void setProperty(AXPropertyName, AttributeValueVariant&&, bool shouldRemove = false);

@@ -63,7 +63,7 @@ void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
     postPlatformNotification(AccessibilityObject::firstAccessibleObjectFromNode(anchorNode), AXScrolledToAnchor);
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
 {
     if (!obj)
         return;
@@ -117,10 +117,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     // negate the AXID so we know that the caller is passing the ID of an
     // element, not the index of a child element.
 
-    ASSERT(obj->axObjectID() >= 1);
-    ASSERT(obj->axObjectID() <= std::numeric_limits<LONG>::max());
+    ASSERT(obj->objectID() >= 1);
+    ASSERT(obj->objectID() <= std::numeric_limits<LONG>::max());
 
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->axObjectID()));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(obj->objectID()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
@@ -174,7 +174,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     if (!page || !page->chrome().platformPageClient())
         return;
 
-    AccessibilityObject* focusedObject = focusedUIElementForPage(page);
+    AXCoreObject* focusedObject = focusedUIElementForPage(page);
     if (!focusedObject)
         return;
 

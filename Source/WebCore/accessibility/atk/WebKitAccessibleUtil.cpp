@@ -176,7 +176,7 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
         && (&range->startContainer() != lastDescendant || range->startOffset() != lastOffset);
 }
 
-AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* referenceObject, int& offset)
+AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject, int& offset)
 {
     // Indication that something bogus has transpired.
     offset = -1;
@@ -198,7 +198,7 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
         return nullptr;
 
     // Look for the actual (not ignoring accessibility) selected object.
-    AccessibilityObject* firstUnignoredParent = focusedObject;
+    AXCoreObject* firstUnignoredParent = focusedObject;
     if (firstUnignoredParent->accessibilityIsIgnored())
         firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
     if (!firstUnignoredParent)
@@ -224,7 +224,7 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
         // because we want it to be relative to the object of
         // reference, not just to the focused object (which could have
         // previous siblings which should be taken into account too).
-        AccessibilityObject* axFirstChild = referenceObject->firstChild();
+        AXCoreObject* axFirstChild = referenceObject->firstChild();
         if (axFirstChild)
             startNode = axFirstChild->node();
     }

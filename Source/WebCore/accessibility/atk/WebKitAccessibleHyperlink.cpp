@@ -158,7 +158,7 @@ static gint rangeLengthForObject(AccessibilityObject& obj, Range* range)
 
     // Check whether the current hyperlink belongs to a list item.
     // If so, we need to consider the length of the item's marker
-    AccessibilityObject* parent = obj.parentObjectUnignored();
+    AXCoreObject* parent = obj.parentObjectUnignored();
     if (!parent || !parent->isAccessibilityRenderObject() || !parent->isListItem())
         return baseLength;
 
@@ -166,7 +166,7 @@ static gint rangeLengthForObject(AccessibilityObject& obj, Range* range)
     // Technologies, we need to have a way to measure their length
     // for those cases when it's needed to take it into account
     // separately (as in getAccessibilityObjectForOffset)
-    AccessibilityObject* markerObj = parent->firstChild();
+    AXCoreObject* markerObj = parent->firstChild();
     if (!markerObj)
         return baseLength;
 
@@ -184,7 +184,7 @@ static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
     returnValIfWebKitAccessibleIsInvalid(accessibleHyperlink->priv->hyperlinkImpl, 0);
 
     auto& coreObject = webkitAccessibleGetAccessibilityObject(accessibleHyperlink->priv->hyperlinkImpl);
-    AccessibilityObject* parentUnignored = coreObject.parentObjectUnignored();
+    AXCoreObject* parentUnignored = coreObject.parentObjectUnignored();
     if (!parentUnignored)
         return 0;
 
@@ -206,7 +206,7 @@ static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
     returnValIfWebKitAccessibleIsInvalid(accessibleHyperlink->priv->hyperlinkImpl, 0);
 
     auto& coreObject = webkitAccessibleGetAccessibilityObject(accessibleHyperlink->priv->hyperlinkImpl);
-    AccessibilityObject* parentUnignored = coreObject.parentObjectUnignored();
+    AXCoreObject* parentUnignored = coreObject.parentObjectUnignored();
     if (!parentUnignored)
         return 0;
 

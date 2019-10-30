@@ -51,7 +51,7 @@ private:
 
     bool isNativeListBox() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
 };
     
 } // namespace WebCore

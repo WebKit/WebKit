@@ -1761,7 +1761,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
     return value;
 }
 
-void InspectorDOMAgent::processAccessibilityChildren(AccessibilityObject& axObject, JSON::ArrayOf<int>& childNodeIds)
+void InspectorDOMAgent::processAccessibilityChildren(AXCoreObject& axObject, JSON::ArrayOf<int>& childNodeIds)
 {
     const auto& children = axObject.children();
     if (!children.size())
@@ -1824,13 +1824,13 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
     unsigned level = 0;
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
-        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
+        if (AXCoreObject* axObject = axObjectCache->getOrCreate(node)) {
 
-            if (AccessibilityObject* activeDescendant = axObject->activeDescendant())
+            if (AXCoreObject* activeDescendant = axObject->activeDescendant())
                 activeDescendantNode = activeDescendant->node();
 
             // An AX object is "busy" if it or any ancestor has aria-busy="true" set.
-            AccessibilityObject* current = axObject;
+            AXCoreObject* current = axObject;
             while (!busy && current) {
                 busy = current->isBusy();
                 current = current->parentObject();
@@ -1971,7 +1971,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                 }
             }
 
-            if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
+            if (AXCoreObject* parentObject = axObject->parentObjectUnignored())
                 parentNode = parentObject->node();
 
             supportsPressed = axObject->pressedIsPresent();
@@ -1988,7 +1988,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             role = axObject->computedRoleString();
             selected = axObject->isSelected();
 
-            AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+            AXCoreObject::AccessibilityChildrenVector selectedChildren;
             axObject->selectedChildren(selectedChildren);
             if (selectedChildren.size()) {
                 selectedChildNodeIds = JSON::ArrayOf<int>::create();

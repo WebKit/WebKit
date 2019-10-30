@@ -130,7 +130,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         if ([wrapper isAttachment] && ![[wrapper attachmentView] accessibilityIsIgnored])
             break;
             
-        AccessibilityObject* parentObject = object->parentObjectUnignored();
+        AXCoreObject* parentObject = object->parentObjectUnignored();
         if (!parentObject)
             break;
 
@@ -388,7 +388,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     // Try a fuzzy hit test first to find an accessible element.
-    AccessibilityObjectInterface *axObject = nullptr;
+    AXCoreObject *axObject = nullptr;
     {
         AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
         axObject = m_object->accessibilityHitTest(IntPoint(point));
@@ -1240,7 +1240,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     
     unsigned columnRangeIndex = static_cast<unsigned>(columnRange.first);
     if (columnRangeIndex < columnHeaders.size()) {
-        RefPtr<AccessibilityObject> columnHeader = columnHeaders[columnRange.first];
+        RefPtr<AXCoreObject> columnHeader = columnHeaders[columnRange.first];
         AccessibilityObjectWrapper* wrapper = columnHeader->wrapper();
         if (wrapper)
             [headers addObject:wrapper];
@@ -1664,7 +1664,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     AXAttributeCacheEnabler enableCache(m_object->axObjectCache());
     
     // As long as there's a parent wrapper, that's the correct chain to climb.
-    AccessibilityObject* parent = m_object->parentObjectUnignored(); 
+    AXCoreObject* parent = m_object->parentObjectUnignored();
     if (parent)
         return parent->wrapper();
 
@@ -1800,7 +1800,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
 
     // If this static text inside of a link, it should use its parent's linked element.
-    AccessibilityObject* element = m_object;
+    AXCoreObject* element = m_object;
     if (m_object->roleValue() == AccessibilityRole::StaticText && m_object->parentObjectUnignored()->isLink())
         element = m_object->parentObjectUnignored();
 

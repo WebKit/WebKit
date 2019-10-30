@@ -70,7 +70,7 @@ LayoutRect AccessibilityTableColumn::elementRect() const
     return columnRect;
 }
 
-AccessibilityObject* AccessibilityTableColumn::headerObject()
+AXCoreObject* AccessibilityTableColumn::headerObject()
 {
     if (!m_parent)
         return nullptr;

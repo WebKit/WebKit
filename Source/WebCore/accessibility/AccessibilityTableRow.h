@@ -40,7 +40,7 @@ public:
     virtual ~AccessibilityTableRow();
 
     // retrieves the "row" header (a th tag in the rightmost column)
-    virtual AccessibilityObject* headerObject();
+    virtual AXCoreObject* headerObject();
     virtual AccessibilityTable* parentTable() const;
     
     void setRowIndex(int rowIndex) { m_rowIndex = rowIndex; }

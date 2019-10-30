@@ -40,9 +40,9 @@ class AccessibilityTableColumn final : public AccessibilityMockObject {
 public:
     static Ref<AccessibilityTableColumn> create();
     virtual ~AccessibilityTableColumn();
-    
-    AccessibilityObject* headerObject();
-        
+
+    AXCoreObject* headerObject();
+
     AccessibilityRole roleValue() const override { return AccessibilityRole::Column; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }

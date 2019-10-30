@@ -48,7 +48,7 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     obj->setWrapper(wrapper.get());
 }
 
-void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
+void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification notification)
 {
     if (!obj)
         return;

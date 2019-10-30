@@ -101,8 +101,8 @@ public:
     float minValueForRange() const override;
     float stepValueForRange() const override;
 
-    AccessibilityObject* selectedRadioButton() override;
-    AccessibilityObject* selectedTabItem() override;
+    AXCoreObject* selectedRadioButton() override;
+    AXCoreObject* selectedTabItem() override;
     AccessibilityButtonState checkboxOrRadioValue() const override;
 
     unsigned hierarchicalLevel() const override;
