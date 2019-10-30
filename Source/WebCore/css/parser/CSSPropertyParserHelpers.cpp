@@ -636,9 +636,9 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
         angleInDegrees = hslValue->doubleValue();
     } else
         angleInDegrees = hslValue->computeDegrees();
+
     double colorArray[3];
-    // The hue needs to be in the range [0.0, 6.0) for calcHue()
-    colorArray[0] = fmod(fmod(angleInDegrees, 360.0) + 360.0, 360.0) / 60.0;
+    colorArray[0] = fmod(fmod(angleInDegrees, 360.0) + 360.0, 360.0) / 360.0;
     bool requiresCommas = false;
     for (int i = 1; i < 3; i++) {
         if (consumeCommaIncludingWhitespace(args)) {
@@ -672,7 +672,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return Color();
 
-    return Color(makeRGBAFromHSLA(colorArray[0], colorArray[1], colorArray[2], alpha));
+    return Color(makeRGBAFromHSLA(static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha)));
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)

@@ -10,7 +10,7 @@ PASS Property color value 'rgb(100%, 0%, 0%)' computes to 'rgb(255, 0, 0)'
 FAIL Property color value 'rgba(2, 3, 4, 0.5)' computes to 'rgba(2, 3, 4, 0.5)' assert_equals: expected "rgba(2, 3, 4, 0.5)" but got "rgba(2, 3, 4, 0.498039)"
 FAIL Property color value 'rgba(2, 3, 4, 50%)' computes to 'rgba(2, 3, 4, 0.5)' assert_equals: expected "rgba(2, 3, 4, 0.5)" but got "rgba(2, 3, 4, 0.498039)"
 PASS Property color value 'hsl(120, 100%, 50%)' computes to 'rgb(0, 255, 0)' 
-FAIL Property color value 'hsla(120, 100%, 50%, 0.25)' computes to 'rgba(0, 255, 0, 0.25)' assert_equals: expected "rgba(0, 255, 0, 0.25)" but got "rgba(0, 255, 0, 0.247059)"
+FAIL Property color value 'hsla(120, 100%, 50%, 0.25)' computes to 'rgba(0, 255, 0, 0.25)' assert_equals: expected "rgba(0, 255, 0, 0.25)" but got "rgba(0, 255, 0, 0.25098)"
 PASS Property color value 'rgb(-2, 3, 4)' computes to 'rgb(0, 3, 4)' 
 PASS Property color value 'rgb(100, 200, 300)' computes to 'rgb(100, 200, 255)' 
 PASS Property color value 'rgb(20, 10, 0, -10)' computes to 'rgba(20, 10, 0, 0)' 

@@ -27,6 +27,7 @@
 #include "Color.h"
 
 #include "AnimationUtilities.h"
+#include "ColorUtilities.h"
 #include "HashTools.h"
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
@@ -96,43 +97,15 @@ RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
     return rgba;
 }
 
-static double calcHue(double temp1, double temp2, double hueVal)
+RGBA32 makeRGBAFromHSLA(float hue, float saturation, float lightness, float alpha)
 {
-    if (hueVal < 0.0)
-        hueVal += 6.0;
-    else if (hueVal >= 6.0)
-        hueVal -= 6.0;
-    if (hueVal < 1.0)
-        return temp1 + (temp2 - temp1) * hueVal;
-    if (hueVal < 3.0)
-        return temp2;
-    if (hueVal < 4.0)
-        return temp1 + (temp2 - temp1) * (4.0 - hueVal);
-    return temp1;
-}
-
-// Explanation of this algorithm can be found in the CSS Color 4 Module
-// specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
-// further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
-
-// Hue is in the range of 0 to 6.0, the remainder are in the range 0 to 1.0
-// FIXME: Use HSLToSRGB().
-RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double alpha)
-{
-    const double scaleFactor = nextafter(256.0, 0.0);
-
-    if (!saturation) {
-        int greyValue = static_cast<int>(lightness * scaleFactor);
-        return makeRGBA(greyValue, greyValue, greyValue, static_cast<int>(alpha * scaleFactor));
-    }
-
-    double temp2 = lightness <= 0.5 ? lightness * (1.0 + saturation) : lightness + saturation - lightness * saturation;
-    double temp1 = 2.0 * lightness - temp2;
-    
-    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, hue + 2.0) * scaleFactor), 
-                    static_cast<int>(calcHue(temp1, temp2, hue) * scaleFactor),
-                    static_cast<int>(calcHue(temp1, temp2, hue - 2.0) * scaleFactor),
-                    static_cast<int>(alpha * scaleFactor));
+    const float scaleFactor = 255.0;
+    FloatComponents floatResult = HSLToSRGB({ hue, saturation, lightness, alpha });
+    return makeRGBA(
+        round(floatResult.components[0] * scaleFactor),
+        round(floatResult.components[1] * scaleFactor),
+        round(floatResult.components[2] * scaleFactor),
+        round(floatResult.components[3] * scaleFactor));
 }
 
 RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)

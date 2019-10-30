@@ -69,6 +69,16 @@
 
         * fast/events/ios/autocorrect-with-range-selection.html:
 
+2019-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Align CSS hsl() -> rgb() color conversion with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=203592
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/fast/css/hsl-color-expected.txt:
+        * platform/mac/fast/css/hsla-color-expected.txt:
+
 2019-10-07  Jer Noble  <jer.noble@apple.com>
 
         Implement the Remote Playback API.
