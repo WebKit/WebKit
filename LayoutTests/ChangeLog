@@ -1,3 +1,17 @@
+2019-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r251750): Three CSS Tests are Failing
+        https://bugs.webkit.org/show_bug.cgi?id=203616
+        <rdar://problem/56749907>
+
+        Unreviewed test gardening.
+
+        Fix the conic-gradient-parsing.html tests, and update iOS expectations for two hsl tests.
+
+        * http/wpt/css/css-images-4/conic-gradient-parsing.html:
+        * platform/ios/fast/css/hsl-color-expected.txt:
+        * platform/ios/fast/css/hsla-color-expected.txt:
+
 2019-10-30  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !object || !isRuby(object->parent()) || is<RenderRubyRun>(*object) || (object->isInline() && (object->isBeforeContent() || object->isAfterContent())) || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == D
