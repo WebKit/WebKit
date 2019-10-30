@@ -1365,3 +1365,8 @@ webkit.org/b/203577 fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Pas
 # Timeout running prompt() because mock implementation is absent.
 webkit.org/b/203572 media/remoteplayback-prompt.html [ Skip ]
 webkit.org/b/203572 media/remoteplayback-target-availability.html [ Skip ]
+
+# <rdar://problem/56708500> REGRESSION [ PHP ][ iOS ]: Two http/tests/cookies/same-site/set-first-party-* Tests are Failing (203567)
+webkit.org/b/203567 http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Failure ]
+webkit.org/b/203567 http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Failure ]
+
