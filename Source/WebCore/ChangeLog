@@ -1,3 +1,18 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        GPUCanvasContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203104
+        <rdar://problem/56748066>
+
+        Reviewed by Tim Horton.
+
+        Let pages with a GPUCanvasContext into the back/forward cache. The current implementation
+        does not run any script.
+
+        Test: fast/history/page-cache-gpu-canvas-context.html
+
+        * Modules/webgpu/GPUCanvasContext.h:
+
 2019-10-30  Daniel Bates  <dabates@apple.com>
 
         Move tracking and computation of timer heap current insertion order to ThreadTimers

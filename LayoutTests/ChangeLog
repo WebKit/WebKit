@@ -1,3 +1,16 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        GPUCanvasContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203104
+        <rdar://problem/56748066>
+
+        Reviewed by Tim Horton.
+
+        Add layout test coverage.
+
+        * fast/history/page-cache-gpu-canvas-context-expected.txt: Added.
+        * fast/history/page-cache-gpu-canvas-context.html: Added.
+
 2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK] LayoutTests/inspector tests timeout

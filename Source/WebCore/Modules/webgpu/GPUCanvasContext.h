@@ -46,9 +46,6 @@ public:
     WebGPUSwapChain* swapChain() const { return m_swapChain.get(); }
     Ref<WebGPUSwapChain> configureSwapChain(const WebGPUSwapChainDescriptor&);
 
-    // FIXME: Stubs.
-    bool hasPendingActivity() const final { return false; }
-
 private:
     GPUCanvasContext(CanvasBase&);
 
@@ -57,10 +54,11 @@ private:
     PlatformLayer* platformLayer() const final;
     void reshape(int width, int height) final;
     void markLayerComposited() final;
+
+    // ActiveDOMObject.
     const char* activeDOMObjectName() const final { return "GPUCanvasContext"; }
     // FIXME: Stubs.
     void stop() final { }
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final { return true; } // FIXME: This should never prevent entering the back/forward cache.
 
     RefPtr<WebGPUSwapChain> m_swapChain;
 };
