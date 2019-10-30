@@ -1,3 +1,19 @@
+2019-10-30  Dean Jackson  <dino@apple.com>
+
+        REGRESSION(r251568) If we didn't start a Service Worker, don't try talking to it
+        https://bugs.webkit.org/show_bug.cgi?id=203639
+        <rdar://problem/56762071>
+
+        Reviewed by Chris Dumez.
+
+        Similar to the fix that introduced this regression, if the UI process does
+        not have the entitlement to start a service worker, we should not try
+        to load with one.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad): If the
+        parent process doesn't have a service worker, use the regular load path.
+
 2019-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Turn Resize Observer on by default

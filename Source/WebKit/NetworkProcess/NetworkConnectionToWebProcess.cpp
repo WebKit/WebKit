@@ -409,15 +409,18 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
 {
 #if ENABLE(SERVICE_WORKER)
-    auto& server = m_networkProcess->swServerForSession(m_sessionID);
-    if (!server.isImportCompleted()) {
-        server.whenImportIsCompleted([this, protectedThis = makeRef(*this), loadParameters = WTFMove(loadParameters)]() mutable {
-            if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
-                return;
-            ASSERT(m_networkProcess->swServerForSession(m_sessionID).isImportCompleted());
-            scheduleResourceLoad(WTFMove(loadParameters));
-        });
-        return;
+    bool serviceWorkerAllowed = m_networkProcess->parentProcessHasServiceWorkerEntitlement();
+    if (serviceWorkerAllowed) {
+        auto& server = m_networkProcess->swServerForSession(m_sessionID);
+        if (!server.isImportCompleted()) {
+            server.whenImportIsCompleted([this, protectedThis = makeRef(*this), loadParameters = WTFMove(loadParameters)]() mutable {
+                if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
+                    return;
+                ASSERT(m_networkProcess->swServerForSession(m_sessionID).isImportCompleted());
+                scheduleResourceLoad(WTFMove(loadParameters));
+            });
+            return;
+        }
     }
 #endif
     auto identifier = loadParameters.identifier;
@@ -428,10 +431,12 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     auto& loader = m_networkResourceLoaders.add(identifier, NetworkResourceLoader::create(WTFMove(loadParameters), *this)).iterator->value;
 
 #if ENABLE(SERVICE_WORKER)
-    loader->startWithServiceWorker();
-#else
-    loader->start();
+    if (serviceWorkerAllowed) {
+        loader->startWithServiceWorker();
+        return;
+    } else
 #endif
+    loader->start();
 }
 
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
