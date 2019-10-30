@@ -40,9 +40,6 @@ webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
 
-# <rdar://problem/51863703> [ iPad Sim ] New Layout test fast/events/autoscroll-with-software-keyboard.html is failing on iOS 13 iPad Simulator testers
-fast/events/autoscroll-with-software-keyboard.html [ Failure ]
-
 # This tests an iphone-specific behavior so is expected to fail on iPad.
 fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
 

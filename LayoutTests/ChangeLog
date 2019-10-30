@@ -1,3 +1,18 @@
+2019-10-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix autoscroll test to work on iPad.
+        https://bugs.webkit.org/show_bug.cgi?id=203598
+        <rdar://problem/51863703>
+
+        Reviewed by Wenson Hsieh.
+
+        iPads are much taller than iPhones, so to test autoscrolling under a
+        software keyboard, we need to return several more times.
+        Also take the opportunity to make the test more robust to races.
+
+        * fast/events/autoscroll-with-software-keyboard.html:
+        * platform/ipad/TestExpectations:
+
 2019-10-30  Frederic Wang  <fwang@igalia.com>
 
         Import WPT tests for scrollend and overscroll events

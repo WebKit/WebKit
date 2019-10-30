@@ -15,14 +15,9 @@
             return;
     
         var output = '';
-        var firstTargetRect = document.getElementById('editable').getBoundingClientRect();
-    
-        var pressPointX = firstTargetRect.x;
-        var pressPointY = firstTargetRect.y;
 
-    
-        await tapAtPoint(pressPointX,pressPointY);
-        await UIHelper.enterText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTest");
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
+        await UIHelper.enterText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTest");
 
         var firstPageOffset = window.pageYOffset;
         if (window.pageYOffset > 0)
@@ -31,7 +26,7 @@
             output += 'FAIL: page has failed to scroll when caret is behind software keyboard.';
         output += '<br>';
 
-        await UIHelper.enterText("\n\n\n\n\n\n\n\n\n\n\n\n\n\nTest");
+        await UIHelper.enterText("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTest");
         if (window.pageYOffset > 0 && window.pageYOffset > firstPageOffset)
             output += 'PASS: page has continuted to scroll when caret is beyond the edge of the screen.';
         else
