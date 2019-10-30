@@ -152,6 +152,9 @@ fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]
 
+# Only iOS has an implementation of UIScriptController::sendEventStream().
+imported/w3c/web-platform-tests/dom/events/scrolling [ Skip ]
+
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html [ Skip ]
 

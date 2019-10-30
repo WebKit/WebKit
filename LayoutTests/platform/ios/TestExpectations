@@ -2560,6 +2560,8 @@ media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
 
 media/video-seek-to-current-time.html [ Failure ]
 
+imported/w3c/web-platform-tests/dom/events/scrolling [ Pass ]
+
 fast/attachment/attachment-wrapping-action.html [ Pass ]
 fast/attachment/attachment-borderless.html [ Pass ]
 fast/images/pdf-as-image-dest-rect-change.html [ Pass ]

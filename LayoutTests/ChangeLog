@@ -1,3 +1,14 @@
+2019-10-30  Frederic Wang  <fwang@igalia.com>
+
+        Import WPT tests for scrollend and overscroll events
+        https://bugs.webkit.org/show_bug.cgi?id=203500
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Skip the tests on most platforms, since
+        sendEventStream is not supported.
+        * platform/ios/TestExpectations: Enable the tests on iOS.
+
 2019-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] SVGSymbolElement should inherits SVGGraphicsElement

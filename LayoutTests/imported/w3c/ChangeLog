@@ -1,3 +1,20 @@
+2019-10-30  Frederic Wang  <fwang@igalia.com>
+
+        Import WPT tests for scrollend and overscroll events
+        https://bugs.webkit.org/show_bug.cgi?id=203500
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-document-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-element-with-overscroll-behavior-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-scrolled-element-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-window-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-element-with-overscroll-behavior-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-scrolled-element-expected.txt: Added.
+        * web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window-expected.txt: Added.
+
 2019-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [SVG2] SVGSymbolElement should inherits SVGGraphicsElement

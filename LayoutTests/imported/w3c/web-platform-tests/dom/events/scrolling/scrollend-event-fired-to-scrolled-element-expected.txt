@@ -1,0 +1,3 @@
+
+FAIL Tests that the scrolled element gets scrollend event at the end of touch scrolling. promise_test: Unhandled rejection with value: "Scroller did not receive scrollend event after horizontal scroll."
+
