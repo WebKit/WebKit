@@ -1,3 +1,13 @@
+2019-10-30  Daniel Bates  <dabates@apple.com>
+
+        Fix misspelling test named fast/dom/simultaneouslyRegsiteredTimerFireOrder.html
+        https://bugs.webkit.org/show_bug.cgi?id=203578
+
+        Reviewed by Jer Noble.
+
+        * fast/dom/simultaneously-registered-timer-fire-order-expected.txt: Renamed from LayoutTests/fast/dom/simultaneouslyRegsiteredTimerFireOrder-expected.txt.
+        * fast/dom/simultaneously-registered-timer-fire-order.html: Renamed from LayoutTests/fast/dom/simultaneouslyRegsiteredTimerFireOrder.html.
+
 2019-10-30  Russell Epstein  <repstein@apple.com>
 
         REGRESSION [ PHP ][ iOS ]: Two http/tests/cookies/same-site/set-first-party-* Tests are Failing
