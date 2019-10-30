@@ -1,3 +1,20 @@
+2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251693): [iOS] Unable to change selection after focusing an element with keyboard attached
+        https://bugs.webkit.org/show_bug.cgi?id=203582
+
+        Reviewed by Tim Horton.
+
+        Introduces a new helper method to check whether two ElementContexts refer to the same element. Importantly, this
+        ignores any information on ElementContext that is not either the element, document, or page identifier (for now,
+        this only includes the element's bounding rect, which may change over time).
+
+        Test: editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html
+
+        * dom/ElementContext.h:
+        (WebCore::ElementContext::isSameElement const):
+        (WebCore::operator==):
+
 2019-10-29  Chris Dumez  <cdumez@apple.com>
 
         UserMediaRequest should not prevent entering the back/forward cache

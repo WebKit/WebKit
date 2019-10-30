@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    width: 300px;
+    height: 300px;
+    font-size: 18px;
+    overflow: scroll;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+function tapAndWaitForSelectionChange(x, y) {
+    return new Promise(async resolve => {
+        let doneCount = 0;
+        const checkDone = () => {
+            if (++doneCount == 2)
+                resolve();
+        }
+        document.addEventListener("selectionchange", checkDone, { once: true });
+        await UIHelper.activateAt(x, y);
+        checkDone();
+    });
+}
+
+addEventListener("load", async () => {
+    description("Verifies that tapping to change selection works when the focused element's bounds change after focusing the element. To manually run the test, first tap the editable area to focus it, then tap the button to shrink the editable area, and finally, verify that it's possible to change selection in the editable area by tapping it.");
+
+    button = document.querySelector("button");
+    editor = document.getElementById("editor");
+
+    button.addEventListener("mousedown", event => {
+        editor.style.width = "160px";
+        editor.style.height = "160px";
+        event.preventDefault();
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    await UIHelper.activateElement(button);
+    await tapAndWaitForSelectionChange(30, 30);
+
+    shouldBe("getSelection().rangeCount", "1");
+    testPassed("Successfully changed selection after shrinking editable area.");
+
+    button.remove();
+    editor.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p contenteditable id="editor">Here's to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can't do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</p>
+<button>Shrink</button>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

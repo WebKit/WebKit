@@ -1,3 +1,25 @@
+2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251693): [iOS] Unable to change selection in a focused element if the element's bounds change
+        https://bugs.webkit.org/show_bug.cgi?id=203582
+
+        Reviewed by Tim Horton.
+
+        The refactoring in r251693 broke the ability to change selection in an editable area by tapping in iOS Safari,
+        in the case where the editable element's bounds change after focus. This is because the aforementioned change
+        now compares position informations' element context against the focused element information's element context to
+        check whether or not the position information request was inside the focused element. However, if the bounds of
+        the focused element change in between the position information request and when the element is initially
+        focused, the `operator==` comparison will fail, causing us to prevent text selection.
+
+        To fix this, only check whether or not the two element contexts refer to the same element in the DOM by
+        comparing page, document and element identifiers, but not the element's bounding rect.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:nodeHasBuiltInClickHandling:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
 2019-10-07  Jer Noble  <jer.noble@apple.com>
 
         Implement the Remote Playback API.

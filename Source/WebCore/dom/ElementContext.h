@@ -41,16 +41,18 @@ struct ElementContext {
 
     ~ElementContext() = default;
 
+    bool isSameElement(const ElementContext& other) const
+    {
+        return webPageIdentifier == other.webPageIdentifier && documentIdentifier == other.documentIdentifier && elementIdentifier == other.elementIdentifier;
+    }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ElementContext> decode(Decoder&);
 };
 
 inline bool operator==(const ElementContext& a, const ElementContext& b)
 {
-    return a.boundingRect == b.boundingRect
-        && a.webPageIdentifier == b.webPageIdentifier
-        && a.documentIdentifier == b.documentIdentifier
-        && a.elementIdentifier == b.elementIdentifier;
+    return a.boundingRect == b.boundingRect && a.isSameElement(b);
 }
 
 template<class Encoder>

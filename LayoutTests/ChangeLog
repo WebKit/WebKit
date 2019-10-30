@@ -1,3 +1,15 @@
+2019-10-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r251693): [iOS] Unable to change selection after focusing an element with keyboard attached
+        https://bugs.webkit.org/show_bug.cgi?id=203582
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to cover this scenario.
+
+        * editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds-expected.txt: Added.
+        * editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html: Added.
+
 2019-10-29  Chris Dumez  <cdumez@apple.com>
 
         UserMediaRequest should not prevent entering the back/forward cache
