@@ -1,3 +1,15 @@
+2019-10-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Simulator testers are filling up
+        https://bugs.webkit.org/show_bug.cgi?id=203056
+        <rdar://problem/56344905>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.tear_down): Remove some CoreSimulator temporary directories
+        after tearing down devices.
+
 2019-10-30  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fixing broken build.

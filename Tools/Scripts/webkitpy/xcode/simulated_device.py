@@ -479,6 +479,13 @@ class SimulatedDeviceManager(object):
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = None
 
+        # If we were managing the simulator, there are some cache files we need to remove
+        for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
+            host.filesystem.rmtree(directory)
+        core_simulator_directory = host.filesystem.expanduser(host.filesystem.join('~', 'Library', 'Developer', 'CoreSimulator'))
+        host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Caches'))
+        host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Temp'))
+
 
 class SimulatedDevice(object):
     class DeviceState:
