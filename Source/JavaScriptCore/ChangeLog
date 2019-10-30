@@ -1,3 +1,18 @@
+2019-10-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        tryCachePutToScopeGlobal should hold the lock to update metadata.m_getPutInfo
+        https://bugs.webkit.org/show_bug.cgi?id=203628
+        <rdar://problem/56705353>
+
+        Reviewed by Yusuke Suzuki.
+
+        We hold the lock to update m_watchpointSet and m_operand, but at that point we have already
+        updated m_getPutInfo. This can lead to inconsistent state observable from the compiler thread
+        where the getPutInfo does not match the watchpointSet.
+
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+
 2019-10-07  Jer Noble  <jer.noble@apple.com>
 
         Implement the Remote Playback API.

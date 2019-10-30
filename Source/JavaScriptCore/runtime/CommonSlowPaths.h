@@ -143,10 +143,10 @@ inline void tryCachePutToScopeGlobal(
         if (scope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
             ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
-            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
             ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode());
             metadata.m_watchpointSet = entry.watchpointSet();
             metadata.m_operand = reinterpret_cast<uintptr_t>(globalLexicalEnvironment->variableAt(entry.scopeOffset()).slot());
             return;
