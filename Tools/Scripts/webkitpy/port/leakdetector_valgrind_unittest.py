@@ -29,6 +29,7 @@ import unittest
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.unicode_compatibility import decode_for
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
 
@@ -619,40 +620,6 @@ Suppressions used:
 -----------------------------------------------------
 Valgrind detected 2 leaks:
 Leak_DefinitelyLost
-8 bytes in 1 blocks are definitely lost in loss record 421 of 7,972
-  operator new(unsigned long) (/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-  std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*)::{lambda(WebCore::PolicyAction)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*)::{lambda(WebCore::PolicyAction)#1}> const&, std::_Manager_operation) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  webkit_web_policy_decision_new (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebCore::NavigationAction const&, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, std::function<void (WebCore::PolicyAction)>) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  WebCore::FrameLoader::loadWithDocumentLoader(WebCore::DocumentLoader*, WebCore::FrameLoadType, WTF::PassRefPtr<WebCore::FormState>) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  WebCore::FrameLoader::load(WebCore::DocumentLoader*) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  WebCore::FrameLoader::load(WebCore::FrameLoadRequest const&) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  webkit_web_frame_load_uri (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
-  runTest(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
-  runTestingServerLoop() (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
-  main (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
-Suppression (error hash=#0449D3ED253FE1F9#):
-
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   fun:_Znw*
-   fun:_ZNSt14_Function_base13_Base_managerIZN7WebCore13PolicyChecker21checkNavigationPolicyERKNS1_15ResourceRequestEPNS1_14DocumentLoaderEN3WTF10PassRefPtrINS1_9FormStateEEEPFvPvS5_SB_bESC_EUlNS1_12PolicyActionEE_E10_M_managerERSt9_Any_dataRKSI_St18_Manager_operation
-   fun:webkit_web_policy_decision_new
-   fun:_ZN6WebKit17FrameLoaderClient39dispatchDecidePolicyForNavigationActionERKN7WebCore16NavigationActionERKNS1_15ResourceRequestEN3WTF10PassRefPtrINS1_9FormStateEEESt8functionIFvNS1_12PolicyActionEEE
-   fun:_ZN7WebCore13PolicyChecker21checkNavigationPolicyERKNS_15ResourceRequestEPNS_14DocumentLoaderEN3WTF10PassRefPtrINS_9FormStateEEEPFvPvS3_S9_bESA_
-   fun:_ZN7WebCore11FrameLoader22loadWithDocumentLoaderEPNS_14DocumentLoaderENS_13FrameLoadTypeEN3WTF10PassRefPtrINS_9FormStateEEE
-   fun:_ZN7WebCore11FrameLoader4loadEPNS_14DocumentLoaderE
-   fun:_ZN7WebCore11FrameLoader4loadERKNS_16FrameLoadRequestE
-   fun:webkit_web_frame_load_uri
-   fun:_ZL7runTestRKSs
-   fun:_ZL20runTestingServerLoopv
-   fun:main
-}
-
-
-Leak_DefinitelyLost
 8 bytes in 1 blocks are definitely lost in loss record 422 of 7,972
   operator new(unsigned long) (/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
   std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkContentPolicy(WebCore::ResourceResponse const&, void (*)(void*, WebCore::PolicyAction), void*)::{lambda(WebCore::PolicyAction)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkContentPolicy(WebCore::ResourceResponse const&, void (*)(void*, WebCore::PolicyAction), void*)::{lambda(WebCore::PolicyAction)#1}> const&, std::_Manager_operation) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
@@ -692,6 +659,40 @@ Suppression (error hash=#8313DEB16B069438#):
    fun:g_main_context_iterate.isra.23
    fun:g_main_loop_run
    fun:gtk_main
+   fun:_ZL7runTestRKSs
+   fun:_ZL20runTestingServerLoopv
+   fun:main
+}
+
+
+Leak_DefinitelyLost
+8 bytes in 1 blocks are definitely lost in loss record 421 of 7,972
+  operator new(unsigned long) (/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+  std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*)::{lambda(WebCore::PolicyAction)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*)::{lambda(WebCore::PolicyAction)#1}> const&, std::_Manager_operation) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  webkit_web_policy_decision_new (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction(WebCore::NavigationAction const&, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, std::function<void (WebCore::PolicyAction)>) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  WebCore::PolicyChecker::checkNavigationPolicy(WebCore::ResourceRequest const&, WebCore::DocumentLoader*, WTF::PassRefPtr<WebCore::FormState>, void (*)(void*, WebCore::ResourceRequest const&, WTF::PassRefPtr<WebCore::FormState>, bool), void*) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  WebCore::FrameLoader::loadWithDocumentLoader(WebCore::DocumentLoader*, WebCore::FrameLoadType, WTF::PassRefPtr<WebCore::FormState>) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  WebCore::FrameLoader::load(WebCore::DocumentLoader*) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  WebCore::FrameLoader::load(WebCore::FrameLoadRequest const&) (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  webkit_web_frame_load_uri (/home/user/WebKit/WebKitBuild/Release/.libs/libwebkitgtk-3.0.so.0.19.3)
+  runTest(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
+  runTestingServerLoop() (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
+  main (/home/user/WebKit/WebKitBuild/Release/Programs/DumpRenderTree)
+Suppression (error hash=#0449D3ED253FE1F9#):
+
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZNSt14_Function_base13_Base_managerIZN7WebCore13PolicyChecker21checkNavigationPolicyERKNS1_15ResourceRequestEPNS1_14DocumentLoaderEN3WTF10PassRefPtrINS1_9FormStateEEEPFvPvS5_SB_bESC_EUlNS1_12PolicyActionEE_E10_M_managerERSt9_Any_dataRKSI_St18_Manager_operation
+   fun:webkit_web_policy_decision_new
+   fun:_ZN6WebKit17FrameLoaderClient39dispatchDecidePolicyForNavigationActionERKN7WebCore16NavigationActionERKNS1_15ResourceRequestEN3WTF10PassRefPtrINS1_9FormStateEEESt8functionIFvNS1_12PolicyActionEEE
+   fun:_ZN7WebCore13PolicyChecker21checkNavigationPolicyERKNS_15ResourceRequestEPNS_14DocumentLoaderEN3WTF10PassRefPtrINS_9FormStateEEEPFvPvS3_S9_bESA_
+   fun:_ZN7WebCore11FrameLoader22loadWithDocumentLoaderEPNS_14DocumentLoaderENS_13FrameLoadTypeEN3WTF10PassRefPtrINS_9FormStateEEE
+   fun:_ZN7WebCore11FrameLoader4loadEPNS_14DocumentLoaderE
+   fun:_ZN7WebCore11FrameLoader4loadERKNS_16FrameLoadRequestE
+   fun:webkit_web_frame_load_uri
    fun:_ZL7runTestRKSs
    fun:_ZL20runTestingServerLoopv
    fun:main
@@ -807,7 +808,7 @@ Suppressions used:
 
 def mock_run_cppfilt_command(args):
     if args[0] == 'c++filt':
-        return valgrind_output_cppfilt_map[args[2]]
+        return valgrind_output_cppfilt_map[decode_for(args[2], str)]
     return ""
 
 

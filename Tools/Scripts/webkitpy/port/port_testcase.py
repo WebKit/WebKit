@@ -89,7 +89,7 @@ def bind_mock_apple_additions():
             result.mapping[INTERNAL_TABLE] = {}
             for platform in result.mapping[PUBLIC_TABLE]:
                 result.mapping[INTERNAL_TABLE][platform] = {}
-                for name, version in result.mapping[PUBLIC_TABLE][platform].iteritems():
+                for name, version in result.mapping[PUBLIC_TABLE][platform].items():
                     result.mapping[INTERNAL_TABLE][platform]['add-' + name] = version
             return result
 
@@ -469,8 +469,8 @@ class PortTestCase(unittest.TestCase):
         for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')
         ordered_dict = port.expectations_dict()
-        self.assertEqual(port.path_to_generic_test_expectations_file(), ordered_dict.keys()[0])
-        self.assertEqual(port.path_to_test_expectations_file(), ordered_dict.keys()[port.test_expectations_file_position()])
+        self.assertEqual(port.path_to_generic_test_expectations_file(), list(ordered_dict.keys())[0])
+        self.assertEqual(port.path_to_test_expectations_file(), list(ordered_dict.keys())[port.test_expectations_file_position()])
 
         options = MockOptions(additional_expectations=['/tmp/foo', '/tmp/bar'])
         port = self.make_port(options=options)
@@ -479,8 +479,8 @@ class PortTestCase(unittest.TestCase):
         port._filesystem.write_text_file('/tmp/foo', 'foo')
         port._filesystem.write_text_file('/tmp/bar', 'bar')
         ordered_dict = port.expectations_dict()
-        self.assertEqual(ordered_dict.keys()[-2:], options.additional_expectations)  # pylint: disable=E1101
-        self.assertEqual(ordered_dict.values()[-2:], ['foo', 'bar'])
+        self.assertEqual(list(ordered_dict.keys())[-2:], options.additional_expectations)  # pylint: disable=E1101
+        self.assertEqual(list(ordered_dict.values())[-2:], ['foo', 'bar'])
 
     def test_path_to_test_expectations_file(self):
         port = TestWebKitPort()
@@ -531,7 +531,7 @@ class PortTestCase(unittest.TestCase):
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations',
             'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
         port = TestWebKitPort(host=host)
-        self.assertEqual(''.join(port.expectations_dict().values()), 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
+        self.assertEqual(''.join(list(port.expectations_dict().values())), 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
 
     def test_build_driver(self):
         output = OutputCapture()

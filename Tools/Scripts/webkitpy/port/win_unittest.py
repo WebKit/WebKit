@@ -56,7 +56,7 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))
-        absolute_search_paths = map(port._webkit_baseline_path, expected_search_paths)
+        absolute_search_paths = list(map(port._webkit_baseline_path, expected_search_paths))
         self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):

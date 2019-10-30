@@ -36,6 +36,7 @@ import tempfile
 import time
 
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.unicode_compatibility import decode_if_necessary
 
 
 class GDBCrashLogGenerator(object):
@@ -75,7 +76,7 @@ class GDBCrashLogGenerator(object):
             try:
                 info = self._executive.run_command(coredumpctl + ['info', "--since=" + time.strftime("%a %Y-%m-%d %H:%M:%S %Z", time.localtime(self.newer_than))],
                     return_stderr=True)
-            except ScriptError, OSError:
+            except (ScriptError, OSError):
                 continue
 
             found_newer = False
@@ -129,7 +130,7 @@ class GDBCrashLogGenerator(object):
         elif coredumpctl:
             crash_log, errors = self._get_trace_from_systemd(coredumpctl, pid_representation)
 
-        stderr_lines = errors + str(stderr or '<empty>').decode('utf8', 'ignore').splitlines()
+        stderr_lines = errors + decode_if_necessary(str(stderr or '<empty>'), errors='ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + stderr_line) for stderr_line in stderr_lines)
         cppfilt_proc = self._executive.popen(
             ['c++filt'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

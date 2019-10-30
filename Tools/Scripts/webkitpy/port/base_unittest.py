@@ -41,6 +41,9 @@ from webkitpy.port import Port
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 class PortTest(unittest.TestCase):
     def make_port(self, executive=None, with_tests=False, port_name=None, **kwargs):
         host = MockSystemHost()
@@ -105,7 +108,7 @@ class PortTest(unittest.TestCase):
 
         t1 = "A\n\nB"
         t2 = "A\n\nB\n\n\n"
-        t3 = "--- exp.txt\n+++ act.txt\n@@ -1,3 +1,5 @@\n A\n \n-B\n\ No newline at end of file\n+B\n+\n+\n"
+        t3 = "--- exp.txt\n+++ act.txt\n@@ -1,3 +1,5 @@\n A\n \n-B\n No newline at end of file\n+B\n+\n+\n"
         self.assertEqual(t3, port.diff_text(t1, t2, 'exp.txt', 'act.txt'))
 
         # And make sure we actually get diff output.
@@ -288,13 +291,18 @@ class PortTest(unittest.TestCase):
 
     def test_parse_reftest_list(self):
         port = self.make_port(with_tests=True)
-        port.host.filesystem.files['bar/reftest.list'] = "\n".join(["== test.html test-ref.html",
-        "",
-        "# some comment",
-        "!= test-2.html test-notref.html # more comments",
-        "== test-3.html test-ref.html",
-        "== test-3.html test-ref2.html",
-        "!= test-3.html test-notref.html"])
+        port.host.filesystem.write_text_file(
+            'bar/reftest.list',
+            "\n".join([
+                "== test.html test-ref.html",
+                "",
+                "# some comment",
+                "!= test-2.html test-notref.html # more comments",
+                "== test-3.html test-ref.html",
+                "== test-3.html test-ref2.html",
+                "!= test-3.html test-notref.html",
+            ]),
+        )
 
         reftest_list = Port._parse_reftest_list(port.host.filesystem, 'bar')
         self.assertEqual(reftest_list, {'bar/test.html': [('==', 'bar/test-ref.html')],

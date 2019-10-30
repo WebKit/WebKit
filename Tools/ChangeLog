@@ -1,5 +1,81 @@
 2019-10-30  Jonathan Bedard  <jbedard@apple.com>
 
+        Python 3: Add support in webkitpy.port
+        https://bugs.webkit.org/show_bug.cgi?id=203489
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.port.
+        * Scripts/webkitpy/common/newstringio.py: Removed.
+        * Scripts/webkitpy/common/newstringio_unittest.py: Removed.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__): Ensure that stdout and stderr are byte arrays.
+        * Scripts/webkitpy/common/version.py:
+        (Version.__hash__): Add hash function for Version objects.
+        * Scripts/webkitpy/port/base.py:
+        (Port.default_baseline_search_path): Convert list to map.
+        (Port.diff_text): Decode for the native string type.
+        (Port.skipped_perf_tests): Convert filter to list.
+        (Port._run_script): No need to decode strings in Python 3, even if decode_output is set.
+        (Port.diff_text.to_raw_bytes): Deleted.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (cmp): Add cmp function for Python 3 comparisons.
+        (PortTest.test_diff_text): Do not escape spaces.
+        (PortTest.test_parse_reftest_list): Write to test file explicitly.
+        * Scripts/webkitpy/port/builders_unittest.py: Use full import path.
+        * Scripts/webkitpy/port/config_standalone.py: script_dir was refering to Tools,
+        not Tools/Scripts.
+        * Scripts/webkitpy/port/config_unittest.py: Use full import path.
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.show_results_html_file): Use os.devnull directly.
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_read_base64_block): Explicitly compare against byte array.
+        (DriverTest.test_setup_environ_base_vars): Convert iterators to lists.
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory.get.in): Imports need to use the full import path.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.default_baseline_search_path): Convert map to list.
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._parse_leaks_output): Search byte array with byte array.
+        * Scripts/webkitpy/port/leakdetector_valgrind.py:
+        (ValgrindError.__str__): Split byte array with byte array.
+        (ValgrindError.error_hash): Correct regex.
+        (LeakDetectorValgrind._parse_leaks_output): Convert bytes to string.
+        (LeakDetectorValgrind.parse_and_print_leaks_detail): Standardize Python 2 and 3 sorting order.
+        * Scripts/webkitpy/port/leakdetector_valgrind_unittest.py: Make unit tests Python 3 compatible.
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_trace_from_systemd): Modernize exception handling.
+        (GDBCrashLogGenerator.generate_crash_log): No need to decode strings in Python 3.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.start_helper): is_ready will be a byte array.
+        (MacPort.stop_helper): stdin will be a byte array.
+        * Scripts/webkitpy/port/mock_drt_unittest.py:
+        (MockDRTTest.assertTest): Use unicode compatible StringIO objects.
+        (MockDRTTest.test_main): Ditto.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (bind_mock_apple_additions.MockAppleAdditions.version_name_mapping): Use items instead of iteritems.
+        (PortTestCase.test_expectations_ordering): Convert iterator to list.
+        (PortTestCase.test_test_expectations): Ditto.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.__init__):
+        (WinPort.default_baseline_search_path): Convert map to list.
+        (WinPort.test_search_path): Ditto.
+        (WinPort.setup_crash_log_saving): Use items instead of iteritems.
+        (WinPort.restore_crash_log_saving): Ditto.
+        (WinPort.prevent_error_dialogs): Ditto.
+        (WinPort.allow_error_dialogs): Ditto.
+        (WinCairoPort.default_baseline_search_path): Convert map to list.
+        (WinCairoPort._port_specific_expectations_files): Ditto.
+        (FTWPort.default_baseline_search_path): Ditto.
+        (FTWPort._port_specific_expectations_files): Ditto.
+        * Scripts/webkitpy/port/win_unittest.py: Ditto.
+        (WinPortTest._assert_search_path): Ditto.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.default_baseline_search_path): Convert map to list.
+        (WPEPort._port_specific_expectations_files): Ditto.
+
+2019-10-30  Jonathan Bedard  <jbedard@apple.com>
+
         Simulator testers are filling up
         https://bugs.webkit.org/show_bug.cgi?id=203056
         <rdar://problem/56344905>

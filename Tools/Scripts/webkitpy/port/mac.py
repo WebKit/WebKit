@@ -222,7 +222,7 @@ class MacPort(DarwinPort):
         self._helper = self._executive.popen(arguments,
             stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=None)
         is_ready = self._helper.stdout.readline()
-        if not is_ready.startswith('ready'):
+        if not is_ready.startswith(b'ready'):
             _log.error("LayoutTestHelper could not start")
             return False
         return True
@@ -242,7 +242,7 @@ class MacPort(DarwinPort):
         if self._helper:
             _log.debug("Stopping LayoutTestHelper")
             try:
-                self._helper.stdin.write("x\n")
+                self._helper.stdin.write(b"x\n")
                 self._helper.stdin.close()
                 self._helper.wait()
             except IOError as e:

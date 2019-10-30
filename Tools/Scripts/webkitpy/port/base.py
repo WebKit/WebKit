@@ -51,6 +51,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.unicode_compatibility import encode_for, encode_if_necessary, decode_for
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
 from webkitpy.port import driver
@@ -222,7 +223,7 @@ class Port(object):
         search_paths.append(self.name())
         if self.name() != self.port_name:
             search_paths.append(self.port_name)
-        return map(self._webkit_baseline_path, search_paths)
+        return list(map(self._webkit_baseline_path, search_paths))
 
     @memoized
     def _compare_baseline(self):
@@ -340,16 +341,8 @@ class Port(object):
     def diff_text(self, expected_text, actual_text, expected_filename, actual_filename):
         """Returns a string containing the diff of the two text strings
         in 'unified diff' format."""
-
-        # The filenames show up in the diff output, make sure they're
-        # raw bytes and not unicode, so that they don't trigger join()
-        # trying to decode the input.
-        def to_raw_bytes(string_value):
-            if isinstance(string_value, unicode):
-                return string_value.encode('utf-8')
-            return string_value
-        expected_filename = to_raw_bytes(expected_filename)
-        actual_filename = to_raw_bytes(actual_filename)
+        expected_filename = decode_for(encode_if_necessary(expected_filename), str)
+        actual_filename = decode_for(encode_if_necessary(actual_filename), str)
         diff = difflib.unified_diff(expected_text.splitlines(True),
                                     actual_text.splitlines(True),
                                     expected_filename,
@@ -358,7 +351,7 @@ class Port(object):
         for line in diff:
             result += line
             if not line.endswith('\n'):
-                result += '\n\ No newline at end of file\n'
+                result += '\n No newline at end of file\n'
         return result
 
     def check_for_leaks(self, process_name, process_id):
@@ -764,7 +757,7 @@ class Port(object):
             if not match:
                 _log.error("Syntax error at line %d in %s: %s" % (line_number + 1, filename, line))
             else:
-                platform_names = filter(lambda token: token, match.group('platforms').lower().split(' ')) if match.group('platforms') else []
+                platform_names = list(filter(lambda token: token, match.group('platforms').lower().split(' '))) if match.group('platforms') else []
                 test_name = match.group('test')
                 if test_name and (not platform_names or self.port_name in platform_names or self._name in platform_names):
                     tests_to_skip.append(test_name)
@@ -1492,7 +1485,7 @@ class Port(object):
         if args:
             run_script_command.extend(args)
         output = self._executive.run_command(run_script_command, cwd=self.webkit_base(), decode_output=decode_output, env=env)
-        _log.debug('Output of %s:\n%s' % (run_script_command, output.encode('utf-8') if decode_output else output))
+        _log.debug('Output of %s:\n%s' % (run_script_command, encode_for(output, str) if decode_output else output))
         return output
 
     def _build_driver(self):

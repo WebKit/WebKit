@@ -40,6 +40,7 @@ PYTHON3_COMPATIBLE_DIRECTORIES = [
   'webkitpy.common.thread',
   'webkitpy.common.net',
   'webkitpy.common.watchlist',
+  'webkitpy.port',
   'webkitpy.results',
   'webkitpy.xcode',
 ]

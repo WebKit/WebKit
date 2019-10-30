@@ -37,7 +37,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.webkit_finder import WebKitFinder
 
-import config
+import webkitpy.port.config as config
 
 
 class ConfigTest(unittest.TestCase):

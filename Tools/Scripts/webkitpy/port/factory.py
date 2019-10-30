@@ -136,9 +136,10 @@ class PortFactory(object):
         classes = []
         for port_class in self.PORT_CLASSES:
             module_name, class_name = port_class.rsplit('.', 1)
-            module = __import__(module_name, globals(), locals(), [], -1)
-            cls = module.__dict__[class_name]
-            classes.append(cls)
+            module = __import__('webkitpy.port.{}'.format(module_name), globals(), locals(), [], 0)
+            cls = module.__dict__.get('port').__dict__.get(module_name).__dict__.get(class_name)
+            if cls:
+                classes.append(cls)
         if config.apple_additions() and hasattr(config.apple_additions(), 'ports'):
             classes += config.apple_additions().ports()
 

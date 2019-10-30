@@ -202,7 +202,7 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(content_block.content_hash, 'actual')
         self.assertEqual(content_block.encoding, 'base64')
         self.assertEqual(content_block.content, 'MTIzNDU2NzgK')
-        self.assertEqual(content_block.decoded_content, '12345678\n')
+        self.assertEqual(content_block.decoded_content, b'12345678\n')
 
     def test_no_timeout(self):
         port = TestWebKitPort()
@@ -368,7 +368,7 @@ class DriverTest(unittest.TestCase):
                           'WAYLAND_DISPLAY': 'wayland-0',
                           'WAYLAND_SOCKET': 'wayland-socket-0',
                           'GDK_BACKEND': 'x11'}
-        environment_user = dict(environ_keep_yes.items() + environ_keep_no.items())
+        environment_user = dict(list(environ_keep_yes.items()) + list(environ_keep_no.items()))
         with patch('os.environ', environment_user):
             port = self.make_port()
             driver = Driver(port, None, pixel_tests=False)

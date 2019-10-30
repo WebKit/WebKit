@@ -35,6 +35,8 @@ import subprocess
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError
 
+from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
+
 _log = logging.getLogger(__name__)
 
 
@@ -127,7 +129,7 @@ class ValgrindError:
             for frame in backtrace[1]:
                 buf += (frame[FUNCTION_NAME] or frame[INSTRUCTION_POINTER]) + "\n"
 
-            input = buf.encode('latin-1').split("\n")
+            input = buf.encode('latin-1').split(b"\n")
             demangled_names = [self._executive.run_command(['c++filt', '-n', name]) for name in input if name]
 
             i = 0
@@ -172,9 +174,9 @@ class ValgrindError:
 
         for frame in range(len(supplines)):
             # Replace the always-changing anonymous namespace prefix with "*".
-            m = re.match("( +fun:)_ZN.*_GLOBAL__N_.*\.cc_" +
-                         "[0-9a-fA-F]{8}_[0-9a-fA-F]{8}(.*)",
-                         supplines[frame])
+            m = re.match(r"( +fun:)_ZN.*_GLOBAL__N_.*\.cc_" +
+                          "[0-9a-fA-F]{8}_[0-9a-fA-F]{8}(.*)",
+                          supplines[frame])
             if m:
                 supplines[frame] = "*".join(m.groups())
 
@@ -196,7 +198,7 @@ class ValgrindError:
         # This is a device-independent hash identifying the suppression.
         # By printing out this hash we can find duplicate reports between tests and
         # different shards running on multiple buildbots
-        return int(hashlib.md5(self.unique_string()).hexdigest()[:16], 16)
+        return int(hashlib.md5(encode_if_necessary(self.unique_string())).hexdigest()[:16], 16)
 
     def __hash__(self):
         return hash(self.unique_string())
@@ -222,7 +224,7 @@ class LeakDetectorValgrind(object):
             parsed_string = parseString(leaks_output)
         except ExpatError as e:
             parse_failed = True
-            _log.error("could not parse %s: %s" % (leaks_output, e))
+            _log.error("could not parse %s: %s" % (decode_for(leaks_output, str), e))
             return
 
         cur_report_errors = set()
@@ -283,11 +285,12 @@ class LeakDetectorValgrind(object):
         _log.info("-----------------------------------------------------")
         _log.info("Suppressions used:")
         _log.info("  count name")
-        for (name, count) in sorted(self._suppressions.items(), key=lambda (k, v): (v, k)):
+        for (name, count) in sorted(self._suppressions.items(), key=lambda pair: (pair[1], pair[0])):
             _log.info("%7d %s" % (count, name))
         _log.info("-----------------------------------------------------")
 
         if self._errors:
             _log.info("Valgrind detected %s leaks:" % len(self._errors))
-            for leak in self._errors:
+            # Force the same order in Python 2 and Python 3
+            for leak in sorted(self._errors, key=lambda error: error.unique_string()):
                 _log.info(leak)

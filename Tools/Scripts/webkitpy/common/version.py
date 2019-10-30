@@ -116,6 +116,9 @@ class Version(object):
             result += '.{}'.format(self[i + 1])
         return result
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __cmp__(self, other):
         if other is None:
             return 1
