@@ -64,27 +64,6 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
     // to return them all as a single BasicEffectTiming.
 
-    auto activeDuration = [this]() -> Seconds {
-        // 3.8.2. Calculating the active duration
-        // https://drafts.csswg.org/web-animations-1/#calculating-the-active-duration
-
-        // The active duration is calculated as follows:
-        // active duration = iteration duration × iteration count
-        // If either the iteration duration or iteration count are zero, the active duration is zero.
-        if (!m_iterationDuration || !m_iterations)
-            return 0_s;
-        return m_iterationDuration * m_iterations;
-    }();
-
-    auto endTime = [this, activeDuration]() -> Seconds {
-        // 3.5.3 The active interval
-        // https://drafts.csswg.org/web-animations-1/#end-time
-
-        // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
-        auto endTime = m_delay + activeDuration + m_endDelay;
-        return endTime > 0_s ? endTime : 0_s;
-    }();
-
     auto localTime = [this]() -> Optional<Seconds> {
         // 4.5.4. Local time
         // https://drafts.csswg.org/web-animations-1/#local-time-section
@@ -97,13 +76,13 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
         return WTF::nullopt;
     }();
 
-    auto phase = [this, endTime, localTime, activeDuration]() -> AnimationEffectPhase {
+    auto phase = [this, localTime]() -> AnimationEffectPhase {
         // 3.5.5. Animation effect phases and states
         // https://drafts.csswg.org/web-animations-1/#animation-effect-phases-and-states
 
         bool animationIsBackwards = m_animation && m_animation->playbackRate() < 0;
-        auto beforeActiveBoundaryTime = std::max(std::min(m_delay, endTime), 0_s);
-        auto activeAfterBoundaryTime = std::max(std::min(m_delay + activeDuration, endTime), 0_s);
+        auto beforeActiveBoundaryTime = std::max(std::min(m_delay, m_endTime), 0_s);
+        auto activeAfterBoundaryTime = std::max(std::min(m_delay + m_activeDuration, m_endTime), 0_s);
 
         // (This should be the last statement, but it's more efficient to cache the local time and return right away if it's not resolved.)
         // Furthermore, it is often convenient to refer to the case when an animation effect is in none of the above phases
@@ -131,7 +110,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
         return AnimationEffectPhase::Active;
     }();
 
-    auto activeTime = [this, localTime, phase, activeDuration]() -> Optional<Seconds> {
+    auto activeTime = [this, localTime, phase]() -> Optional<Seconds> {
         // 3.8.3.1. Calculating the active time
         // https://drafts.csswg.org/web-animations-1/#calculating-the-active-time
 
@@ -160,7 +139,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
             // If the fill mode is forwards or both, return the result of evaluating
             // max(min(local time - start delay, active duration), 0).
             if (m_fill == FillMode::Forwards || m_fill == FillMode::Both)
-                return std::max(std::min(*localTime - m_delay, activeDuration), 0_s);
+                return std::max(std::min(*localTime - m_delay, m_activeDuration), 0_s);
             // Otherwise, return an unresolved time value.
             return WTF::nullopt;
         }
@@ -169,7 +148,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming() const
         return WTF::nullopt;
     }();
 
-    return { localTime, activeTime, endTime, activeDuration, phase };
+    return { localTime, activeTime, m_endTime, m_activeDuration, phase };
 }
 
 ComputedEffectTiming AnimationEffect::getComputedTiming() const
@@ -180,7 +159,6 @@ ComputedEffectTiming AnimationEffect::getComputedTiming() const
 
     auto basicEffectTiming = getBasicTiming();
     auto activeTime = basicEffectTiming.activeTime;
-    auto activeDuration = basicEffectTiming.activeDuration;
     auto phase = basicEffectTiming.phase;
 
     auto overallProgress = [this, phase, activeTime]() -> Optional<double> {
@@ -210,7 +188,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming() const
         return std::abs(overallProgress);
     }();
 
-    auto simpleIterationProgress = [this, overallProgress, phase, activeTime, activeDuration]() -> Optional<double> {
+    auto simpleIterationProgress = [this, overallProgress, phase, activeTime]() -> Optional<double> {
         // 3.8.3.3. Calculating the simple iteration progress
         // https://drafts.csswg.org/web-animations-1/#calculating-the-simple-iteration-progress
 
@@ -233,7 +211,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming() const
         // the active time is equal to the active duration, and
         // the iteration count is not equal to zero.
         // let the simple iteration progress be 1.0.
-        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && std::abs(activeTime->microseconds() - activeDuration.microseconds()) < timeEpsilon.microseconds() && m_iterations)
+        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && std::abs(activeTime->microseconds() - m_activeDuration.microseconds()) < timeEpsilon.microseconds() && m_iterations)
             return 1;
 
         return simpleIterationProgress;
@@ -347,8 +325,8 @@ ComputedEffectTiming AnimationEffect::getComputedTiming() const
     computedTiming.duration = secondsToWebAnimationsAPITime(m_iterationDuration);
     computedTiming.direction = m_direction;
     computedTiming.easing = m_timingFunction->cssText();
-    computedTiming.endTime = secondsToWebAnimationsAPITime(basicEffectTiming.endTime);
-    computedTiming.activeDuration = secondsToWebAnimationsAPITime(activeDuration);
+    computedTiming.endTime = secondsToWebAnimationsAPITime(m_endTime);
+    computedTiming.activeDuration = secondsToWebAnimationsAPITime(m_activeDuration);
     if (basicEffectTiming.localTime)
         computedTiming.localTime = secondsToWebAnimationsAPITime(*basicEffectTiming.localTime);
     computedTiming.simpleIterationProgress = simpleIterationProgress;
@@ -432,10 +410,34 @@ ExceptionOr<void> AnimationEffect::updateTiming(Optional<OptionalEffectTiming> t
     if (timing->direction)
         m_direction = timing->direction.value();
 
+    updateStaticTimingProperties();
+
     if (m_animation)
         m_animation->effectTimingDidChange();
 
     return { };
+}
+
+void AnimationEffect::updateStaticTimingProperties()
+{
+    // 3.8.2. Calculating the active duration
+    // https://drafts.csswg.org/web-animations-1/#calculating-the-active-duration
+
+    // The active duration is calculated as follows:
+    // active duration = iteration duration × iteration count
+    // If either the iteration duration or iteration count are zero, the active duration is zero.
+    if (!m_iterationDuration || !m_iterations)
+        m_activeDuration = 0_s;
+    else
+        m_activeDuration = m_iterationDuration * m_iterations;
+
+    // 3.5.3 The active interval
+    // https://drafts.csswg.org/web-animations-1/#end-time
+
+    // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
+    m_endTime = m_delay + m_activeDuration + m_endDelay;
+    if (m_endTime < 0_s)
+        m_endTime = 0_s;
 }
 
 ExceptionOr<void> AnimationEffect::setIterationStart(double iterationStart)

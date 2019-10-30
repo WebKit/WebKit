@@ -1,3 +1,35 @@
+2019-10-30  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Precompute an animation effect's active duration and end time
+        https://bugs.webkit.org/show_bug.cgi?id=203611
+
+        Reviewed by Dean Jackson.
+
+        We would compute an animation effect's active duration and end time in AnimationEffect::getBasicTiming()
+        but these two properties could be computed ahead of time when the other static timing properties of an
+        animation effect are changed. This allows several calls sites to WebAnimation::effectEndTime() to no
+        longer require the dynamic computation of all the other timing properties in AnimationEffect::getBasicTiming(),
+        (local time, active time and phase) which need to be computed dynamically as they rely on the current
+        timeline time.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getBasicTiming const):
+        (WebCore::AnimationEffect::getComputedTiming const):
+        (WebCore::AnimationEffect::updateTiming):
+        (WebCore::AnimationEffect::updateStaticTimingProperties):
+        * animation/AnimationEffect.h:
+        (WebCore::AnimationEffect::activeDuration const):
+        (WebCore::AnimationEffect::endTime const):
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::syncPropertiesWithBackingAnimation):
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::setTimingProperties):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::effectEndTime const):
+        (WebCore::WebAnimation::timeToNextTick const):
+
 2019-10-30  Antti Koivisto  <antti@apple.com>
 
         ::before/::after elements not filling their grid cell when container has display: contents

@@ -90,6 +90,11 @@ public:
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>&);
 
+    Seconds activeDuration() const { return m_activeDuration; }
+    Seconds endTime() const { return m_endTime; }
+
+    void updateStaticTimingProperties();
+
 protected:
     explicit AnimationEffect();
 
@@ -108,6 +113,8 @@ private:
     Seconds m_delay { 0_s };
     Seconds m_endDelay { 0_s };
     Seconds m_iterationDuration { 0_s };
+    Seconds m_activeDuration { 0_s };
+    Seconds m_endTime { 0_s };
 };
 
 } // namespace WebCore

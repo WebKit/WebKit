@@ -96,6 +96,7 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
 
     animationEffect->setDelay(Seconds(animation.delay()));
     animationEffect->setIterationDuration(Seconds(animation.duration()));
+    animationEffect->updateStaticTimingProperties();
 
     // Synchronize the play state
     if (animation.playState() == AnimationPlayState::Playing && playState() == WebAnimation::PlayState::Paused) {

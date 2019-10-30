@@ -545,7 +545,7 @@ Seconds WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    return m_effect ? m_effect->getBasicTiming().endTime : 0_s;
+    return m_effect ? m_effect->endTime() : 0_s;
 }
 
 void WebAnimation::cancel()
@@ -1291,7 +1291,7 @@ Seconds WebAnimation::timeToNextTick() const
                 return animationEffect->delay() - localTime;
         }
     } else if (auto animationCurrentTime = currentTime())
-        return effect()->getBasicTiming().endTime - *animationCurrentTime;
+        return effect()->endTime() - *animationCurrentTime;
 
     ASSERT_NOT_REACHED();
     return Seconds::infinity();

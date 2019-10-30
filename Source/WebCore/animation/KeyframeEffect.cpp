@@ -542,6 +542,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setTimingFunction(source->timingFunction());
     setIterationStart(source->iterationStart());
     setIterationDuration(source->iterationDuration());
+    updateStaticTimingProperties();
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
     for (auto& keyframe : source->m_blendingKeyframes.keyframes()) {
