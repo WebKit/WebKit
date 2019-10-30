@@ -42,6 +42,7 @@
 #include "RegistrableDomain.h"
 #include "LegacySchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
@@ -50,11 +51,6 @@
 namespace WebCore {
 
 namespace AuthenticatorCoordinatorInternal {
-
-enum class ClientDataType {
-    Create,
-    Get
-};
 
 // FIXME(181948): Add token binding ID.
 static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin)

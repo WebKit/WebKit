@@ -26,12 +26,14 @@
 #import "config.h"
 #import "WebAuthenticationPanelClient.h"
 #import "_WKWebAuthenticationPanelInternal.h"
+#import <WebCore/WebAuthenticationConstants.h>
 
 #import <wtf/RetainPtr.h>
 
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
     WeakPtr<WebKit::WebAuthenticationPanelClient> _client;
+    RetainPtr<NSMutableArray> _transports;
 #endif
 }
 
@@ -42,11 +44,6 @@
     _panel->~WebAuthenticationPanel();
 
     [super dealloc];
-}
-
-- (NSString *)relyingPartyID
-{
-    return _panel->rpId();
 }
 
 - (id <_WKWebAuthenticationPanelDelegate>)delegate
@@ -61,6 +58,55 @@
     auto client = WTF::makeUniqueRef<WebKit::WebAuthenticationPanelClient>(self, delegate);
     _client = makeWeakPtr(client.get());
     _panel->setClient(WTFMove(client));
+}
+
+
+- (NSString *)relyingPartyID
+{
+    return _panel->rpId();
+}
+
+static _WKWebAuthenticationTransport wkWebAuthenticationTransport(WebCore::AuthenticatorTransport transport)
+{
+    switch (transport) {
+    case WebCore::AuthenticatorTransport::Usb:
+        return _WKWebAuthenticationTransportUSB;
+    case WebCore::AuthenticatorTransport::Nfc:
+        return _WKWebAuthenticationTransportNFC;
+    default:
+        ASSERT_NOT_REACHED();
+        return _WKWebAuthenticationTransportUSB;
+    }
+}
+
+- (NSArray *)transports
+{
+    if (_transports)
+        return _transports.get();
+
+    auto& transports = _panel->transports();
+    _transports = [[NSMutableArray alloc] initWithCapacity:transports.size()];
+    for (auto& transport : transports)
+        [_transports addObject:adoptNS([[NSNumber alloc] initWithInt:wkWebAuthenticationTransport(transport)]).get()];
+    return _transports.get();
+}
+
+static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType type)
+{
+    switch (type) {
+    case WebCore::ClientDataType::Create:
+        return _WKWebAuthenticationTypeCreate;
+    case WebCore::ClientDataType::Get:
+        return _WKWebAuthenticationTypeGet;
+    default:
+        ASSERT_NOT_REACHED();
+        return _WKWebAuthenticationTypeCreate;
+    }
+}
+
+- (_WKWebAuthenticationType)type
+{
+    return wkWebAuthenticationType(_panel->clientDataType());
 }
 
 #endif // ENABLE(WEB_AUTHN)
