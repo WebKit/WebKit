@@ -59,7 +59,7 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
     {
         this._checkboxLabel.removeChildren();
 
-        if (label);
+        if (label)
             this._checkboxLabel.append(label);
     }
 

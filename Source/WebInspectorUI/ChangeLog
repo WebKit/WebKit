@@ -1,3 +1,13 @@
+2019-10-30  Eike Rathke  <erack@redhat.com>
+
+        Covscan: remove stray semicolon
+        https://bugs.webkit.org/show_bug.cgi?id=203622
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CheckboxNavigationItem.js:
+        (WI.CheckboxNavigationItem.prototype.set label):
+
 2019-10-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Opacity slider background doesn't update when when hue slider moves
