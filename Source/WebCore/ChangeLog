@@ -1,3 +1,20 @@
+2019-10-30  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r249428): [GStreamer] VP9 video rendered green
+        https://bugs.webkit.org/show_bug.cgi?id=201422
+        <rdar://problem/55945741>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the texture upload GStreamer meta code path. Until
+        GStreamer 1.16.2 this workaround is needed to fix VP9 (vp9dec)
+        rendering.
+
+        Original patch by: Chris Lord <clord@igalia.com>
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL):
+
 2019-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ImageDecoders: use a thread safe data buffer for Cairo backing store
