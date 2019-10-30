@@ -1,3 +1,11 @@
+2019-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip 3 WPT tests that are timing out since they were imported.
+
+        It unnecessarily slows down our test runs.
+
+        * TestExpectations:
+
 2019-10-30  Megan Gardner  <megan_gardner@apple.com>
 
         Fix autoscroll test to work on iPad.
