@@ -51,6 +51,7 @@ public:
     using Respond = Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>;
     using Callback = CompletionHandler<void(Respond&&)>;
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
+    using FrameIdentifier = uint64_t;
 
     using AuthenticatorTransportService::Observer::weakPtrFactory;
     using WeakValueType = AuthenticatorTransportService::Observer::WeakValueType;
@@ -59,7 +60,7 @@ public:
     virtual ~AuthenticatorManager() = default;
 
     void handleRequest(WebAuthenticationRequestData&&, Callback&&);
-    void cancelRequest(const WebCore::PageIdentifier&, const Optional<WebCore::FrameIdentifier>&); // Called from WebPageProxy/WebProcessProxy.
+    void cancelRequest(const WebCore::PageIdentifier&, const Optional<FrameIdentifier>&); // Called from WebPageProxy/WebProcessProxy.
     void cancelRequest(const API::WebAuthenticationPanel&); // Called from panel clients.
 
     virtual bool isMock() const { return false; }

@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "MessageReceiver.h"
-#include <WebCore/FrameIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -50,6 +49,8 @@ class WebAuthenticatorCoordinatorProxy : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
 public:
+    using FrameIdentifier = uint64_t;
+
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);
     ~WebAuthenticatorCoordinatorProxy();
 
@@ -61,8 +62,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
-    void getAssertion(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, RequestCompletionHandler&&);
+    void makeCredential(FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
+    void getAssertion(FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
