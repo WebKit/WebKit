@@ -37,14 +37,14 @@ namespace WebKit {
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc
 class CtapNfcDriver : public CtapDriver {
 public:
-    explicit CtapNfcDriver(UniqueRef<NfcConnection>&&);
+    explicit CtapNfcDriver(Ref<NfcConnection>&&);
 
     void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
 
 private:
     void respondAsync(ResponseCallback&&, Vector<uint8_t>&& response) const;
 
-    UniqueRef<NfcConnection> m_connection;
+    Ref<NfcConnection> m_connection;
 };
 
 } // namespace WebKit
