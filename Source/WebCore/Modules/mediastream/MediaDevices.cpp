@@ -107,8 +107,10 @@ static MediaConstraints createMediaConstraints(const Variant<bool, MediaTrackCon
 void MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
-    if (!document)
+    if (!document || !document->isFullyActive()) {
+        promise.reject(Exception { InvalidStateError, "Document is not fully active"_s });
         return;
+    }
 
     auto audioConstraints = createMediaConstraints(constraints.audio);
     auto videoConstraints = createMediaConstraints(constraints.video);

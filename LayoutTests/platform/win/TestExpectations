@@ -866,6 +866,7 @@ webkit.org/b/38376 media/media-document-audio-size.html [ Skip ]
 fast/mediastream [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 http/tests/media/media-stream [ Skip ]
+http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
 #webkit.org/b/45021 media/context-menu-actions.html

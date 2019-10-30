@@ -1,3 +1,17 @@
+2019-10-29  Chris Dumez  <cdumez@apple.com>
+
+        UserMediaRequest should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203098
+        <rdar://problem/56716101>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * fast/mediastream/MediaDevices-getUserMedia-expected.txt:
+        * http/tests/navigation/page-cache-getUserMedia-pending-promise-expected.txt: Added.
+        * http/tests/navigation/page-cache-getUserMedia-pending-promise.html: Added.
+
 2019-10-29  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Implement PictureInPictureWindow
