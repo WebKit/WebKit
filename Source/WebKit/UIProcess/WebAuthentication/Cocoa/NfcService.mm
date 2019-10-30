@@ -54,7 +54,7 @@ void NfcService::didConnectTag()
 #if HAVE(NEAR_FIELD)
     auto connection = m_connection;
     ASSERT(connection);
-    getInfo(WTF::makeUnique<CtapNfcDriver>(connection.releaseNonNull()));
+    getInfo(std::make_unique<CtapNfcDriver>(connection.releaseNonNull()));
 #endif
 }
 
