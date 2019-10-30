@@ -1,3 +1,16 @@
+2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK] LayoutTests/inspector tests timeout
+        https://bugs.webkit.org/show_bug.cgi?id=147518
+
+        Unreviewed. Renable inspector/dom and inspector/timeline tests on GTK.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt: This test has consistent output which
+        is slightly different from Mac.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/inspector/timeline/line-column-expected.txt: Added. TimelineRecordType::RenderingFrame
+        is only emitted on PLATFORM(COCOA), so we need custom expectation on other platforms.
+
 2019-10-30  Russell Epstein  <repstein@apple.com>
 
         [ iOS ] Layout Test fast/css-custom-paint/simple-hidpi.html is a Flaky Failure (203637).

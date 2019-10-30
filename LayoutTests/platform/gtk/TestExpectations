@@ -2296,9 +2296,6 @@ webkit.org/b/149916 inspector/unit-tests/linked-list.html [ Pass Slow ]
 webkit.org/b/149916 inspector/unit-tests/list-multimap.html [ Pass Slow ]
 webkit.org/b/149916 inspector/unit-tests/object.html [ Pass Slow ]
 
-# Slow is not enough for this one.
-webkit.org/b/149916 inspector/dom/setInspectedNode.html [ Timeout Pass ]
-
 webkit.org/b/186781 inspector/view/asynchronous-layout.html [ Timeout Pass ]
 
 Bug(GTK) http/tests/misc/large-js-program.php [ Pass Slow ]
@@ -2336,7 +2333,6 @@ webkit.org/b/120682 inspector/page/archive.html [ Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 webkit.org/b/122571 http/tests/inspector/dom/cross-domain-inspected-node-access.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/dom/request-child-nodes-depth.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/dom/focus.html [ Failure Timeout Pass ]
 webkit.org/b/122571 inspector/runtime/getProperties.html [ Timeout Pass Crash ]
 webkit.org/b/122571 inspector/runtime/saveResult.html [ Timeout Pass Crash ]
@@ -2380,8 +2376,13 @@ webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout 
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 
-webkit.org/b/147518 inspector/dom [ Skip ]
-webkit.org/b/147518 inspector/timeline [ Skip ]
+webkit.org/b/203625 inspector/timeline/timeline-event-CancelAnimationFrame.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-EventDispatch.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-FireAnimationFrame.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-RequestAnimationFrame.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-TimerFire.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-TimerInstall.html  [ Pass Failure ]
+webkit.org/b/203625 inspector/timeline/timeline-event-TimerRemove.html  [ Pass Failure ]
 
 webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Failure ]
 webkit.org/b/139362 inspector/css/selector-specificity.html [ Timeout Pass ]
