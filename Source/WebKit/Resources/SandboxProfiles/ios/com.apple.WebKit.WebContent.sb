@@ -930,7 +930,10 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
-(allow mach-lookup (extension "com.apple.webkit.extension.mach"))
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.iphone.axserver-systemwide")))
 
 (media-capture-support)
 

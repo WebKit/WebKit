@@ -1,3 +1,18 @@
+2019-10-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Lookup to mach services with the WebKit extension should list the allowed services
+        https://bugs.webkit.org/show_bug.cgi?id=203619
+
+        Reviewed by Alexey Proskuryakov.
+
+        To tighten the mach lookup rule which allows lookup to services with the "com.apple.webkit.extension.mach"
+        extension, all allowed services should be listed. Currently, we are only creating mach lookup extensions to
+        "com.apple.iphone.axserver-systemwide", but more will come in the future.
+
+        No new tests. Testing this requires UI interaction on the device to enable Accessibility.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-30  Alex Christensen  <achristensen@webkit.org>
 
         WKContentRuleLists should block requests from service workers
