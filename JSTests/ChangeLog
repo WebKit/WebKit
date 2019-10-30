@@ -1,3 +1,11 @@
+2019-10-30  Guillaume Emont  <guijemont@igalia.com>
+
+        Temporarily skip ChakraCore/test/Math/max.js on arm and mips
+
+        Unreviewed gardening.
+
+        * ChakraCore.yaml:
+
 2019-10-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl.DateTimeFormat returns resolvedOptions in the wrong order

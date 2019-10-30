@@ -910,8 +910,14 @@
   cmd: runChakra :baseline, "NoException", "pow.baseline", []
 - path: ChakraCore/test/Math/min.js
   cmd: runChakra :baseline, "NoException", "min.baseline", []
+  # FIXME: unskip the following test on arm and mips when https://bugs.webkit.org/show_bug.cgi?id=203406 is fixed.
 - path: ChakraCore/test/Math/max.js
-  cmd: runChakra :baseline, "NoException", "max.baseline", []
+  cmd: |
+      if ["arm", "mips"].include?($architecture) and $hostOS == "linux"
+          skip
+      else
+          runChakra :baseline, "NoException", "max.baseline", []
+      end
 - path: ChakraCore/test/Math/miscellaneous.js
   cmd: runChakra :baseline, "NoException", "miscellaneous.baseline", []
 - path: ChakraCore/test/Math/round.js
