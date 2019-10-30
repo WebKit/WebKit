@@ -37,6 +37,7 @@ struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialData;
 struct PublicKeyCredentialRequestOptions;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -60,8 +61,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(WebCore::FrameIdentifier, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&);
-    void getAssertion(WebCore::FrameIdentifier, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&);
+    void makeCredential(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
+    void getAssertion(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&);
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
