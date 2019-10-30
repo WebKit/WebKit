@@ -1,3 +1,12 @@
+2019-10-30  Jer Noble  <jer.noble@apple.com>
+
+        Enable Remote Playback API by default
+        https://bugs.webkit.org/show_bug.cgi?id=203595
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         [iOS] [WK2] Improve process assertion-related logging to help identify causes of leaked assertions

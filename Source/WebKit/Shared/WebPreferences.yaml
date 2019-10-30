@@ -1810,7 +1810,7 @@ RemotePlaybackEnabled:
   category: experimental
   condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Remote Playback API"
   humanReadableDescription: "Enable Remote Playback API"
 
