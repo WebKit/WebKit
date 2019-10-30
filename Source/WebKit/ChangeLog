@@ -1,3 +1,17 @@
+2019-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(2.27.2): [GTK] Overview item remove button broken
+        https://bugs.webkit.org/show_bug.cgi?id=203461
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is a regression of the switch to new custom protocols implementation. Epiphany is passing NULL as content
+        type of ephy-resource requests, in which case we should try to guess the mime type, but we are not doing it.
+
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback): Use MIMETypeRegistry to guess the mime type when content type is nullptr,
+        like NetworkDataTask does.
+
 2019-10-29  Andy Estes  <aestes@apple.com>
 
         [Quick Look] Clean up LegacyPreviewLoaderClients

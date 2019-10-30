@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/URLSoup.h>
 #include <libsoup/soup.h>
@@ -181,6 +182,8 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     if (!priv->bytesRead) {
         ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(priv->contentType.data()), priv->streamLength, emptyString());
         response.setTextEncodingName(extractCharsetFromMediaType(priv->contentType.data()));
+        if (response.mimeType().isEmpty())
+            response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(response.url().path()));
         priv->task->didReceiveResponse(response);
     }
 
