@@ -33,6 +33,7 @@
 #include "APIWebAuthenticationPanelClient.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
+#include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <wtf/MonotonicTime.h>
@@ -164,7 +165,7 @@ void AuthenticatorManager::handleRequest(WebAuthenticationRequestData&& data, Ca
     runPanel();
 }
 
-void AuthenticatorManager::cancelRequest(const WebCore::PageIdentifier& pageID, const Optional<FrameIdentifier>& frameID)
+void AuthenticatorManager::cancelRequest(const WebCore::PageIdentifier& pageID, uint64_t frameID)
 {
     if (!m_pendingCompletionHandler)
         return;
@@ -298,7 +299,7 @@ void AuthenticatorManager::runPanel()
     auto* page = m_pendingRequestData.page.get();
     if (!page)
         return;
-    ASSERT(m_pendingRequestData.frameID && page->webPageID() == m_pendingRequestData.frameID->pageID);
+    ASSERT(m_pendingRequestData.frameID && page->pageID() == m_pendingRequestData.frameID->pageID);
     auto* frame = page->process().webFrame(m_pendingRequestData.frameID->frameID);
     if (!frame)
         return;

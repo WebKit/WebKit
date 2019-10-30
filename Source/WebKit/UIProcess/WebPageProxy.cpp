@@ -4056,7 +4056,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_navigationClient->didStartProvisionalNavigation(*this, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
 
 #if ENABLE(WEB_AUTHN)
-    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, frameID);
+    m_websiteDataStore->authenticatorManager().cancelRequest(m_pageID, frameID);
 #endif
 }
 
@@ -7132,7 +7132,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, WTF::nullopt);
+    m_websiteDataStore->authenticatorManager().cancelRequest(m_pageID, 0);
 #endif
 }
 
