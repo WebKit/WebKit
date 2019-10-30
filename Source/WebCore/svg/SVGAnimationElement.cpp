@@ -562,7 +562,7 @@ void SVGAnimationElement::startedActiveInterval()
         m_animationValid = calcMode == CalcMode::Paced || !hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size());
 }
 
-void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, SVGSMILElement* resultElement)
+void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
 {    
     if (!m_animationValid)
         return;
@@ -590,7 +590,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
     else
         effectivePercent = percent;
 
-    calculateAnimatedValue(effectivePercent, repeatCount, resultElement);
+    calculateAnimatedValue(effectivePercent, repeatCount);
 }
 
 void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& valueString)

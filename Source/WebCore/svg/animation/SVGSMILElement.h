@@ -82,7 +82,7 @@ public:
     SMILTime simpleDuration() const;
 
     void seekToIntervalCorrespondingToTime(SMILTime elapsed);
-    bool progress(SMILTime elapsed, SVGSMILElement* resultsElement, bool seekToTime);
+    bool progress(SMILTime elapsed, SVGSMILElement& firstAnimation, bool seekToTime);
     SMILTime nextProgressTime() const;
 
     void reset();
@@ -98,8 +98,8 @@ public:
     void setDocumentOrderIndex(unsigned index) { m_documentOrderIndex = index; }
 
     virtual bool isAdditive() const = 0;
-    virtual void resetAnimatedType() = 0;
-    virtual void clearAnimatedType(SVGElement* targetElement) = 0;
+    virtual void startAnimation() = 0;
+    virtual void stopAnimation(SVGElement* targetElement) = 0;
     virtual void applyResultsToTarget() = 0;
 
     void connectConditions();
@@ -129,7 +129,7 @@ private:
 
     virtual void startedActiveInterval() = 0;
     void endedActiveInterval();
-    virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
+    virtual void updateAnimation(float percent, unsigned repeat) = 0;
 
     static bool isSupportedAttribute(const QualifiedName&);
     QualifiedName constructAttributeName() const;

@@ -245,7 +245,7 @@ static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& time
 
 void SVGSMILElement::reset()
 {
-    clearAnimatedType(m_targetElement);
+    stopAnimation(m_targetElement);
 
     m_activeState = Inactive;
     m_isWaitingForFirstInterval = true;
@@ -610,7 +610,7 @@ void SVGSMILElement::setAttributeName(const QualifiedName& attributeName)
 
     // Only clear the animated type, if we had a target before.
     if (m_targetElement)
-        clearAnimatedType(m_targetElement);
+        stopAnimation(m_targetElement);
 }
 
 void SVGSMILElement::setTargetElement(SVGElement* target)
@@ -624,7 +624,7 @@ void SVGSMILElement::setTargetElement(SVGElement* target)
 
     if (m_targetElement) {
         // Clear values that may depend on the previous target.
-        clearAnimatedType(m_targetElement);
+        stopAnimation(m_targetElement);
         disconnectConditions();
     }
 
@@ -1070,9 +1070,8 @@ bool SVGSMILElement::isContributing(SMILTime elapsed) const
     return (m_activeState == Active && (fill() == FillFreeze || elapsed <= m_intervalBegin + repeatingDuration())) || m_activeState == Frozen;
 }
     
-bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement, bool seekToTime)
+bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, bool seekToTime)
 {
-    ASSERT(resultElement);
     ASSERT(m_timeContainer);
     ASSERT(m_isWaitingForFirstInterval || m_intervalBegin.isFinite());
 
@@ -1085,9 +1084,9 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement, b
     if (elapsed < m_intervalBegin) {
         ASSERT(m_activeState != Active);
         if (m_activeState == Frozen) {
-            if (this == resultElement)
-                resetAnimatedType();
-            updateAnimation(m_lastPercent, m_lastRepeat, resultElement);
+            if (this == &firstAnimation)
+                startAnimation();
+            updateAnimation(m_lastPercent, m_lastRepeat);
         }
         m_nextProgressTime = m_intervalBegin;
         return false;
@@ -1118,15 +1117,15 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement, b
     m_activeState = determineActiveState(elapsed);
     bool animationIsContributing = isContributing(elapsed);
 
-    // Only reset the animated type to the base value once for the lowest priority animation that animates and contributes to a particular element/attribute pair.
-    if (this == resultElement && animationIsContributing)
-        resetAnimatedType();
-
     if (animationIsContributing) {
+        // Only start the animation of the lowest priority animation that animates and contributes to a particular element/attribute pair.
+        if (this == &firstAnimation)
+            startAnimation();
+
         if (oldActiveState == Inactive)
             startedActiveInterval();
 
-        updateAnimation(percent, repeat, resultElement);
+        updateAnimation(percent, repeat);
         m_lastPercent = percent;
         m_lastRepeat = repeat;
     }
@@ -1135,7 +1134,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement, b
         smilEndEventSender().dispatchEventSoon(*this);
         endedActiveInterval();
         if (m_activeState != Frozen)
-            clearAnimatedType(m_targetElement);
+            stopAnimation(m_targetElement);
     } else if (oldActiveState != Active && m_activeState == Active)
         smilBeginEventSender().dispatchEventSoon(*this);
 

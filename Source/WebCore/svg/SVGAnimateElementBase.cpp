@@ -146,7 +146,7 @@ bool SVGAnimateElementBase::calculateToAtEndOfDurationValue(const String& toAtEn
     return false;
 }
 
-void SVGAnimateElementBase::resetAnimatedType()
+void SVGAnimateElementBase::startAnimation()
 {
     if (!targetElement())
         return;
@@ -155,7 +155,7 @@ void SVGAnimateElementBase::resetAnimatedType()
         protectedAnimator->start(targetElement());
 }
 
-void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repeatCount, SVGSMILElement*)
+void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repeatCount)
 {
     if (!targetElement())
         return;
@@ -180,7 +180,7 @@ void SVGAnimateElementBase::applyResultsToTarget()
         animator->apply(targetElement());
 }
 
-void SVGAnimateElementBase::clearAnimatedType(SVGElement* targetElement)
+void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
 {
     if (!targetElement)
         return;

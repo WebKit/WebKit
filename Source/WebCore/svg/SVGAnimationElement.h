@@ -102,7 +102,7 @@ protected:
 
     // from SVGSMILElement
     void startedActiveInterval() override;
-    void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) override;
+    void updateAnimation(float percent, unsigned repeat) override;
 
     AnimatedPropertyValueType m_fromPropertyValueType { RegularPropertyValue };
     AnimatedPropertyValueType m_toPropertyValueType { RegularPropertyValue };
@@ -120,7 +120,7 @@ private:
     virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
-    virtual void calculateAnimatedValue(float percent, unsigned repeatCount, SVGSMILElement* resultElement) = 0;
+    virtual void calculateAnimatedValue(float percent, unsigned repeatCount) = 0;
     virtual Optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
 
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);

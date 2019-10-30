@@ -53,10 +53,10 @@ private:
     bool calculateFromAndByValues(const String& fromString, const String& byString) override;
     bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
 
-    void resetAnimatedType() override;
-    void calculateAnimatedValue(float progress, unsigned repeatCount, SVGSMILElement* resultElement) override;
+    void startAnimation() override;
+    void calculateAnimatedValue(float progress, unsigned repeatCount) override;
     void applyResultsToTarget() override;
-    void clearAnimatedType(SVGElement* targetElement) override;
+    void stopAnimation(SVGElement* targetElement) override;
     Optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
     bool hasInvalidCSSAttributeType() const;
