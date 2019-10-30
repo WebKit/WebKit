@@ -1,3 +1,13 @@
+2019-10-30  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fixing broken build.
+
+        Not reviewed.
+
+        JSON appears to not like commas at the end of the last element in an array.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         WKFrameIsDisplayingMarkupDocument() should return true after a window.open/document.write
