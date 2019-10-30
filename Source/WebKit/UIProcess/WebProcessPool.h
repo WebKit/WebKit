@@ -260,6 +260,8 @@ public:
     ProcessID prewarmedProcessIdentifier();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
     bool networkProcessHasEntitlementForTesting(const String&);
+    void setServiceWorkerTimeoutForTesting(Seconds);
+    void resetServiceWorkerTimeoutForTesting();
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
 

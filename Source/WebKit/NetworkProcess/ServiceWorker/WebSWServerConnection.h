@@ -29,11 +29,11 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "ServiceWorkerFetchTask.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class FormDataReference;
