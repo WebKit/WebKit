@@ -1913,3 +1913,76 @@ TEST(ServiceWorkers, ProcessPerSession)
 
     EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
 }
+
+static const char* contentRuleListWorkerScript =
+"self.addEventListener('message', (event) => {"
+"    fetch('blockedsubresource').then(() => {"
+"        event.source.postMessage('FAIL - should have blocked first request');"
+"    }).catch(() => {"
+"        fetch('allowedsubresource').then(() => {"
+"            event.source.postMessage('PASS - blocked first request, allowed second');"
+"        }).catch(() => {"
+"            event.source.postMessage('FAIL - should have allowed second request');"
+"        });"
+"    });"
+"});";
+
+TEST(ServiceWorkers, ContentRuleList)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    __block bool doneCompiling = false;
+    __block RetainPtr<WKContentRuleList> contentRuleList;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"ServiceWorkerRuleList" encodedContentRuleList:@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"blockedsubresource\"}}]" completionHandler:^(WKContentRuleList *list, NSError *error) {
+        EXPECT_NOT_NULL(list);
+        EXPECT_NULL(error);
+        contentRuleList = list;
+        doneCompiling = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    [[configuration userContentController] addContentRuleList:contentRuleList.get()];
+
+    using namespace TestWebKitAPI;
+    TCPServer server([] (int socket) {
+        auto respond = [socket] (const char* body, const char* mimeType) {
+            NSString *format = @"HTTP/1.1 200 OK\r\n"
+            "Content-Type: %s\r\n"
+            "Content-Length: %d\r\n\r\n"
+            "%s";
+            NSString *response = [NSString stringWithFormat:format, mimeType, strlen(body), body];
+            TCPServer::write(socket, response.UTF8String, response.length);
+        };
+        TCPServer::read(socket);
+        respond(mainBytes, "text/html");
+        TCPServer::read(socket);
+        respond(contentRuleListWorkerScript, "application/javascript");
+        auto lastRequest = TCPServer::read(socket);
+        EXPECT_TRUE(strstr((const char*)lastRequest.data(), "allowedsubresource"));
+        respond("successful fetch", "application/octet-stream");
+    });
+
+    expectedMessage = @"Message from worker: PASS - blocked first request, allowed second";
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    TestWebKitAPI::Util::run(&done);
+    
+    __block bool doneRemoving = false;
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"ServiceWorkerRuleList" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        doneRemoving = true;
+    }];
+    TestWebKitAPI::Util::run(&doneRemoving);
+}

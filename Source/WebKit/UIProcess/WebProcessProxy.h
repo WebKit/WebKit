@@ -35,6 +35,8 @@
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
+#include "ServiceWorkerInitializationData.h"
+#include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxyIdentifier.h"
@@ -74,6 +76,7 @@ class ProvisionalPageProxy;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
 class WebBackForwardListItem;
+class WebCompiledContentRuleListData;
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -131,7 +134,7 @@ public:
     void setIsInProcessCache(bool);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
-    void enableServiceWorkers();
+    void enableServiceWorkers(const Optional<UserContentControllerIdentifier>&);
     void disableServiceWorkers();
 
     WebsiteDataStore& websiteDataStore() const { ASSERT(m_websiteDataStore); return *m_websiteDataStore; }
@@ -522,6 +525,7 @@ private:
     struct ServiceWorkerInformation {
         WebPageProxyIdentifier serviceWorkerPageProxyID;
         WebCore::PageIdentifier serviceWorkerPageID;
+        ServiceWorkerInitializationData initializationData;
     };
     Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
 };

@@ -1,3 +1,20 @@
+2019-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        WKContentRuleLists should block requests from service workers
+        https://bugs.webkit.org/show_bug.cgi?id=201980
+        <rdar://problem/55516735>
+
+        Reviewed by Chris Dumez.
+
+        NSString initWithContentsOfURL doesn't work with https URLs with certificates without a trusted root,
+        so I use an ephemeral NSURLSession instead so I can tell it to accept any connection, even our WebKit httpd server.
+        I also added an API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (-[WKTRSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WTR::TestController::configureContentExtensionForTest):
+
 2019-10-30  Daniel Bates  <dabates@apple.com>
 
         Add pretty printer for CompactPointerTuple

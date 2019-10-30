@@ -393,6 +393,7 @@ public:
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
     void updateServiceWorkerUserAgent(const String& userAgent);
+    const Optional<UserContentControllerIdentifier>& userContentControllerIdentifierForServiceWorkers() const { return m_userContentControllerIDForServiceWorker; }
 #endif
 
 #if PLATFORM(COCOA)
@@ -611,6 +612,7 @@ private:
     bool m_allowsAnySSLCertificateForServiceWorker { false };
     String m_serviceWorkerUserAgent;
     Optional<WebPreferencesStore> m_serviceWorkerPreferences;
+    Optional<UserContentControllerIdentifier> m_userContentControllerIDForServiceWorker;
 #endif
 
     Ref<WebPageGroup> m_defaultPageGroup;

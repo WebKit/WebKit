@@ -78,6 +78,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -722,7 +723,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
                 continue;
 
             serviceWorkerProcessProxy = process.get();
-            serviceWorkerProcessProxy->enableServiceWorkers();
+            serviceWorkerProcessProxy->enableServiceWorkers(userContentControllerIdentifierForServiceWorkers());
 
             RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess reusing an existing web process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
             break;
@@ -1227,6 +1228,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     } else
         process = &processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
 
+    RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
+    
     ASSERT(process);
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
@@ -1237,6 +1240,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
             serviceWorkerProcess->updateServiceWorkerPreferencesStore(*m_serviceWorkerPreferences);
     }
+    if (userContentController)
+        m_userContentControllerIDForServiceWorker = userContentController->identifier();
 #endif
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();

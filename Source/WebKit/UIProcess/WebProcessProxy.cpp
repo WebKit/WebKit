@@ -143,7 +143,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForServiceWorkers(WebProcessPool& pr
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No));
     proxy->m_registrableDomain = WTFMove(registrableDomain);
-    proxy->enableServiceWorkers();
+    proxy->enableServiceWorkers(processPool.userContentControllerIdentifierForServiceWorkers());
     proxy->connect();
     return proxy;
 }
@@ -1541,7 +1541,7 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 #if ENABLE(SERVICE_WORKER)
 void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain }, 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, 0);
 }
 
 void WebProcessProxy::setServiceWorkerUserAgent(const String& userAgent)
@@ -1572,11 +1572,38 @@ void WebProcessProxy::disableServiceWorkers()
     maybeShutDown();
 }
 
-void WebProcessProxy::enableServiceWorkers()
+#if ENABLE(CONTENT_EXTENSIONS)
+static Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListsFromIdentifier(const Optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
+{
+    if (!userContentControllerIdentifier) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto* userContentController = WebUserContentControllerProxy::get(*userContentControllerIdentifier);
+    if (!userContentController) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    return userContentController->contentRuleListData();
+}
+#endif
+
+void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerIdentifier>& userContentControllerIdentifier)
 {
     ASSERT(m_registrableDomain && !m_registrableDomain->isEmpty());
     ASSERT(!m_serviceWorkerInformation);
-    m_serviceWorkerInformation = ServiceWorkerInformation { WebPageProxyIdentifier::generate(), PageIdentifier::generate() };
+    m_serviceWorkerInformation = ServiceWorkerInformation {
+        WebPageProxyIdentifier::generate(),
+        PageIdentifier::generate(),
+        ServiceWorkerInitializationData {
+            userContentControllerIdentifier,
+#if ENABLE(CONTENT_EXTENSIONS)
+            contentRuleListsFromIdentifier(userContentControllerIdentifier),
+#endif
+        },
+    };
 }
 
 } // namespace WebKit

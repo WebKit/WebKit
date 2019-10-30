@@ -60,6 +60,7 @@ class NetworkProcessProxy;
 class WebProcessProxy;
 class WebScriptMessageHandler;
 struct FrameInfoData;
+class WebCompiledContentRuleListData;
 struct WebPageCreationParameters;
 enum class InjectUserScriptImmediately : bool;
 
@@ -104,6 +105,7 @@ public:
     void removeContentRuleList(const String&);
     void removeAllContentRuleLists();
     const HashMap<String, RefPtr<API::ContentRuleList>>& contentExtensionRules() { return m_contentRuleLists; }
+    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleListData();
 #endif
 
     UserContentControllerIdentifier identifier() const { return m_identifier; }

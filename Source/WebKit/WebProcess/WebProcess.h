@@ -35,6 +35,7 @@
 #include "SandboxExtension.h"
 #include "StorageAreaIdentifier.h"
 #include "TextCheckerState.h"
+#include "UserContentControllerIdentifier.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
@@ -109,11 +110,13 @@ class InjectedBundle;
 class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
+struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
 class WebCacheStorageProvider;
+class WebCompiledContentRuleListData;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebLoaderStrategy;
@@ -371,7 +374,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&);
+    void establishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, ServiceWorkerInitializationData&&);
     void registerServiceWorkerClients();
 #endif
 
