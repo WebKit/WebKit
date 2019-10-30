@@ -1,3 +1,21 @@
+2019-10-30  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !object || !isRuby(object->parent()) || is<RenderRubyRun>(*object) || (object->isInline() && (object->isBeforeContent() || object->isAfterContent())) || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == D
+        https://bugs.webkit.org/show_bug.cgi?id=196003
+        <rdar://problem/49219890>
+
+        Reviewed by Antti Koivisto.
+
+        This test case triggered two slightly different issues.
+        1. It's valid to have column flows/sets as the child of the ruby renderer (isRubyChildForNormalRemoval already accepts these type of renderers).
+        2. When the parent finding logic comes back with the insertion point as parent candidate, we can only call the simple internal insert when the multicol context is not present (since the multicol context (sadly) mutates the insertion point).
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attach):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        (WebCore::lastRubyRun):
+
 2019-10-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Create base class common to AccessibilityObject and AXIsolatedTreeNode.

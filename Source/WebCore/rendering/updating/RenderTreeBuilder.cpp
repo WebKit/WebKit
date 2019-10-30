@@ -185,6 +185,11 @@ void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> ch
 {
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
         if (&parent == &parentCandidate) {
+            // Parents inside multicols can't call internal attach directly.
+            if (is<RenderBlockFlow>(parent) && downcast<RenderBlockFlow>(parent).multiColumnFlow()) {
+                blockFlowBuilder().attach(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
+                return;
+            }
             attachToRenderElement(parent, WTFMove(child), beforeChild);
             return;
         }

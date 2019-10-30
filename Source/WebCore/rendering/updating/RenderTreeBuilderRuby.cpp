@@ -48,7 +48,9 @@ static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
         || !isRuby(object->parent())
         || is<RenderRubyRun>(*object)
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == DisplayType::InlineBlock));
+        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == DisplayType::InlineBlock)
+        || object->isRenderMultiColumnFlow()
+        || object->isRenderMultiColumnSet());
 
     return object
         && isRuby(object->parent())
@@ -109,7 +111,7 @@ static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
     if (child && !is<RenderRubyRun>(*child))
         child = child->previousSibling();
     if (!is<RenderRubyRun>(child)) {
-        ASSERT(!child || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
+        ASSERT(!child || child->isBeforeContent() || child == rubyBeforeBlock(ruby) || child->isRenderMultiColumnFlow() || child->isRenderMultiColumnSet());
         return nullptr;
     }
     return downcast<RenderRubyRun>(child);
