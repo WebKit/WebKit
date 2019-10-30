@@ -1,3 +1,12 @@
+2019-10-30  Antti Koivisto  <antti@apple.com>
+
+        Update css/css-display web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=203607
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2019-10-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make testharnessreport.js report the results correctly inside an SVG document

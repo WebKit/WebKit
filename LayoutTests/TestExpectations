@@ -3348,7 +3348,6 @@ webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-details.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-display/display-contents-fieldset-nested-legend.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-first-letter-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/display-contents-svg-elements.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ ImageOnlyFailure ]
@@ -3902,3 +3901,8 @@ webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-posi
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html [ ImageOnlyFailure ]
+
+webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html [ ImageOnlyFailure ]
+webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html [ ImageOnlyFailure ]
+webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1.html [ Skip ]

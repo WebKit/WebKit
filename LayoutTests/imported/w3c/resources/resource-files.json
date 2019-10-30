@@ -194,6 +194,7 @@
         "web-platform-tests/css/css-display/run-in/white-space-applies-to-004.xht",
         "web-platform-tests/css/css-display/run-in/word-spacing-applies-to-004.xht",
         "web-platform-tests/css/css-display/run-in/z-index-applies-to-011.xht",
+        "web-platform-tests/css/css-display/support/red-square.html",
         "web-platform-tests/css/css-grid-1/grid-items/ref-filled-green-100px-square-image.html",
         "web-platform-tests/css/css-grid-1/test-plan/index.html",
         "web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html",

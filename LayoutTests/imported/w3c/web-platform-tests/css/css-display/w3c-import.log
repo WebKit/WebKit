@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-display/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-change-iframe-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-change-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-alignment-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-alignment-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-alignment-002-expected.html
@@ -29,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-block-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-block-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-block-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-blockify-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-button-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-button.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-computed-style.html
@@ -111,6 +116,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-oof-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-oof-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-parsing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-host-whitespace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-host-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-sharing-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-sharing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-state-change-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-state-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-suppression-dynamic-001-expected.html
@@ -135,6 +146,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-tr-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-unusual-html-elements-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-unusual-html-elements-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-inline-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-inline-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-list-item-height-after-dom-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-none-inline-img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html

@@ -1,3 +1,76 @@
+2019-10-30  Antti Koivisto  <antti@apple.com>
+
+        Update css/css-display web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=203607
+
+        Reviewed by Simon Fraser.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-display/META.yml: Added.
+        * web-platform-tests/css/css-display/OWNERS: Removed.
+        * web-platform-tests/css/css-display/display-change-iframe-expected.xht: Added.
+        * web-platform-tests/css/css-display/display-change-iframe.html: Added.
+        * web-platform-tests/css/css-display/display-change-object-iframe-expected.xht: Added.
+        * web-platform-tests/css/css-display/display-change-object-iframe.html: Added.
+        * web-platform-tests/css/css-display/display-contents-blockify-dynamic-expected.txt: Added.
+        * web-platform-tests/css/css-display/display-contents-blockify-dynamic.html: Added.
+        * web-platform-tests/css/css-display/display-contents-details.html:
+        * web-platform-tests/css/css-display/display-contents-fieldset-nested-legend-expected.html:
+        * web-platform-tests/css/css-display/display-contents-shadow-dom-1-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-shadow-dom-1.html: Added.
+        * web-platform-tests/css/css-display/display-contents-shadow-host-whitespace-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-shadow-host-whitespace.html: Added.
+        * web-platform-tests/css/css-display/display-contents-sharing-001-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-sharing-001.html: Added.
+        * web-platform-tests/css/css-display/display-contents-whitespace-inside-inline-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-whitespace-inside-inline.html: Added.
+        * web-platform-tests/css/css-display/display-flow-root-list-item-001-expected.html: Added.
+        * web-platform-tests/css/css-display/display-flow-root-list-item-001.html: Added.
+        * web-platform-tests/css/css-display/display-inline-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-display/display-inline-dynamic-001.html: Added.
+        * web-platform-tests/css/css-display/display-none-inline-img-expected.html: Added.
+        * web-platform-tests/css/css-display/display-none-inline-img.html: Added.
+        * web-platform-tests/css/css-display/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-display/inheritance.html: Added.
+        * web-platform-tests/css/css-display/parsing/display-computed-expected.txt: Added.
+        * web-platform-tests/css/css-display/parsing/display-computed.html: Added.
+        * web-platform-tests/css/css-display/parsing/display-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-display/parsing/display-invalid.html: Added.
+        * web-platform-tests/css/css-display/parsing/display-valid-expected.txt: Added.
+        * web-platform-tests/css/css-display/parsing/display-valid.html: Added.
+        * web-platform-tests/css/css-display/parsing/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-display/support/w3c-import.log.
+        * web-platform-tests/css/css-display/run-in/OWNERS: Removed.
+        * web-platform-tests/css/css-display/run-in/direction-applies-to-011.xht:
+        * web-platform-tests/css/css-display/run-in/font-family-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/font-size-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/font-style-applies-to-004-expected.xht:
+        * web-platform-tests/css/css-display/run-in/letter-spacing-applies-to-004-expected.html:
+        * web-platform-tests/css/css-display/run-in/letter-spacing-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/overflow-applies-to-011.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-001.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-003.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-004.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-006.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-007.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-008.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-009.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-010.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-011.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-012.xht:
+        * web-platform-tests/css/css-display/run-in/run-in-013.xht:
+        * web-platform-tests/css/css-display/run-in/support/w3c-import.log:
+        * web-platform-tests/css/css-display/run-in/table-layout-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/text-indent-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/vertical-align-applies-to-011.xht:
+        * web-platform-tests/css/css-display/run-in/w3c-import.log:
+        * web-platform-tests/css/css-display/run-in/white-space-applies-to-004.xht:
+        * web-platform-tests/css/css-display/run-in/word-spacing-applies-to-004.xht:
+        * web-platform-tests/css/css-display/select-4-option-optgroup-display-none-expected.html: Added.
+        * web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html: Added.
+        * web-platform-tests/css/css-display/support/red-square.html: Added.
+        * web-platform-tests/css/css-display/support/w3c-import.log:
+        * web-platform-tests/css/css-display/w3c-import.log:
+
 2019-10-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make testharnessreport.js report the results correctly inside an SVG document
