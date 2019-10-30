@@ -46,11 +46,9 @@ const unsigned retryTimeOutValueMs = 200;
 }
 
 U2fAuthenticator::U2fAuthenticator(std::unique_ptr<CtapDriver>&& driver)
-    : m_driver(WTFMove(driver))
+    : FidoAuthenticator(WTFMove(driver))
     , m_retryTimer(RunLoop::main(), this, &U2fAuthenticator::retryLastCommand)
 {
-    // FIXME(191520): We need a way to convert std::unique_ptr to UniqueRef.
-    ASSERT(m_driver);
 }
 
 void U2fAuthenticator::makeCredential()
@@ -118,7 +116,7 @@ void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType ty
 
 void U2fAuthenticator::issueCommand(const Vector<uint8_t>& command, CommandType type)
 {
-    m_driver->transact(Vector<uint8_t>(command), [weakThis = makeWeakPtr(*this), type](Vector<uint8_t>&& data) {
+    driver().transact(Vector<uint8_t>(command), [weakThis = makeWeakPtr(*this), type](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;

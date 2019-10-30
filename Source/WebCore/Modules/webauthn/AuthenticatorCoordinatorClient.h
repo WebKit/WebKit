@@ -35,12 +35,13 @@
 namespace WebCore {
 
 class DeferredPromise;
+class Frame;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialData;
 struct PublicKeyCredentialRequestOptions;
 
-using RequestCompletionHandler = CompletionHandler<void(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&)>;
+using RequestCompletionHandler = CompletionHandler<void(WebCore::PublicKeyCredentialData&&, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
 class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
@@ -50,26 +51,9 @@ public:
     AuthenticatorCoordinatorClient() = default;
     virtual ~AuthenticatorCoordinatorClient() = default;
 
-    // Senders.
-    virtual void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;
-    virtual void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) = 0;
-    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
-
-    // Receivers.
-    void requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&);
-    void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
-
-protected:
-    // Only one request is allowed at one time. A new request will cancel any pending request.
-    // A message id that is tied to the request wil be generated each time to prevent mismatching responses.
-    uint64_t setRequestCompletionHandler(RequestCompletionHandler&&);
-    uint64_t addQueryCompletionHandler(QueryCompletionHandler&&);
-
-private:
-    uint64_t m_accumulatedRequestMessageId { 1 };
-    RequestCompletionHandler m_pendingCompletionHandler;
-    uint64_t m_accumulatedQueryMessageId { 1 };
-    HashMap<uint64_t, QueryCompletionHandler> m_pendingQueryCompletionHandlers;
+    virtual void makeCredential(const Frame&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
+    virtual void getAssertion(const Frame&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
+    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) { };
 };
 
 } // namespace WebCore

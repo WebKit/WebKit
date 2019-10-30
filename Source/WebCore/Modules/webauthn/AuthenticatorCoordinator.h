@@ -36,7 +36,7 @@ namespace WebCore {
 class AbortSignal;
 class AuthenticatorCoordinatorClient;
 class BasicCredential;
-class SecurityOrigin;
+class Document;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
@@ -50,8 +50,8 @@ public:
     WEBCORE_EXPORT void setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&&);
 
     // The following methods implement static methods of PublicKeyCredential.
-    void create(const SecurityOrigin&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
-    void discoverFromExternalSource(const SecurityOrigin&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
+    void create(const Document&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
+    void discoverFromExternalSource(const Document&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
     void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
 
 private:

@@ -27,14 +27,14 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Authenticator.h"
+#include "FidoAuthenticator.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
 
 namespace WebKit {
 
 class CtapDriver;
 
-class CtapAuthenticator final : public Authenticator {
+class CtapAuthenticator final : public FidoAuthenticator {
 public:
     static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
     {
@@ -52,7 +52,6 @@ private:
     bool tryDowngrade();
     bool processGoogleLegacyAppIdSupportExtension();
 
-    std::unique_ptr<CtapDriver> m_driver;
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
 };

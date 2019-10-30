@@ -23,62 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebAuthenticationPanelClient.h"
-#import "_WKWebAuthenticationPanelInternal.h"
-
-#import <wtf/RetainPtr.h>
-
-@implementation _WKWebAuthenticationPanel {
-#if ENABLE(WEB_AUTHN)
-    WeakPtr<WebKit::WebAuthenticationPanelClient> _client;
-#endif
-}
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
-- (void)dealloc
-{
-    _panel->~WebAuthenticationPanel();
+#include "Authenticator.h"
 
-    [super dealloc];
-}
+namespace WebKit {
 
-- (NSString *)relyingPartyID
-{
-    return _panel->rpId();
-}
+class CtapDriver;
 
-- (id <_WKWebAuthenticationPanelDelegate>)delegate
-{
-    if (!_client)
-        return nil;
-    return _client->delegate().autorelease();
-}
+class FidoAuthenticator : public Authenticator {
+public:
+    ~FidoAuthenticator() override;
 
-- (void)setDelegate:(id<_WKWebAuthenticationPanelDelegate>)delegate
-{
-    auto client = WTF::makeUniqueRef<WebKit::WebAuthenticationPanelClient>(self, delegate);
-    _client = makeWeakPtr(client.get());
-    _panel->setClient(WTFMove(client));
-}
+protected:
+    explicit FidoAuthenticator(std::unique_ptr<CtapDriver>&&);
+
+    CtapDriver& driver() const;
+    std::unique_ptr<CtapDriver> releaseDriver();
+
+private:
+    std::unique_ptr<CtapDriver> m_driver;
+};
+
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
-
-- (void)cancel
-{
-#if ENABLE(WEB_AUTHN)
-    _panel->cancel();
-#endif
-}
-
-#if ENABLE(WEB_AUTHN)
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_panel;
-}
-#endif
-
-@end

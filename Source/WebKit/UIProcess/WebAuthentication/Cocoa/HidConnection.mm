@@ -63,7 +63,7 @@ HidConnection::HidConnection(IOHIDDeviceRef device)
 
 HidConnection::~HidConnection()
 {
-    ASSERT(m_terminated);
+    ASSERT(!m_isInitialized);
 }
 
 void HidConnection::initialize()
@@ -72,7 +72,7 @@ void HidConnection::initialize()
     IOHIDDeviceScheduleWithRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     m_inputBuffer.resize(kHidMaxPacketSize);
     IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), &reportReceived, this);
-    m_initialized = true;
+    m_isInitialized = true;
 }
 
 void HidConnection::terminate()
@@ -80,12 +80,23 @@ void HidConnection::terminate()
     IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), nullptr, nullptr);
     IOHIDDeviceUnscheduleFromRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     IOHIDDeviceClose(m_device.get(), kIOHIDOptionsTypeNone);
-    m_terminated = true;
+    m_isInitialized = false;
+}
+
+auto HidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
+{
+    ASSERT(m_isInitialized);
+    auto status = IOHIDDeviceSetReport(m_device.get(), kIOHIDReportTypeOutput, kHidReportId, data.data(), data.size());
+    if (status) {
+        LOG_ERROR("Couldn't send report to the authenticator: %d", status);
+        return DataSent::No;
+    }
+    return DataSent::Yes;
 }
 
 void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
-    ASSERT(m_initialized);
+    ASSERT(m_isInitialized);
     auto task = makeBlockPtr([device = m_device, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
@@ -104,7 +115,7 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 
 void HidConnection::registerDataReceivedCallback(DataReceivedCallback&& callback)
 {
-    ASSERT(m_initialized);
+    ASSERT(m_isInitialized);
     ASSERT(!m_inputCallback);
     m_inputCallback = WTFMove(callback);
     consumeReports();

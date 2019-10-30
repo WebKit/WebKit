@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,36 @@
  */
 
 #include "config.h"
-#include "AuthenticatorCoordinatorClient.h"
+#include "FidoAuthenticator.h"
 
 #if ENABLE(WEB_AUTHN)
 
-#include "PublicKeyCredentialData.h"
+namespace WebKit {
 
-namespace WebCore {
-
-void AuthenticatorCoordinatorClient::requestReply(uint64_t messageId, const WebCore::PublicKeyCredentialData& data, const WebCore::ExceptionData& exception)
+FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
+    : m_driver(WTFMove(driver))
 {
-    if (messageId != m_accumulatedRequestMessageId - 1)
-        return;
-    m_pendingCompletionHandler(data, exception);
+    ASSERT(m_driver);
 }
 
-void AuthenticatorCoordinatorClient::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)
+FidoAuthenticator::~FidoAuthenticator()
 {
-    auto handler = m_pendingQueryCompletionHandlers.take(messageId);
-    handler(result);
+    if (m_driver)
+        m_driver->cancel();
 }
 
-uint64_t AuthenticatorCoordinatorClient::setRequestCompletionHandler(RequestCompletionHandler&& handler)
+CtapDriver& FidoAuthenticator::driver() const
 {
-    if (m_pendingCompletionHandler)
-        m_pendingCompletionHandler({ }, { NotAllowedError, "This request has been voided by a new request."_s });
-
-    m_pendingCompletionHandler = WTFMove(handler);
-    return m_accumulatedRequestMessageId++;
+    ASSERT(m_driver);
+    return *m_driver;
 }
 
-uint64_t AuthenticatorCoordinatorClient::addQueryCompletionHandler(QueryCompletionHandler&& handler)
+std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
 {
-    uint64_t messageId = m_accumulatedQueryMessageId++;
-    auto addResult = m_pendingQueryCompletionHandlers.add(messageId, WTFMove(handler));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    return messageId;
+    ASSERT(m_driver);
+    return WTFMove(m_driver);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

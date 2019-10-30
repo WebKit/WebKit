@@ -83,6 +83,7 @@ struct MockWebAuthenticationConfiguration {
         bool fastDataArrival { false };
         bool continueAfterErrorData { false };
         bool canDowngrade { false };
+        bool expectCancel { false };
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<HidConfiguration> decode(Decoder&);
@@ -159,7 +160,7 @@ Optional<MockWebAuthenticationConfiguration::LocalConfiguration> MockWebAuthenti
 template<class Encoder>
 void MockWebAuthenticationConfiguration::HidConfiguration::encode(Encoder& encoder) const
 {
-    encoder << payloadBase64 << stage << subStage << error << isU2f << keepAlive << fastDataArrival << continueAfterErrorData << canDowngrade;
+    encoder << payloadBase64 << stage << subStage << error << isU2f << keepAlive << fastDataArrival << continueAfterErrorData << canDowngrade << expectCancel;
 }
 
 template<class Decoder>
@@ -183,6 +184,8 @@ Optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthentica
     if (!decoder.decode(result.continueAfterErrorData))
         return WTF::nullopt;
     if (!decoder.decode(result.canDowngrade))
+        return WTF::nullopt;
+    if (!decoder.decode(result.expectCancel))
         return WTF::nullopt;
     return result;
 }

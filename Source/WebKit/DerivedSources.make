@@ -147,7 +147,6 @@ MESSAGE_RECEIVERS = \
     ViewUpdateDispatcher \
     VisitedLinkStore \
     VisitedLinkTableController \
-    WebAuthenticatorCoordinator \
     WebAuthenticatorCoordinatorProxy \
     WebAutomationSession \
     WebAutomationSessionProxy \

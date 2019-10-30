@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(const PublicKeyCredentialData& data)
+RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(PublicKeyCredentialData&& data)
 {
     if (!data.rawId || !data.clientDataJSON)
         return nullptr;

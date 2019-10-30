@@ -64,7 +64,7 @@ void FidoService::continueAfterGetInfo(WeakPtr<CtapDriver>&& weakDriver, Vector<
     if (!weakDriver)
         return;
 
-    std::unique_ptr<CtapDriver> driver = m_drivers.take(weakDriver.get());
+    auto driver = m_drivers.take(weakDriver.get());
     if (!driver || !observer() || response.isEmpty())
         return;
 

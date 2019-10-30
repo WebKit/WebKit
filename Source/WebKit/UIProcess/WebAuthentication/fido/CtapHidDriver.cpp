@@ -68,9 +68,11 @@ void CtapHidDriver::Worker::transact(fido::FidoHidMessage&& requestMessage, Mess
 
 void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
 {
-    ASSERT(m_state == State::Write);
+    if (m_state != State::Write)
+        return;
     if (sent != HidConnection::DataSent::Yes) {
-        returnMessage(WTF::nullopt);
+        m_responseMessage = WTF::nullopt;
+        returnMessage();
         return;
     }
 
@@ -95,7 +97,8 @@ void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
 
 void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
 {
-    ASSERT(m_state == State::Read);
+    if (m_state != State::Read)
+        return;
     if (!m_responseMessage) {
         m_responseMessage = FidoHidMessage::createFromSerializedData(data);
         // The first few reports could be for other applications, and therefore ignore those.
@@ -107,7 +110,8 @@ void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
     } else {
         if (!m_responseMessage->addContinuationPacket(data)) {
             LOG_ERROR("Couldn't parse a hid continuation packet.");
-            returnMessage(WTF::nullopt);
+            m_responseMessage = WTF::nullopt;
+            returnMessage();
             return;
         }
     }
@@ -119,16 +123,37 @@ void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
             m_responseMessage.reset();
             return;
         }
-        returnMessage(WTFMove(m_responseMessage));
+        returnMessage();
         return;
     }
 }
 
-void CtapHidDriver::Worker::returnMessage(Optional<fido::FidoHidMessage>&& message)
+void CtapHidDriver::Worker::returnMessage()
 {
-    m_state = State::Idle;
+    // Reset state before calling the response callback to avoid being deleted.
+    auto callback = WTFMove(m_callback);
+    auto message = WTFMove(m_responseMessage);
+    reset();
+    callback(WTFMove(message));
+}
+
+void CtapHidDriver::Worker::reset()
+{
     m_connection->unregisterDataReceivedCallback();
-    m_callback(WTFMove(message));
+    m_callback = nullptr;
+    m_responseMessage = WTF::nullopt;
+    m_requestMessage = WTF::nullopt;
+    m_state = State::Idle;
+}
+
+// This implements CTAPHID_CANCEL which violates the transaction semantics:
+// https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#usb-hid-cancel
+void CtapHidDriver::Worker::cancel(fido::FidoHidMessage&& requestMessage)
+{
+    reset();
+    m_connection->invalidateCache();
+    ASSERT(requestMessage.numPackets() == 1);
+    m_connection->sendSync(requestMessage.popNextPacket());
 }
 
 CtapHidDriver::CtapHidDriver(UniqueRef<HidConnection>&& connection)
@@ -167,7 +192,8 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 
 void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& message)
 {
-    ASSERT(m_state == State::AllocateChannel);
+    if (m_state != State::AllocateChannel)
+        return;
     if (!message) {
         returnResponse({ });
         return;
@@ -193,7 +219,7 @@ void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& mes
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 16;
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 8;
     m_channelId |= static_cast<uint32_t>(payload[index]);
-    // FIXME(191534): Check the reset of the payload.
+    // FIXME(191534): Check the rest of the payload.
     auto cmd = FidoHidMessage::create(m_channelId, protocol() == ProtocolVersion::kCtap ? FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
     ASSERT(cmd);
     m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](Optional<FidoHidMessage>&& response) mutable {
@@ -206,7 +232,8 @@ void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& mes
 
 void CtapHidDriver::continueAfterResponseReceived(Optional<fido::FidoHidMessage>&& message)
 {
-    ASSERT(m_state == State::Ready);
+    if (m_state != State::Ready)
+        return;
     ASSERT(!message || message->channelId() == m_channelId);
     returnResponse(message ? message->getMessagePayload() : Vector<uint8_t>());
 }
@@ -214,8 +241,28 @@ void CtapHidDriver::continueAfterResponseReceived(Optional<fido::FidoHidMessage>
 void CtapHidDriver::returnResponse(Vector<uint8_t>&& response)
 {
     // Reset state before calling the response callback to avoid being deleted.
+    auto responseCallback = WTFMove(m_responseCallback);
+    reset();
+    responseCallback(WTFMove(response));
+}
+
+void CtapHidDriver::reset()
+{
+    m_responseCallback = nullptr;
+    m_channelId = fido::kHidBroadcastChannel;
     m_state = State::Idle;
-    m_responseCallback(WTFMove(response));
+}
+
+void CtapHidDriver::cancel()
+{
+    if (m_state == State::Idle || protocol() != ProtocolVersion::kCtap)
+        return;
+    // Cancel any outstanding requests.
+    if (m_state == State::Ready) {
+        auto cancelCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kCancel, { });
+        m_worker->cancel(WTFMove(*cancelCommand));
+    }
+    reset();
 }
 
 } // namespace WebKit

@@ -182,7 +182,7 @@ WebPage* WebFrame::page() const
     return nullptr;
 }
 
-WebFrame* WebFrame::fromCoreFrame(Frame& frame)
+WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
 {
     auto* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
     if (!webFrameLoaderClient)

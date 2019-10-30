@@ -35,19 +35,19 @@ namespace WebCore {
 class AuthenticatorResponse;
 
 struct PublicKeyCredentialData {
-    mutable RefPtr<ArrayBuffer> rawId;
+    RefPtr<ArrayBuffer> rawId;
 
     // AuthenticatorResponse
     bool isAuthenticatorAttestationResponse;
-    mutable RefPtr<ArrayBuffer> clientDataJSON;
+    RefPtr<ArrayBuffer> clientDataJSON;
 
     // AuthenticatorAttestationResponse
-    mutable RefPtr<ArrayBuffer> attestationObject;
+    RefPtr<ArrayBuffer> attestationObject;
 
     // AuthenticatorAssertionResponse
-    mutable RefPtr<ArrayBuffer> authenticatorData;
-    mutable RefPtr<ArrayBuffer> signature;
-    mutable RefPtr<ArrayBuffer> userHandle;
+    RefPtr<ArrayBuffer> authenticatorData;
+    RefPtr<ArrayBuffer> signature;
+    RefPtr<ArrayBuffer> userHandle;
 
     // Extensions
     Optional<bool> appid;

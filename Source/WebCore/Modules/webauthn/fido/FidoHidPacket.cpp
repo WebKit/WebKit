@@ -99,7 +99,9 @@ Vector<uint8_t> FidoHidInitPacket::getSerializedData() const
     serialized.append((m_payloadLength >> 8) & 0xff);
     serialized.append(m_payloadLength & 0xff);
     serialized.append(m_data.begin(), m_data.size());
+    auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
+    memset(serialized.data() + offset, 0, kHidPacketSize - offset);
 
     return serialized;
 }
@@ -147,7 +149,9 @@ Vector<uint8_t> FidoHidContinuationPacket::getSerializedData() const
     serialized.append(m_channelId & 0xff);
     serialized.append(m_sequence);
     serialized.append(m_data.begin(), m_data.size());
+    auto offset = serialized.size();
     serialized.grow(kHidPacketSize);
+    memset(serialized.data() + offset, 0, kHidPacketSize - offset);
 
     return serialized;
 }

@@ -60,17 +60,29 @@ MockHidConnection::MockHidConnection(IOHIDDeviceRef device, const MockWebAuthent
 
 void MockHidConnection::initialize()
 {
-    m_initialized = true;
+    setIsInitialized(true);
 }
 
 void MockHidConnection::terminate()
 {
-    m_terminated = true;
+    setIsInitialized(false);
+}
+
+auto MockHidConnection::sendSync(const Vector<uint8_t>& data) -> DataSent
+{
+    ASSERT(isInitialized());
+    if (m_configuration.hid->expectCancel) {
+        auto message = FidoHidMessage::createFromSerializedData(data);
+        ASSERT_UNUSED(message, message);
+        ASSERT(message->cmd() == FidoHidDeviceCommand::kCancel);
+        LOG_ERROR("Request cancelled.");
+    }
+    return DataSent::Yes;
 }
 
 void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
-    ASSERT(m_initialized);
+    ASSERT(isInitialized());
     auto task = makeBlockPtr([weakThis = makeWeakPtr(*this), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
         RunLoop::main().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
@@ -228,6 +240,8 @@ void MockHidConnection::feedReports()
     }
 
     if (m_stage == Mock::HidStage::Request && m_subStage == Mock::HidSubStage::Msg) {
+        if (m_configuration.hid->expectCancel)
+            return;
         if (m_configuration.hid->keepAlive) {
             m_configuration.hid->keepAlive = false;
             FidoHidInitPacket initPacket(m_currentChannel, FidoHidDeviceCommand::kKeepAlive, { CtapKeepAliveStatusProcessing }, 1);

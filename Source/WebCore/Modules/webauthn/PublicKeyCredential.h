@@ -46,7 +46,7 @@ public:
         Optional<bool> appid;
     };
 
-    static RefPtr<PublicKeyCredential> tryCreate(const PublicKeyCredentialData&);
+    static RefPtr<PublicKeyCredential> tryCreate(PublicKeyCredentialData&&);
 
     ArrayBuffer* rawId() const { return m_rawId.ptr(); }
     AuthenticatorResponse* response() const { return m_response.ptr(); }

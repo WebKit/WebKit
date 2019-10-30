@@ -41,14 +41,15 @@ class CtapDriver : public CanMakeWeakPtr<CtapDriver> {
 public:
     using ResponseCallback = Function<void(Vector<uint8_t>&&)>;
 
-    CtapDriver() = default;
     virtual ~CtapDriver() = default;
 
     void setProtocol(fido::ProtocolVersion protocol) { m_protocol = protocol; }
 
     virtual void transact(Vector<uint8_t>&& data, ResponseCallback&&) = 0;
+    virtual void cancel() { };
 
 protected:
+    CtapDriver() = default;
     fido::ProtocolVersion protocol() const { return m_protocol; }
 
 private:
