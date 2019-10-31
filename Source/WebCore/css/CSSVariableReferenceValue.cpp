@@ -30,8 +30,8 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
-#include "PropertyCascade.h"
 #include "RenderStyle.h"
+#include "StyleBuilder.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -67,7 +67,7 @@ static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParser
     ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
 
     // Apply this variable first, in case it is still unresolved
-    builderState.cascade().applyCustomProperty(variableName);
+    builderState.builder().applyCustomProperty(variableName);
 
     // Apply fallback to detect cycles
     Vector<CSSParserToken> fallbackResult;

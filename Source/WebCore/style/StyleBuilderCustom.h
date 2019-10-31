@@ -1612,7 +1612,8 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
         if (primitiveValue.isLength()) {
             size = primitiveValue.computeLength<float>(CSSToLengthConversionData(&builderState.parentStyle(), &builderState.rootElementStyle(), builderState.document().renderView(), 1.0f, true));
-            builderState.styleResolver().state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
+            if (primitiveValue.isViewportPercentageLength())
+                builderState.style().setHasViewportUnits();
         } else if (primitiveValue.isPercentage())
             size = (primitiveValue.floatValue() * parentSize) / 100.0f;
         else if (primitiveValue.isCalculatedPercentageWithLength()) {

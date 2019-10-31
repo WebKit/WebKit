@@ -67,12 +67,12 @@
 #include "HashTools.h"
 // FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
 #include "Pair.h"
-#include "PropertyCascade.h"
 #include "Rect.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
+#include "StyleBuilder.h"
 #include "StyleBuilderConverter.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"

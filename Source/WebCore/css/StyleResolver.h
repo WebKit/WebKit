@@ -63,7 +63,6 @@ class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;
 class Node;
-class RenderScrollbar;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
@@ -80,13 +79,8 @@ class StyleSheet;
 class StyleSheetList;
 class StyledElement;
 class SVGElement;
-class SVGSVGElement;
 class ViewportStyleResolver;
 struct ResourceLoaderOptions;
-
-namespace Style {
-class PropertyCascade;
-}
 
 // MatchOnlyUserAgentRules is used in media queries, where relative units
 // are interpreted according to the document root element style, and styled only
@@ -163,13 +157,7 @@ public:
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, std::unique_ptr<RenderStyle>);
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
-    void updateFont(Style::PropertyCascade&);
     void initializeFontStyle();
-
-    void setFontSize(FontCascadeDescription&, float size);
-
-    bool useSVGZoomRules() const;
-    bool useSVGZoomRulesForLength() const;
 
     static bool colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue&);
     Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
@@ -205,13 +193,6 @@ public:
     bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
 
 private:
-    // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
-    void checkForGenericFamilyChange(RenderStyle&, const RenderStyle* parentStyle);
-    void checkForZoomChange(RenderStyle&, const RenderStyle* parentStyle);
-#if ENABLE(TEXT_AUTOSIZING)
-    void checkForTextSizeAdjust(RenderStyle&);
-#endif
-
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
     void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
     
@@ -246,16 +227,11 @@ public:
         const RenderStyle* parentStyle() const { return m_parentStyle; }
         const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
-        void setFontSizeHasViewportUnits(bool hasViewportUnits) { m_fontSizeHasViewportUnits = hasViewportUnits; }
-        bool fontSizeHasViewportUnits() const { return m_fontSizeHasViewportUnits; }
-
         void cacheBorderAndBackground();
         bool hasUAAppearance() const { return m_hasUAAppearance; }
         BorderData borderData() const { return m_borderData; }
         FillLayer backgroundData() const { return m_backgroundData; }
         const Color& backgroundColor() const { return m_backgroundColor; }
-
-        bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
 
         const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
 
@@ -278,7 +254,6 @@ public:
 
         CSSToLengthConversionData m_cssToLengthConversionData;
 
-        bool m_fontSizeHasViewportUnits { false };
         bool m_hasUAAppearance { false };
     };
 

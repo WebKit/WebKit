@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -32,7 +32,6 @@
 
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
-#include "CSSCustomPropertyValue.h"
 #include "CSSDefaultStyleSheets.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontSelector.h"
@@ -51,7 +50,6 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueList.h"
-#include "CSSValuePool.h"
 #include "CachedResourceLoader.h"
 #include "ElementRuleCollector.h"
 #include "FilterOperation.h"
@@ -73,9 +71,7 @@
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
-#include "PaintWorkletGlobalScope.h"
 #include "Pair.h"
-#include "PropertyCascade.h"
 #include "Quirks.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
@@ -87,11 +83,11 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SharedStringHash.h"
+#include "StyleBuilder.h"
 #include "StyleColor.h"
 #include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
@@ -116,8 +112,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
 inline void StyleResolver::State::cacheBorderAndBackground()
 {
@@ -363,22 +357,8 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     state.setStyle(RenderStyle::clonePtr(*elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(*elementStyle));
 
-    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author });
-
-    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
-
-    // If our font got dirtied, update it now.
-    updateFont(cascade);
-
-    // Now resolve remaining custom properties and the rest, in any order
-    cascade.applyCustomProperties();
-
-    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
-
-    // If our font got dirtied by one of the non-essential font props, update it a second time.
-    updateFont(cascade);
-
-    cascade.applyDeferredProperties();
+    Style::Builder builder(*this, result, { Style::CascadeLevel::Author });
+    builder.applyAllProperties();
 
     adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr, nullptr);
 
@@ -563,19 +543,8 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     auto& result = collector.matchResult();
 
-    Style::PropertyCascade cascade(*this, result, { Style::CascadeLevel::Author });
-
-    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
-
-    // If our font got dirtied, update it now.
-    updateFont(cascade);
-
-    // Now resolve remaining custom properties and the rest, in any order
-    cascade.applyCustomProperties();
-
-    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
-
-    cascade.applyDeferredProperties();
+    Style::Builder builder(*this, result, { Style::CascadeLevel::Author });
+    builder.applyAllProperties();
 
     // Now return the style.
     return m_state.takeStyle();
@@ -678,16 +647,6 @@ static bool isScrollableOverflow(Overflow overflow)
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
 }
 #endif
-
-void StyleResolver::adjustStyleForInterCharacterRuby()
-{
-    RenderStyle* style = m_state.style();
-    if (style->rubyPosition() != RubyPosition::InterCharacter || !m_state.element() || !m_state.element()->hasTagName(rtTag))
-        return;
-    style->setTextAlign(TextAlignMode::Center);
-    if (style->isHorizontalWritingMode())
-        style->setWritingMode(LeftToRightWritingMode);
-}
 
 static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 {
@@ -1141,38 +1100,6 @@ void StyleResolver::adjustRenderStyleForSiteSpecificQuirks(RenderStyle& style, c
     }
 }
 
-static void checkForOrientationChange(RenderStyle& style)
-{
-    auto [fontOrientation, glyphOrientation] = style.fontAndGlyphOrientation();
-
-    const auto& fontDescription = style.fontDescription();
-    if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
-        return;
-
-    auto newFontDescription = fontDescription;
-    newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
-    newFontDescription.setOrientation(fontOrientation);
-    style.setFontDescription(WTFMove(newFontDescription));
-}
-
-void StyleResolver::updateFont(Style::PropertyCascade& cascade)
-{
-    auto& style = *m_state.style();
-    if (!cascade.builderState().fontDirty() && style.fontCascade().fonts())
-        return;
-
-#if ENABLE(TEXT_AUTOSIZING)
-    checkForTextSizeAdjust(style);
-#endif
-    checkForGenericFamilyChange(style, m_state.parentStyle());
-    checkForZoomChange(style, m_state.parentStyle());
-    checkForOrientationChange(style);
-    style.fontCascade().update(&document().fontSelector());
-    if (m_state.fontSizeHasViewportUnits())
-        style.setHasViewportUnits(true);
-
-    cascade.builderState().clearFontDirty();
-}
 
 Vector<RefPtr<StyleRule>> StyleResolver::styleRulesForElement(const Element* element, unsigned rulesToInclude)
 {
@@ -1325,63 +1252,26 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        Style::PropertyCascade cascade(*this, matchResult, { Style::CascadeLevel::UserAgent }, includedProperties);
-
-        cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
-        adjustStyleForInterCharacterRuby();
-
-#if ENABLE(DARK_MODE_CSS)
-        // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-        cascade.applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
-#endif
-
-        cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
-
-        // If our font got dirtied, update it now.
-        updateFont(cascade);
-
-        // Now resolve remaining custom properties and the rest, in any order
-        cascade.applyCustomProperties();
-
-        cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
+        Style::Builder builder(*this, matchResult, { Style::CascadeLevel::UserAgent }, includedProperties);
+        builder.applyAllProperties();
 
         state.cacheBorderAndBackground();
     }
 
-    Style::PropertyCascade cascade(*this, matchResult, Style::allCascadeLevels(), includedProperties);
+    Style::Builder builder(*this, matchResult, Style::allCascadeLevels(), includedProperties);
 
-    cascade.applyProperties(CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
-    adjustStyleForInterCharacterRuby();
-
-#if ENABLE(DARK_MODE_CSS)
-    // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-    cascade.applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
-#endif
-
-    cascade.applyProperties(firstCSSProperty, lastHighPriorityProperty);
+    // High priority properties may affect resolution of other properties (they are mostly font related).
+    builder.applyHighPriorityProperties();
 
     // If the effective zoom value changes, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
-    // If our font got dirtied, update it now.
-    updateFont(cascade);
-
     // If the font changed, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->fontDescription() != state.style()->fontDescription())
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
-    // Now resolve remaining custom properties and the rest, in any order
-    cascade.applyCustomProperties();
-
-    cascade.applyProperties(firstLowPriorityProperty, lastCSSProperty);
-
-    // Finally, some properties must be applied in the order they were parsed.
-    // There are some CSS properties that affect the same RenderStyle values,
-    // so to preserve behavior, we queue them up during cascade and flush here.
-    cascade.applyDeferredProperties();
-
-    ASSERT(!cascade.builderState().fontDirty());
+    builder.applyLowPriorityProperties();
 
     if (cacheItem || !cacheHash)
         return;
@@ -1404,28 +1294,8 @@ void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* valu
         return;
 
     MatchResult matchResult;
-    Style::PropertyCascade cascade(*this, matchResult, { });
-    cascade.applyProperty(id, *value);
-    updateFont(cascade);
-}
-
-// SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
-// of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
-// multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
-// Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
-// need to respect the scaling. RenderBox (the parent class of RenderSVGRoot) grabs values like
-// width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
-// if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
-// properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
-bool StyleResolver::useSVGZoomRules() const
-{
-    return m_state.element() && m_state.element()->isSVGElement();
-}
-
-// Scale with/height properties on inline SVG root.
-bool StyleResolver::useSVGZoomRulesForLength() const
-{
-    return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
+    Style::Builder builder(*this, matchResult, { });
+    builder.applyPropertyValue(id, *value);
 }
 
 RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
@@ -1447,83 +1317,19 @@ RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
     return nullptr;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-void StyleResolver::checkForTextSizeAdjust(RenderStyle& style)
-{
-    if (style.textSizeAdjust().isAuto()
-        || !settings().textAutosizingEnabled()
-        || (settings().textAutosizingUsesIdempotentMode() && !style.textSizeAdjust().isNone()))
-        return;
-
-    auto newFontDescription = style.fontDescription();
-    if (!style.textSizeAdjust().isNone())
-        newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style.textSizeAdjust().multiplier());
-    else
-        newFontDescription.setComputedSize(newFontDescription.specifiedSize());
-    style.setFontDescription(WTFMove(newFontDescription));
-}
-#endif
-
-void StyleResolver::checkForZoomChange(RenderStyle& style, const RenderStyle* parentStyle)
-{
-    if (!parentStyle)
-        return;
-
-    if (style.effectiveZoom() == parentStyle->effectiveZoom() && style.textZoom() == parentStyle->textZoom())
-        return;
-
-    const auto& childFont = style.fontDescription();
-    auto newFontDescription = childFont;
-    setFontSize(newFontDescription, childFont.specifiedSize());
-    style.setFontDescription(WTFMove(newFontDescription));
-}
-
-void StyleResolver::checkForGenericFamilyChange(RenderStyle& style, const RenderStyle* parentStyle)
-{
-    const auto& childFont = style.fontDescription();
-
-    if (childFont.isAbsoluteSize() || !parentStyle)
-        return;
-
-    const auto& parentFont = parentStyle->fontDescription();
-    if (childFont.useFixedDefaultSize() == parentFont.useFixedDefaultSize())
-        return;
-    // We know the parent is monospace or the child is monospace, and that font
-    // size was unspecified. We want to scale our font size as appropriate.
-    // If the font uses a keyword size, then we refetch from the table rather than
-    // multiplying by our scale factor.
-    float size;
-    if (CSSValueID sizeIdentifier = childFont.keywordSizeAsIdentifier())
-        size = Style::fontSizeForKeyword(sizeIdentifier, childFont.useFixedDefaultSize(), document());
-    else {
-        float fixedScaleFactor = (settings().defaultFixedFontSize() && settings().defaultFontSize())
-            ? static_cast<float>(settings().defaultFixedFontSize()) / settings().defaultFontSize()
-            : 1;
-        size = parentFont.useFixedDefaultSize() ?
-                childFont.specifiedSize() / fixedScaleFactor :
-                childFont.specifiedSize() * fixedScaleFactor;
-    }
-
-    auto newFontDescription = childFont;
-    setFontSize(newFontDescription, size);
-    style.setFontDescription(WTFMove(newFontDescription));
-}
-
 void StyleResolver::initializeFontStyle()
 {
     FontCascadeDescription fontDescription;
     fontDescription.setRenderingMode(settings().fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
-    setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
+
+    auto size = Style::fontSizeForKeyword(CSSValueMedium, false, document());
+    fontDescription.setSpecifiedSize(size);
+    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(m_state.element()), m_state.style(), document()));
+
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
     style()->setFontDescription(WTFMove(fontDescription));
-}
-
-void StyleResolver::setFontSize(FontCascadeDescription& fontDescription, float size)
-{
-    fontDescription.setSpecifiedSize(size);
-    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), m_state.style(), document()));
 }
 
 bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue& value)

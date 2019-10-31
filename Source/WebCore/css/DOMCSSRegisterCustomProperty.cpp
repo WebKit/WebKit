@@ -33,7 +33,7 @@
 #include "CSSTokenizer.h"
 #include "DOMCSSNamespace.h"
 #include "Document.h"
-#include "PropertyCascade.h"
+#include "StyleBuilder.h"
 #include "StyleBuilderConverter.h"
 #include <wtf/text/WTFString.h>
 
@@ -60,8 +60,8 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
             return Exception { SyntaxError, "The given initial value must be computationally independent." };
 
         MatchResult matchResult;
-        Style::PropertyCascade dummyCascade(styleResolver, matchResult, { });
-        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyCascade.builderState(), strictCSSParserContext());
+        Style::Builder dummyBuilder(styleResolver, matchResult, { });
+        initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), strictCSSParserContext());
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax." };

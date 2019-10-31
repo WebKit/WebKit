@@ -39,13 +39,13 @@ class StyleResolver;
 
 namespace Style {
 
-class PropertyCascade;
+class Builder;
 
 class BuilderState {
 public:
-    BuilderState(PropertyCascade&, StyleResolver&);
+    BuilderState(Builder&, StyleResolver&);
 
-    PropertyCascade& cascade() { return m_cascade; }
+    Builder& builder() { return m_builder; }
     StyleResolver& styleResolver() { return m_styleResolver; }
 
     RenderStyle& style() { return m_style; }
@@ -64,7 +64,6 @@ public:
 
     bool fontDirty() const { return m_fontDirty; }
     void setFontDirty() { m_fontDirty = true; }
-    void clearFontDirty() { m_fontDirty = false; }
 
     const FontCascadeDescription& fontDescription() { return m_style.fontDescription(); }
     const FontCascadeDescription& parentFontDescription() { return m_parentStyle.fontDescription(); }
@@ -85,9 +84,19 @@ public:
     CSSToStyleMap& styleMap() { return m_styleMap; }
 
 private:
-    friend class PropertyCascade;
+    friend class Builder;
 
-    PropertyCascade& m_cascade;
+    void adjustStyleForInterCharacterRuby();
+
+    void updateFont();
+#if ENABLE(TEXT_AUTOSIZING)
+    void updateFontForTextSizeAdjust();
+#endif
+    void updateFontForZoomChange();
+    void updateFontForGenericFamilyChange();
+    void updateFontForOrientationChange();
+
+    Builder& m_builder;
 
     CSSToStyleMap m_styleMap;
     CSSToLengthConversionData m_cssToLengthConversionData;

@@ -42,10 +42,10 @@
 #include "Document.h"
 #include "Element.h"
 #include "Page.h"
-#include "PropertyCascade.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
 #include "Settings.h"
+#include "StyleBuilder.h"
 #include "StyleColor.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
@@ -234,7 +234,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     CSSPropertyParser::collectParsedCustomPropertyValueDependencies(syntax, false, dependencies, resolvedData->tokens(), m_context);
 
     for (auto id : dependencies)
-        builderState.cascade().applyProperties(id, id);
+        builderState.builder().applyProperty(id);
 
     return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), builderState, m_context);
 }

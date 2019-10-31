@@ -4843,6 +4843,7 @@
 		E4ABABF32368B95900FA4345 /* StyleBuilderState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABABF22368B95800FA4345 /* StyleBuilderState.h */; };
 		E4ABABF52368C6EF00FA4345 /* CascadeLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABABF42368C6EF00FA4345 /* CascadeLevel.h */; };
 		E4ABAC04236AE95900FA4345 /* StyleBuilderGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */; };
+		E4ABAC06236B016D00FA4345 /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABAC05236B016C00FA4345 /* StyleBuilder.h */; };
 		E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1517D1BB950009FB31 /* ElementIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -15180,6 +15181,8 @@
 		E4ABABF22368B95800FA4345 /* StyleBuilderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderState.h; sourceTree = "<group>"; };
 		E4ABABF42368C6EF00FA4345 /* CascadeLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CascadeLevel.h; sourceTree = "<group>"; };
 		E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderGenerated.h; sourceTree = "<group>"; };
+		E4ABAC05236B016C00FA4345 /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
+		E4ABAC07236B018100FA4345 /* StyleBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBuilder.cpp; sourceTree = "<group>"; };
 		E4AE7C1517D1BB950009FB31 /* ElementIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIterator.h; sourceTree = "<group>"; };
 		E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAncestorIterator.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
@@ -26958,6 +26961,8 @@
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
 				E4ABABE52361A34200FA4345 /* PropertyCascade.cpp */,
 				E4ABABE22361A32900FA4345 /* PropertyCascade.h */,
+				E4ABAC07236B018100FA4345 /* StyleBuilder.cpp */,
+				E4ABAC05236B016C00FA4345 /* StyleBuilder.h */,
 				83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */,
 				835D363619FF6193004C93AB /* StyleBuilderCustom.h */,
 				E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */,
@@ -30572,6 +30577,7 @@
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				93A806201E03B585008A1F26 /* JSLongRange.h in Headers */,
 				CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */,
+				E4ABAC06236B016D00FA4345 /* StyleBuilder.h in Headers */,
 				159741DB1B7D140100201C92 /* JSMediaDeviceInfo.h in Headers */,
 				15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,

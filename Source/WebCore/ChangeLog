@@ -1,3 +1,102 @@
+2019-10-31  Antti Koivisto  <antti@apple.com>
+
+        Introduce Style::Builder
+        https://bugs.webkit.org/show_bug.cgi?id=203682
+
+        Reviewed by Zalan Bujtas.
+
+        Encapsulate the style building step into a new Builder class. It owns the cascade and the style building state.
+
+        Move tha applying code from StyleResolver and PropertyCascade there.
+        Move a bunch of font related state from StyleResolver::State to BuilderState.
+
+        * DerivedSources-output.xcfilelist:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::resolveVariableReference):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToCurrentStyle):
+        (WebCore::StyleResolver::initializeFontStyle):
+        (WebCore::StyleResolver::adjustStyleForInterCharacterRuby): Deleted.
+        (WebCore::checkForOrientationChange): Deleted.
+        (WebCore::StyleResolver::updateFont): Deleted.
+        (WebCore::StyleResolver::useSVGZoomRules const): Deleted.
+        (WebCore::StyleResolver::useSVGZoomRulesForLength const): Deleted.
+        (WebCore::StyleResolver::checkForTextSizeAdjust): Deleted.
+        (WebCore::StyleResolver::checkForZoomChange): Deleted.
+        (WebCore::StyleResolver::checkForGenericFamilyChange): Deleted.
+        (WebCore::StyleResolver::setFontSize): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::setFontSizeHasViewportUnits): Deleted.
+        (WebCore::StyleResolver::State::fontSizeHasViewportUnits const): Deleted.
+        (WebCore::StyleResolver::State::useSVGZoomRules const): Deleted.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSPropertyParser.cpp:
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        (WebCore::Style::PropertyCascade::set):
+        (WebCore::Style::PropertyCascade::propertyCascadeForRollback const):
+        (WebCore::Style::PropertyCascade::resolveDirectionAndWritingMode const):
+        (WebCore::Style::PropertyCascade::applyDeferredProperties): Deleted.
+        (WebCore::Style::PropertyCascade::applyProperties): Deleted.
+        (WebCore::Style::PropertyCascade::applyPropertiesImpl): Deleted.
+        (WebCore::Style::PropertyCascade::applyCustomProperties): Deleted.
+        (WebCore::Style::PropertyCascade::applyCustomProperty): Deleted.
+        (WebCore::Style::PropertyCascade::propertyCascadeForRollback): Deleted.
+        (WebCore::Style::PropertyCascade::applyProperty): Deleted.
+        (WebCore::Style::PropertyCascade::resolveValue): Deleted.
+        (WebCore::Style::PropertyCascade::resolvedVariableValue): Deleted.
+        (WebCore::Style::PropertyCascade::resolveDirectionAndWritingMode): Deleted.
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::deferredProperties const):
+        (WebCore::Style::PropertyCascade::customProperties const):
+        (WebCore::Style::PropertyCascade::direction const):
+        (WebCore::Style::PropertyCascade::builderState): Deleted.
+        * style/StyleBuilder.cpp: Added.
+        (WebCore::Style::directionFromStyle):
+        (WebCore::Style::Builder::Builder):
+        (WebCore::Style::Builder::applyAllProperties):
+        (WebCore::Style::Builder::applyHighPriorityProperties):
+        (WebCore::Style::Builder::applyLowPriorityProperties):
+        (WebCore::Style::Builder::applyPropertyValue):
+        (WebCore::Style::Builder::applyDeferredProperties):
+        (WebCore::Style::Builder::applyProperties):
+        (WebCore::Style::Builder::applyPropertiesImpl):
+        (WebCore::Style::Builder::applyCustomProperties):
+        (WebCore::Style::Builder::applyCustomProperty):
+        (WebCore::Style::Builder::applyCascadeProperty):
+        (WebCore::Style::Builder::applyProperty):
+        (WebCore::Style::Builder::resolveValue):
+        (WebCore::Style::Builder::resolvedVariableValue):
+        * style/StyleBuilder.h: Added.
+        (WebCore::Style::Builder::applyProperty):
+        (WebCore::Style::Builder::state):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueFontSize):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::BuilderState):
+        (WebCore::Style::BuilderState::useSVGZoomRules const):
+        (WebCore::Style::BuilderState::useSVGZoomRulesForLength const):
+        (WebCore::Style::BuilderState::adjustStyleForInterCharacterRuby):
+        (WebCore::Style::BuilderState::updateFont):
+        (WebCore::Style::BuilderState::updateFontForTextSizeAdjust):
+        (WebCore::Style::BuilderState::updateFontForZoomChange):
+        (WebCore::Style::BuilderState::updateFontForGenericFamilyChange):
+        (WebCore::Style::BuilderState::updateFontForOrientationChange):
+        (WebCore::Style::BuilderState::setFontSize):
+        * style/StyleBuilderState.h:
+        (WebCore::Style::BuilderState::builder):
+        (WebCore::Style::BuilderState::setFontDirty):
+        (WebCore::Style::BuilderState::cascade): Deleted.
+        (WebCore::Style::BuilderState::clearFontDirty): Deleted.
+
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove unneeded HAVE_TIMINGDATAOPTIONS
