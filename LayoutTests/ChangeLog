@@ -1,3 +1,12 @@
+2019-10-31  Truitt Savell  <tsavell@apple.com>
+
+        Update results for fast/css/hsl-color.html on win
+        https://bugs.webkit.org/show_bug.cgi?id=203592
+
+        Unreviewed test gardening
+
+        * platform/win/fast/css/hsl-color-expected.txt:
+
 2019-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK] Web Inspector: inspector/timeline/timeline-event-*.html are failing
