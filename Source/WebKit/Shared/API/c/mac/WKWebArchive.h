@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,8 +21,32 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
-#if !TARGET_OS_IPHONE
-#include <WebKit/WKWebArchiveRef.h>
+#ifndef WKWebArchive_h
+#define WKWebArchive_h
+
+#include <WebKit/WKBase.h>
+
+#include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+WK_EXPORT WKTypeID WKWebArchiveGetTypeID();
+
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResource, WKArrayRef subresources, WKArrayRef subframeArchives);
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef data);
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef range);
+
+WK_EXPORT WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchive);
+WK_EXPORT WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchive);
+WK_EXPORT WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchive);
+WK_EXPORT WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchive);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // WKWebArchive_h
