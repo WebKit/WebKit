@@ -13,6 +13,6 @@ Removed Breakpoint 1!
 dfgWithoutInline result: 502500
 Hit Breakpoint 2!
 Removed Breakpoint 2!
-PASS
 dfgWithInline result: 504500
+PASS
 

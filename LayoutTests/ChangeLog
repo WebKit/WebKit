@@ -1,3 +1,24 @@
+2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        inspector-protocol/debugger/setBreakpoint-dfg.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=128736
+
+        Reviewed by Devin Rousso.
+
+        Reenabling the test on all platforms. Depending on the platform implementation of EventLoop
+        there is a difference in what is dispatched first when execution is resumed: previously
+        paused inspected script or commands from the inspector front-end. It would not be a problem
+        if InspectorFrontendAPI.dispatchMessageAsync actually delivered messages asynchronously.
+        With the current implementation though response to Debugger.resume
+        is dispatched in the front-end synchronously and the front-end would call InspectoTest.log
+        when inspected script execution is not yet resumed.
+
+        * TestExpectations:
+        * inspector/debugger/setBreakpoint-dfg-expected.txt:
+        * inspector/debugger/setBreakpoint-dfg.html: Print final 'PASS' output after exiting nested loop
+        so that it always appears last.
+        * platform/gtk/TestExpectations:
+
 2019-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Opacity should always serialize as a number

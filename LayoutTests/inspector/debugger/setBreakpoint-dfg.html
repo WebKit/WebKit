@@ -69,13 +69,16 @@ function test()
 
         InspectorProtocol.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointId}, function(responseObject) {
             ProtocolTest.log("Removed Breakpoint " + breakpointsHit + "!");
-            InspectorProtocol.sendCommand("Debugger.resume", {}, function(responseObject) {
-                if (breakpointsHit == 2) {
-                    ProtocolTest.log("PASS");
-                    ProtocolTest.completeTest();
-                }
-            });
+            InspectorProtocol.sendCommand("Debugger.resume");
         });
+    }
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        if (breakpointsHit < 2)
+           return;
+        ProtocolTest.assert(breakpointsHit == 2);
+        ProtocolTest.log("PASS");
+        ProtocolTest.completeTest();
     }
 }
 </script>

@@ -924,7 +924,6 @@ inspector/formatting/source-map-javascript-1.html [ Slow ]
 
 webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
-webkit.org/b/128736 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass ]
 webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [ Failure Pass ]
 
 webkit.org/b/202932 inspector/model/remote-object-weak-collection.html [ Pass Timeout Failure ]
