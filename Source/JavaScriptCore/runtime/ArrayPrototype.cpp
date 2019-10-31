@@ -1487,10 +1487,10 @@ void clearElement(double& element)
 }
 
 template<typename T>
-ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, void* source, unsigned sourceSize, IndexingType sourceType)
+ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, T* source, unsigned sourceSize, IndexingType sourceType)
 {
     if (sourceType != ArrayWithUndecided) {
-        memcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+        gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
         return;
     }
 

@@ -777,16 +777,15 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 
         // We need to zero our unused property space; otherwise the GC might see a
         // stale pointer when we add properties in the future.
-        memset(
+        gcSafeZeroMemory(
             object->inlineStorageUnsafe() + inlineSize(),
-            0,
             (inlineCapacity() - inlineSize()) * sizeof(EncodedJSValue));
 
         Butterfly* butterfly = object->butterfly();
         size_t preCapacity = butterfly->indexingHeader()->preCapacity(this);
         void* base = butterfly->base(preCapacity, beforeOutOfLineCapacity);
         void* startOfPropertyStorageSlots = reinterpret_cast<EncodedJSValue*>(base) + preCapacity;
-        memset(startOfPropertyStorageSlots, 0, (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));
+        gcSafeZeroMemory(static_cast<JSValue*>(startOfPropertyStorageSlots), (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));
         checkOffsetConsistency();
     }
 

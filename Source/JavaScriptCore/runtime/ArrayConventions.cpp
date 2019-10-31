@@ -33,17 +33,7 @@ namespace JSC {
 #if USE(JSVALUE64)
 void clearArrayMemset(WriteBarrier<Unknown>* base, unsigned count)
 {
-#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
-    uint64_t zero = 0;
-    asm volatile (
-        "rep stosq\n\t"
-        : "+D"(base), "+c"(count)
-        : "a"(zero)
-        : "memory"
-        );
-#else // not CPU(X86_64)
-    memset(base, 0, count * sizeof(WriteBarrier<Unknown>));
-#endif // generic CPU
+    gcSafeZeroMemory(base, count * sizeof(WriteBarrier<Unknown>));
 }
 
 void clearArrayMemset(double* base, unsigned count)
