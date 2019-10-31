@@ -115,25 +115,29 @@ Line::RunList Line::close()
     // Join text runs together when possible.
     unsigned index = 1;
     while (index < m_runList.size()) {
+        auto canMergeRuns = [](const auto& previousRun, const auto& currentRun) {
+            // Do not merge runs across inline boxes (<span>foo</span><span>bar</span>)
+            if (&previousRun->layoutBox() !=  &currentRun->layoutBox())
+                return false;
+            // Only text content can be merged.
+            if (!previousRun->isText() || !currentRun->isText())
+                return false;
+            // Merged content needs to be continuous.
+            if (previousRun->hasTrailingCollapsedContent())
+                return false;
+            // Visually empty runs are ignored.
+            if (currentRun->isCollapsedToZeroAdvanceWidth())
+                return false;
+            return true;
+        };
         auto& previousRun = m_runList[index - 1];
-        if (!previousRun->canBeExtended()) {
-            ++index;
-            continue;
-        }
         auto& currentRun = m_runList[index];
-        // Do not merge runs from different boxes (<span>foo</span><span>bar</span>)
-        // or within the same layout box but with preserved \n
-        // (<span>text\n<span <- both the "text" and "\" belong to the same layout box)
-        auto canAppendToPreviousRun = currentRun->isText() && &currentRun->layoutBox() ==  &previousRun->layoutBox();
-        if (!canAppendToPreviousRun) {
-            ++index;
+        if (canMergeRuns(previousRun, currentRun)) {
+            previousRun->expand(*currentRun);
+            m_runList.remove(index);
             continue;
         }
-        // Only text content can be extended atm.
-        ASSERT(previousRun->isText());
-        ASSERT(currentRun->isText());
-        previousRun->expand(*currentRun);
-        m_runList.remove(index);
+        ++index;
     }
 
     if (!m_skipAlignment) {

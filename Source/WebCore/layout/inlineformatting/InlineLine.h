@@ -94,8 +94,8 @@ public:
         void setCollapsesToZeroAdvanceWidth();
 
         bool isCollapsible() const { return m_inlineItem.isText() && downcast<InlineTextItem>(m_inlineItem).isCollapsible(); }
+        bool hasTrailingCollapsedContent() const { return m_hasTrailingCollapsedContent; }
         bool isWhitespace() const;
-        bool canBeExtended() const;
 
         const InlineItem& m_inlineItem;
         Display::Run m_displayRun;
@@ -175,11 +175,6 @@ inline void Line::Run::setIsCollapsed()
     ASSERT(isWhitespace());
     m_isCollapsed = true;
     m_hasTrailingCollapsedContent = true;
-}
-
-inline bool Line::Run::canBeExtended() const
-{
-    return isText() && !m_hasTrailingCollapsedContent;
 }
 
 inline bool Line::Run::isCollapsedToZeroAdvanceWidth() const

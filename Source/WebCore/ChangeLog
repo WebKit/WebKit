@@ -1,5 +1,23 @@
 2019-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Do not merge completely collapsed run with the previous run
+        https://bugs.webkit.org/show_bug.cgi?id=203658
+        <rdar://problem/56769334>
+
+        Reviewed by Antti Koivisto.
+
+        When a whitespace run is completely collapsed (and visually empty), we should not try to merge it with previous text runs.
+        E.g. [before  \nafter] -> [before][  ][\n][after] -> [before ][][after] -> [before ][after]
+                ^content               ^inline items             ^line runs          ^display runs
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::hasTrailingCollapsedContent const):
+        (WebCore::Layout::Line::Run::canBeExtended const): Deleted.
+
+2019-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Set setIsCollapsed on the line item when its content is actually collapsed
         https://bugs.webkit.org/show_bug.cgi?id=203655
         <rdar://problem/56767543>
