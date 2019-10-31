@@ -1,3 +1,14 @@
+2019-10-31  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Display pre-existing API test names in the build summary
+        https://bugs.webkit.org/show_bug.cgi?id=199525
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults): Include the names of pre-existing test failures in summary string and 
+        limit the number of failures to display to NUM_API_FAILURES_TO_DISPLAY.
+
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Expose more WKPreferences SPI

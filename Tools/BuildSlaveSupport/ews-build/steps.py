@@ -1488,6 +1488,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         first_run_failures = getAPITestFailures(first_run_results)
         second_run_failures = getAPITestFailures(second_run_results)
         clean_tree_failures = getAPITestFailures(clean_tree_results)
+        clean_tree_failures_to_display = list(clean_tree_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
+        clean_tree_failures_string = ', '.join(clean_tree_failures_to_display)
 
         failures_with_patch = first_run_failures.intersection(second_run_failures)
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
@@ -1517,7 +1519,9 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
             pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
-            message = 'Found {} pre-existing API test failure{}'.format(len(clean_tree_failures), pluralSuffix)
+            message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+            if len(clean_tree_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
+                message += ' ...'
             if flaky_failures:
                 message += '. Flaky tests: {}'.format(flaky_failures_string)
             self.build.buildFinished([message], SUCCESS)
