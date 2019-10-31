@@ -812,7 +812,10 @@
     (sysctl-name
         "hw.activecpu"
         "hw.availcpu"
+        "hw.cachelinesize"
+        "hw.cputype"
         "hw.l2cachesize"
+        "hw.logicalcpu"
         "hw.logicalcpu_max"
         "hw.ncpu"
         "hw.machine"

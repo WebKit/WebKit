@@ -1,3 +1,12 @@
+2019-10-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix some sysctl read violations in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=203632
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-30  Dean Jackson  <dino@apple.com>
 
         REGRESSION(r251568) If we didn't start a Service Worker, don't try talking to it
