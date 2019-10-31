@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-using namespace WTF;
-
 const ClassInfo DateInstance::s_info = {"Date", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DateInstance)};
 
 DateInstance::DateInstance(VM& vm, Structure* structure)

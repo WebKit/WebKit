@@ -35,6 +35,53 @@
 
 namespace WTF {
 
+GregorianDateTime::GregorianDateTime(double ms, LocalTimeOffset localTime)
+{
+    if (ms >= 0
+#if OS(WINDOWS) && CPU(X86)
+            // The VS Compiler for 32-bit builds generates a floating point error when attempting to cast
+            // from an infinity to a 64-bit integer. We leave this routine with the floating point error
+            // left in a register, causing undefined behavior in later floating point operations.
+            //
+            // To avoid this issue, we check for infinity here, and return false in that case.
+            && !std::isinf(ms)
+#endif
+        ) {
+        int64_t integer = static_cast<int64_t>(ms);
+        if (static_cast<double>(integer) == ms && integer <= maxECMAScriptTime) {
+            // Positive integer fast path.
+            WTF::TimeClippedPositiveMilliseconds timeClipped(integer);
+            const int year = msToYear(ms);
+            setSecond(msToSeconds(timeClipped));
+            setMinute(msToMinutes(timeClipped));
+            setHour(msToHours(timeClipped));
+            setWeekDay(msToWeekDay(timeClipped));
+            int yearDay = dayInYear(timeClipped, year);
+            bool leapYear = isLeapYear(year);
+            setYearDay(yearDay);
+            setMonthDay(dayInMonthFromDayInYear(yearDay, leapYear));
+            setMonth(monthFromDayInYear(yearDay, leapYear));
+            setYear(year);
+            setIsDST(localTime.isDST);
+            setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
+            return;
+        }
+    }
+    const int year = msToYear(ms);
+    setSecond(msToSeconds(ms));
+    setMinute(msToMinutes(ms));
+    setHour(msToHours(ms));
+    setWeekDay(msToWeekDay(ms));
+    int yearDay = dayInYear(ms, year);
+    bool leapYear = isLeapYear(year);
+    setYearDay(yearDay);
+    setMonthDay(dayInMonthFromDayInYear(yearDay, leapYear));
+    setMonth(monthFromDayInYear(yearDay, leapYear));
+    setYear(year);
+    setIsDST(localTime.isDST);
+    setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
+}
+
 void GregorianDateTime::setToCurrentLocalTime()
 {
 #if OS(WINDOWS)

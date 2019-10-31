@@ -69,8 +69,6 @@
 
 namespace JSC {
 
-using namespace WTF;
-
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(JSGlobalObject*, CallFrame*);

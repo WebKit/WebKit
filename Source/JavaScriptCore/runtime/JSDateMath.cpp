@@ -100,30 +100,6 @@
 
 namespace JSC {
 
-using namespace WTF;
-
-static inline double timeToMS(double hour, double min, double sec, double ms)
-{
-    return (((hour * minutesPerHour + min) * secondsPerMinute + sec) * msPerSecond + ms);
-}
-
-static inline int msToSeconds(double ms)
-{
-    double result = fmod(floor(ms / msPerSecond), secondsPerMinute);
-    if (result < 0)
-        result += secondsPerMinute;
-    return static_cast<int>(result);
-}
-
-// 0: Sunday, 1: Monday, etc.
-static inline int msToWeekDay(double ms)
-{
-    int wd = (static_cast<int>(msToDays(ms)) + 4) % 7;
-    if (wd < 0)
-        wd += 7;
-    return wd;
-}
-
 // Get the combined UTC + DST offset for the time passed in.
 //
 // NOTE: The implementation relies on the fact that no time zones have
@@ -152,7 +128,7 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTim
                 // the offset in the cache, we grow the cached time interval
                 // and return the offset.
                 cache.end = newEnd;
-                cache.increment = msPerMonth;
+                cache.increment = WTF::msPerMonth;
                 return endOffset;
             }
             LocalTimeOffset offset = calculateLocalTimeOffset(ms, inputTimeType);
@@ -163,7 +139,7 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTim
                 // the interval to reflect this and reset the increment.
                 cache.start = ms;
                 cache.end = newEnd;
-                cache.increment = msPerMonth;
+                cache.increment = WTF::msPerMonth;
             } else {
                 // The interval contains a DST offset change and the given time is
                 // before it. Adjust the increment to avoid a linear search for
@@ -184,8 +160,13 @@ static LocalTimeOffset localTimeOffset(VM& vm, double ms, WTF::TimeType inputTim
     cache.offset = offset;
     cache.start = ms;
     cache.end = ms;
-    cache.increment = msPerMonth;
+    cache.increment = WTF::msPerMonth;
     return offset;
+}
+
+static inline double timeToMS(double hour, double min, double sec, double ms)
+{
+    return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
 }
 
 double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSeconds, WTF::TimeType inputTimeType)
@@ -194,7 +175,7 @@ double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSec
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double localTimeResult = (day * WTF::msPerDay) + ms;
 
-    double localToUTCTimeOffset = inputTimeType == LocalTime
+    double localToUTCTimeOffset = inputTimeType == WTF::LocalTime
         ? localTimeOffset(vm, localTimeResult, inputTimeType).offset : 0;
 
     return localTimeResult - localToUTCTimeOffset;
@@ -208,18 +189,7 @@ void msToGregorianDateTime(VM& vm, double ms, WTF::TimeType outputTimeType, Greg
         localTime = localTimeOffset(vm, ms);
         ms += localTime.offset;
     }
-
-    const int year = msToYear(ms);
-    tm.setSecond(msToSeconds(ms));
-    tm.setMinute(msToMinutes(ms));
-    tm.setHour(msToHours(ms));
-    tm.setWeekDay(msToWeekDay(ms));
-    tm.setYearDay(dayInYear(ms, year));
-    tm.setMonthDay(dayInMonthFromDayInYear(tm.yearDay(), isLeapYear(year)));
-    tm.setMonth(monthFromDayInYear(tm.yearDay(), isLeapYear(year)));
-    tm.setYear(year);
-    tm.setIsDST(localTime.isDST);
-    tm.setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
+    tm = GregorianDateTime(ms, localTime);
 }
 
 double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
@@ -254,7 +224,7 @@ double parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
     }
 
     auto dateUtf8 = expectedString.value();
-    double value = parseES5DateFromNullTerminatedCharacters(dateUtf8.data());
+    double value = WTF::parseES5DateFromNullTerminatedCharacters(dateUtf8.data());
     if (std::isnan(value))
         value = parseDateFromNullTerminatedCharacters(vm, dateUtf8.data());
     vm.cachedDateString = date;

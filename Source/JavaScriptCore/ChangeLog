@@ -1,3 +1,26 @@
+2019-10-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DateMath should have TimeClipped version
+        https://bugs.webkit.org/show_bug.cgi?id=203550
+
+        Reviewed by Saam Barati.
+
+        Removing `using namespace WTF;` in Date related files in JSC.
+
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime):
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/JSDateMath.cpp:
+        (JSC::localTimeOffset):
+        (JSC::timeToMS):
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDate):
+        (JSC::msToSeconds): Deleted.
+        (JSC::msToWeekDay): Deleted.
+
 2019-10-30  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Enable the support for iOS

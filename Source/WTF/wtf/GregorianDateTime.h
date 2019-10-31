@@ -36,6 +36,7 @@ class GregorianDateTime final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GregorianDateTime() = default;
+    WTF_EXPORT_PRIVATE explicit GregorianDateTime(double ms, LocalTimeOffset);
 
     inline int year() const { return m_year; }
     inline int month() const { return m_month; }

@@ -55,8 +55,6 @@ EncodedJSValue JSC_HOST_CALL dateNow(JSGlobalObject*, CallFrame*);
 
 namespace JSC {
 
-using namespace WTF;
-
 const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_info, &dateConstructorTable, nullptr, CREATE_METHOD_TABLE(DateConstructor) };
 
 /* Source for DateConstructor.lut.h
