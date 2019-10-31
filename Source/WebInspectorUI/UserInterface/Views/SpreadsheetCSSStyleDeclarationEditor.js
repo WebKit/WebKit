@@ -233,11 +233,14 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         if (this._sortPropertiesByName)
             properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 
+        let hideVariables = this._propertyVisibilityMode === SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables;
+        let hideNonVariables = this._propertyVisibilityMode === SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables;
+
         return properties.filter((property) => {
-            if (!property.variable && this._propertyVisibilityMode === WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables)
+            if (!property.isVariable && hideNonVariables)
                 return false;
 
-            if (property.variable && this._propertyVisibilityMode === WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables)
+            if (property.isVariable && hideVariables)
                 return false;
 
             return !property.implicit || this._showsImplicitProperties || this._alwaysShowPropertyNames.has(property.canonicalName);

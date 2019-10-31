@@ -1,5 +1,25 @@
 2019-10-31  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r251038): Elements: Computed: variables are shown in the Properties section instead of in the Variables section
+        https://bugs.webkit.org/show_bug.cgi?id=203668
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection):
+        (WI.ComputedStyleSection.prototype.set propertyVisibilityMode): Added.
+        (WI.ComputedStyleSection.prototype.get propertiesToRender):
+        Reintroduce the `propertyVisibilityMode` concept to `WI.ComputedStyleSection` so that the
+        Computed details panel can prevent CSS variables from being shown in the Properites section.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get propertiesToRender):
+        Replace `variable` getter with `isVariable` to match r251038.
+
+2019-10-31  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: DOMDebugger: Node Removed breakpoints should fire whenever the node is removed from the main DOM tree, not just when it's removed from it's parent
         https://bugs.webkit.org/show_bug.cgi?id=203349
 

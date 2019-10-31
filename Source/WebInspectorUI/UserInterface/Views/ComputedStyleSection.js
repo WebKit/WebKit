@@ -40,6 +40,7 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this._showsImplicitProperties = false;
         this._showsShorthandsInsteadOfLonghands = false;
         this._alwaysShowPropertyNames = new Set;
+        this._propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.ShowAll;
         this._hideFilterNonMatchingProperties = false;
         this._filterText = null;
     }
@@ -108,6 +109,16 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
         this.needsLayout();
     }
 
+    set propertyVisibilityMode(propertyVisibilityMode)
+    {
+        if (this._propertyVisibilityMode === propertyVisibilityMode)
+            return;
+
+        this._propertyVisibilityMode = propertyVisibilityMode;
+
+        this.needsLayout();
+    }
+
     set hideFilterNonMatchingProperties(value)
     {
         if (value === this._hideFilterNonMatchingProperties)
@@ -131,6 +142,9 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
 
         properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 
+        let hideVariables = this._propertyVisibilityMode === ComputedStyleSection.PropertyVisibilityMode.HideVariables;
+        let hideNonVariables = this._propertyVisibilityMode === ComputedStyleSection.PropertyVisibilityMode.HideNonVariables;
+
         return properties.filter((property) => {
             if (this._alwaysShowPropertyNames.has(property.canonicalName))
                 return true;
@@ -142,6 +156,12 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
                 if (property.shorthandPropertyNames.length)
                     return false;
             } else if (property.isShorthand)
+                return false;
+
+            if (property.isVariable && hideVariables)
+                return false;
+
+            if (!property.isVariable && hideNonVariables)
                 return false;
 
             return true;
@@ -271,3 +291,9 @@ WI.ComputedStyleSection.Event = {
 };
 
 WI.ComputedStyleSection.StyleClassName = "computed-style-section";
+
+WI.ComputedStyleSection.PropertyVisibilityMode = {
+    ShowAll: Symbol("variable-visibility-show-all"),
+    HideVariables: Symbol("variable-visibility-hide-variables"),
+    HideNonVariables: Symbol("variable-visibility-hide-non-variables"),
+};

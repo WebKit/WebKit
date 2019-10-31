@@ -104,6 +104,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStyleSection = new WI.ComputedStyleSection(this);
         this._computedStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
         this._computedStyleSection.showsImplicitProperties = this._computedStyleShowAllSetting.value;
+        this._computedStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideVariables;
         this._computedStyleSection.showsShorthandsInsteadOfLonghands = this._computedStylePreferShorthandsSetting.value;
         this._computedStyleSection.alwaysShowPropertyNames = ["display", "width", "height"];
         this._computedStyleSection.hideFilterNonMatchingProperties = true;
