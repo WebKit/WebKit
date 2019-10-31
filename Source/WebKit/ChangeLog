@@ -1,3 +1,24 @@
+2019-10-31  Brady Eidson  <beidson@apple.com>
+
+        Rejigger WKWebArchive headers.
+        https://bugs.webkit.org/show_bug.cgi?id=203648
+
+        Reviewed by Andy Estes.
+
+        * Shared/API/c/mac/WKWebArchiveRef.cpp: Renamed from Source/WebKit/Shared/API/c/mac/WKWebArchive.cpp.
+        (WKWebArchiveGetTypeID):
+        (WKWebArchiveCreate):
+        (WKWebArchiveCreateWithData):
+        (WKWebArchiveCreateFromRange):
+        (WKWebArchiveCopyMainResource):
+        (WKWebArchiveCopySubresources):
+        (WKWebArchiveCopySubframeArchives):
+        (WKWebArchiveCopyData):
+        * Shared/API/c/mac/WKWebArchiveRef.h: Copied from Source/WebKit/Shared/API/c/mac/WKWebArchive.h.
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebArchive.h: Renamed from Source/WebKit/Shared/API/c/mac/WKWebArchive.h.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add telemetry to test a potential cause of crashes under -[WKContentView _interpretKeyEvent:isCharEvent:]
