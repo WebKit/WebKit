@@ -1,3 +1,19 @@
+2019-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK] Web Inspector: inspector/timeline/timeline-event-*.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=203625
+
+        Reviewed by Devin Rousso.
+
+        Unflake inspector/timeline/timeline-event-*.html tests on GTK.
+
+        * inspector/timeline/resources/timeline-event-utilities.js: There is a race between CapturingState.Inactive
+        and SavePageData events, so the test has to wait for both.
+        Drive-by: wrap promis.reject in a lambda, otherwise reject would be called on an undefined 'this' object.
+        arrive before resolving the promise.
+        (TestPage.registerInitializer):
+        * platform/gtk/TestExpectations:
+
 2019-10-31  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK and WPE gardening after r251837.

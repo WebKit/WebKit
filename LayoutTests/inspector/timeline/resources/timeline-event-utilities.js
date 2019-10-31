@@ -6,7 +6,9 @@ TestPage.registerInitializer(() => {
     InspectorTest.TimelineEvent = {};
 
     InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType}) {
-        let pageRecordingData = null;
+        let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => {
+            return event.data;
+        });
 
         let promise = new WI.WrappedPromise;
 
@@ -28,20 +30,20 @@ TestPage.registerInitializer(() => {
 
                 InspectorTest.log("Evaluating...");
                 InspectorTest.evaluateInPage(expression)
-                .catch(promise.reject);
+                .catch((error) => {
+                    promise.reject(error);
+                });
                 return;
             }
 
             if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive) {
                 WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
-                InspectorTest.assert(pageRecordingData, "savePageData should have been called in the page before capturing was stopped.");
-                promise.resolve(pageRecordingData);
+                InspectorTest.assert(savePageDataPromise, "savePageData should have been called in the page before capturing was stopped.");
+                savePageDataPromise.then((data) => {
+                    promise.resolve(data);
+                });
                 return;
             }
-        });
-
-        InspectorTest.awaitEvent("SavePageData").then((event) => {
-            pageRecordingData = event.data;
         });
 
         InspectorTest.log("Starting Capture...");
