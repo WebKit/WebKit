@@ -1276,10 +1276,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#define HAVE_TIMINGDATAOPTIONS 1
-#endif
-
-#if PLATFORM(COCOA)
 #define USE_AUDIO_SESSION 1
 #endif
 

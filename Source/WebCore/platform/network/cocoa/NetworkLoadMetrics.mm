@@ -64,16 +64,5 @@ void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics& timing)
 
     // NOTE: responseEnd is not populated in this code path.
 }
-
-#if !HAVE(TIMINGDATAOPTIONS)
-void setCollectsTimingData()
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [NSURLConnection _setCollectsTimingData:YES];
-        [NSURLConnection _collectTimingDataWithOptions:TimingDataCollectionNStatsOff | TimingDataCollectionConnectionDataOff];
-    });
-}
-#endif
     
 }

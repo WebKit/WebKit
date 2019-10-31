@@ -141,10 +141,6 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
 #endif
 {
-#if !HAVE(TIMINGDATAOPTIONS)
-    setCollectsTimingData();
-#endif
-
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
         URL urlWithCredentials(firstRequest().url());
@@ -217,9 +213,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
     const bool usesCache = true;
 #endif
-#if HAVE(TIMINGDATAOPTIONS)
     [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(_TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
-#endif
 
     // This is used to signal that to CFNetwork that this connection should be considered
     // web content for purposes of App Transport Security.

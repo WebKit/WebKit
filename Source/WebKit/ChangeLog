@@ -1,5 +1,15 @@
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unneeded HAVE_TIMINGDATAOPTIONS
+        https://bugs.webkit.org/show_bug.cgi?id=202990
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
+2019-10-31  Alex Christensen  <achristensen@webkit.org>
+
         Use SecurityOriginData in NetworkProcess where possible without other changes
         https://bugs.webkit.org/show_bug.cgi?id=203615
 

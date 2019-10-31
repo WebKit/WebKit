@@ -187,10 +187,6 @@ public:
 WEBCORE_EXPORT void copyTimingData(NSDictionary *timingData, NetworkLoadMetrics&);
 #endif
 
-#if PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
-WEBCORE_EXPORT void setCollectsTimingData();
-#endif
-
 template<class Encoder>
 void NetworkLoadMetrics::encode(Encoder& encoder) const
 {
