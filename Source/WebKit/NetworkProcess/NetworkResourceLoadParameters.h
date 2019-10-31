@@ -58,7 +58,7 @@ public:
     bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };
-    Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
+    Vector<WebCore::SecurityOriginData> frameAncestorOrigins;
     bool isHTTPSUpgradeEnabled { false };
 
 #if ENABLE(SERVICE_WORKER)

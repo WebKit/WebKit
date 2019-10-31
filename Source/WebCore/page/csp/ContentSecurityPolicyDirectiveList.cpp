@@ -79,6 +79,11 @@ static inline URL urlFromOrigin(const SecurityOrigin& origin)
     return { URL { }, origin.toString() };
 }
 
+static inline URL urlFromOrigin(const SecurityOriginData& origin)
+{
+    return { URL { }, origin.toString() };
+}
+
 static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Frame& frame)
 {
     if (!directive)
@@ -92,13 +97,13 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
     return true;
 }
 
-static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins)
+static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective* directive, const Vector<SecurityOriginData>& ancestorOrigins)
 {
     if (!directive)
         return true;
     bool didReceiveRedirectResponse = false;
     for (auto& origin : ancestorOrigins) {
-        URL originURL = urlFromOrigin(*origin);
+        URL originURL = urlFromOrigin(origin);
         if (!originURL.isValid() || !directive->allows(originURL, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
@@ -258,7 +263,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return m_frameAncestors.get();
 }
 
-const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins(const Vector<RefPtr<SecurityOrigin>>& ancestorOrigins) const
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins(const Vector<SecurityOriginData>& ancestorOrigins) const
 {
     if (checkFrameAncestors(m_frameAncestors.get(), ancestorOrigins))
         return nullptr;

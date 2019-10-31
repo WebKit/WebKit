@@ -1,3 +1,25 @@
+2019-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use SecurityOriginData in NetworkProcess where possible without other changes
+        https://bugs.webkit.org/show_bug.cgi?id=203615
+
+        Reviewed by Brady Eidson.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isolatedCopy const):
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::encode const):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowFrameAncestors const):
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::urlFromOrigin):
+        (WebCore::checkFrameAncestors):
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForFrameAncestorOrigins const):
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+
 2019-10-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add expansion context to Line::Run

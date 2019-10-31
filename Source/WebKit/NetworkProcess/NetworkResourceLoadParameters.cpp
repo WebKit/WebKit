@@ -92,7 +92,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     if (sourceOrigin)
         encoder << *sourceOrigin;
     encoder << static_cast<bool>(topOrigin);
-    if (sourceOrigin)
+    if (topOrigin)
         encoder << *topOrigin;
     encoder << options;
     encoder << cspResponseHeaders;

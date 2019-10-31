@@ -97,6 +97,7 @@ inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData
 template<class Encoder>
 void SecurityOriginData::encode(Encoder& encoder) const
 {
+    ASSERT(!isEmpty());
     encoder << protocol;
     encoder << host;
     encoder << port;

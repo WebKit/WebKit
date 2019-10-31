@@ -336,9 +336,9 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.shouldEnableCrossOriginResourcePolicy = RuntimeEnabledFeatures::sharedFeatures().crossOriginResourcePolicyEnabled() && !loadParameters.isMainFrameNavigation;
 
     if (resourceLoader.options().mode == FetchOptions::Mode::Navigate) {
-        Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
+        Vector<SecurityOriginData> frameAncestorOrigins;
         for (auto* frame = resourceLoader.frame()->tree().parent(); frame; frame = frame->tree().parent())
-            frameAncestorOrigins.append(makeRefPtr(frame->document()->securityOrigin()));
+            frameAncestorOrigins.append(frame->document()->securityOrigin().data());
         loadParameters.frameAncestorOrigins = WTFMove(frameAncestorOrigins);
     }
 
