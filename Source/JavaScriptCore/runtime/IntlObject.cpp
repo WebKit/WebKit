@@ -151,6 +151,11 @@ bool intlBooleanOption(JSGlobalObject* globalObject, JSValue options, PropertyNa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (options.isUndefined()) {
+        usesFallback = true;
+        return false;
+    }
+
     JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
@@ -175,6 +180,9 @@ String intlStringOption(JSGlobalObject* globalObject, JSValue options, PropertyN
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (options.isUndefined())
+        return fallback;
 
     JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, String());
@@ -203,6 +211,9 @@ unsigned intlNumberOption(JSGlobalObject* globalObject, JSValue options, Propert
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (options.isUndefined())
+        return fallback;
 
     JSObject* opts = options.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, 0);

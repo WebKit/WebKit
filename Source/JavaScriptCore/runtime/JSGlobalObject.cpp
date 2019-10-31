@@ -893,6 +893,16 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             IntlPluralRulesPrototype* pluralRulesPrototype = IntlPluralRulesPrototype::create(init.vm, globalObject, IntlPluralRulesPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlPluralRules::createStructure(init.vm, globalObject, pluralRulesPrototype));
         });
+    m_defaultCollator.initLater(
+        [] (const Initializer<IntlCollator>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            VM& vm = init.vm;
+            auto scope = DECLARE_CATCH_SCOPE(vm);
+            IntlCollator* collator = IntlCollator::create(vm, globalObject->collatorStructure());
+            collator->initializeCollator(globalObject, jsUndefined(), jsUndefined());
+            scope.releaseAssertNoException();
+            init.set(collator);
+        });
 
     IntlObject* intl = IntlObject::create(vm, IntlObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Intl, intl, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1690,7 +1700,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_internalPromiseConstructor);
 
 #if ENABLE(INTL)
-    visitor.append(thisObject->m_defaultCollator);
+    thisObject->m_defaultCollator.visit(visitor);
     thisObject->m_collatorStructure.visit(visitor);
     thisObject->m_numberFormatStructure.visit(visitor);
     thisObject->m_dateTimeFormatStructure.visit(visitor);
@@ -2058,21 +2068,6 @@ const HashSet<String>& JSGlobalObject::intlPluralRulesAvailableLocales()
         addMissingScriptLocales(m_intlPluralRulesAvailableLocales);
     }
     return m_intlPluralRulesAvailableLocales;
-}
-
-IntlCollator* JSGlobalObject::defaultCollator(JSGlobalObject* globalObject)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (m_defaultCollator)
-        return m_defaultCollator.get();
-
-    IntlCollator* collator = IntlCollator::create(vm, collatorStructure());
-    collator->initializeCollator(globalObject, jsUndefined(), jsUndefined());
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    m_defaultCollator.set(vm, this, collator);
-    return collator;
 }
 
 #endif // ENABLE(INTL)

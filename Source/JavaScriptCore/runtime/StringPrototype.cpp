@@ -1503,10 +1503,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(JSGlobalObject* global
     JSValue locales = callFrame->argument(1);
     JSValue options = callFrame->argument(2);
     IntlCollator* collator = nullptr;
-    if (locales.isUndefined() && options.isUndefined()) {
-        collator = globalObject->defaultCollator(globalObject);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    } else {
+    if (locales.isUndefined() && options.isUndefined())
+        collator = globalObject->defaultCollator();
+    else {
         collator = IntlCollator::create(vm, globalObject->collatorStructure());
         collator->initializeCollator(globalObject, locales, options);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

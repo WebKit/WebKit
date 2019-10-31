@@ -184,10 +184,8 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     auto requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    JSObject* options;
-    if (optionsValue.isUndefined())
-        options = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
-    else {
+    JSValue options = optionsValue;
+    if (!optionsValue.isUndefined()) {
         options = optionsValue.toObject(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }

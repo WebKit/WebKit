@@ -285,7 +285,7 @@ public:
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
 #if ENABLE(INTL)
-    WriteBarrier<IntlCollator> m_defaultCollator;
+    LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
     LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_dateTimeFormatStructure;
@@ -606,7 +606,7 @@ public:
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
 
 #if ENABLE(INTL)
-    IntlCollator* defaultCollator(JSGlobalObject*);
+    IntlCollator* defaultCollator() const { return m_defaultCollator.get(this); }
 #endif
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
