@@ -358,7 +358,7 @@ HRESULT AccessibleBase::get_accParent(_COM_Outptr_opt_ IDispatch** parent)
     if (!m_object)
         return E_FAIL;
 
-    AccessibilityObject* parentObject = dynamic_cast<AccessibilityObject*>(m_object->parentObjectUnignored());
+    AccessibilityObject* parentObject = static_cast<AccessibilityObject*>(m_object->parentObjectUnignored());
     if (parentObject) {
         *parent = wrapper(parentObject);
         (*parent)->AddRef();
@@ -1045,7 +1045,7 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
 
         if (childIndex >= m_object->children().size())
             return E_FAIL;
-        childObj = dynamic_cast<AccessibilityObject*>(m_object->children().at(childIndex).get());
+        childObj = static_cast<AccessibilityObject*>(m_object->children().at(childIndex).get());
     }
 
     if (!childObj)
