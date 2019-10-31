@@ -1,3 +1,20 @@
+2019-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOMDebugger: Node Removed breakpoints should fire whenever the node is removed from the main DOM tree, not just when it's removed from it's parent
+        https://bugs.webkit.org/show_bug.cgi?id=203349
+
+        Reviewed by Matt Baker.
+
+        Replace `targetNode` (which was a `Runtime.RemoteObject`) with a `targetNodeId` (which is a
+        `DOM.NodeId`) when dispatching `DOMDebugger` pauses. Additionally, include the ancestor's
+        `DOM.NodeId` as the `targetNodeId` whenever an ancestor is removed that has a descendant
+        with a node removed DOM breakpoint.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: CONSOLE ERROR Shown panel style-rules must be visible

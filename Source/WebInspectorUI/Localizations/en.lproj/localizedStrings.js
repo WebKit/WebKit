@@ -891,6 +891,7 @@ localizedStrings["Remove Local Override"] = "Remove Local Override";
 localizedStrings["Remove Watch Expression"] = "Remove Watch Expression";
 localizedStrings["Remove probe"] = "Remove probe";
 localizedStrings["Remove this breakpoint action"] = "Remove this breakpoint action";
+localizedStrings["Removed ancestor "] = "Removed ancestor ";
 localizedStrings["Removed descendant "] = "Removed descendant ";
 localizedStrings["Render Pipeline %d"] = "Render Pipeline %d";
 localizedStrings["Rendering Frames"] = "Rendering Frames";

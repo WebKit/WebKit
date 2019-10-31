@@ -1465,13 +1465,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(domNode));
             this._pauseReasonGroup.rows = [domBreakpointRow, ownerElementRow];
 
-            if (domBreakpoint.type !== WI.DOMBreakpoint.Type.SubtreeModified)
-                return true;
-
-            console.assert(pauseData.targetNode);
-
-            let remoteObject = WI.RemoteObject.fromPayload(pauseData.targetNode, target);
-            remoteObject.pushNodeToFrontend((nodeId) => {
+            let updateTargetDescription = (nodeId) => {
                 if (!nodeId)
                     return;
 
@@ -1481,14 +1475,33 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                     return;
 
                 let fragment = document.createDocumentFragment();
-                let description = pauseData.insertion ? WI.UIString("Child added to ") : WI.UIString("Removed descendant ");
+
+                let description = null;
+                switch (domBreakpoint.type) {
+                case WI.DOMBreakpoint.Type.SubtreeModified:
+                    description = pauseData.insertion ? WI.UIString("Child added to ") : WI.UIString("Removed descendant ");
+                    break;
+                case WI.DOMBreakpoint.Type.NodeRemoved:
+                    description = WI.UIString("Removed ancestor ");
+                    break;
+                }
+                console.assert(description);
                 fragment.append(description, WI.linkifyNodeReference(node));
 
                 let targetDescriptionRow = new WI.DetailsSectionSimpleRow(WI.UIString("Details"), fragment);
                 targetDescriptionRow.element.classList.add("target-description");
 
                 this._pauseReasonGroup.rows = this._pauseReasonGroup.rows.concat(targetDescriptionRow);
-            });
+            };
+
+            if (pauseData.targetNodeId) {
+                console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified || domBreakpoint.type === WI.DOMBreakpoint.Type.NodeRemoved);
+                updateTargetDescription(pauseData.targetNodeId);
+            } else if (pauseData.targetNode) { // COMPATIBILITY (iOS 13): `targetNode` was renamed to `targetNodeId` and was changed from a `Runtime.RemoteObject` to a `DOM.NodeId`.
+                console.assert(domBreakpoint.type === WI.DOMBreakpoint.Type.SubtreeModified);
+                let remoteObject = WI.RemoteObject.fromPayload(pauseData.targetNode, target);
+                remoteObject.pushNodeToFrontend(updateTargetDescription);
+            }
 
             return true;
         }

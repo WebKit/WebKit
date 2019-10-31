@@ -15,6 +15,10 @@ PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
 PASS: Pause reason should be DOM.
+PASS: Pause type should be 'subtree-modified'.
+PASS: Pause nodeId should be expected value.
+PASS: Pause insertion should be 'true'.
+PASS: Pause targetNodeId should match nodeId.
 CALL STACK:
 0: [F] subtreeModifiedTest
 1: [P] Global Code
@@ -45,6 +49,8 @@ PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
 PASS: Pause reason should be DOM.
+PASS: Pause type should be 'attribute-modified'.
+PASS: Pause nodeId should be expected value.
 CALL STACK:
 0: [F] attributeModifiedTest
 1: [P] Global Code
@@ -69,30 +75,65 @@ Wait for evaluate in page to return.
 PASS: Should not pause for removed breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.NodeRemoved.BreakpointEnabled
+-- Running test case: DOMBreakpoints.NodeRemovedSelf.BreakpointEnabled
 PASS: Added 'node-removed' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
 PAUSED:
 PASS: Pause reason should be DOM.
+PASS: Pause type should be 'node-removed'.
+PASS: Pause nodeId should be expected value.
 CALL STACK:
-0: [F] nodeRemovedTest
+0: [F] nodeRemovedDirectTest
 1: [P] Global Code
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.NodeRemoved.BreakpointDisabled
+-- Running test case: DOMBreakpoints.NodeRemovedSelf.BreakpointDisabled
 PASS: Added 'node-removed' breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.NodeRemoved.DebuggerDisabled
+-- Running test case: DOMBreakpoints.NodeRemovedSelf.DebuggerDisabled
 PASS: Added 'node-removed' breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: DOMBreakpoints.NodeRemoved.RemoveBreakpoint
+-- Running test case: DOMBreakpoints.NodeRemovedSelf.RemoveBreakpoint
+PASS: Added 'node-removed' breakpoint.
+Remove breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemovedAncestor.BreakpointEnabled
+PASS: Added 'node-removed' breakpoint.
+PASS: Breakpoint should have expected type.
+Call DOM operation.
+PAUSED:
+PASS: Pause reason should be DOM.
+PASS: Pause type should be 'node-removed'.
+PASS: Pause nodeId should be expected value.
+PASS: Pause targetNodeId should not match nodeId.
+CALL STACK:
+0: [F] nodeRemovedAncestorTest
+1: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemovedAncestor.BreakpointDisabled
+PASS: Added 'node-removed' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemovedAncestor.DebuggerDisabled
+PASS: Added 'node-removed' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemovedAncestor.RemoveBreakpoint
 PASS: Added 'node-removed' breakpoint.
 Remove breakpoint.
 Wait for evaluate in page to return.

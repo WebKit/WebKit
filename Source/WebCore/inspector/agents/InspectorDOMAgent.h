@@ -178,6 +178,7 @@ public:
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 
+    int pushNodeToFrontend(Node*);
     int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
     Node* nodeForId(int nodeId);
     int boundNodeId(const Node*);

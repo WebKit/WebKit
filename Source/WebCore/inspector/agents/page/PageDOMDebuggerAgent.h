@@ -64,6 +64,7 @@ private:
 
     void descriptionForDOMEvent(Node&, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
+    bool checkSubtreeForNodeRemoved(Node*);
     bool hasBreakpoint(Node*, int type);
 
     HashMap<Node*, uint32_t> m_domBreakpoints;

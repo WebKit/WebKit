@@ -541,6 +541,15 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
+int InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
+{
+    if (!nodeToPush)
+        return 0;
+
+    ErrorString ignored;
+    return pushNodeToFrontend(ignored, boundNodeId(&nodeToPush->document()), nodeToPush);
+}
+
 int InspectorDOMAgent::pushNodeToFrontend(ErrorString& errorString, int documentNodeId, Node* nodeToPush)
 {
     Document* document = assertDocument(errorString, documentNodeId);

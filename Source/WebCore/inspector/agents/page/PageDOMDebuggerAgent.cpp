@@ -187,15 +187,33 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    Node* parentNode = InspectorDOMAgent::innerParentNode(&node);
     if (hasBreakpoint(&node, NodeRemoved)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        auto eventData = JSON::Object::create();
         descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
-    } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        return;
+    }
+
+    uint32_t rootBit = 1 << NodeRemoved;
+    uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;
+    uint32_t matchBit = rootBit | derivedBit;
+    for (auto& [nodeWithBreakpoint, breakpointTypes] : m_domBreakpoints) {
+        if (node.contains(nodeWithBreakpoint) && (breakpointTypes & matchBit)) {
+            auto eventData = JSON::Object::create();
+            descriptionForDOMEvent(*nodeWithBreakpoint, NodeRemoved, false, eventData.get());
+            if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent())
+                eventData->setInteger("targetNodeId"_s, domAgent->pushNodeToFrontend(&node));
+            m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
+            return;
+        }
+    }
+
+    auto* parentNode = InspectorDOMAgent::innerParentNode(&node);
+    if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
+        auto eventData = JSON::Object::create();
         descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
+        return;
     }
 }
 
@@ -273,8 +291,7 @@ void PageDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointTy
         if (domAgent) {
             // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
             // Target node may be unknown to frontend, so we need to push it first.
-            RefPtr<Inspector::Protocol::Runtime::RemoteObject> targetNodeObject = domAgent->resolveNode(&target, InspectorDebuggerAgent::backtraceObjectGroup);
-            description.setValue("targetNode", targetNodeObject);
+            description.setInteger("targetNodeId"_s, domAgent->pushNodeToFrontend(&target));
         }
 
         // Find breakpoint owner node.

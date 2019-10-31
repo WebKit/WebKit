@@ -12,18 +12,27 @@ function attributeModifiedTest() {
     document.getElementById("attribute-modified-test").setAttribute("display", "none");
 }
 
-function nodeRemovedTest() {
-    let node = document.getElementById("node-removed-test");
+function nodeRemovedDirectTest() {
+    let node = document.getElementById("node-removed-direct-test");
     let parent = node.parentNode;
     node.remove();
     parent.append(node);
+}
+
+function nodeRemovedAncestorTest() {
+    let node = document.getElementById("node-removed-ancestor-test");
+    let parent = node.parentNode;
+    let grandparent = parent.parentNode;
+    parent.remove(node);
+    grandparent.append(parent);
 }
 
 function test()
 {
     const subtreeModifiedTestId = "subtree-modified-test";
     const attributeModifiedTestId = "attribute-modified-test";
-    const nodeRemovedTestId = "node-removed-test";
+    const nodeRemovedDirectTestId = "node-removed-direct-test";
+    const nodeRemovedAncestorTestId = "node-removed-ancestor-test";
     const multipleBreakpointsTestId = "multiple-breakpoints-test";
 
     let debuggerPausedListener = null;
@@ -109,7 +118,7 @@ function test()
         });
     }
 
-    function addTestsForBreakpointType({name, elementIdentifier, type, expression}) {
+    function addTestsForBreakpointType({name, elementIdentifier, type, expression, insertion, shouldMatch}) {
         suite.addTestCase({
             name: `DOMBreakpoints.${name}.BreakpointEnabled`,
             description: "Check that debugger pauses for breakpoint type.",
@@ -128,8 +137,22 @@ function test()
                     let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
                     InspectorTest.log("PAUSED:");
                     InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DOM, "Pause reason should be DOM.");
-                    logActiveStackTrace();
 
+                    let pauseData = targetData.pauseData;
+                    InspectorTest.expectEqual(pauseData.type, type, `Pause type should be '${type}'.`);
+                    InspectorTest.expectEqual(pauseData.nodeId, domNodeIdentifier, `Pause nodeId should be expected value.`);
+
+                    if (insertion !== undefined)
+                        InspectorTest.expectEqual(insertion, target.pauseData.insertion, `Pause insertion should be '${insertion}'.`);
+
+                    if (pauseData.targetNodeId) {
+                        if (shouldMatch)
+                            InspectorTest.expectEqual(pauseData.targetNodeId, pauseData.nodeId, "Pause targetNodeId should match nodeId.");
+                        else
+                            InspectorTest.expectNotEqual(pauseData.targetNodeId, pauseData.nodeId, "Pause targetNodeId should not match nodeId.");
+                    }
+
+                    logActiveStackTrace();
                     return WI.debuggerManager.resume();
                 })
                 .then(resolve, reject);
@@ -217,6 +240,8 @@ function test()
         elementIdentifier: subtreeModifiedTestId,
         type: WI.DOMBreakpoint.Type.SubtreeModified,
         expression: "subtreeModifiedTest()",
+        insertion: true,
+        shouldMatch: true,
     });
 
     addTestsForBreakpointType({
@@ -227,10 +252,18 @@ function test()
     });
 
     addTestsForBreakpointType({
-        name: "NodeRemoved",
-        elementIdentifier: nodeRemovedTestId,
+        name: "NodeRemovedSelf",
+        elementIdentifier: nodeRemovedDirectTestId,
         type: WI.DOMBreakpoint.Type.NodeRemoved,
-        expression: "nodeRemovedTest()",
+        expression: "nodeRemovedDirectTest()",
+    });
+
+    addTestsForBreakpointType({
+        name: "NodeRemovedAncestor",
+        elementIdentifier: nodeRemovedAncestorTestId,
+        type: WI.DOMBreakpoint.Type.NodeRemoved,
+        expression: "nodeRemovedAncestorTest()",
+        shouldMatch: true,
     });
 
     suite.addTestCase({
@@ -353,7 +386,8 @@ function test()
 <div id="test-container" style="display: none">
     <div id="subtree-modified-test"></div>
     <div id="attribute-modified-test"></div>
-    <div id="node-removed-test"></div>
+    <div id="node-removed-direct-test"></div>
+    <div><div id="node-removed-ancestor-test"></div></div>
     <div id="multiple-breakpoints-test"></div>
 </div>
 </body>
