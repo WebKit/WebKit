@@ -136,8 +136,10 @@ WI.Sidebar = class Sidebar extends WI.View
         if (this._selectedSidebarPanel) {
             this.addSubview(this._selectedSidebarPanel);
             this._selectedSidebarPanel.selected = true;
-            this._selectedSidebarPanel.shown();
-            this._selectedSidebarPanel.visibilityDidChange();
+            if (!this.collapsed) {
+                this._selectedSidebarPanel.shown();
+                this._selectedSidebarPanel.visibilityDidChange();
+            }
         }
 
         this.dispatchEventToListeners(WI.Sidebar.Event.SidebarPanelSelected);

@@ -1,3 +1,18 @@
+2019-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: CONSOLE ERROR Shown panel style-rules must be visible
+        https://bugs.webkit.org/show_bug.cgi?id=203377
+
+        Reviewed by Devin Rousso.
+
+        Fix assertion failure when opening elements panel with hidden details sidebar.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels):
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.set selectedSidebarPanel): Only call shown() if the Sidebar
+        is not collapsed. It will anyway be called when the Sidebar is expanded.
+
 2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: track WI.Script unique display name numbers per Page target

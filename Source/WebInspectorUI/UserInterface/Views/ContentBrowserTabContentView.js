@@ -173,8 +173,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             return;
 
         var currentRepresentedObjects = this._contentBrowser.currentRepresentedObjects;
-        var currentSidebarPanels = WI.detailsSidebar.sidebarPanels;
-        var wasSidebarEmpty = !currentSidebarPanels.length;
+        var wasSidebarEmpty = !WI.detailsSidebar.sidebarPanels.length;
 
         // Ignore any changes to the selected sidebar panel during this function so only user initiated
         // changes are recorded in _lastSelectedDetailsSidebarPanelSetting.
@@ -186,7 +185,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         for (var i = 0; i < this.detailsSidebarPanels.length; ++i) {
             var sidebarPanel = this.detailsSidebarPanels[i];
             if (sidebarPanel.inspect(currentRepresentedObjects)) {
-                if (currentSidebarPanels.includes(sidebarPanel)) {
+                if (WI.detailsSidebar.sidebarPanels.includes(sidebarPanel)) {
                     // Already showing the panel.
                     continue;
                 }
@@ -206,8 +205,8 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             }
         }
 
-        if (!WI.detailsSidebar.selectedSidebarPanel && currentSidebarPanels.length)
-            WI.detailsSidebar.selectedSidebarPanel = currentSidebarPanels[0];
+        if (!WI.detailsSidebar.selectedSidebarPanel && WI.detailsSidebar.sidebarPanels.length)
+            WI.detailsSidebar.selectedSidebarPanel = WI.detailsSidebar.sidebarPanels[0];
 
         if (!WI.detailsSidebar.sidebarPanels.length)
             WI.detailsSidebar.collapsed = true;
