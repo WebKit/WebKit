@@ -25,6 +25,20 @@
         * loader/archive/mhtml/MHTMLArchive.cpp:
         (WebCore::MHTMLArchive::generateMHTMLData):
 
+2019-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Opacity should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=203601
+
+        Reviewed by Dean Jackson.
+        
+        opacity should always serialize as a number, even if it was specified as a percentage.
+
+        Tests: imported/w3c/web-platform-tests/css/css-color/parsing/opacity-valid
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         GPUCanvasContext should not prevent entering the back/forward cache

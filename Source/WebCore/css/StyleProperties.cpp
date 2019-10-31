@@ -123,8 +123,23 @@ MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
 String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 {
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
-    if (value)
-        return value->cssText();
+    if (value) {
+        switch (propertyID) {
+        case CSSPropertyFillOpacity:
+        case CSSPropertyFloodOpacity:
+        case CSSPropertyOpacity:
+        case CSSPropertyStopOpacity:
+        case CSSPropertyStrokeOpacity:
+            // Opacity values always serializes as a number.
+            if (value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isPercentage()) {
+                auto doubleValue = downcast<CSSPrimitiveValue>(value.get())->doubleValue();
+                return makeString(doubleValue / 100.0);
+            }
+            FALLTHROUGH;
+        default:
+            return value->cssText();
+        }
+    }
 
     const StylePropertyShorthand& shorthand = shorthandForProperty(propertyID);
     if (shorthand.length()) {

@@ -1,3 +1,23 @@
+2019-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Opacity should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=203601
+
+        Reviewed by Dean Jackson.
+
+        Fix the tests and results.
+
+        * fast/css/parsing-opacity-expected.txt:
+        * fast/css/parsing-opacity.html:
+        * fast/svg/parsing-fill-opacity-expected.txt:
+        * fast/svg/parsing-fill-opacity.html:
+        * fast/svg/parsing-flood-opacity-expected.txt:
+        * fast/svg/parsing-flood-opacity.html:
+        * fast/svg/parsing-stop-opacity-expected.txt:
+        * fast/svg/parsing-stop-opacity.html:
+        * fast/svg/parsing-stroke-opacity-expected.txt:
+        * fast/svg/parsing-stroke-opacity.html:
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         GPUCanvasContext should not prevent entering the back/forward cache

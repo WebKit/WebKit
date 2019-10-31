@@ -1,3 +1,12 @@
+2019-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Opacity should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=203601
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-color/parsing/opacity-valid-expected.txt:
+
 2019-10-30  Antti Koivisto  <antti@apple.com>
 
         Update css/css-display web platform tests
