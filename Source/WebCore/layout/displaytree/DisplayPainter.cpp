@@ -117,7 +117,7 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
         return;
 
     for (auto& run : inlineRuns) {
-        if (run->textContext()) {
+        if (auto textContext = run->textContext()) {
             auto& style = run->style();
             context.setStrokeColor(style.color());
             context.setFillColor(style.color());
@@ -125,8 +125,10 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
             auto logicalLeft = rootAbsoluteDisplayBox.left() + run->logicalLeft();
             // FIXME: Add non-baseline align painting
             auto& lineBox = formattingState.lineBoxForRun(*run);
-            auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset(); 
-            context.drawText(style.fontCascade(), TextRun { run->textContext()->content() }, { logicalLeft, baselineOffset });
+            auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset();
+            context.drawText(style.fontCascade(),
+                TextRun { textContext->content(), logicalLeft, textContext->expansion().valueOr(0), textContext->expansionBehavior().valueOr(ForbidLeadingExpansion | ForbidTrailingExpansion)},
+                { logicalLeft, baselineOffset });
         } else if (auto* cachedImage = run->image()) {
             auto runAbsoluteRect = FloatRect { rootAbsoluteDisplayBox.left() + run->logicalLeft(), rootAbsoluteDisplayBox.top() + run->logicalTop(), run->logicalWidth(), run->logicalHeight() };
             context.drawImage(*cachedImage->image(), runAbsoluteRect);
