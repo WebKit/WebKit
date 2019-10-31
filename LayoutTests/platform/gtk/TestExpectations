@@ -3458,9 +3458,6 @@ webkit.org/b/184776 imported/w3c/web-platform-tests/streams/readable-byte-stream
 
 webkit.org/b/184777 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
 
-webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
-webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
-
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
@@ -3641,8 +3638,6 @@ webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure
 webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
-webkit.org/b/192875 imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html [ Failure ]
-
 webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
@@ -3671,8 +3666,6 @@ webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.htm
 webkit.org/b/193511 http/tests/images/mp4-partial-load.html [ Failure ]
 
 webkit.org/b/193516 http/tests/misc/form-submit-file-cross-site.html [ Failure ]
-
-webkit.org/b/193517 imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative.html [ Failure ]
 
 webkit.org/b/193627 editing/spelling/spelling-dots-position.html [ ImageOnlyFailure ]
 
@@ -3849,7 +3842,7 @@ webkit.org/b/202245 http/tests/workers/service/serviceworkerclients-matchAll.htt
 webkit.org/b/202245 http/wpt/service-workers/extendableEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/fetchEvent.https.html [ Failure ]
 webkit.org/b/202245 http/wpt/service-workers/navigation-redirect.https.html [ Failure ]
-webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure ]
+webkit.org/b/202245 http/wpt/service-workers/online.https.html [ Failure Pass ]
 webkit.org/b/202245 imported/w3c/web-platform-tests/service-workers/service-worker/installing.https.html [ Failure ]
 
 webkit.org/b/202457 imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_canvas.html [ Failure ]
@@ -3881,6 +3874,27 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-con
 
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html [ Failure ]
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]
+
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-012.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
+
+webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
+
+webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual.svg [ Failure ]
+webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
+webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
@@ -4009,6 +4023,14 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.htm
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
+
+# css-values passing for us
+imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

@@ -1,3 +1,16 @@
+2019-10-31  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK and WPE gardening after r251837.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/parsing/height-computed-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/geometry/parsing/width-computed-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance/extensions/oes-texture-half-float-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/extensions/ext-color-buffer-float-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance2/textures/misc/tex-new-formats-expected.txt:
+
 2019-10-30  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Enable the support for iOS
