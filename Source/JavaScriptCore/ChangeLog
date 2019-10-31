@@ -1,5 +1,16 @@
 2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Unreviewed, fix cloop builds after r251886
+        https://bugs.webkit.org/show_bug.cgi?id=194257
+
+        ci2d was renamed to ci2ds, but I missed cloop.rb, arm.rb and mips.rb
+
+        * offlineasm/arm.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/mips.rb:
+
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
         [WebAssembly] Create a Wasm interpreter
         https://bugs.webkit.org/show_bug.cgi?id=194257
         <rdar://problem/44186794>

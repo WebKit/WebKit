@@ -912,7 +912,7 @@ class Instruction
             emitMIPS("mul.d", operands)
         when "sqrtd"
             $asm.puts "sqrt.d #{mipsFlippedOperands(operands)}"
-        when "ci2d"
+        when "ci2ds"
             raise "invalid ops of #{self.inspect} at #{codeOriginString}" unless operands[1].is_a? FPRegisterID and operands[0].register?
             $asm.puts "mtc1 #{operands[0].mipsOperand}, #{operands[1].mipsOperand}"
             $asm.puts "cvt.d.w #{operands[1].mipsOperand}, #{operands[1].mipsOperand}"

@@ -468,7 +468,7 @@ class Instruction
             emitArm("vmul.f64", operands)
         when "sqrtd"
             $asm.puts "vsqrt.f64 #{armFlippedOperands(operands)}"
-        when "ci2d"
+        when "ci2ds"
             $asm.puts "vmov #{operands[1].armSingle}, #{operands[0].armOperand}"
             $asm.puts "vcvt.f64.s32 #{operands[1].armOperand}, #{operands[1].armSingle}"
         when "bdeq"

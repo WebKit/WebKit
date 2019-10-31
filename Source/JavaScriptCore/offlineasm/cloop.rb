@@ -685,8 +685,8 @@ class Instruction
             cloopEmitOperation(operands, :double, "*")
 
         # Convert an int value to its double equivalent, and store it in a double register.
-        when "ci2d"
-            $asm.putc "#{operands[1].clLValue(:double)} = (double)#{operands[0].clValue(:int32)}; // ci2d"
+        when "ci2ds"
+            $asm.putc "#{operands[1].clLValue(:double)} = (double)#{operands[0].clValue(:int32)}; // ci2ds"
 
         when "bdeq"
             cloopEmitCompareAndBranch(operands, :double, "==")
