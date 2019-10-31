@@ -3422,21 +3422,10 @@ void FrameView::sendResizeEventIfNeeded()
     }
 #endif
 
+    LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << frame().document() << ", size " << currentSize);
+    frame().document()->setNeedsDOMWindowResizeEvent();
+
     bool isMainFrame = frame().isMainFrame();
-    bool canSendResizeEventSynchronously = isMainFrame && !m_shouldAutoSize;
-
-    LOG(Events, "FrameView %p sendResizeEventIfNeeded sending resize event, size %dx%d (canSendResizeEventSynchronously %d)", this, currentSize.width(), currentSize.height(), canSendResizeEventSynchronously);
-
-    Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No);
-    if (canSendResizeEventSynchronously)
-        frame().document()->dispatchWindowEvent(resizeEvent);
-    else {
-        // FIXME: Queueing this event for an unpredictable time in the future seems
-        // intrinsically racy. By the time this resize event fires, the frame might
-        // be resized again, so we could end up with two resize events for the same size.
-        frame().document()->enqueueWindowEvent(WTFMove(resizeEvent));
-    }
-
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
         if (Page* page = frame().page()) {
             if (InspectorClient* inspectorClient = page->inspectorController().inspectorClient())

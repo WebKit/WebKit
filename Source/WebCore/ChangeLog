@@ -1,3 +1,44 @@
+2019-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Integrate resize event with HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=202964
+
+        Reviewed by Geoffrey Garen and Simon Fraser.
+
+        Dispatch resize events in "run the resize steps" during the "update the rendering":
+        https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
+
+        Existing code in WebCore which was dispatching or scheduling dispatching of resize events now simply sets
+        a flag on document and schedules a rendering update. In Page::updateRendering, we fire resize events on
+        any documents with this flag set.
+
+        Test: fast/events/resize-subframe-in-rendering-update.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired): Fixed the flakiness in SVG animation tests observed
+        after this patch was landed previously. The issue was that this code was calling FrameLoader's
+        checkLoadComplete before checkCompleted. checkCompleted starts SVG animations in Document::implicitClose
+        whereas checkLoadComplete can cause DumpRenderTree to end the test. As a result, depending on when this
+        function was called relative to other work being done in the main thread, DumpRenderTree could prematurely
+        end and dump the test result even though SVG animation would have immediately started in either scenario.
+        Unfortunately I couldn't come up with a new deterministic test for this issue since the exact condition
+        under which this problem comes up seems quite racy (which makes sense given this only manifested as flaky
+        failures in existing tests).
+        * dom/Document.cpp:
+        (WebCore::Document::setNeedsDOMWindowResizeEvent): Added.
+        (WebCore::Document::setNeedsVisualViewportResize): Added.
+        (WebCore::Document::runResizeSteps): Added. https://drafts.csswg.org/cssom-view/#run-the-resize-steps
+        * dom/Document.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded): Now sets m_needsDOMWindowResizeEvent on Document instead of
+        enqueuing a resize event.
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering): Call runResizeSteps on each document.
+        (WebCore::Page::collectDocuments): Added.
+        * page/Page.h:
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::enqueueResizeEvent):
+
 2019-10-31  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; move PictureInPictureSupport.h include outside HAVE(AVKIT) check.

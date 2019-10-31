@@ -110,17 +110,19 @@ function testResizeEvent() {
     iframe.style.height = '100px';
 
     iframe.onload = function () {
-        iframe.contentDocument.body.getBoundingClientRect();
-        log(iframe.contentWindow, "resize");
-        setTimeout(function () {
-            iframe.style.width = '200px';
-            iframe.style.height = '200px';
-            iframe.contentDocument.body.getBoundingClientRect();
+        requestAnimationFrame(function () {
             setTimeout(function () {
-                checkFlags('', {eventType: 'resize', composed: false});
-                finishJSTest();
+                iframe.contentDocument.body.getBoundingClientRect();
+                log(iframe.contentWindow, "resize");
+                iframe.style.width = '200px';
+                iframe.style.height = '200px';
+                iframe.contentDocument.body.getBoundingClientRect();
+                requestAnimationFrame(function () {
+                    checkFlags('', {eventType: 'resize', composed: false});
+                    finishJSTest();
+                });
             }, 0);
-        }, 0);
+        });
     }
 
     document.body.appendChild(iframe);

@@ -397,12 +397,14 @@ void CSSFontSelector::beginLoadTimerFired()
         // Balances incrementRequestCount() in beginLoadingFontSoon().
         cachedResourceLoader.decrementRequestCount(*fontHandle);
     }
+    // FIXME: Use SubresourceLoader instead.
+    // Call FrameLoader::loadDone before FrameLoader::subresourceLoadDone to match the order in SubresourceLoader::notifyDone.
+    cachedResourceLoader.loadDone(LoadCompletionType::Finish);
     // Ensure that if the request count reaches zero, the frame loader will know about it.
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())
         m_document->frame()->loader().checkLoadComplete();
-    cachedResourceLoader.loadDone(LoadCompletionType::Finish);
 }
 
 
