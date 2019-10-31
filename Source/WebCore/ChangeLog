@@ -1,3 +1,41 @@
+2019-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] ImageDecoders: use SharedBuffer::DataSegment instead of SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=202807
+
+        Reviewed by Adrian Perez de Castro.
+
+        Because SharedBuffer::DataSegment is ThreadSafeRefCounted.
+
+        * platform/image-decoders/ScalableImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::setData):
+        (WebCore::BMPImageDecoder::decodeHelper):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::readUint16):
+        (WebCore::BMPImageReader::readUint32):
+        (WebCore::BMPImageReader::setData):
+        (WebCore::BMPImageReader::readUint16 const):
+        (WebCore::BMPImageReader::readUint32 const):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::setData):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::setData):
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        * platform/image-decoders/jpeg2000/JPEG2000ImageDecoder.cpp:
+        (WebCore::JPEG2000ImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
 2019-10-30  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Enable the support for iOS

@@ -61,7 +61,7 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
 
     for (BMPReaders::iterator i(m_bmpReaders.begin()); i != m_bmpReaders.end(); ++i) {
         if (*i)
-            (*i)->setData(&data);
+            (*i)->setData(*m_data);
     }
     for (size_t i = 0; i < m_pngDecoders.size(); ++i)
         setDataForPNGDecoderAtIndex(i);
@@ -196,7 +196,7 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
             // we must not resize it again later (see caution in frameCount()).
             ASSERT(m_frameBufferCache.size() == m_dirEntries.size());
             m_bmpReaders[index] = makeUnique<BMPImageReader>(this, dirEntry.m_imageOffset, 0, true);
-            m_bmpReaders[index]->setData(m_data.get());
+            m_bmpReaders[index]->setData(*m_data);
             m_bmpReaders[index]->setBuffer(&m_frameBufferCache[index]);
         }
         m_frameSize = dirEntry.m_size;
