@@ -1077,4 +1077,29 @@ public:
     virtual void setIsIgnoredFromParentDataForChild(AXCoreObject*) = 0;
 };
 
+namespace Accessibility {
+
+template<typename T, typename F>
+T* findAncestor(const T& object, bool includeSelf, const F& matches)
+{
+    T* parent;
+    if (includeSelf)
+        parent = const_cast<T*>(&object);
+    else {
+        auto* parentPtr = object.parentObject();
+        if (!is<T>(parentPtr))
+            return nullptr;
+        parent = parentPtr;
+    }
+
+    for (; parent; parent = parent->parentObject()) {
+        if (matches(*parent))
+            return parent;
+    }
+
+    return nullptr;
+}
+
+} // namespace Accessibility
+
 } // namespace WebCore

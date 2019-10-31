@@ -248,7 +248,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     if (m_renderer->isSVGShape()) {
         if (canSetFocusAttribute() || element()->hasEventListeners())
             return false;
-        if (auto svgParent = AccessibilityObject::matchedParent(*this, true, [] (const AccessibilityObject& object) {
+        if (auto* svgParent = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
             return object.hasAttributesRequiredForInclusion() || object.isAccessibilitySVGRoot();
         }))
             return !svgParent->hasAttributesRequiredForInclusion();

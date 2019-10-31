@@ -1467,7 +1467,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
         auto matchFunc = [] (const AccessibilityObject& object) {
             return object.isFieldset() && !object.ariaDescribedByAttribute().isEmpty();
         };
-        if (const auto* parent = AccessibilityObject::matchedParent(*this, false, WTFMove(matchFunc)))
+        if (const auto* parent = Accessibility::findAncestor<AccessibilityObject>(*this, false, WTFMove(matchFunc)))
             textOrder.append(AccessibilityText(parent->ariaDescribedByAttribute(), AccessibilityTextSource::Summary));
     }
 
@@ -1770,7 +1770,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
     if (is<Text>(node))
         return downcast<Text>(*node).wholeText();
 
-    bool isAriaVisible = AccessibilityObject::matchedParent(*this, true, [] (const AccessibilityObject& object) {
+    bool isAriaVisible = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
         return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false");
     }) != nullptr;
 

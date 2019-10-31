@@ -761,7 +761,6 @@ public:
     AccessibilityObject* highestEditableAncestor() override;
 
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const override;
-    static const AccessibilityObject* matchedParent(const AccessibilityObject&, bool includeSelf, const WTF::Function<bool(const AccessibilityObject&)>&);
 
     void clearIsIgnoredFromParentData() override { m_isIgnoredFromParentData = AccessibilityIsIgnoredFromParentData(); }
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override;

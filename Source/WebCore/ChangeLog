@@ -1,3 +1,55 @@
+2019-10-31  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rename AccessibilityObject::matchedParent as Accessibility::findAncestor and re-implement in a generic way so that can be used with both AccessibilityObjects and AXIsolatedTreeNodes.
+        https://bugs.webkit.org/show_bug.cgi?id=203654
+
+        Reviewed by Chris Fleizach.
+
+        No new tests necessary since this does not change functionality.
+
+        - Deleted AccessibilityObject::matchedParent and replaced with Accessibility::findAncestor.
+        - Accessibility::findAncestor is a template function that can be used with both AccessibilityObjects and AXIsolatedTreeNodes.
+        - Created the namespace Accessibility for implementation details that need not to be exposed to client code.
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::helpText const):
+        (WebCore::AccessibilityNodeObject::textUnderElement const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::parentObjectUnignored const):
+        (WebCore::AccessibilityObject::isDescendantOfRole const):
+        (WebCore::AccessibilityObject::ancestorAccessibilityScrollView const):
+        (WebCore::AccessibilityObject::headingElementForNode):
+        (WebCore::AccessibilityObject::isDescendantOfObject const):
+        (WebCore::AccessibilityObject::liveRegionAncestor const):
+        (WebCore::AccessibilityObject::isExpanded const):
+        (WebCore::AccessibilityObject::isAXHidden const):
+        (WebCore::AccessibilityObject::focusableAncestor):
+        (WebCore::AccessibilityObject::editableAncestor):
+        (WebCore::AccessibilityObject::radioGroupAncestor const):
+        (WebCore::AccessibilityObject::matchedParent): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::Accessibility::findAncestor):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasPopup const):
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::computeAccessibilityIsIgnored const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityTreeAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityArticleAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityLandmarkAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFieldsetAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFrameAncestor]):
+        (-[WebAccessibilityObjectWrapper tableCellParent]):
+        (-[WebAccessibilityObjectWrapper tableParent]):
+        (-[WebAccessibilityObjectWrapper accessibilityDatetimeValue]):
+        (-[WebAccessibilityObjectWrapper detailParentForSummaryObject:]):
+        (-[WebAccessibilityObjectWrapper detailParentForObject:]):
+        (-[WebAccessibilityObjectWrapper treeItemParentForObject:]):
+        (AXAttributeStringSetStyle):
+
 2019-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate resize event with HTML5 event loop
