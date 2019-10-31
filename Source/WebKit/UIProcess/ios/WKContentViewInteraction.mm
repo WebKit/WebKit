@@ -4947,6 +4947,12 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
+    if (!isUIThread()) {
+        RELEASE_LOG_FAULT(KeyHandling, "%s was invoked on a background thread.", __PRETTY_FUNCTION__);
+        completionHandler(theEvent, NO);
+        return;
+    }
+
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;

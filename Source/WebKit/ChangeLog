@@ -1,3 +1,26 @@
+2019-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add telemetry to test a potential cause of crashes under -[WKContentView _interpretKeyEvent:isCharEvent:]
+        https://bugs.webkit.org/show_bug.cgi?id=203630
+        <rdar://problem/56769229>
+
+        Reviewed by Simon Fraser.
+
+        This iOS-specific crash occurs under `-_interpretKeyEvent:isCharEvent:`, when we first try to access WebEvent's
+        properties with `event.keyboardFlags`. This suggests that between storing the WebEvent in WebPageProxy's
+        m_keyEventQueue, and later receiving an InterpretKeyEvent sync IPC message in the UI process, something ends up
+        overreleasing (or otherwise writing over or corrupting) the WebEvent.
+
+        However, from code inspection, nothing appears to overrelease the WebEvent; an alternate possibility is that the
+        API is somehow being invoked from a background thread, which would explain why the WebEvent may sometimes get
+        destroyed too early.
+
+        To try and detect this scenario (and avoid keeping any strong references to WebEvent at all), add an
+        `os_log_fault` in case the API is being called on a background thread, and bail immediately.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+
 2019-10-31  Miguel Gomez  <magomez@igalia.com>
 
         [CoordGraphics] Avoid painting backing stores for zero-opacity layers
