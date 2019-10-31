@@ -1451,6 +1451,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
     name = 'analyze-api-tests-results'
     description = ['analyze-api-test-results']
     descriptionDone = ['analyze-api-tests-results']
+    NUM_API_FAILURES_TO_DISPLAY = 10
 
     def start(self):
         self.results = {}
@@ -1492,7 +1493,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
         flaky_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in flaky_failures])
         new_failures = failures_with_patch - clean_tree_failures
-        new_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in new_failures])
+        new_failures_to_display = list(new_failures)[:self.NUM_API_FAILURES_TO_DISPLAY]
+        new_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in new_failures_to_display])
 
         self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
         self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(second_run_failures))
@@ -1505,6 +1507,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             message = 'Found {} new API test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
+            if len(new_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
+                message += ' ...'
             self.descriptionDone = message
             self.build.buildFinished([message], FAILURE)
         else:

@@ -1,3 +1,14 @@
+2019-10-31  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Limit API tests failures to display in the status-bubble tooltip and buildbot summary
+        https://bugs.webkit.org/show_bug.cgi?id=203678
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults): Define NUM_API_FAILURES_TO_DISPLAY as 10.
+        (AnalyzeAPITestsResults.analyzeResults): Truncate the failure string to contain 10 test failures.
+
 2019-10-30  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Enable the support for iOS
