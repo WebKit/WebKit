@@ -40,11 +40,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
-{
-    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
-}
-
 CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client)
     : m_client(client)
 {
@@ -135,12 +130,6 @@ void updateBackingStore(TextureMapperLayer& layer,
     Nicosia::BackingStoreTextureMapperImpl::CompositionState& compositionState,
     const Nicosia::BackingStoreTextureMapperImpl::TileUpdate& update)
 {
-    if (!layerShouldHaveBackingStore(&layer)) {
-        layer.setBackingStore(nullptr);
-        compositionState.backingStore = nullptr;
-        return;
-    }
-
     if (!compositionState.backingStore)
         compositionState.backingStore = CoordinatedBackingStore::create();
     auto& backingStore = *compositionState.backingStore;
