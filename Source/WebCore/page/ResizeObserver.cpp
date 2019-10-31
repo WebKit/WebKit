@@ -29,6 +29,7 @@
 #include "ResizeObserver.h"
 
 #include "Element.h"
+#include "InspectorInstrumentation.h"
 #include "ResizeObserverEntry.h"
 
 namespace WebCore {
@@ -122,7 +123,14 @@ void ResizeObserver::deliverObservations()
         entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect()));
     }
     m_activeObservations.clear();
+
+    auto* context = m_callback->scriptExecutionContext();
+    if (!context)
+        return;
+
+    InspectorInstrumentation::willFireObserverCallback(*context, "ResizeObserver"_s);
     m_callback->handleEvent(entries, *this);
+    InspectorInstrumentation::didFireObserverCallback(*context);
 }
 
 bool ResizeObserver::removeTarget(Element& target)
