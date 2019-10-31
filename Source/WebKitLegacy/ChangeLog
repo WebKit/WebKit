@@ -1,3 +1,12 @@
+2019-10-31  Alex Christensen  <achristensen@apple.com>
+
+        Enable more features in Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=203699
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
         CMake build should make WebKit framework able to be used by Safari

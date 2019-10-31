@@ -6,6 +6,7 @@ find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
+find_library(DEVICEIDENTITY_LIBRARY DeviceIdentity HINTS /System/Library/PrivateFrameworks)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
@@ -16,6 +17,7 @@ set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 list(APPEND WebKit_LIBRARIES
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
+    ${DEVICEIDENTITY_LIBRARY}
     ${SECURITYINTERFACE_LIBRARY}
 )
 
@@ -74,6 +76,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/c/cf"
     "${WEBKIT_DIR}/Shared/API/c/cg"
     "${WEBKIT_DIR}/Shared/API/c/mac"
+    "${WEBKIT_DIR}/Shared/ApplePay/cocoa/"
     "${WEBKIT_DIR}/Shared/Authentication/cocoa"
     "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/cf"
@@ -82,6 +85,8 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/mac"
     "${WEBKIT_DIR}/Shared/Plugins/mac"
     "${WEBKIT_DIR}/Shared/Scrolling"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication/fido"
+    "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
@@ -145,22 +150,30 @@ set(WebKit_FORWARDING_HEADERS_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
+    Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
+
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
     UIProcess/ViewGestureController.messages.in
 
     UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
+    UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
 
+    UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in
+
     UIProcess/ios/EditableImageController.messages.in
 
     UIProcess/mac/SecItemShimProxy.messages.in
 
+    WebProcess/ApplePay/WebPaymentCoordinator.messages.in
+
     WebProcess/cocoa/PlaybackSessionManager.messages.in
+    WebProcess/cocoa/UserMediaCaptureManager.messages.in
     WebProcess/cocoa/VideoFullscreenManager.messages.in
 
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in

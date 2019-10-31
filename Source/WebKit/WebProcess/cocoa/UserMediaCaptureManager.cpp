@@ -254,7 +254,7 @@ WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const
         return WTFMove(errorMessage);
 
     auto type = device.type() == CaptureDevice::DeviceType::Microphone ? WebCore::RealtimeMediaSource::Type::Audio : WebCore::RealtimeMediaSource::Type::Video;
-    auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label() }, WTFMove(hashSalt), id, *this));
+    auto source = adoptRef(*new Source(String::number(id), type, device.type(), String { settings.label().string() }, WTFMove(hashSalt), id, *this));
     source->setSettings(WTFMove(settings));
     m_sources.add(id, source.copyRef());
     return WebCore::CaptureSourceOrError(WTFMove(source));

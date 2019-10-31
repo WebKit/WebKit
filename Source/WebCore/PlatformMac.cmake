@@ -6,6 +6,7 @@ find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CFNETWORK_LIBRARY CFNetwork)
 find_library(COCOA_LIBRARY Cocoa)
+find_library(COMPRESSION_LIBRARY Compression)
 find_library(COREAUDIO_LIBRARY CoreAudio)
 find_library(CORESERVICES_LIBRARY CoreServices)
 find_library(DISKARBITRATION_LIBRARY DiskArbitration)
@@ -33,6 +34,7 @@ list(APPEND WebCore_LIBRARIES
     ${CARBON_LIBRARY}
     ${CFNETWORK_LIBRARY}
     ${COCOA_LIBRARY}
+    ${COMPRESSION_LIBRARY}
     ${COREAUDIO_LIBRARY}
     ${CORESERVICES_LIBRARY}
     ${DISKARBITRATION_LIBRARY}
@@ -71,15 +73,19 @@ if (NOT LOOKUP_FRAMEWORK-NOTFOUND)
 endif ()
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/pictureinpicture"
     "${WEBCORE_DIR}/Modules/remoteplayback"
+    "${WEBCORE_DIR}/Modules/webauthn/apdu"
     "${WEBCORE_DIR}/Modules/webgpu/WHLSL/Metal"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bridge/objc"
+    "${WEBCORE_DIR}/crypto/mac"
     "${WEBCORE_DIR}/editing/cocoa"
     "${WEBCORE_DIR}/editing/ios"
     "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/html/shadow/cocoa"
     "${WEBCORE_DIR}/icu"
+    "${WEBCORE_DIR}/layout/tableformatting"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/mac"
@@ -91,6 +97,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/audio/mac"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/cocoa"
+    "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/cf"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/objc"
@@ -107,6 +114,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/mac"
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/mediacapabilities"
+    "${WEBCORE_DIR}/platform/mediarecorder/cocoa"
     "${WEBCORE_DIR}/platform/mediastream/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
@@ -138,6 +146,8 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 
 list(APPEND WebCore_SOURCES
     Modules/paymentrequest/MerchantValidationEvent.cpp
+
+    Modules/webaudio/MediaStreamAudioSourceCocoa.cpp
 
     accessibility/mac/AXObjectCacheMac.mm
     accessibility/mac/AccessibilityObjectMac.mm
@@ -217,6 +227,8 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/VideoToolboxSoftLink.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
 
+    platform/encryptedmedia/clearkey/CDMClearKey.cpp
+
     platform/gamepad/mac/HIDGamepad.cpp
     platform/gamepad/mac/HIDGamepadProvider.cpp
 
@@ -226,6 +238,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
+    platform/graphics/avfoundation/CDMFairPlayStreaming.cpp
     platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
@@ -236,6 +249,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
+    platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
     platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
     platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
     platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm
@@ -428,6 +442,10 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    Modules/applepay/PaymentMethodUpdate.h
+    Modules/applepay/PaymentSessionError.h
+    Modules/applepay/PaymentSummaryItems.h
+
     accessibility/mac/WebAccessibilityObjectWrapperBase.h
     accessibility/mac/WebAccessibilityObjectWrapperMac.h
 
@@ -460,6 +478,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h
     page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h
     page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
+
+    platform/PictureInPictureSupport.h
 
     platform/audio/cocoa/MediaSessionManagerCocoa.h
     platform/audio/cocoa/WebAudioBufferList.h
@@ -566,9 +586,41 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/mac/FormDataStreamMac.h
     platform/network/mac/UTIUtilities.h
     platform/network/mac/WebCoreURLResponse.h
+
+    testing/MockWebAuthenticationConfiguration.h
 )
 
 list(APPEND WebCore_IDL_FILES
+    Modules/applepay/ApplePayCancelEvent.idl
+    Modules/applepay/ApplePayContactField.idl
+    Modules/applepay/ApplePayError.idl
+    Modules/applepay/ApplePayErrorCode.idl
+    Modules/applepay/ApplePayErrorContactField.idl
+    Modules/applepay/ApplePayLineItem.idl
+    Modules/applepay/ApplePayMerchantCapability.idl
+    Modules/applepay/ApplePayPayment.idl
+    Modules/applepay/ApplePayPaymentAuthorizationResult.idl
+    Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
+    Modules/applepay/ApplePayPaymentContact.idl
+    Modules/applepay/ApplePayPaymentMethod.idl
+    Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
+    Modules/applepay/ApplePayPaymentMethodType.idl
+    Modules/applepay/ApplePayPaymentMethodUpdate.idl
+    Modules/applepay/ApplePayPaymentPass.idl
+    Modules/applepay/ApplePayPaymentRequest.idl
+    Modules/applepay/ApplePayRequestBase.idl
+    Modules/applepay/ApplePaySession.idl
+    Modules/applepay/ApplePaySessionError.idl
+    Modules/applepay/ApplePayShippingContactSelectedEvent.idl
+    Modules/applepay/ApplePayShippingContactUpdate.idl
+    Modules/applepay/ApplePayShippingMethod.idl
+    Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
+    Modules/applepay/ApplePayShippingMethodUpdate.idl
+    Modules/applepay/ApplePayValidateMerchantEvent.idl
+
+    Modules/applepay/paymentrequest/ApplePayModifier.idl
+    Modules/applepay/paymentrequest/ApplePayRequest.idl
+
     Modules/plugins/QuickTimePluginReplacement.idl
 
     Modules/remoteplayback/RemotePlayback.idl
@@ -589,15 +641,34 @@ add_custom_command(
     DEPENDS Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py
     COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
     VERBATIM)
+add_custom_command(
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
+    DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
+    COMMAND gzip -cn ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt > ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.gz
+    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl WHLSLStandardLibrary ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.gz ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
+    VERBATIM)
+list(APPEND WebCore_SOURCES
+    ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
+    ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
+)
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES
     testing/Internals.mm
     testing/MockContentFilter.cpp
     testing/MockContentFilterSettings.cpp
+    testing/MockPaymentCoordinator.cpp
     testing/MockPreviewLoaderClient.cpp
+    testing/ServiceWorkerInternals.mm
 
     testing/cocoa/WebArchiveDumpSupport.mm
+)
+list(APPEND WebCoreTestSupport_IDL_FILES
+    testing/MockPaymentAddress.idl
+    testing/MockPaymentContactFields.idl
+    testing/MockPaymentCoordinator.idl
+    testing/MockPaymentError.idl
+    testing/MockWebAuthenticationConfiguration.idl
 )
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

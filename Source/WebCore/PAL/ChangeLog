@@ -1,3 +1,13 @@
+2019-10-31  Alex Christensen  <achristensen@apple.com>
+
+        Enable more features in Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=203699
+
+        Rubber-stamped by Tim Horton.
+
+        * pal/CMakeLists.txt:
+        * pal/PlatformMac.cmake:
+
 2019-10-30  Peng Liu  <peng.liu6@apple.com>
 
         [Picture-in-Picture Web API] Enable the support for iOS

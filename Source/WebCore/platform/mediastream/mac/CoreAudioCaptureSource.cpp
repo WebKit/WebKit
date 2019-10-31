@@ -28,14 +28,11 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AVAudioSessionCaptureDevice.h"
-#include "AVAudioSessionCaptureDeviceManager.h"
 #include "AudioSampleBufferList.h"
 #include "AudioSampleDataSource.h"
 #include "AudioSession.h"
 #include "CoreAudioCaptureDevice.h"
 #include "CoreAudioCaptureDeviceManager.h"
-#include "CoreAudioCaptureSourceIOS.h"
 #include "Logging.h"
 #include "Timer.h"
 #include "WebAudioSourceProviderAVFObjC.h"
@@ -50,6 +47,12 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <pal/cf/CoreMediaSoftLink.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include "AVAudioSessionCaptureDevice.h"
+#include "AVAudioSessionCaptureDeviceManager.h"
+#include "CoreAudioCaptureSourceIOS.h"
+#endif
 
 namespace WebCore {
 using namespace PAL;

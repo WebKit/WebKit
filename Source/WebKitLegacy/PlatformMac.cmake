@@ -110,6 +110,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebCoreSupport/WebKitFullScreenListener.mm
     mac/WebCoreSupport/WebNotificationClient.mm
     mac/WebCoreSupport/WebOpenPanelResultListener.mm
+    mac/WebCoreSupport/WebPaymentCoordinatorClient.mm
     mac/WebCoreSupport/WebPlatformStrategies.mm
     mac/WebCoreSupport/WebPluginInfoProvider.mm
     mac/WebCoreSupport/WebProgressTrackerClient.mm

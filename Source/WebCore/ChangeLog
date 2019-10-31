@@ -1,3 +1,15 @@
+2019-10-31  Alex Christensen  <achristensen@apple.com>
+
+        Enable more features in Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=203699
+
+        Rubber-stamped by Tim Horton.
+
+        * Modules/pictureinpicture/PictureInPictureWindow.h:
+        * PlatformMac.cmake:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+
 2019-10-31  Russell Epstein  <repstein@apple.com>
 
         Unreviewed, rolling out r251861.

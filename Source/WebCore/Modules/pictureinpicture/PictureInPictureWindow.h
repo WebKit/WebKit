@@ -29,6 +29,7 @@
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
 #include "EventTarget.h"
+#include "IntSize.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
