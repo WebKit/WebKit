@@ -36,13 +36,15 @@ WebKitAnimationEvent::WebKitAnimationEvent(const AtomString& type, const Init& i
     : Event(type, initializer, isTrusted)
     , m_animationName(initializer.animationName)
     , m_elapsedTime(initializer.elapsedTime)
+    , m_pseudoElement(initializer.pseudoElement)
 {
 }
 
-WebKitAnimationEvent::WebKitAnimationEvent(const AtomString& type, const String& animationName, double elapsedTime)
+WebKitAnimationEvent::WebKitAnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement)
     : Event(type, CanBubble::Yes, IsCancelable::Yes)
     , m_animationName(animationName)
     , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
 {
 }
 
@@ -56,6 +58,11 @@ const String& WebKitAnimationEvent::animationName() const
 double WebKitAnimationEvent::elapsedTime() const
 {
     return m_elapsedTime;
+}
+
+const String& WebKitAnimationEvent::pseudoElement() const
+{
+    return m_pseudoElement;
 }
 
 EventInterface WebKitAnimationEvent::eventInterface() const

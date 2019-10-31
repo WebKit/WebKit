@@ -227,7 +227,7 @@ void CSSAnimationControllerPrivate::fireEventsAndUpdateStyle()
         if (event.eventType == eventNames().transitionendEvent)
             element.dispatchEvent(TransitionEvent::create(event.eventType, event.name, event.elapsedTime, PseudoElement::pseudoElementNameForEvents(element.pseudoId())));
         else
-            element.dispatchEvent(AnimationEvent::create(event.eventType, event.name, event.elapsedTime));
+            element.dispatchEvent(AnimationEvent::create(event.eventType, event.name, event.elapsedTime, PseudoElement::pseudoElementNameForEvents(element.pseudoId())));
     }
 
     for (auto& change : m_elementChangesToDispatch)

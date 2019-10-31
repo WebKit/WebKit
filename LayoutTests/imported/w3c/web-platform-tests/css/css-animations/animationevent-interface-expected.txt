@@ -12,7 +12,7 @@ PASS elapsedTime is readonly
 PASS animationEventInit argument is null 
 PASS animationEventInit argument is undefined 
 PASS animationEventInit argument is empty dictionary 
-FAIL AnimationEvent.pseudoElement initialized from the dictionary assert_equals: expected (string) "::testPseudo" but got (undefined) undefined
+PASS AnimationEvent.pseudoElement initialized from the dictionary 
 PASS animationName set to 'sample' 
 PASS animationName set to undefined 
 PASS animationName set to null 

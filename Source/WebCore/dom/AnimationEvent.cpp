@@ -36,13 +36,15 @@ AnimationEvent::AnimationEvent(const AtomString& type, const Init& initializer, 
     : Event(type, initializer, isTrusted)
     , m_animationName(initializer.animationName)
     , m_elapsedTime(initializer.elapsedTime)
+    , m_pseudoElement(initializer.pseudoElement)
 {
 }
 
-AnimationEvent::AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime)
+AnimationEvent::AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement)
     : Event(type, CanBubble::Yes, IsCancelable::No)
     , m_animationName(animationName)
     , m_elapsedTime(elapsedTime)
+    , m_pseudoElement(pseudoElement)
 {
 }
 
@@ -56,6 +58,11 @@ const String& AnimationEvent::animationName() const
 double AnimationEvent::elapsedTime() const
 {
     return m_elapsedTime;
+}
+
+const String& AnimationEvent::pseudoElement() const
+{
+    return m_pseudoElement;
 }
 
 EventInterface AnimationEvent::eventInterface() const

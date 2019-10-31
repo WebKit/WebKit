@@ -32,14 +32,15 @@ namespace WebCore {
 class WebKitAnimationEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(WebKitAnimationEvent);
 public:
-    static Ref<WebKitAnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime)
+    static Ref<WebKitAnimationEvent> create(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement)
     {
-        return adoptRef(*new WebKitAnimationEvent(type, animationName, elapsedTime));
+        return adoptRef(*new WebKitAnimationEvent(type, animationName, elapsedTime, pseudoElement));
     }
 
     struct Init : EventInit {
         String animationName;
         double elapsedTime { 0.0 };
+        String pseudoElement;
     };
 
     static Ref<WebKitAnimationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -51,15 +52,17 @@ public:
 
     const String& animationName() const;
     double elapsedTime() const;
+    const String& pseudoElement() const;
 
     EventInterface eventInterface() const override;
 
 private:
-    WebKitAnimationEvent(const AtomString& type, const String& animationName, double elapsedTime);
+    WebKitAnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement);
     WebKitAnimationEvent(const AtomString&, const Init&, IsTrusted);
 
     String m_animationName;
     double m_elapsedTime;
+    String m_pseudoElement;
 };
 
 } // namespace WebCore

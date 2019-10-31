@@ -341,7 +341,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
     ASSERT(m_owningElement);
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     if (is<CSSAnimation>(this))
-        m_eventQueue->enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time));
+        m_eventQueue->enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
     else if (is<CSSTransition>(this))
         m_eventQueue->enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_owningElement->pseudoId())));
 }
