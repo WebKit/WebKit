@@ -74,6 +74,7 @@
 #include "NetworkingContext.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PictureInPictureSupport.h"
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"

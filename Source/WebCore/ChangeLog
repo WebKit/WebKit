@@ -1,3 +1,45 @@
+2019-10-30  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Enable the support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202618
+
+        Reviewed by Jer Noble.
+
+        Enable the Picture-in-Picture API support for iOS (iPad only).
+        Add a file WebCore/platform/PictureInPictureSupport.h to define supportsPictureInPicture()
+        and provide a default implementation of that function if a configuration does not provide it (just return false).
+        The original definition of this function in platform/cocoa/VideoFullscreenModel.h is removed,
+        and the usage of this function is cleaned up.
+        Also fix a build error related to including header file (pal/spi/cg/CoreGraphicsSPI.h).
+
+        Covered by existing test cases.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/pictureinpicture/DocumentPictureInPicture.cpp:
+        (WebCore::DocumentPictureInPicture::pictureInPictureEnabled):
+        * Modules/pictureinpicture/DocumentPictureInPicture.h:
+        (WebCore::DocumentPictureInPicture::pictureInPictureEnabled): Deleted.
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/pictureinpicture/DocumentPictureInPicture.cpp:
+        (WebCore::DocumentPictureInPicture::pictureInPictureEnabled):
+        * Modules/pictureinpicture/DocumentPictureInPicture.h:
+        (WebCore::DocumentPictureInPicture::pictureInPictureEnabled): Deleted.
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode const):
+        * platform/PictureInPictureSupport.h: Copied from Source/WebCore/Modules/pictureinpicture/DocumentPictureInPicture.h.
+        (WebCore::supportsPictureInPicture):
+        * platform/cocoa/VideoFullscreenModel.h:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+
 2019-10-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: ResizeObserver callbacks are not labeled in the Events timeline

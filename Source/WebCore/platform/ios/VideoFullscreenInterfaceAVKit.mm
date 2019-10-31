@@ -32,6 +32,7 @@
 
 #import "GeometryUtilities.h"
 #import "Logging.h"
+#import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"

@@ -33,6 +33,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSPictureInPictureWindow.h"
 #include "Logging.h"
+#include "PictureInPictureSupport.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
@@ -72,6 +73,11 @@ HTMLVideoElementPictureInPicture* HTMLVideoElementPictureInPicture::from(HTMLVid
 
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
+    if (!supportsPictureInPicture()) {
+        promise->reject(NotSupportedError, "The Picture-in-Picture mode is not supported.");
+        return;
+    }
+
     if (videoElement.readyState() == HTMLMediaElementEnums::HAVE_NOTHING) {
         promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode.");
         return;

@@ -85,8 +85,6 @@ public:
     virtual void didExitPictureInPicture() { }
     virtual void modelDestroyed() { }
 };
-
-WEBCORE_EXPORT bool supportsPictureInPicture();
     
 }
 

@@ -30,6 +30,7 @@
 
 #import "IntRect.h"
 #import "Logging.h"
+#import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceMac.h"
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"

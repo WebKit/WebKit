@@ -1,3 +1,15 @@
+2019-10-30  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Enable the support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202618
+
+        Reviewed by Jer Noble.
+
+        Enable the Picture-in-Picture API support for iOS (iPad only).
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+
 2019-10-30  Alex Christensen  <achristensen@webkit.org>
 
         Prevent Mac CMake build from bit rotting

@@ -39,6 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PictureInPictureSupport.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
 #include "ScriptController.h"
@@ -414,10 +415,8 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode
         return supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 
     if (mode == VideoPresentationMode::PictureInPicture) {
-#if PLATFORM(COCOA)
         if (!supportsPictureInPicture())
             return false;
-#endif
 
         return supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     }

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2019 Carlos Eduardo Ramalho <cadubentzen@gmail.com>.
  * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,31 +25,12 @@
 
 #pragma once
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
-
-#include "HTMLVideoElement.h"
-#include "Supplementable.h"
-#include <wtf/IsoMalloc.h>
-
 namespace WebCore {
 
-class DeferredPromise;
-class Document;
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+WEBCORE_EXPORT bool supportsPictureInPicture();
+#else
+constexpr bool supportsPictureInPicture() { return false; }
+#endif
 
-class DocumentPictureInPicture : public Supplement<Document> {
-    WTF_MAKE_ISO_ALLOCATED(DocumentPictureInPicture);
-public:
-    virtual ~DocumentPictureInPicture();
-
-    static bool pictureInPictureEnabled(Document&);
-    static void exitPictureInPicture(Document&, Ref<DeferredPromise>&&);
-
-    static DocumentPictureInPicture* from(Document&);
-
-private:
-    static const char* supplementName() { return "DocumentPictureInPicture"; };
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(PICTURE_IN_PICTURE_API)
+}

@@ -12,9 +12,6 @@
             run('video.src = findMediaFile("video", "content/test")');
             await waitFor(video, 'canplaythrough');
 
-            run('video.play()');
-            await waitFor(video, 'playing');
-
             runWithKeyDown(function() { video.requestPictureInPicture(); });
             await waitFor(video, 'enterpictureinpicture');
 

@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "HTMLVideoElementPictureInPicture.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PictureInPictureSupport.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +40,11 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentPictureInPicture);
 
 DocumentPictureInPicture::~DocumentPictureInPicture() = default;
+
+bool DocumentPictureInPicture::pictureInPictureEnabled(Document&)
+{
+    return supportsPictureInPicture();
+}
 
 void DocumentPictureInPicture::exitPictureInPicture(Document& document, Ref<DeferredPromise>&& promise)
 {

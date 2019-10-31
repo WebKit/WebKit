@@ -1,3 +1,20 @@
+2019-10-30  Peng Liu  <peng.liu6@apple.com>
+
+        [Picture-in-Picture Web API] Enable the support for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=202618
+
+        Reviewed by Jer Noble.
+
+        We do not need to play the video before entering the picture-in-picture mode,
+        so remove the code to start video playback in the test pages.
+        Also, enable the layout test cases of the Picture-in-Picture API for iPad.
+
+        * media/picture-in-picture-api-pip-events-expected.txt:
+        * media/picture-in-picture-api-pip-events.html:
+        * media/picture-in-picture-api-pip-window-expected.txt:
+        * media/picture-in-picture-api-pip-window.html:
+        * platform/ipad/TestExpectations:
+
 2019-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         inspector-protocol/debugger/setBreakpoint-dfg.html is flaky

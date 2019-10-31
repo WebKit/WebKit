@@ -35,6 +35,7 @@
 #include "IntRect.h"
 #include "StrokeStyleApplier.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>

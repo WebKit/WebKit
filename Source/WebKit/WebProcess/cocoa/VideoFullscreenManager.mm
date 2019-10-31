@@ -43,6 +43,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
