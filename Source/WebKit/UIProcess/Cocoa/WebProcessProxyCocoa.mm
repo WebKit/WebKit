@@ -194,7 +194,7 @@ void WebProcessProxy::processWasUnexpectedlyUnsuspended()
 {
     if (m_throttler.shouldBeRunnable()) {
         // The process becoming unsuspended was not unexpected; it likely was notified of its running state
-        // before receiving a procsessDidResume() message from the UIProcess.
+        // before receiving a processDidResume() message from the UIProcess.
         return;
     }
 
