@@ -1,3 +1,17 @@
+2019-10-31  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] transform property is always "none" for getKeyframes() output of a CSS Animation
+        https://bugs.webkit.org/show_bug.cgi?id=203669
+
+        Reviewed by Dean Jackson.
+
+        Calling valueForPropertyInStyle() with CSSPropertyTransform will eventually call into computedTransform()
+        which requires a renderer. Note that right now we're returning the computed style instead of the parsed
+        style, this will be addressed in a separate patch.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::getKeyframes):
+
 2019-10-31  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed, rolling out r251772.

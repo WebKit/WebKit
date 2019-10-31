@@ -570,6 +570,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
     // 3. For each keyframe in keyframes perform the following steps:
     if (is<DeclarativeAnimation>(animation())) {
+        auto* renderer = m_target->renderer();
         auto computedStyleExtractor = ComputedStyleExtractor(m_target.get());
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
@@ -602,7 +603,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
                 String idlValue = "";
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
                     idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
                 auto value = toJS<IDLDOMString>(lexicalGlobalObject, idlValue);

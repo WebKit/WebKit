@@ -1,3 +1,14 @@
+2019-10-31  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] transform property is always "none" for getKeyframes() output of a CSS Animation
+        https://bugs.webkit.org/show_bug.cgi?id=203669
+
+        Reviewed by Dean Jackson.
+
+        Mark a progression, although the test still fails overall, it fails in a better way.
+
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+
 2019-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Opacity should always serialize as a number
