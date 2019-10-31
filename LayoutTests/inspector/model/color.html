@@ -479,6 +479,25 @@ function test()
     });
 
     suite.addTestCase({
+        name: "WI.Color.hsv2hsl",
+        description: "Test conversion from HSV to HSL.",
+        test() {
+            testColorConversion(WI.Color.hsv2hsl, [42, 100, 0], [42, 0, 0]);
+            testColorConversion(WI.Color.hsv2hsl, [42, 50, 100], [42, 100, 75]);
+            testColorConversion(WI.Color.hsv2hsl, [42, 100, 50], [42, 100, 25]);
+            testColorConversion(WI.Color.hsv2hsl, [42, 50, 50], [42, 33.33333333333333, 37.5]);
+            testColorConversion(WI.Color.hsv2hsl, [42, 100, 100], [42, 100, 50]);
+
+            // Out-of-bounds.
+            testColorConversion(WI.Color.hsv2hsl, [-1, -1, -1], [0, 0, 0]);
+            testColorConversion(WI.Color.hsv2hsl, [361, 101, 50], [360, 100, 25]);
+            testColorConversion(WI.Color.hsv2hsl, [361, 101, 101], [360, 100, 50]);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "WI.Color.cmyk2rgb",
         description: "Test conversion from CMYK to RGB.",
         test() {

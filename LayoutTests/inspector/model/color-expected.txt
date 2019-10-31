@@ -441,6 +441,16 @@ PASS: Should convert [-1,-1,-1] to [0,0,0].
 PASS: Should convert [361,101,50] to [255,0,0].
 PASS: Should convert [361,101,101] to [255,255,255].
 
+-- Running test case: WI.Color.hsv2hsl
+PASS: Should convert [42,100,0] to [42,0,0].
+PASS: Should convert [42,50,100] to [42,100,75].
+PASS: Should convert [42,100,50] to [42,100,25].
+PASS: Should convert [42,50,50] to [42,33.33333333333333,37.5].
+PASS: Should convert [42,100,100] to [42,100,50].
+PASS: Should convert [-1,-1,-1] to [0,0,0].
+PASS: Should convert [361,101,50] to [360,100,25].
+PASS: Should convert [361,101,101] to [360,100,50].
+
 -- Running test case: WI.Color.cmyk2rgb
 PASS: Should convert [0,0,0,1] to [0,0,0].
 PASS: Should convert [1,0,0,0] to [0,255,255].

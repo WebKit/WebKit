@@ -253,6 +253,23 @@ WI.Color = class Color
         ];
     }
 
+    // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_HSL
+    static hsv2hsl(h, s, v)
+    {
+        h = Number.constrain(h, 0, 360);
+        s = Number.constrain(s, 0, 100) / 100;
+        v = Number.constrain(v, 0, 100) / 100;
+
+        let l = v - v * s / 2;
+        let saturation;
+        if (l === 0 || l === 1)
+            saturation = 0;
+        else
+            saturation = (v - l) / Math.min(l, 1 - l);
+
+        return [h, saturation * 100, l * 100];
+    }
+
     static cmyk2rgb(c, m, y, k)
     {
         c = Number.constrain(c, 0, 1);

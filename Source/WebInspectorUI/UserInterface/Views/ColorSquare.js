@@ -79,8 +79,11 @@ WI.ColorSquare = class ColorSquare
 
     get tintedColor()
     {
-        if (this._crosshairPosition)
-            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, this._lightness]);
+        if (this._crosshairPosition) {
+            let hsl = WI.Color.hsv2hsl(this._hue, this._saturation, this._brightness);
+            return new WI.Color(WI.Color.Format.HSL, hsl);
+        }
+
         return new WI.Color(WI.Color.Format.HSLA, [0, 0, 0, 0]);
     }
 
@@ -138,13 +141,6 @@ WI.ColorSquare = class ColorSquare
     {
         let brightness = 1 - (this._y / this._dimension);
         return Number.constrain(brightness, 0, 1) * 100;
-    }
-
-    get _lightness()
-    {
-        // The color picker is HSB-based. (HSB is also known as HSV.)
-        // Derive lightness by using HSB to HSL equation.
-        return (200 - this._saturation) * (this._brightness / 100) / 2;
     }
 
     _handleMousedown(event)

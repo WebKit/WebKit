@@ -1,3 +1,14 @@
+2019-10-31  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Color picker: incorrect saturation when selecting color on color square
+        https://bugs.webkit.org/show_bug.cgi?id=203695
+        <rdar://problem/56793697>
+
+        Reviewed by Matt Baker.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2019-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOMDebugger: Node Removed breakpoints should fire whenever the node is removed from the main DOM tree, not just when it's removed from it's parent
