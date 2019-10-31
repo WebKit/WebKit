@@ -1,3 +1,101 @@
+2019-10-31  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
+
+        Move ImageBuffer-related functionality from HTMLCanvasElement to CanvasBase
+        https://bugs.webkit.org/show_bug.cgi?id=182503
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the ImageBuffer member variable, other related member variables and
+        majority of methods that operate on these from the HTMLCanvasElement
+        class up to the CanvasBase class. This will make it possible for the
+        OffscreenCanvas implementation to leverage the same code when using 2D
+        contexts for painting.
+
+        Most of the moved methods are public, while the setImageBuffer() method
+        is made protected so that it's still accessible from the inheriting
+        class.
+
+        Along with setImageBuffer(), the active pixel memory counter is moved
+        into the CanvasBase class. It's still using static storage, but is now
+        a member of the class with protected access. The storage has been made
+        atomic so as to allow its consistency to be maintained when accessed
+        from multiple threads (which may happen in the future).
+
+        The m_size member variable is also moved up into the CanvasBase class.
+        Constructor is changed so that the passed-in IntSize argument is used
+        to initialize it. Canvas implementations are still the owners of their
+        respective canvas contexts and are responsible for the destruction of
+        both the context and the ImageBuffer, in that order.
+
+        HTMLCanvasElement destructor still has to invoke
+        CanvasBase::notifyObserversCanvasDestroyed() since some CanvasObserver
+        derivatives perform virtual method calls on the CanvasBase object for
+        typecasting purposes in their canvasDestroyed() implementation.
+        Calling virtual methods on an object that's being destroyed is normally
+        discouraged and should be fixed separately, but it works as long as
+        invocations are done before the HTMLCanvasElement object is destroyed
+        completely (as has been the case so far).
+
+        CanvasRenderingContext2DBase is already changed in unwindStateStack()
+        to call CanvasBase::existingDrawingContext() and not downcast the
+        CanvasBase object to HTMLCanvasElement. This is done now due to
+        unwindStateStack() being called from the destructor, which is now
+        invoked from the CanvasBase destructor and not the HTMLCanvasElement
+        destructor, avoiding virtual method calls on the CanvasBase object as
+        it's being destroyed.
+
+        This patch doesn't address various methods using const qualifier and
+        then working around that by requiring member variables to be mutable.
+        This should be amended as much as possible in a separate patch.
+
+        No new tests -- no change in functionality, only refactoring.
+
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::CanvasBase):
+        (WebCore::CanvasBase::~CanvasBase):
+        (WebCore::CanvasBase::drawingContext const):
+        (WebCore::CanvasBase::existingDrawingContext const):
+        (WebCore::CanvasBase::buffer const):
+        (WebCore::CanvasBase::baseTransform const):
+        (WebCore::CanvasBase::makeRenderingResultsAvailable):
+        (WebCore::CanvasBase::memoryCost const):
+        (WebCore::CanvasBase::externalMemoryCost const):
+        (WebCore::CanvasBase::callTracingActive const):
+        (WebCore::CanvasBase::setImageBuffer const):
+        (WebCore::CanvasBase::activePixelMemory):
+        (WebCore::CanvasBase::resetGraphicsContextState const):
+        * html/CanvasBase.h:
+        (WebCore::CanvasBase::width const):
+        (WebCore::CanvasBase::height const):
+        (WebCore::CanvasBase::size const):
+        (WebCore::CanvasBase::setSize):
+        (WebCore::CanvasBase::hasCreatedImageBuffer const):
+        (WebCore::CanvasBase::createImageBuffer const):
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::CustomPaintCanvas):
+        (WebCore::CustomPaintCanvas::~CustomPaintCanvas):
+        * html/CustomPaintCanvas.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::setSize):
+        (WebCore::HTMLCanvasElement::createContext2d):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        (WebCore::HTMLCanvasElement::toDataURL):
+        (WebCore::HTMLCanvasElement::toBlob):
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        (WebCore::HTMLCanvasElement::setImageBufferAndMarkDirty):
+        * html/HTMLCanvasElement.h:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::OffscreenCanvas):
+        (WebCore::OffscreenCanvas::~OffscreenCanvas):
+        (WebCore::OffscreenCanvas::setWidth):
+        (WebCore::OffscreenCanvas::setHeight):
+        (WebCore::OffscreenCanvas::transferToImageBitmap):
+        (WebCore::OffscreenCanvas::createImageBuffer const):
+        * html/OffscreenCanvas.h:
+
 2019-10-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOMDebugger: Node Removed breakpoints should fire whenever the node is removed from the main DOM tree, not just when it's removed from it's parent

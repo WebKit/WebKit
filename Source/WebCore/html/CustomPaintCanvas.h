@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class CanvasRenderingContext;
 class ImageBitmap;
 class PaintRenderingContext2D;
 
@@ -52,20 +53,12 @@ public:
     virtual ~CustomPaintCanvas();
     bool isCustomPaintCanvas() const final { return true; }
 
-    unsigned width() const final;
-    void setWidth(unsigned);
-    unsigned height() const final;
-    void setHeight(unsigned);
-
-    const IntSize& size() const final;
-    void setSize(const IntSize&) final;
-
     ExceptionOr<RefPtr<PaintRenderingContext2D>> getContext();
 
+    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     GraphicsContext* drawingContext() const final;
     GraphicsContext* existingDrawingContext() const final;
 
-    void makeRenderingResultsAvailable() final;
     void didDraw(const FloatRect&) final { }
 
     AffineTransform baseTransform() const final { ASSERT(m_destinationGraphicsContext && m_copiedBuffer); return m_copiedBuffer->baseTransform(); }
@@ -82,8 +75,8 @@ private:
     void derefCanvasBase() final { deref(); }
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
+    std::unique_ptr<CanvasRenderingContext> m_context;
     mutable GraphicsContext* m_destinationGraphicsContext = nullptr;
-    mutable IntSize m_size;
     mutable std::unique_ptr<ImageBuffer> m_copiedBuffer;
     mutable RefPtr<Image> m_copiedImage;
 };

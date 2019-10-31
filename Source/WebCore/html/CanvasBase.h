@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IntSize.h"
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 
@@ -35,9 +36,9 @@ class CanvasBase;
 class CanvasRenderingContext;
 class Element;
 class GraphicsContext;
+class GraphicsContextStateSaver;
 class Image;
 class ImageBuffer;
-class IntSize;
 class FloatRect;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -64,10 +65,18 @@ public:
     virtual bool isOffscreenCanvas() const { return false; }
     virtual bool isCustomPaintCanvas() const { return false; }
 
-    virtual unsigned width() const = 0;
-    virtual unsigned height() const = 0;
-    virtual const IntSize& size() const  = 0;
-    virtual void setSize(const IntSize&) = 0;
+    unsigned width() const { return m_size.width(); }
+    unsigned height() const { return m_size.height(); }
+    const IntSize& size() const { return m_size; }
+
+    ImageBuffer* buffer() const;
+
+    virtual AffineTransform baseTransform() const;
+
+    void makeRenderingResultsAvailable();
+
+    size_t memoryCost() const;
+    size_t externalMemoryCost() const;
 
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }
@@ -76,7 +85,7 @@ public:
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
     ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
 
-    CanvasRenderingContext* renderingContext() const;
+    virtual CanvasRenderingContext* renderingContext() const = 0;
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
@@ -86,25 +95,36 @@ public:
 
     HashSet<Element*> cssCanvasClients() const;
 
-    virtual GraphicsContext* drawingContext() const = 0;
-    virtual GraphicsContext* existingDrawingContext() const = 0;
+    virtual GraphicsContext* drawingContext() const;
+    virtual GraphicsContext* existingDrawingContext() const;
 
-    virtual void makeRenderingResultsAvailable() = 0;
     virtual void didDraw(const FloatRect&) = 0;
 
-    virtual AffineTransform baseTransform() const = 0;
     virtual Image* copiedImage() const = 0;
-
     bool callTracingActive() const;
 
 protected:
-    CanvasBase();
+    explicit CanvasBase(IntSize);
 
     virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 
-    std::unique_ptr<CanvasRenderingContext> m_context;
+    virtual void setSize(const IntSize& size) { m_size = size; }
+
+    void setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
+    virtual bool hasCreatedImageBuffer() const { return false; }
+    static size_t activePixelMemory();
+
+    void resetGraphicsContextState() const;
 
 private:
+    virtual void createImageBuffer() const { }
+
+    mutable IntSize m_size;
+    mutable Lock m_imageBufferAssignmentLock;
+    mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
+    mutable size_t m_imageBufferCost { 0 };
+    mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
+
     bool m_originClean { true };
 #ifndef NDEBUG
     bool m_didNotifyObserversCanvasDestroyed { false };

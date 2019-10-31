@@ -31,7 +31,6 @@
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #include "ImageBitmapRenderingContextSettings.h"
-#include "IntSize.h"
 #include <memory>
 #include <wtf/Forward.h>
 
@@ -42,9 +41,9 @@
 namespace WebCore {
 
 class BlobCallback;
+class CanvasRenderingContext;
 class CanvasRenderingContext2D;
 class GraphicsContext;
-class GraphicsContextStateSaver;
 class Image;
 class ImageBuffer;
 class ImageData;
@@ -65,25 +64,12 @@ public:
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
-    unsigned width() const final { return size().width(); }
-    unsigned height() const final { return size().height(); }
-
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    const IntSize& size() const final { return m_size; }
+    void setSize(const IntSize& newSize) override;
 
-    void setSize(const IntSize& newSize) override
-    { 
-        if (newSize == size())
-            return;
-        m_ignoreReset = true; 
-        setWidth(newSize.width());
-        setHeight(newSize.height());
-        m_ignoreReset = false;
-        reset();
-    }
-
+    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<Optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     CanvasRenderingContext* getContext(const String&);
@@ -116,15 +102,11 @@ public:
 
     void paint(GraphicsContext&, const LayoutRect&);
 
-    GraphicsContext* drawingContext() const final;
-    GraphicsContext* existingDrawingContext() const final;
-
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
     ExceptionOr<Ref<MediaStream>> captureStream(Document&, Optional<double>&& frameRequestRate);
 #endif
 
-    ImageBuffer* buffer() const;
     Image* copiedImage() const final;
     void clearCopiedImage();
     RefPtr<ImageData> getImageData();
@@ -133,20 +115,12 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    AffineTransform baseTransform() const final;
-
-    void makeRenderingResultsAvailable() final;
-    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
-
     bool shouldAccelerate(const IntSize&) const;
 
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
     WEBCORE_EXPORT void setTracksDisplayListReplay(bool);
     WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
     WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
-
-    size_t memoryCost() const;
-    size_t externalMemoryCost() const;
 
     // FIXME: Only some canvas rendering contexts need an ImageBuffer.
     // It would be better to have the contexts own the buffers.
@@ -167,12 +141,12 @@ private:
 
     void reset();
 
-    void createImageBuffer() const;
+    void createImageBuffer() const final;
     void clearImageBuffer() const;
 
+    bool hasCreatedImageBuffer() const final { return m_hasCreatedImageBuffer; }
+
     void setSurfaceSize(const IntSize&);
-    void setImageBuffer(std::unique_ptr<ImageBuffer>&&) const;
-    void releaseImageBufferAndContext();
 
     bool paintsIntoCanvasBuffer() const;
 
@@ -184,21 +158,18 @@ private:
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
 
     FloatRect m_dirtyRect;
-    mutable IntSize m_size;
 
     bool m_ignoreReset { false };
 
     bool m_usesDisplayListDrawing { false };
     bool m_tracksDisplayListReplay { false };
 
-    mutable Lock m_imageBufferAssignmentLock;
-    
-    // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
+    std::unique_ptr<CanvasRenderingContext> m_context;
+
+    // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer { false };
     mutable bool m_didClearImageBuffer { false };
-    mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
-    mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
-    
+
     mutable RefPtr<Image> m_presentedImage;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };

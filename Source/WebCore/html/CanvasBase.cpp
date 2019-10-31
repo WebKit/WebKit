@@ -31,24 +31,91 @@
 #include "Element.h"
 #include "FloatRect.h"
 #include "InspectorInstrumentation.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
+#include <atomic>
 #include <wtf/Vector.h>
+
+static std::atomic<size_t> s_activePixelMemory { 0 };
 
 namespace WebCore {
 
-CanvasBase::CanvasBase()
+#if USE(CG)
+// FIXME: It seems strange that the default quality is not the one that is literally named "default".
+// Should fix names to make this easier to understand, or write an excellent comment here explaining why not.
+const InterpolationQuality defaultInterpolationQuality = InterpolationLow;
+#else
+const InterpolationQuality defaultInterpolationQuality = InterpolationDefault;
+#endif
+
+CanvasBase::CanvasBase(IntSize size)
+    : m_size(size)
 {
 }
 
 CanvasBase::~CanvasBase()
 {
-    ASSERT(!m_context); // Should have been set to null by base class.
     ASSERT(m_didNotifyObserversCanvasDestroyed);
     ASSERT(m_observers.isEmpty());
+    ASSERT(!m_imageBuffer);
 }
 
-CanvasRenderingContext* CanvasBase::renderingContext() const
+GraphicsContext* CanvasBase::drawingContext() const
 {
-    return m_context.get();
+    auto* context = renderingContext();
+    if (context && !context->is2d())
+        return nullptr;
+
+    return buffer() ? &m_imageBuffer->context() : nullptr;
+}
+
+GraphicsContext* CanvasBase::existingDrawingContext() const
+{
+    if (!hasCreatedImageBuffer())
+        return nullptr;
+
+    return drawingContext();
+}
+
+ImageBuffer* CanvasBase::buffer() const
+{
+    if (!hasCreatedImageBuffer())
+        createImageBuffer();
+    return m_imageBuffer.get();
+}
+
+AffineTransform CanvasBase::baseTransform() const
+{
+    ASSERT(hasCreatedImageBuffer());
+    return m_imageBuffer->baseTransform();
+}
+
+void CanvasBase::makeRenderingResultsAvailable()
+{
+    if (auto* context = renderingContext())
+        context->paintRenderingResultsToCanvas();
+}
+
+size_t CanvasBase::memoryCost() const
+{
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
+    // from being changed while we access it.
+    auto locker = holdLock(m_imageBufferAssignmentLock);
+    if (!m_imageBuffer)
+        return 0;
+    return m_imageBuffer->memoryCost();
+}
+
+size_t CanvasBase::externalMemoryCost() const
+{
+    // externalMemoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
+    // from being changed while we access it.
+    auto locker = holdLock(m_imageBufferAssignmentLock);
+    if (!m_imageBuffer)
+        return 0;
+    return m_imageBuffer->externalMemoryCost();
 }
 
 void CanvasBase::addObserver(CanvasObserver& observer)
@@ -111,7 +178,53 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
 
 bool CanvasBase::callTracingActive() const
 {
-    return m_context && m_context->callTracingActive();
+    auto* context = renderingContext();
+    return context && context->callTracingActive();
+}
+
+void CanvasBase::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
+{
+    {
+        auto locker = holdLock(m_imageBufferAssignmentLock);
+        m_contextStateSaver = nullptr;
+        m_imageBuffer = WTFMove(buffer);
+    }
+
+    if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
+        m_size = m_imageBuffer->internalSize();
+
+    size_t previousMemoryCost = m_imageBufferCost;
+    m_imageBufferCost = memoryCost();
+    s_activePixelMemory += m_imageBufferCost - previousMemoryCost;
+
+    auto* context = renderingContext();
+    if (context && m_imageBuffer && previousMemoryCost != m_imageBufferCost)
+        InspectorInstrumentation::didChangeCanvasMemory(*context);
+
+    if (!m_imageBuffer)
+        return;
+
+    m_imageBuffer->context().setShadowsIgnoreTransforms(true);
+    m_imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
+    m_imageBuffer->context().setStrokeThickness(1);
+    m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(m_imageBuffer->context());
+
+    JSC::JSLockHolder lock(scriptExecutionContext()->vm());
+    scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(m_imageBufferCost);
+}
+
+size_t CanvasBase::activePixelMemory()
+{
+    return s_activePixelMemory.load();
+}
+
+void CanvasBase::resetGraphicsContextState() const
+{
+    if (m_contextStateSaver) {
+        // Reset to the initial graphics context state.
+        m_contextStateSaver->restore();
+        m_contextStateSaver->save();
+    }
 }
 
 }
