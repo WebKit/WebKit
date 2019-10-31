@@ -95,7 +95,9 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         };
 
         if (isSegmentBreakCandidate(text[currentPosition])) {
-            inlineContent.append(InlineTextItem::createSegmentBreakItem(inlineBox, currentPosition));
+            // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.  
+            inlineContent.append(style.preserveNewline() ? makeUnique<InlineItem>(inlineBox, Type::ForcedLineBreak)
+                : InlineTextItem::createSegmentBreakItem(inlineBox, currentPosition));
             ++currentPosition;
             continue;
         }
@@ -148,7 +150,6 @@ InlineTextItem::InlineTextItem(const Box& inlineBox)
 std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const
 {
     RELEASE_ASSERT(length <= this->length());
-    ASSERT(!isSegmentBreak());
     ASSERT(m_textItemType != TextItemType::Undefined);
     return makeUnique<InlineTextItem>(layoutBox(), start(), length, m_textItemType);
 }
@@ -156,16 +157,8 @@ std::unique_ptr<InlineTextItem> InlineTextItem::left(unsigned length) const
 std::unique_ptr<InlineTextItem> InlineTextItem::right(unsigned length) const
 {
     RELEASE_ASSERT(length <= this->length());
-    ASSERT(!isSegmentBreak());
     ASSERT(m_textItemType != TextItemType::Undefined);
     return makeUnique<InlineTextItem>(layoutBox(), end() - length, length, m_textItemType);
-}
-
-bool InlineTextItem::isWhitespace() const
-{
-    if (isSegmentBreak())
-        return !style().preserveNewline();
-    return m_textItemType == TextItemType::Whitespace;
 }
 
 }

@@ -28,25 +28,13 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineTextItem.h"
-
 namespace WebCore {
 namespace Layout {
 
-bool InlineItem::isForcedLineBreak() const
+InlineItem::InlineItem(const Box& layoutBox, Type type)
+    : m_layoutBox(layoutBox)
+    , m_type(type)
 {
-    if (type() == Type::LineBreakBox)
-        return true;
-    if (type() != Type::Text || !static_cast<const InlineTextItem*>(this)->isSegmentBreak())
-        return false;
-    // Segment break with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line)
-    return style().preserveNewline();
-}
-
-bool InlineItem::isText() const
-{
-    // If this setup turns out to be a perf hit, we could easily switch over to generate-the-narrow-type way.
-    return type() == Type::Text && !isForcedLineBreak();
 }
 
 }

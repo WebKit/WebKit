@@ -46,7 +46,7 @@ public:
     unsigned end() const { return start() + length(); }
     unsigned length() const { return m_length; }
 
-    bool isWhitespace() const;
+    bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace || isSegmentBreak(); }
     bool isCollapsible() const { return isWhitespace() && style().collapseWhiteSpace(); }
     bool isSegmentBreak() const { return m_textItemType == TextItemType::SegmentBreak; }
 

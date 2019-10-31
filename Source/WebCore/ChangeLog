@@ -1,3 +1,32 @@
+2019-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Preserved segment breaks should produce ForcedLineBreak type of InlineItems
+        https://bugs.webkit.org/show_bug.cgi?id=203645
+        <rdar://problem/56763606>
+
+        Reviewed by Antti Koivisto.
+
+        This patch turns preserved segment breaks (e.g. \n) into a ForcedLineBreak. Non-preserved segments breaks are treated as whitespace characters.
+        It fixes a small type mismatch of having an InlineTextItem representing a non-text content (line break).
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent):
+        * layout/inlineformatting/InlineItem.cpp:
+        (WebCore::Layout::InlineItem::InlineItem):
+        (WebCore::Layout::InlineItem::isForcedLineBreak const): Deleted.
+        (WebCore::Layout::InlineItem::isText const): Deleted.
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItem::isText const):
+        (WebCore::Layout::InlineItem::isForcedLineBreak const):
+        (WebCore::Layout::InlineItem::InlineItem): Deleted.
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        (WebCore::Layout::InlineTextItem::left const):
+        (WebCore::Layout::InlineTextItem::right const):
+        (WebCore::Layout::InlineTextItem::isWhitespace const): Deleted.
+        * layout/inlineformatting/InlineTextItem.h:
+        (WebCore::Layout::InlineTextItem::isWhitespace const):
+
 2019-10-31  Antti Koivisto  <antti@apple.com>
 
         Rename StyleBuilder to Style::BuilderGenerated
