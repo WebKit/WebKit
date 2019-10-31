@@ -1,3 +1,28 @@
+2019-10-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line::Run should not hold a reference to InlineItem
+        https://bugs.webkit.org/show_bug.cgi?id=203660
+        <rdar://problem/56770286>
+
+        Reviewed by Antti Koivisto.
+
+        When Line::Runs are merged ([content][   ] -> [content ]) they end up with multiple InlineItems. Let's cache some values from
+        the InlineItems instead.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::close):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::layoutBox const):
+        (WebCore::Layout::Line::Run::isText const):
+        (WebCore::Layout::Line::Run::isBox const):
+        (WebCore::Layout::Line::Run::isForcedLineBreak const):
+        (WebCore::Layout::Line::Run::isContainerStart const):
+        (WebCore::Layout::Line::Run::isContainerEnd const):
+        (WebCore::Layout::Line::Run::isCollapsible const):
+        (WebCore::Layout::Line::Run::isWhitespace const):
+        (WebCore::Layout::Line::Run::expand):
+
 2019-10-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, update DerivedSources-output.xcfilelist after r251841

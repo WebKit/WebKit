@@ -70,17 +70,17 @@ public:
         Run(const InlineItem&, const Display::Run&);
 
         const Display::Run& displayRun() const { return m_displayRun; }
-        const Box& layoutBox() const { return m_inlineItem.layoutBox(); }
+        const Box& layoutBox() const { return m_layoutBox; }
 
         const Display::Rect& logicalRect() const { return m_displayRun.logicalRect(); }
         bool isCollapsedToZeroAdvanceWidth() const;
         bool isCollapsed() const { return m_isCollapsed; }
 
-        bool isText() const { return m_inlineItem.isText() && !isForcedLineBreak(); }
-        bool isBox() const { return m_inlineItem.isBox(); }
-        bool isForcedLineBreak() const { return m_inlineItem.isForcedLineBreak(); }
-        bool isContainerStart() const { return m_inlineItem.isContainerStart(); }
-        bool isContainerEnd() const { return m_inlineItem.isContainerEnd(); }
+        bool isText() const { return m_type == InlineItem::Type::Text; }
+        bool isBox() const { return m_type == InlineItem::Type::Box; }
+        bool isForcedLineBreak() const { return m_type == InlineItem::Type::ForcedLineBreak; }
+        bool isContainerStart() const { return m_type == InlineItem::Type::ContainerStart; }
+        bool isContainerEnd() const { return m_type == InlineItem::Type::ContainerEnd; }
 
     private:
         friend class Line;
@@ -93,12 +93,15 @@ public:
         void setIsCollapsed();
         void setCollapsesToZeroAdvanceWidth();
 
-        bool isCollapsible() const { return m_inlineItem.isText() && downcast<InlineTextItem>(m_inlineItem).isCollapsible(); }
+        bool isCollapsible() const { return m_isCollapsible; }
         bool hasTrailingCollapsedContent() const { return m_hasTrailingCollapsedContent; }
-        bool isWhitespace() const;
+        bool isWhitespace() const { return m_isWhitespace; }
 
-        const InlineItem& m_inlineItem;
+        const Box& m_layoutBox;
         Display::Run m_displayRun;
+        const InlineItem::Type m_type;
+        bool m_isWhitespace { false };
+        bool m_isCollapsible { false };
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };
         bool m_hasTrailingCollapsedContent { false };
@@ -157,17 +160,14 @@ inline void Line::Run::expand(const Run& other)
     ASSERT(isText());
     ASSERT(other.isText());
     ASSERT(!isCollapsedToZeroAdvanceWidth());
-    ASSERT(!m_hasTrailingCollapsedContent);
+    ASSERT(!hasTrailingCollapsedContent());
 
     auto& otherDisplayRun = other.displayRun();
     m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
     m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
     m_hasTrailingCollapsedContent = other.isCollapsed();
-}
-
-inline bool Line::Run::isWhitespace() const
-{
-    return isText() && downcast<InlineTextItem>(m_inlineItem).isWhitespace();
+    m_isWhitespace &= other.isWhitespace();
+    m_isCollapsible = false;
 }
 
 inline void Line::Run::setIsCollapsed()

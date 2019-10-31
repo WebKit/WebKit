@@ -38,8 +38,11 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Line);
 
 Line::Run::Run(const InlineItem& inlineItem, const Display::Run& displayRun)
-    : m_inlineItem(inlineItem)
+    : m_layoutBox(inlineItem.layoutBox())
     , m_displayRun(displayRun)
+    , m_type(inlineItem.type())
+    , m_isWhitespace(is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isWhitespace())
+    , m_isCollapsible(is<InlineTextItem>(inlineItem) && downcast<InlineTextItem>(inlineItem).isCollapsible())
 {
 }
 
