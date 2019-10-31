@@ -1,5 +1,34 @@
 2019-10-31  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r251370. rdar://problem/56763315
+
+    Add more release logging for "Unexpectedly resumed" assertion
+    https://bugs.webkit.org/show_bug.cgi?id=203196
+    
+    Reviewed by Geoffrey Garen.
+    
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::processDidResume):
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::processTaskStateDidChange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@251370 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-10-21  Chris Dumez  <cdumez@apple.com>
+
+            Add more release logging for "Unexpectedly resumed" assertion
+            https://bugs.webkit.org/show_bug.cgi?id=203196
+
+            Reviewed by Geoffrey Garen.
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::processDidResume):
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::processTaskStateDidChange):
+
+2019-10-31  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r251304. rdar://problem/56763315
 
     [iOS] "Unexpectedly Resumed" process assertion may cause us to get terminated
