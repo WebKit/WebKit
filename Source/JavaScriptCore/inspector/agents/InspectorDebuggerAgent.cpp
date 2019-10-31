@@ -905,8 +905,11 @@ void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, cons
         return;
     }
 
+    BlackboxConfig config { url, caseSensitive, isRegex };
     if (shouldBlackbox)
-        m_blackboxedURLs.append({ url, caseSensitive, isRegex });
+        m_blackboxedURLs.appendIfNotContains(config);
+    else
+        m_blackboxedURLs.removeAll(config);
 
     auto blackboxType = shouldBlackbox ? Optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Deferred) : WTF::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
@@ -915,14 +918,6 @@ void InspectorDebuggerAgent::setShouldBlackboxURL(ErrorString& errorString, cons
         if (!shouldBlackboxURL(script.sourceURL) && !shouldBlackboxURL(script.url))
             continue;
         m_scriptDebugServer.setBlackboxType(sourceID, blackboxType);
-    }
-
-    if (!shouldBlackbox) {
-        m_blackboxedURLs.removeAllMatching([&] (const auto& blackboxConfig) {
-            return blackboxConfig.url == url
-                && blackboxConfig.caseSensitive == caseSensitive
-                && blackboxConfig.isRegex == isRegex;
-        });
     }
 }
 

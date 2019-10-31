@@ -192,6 +192,13 @@ private:
         String url;
         bool caseSensitive { false };
         bool isRegex { false };
+
+        inline bool operator==(const BlackboxConfig& other) const
+        {
+            return url == other.url
+                && caseSensitive == other.caseSensitive
+                && isRegex == other.isRegex;
+        }
     };
     Vector<BlackboxConfig> m_blackboxedURLs;
 

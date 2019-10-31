@@ -1,3 +1,14 @@
+2019-10-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: make sure the blackbox config is removed before iterating all existing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=203666
+
+        Reviewed by Matt Baker.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setShouldBlackboxURL):
+
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
         CMake build should make WebKit framework able to be used by Safari
