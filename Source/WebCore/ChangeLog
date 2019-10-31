@@ -1,3 +1,9 @@
+2019-10-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; move PictureInPictureSupport.h include outside HAVE(AVKIT) check.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+
 2019-10-31  Antti Koivisto  <antti@apple.com>
 
         Introduce Style::Builder

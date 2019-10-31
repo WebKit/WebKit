@@ -28,11 +28,12 @@
 #if PLATFORM(IOS_FAMILY)
 #import "VideoFullscreenInterfaceAVKit.h"
 
+#import "PictureInPictureSupport.h"
+
 #if HAVE(AVKIT)
 
 #import "GeometryUtilities.h"
 #import "Logging.h"
-#import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
