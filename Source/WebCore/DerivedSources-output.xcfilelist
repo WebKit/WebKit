@@ -2149,7 +2149,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ServiceWorkerGlobalScopeConstructor
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilder.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StylePropertyShorthandFunctions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.dep
