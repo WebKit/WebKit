@@ -353,13 +353,13 @@ float RenderSVGShape::getTotalLength() const
     return 0;
 }
 
-void RenderSVGShape::getPointAtLength(FloatPoint& point, float distance) const
+FloatPoint RenderSVGShape::getPointAtLength(float distance) const
 {
     if (!m_path)
-        return;
+        return { };
 
     bool isValid;
-    point = m_path->pointAtLength(distance, isValid);
+    return m_path->pointAtLength(distance, isValid);
 }
 
 bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

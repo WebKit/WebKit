@@ -35,7 +35,7 @@ class SVGGeometryElement : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGGeometryElement);
 public:
     virtual float getTotalLength() const;
-    virtual Ref<SVGPoint> getPointAtLength(float distance) const;
+    virtual ExceptionOr<Ref<SVGPoint>> getPointAtLength(float distance) const;
 
     bool isPointInFill(DOMPointInit&&);
     bool isPointInStroke(DOMPointInit&&);

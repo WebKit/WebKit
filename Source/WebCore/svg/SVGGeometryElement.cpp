@@ -55,17 +55,21 @@ float SVGGeometryElement::getTotalLength() const
     return renderer->getTotalLength();
 }
 
-Ref<SVGPoint> SVGGeometryElement::getPointAtLength(float distance) const
+ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
 {
-    FloatPoint point { };
-
     document().updateLayoutIgnorePendingStylesheets();
 
     auto* renderer = downcast<RenderSVGShape>(this->renderer());
-    if (renderer)
-        renderer->getPointAtLength(point, distance);
+    
+    // Spec: If current element is a non-rendered element, throw an InvalidStateError.
+    if (!renderer)
+        return Exception { InvalidStateError };
+    
+    // Spec: Clamp distance to [0, length].
+    distance = clampTo<float>(distance, 0, getTotalLength());
 
-    return SVGPoint::create(point);
+    // Spec: Return a newly created, detached SVGPoint object.
+    return SVGPoint::create(renderer->getPointAtLength(distance));
 }
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)

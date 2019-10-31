@@ -88,7 +88,7 @@ public:
     }
 
     float getTotalLength() const final;
-    Ref<SVGPoint> getPointAtLength(float distance) const final;
+    ExceptionOr<Ref<SVGPoint>> getPointAtLength(float distance) const final;
     unsigned getPathSegAtLength(float distance) const;
 
     FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) final;

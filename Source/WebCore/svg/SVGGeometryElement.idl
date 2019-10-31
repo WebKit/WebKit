@@ -25,10 +25,10 @@
 
 // [Exposed=Window]
 interface SVGGeometryElement : SVGGraphicsElement {
-    readonly attribute SVGAnimatedNumber pathLength; // FIXME: Should be [SameObject].
+    [SameObject] readonly attribute SVGAnimatedNumber pathLength;
 
     boolean isPointInFill(optional DOMPointInit point);
     boolean isPointInStroke(optional DOMPointInit point);
     unrestricted float getTotalLength();
-    [NewObject] SVGPoint getPointAtLength(float distance);
+    [NewObject, MayThrowException] SVGPoint getPointAtLength(float distance);
 };
