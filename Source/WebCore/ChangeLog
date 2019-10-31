@@ -1,3 +1,13 @@
+2019-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent Mac CMake build from bit rotting
+        https://bugs.webkit.org/show_bug.cgi?id=203647
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+        * platform/graphics/mac/WebKitNSImageExtras.mm:
+
 2019-10-30  Jer Noble  <jer.noble@apple.com>
 
         Add fullscreen style quirk for reddit.com

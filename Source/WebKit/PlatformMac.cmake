@@ -55,6 +55,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
+    "${WEBKIT_DIR}/UIProcess/WebAuthentication/Cocoa"
     "${WEBKIT_DIR}/UIProcess/ios"
     "${WEBKIT_DIR}/Platform/cg"
     "${WEBKIT_DIR}/Platform/classifier"
@@ -430,6 +431,7 @@ target_include_directories(SecItemShim PRIVATE
     ${FORWARDING_HEADERS_DIR}
     ${WEBKIT_DIR}
 )
+add_dependencies(SecItemShim WebCore)
 
 # FIXME: These should not be necessary.
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")

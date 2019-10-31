@@ -108,7 +108,14 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
 {
     return wkWebAuthenticationType(_panel->clientDataType());
 }
-
+#else // ENABLE(WEB_AUTHN)
+- (id <_WKWebAuthenticationPanelDelegate>)delegate
+{
+    return nil;
+}
+- (void)setDelegate:(id<_WKWebAuthenticationPanelDelegate>)delegate
+{
+}
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)cancel

@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS_FAMILY)
 #import "config.h"
 #import "WebKitNSImageExtras.h"
+
+#if !PLATFORM(IOS_FAMILY)
 
 #import <pal/spi/mac/NSImageSPI.h>
 

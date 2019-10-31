@@ -64,7 +64,6 @@ list(APPEND WTF_SOURCES
 
     mac/DeprecatedSymbolsUsedBySafari.mm
     mac/FileSystemMac.mm
-    mac/RunLoopMac.mm
     mac/SchedulePairMac.mm
 
     posix/FileSystemPOSIX.cpp
