@@ -138,5 +138,7 @@ set(DumpRenderTree_RESOURCES
 
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
 foreach (_file ${DumpRenderTree_RESOURCES})
-    file(COPY ${TOOLS_DIR}/DumpRenderTree/fonts/${_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
+    if (NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources/${_file})
+        file(COPY ${TOOLS_DIR}/DumpRenderTree/fonts/${_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DumpRenderTree.resources)
+    endif ()
 endforeach ()

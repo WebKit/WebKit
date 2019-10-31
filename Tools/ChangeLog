@@ -1,3 +1,12 @@
+2019-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build should make WebKit framework able to be used by Safari
+        https://bugs.webkit.org/show_bug.cgi?id=203685
+
+        Rubber-stamped by Tim Horton.
+
+        * DumpRenderTree/PlatformMac.cmake:
+
 2019-10-31  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] Limit API tests failures to display in the status-bubble tooltip and buildbot summary

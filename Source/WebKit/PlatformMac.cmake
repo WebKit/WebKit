@@ -37,6 +37,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WKSafeBrowsingWarning.mm
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
+
+    WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
@@ -475,6 +477,16 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist
         ${WebKit_NetworkProcess_OUTPUT_NAME})
+
+    set(WebKit_RESOURCES_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Resources)
+    add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb COMMAND
+        grep -o "^[^;]*" ${WEBKIT_DIR}/WebProcess/com.apple.WebProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${FORWARDING_HEADERS_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb
+        VERBATIM)
+    add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb COMMAND
+        grep -o "^[^;]*" ${WEBKIT_DIR}/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${FORWARDING_HEADERS_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb
+        VERBATIM)
+    add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb)
+    add_dependencies(WebKit WebKitSandboxProfiles)
 
     add_custom_command(OUTPUT ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib COMMAND
         ibtool --compile ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib ${WEBKIT_DIR}/Resources/WebContentProcess.xib
