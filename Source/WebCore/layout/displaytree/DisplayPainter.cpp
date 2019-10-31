@@ -126,9 +126,10 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
             // FIXME: Add non-baseline align painting
             auto& lineBox = formattingState.lineBoxForRun(*run);
             auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset();
-            context.drawText(style.fontCascade(),
-                TextRun { textContext->content(), logicalLeft, textContext->expansion().valueOr(0), textContext->expansionBehavior().valueOr(ForbidLeadingExpansion | ForbidTrailingExpansion)},
-                { logicalLeft, baselineOffset });
+            if (auto expansionContext = textContext->expansion())
+                context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft, expansionContext->horiztontalExpansion, expansionContext->behavior }, { logicalLeft, baselineOffset });
+            else
+                context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft }, { logicalLeft, baselineOffset });
         } else if (auto* cachedImage = run->image()) {
             auto runAbsoluteRect = FloatRect { rootAbsoluteDisplayBox.left() + run->logicalLeft(), rootAbsoluteDisplayBox.top() + run->logicalTop(), run->logicalWidth(), run->logicalHeight() };
             context.drawImage(*cachedImage->image(), runAbsoluteRect);

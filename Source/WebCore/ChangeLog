@@ -1,5 +1,32 @@
 2019-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add expansion context to Line::Run
+        https://bugs.webkit.org/show_bug.cgi?id=203683
+        <rdar://problem/56785012>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding text-align: justify support.
+        The temporary Line::Run holds the number of expansion opportunities, while Display::Run holds both the expansion behavior and
+        the final expansion width.
+        The number of opportunities is used to compute the final expansion width for each run.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::TextContext):
+        (WebCore::Display::Run::TextContext::setExpansion):
+        (WebCore::Display::Run::TextContext::expansion const):
+        (WebCore::Display::Run::TextContext::expansionBehavior const): Deleted.
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::hasExpansionOpportunity const):
+        (WebCore::Layout::Line::Run::expansionOpportunityCount const):
+        (WebCore::Layout::Line::Run::expansionBehavior const):
+        (WebCore::Layout::Line::Run::setHasExpansionOpportunity):
+        (WebCore::Layout::Line::Run::setComputedHorizontalExpansion):
+
+2019-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Line::Run should not hold a reference to InlineItem
         https://bugs.webkit.org/show_bug.cgi?id=203660
         <rdar://problem/56770286>

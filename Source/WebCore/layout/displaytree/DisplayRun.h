@@ -43,23 +43,27 @@ struct Run {
     struct TextContext {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContext(unsigned position, unsigned length, String content, Optional<ExpansionBehavior> = { }, Optional<LayoutUnit> expansion = { });
+        struct ExpansionContext;
+        TextContext(unsigned position, unsigned length, String content, Optional<ExpansionContext> = { });
 
         unsigned start() const { return m_start; }
         unsigned end() const { return start() + length(); }
         unsigned length() const { return m_length; }
         String content() const { return m_content; }
 
-        Optional<ExpansionBehavior> expansionBehavior() const { return m_expansionBehavior; }
-        Optional<LayoutUnit> expansion() const { return m_expansion; }
+        struct ExpansionContext {
+            ExpansionBehavior behavior;
+            LayoutUnit horiztontalExpansion;
+        };
+        void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
+        Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
         void expand(const TextContext& other);
 
     private:
         unsigned m_start { 0 };
         unsigned m_length { 0 };
-        Optional<ExpansionBehavior> m_expansionBehavior;
-        Optional<LayoutUnit> m_expansion;
+        Optional<ExpansionContext> m_expansionContext;
         // FIXME: This is temporary. We should have some mapping setup to identify associated text content instead.
         String m_content;
     };
@@ -110,11 +114,10 @@ inline Run::Run(const RenderStyle& style, Rect logicalRect, Optional<TextContext
 {
 }
 
-inline Run::TextContext::TextContext(unsigned start, unsigned length, String content, Optional<ExpansionBehavior> expansionBehavior, Optional<LayoutUnit> expansion)
+inline Run::TextContext::TextContext(unsigned start, unsigned length, String content, Optional<ExpansionContext> expansionContext)
     : m_start(start)
     , m_length(length)
-    , m_expansionBehavior(expansionBehavior)
-    , m_expansion(expansion)
+    , m_expansionContext(expansionContext)
     , m_content(content)
 {
 }

@@ -93,6 +93,12 @@ public:
         void setIsCollapsed();
         void setCollapsesToZeroAdvanceWidth();
 
+        void setHasExpansionOpportunity(ExpansionBehavior);
+        bool hasExpansionOpportunity() const { return m_expansionOpportunityCount.hasValue(); }
+        Optional<ExpansionBehavior> expansionBehavior() const;
+        Optional<unsigned> expansionOpportunityCount() const { return m_expansionOpportunityCount; }
+        void setComputedHorizontalExpansion(LayoutUnit logicalExpansion);
+
         bool isCollapsible() const { return m_isCollapsible; }
         bool hasTrailingCollapsedContent() const { return m_hasTrailingCollapsedContent; }
         bool isWhitespace() const { return m_isWhitespace; }
@@ -105,6 +111,7 @@ public:
         bool m_isCollapsed { false };
         bool m_collapsedToZeroAdvanceWidth { false };
         bool m_hasTrailingCollapsedContent { false };
+        Optional<unsigned> m_expansionOpportunityCount;
     };
     using RunList = Vector<std::unique_ptr<Run>>;
     RunList close();
@@ -188,6 +195,31 @@ inline void Line::Run::setCollapsesToZeroAdvanceWidth()
     setIsCollapsed();
     m_collapsedToZeroAdvanceWidth = true;
     m_displayRun.setLogicalWidth({ });
+}
+
+inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
+{
+    ASSERT(isText());
+    if (auto expansionContext = m_displayRun.textContext()->expansion())
+        return expansionContext->behavior;
+    return { };
+}
+
+inline void Line::Run::setHasExpansionOpportunity(ExpansionBehavior expansionBehavior)
+{
+    ASSERT(isText());
+    ASSERT(!hasExpansionOpportunity());
+    m_expansionOpportunityCount = 1;
+    m_displayRun.textContext()->setExpansion({ expansionBehavior, { } });
+}
+
+inline void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)
+{
+    ASSERT(isText());
+    ASSERT(hasExpansionOpportunity());
+    ASSERT(m_displayRun.textContext()->expansion());
+    m_displayRun.expandHorizontally(logicalExpansion);
+    m_displayRun.textContext()->setExpansion({ m_displayRun.textContext()->expansion()->behavior, logicalExpansion });
 }
 
 }
