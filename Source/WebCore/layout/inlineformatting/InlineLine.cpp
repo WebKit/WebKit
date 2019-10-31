@@ -369,16 +369,16 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
         logicalRect.setHeight(inlineItemContentHeight(inlineItem));
     }
 
-    auto collapseRun = inlineItem.isCollapsible();
+    auto collapsedRun = inlineItem.isCollapsible() && inlineItem.length() > 1;
     auto contentStart = inlineItem.start();
-    auto contentLength =  collapseRun ? 1 : inlineItem.length();
+    auto contentLength =  collapsedRun ? 1 : inlineItem.length();
     auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
     auto lineRun = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
         lineRun->setCollapsesToZeroAdvanceWidth();
-    else if (collapseRun)
+    else if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
         m_trimmableContent.add(lineRun.get());
