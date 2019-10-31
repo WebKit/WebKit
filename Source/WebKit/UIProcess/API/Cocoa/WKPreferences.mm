@@ -862,6 +862,36 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setSecureContextChecksEnabled(enabled);
 }
 
+- (void)_setWebAudioEnabled:(BOOL)enabled
+{
+    _preferences->setWebAudioEnabled(enabled);
+}
+
+- (BOOL)_webAudioEnabled
+{
+    return _preferences->webAudioEnabled();
+}
+
+- (void)_setAcceleratedCompositingEnabled:(BOOL)enabled
+{
+    _preferences->setAcceleratedCompositingEnabled(enabled);
+}
+
+- (BOOL)_acceleratedCompositingEnabled
+{
+    return _preferences->acceleratedCompositingEnabled();
+}
+
+- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
+{
+    _preferences->setRequestAnimationFrameEnabled(enabled);
+}
+
+- (BOOL)_requestAnimationFrameEnabled
+{
+    return _preferences->requestAnimationFrameEnabled();
+}
+
 - (BOOL)_remotePlaybackEnabled
 {
     return _preferences->remotePlaybackEnabled();
@@ -891,16 +921,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_canvasUsesAcceleratedDrawing
 {
     return _preferences->canvasUsesAcceleratedDrawing();
-}
-
-- (void)_setAcceleratedCompositingEnabled:(BOOL)enabled
-{
-    _preferences->setAcceleratedCompositingEnabled(enabled);
-}
-
-- (BOOL)_acceleratedCompositingEnabled
-{
-    return _preferences->acceleratedCompositingEnabled();
 }
 
 - (void)_setDefaultTextEncodingName:(NSString *)name
@@ -1294,16 +1314,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_wantsBalancedSetDefersLoadingBehavior
 {
     return _preferences->wantsBalancedSetDefersLoadingBehavior();
-}
-
-- (void)_setWebAudioEnabled:(BOOL)enabled
-{
-    _preferences->setWebAudioEnabled(enabled);
-}
-
-- (BOOL)_webAudioEnabled
-{
-    return _preferences->webAudioEnabled();
 }
 
 - (void)_setAggressiveTileRetentionEnabled:(BOOL)enabled

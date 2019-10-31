@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import "Utilities.h"
 #import <WebKit/WKFoundation.h>
@@ -64,6 +65,25 @@ TEST(WebKit, ExperimentalFeatures)
         BOOL value = [preferences _isEnabledForFeature:feature];
         [preferences _setEnabled:value forFeature:feature];
     }
+}
+
+TEST(WebKit, WebAudioPreference)
+{
+    auto check = [](bool value) {
+        WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+        configuration.preferences._webAudioEnabled = value;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
+        __block bool done = false;
+        __block RetainPtr<NSString> result;
+        [webView evaluateJavaScript:@"new Boolean(window.webkitAudioContext).toString()" completionHandler:^(id resultFromJS, NSError *error) {
+            result = resultFromJS;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result.autorelease();
+    };
+    EXPECT_WK_STREQ(check(true), "true");
+    EXPECT_WK_STREQ(check(false), "false");
 }
 
 #if PLATFORM(MAC)

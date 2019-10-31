@@ -158,12 +158,14 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setMediaSourceEnabled:) BOOL _mediaSourceEnabled WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setSecureContextChecksEnabled:) BOOL _secureContextChecksEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setRemotePlaybackEnabled:) BOOL _remotePlaybackEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setWebAudioEnabled:) BOOL _webAudioEnabled WK_API_AVAILABLE(macos(10.14), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAcceleratedCompositingEnabled:) BOOL _acceleratedCompositingEnabled WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setJavaEnabledForLocalFiles:) BOOL _javaEnabledForLocalFiles WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setCanvasUsesAcceleratedDrawing:) BOOL _canvasUsesAcceleratedDrawing WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setAcceleratedCompositingEnabled:) BOOL _acceleratedCompositingEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setDefaultTextEncodingName:) NSString *_defaultTextEncodingName WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setAuthorAndUserStylesEnabled:) BOOL _authorAndUserStylesEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setDOMTimersThrottlingEnabled:) BOOL _domTimersThrottlingEnabled WK_API_AVAILABLE(macos(10.13.4));
@@ -202,7 +204,6 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setTextAreasAreResizable:) BOOL _textAreasAreResizable WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, setter=_setUseGiantTiles:) BOOL _useGiantTiles WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, setter=_setWantsBalancedSetDefersLoadingBehavior:) BOOL _wantsBalancedSetDefersLoadingBehavior WK_API_AVAILABLE(macos(10.14));
-@property (nonatomic, setter=_setWebAudioEnabled:) BOOL _webAudioEnabled WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, setter=_setAggressiveTileRetentionEnabled:) BOOL _aggressiveTileRetentionEnabled WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, setter=_setAppNapEnabled:) BOOL _appNapEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif

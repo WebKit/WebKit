@@ -1,3 +1,14 @@
+2019-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Expose more WKPreferences SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203631
+        <rdar://problem/56717160>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preferences.mm:
+        (TEST):
+
 2019-10-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] imported/mozilla/svg/text/textpath-selection.svg is still flaky

@@ -1,5 +1,24 @@
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
+        Expose more WKPreferences SPI
+        https://bugs.webkit.org/show_bug.cgi?id=203631
+        <rdar://problem/56717160>
+
+        Reviewed by Brady Eidson.
+
+        I added a unit test for the one that can be easily tested.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setWebAudioEnabled:]):
+        (-[WKPreferences _webAudioEnabled]):
+        (-[WKPreferences _setAcceleratedCompositingEnabled:]):
+        (-[WKPreferences _acceleratedCompositingEnabled]):
+        (-[WKPreferences _setRequestAnimationFrameEnabled:]):
+        (-[WKPreferences _requestAnimationFrameEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+2019-10-31  Alex Christensen  <achristensen@webkit.org>
+
         CMake build should make WebKit framework able to be used by Safari
         https://bugs.webkit.org/show_bug.cgi?id=203685
 
