@@ -1,3 +1,248 @@
+2019-10-31  Antti Koivisto  <antti@apple.com>
+
+        Rename StyleBuilder to Style::BuilderGenerated
+        https://bugs.webkit.org/show_bug.cgi?id=203673
+
+        Reviewed by Antoine Quint.
+
+        Also rename the related StykeBuilderCustom and StyleBuilderConverter classes
+        and move them to the Style namespace and directory.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.cpp:
+        (WebCore::calculateWeightRange):
+        (WebCore::calculateStretchRange):
+        (WebCore::calculateItalicRange):
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::computeFontSelectionRequest):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        * css/StyleBuilder.h: Removed.
+        * css/makeprop.pl:
+        (getScopeForFunction):
+        (generateInitialValueSetter):
+        (generateInheritValueSetter):
+        (generateValueSetter):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseTypedCustomPropertyValue):
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::applyProperty):
+        * style/StyleBuilderConverter.h: Renamed from Source/WebCore/css/StyleBuilderConverter.h.
+        (WebCore::Style::BuilderConverter::convertLength):
+        (WebCore::Style::BuilderConverter::convertLengthOrAuto):
+        (WebCore::Style::BuilderConverter::convertLengthSizing):
+        (WebCore::Style::BuilderConverter::convertLengthMaxSizing):
+        (WebCore::Style::BuilderConverter::convertTabSize):
+        (WebCore::Style::BuilderConverter::convertComputedLength):
+        (WebCore::Style::BuilderConverter::convertLineWidth):
+        (WebCore::Style::BuilderConverter::convertSpacing):
+        (WebCore::Style::BuilderConverter::convertToRadiusLength):
+        (WebCore::Style::BuilderConverter::convertRadius):
+        (WebCore::Style::BuilderConverter::convertTo100PercentMinusLength):
+        (WebCore::Style::BuilderConverter::convertPositionComponentX):
+        (WebCore::Style::BuilderConverter::convertPositionComponentY):
+        (WebCore::Style::BuilderConverter::convertPositionComponent):
+        (WebCore::Style::BuilderConverter::convertObjectPosition):
+        (WebCore::Style::BuilderConverter::convertTextDecoration):
+        (WebCore::Style::BuilderConverter::convertNumber):
+        (WebCore::Style::BuilderConverter::convertNumberOrAuto):
+        (WebCore::Style::BuilderConverter::convertWebkitHyphenateLimitLines):
+        (WebCore::Style::BuilderConverter::convertBorderImage):
+        (WebCore::Style::BuilderConverter::convertBorderMask):
+        (WebCore::Style::BuilderConverter::convertStyleImage):
+        (WebCore::Style::BuilderConverter::convertTransform):
+        (WebCore::Style::BuilderConverter::updateColorScheme):
+        (WebCore::Style::BuilderConverter::convertColorScheme):
+        (WebCore::Style::BuilderConverter::convertString):
+        (WebCore::Style::BuilderConverter::convertStringOrAuto):
+        (WebCore::Style::BuilderConverter::convertStringOrNone):
+        (WebCore::Style::BuilderConverter::valueToEmphasisPosition):
+        (WebCore::Style::BuilderConverter::convertTextEmphasisPosition):
+        (WebCore::Style::BuilderConverter::convertTextAlign):
+        (WebCore::Style::BuilderConverter::convertClipPath):
+        (WebCore::Style::BuilderConverter::convertResize):
+        (WebCore::Style::BuilderConverter::convertMarqueeRepetition):
+        (WebCore::Style::BuilderConverter::convertMarqueeSpeed):
+        (WebCore::Style::BuilderConverter::convertQuotes):
+        (WebCore::Style::BuilderConverter::convertTextUnderlinePosition):
+        (WebCore::Style::BuilderConverter::convertTextUnderlineOffset):
+        (WebCore::Style::BuilderConverter::convertTextDecorationThickness):
+        (WebCore::Style::BuilderConverter::convertReflection):
+        (WebCore::Style::BuilderConverter::convertInitialLetter):
+        (WebCore::Style::BuilderConverter::convertTextStrokeWidth):
+        (WebCore::Style::BuilderConverter::convertLineBoxContain):
+        (WebCore::Style::BuilderConverter::valueToDecorationSkip):
+        (WebCore::Style::BuilderConverter::convertTextDecorationSkip):
+        (WebCore::Style::BuilderConverter::convertShapeValue):
+        (WebCore::Style::BuilderConverter::convertScrollSnapType):
+        (WebCore::Style::BuilderConverter::convertScrollSnapAlign):
+        (WebCore::Style::BuilderConverter::createGridTrackBreadth):
+        (WebCore::Style::BuilderConverter::createGridTrackSize):
+        (WebCore::Style::BuilderConverter::createGridTrackList):
+        (WebCore::Style::BuilderConverter::createGridPosition):
+        (WebCore::Style::BuilderConverter::createImplicitNamedGridLinesFromGridArea):
+        (WebCore::Style::BuilderConverter::convertGridTrackSizeList):
+        (WebCore::Style::BuilderConverter::convertGridTrackSize):
+        (WebCore::Style::BuilderConverter::convertGridPosition):
+        (WebCore::Style::BuilderConverter::convertGridAutoFlow):
+        (WebCore::Style::BuilderConverter::csstoLengthConversionDataWithTextZoomFactor):
+        (WebCore::Style::BuilderConverter::convertWordSpacing):
+        (WebCore::Style::BuilderConverter::convertPerspective):
+        (WebCore::Style::BuilderConverter::convertMarqueeIncrement):
+        (WebCore::Style::BuilderConverter::convertFilterOperations):
+        (WebCore::Style::BuilderConverter::convertFontFeatureSettings):
+        (WebCore::Style::BuilderConverter::convertFontWeightFromValue):
+        (WebCore::Style::BuilderConverter::convertFontStretchFromValue):
+        (WebCore::Style::BuilderConverter::convertFontStyleFromValue):
+        (WebCore::Style::BuilderConverter::convertFontWeight):
+        (WebCore::Style::BuilderConverter::convertFontStretch):
+        (WebCore::Style::BuilderConverter::convertFontVariationSettings):
+        (WebCore::Style::BuilderConverter::convertTouchCallout):
+        (WebCore::Style::BuilderConverter::convertTapHighlightColor):
+        (WebCore::Style::BuilderConverter::convertTouchAction):
+        (WebCore::Style::BuilderConverter::convertOverflowScrolling):
+        (WebCore::Style::BuilderConverter::convertSVGLengthValue):
+        (WebCore::Style::BuilderConverter::convertSVGLengthVector):
+        (WebCore::Style::BuilderConverter::convertStrokeDashArray):
+        (WebCore::Style::BuilderConverter::convertPaintOrder):
+        (WebCore::Style::BuilderConverter::convertOpacity):
+        (WebCore::Style::BuilderConverter::convertSVGURIReference):
+        (WebCore::Style::BuilderConverter::convertSVGColor):
+        (WebCore::Style::BuilderConverter::convertSelfOrDefaultAlignmentData):
+        (WebCore::Style::BuilderConverter::convertContentAlignmentData):
+        (WebCore::Style::BuilderConverter::convertGlyphOrientation):
+        (WebCore::Style::BuilderConverter::convertGlyphOrientationOrAuto):
+        (WebCore::Style::BuilderConverter::convertLineHeight):
+        (WebCore::Style::BuilderConverter::convertFontSynthesis):
+        (WebCore::Style::BuilderConverter::convertSpeakAs):
+        (WebCore::Style::BuilderConverter::convertHangingPunctuation):
+        (WebCore::Style::BuilderConverter::convertGapLength):
+        * style/StyleBuilderCustom.h: Renamed from Source/WebCore/css/StyleBuilderCustom.h.
+        (WebCore::Style::BuilderCustom::applyInitialWebkitMaskImage):
+        (WebCore::Style::BuilderCustom::applyInheritWebkitMaskImage):
+        (WebCore::Style::BuilderCustom::applyInitialFontFeatureSettings):
+        (WebCore::Style::BuilderCustom::applyInheritFontFeatureSettings):
+        (WebCore::Style::BuilderCustom::applyInitialFontVariationSettings):
+        (WebCore::Style::BuilderCustom::applyInheritFontVariationSettings):
+        (WebCore::Style::BuilderCustom::applyValueDirection):
+        (WebCore::Style::BuilderCustom::applyInitialTextAlign):
+        (WebCore::Style::BuilderCustom::applyValueTextAlign):
+        (WebCore::Style::BuilderCustom::resetEffectiveZoom):
+        (WebCore::Style::BuilderCustom::applyInitialZoom):
+        (WebCore::Style::BuilderCustom::applyInheritZoom):
+        (WebCore::Style::BuilderCustom::applyValueZoom):
+        (WebCore::Style::BuilderCustom::mmLength):
+        (WebCore::Style::BuilderCustom::inchLength):
+        (WebCore::Style::BuilderCustom::getPageSizeFromName):
+        (WebCore::Style::BuilderCustom::applyValueVerticalAlign):
+        (WebCore::Style::BuilderCustom::applyInheritImageResolution):
+        (WebCore::Style::BuilderCustom::applyInitialImageResolution):
+        (WebCore::Style::BuilderCustom::applyValueImageResolution):
+        (WebCore::Style::BuilderCustom::applyInheritSize):
+        (WebCore::Style::BuilderCustom::applyInitialSize):
+        (WebCore::Style::BuilderCustom::applyValueSize):
+        (WebCore::Style::BuilderCustom::applyInheritTextIndent):
+        (WebCore::Style::BuilderCustom::applyInitialTextIndent):
+        (WebCore::Style::BuilderCustom::applyValueTextIndent):
+        (WebCore::Style::ApplyPropertyBorderImageModifier::applyInheritValue):
+        (WebCore::Style::ApplyPropertyBorderImageModifier::applyInitialValue):
+        (WebCore::Style::ApplyPropertyBorderImageModifier::applyValue):
+        (WebCore::Style::BuilderCustom::applyInheritLineHeight):
+        (WebCore::Style::BuilderCustom::applyInitialLineHeight):
+        (WebCore::Style::BuilderCustom::applyValueLineHeight):
+        (WebCore::Style::BuilderCustom::applyInheritOutlineStyle):
+        (WebCore::Style::BuilderCustom::applyInitialOutlineStyle):
+        (WebCore::Style::BuilderCustom::applyValueOutlineStyle):
+        (WebCore::Style::BuilderCustom::applyInitialClip):
+        (WebCore::Style::BuilderCustom::applyInheritClip):
+        (WebCore::Style::BuilderCustom::applyValueClip):
+        (WebCore::Style::BuilderCustom::applyValueWebkitLocale):
+        (WebCore::Style::BuilderCustom::applyValueWritingMode):
+        (WebCore::Style::BuilderCustom::applyValueWebkitTextOrientation):
+        (WebCore::Style::BuilderCustom::applyValueWebkitTextSizeAdjust):
+        (WebCore::Style::BuilderCustom::applyValueWebkitTextZoom):
+        (WebCore::Style::BuilderCustom::applyValueColorScheme):
+        (WebCore::Style::BuilderCustom::applyTextOrBoxShadowValue):
+        (WebCore::Style::BuilderCustom::applyInitialTextShadow):
+        (WebCore::Style::BuilderCustom::applyInheritTextShadow):
+        (WebCore::Style::BuilderCustom::applyValueTextShadow):
+        (WebCore::Style::BuilderCustom::applyInitialBoxShadow):
+        (WebCore::Style::BuilderCustom::applyInheritBoxShadow):
+        (WebCore::Style::BuilderCustom::applyValueBoxShadow):
+        (WebCore::Style::BuilderCustom::applyInitialWebkitBoxShadow):
+        (WebCore::Style::BuilderCustom::applyInheritWebkitBoxShadow):
+        (WebCore::Style::BuilderCustom::applyValueWebkitBoxShadow):
+        (WebCore::Style::BuilderCustom::applyInitialFontFamily):
+        (WebCore::Style::BuilderCustom::applyInheritFontFamily):
+        (WebCore::Style::BuilderCustom::applyValueFontFamily):
+        (WebCore::Style::BuilderCustom::isValidDisplayValue):
+        (WebCore::Style::BuilderCustom::applyInheritDisplay):
+        (WebCore::Style::BuilderCustom::applyValueDisplay):
+        (WebCore::Style::BuilderCustom::applyValueBaselineShift):
+        (WebCore::Style::BuilderCustom::applyInitialWebkitAspectRatio):
+        (WebCore::Style::BuilderCustom::applyInheritWebkitAspectRatio):
+        (WebCore::Style::BuilderCustom::applyValueWebkitAspectRatio):
+        (WebCore::Style::BuilderCustom::applyInitialWebkitTextEmphasisStyle):
+        (WebCore::Style::BuilderCustom::applyInheritWebkitTextEmphasisStyle):
+        (WebCore::Style::BuilderCustom::applyValueWebkitTextEmphasisStyle):
+        (WebCore::Style::BuilderCustom::applyInheritCounter):
+        (WebCore::Style::BuilderCustom::applyValueCounter):
+        (WebCore::Style::BuilderCustom::applyInitialCounterIncrement):
+        (WebCore::Style::BuilderCustom::applyInheritCounterIncrement):
+        (WebCore::Style::BuilderCustom::applyValueCounterIncrement):
+        (WebCore::Style::BuilderCustom::applyInitialCounterReset):
+        (WebCore::Style::BuilderCustom::applyInheritCounterReset):
+        (WebCore::Style::BuilderCustom::applyValueCounterReset):
+        (WebCore::Style::BuilderCustom::applyInitialCursor):
+        (WebCore::Style::BuilderCustom::applyInheritCursor):
+        (WebCore::Style::BuilderCustom::applyValueCursor):
+        (WebCore::Style::BuilderCustom::applyInitialFill):
+        (WebCore::Style::BuilderCustom::applyInheritFill):
+        (WebCore::Style::BuilderCustom::applyValueFill):
+        (WebCore::Style::BuilderCustom::applyInitialStroke):
+        (WebCore::Style::BuilderCustom::applyInheritStroke):
+        (WebCore::Style::BuilderCustom::applyValueStroke):
+        (WebCore::Style::BuilderCustom::applyInitialContent):
+        (WebCore::Style::BuilderCustom::applyInheritContent):
+        (WebCore::Style::BuilderCustom::applyValueContent):
+        (WebCore::Style::BuilderCustom::applyInheritFontVariantLigatures):
+        (WebCore::Style::BuilderCustom::applyInitialFontVariantLigatures):
+        (WebCore::Style::BuilderCustom::applyValueFontVariantLigatures):
+        (WebCore::Style::BuilderCustom::applyInheritFontVariantNumeric):
+        (WebCore::Style::BuilderCustom::applyInitialFontVariantNumeric):
+        (WebCore::Style::BuilderCustom::applyValueFontVariantNumeric):
+        (WebCore::Style::BuilderCustom::applyInheritFontVariantEastAsian):
+        (WebCore::Style::BuilderCustom::applyInitialFontVariantEastAsian):
+        (WebCore::Style::BuilderCustom::applyValueFontVariantEastAsian):
+        (WebCore::Style::BuilderCustom::applyInitialFontSize):
+        (WebCore::Style::BuilderCustom::applyInheritFontSize):
+        (WebCore::Style::BuilderCustom::largerFontSize):
+        (WebCore::Style::BuilderCustom::smallerFontSize):
+        (WebCore::Style::BuilderCustom::determineRubyTextSizeMultiplier):
+        (WebCore::Style::BuilderCustom::applyInitialFontStyle):
+        (WebCore::Style::BuilderCustom::applyInheritFontStyle):
+        (WebCore::Style::BuilderCustom::applyValueFontStyle):
+        (WebCore::Style::BuilderCustom::applyValueFontSize):
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateAreas):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateAreas):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateAreas):
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateRows):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateRows):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateRows):
+        (WebCore::Style::BuilderCustom::applyValueAlt):
+        (WebCore::Style::BuilderCustom::applyValueWillChange):
+        (WebCore::Style::BuilderCustom::applyValueStrokeWidth):
+        (WebCore::Style::BuilderCustom::applyValueStrokeColor):
+        (WebCore::Style::BuilderCustom::applyInitialCustomProperty):
+        (WebCore::Style::BuilderCustom::applyInheritCustomProperty):
+        (WebCore::Style::BuilderCustom::applyValueCustomProperty):
+        * style/StyleBuilderGenerated.h: Added.
+
 2019-10-31  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Add support for AnimationEvent.pseudoElement

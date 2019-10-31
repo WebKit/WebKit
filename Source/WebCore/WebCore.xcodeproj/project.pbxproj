@@ -2416,7 +2416,6 @@
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
 		837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */; };
-		8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */; };
 		838867351D13BA5F003697D0 /* RenderObjectEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 838867341D13BA59003697D0 /* RenderObjectEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		838CA6BD1FC0DFE9005D9FA5 /* ServiceWorkerJobDataIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 838CA6BB1FC0DFDD005D9FA5 /* ServiceWorkerJobDataIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		838EF5381DC149E2008F0C39 /* IDBTransactionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838EF5361DC149DA008F0C39 /* IDBTransactionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4843,6 +4842,7 @@
 		E4ABABE42361A32900FA4345 /* PropertyCascade.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABABE22361A32900FA4345 /* PropertyCascade.h */; };
 		E4ABABF32368B95900FA4345 /* StyleBuilderState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABABF22368B95800FA4345 /* StyleBuilderState.h */; };
 		E4ABABF52368C6EF00FA4345 /* CascadeLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABABF42368C6EF00FA4345 /* CascadeLevel.h */; };
+		E4ABAC04236AE95900FA4345 /* StyleBuilderGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */; };
 		E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1517D1BB950009FB31 /* ElementIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -10177,8 +10177,7 @@
 		837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendableMessageEvent.h; sourceTree = "<group>"; };
 		837FB3421F9EA06700D0FC31 /* ExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendableMessageEvent.cpp; sourceTree = "<group>"; };
 		837FB3431F9EA06800D0FC31 /* ExtendableMessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExtendableMessageEvent.idl; sourceTree = "<group>"; };
-		8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilder.h; sourceTree = "<group>"; };
-		8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBuilder.cpp; path = DerivedSources/WebCore/StyleBuilder.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		8386A96E19F61E4F00E1EC4A /* StyleBuilderGenerated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBuilderGenerated.cpp; path = DerivedSources/WebCore/StyleBuilderGenerated.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		838867341D13BA59003697D0 /* RenderObjectEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderObjectEnums.h; sourceTree = "<group>"; };
 		838869EB1CE81E9E00D16A9E /* JSTextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextCustom.cpp; sourceTree = "<group>"; };
 		838CA6BB1FC0DFDD005D9FA5 /* ServiceWorkerJobDataIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJobDataIdentifier.h; sourceTree = "<group>"; };
@@ -15180,6 +15179,7 @@
 		E4ABABF02368B91800FA4345 /* StyleBuilderState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBuilderState.cpp; sourceTree = "<group>"; };
 		E4ABABF22368B95800FA4345 /* StyleBuilderState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderState.h; sourceTree = "<group>"; };
 		E4ABABF42368C6EF00FA4345 /* CascadeLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CascadeLevel.h; sourceTree = "<group>"; };
+		E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderGenerated.h; sourceTree = "<group>"; };
 		E4AE7C1517D1BB950009FB31 /* ElementIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIterator.h; sourceTree = "<group>"; };
 		E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAncestorIterator.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
@@ -20157,7 +20157,7 @@
 				7CEB57E91F95651500097AEC /* Settings.h */,
 				9908B0FD1BCAD07D00ED0F55 /* StreamInternalsBuiltins.cpp */,
 				9B03D8061BB3110D00B764C9 /* StreamInternalsBuiltins.h */,
-				8386A96E19F61E4F00E1EC4A /* StyleBuilder.cpp */,
+				8386A96E19F61E4F00E1EC4A /* StyleBuilderGenerated.cpp */,
 				83C05A581A686212007E5DEA /* StylePropertyShorthandFunctions.cpp */,
 				83C05A591A686212007E5DEA /* StylePropertyShorthandFunctions.h */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
@@ -26958,6 +26958,9 @@
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
 				E4ABABE52361A34200FA4345 /* PropertyCascade.cpp */,
 				E4ABABE22361A32900FA4345 /* PropertyCascade.h */,
+				83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */,
+				835D363619FF6193004C93AB /* StyleBuilderCustom.h */,
+				E4ABAC02236AE95800FA4345 /* StyleBuilderGenerated.h */,
 				E4ABABF02368B91800FA4345 /* StyleBuilderState.cpp */,
 				E4ABABF22368B95800FA4345 /* StyleBuilderState.h */,
 				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
@@ -27370,9 +27373,6 @@
 				43B85ED618CBEC9700E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.in */,
 				26AA0F9A18D2973D00419381 /* SelectorPseudoElementTypeMap.in */,
 				43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */,
-				8386A96C19F61B2E00E1EC4A /* StyleBuilder.h */,
-				83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */,
-				835D363619FF6193004C93AB /* StyleBuilderCustom.h */,
 				941827881D8B242200492764 /* StyleColor.cpp */,
 				941827891D8B242200492764 /* StyleColor.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -32142,7 +32142,6 @@
 				414B82051D6DF0E50077EBE3 /* StructuredClone.h in Headers */,
 				BC5EB6A30E81DC4F00B25965 /* StyleBackgroundData.h in Headers */,
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
-				8386A96D19F61B2E00E1EC4A /* StyleBuilder.h in Headers */,
 				83B9687B19F8AB83004EF7AF /* StyleBuilderConverter.h in Headers */,
 				835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */,
 				E4ABABF32368B95900FA4345 /* StyleBuilderState.h in Headers */,
@@ -32348,6 +32347,7 @@
 				0854B0231255E4E600B9CDD0 /* SVGRootInlineBox.h in Headers */,
 				B2227AA30D00BF220071B782 /* SVGScriptElement.h in Headers */,
 				B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */,
+				E4ABAC04236AE95900FA4345 /* StyleBuilderGenerated.h in Headers */,
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */,
 				B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */,

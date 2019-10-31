@@ -314,9 +314,9 @@ static FontSelectionRequest computeFontSelectionRequest(MutableStyleProperties& 
     if (!styleValue)
         styleValue = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
 
-    auto weightSelectionValue = StyleBuilderConverter::convertFontWeightFromValue(*weightValue);
-    auto stretchSelectionValue = StyleBuilderConverter::convertFontStretchFromValue(*stretchValue);
-    auto styleSelectionValue = StyleBuilderConverter::convertFontStyleFromValue(*styleValue);
+    auto weightSelectionValue = Style::BuilderConverter::convertFontWeightFromValue(*weightValue);
+    auto stretchSelectionValue = Style::BuilderConverter::convertFontStretchFromValue(*stretchValue);
+    auto styleSelectionValue = Style::BuilderConverter::convertFontStyleFromValue(*styleValue);
 
     return { weightSelectionValue, stretchSelectionValue, styleSelectionValue };
 }

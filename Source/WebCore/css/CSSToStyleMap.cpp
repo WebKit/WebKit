@@ -231,9 +231,9 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
-        length = StyleBuilderConverter::convertLength(m_builderState, *pair->second());
+        length = Style::BuilderConverter::convertLength(m_builderState, *pair->second());
     } else
-        length = StyleBuilderConverter::convertPositionComponentX(m_builderState, value);
+        length = Style::BuilderConverter::convertPositionComponentX(m_builderState, value);
 
     layer.setXPosition(length);
     if (pair)
@@ -255,9 +255,9 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     Length length;
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
-        length = StyleBuilderConverter::convertLength(m_builderState, *pair->second());
+        length = Style::BuilderConverter::convertLength(m_builderState, *pair->second());
     } else
-        length = StyleBuilderConverter::convertPositionComponentY(m_builderState, value);
+        length = Style::BuilderConverter::convertPositionComponentY(m_builderState, value);
     
     layer.setYPosition(length);
     if (pair)

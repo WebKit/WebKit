@@ -30,7 +30,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
 #include "PaintWorkletGlobalScope.h"
-#include "StyleBuilder.h"
+#include "StyleBuilderGenerated.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 
@@ -624,8 +624,7 @@ void PropertyCascade::applyProperty(CSSPropertyID id, CSSValue& value, SelectorC
     }
 #endif
 
-    // Use the generated StyleBuilder.
-    StyleBuilder::applyProperty(id, builderState, valueToApply.get(), isInitial, isInherit, customPropertyRegistered);
+    BuilderGenerated::applyProperty(id, builderState, valueToApply.get(), isInitial, isInherit, customPropertyRegistered);
 }
 
 Ref<CSSValue> PropertyCascade::resolveValue(CSSPropertyID propertyID, CSSValue& value)

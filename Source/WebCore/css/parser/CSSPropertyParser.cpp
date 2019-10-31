@@ -4300,7 +4300,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         m_range.consumeWhitespace();
         auto primitiveVal = consumeWidthOrHeight(m_range, m_context);
         if (primitiveVal && primitiveVal->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*primitiveVal).isLength()) {
-            auto length = StyleBuilderConverter::convertLength(builderState, *primitiveVal);
+            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveVal);
             if (!length.isCalculated() && !length.isUndefined())
                 return CSSCustomPropertyValue::createSyntaxLength(name, WTFMove(length));
         }

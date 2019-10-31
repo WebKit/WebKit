@@ -138,14 +138,14 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
         ASSERT(valueList.item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        auto result0 = StyleBuilderConverter::convertFontWeightFromValue(value0);
-        auto result1 = StyleBuilderConverter::convertFontWeightFromValue(value1);
+        auto result0 = Style::BuilderConverter::convertFontWeightFromValue(value0);
+        auto result1 = Style::BuilderConverter::convertFontWeightFromValue(value1);
         return { result0, result1 };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = StyleBuilderConverter::convertFontWeightFromValue(primitiveValue);
+    FontSelectionValue result = Style::BuilderConverter::convertFontWeightFromValue(primitiveValue);
     return { result, result };
 }
 
@@ -176,14 +176,14 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
         ASSERT(valueList.item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
-        auto result0 = StyleBuilderConverter::convertFontStretchFromValue(value0);
-        auto result1 = StyleBuilderConverter::convertFontStretchFromValue(value1);
+        auto result0 = Style::BuilderConverter::convertFontStretchFromValue(value0);
+        auto result1 = Style::BuilderConverter::convertFontStretchFromValue(value1);
         return { result0, result1 };
     }
 
     ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = StyleBuilderConverter::convertFontStretchFromValue(primitiveValue);
+    FontSelectionValue result = Style::BuilderConverter::convertFontStretchFromValue(primitiveValue);
     return { result, result };
 }
 
@@ -206,7 +206,7 @@ void CSSFontFace::setStretch(CSSValue& style)
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
     if (value.isFontStyleValue()) {
-        auto result = StyleBuilderConverter::convertFontStyleFromValue(value);
+        auto result = Style::BuilderConverter::convertFontStyleFromValue(value);
         return { result.valueOr(normalItalicValue()), result.valueOr(normalItalicValue()) };
     }
 

@@ -1289,7 +1289,7 @@ all : \
     SVGNames.h \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementTypeMap.cpp \
-    StyleBuilder.cpp \
+    StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
     UserAgentStyleSheets.h \
@@ -1338,7 +1338,7 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCS
 CSS_PROPERTY_NAME_FILES = \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
-    StyleBuilder.cpp \
+    StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
 #

@@ -2602,7 +2602,7 @@ HTMLEntityTable.cpp
 MathMLElementFactory.cpp
 PlugInsResourcesData.cpp
 SVGElementFactory.cpp
-StyleBuilder.cpp
+StyleBuilderGenerated.cpp
 StylePropertyShorthandFunctions.cpp
 UserAgentStyleSheetsData.cpp
 WebCoreJSBuiltinInternals.cpp
