@@ -1,5 +1,20 @@
 2019-10-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Line::appendTextContent::willCollapseCompletely should check for isCollapsible()
+        https://bugs.webkit.org/show_bug.cgi?id=203653
+        <rdar://problem/56766949>
+
+        Reviewed by Antti Koivisto.
+
+        When deciding whether the current collapsible whitespace run collapses completely, we need to check whether the previous
+        run is collapsible and not whether it is collapsed (it addresses the cases when the previous whitespace length is 1, so it is collapsible but not
+        collapsed -> " " followed by '\n' <- no preserved segment break.)
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendTextContent):
+
+2019-10-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add justify expansion information to Display::Runs
         https://bugs.webkit.org/show_bug.cgi?id=203535
         <rdar://problem/56689268>

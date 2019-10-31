@@ -355,7 +355,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
             // : "<span>  </span> " <- the trailing whitespace collapses completely.
             // Not that when the inline container has preserve whitespace style, "<span style="white-space: pre">  </span> " <- this whitespace stays around.
             if (run->isText())
-                return run->isCollapsed();
+                return run->isCollapsible();
             ASSERT(run->isContainerStart() || run->isContainerEnd());
         }
         return true;

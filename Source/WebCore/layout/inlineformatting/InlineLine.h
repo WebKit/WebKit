@@ -93,6 +93,7 @@ public:
         void setIsCollapsed();
         void setCollapsesToZeroAdvanceWidth();
 
+        bool isCollapsible() const { return m_inlineItem.isText() && downcast<InlineTextItem>(m_inlineItem).isCollapsible(); }
         bool isWhitespace() const;
         bool canBeExtended() const;
 
