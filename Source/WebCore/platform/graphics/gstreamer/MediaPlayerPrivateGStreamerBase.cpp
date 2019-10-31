@@ -1201,19 +1201,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
     gst_bin_add_many(GST_BIN(videoSink), upload, colorconvert, appsink, nullptr);
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
-    GstCapsFeatures* features = gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr);
-
-    // Workaround until we can depend on GStreamer 1.16.2.
-    // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
-    // Adding the texture upload meta here allows glupload to add video meta to
-    // the buffers, without needing the patch above. However this specific caps
-    // feature is going to be removed from GStreamer so it is considered a
-    // short-term workaround.
-    // See also https://bugs.webkit.org/show_bug.cgi?id=201422
-    if (!webkitGstCheckVersion(1, 16, 2))
-        gst_caps_features_add(features, GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META);
-
-    gst_caps_set_features(caps.get(), 0, features);
+    gst_caps_set_features(caps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
     g_object_set(appsink, "caps", caps.get(), nullptr);
 
     result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
