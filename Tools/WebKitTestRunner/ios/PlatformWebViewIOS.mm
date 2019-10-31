@@ -37,6 +37,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 
 @interface WKWebView (Details)
@@ -324,11 +325,23 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
-    BOOL shouldUnhideSelectionView = NO;
-    WeakObjCPtr<UIView> selectionView = [platformView() valueForKeyPath:@"_currentContentView.interactionAssistant.selectionView"];
+    UIView *selectionView = [platformView() valueForKeyPath:@"_currentContentView.interactionAssistant.selectionView"];
+    UIView *startGrabberView = [selectionView valueForKeyPath:@"rangeView.startGrabber"];
+    UIView *endGrabberView = [selectionView valueForKeyPath:@"rangeView.endGrabber"];
+    Vector<WeakObjCPtr<UIView>, 3> viewsToUnhide;
     if (![selectionView isHidden]) {
-        shouldUnhideSelectionView = YES;
         [selectionView setHidden:YES];
+        viewsToUnhide.uncheckedAppend(selectionView);
+    }
+
+    if (![startGrabberView isHidden]) {
+        [startGrabberView setHidden:YES];
+        viewsToUnhide.uncheckedAppend(startGrabberView);
+    }
+
+    if (![endGrabberView isHidden]) {
+        [endGrabberView setHidden:YES];
+        viewsToUnhide.uncheckedAppend(endGrabberView);
     }
 
 #if HAVE(IOSURFACE)
@@ -371,8 +384,8 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     auto result = adoptCF(CGImageCreate(bufferWidth, bufferHeight, 8, 32, rowBytes, sRGBSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider.get(), 0, false, kCGRenderingIntentDefault));
     RELEASE_ASSERT(result);
 #endif
-    if (shouldUnhideSelectionView)
-        [selectionView setHidden:NO];
+    for (auto view : viewsToUnhide)
+        [view setHidden:NO];
 
     return result;
     END_BLOCK_OBJC_EXCEPTIONS;
