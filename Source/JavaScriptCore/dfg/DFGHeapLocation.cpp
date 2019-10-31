@@ -168,6 +168,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("RegExpObjectLastIndexLoc");
         return;
 
+    case DateFieldLoc:
+        out.print("DateFieldLoc");
+        return;
+
     case MapBucketLoc:
         out.print("MapBucketLoc");
         return;

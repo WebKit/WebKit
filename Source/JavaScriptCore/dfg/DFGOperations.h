@@ -31,7 +31,11 @@
 #include "JITOperations.h"
 #include "TypedArrayType.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class DateInstance;
+
+namespace DFG {
 
 struct OSRExitBase;
 
@@ -293,6 +297,23 @@ JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM*, Structure*, Butterfly
 JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM*, Structure*, unsigned length, Butterfly*) WTF_INTERNAL;
 
 void JIT_OPERATION operationLinkDirectCall(CallLinkInfo*, JSFunction*) WTF_INTERNAL;
+
+EncodedJSValue JIT_OPERATION operationDateGetFullYear(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCFullYear(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetMonth(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCMonth(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetDate(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCDate(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetDay(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCDay(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetHours(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCHours(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetMinutes(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCMinutes(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetSeconds(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetUTCSeconds(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetTimezoneOffset(VM*, DateInstance*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationDateGetYear(VM*, DateInstance*) WTF_INTERNAL;
 
 void JIT_OPERATION operationProcessTypeProfilerLogDFG(VM*) WTF_INTERNAL;
 

@@ -71,6 +71,7 @@ namespace JSC { namespace DFG {
     macro(HeapObjectCount) /* Used to reflect the fact that some allocations reveal object identity */\
     macro(RegExpState) \
     macro(MathDotRandomState) \
+    macro(JSDateFields) \
     macro(JSMapFields) \
     macro(JSSetFields) \
     macro(JSWeakMapFields) \

@@ -64,6 +64,7 @@ enum LocationKind {
     PrototypeLoc,
     StackLoc,
     StackPayloadLoc,
+    DateFieldLoc,
     MapBucketLoc,
     MapBucketHeadLoc,
     MapBucketValueLoc,

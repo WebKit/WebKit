@@ -1545,6 +1545,10 @@ private:
         case FilterInByIdStatus:
             compileFilterICStatus();
             break;
+        case DateGetInt32OrNaN:
+        case DateGetTime:
+            compileDateGet();
+            break;
         case DataViewGetInt:
         case DataViewGetFloat:
             compileDataViewGet();
@@ -13407,6 +13411,115 @@ private:
             }
         }
     }
+
+    void compileDateGet()
+    {
+        LValue base = lowDateObject(m_node->child1());
+
+        auto emitGetCodeWithCallback = [&] (const AbstractHeap& cachedDoubleOffset, const AbstractHeap& cachedDataOffset, auto* operation, auto callback) {
+            LBasicBlock dataExistsCase = m_out.newBlock();
+            LBasicBlock fastCase = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue data = m_out.loadPtr(base, m_heaps.DateInstance_data);
+            m_out.branch(m_out.notZero64(data), unsure(dataExistsCase), unsure(slowCase));
+
+            LBasicBlock lastNext = m_out.appendTo(dataExistsCase, fastCase);
+            LValue milliseconds = m_out.loadDouble(base, m_heaps.DateInstance_internalNumber);
+            LValue cachedMilliseconds = m_out.loadDouble(data, cachedDoubleOffset);
+            m_out.branch(m_out.doubleNotEqualOrUnordered(milliseconds, cachedMilliseconds), unsure(slowCase), unsure(fastCase));
+
+            m_out.appendTo(fastCase, slowCase);
+            ValueFromBlock fastResult = m_out.anchor(boxInt32(callback(m_out.load32(data, cachedDataOffset))));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operation, m_vmValue, base));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, fastResult, slowResult));
+        };
+
+        auto emitGetCode = [&] (const AbstractHeap& cachedDoubleOffset, const AbstractHeap& cachedDataOffset, auto* operation) {
+            emitGetCodeWithCallback(cachedDoubleOffset, cachedDataOffset, operation, [] (LValue value) { return value; });
+        };
+
+        switch (m_node->intrinsic()) {
+        case DatePrototypeGetTimeIntrinsic:
+            setDouble(m_out.loadDouble(base, m_heaps.DateInstance_internalNumber));
+            break;
+
+        case DatePrototypeGetMillisecondsIntrinsic:
+        case DatePrototypeGetUTCMillisecondsIntrinsic: {
+            LValue milliseconds = m_out.loadDouble(base, m_heaps.DateInstance_internalNumber);
+            LValue msPerSecondConstant = m_out.constDouble(msPerSecond);
+            LValue seconds = m_out.doubleFloor(m_out.doubleDiv(milliseconds, msPerSecondConstant));
+            LValue result = m_out.doubleToInt(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
+            setJSValue(m_out.select(m_out.doubleNotEqualOrUnordered(milliseconds, milliseconds), m_out.constInt64(JSValue::encode(jsNaN())), boxInt32(result)));
+            break;
+        }
+
+        case DatePrototypeGetFullYearIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_year, operationDateGetFullYear);
+            break;
+        case DatePrototypeGetUTCFullYearIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_year, operationDateGetUTCFullYear);
+            break;
+        case DatePrototypeGetMonthIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_month, operationDateGetMonth);
+            break;
+        case DatePrototypeGetUTCMonthIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_month, operationDateGetUTCMonth);
+            break;
+        case DatePrototypeGetDateIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_monthDay, operationDateGetDate);
+            break;
+        case DatePrototypeGetUTCDateIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_monthDay, operationDateGetUTCDate);
+            break;
+        case DatePrototypeGetDayIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_weekDay, operationDateGetDay);
+            break;
+        case DatePrototypeGetUTCDayIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_weekDay, operationDateGetUTCDay);
+            break;
+        case DatePrototypeGetHoursIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_hour, operationDateGetHours);
+            break;
+        case DatePrototypeGetUTCHoursIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_hour, operationDateGetUTCHours);
+            break;
+        case DatePrototypeGetMinutesIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_minute, operationDateGetMinutes);
+            break;
+        case DatePrototypeGetUTCMinutesIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_minute, operationDateGetUTCMinutes);
+            break;
+        case DatePrototypeGetSecondsIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_second, operationDateGetSeconds);
+            break;
+        case DatePrototypeGetUTCSecondsIntrinsic:
+            emitGetCode(m_heaps.DateInstanceData_gregorianDateTimeUTCCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTimeUTC_second, operationDateGetUTCSeconds);
+            break;
+
+        case DatePrototypeGetTimezoneOffsetIntrinsic:
+            emitGetCodeWithCallback(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_utcOffsetInMinute, operationDateGetTimezoneOffset, [&] (LValue offset) {
+                return m_out.neg(offset);
+            });
+            break;
+
+        case DatePrototypeGetYearIntrinsic:
+            emitGetCodeWithCallback(m_heaps.DateInstanceData_gregorianDateTimeCachedForMS, m_heaps.DateInstanceData_cachedGregorianDateTime_year, operationDateGetYear, [&] (LValue year) {
+                return m_out.sub(year, m_out.constInt32(1900));
+            });
+            break;
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
     
     void emitSwitchForMultiByOffset(LValue base, bool structuresChecked, Vector<SwitchCase, 2>& cases, LBasicBlock exit)
     {
@@ -15756,6 +15869,13 @@ private:
         speculateDataViewObject(edge, result);
         return result;
     }
+
+    LValue lowDateObject(Edge edge)
+    {
+        LValue result = lowCell(edge);
+        speculateDateObject(edge, result);
+        return result;
+    }
     
     LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
@@ -16239,6 +16359,9 @@ private:
             break;
         case DerivedArrayUse:
             speculateDerivedArray(edge);
+            break;
+        case DateObjectUse:
+            speculateDateObject(edge);
             break;
         case MapObjectUse:
             speculateMapObject(edge);
@@ -16764,6 +16887,17 @@ private:
     void speculatePromiseObject(Edge edge)
     {
         speculatePromiseObject(edge, lowCell(edge));
+    }
+
+    void speculateDateObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecDateObject, isNotType(cell, JSDateType));
+    }
+
+    void speculateDateObject(Edge edge)
+    {
+        speculateDateObject(edge, lowCell(edge));
     }
 
     void speculateMapObject(Edge edge, LValue cell)

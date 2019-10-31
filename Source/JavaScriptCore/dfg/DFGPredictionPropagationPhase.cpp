@@ -845,8 +845,14 @@ private:
         case GetPrototypeOf:
         case ExtractValueFromWeakMapGet: 
         case DataViewGetInt:
-        case DataViewGetFloat: {
+        case DataViewGetFloat:
+        case DateGetInt32OrNaN: {
             setPrediction(m_currentNode->getHeapPrediction());
+            break;
+        }
+
+        case DateGetTime: {
+            setPrediction(SpecFullNumber);
             break;
         }
 

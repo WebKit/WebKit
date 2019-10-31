@@ -1,3 +1,13 @@
+2019-10-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Date functions should have intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=202187
+
+        Reviewed by Keith Miller.
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+
 2019-10-30  Chris Dumez  <cdumez@apple.com>
 
         GPUCanvasContext should not prevent entering the back/forward cache

@@ -365,6 +365,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     }
     if (node->hasIgnoreLastIndexIsWritable())
         out.print(comma, "ignoreLastIndexIsWritable = ", node->ignoreLastIndexIsWritable());
+    if (node->hasIntrinsic())
+        out.print(comma, "intrinsic = ", node->intrinsic());
     if (node->isConstant())
         out.print(comma, pointerDumpInContext(node->constant(), context));
     if (node->hasCallLinkStatus())

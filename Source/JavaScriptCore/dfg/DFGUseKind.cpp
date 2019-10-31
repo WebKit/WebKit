@@ -106,6 +106,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case DerivedArrayUse:
         out.print("DerivedArray");
         return;
+    case DateObjectUse:
+        out.print("DateObject");
+        return;
     case MapObjectUse:
         out.print("MapObject");
         return;

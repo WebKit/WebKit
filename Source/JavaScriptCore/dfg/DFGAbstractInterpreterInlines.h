@@ -4068,6 +4068,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case DateGetInt32OrNaN: {
+        setNonCellTypeForNode(node, SpecInt32Only | SpecDoublePureNaN);
+        break;
+    }
+
+    case DateGetTime: {
+        setNonCellTypeForNode(node, SpecFullDouble);
+        break;
+    }
+
     case DataViewSet: {
         break;
     }

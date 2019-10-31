@@ -37,17 +37,18 @@ class DateInstanceData : public RefCounted<DateInstanceData> {
 public:
     static Ref<DateInstanceData> create() { return adoptRef(*new DateInstanceData); }
 
-    double m_gregorianDateTimeCachedForMS;
+    static ptrdiff_t offsetOfGregorianDateTimeCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeCachedForMS); }
+    static ptrdiff_t offsetOfCachedGregorianDateTime() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTime); }
+    static ptrdiff_t offsetOfGregorianDateTimeUTCCachedForMS() { return OBJECT_OFFSETOF(DateInstanceData, m_gregorianDateTimeUTCCachedForMS); }
+    static ptrdiff_t offsetOfCachedGregorianDateTimeUTC() { return OBJECT_OFFSETOF(DateInstanceData, m_cachedGregorianDateTimeUTC); }
+
+    double m_gregorianDateTimeCachedForMS { PNaN };
     GregorianDateTime m_cachedGregorianDateTime;
-    double m_gregorianDateTimeUTCCachedForMS;
+    double m_gregorianDateTimeUTCCachedForMS { PNaN };
     GregorianDateTime m_cachedGregorianDateTimeUTC;
 
 private:
-    DateInstanceData()
-        : m_gregorianDateTimeCachedForMS(PNaN)
-        , m_gregorianDateTimeUTCCachedForMS(PNaN)
-    {
-    }
+    DateInstanceData() = default;
 };
 
 class DateInstanceCache {

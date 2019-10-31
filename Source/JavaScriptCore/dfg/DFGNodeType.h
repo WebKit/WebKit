@@ -516,6 +516,9 @@ namespace JSC { namespace DFG {
     macro(DataViewGetInt, NodeMustGenerate | NodeResultJS) /* The gets are must generate for now because they do bounds checks */ \
     macro(DataViewGetFloat, NodeMustGenerate | NodeResultDouble) \
     macro(DataViewSet, NodeMustGenerate | NodeMustGenerate | NodeHasVarArgs) \
+    /* Date access */ \
+    macro(DateGetInt32OrNaN, NodeResultJS) \
+    macro(DateGetTime, NodeResultDouble) \
 
 
 // This enum generates a monotonically increasing id for all Node types,

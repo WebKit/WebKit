@@ -26,27 +26,16 @@
 
 #include <string.h>
 #include <time.h>
+#include <wtf/DateMath.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
 class GregorianDateTime final {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(GregorianDateTime);
 public:
-    GregorianDateTime()
-        : m_year(0)
-        , m_month(0)
-        , m_yearDay(0)
-        , m_monthDay(0)
-        , m_weekDay(0)
-        , m_hour(0)
-        , m_minute(0)
-        , m_second(0)
-        , m_utcOffset(0)
-        , m_isDST(0)
-    {
-    }
+    GregorianDateTime() = default;
 
     inline int year() const { return m_year; }
     inline int month() const { return m_month; }
@@ -56,7 +45,7 @@ public:
     inline int hour() const { return m_hour; }
     inline int minute() const { return m_minute; }
     inline int second() const { return m_second; }
-    inline int utcOffset() const { return m_utcOffset; }
+    inline int utcOffsetInMinute() const { return m_utcOffsetInMinute; }
     inline int isDST() const { return m_isDST; }
 
     inline void setYear(int year) { m_year = year; }
@@ -67,8 +56,19 @@ public:
     inline void setHour(int hour) { m_hour = hour; }
     inline void setMinute(int minute) { m_minute = minute; }
     inline void setSecond(int second) { m_second = second; }
-    inline void setUtcOffset(int utcOffset) { m_utcOffset = utcOffset; }
+    inline void setUTCOffsetInMinute(int utcOffsetInMinute) { m_utcOffsetInMinute = utcOffsetInMinute; }
     inline void setIsDST(int isDST) { m_isDST = isDST; }
+
+    static ptrdiff_t offsetOfYear() { return OBJECT_OFFSETOF(GregorianDateTime, m_year); }
+    static ptrdiff_t offsetOfMonth() { return OBJECT_OFFSETOF(GregorianDateTime, m_month); }
+    static ptrdiff_t offsetOfYearDay() { return OBJECT_OFFSETOF(GregorianDateTime, m_yearDay); }
+    static ptrdiff_t offsetOfMonthDay() { return OBJECT_OFFSETOF(GregorianDateTime, m_monthDay); }
+    static ptrdiff_t offsetOfWeekDay() { return OBJECT_OFFSETOF(GregorianDateTime, m_weekDay); }
+    static ptrdiff_t offsetOfHour() { return OBJECT_OFFSETOF(GregorianDateTime, m_hour); }
+    static ptrdiff_t offsetOfMinute() { return OBJECT_OFFSETOF(GregorianDateTime, m_minute); }
+    static ptrdiff_t offsetOfSecond() { return OBJECT_OFFSETOF(GregorianDateTime, m_second); }
+    static ptrdiff_t offsetOfUTCOffsetInMinute() { return OBJECT_OFFSETOF(GregorianDateTime, m_utcOffsetInMinute); }
+    static ptrdiff_t offsetOfIsDST() { return OBJECT_OFFSETOF(GregorianDateTime, m_isDST); }
 
     WTF_EXPORT_PRIVATE void setToCurrentLocalTime();
 
@@ -88,37 +88,23 @@ public:
         ret.tm_isdst = m_isDST;
 
 #if HAVE(TM_GMTOFF)
-        ret.tm_gmtoff = static_cast<long>(m_utcOffset);
+        ret.tm_gmtoff = static_cast<long>(m_utcOffsetInMinute) * static_cast<long>(secondsPerMinute);
 #endif
 
         return ret;
     }
 
-    void copyFrom(const GregorianDateTime& other)
-    {
-        m_year = other.m_year;
-        m_month = other.m_month;
-        m_yearDay = other.m_yearDay;
-        m_monthDay = other.m_monthDay;
-        m_weekDay = other.m_weekDay;
-        m_hour = other.m_hour;
-        m_minute = other.m_minute;
-        m_second = other.m_second;
-        m_utcOffset = other.m_utcOffset;
-        m_isDST = other.m_isDST;
-    }
-
 private:
-    int m_year;
-    int m_month;
-    int m_yearDay;
-    int m_monthDay;
-    int m_weekDay;
-    int m_hour;
-    int m_minute;
-    int m_second;
-    int m_utcOffset;
-    int m_isDST;
+    int m_year { 0 };
+    int m_month { 0 };
+    int m_yearDay { 0 };
+    int m_monthDay { 0 };
+    int m_weekDay { 0 };
+    int m_hour { 0 };
+    int m_minute { 0 };
+    int m_second { 0 };
+    int m_utcOffsetInMinute { 0 };
+    int m_isDST { 0 };
 };
 
 } // namespace WTF

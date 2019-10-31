@@ -219,7 +219,7 @@ void msToGregorianDateTime(VM& vm, double ms, WTF::TimeType outputTimeType, Greg
     tm.setMonth(monthFromDayInYear(tm.yearDay(), isLeapYear(year)));
     tm.setYear(year);
     tm.setIsDST(localTime.isDST);
-    tm.setUtcOffset(localTime.offset / WTF::msPerSecond);
+    tm.setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
 }
 
 double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)

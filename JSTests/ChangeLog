@@ -1,3 +1,76 @@
+2019-10-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Date functions should have intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=202187
+
+        Reviewed by Keith Miller.
+
+        * stress/date-cse.js: Added.
+        (shouldBe):
+        (test):
+        (test2):
+        (test3):
+        * stress/date-get-date-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-day-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-full-year-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-hours-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-milliseconds-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-minutes-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-month-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-seconds-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-time-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-timezone-offset-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-date-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-day-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-full-year-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-hours-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-milliseconds-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-minutes-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-month-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-utc-seconds-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-get-year-jit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/date-value-of-jit.js: Added.
+        (shouldBe):
+        (test):
+
 2019-10-30  Guillaume Emont  <guijemont@igalia.com>
 
         Temporarily skip ChakraCore/test/Math/max.js on arm and mips

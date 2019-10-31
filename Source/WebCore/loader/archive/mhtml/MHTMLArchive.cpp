@@ -141,7 +141,7 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
     GregorianDateTime now;
     now.setToCurrentLocalTime();
-    String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffset() / 60);
+    String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffsetInMinute());
 
     StringBuilder stringBuilder;
     stringBuilder.append("From: <Saved by WebKit>\r\n");

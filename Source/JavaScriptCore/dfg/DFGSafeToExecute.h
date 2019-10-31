@@ -62,6 +62,7 @@ public:
         case PromiseObjectUse:
         case ProxyObjectUse:
         case DerivedArrayUse:
+        case DateObjectUse:
         case MapObjectUse:
         case SetObjectUse:
         case WeakMapObjectUse:
@@ -489,6 +490,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
     case MatchStructure:
+    case DateGetInt32OrNaN:
+    case DateGetTime:
     case DataViewGetInt:
     case DataViewGetFloat:
         return true;

@@ -29,6 +29,7 @@
 #include "config.h"
 #include "SpeculatedType.h"
 
+#include "DateInstance.h"
 #include "DirectArguments.h"
 #include "JSArray.h"
 #include "JSBigInt.h"
@@ -171,6 +172,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
     
             if (value & SpecRegExpObject)
                 strOut.print("RegExpObject");
+            else
+                isTop = false;
+
+            if (value & SpecDateObject)
+                strOut.print("DateObject");
             else
                 isTop = false;
 
@@ -445,6 +451,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     if (classInfo == RegExpObject::info())
         return SpecRegExpObject;
 
+    if (classInfo == DateInstance::info())
+        return SpecDateObject;
+
     if (classInfo == JSMap::info())
         return SpecMapObject;
 
@@ -594,6 +603,8 @@ Optional<SpeculatedType> speculationFromJSType(JSType type)
         return SpecDerivedArray;
     case RegExpObjectType:
         return SpecRegExpObject;
+    case JSDateType:
+        return SpecDateObject;
     case ProxyObjectType:
         return SpecProxyObject;
     case JSPromiseType:
@@ -814,6 +825,8 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecStringObject;
     if (!strncmp(speculation, "SpecRegExpObject", strlen("SpecRegExpObject")))
         return SpecRegExpObject;
+    if (!strncmp(speculation, "SpecDateObject", strlen("SpecDateObject")))
+        return SpecDateObject;
     if (!strncmp(speculation, "SpecPromiseObject", strlen("SpecPromiseObject")))
         return SpecPromiseObject;
     if (!strncmp(speculation, "SpecMapObject", strlen("SpecMapObject")))

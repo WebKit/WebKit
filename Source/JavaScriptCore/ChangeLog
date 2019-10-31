@@ -1,3 +1,124 @@
+2019-10-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Date functions should have intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=202187
+
+        Reviewed by Keith Miller.
+
+        This patch adds intrinsic to Date object getter functions to make it inlined in DFG and FTL.
+        We add two DFG nodes, DateGetInt32OrNaN and DateGetTime. DateGetTime is used when we know
+        that the result is always machine double. On the other hand, DateGetInt32OrNaN is used when the result is Int32 or NaN.
+
+        Run SunSpider 100 times and get the solid improvement in Date related benchmarks.
+
+                                          ToT                     Patched
+
+            date-format-tofte        5.3511+-0.0260     ^      5.2747+-0.0273        ^ definitely 1.0145x faster
+            date-format-xparb        4.9196+-0.0265     ^      4.7067+-0.0200        ^ definitely 1.0452x faster
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromJSType):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIntrinsic):
+        (JSC::DFG::Node::intrinsic):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateDateObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDateGet):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDateGet):
+        (JSC::FTL::DFG::LowerDFGToB3::lowDateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateDateObject):
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime):
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime const):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC const):
+        * runtime/DateInstance.h:
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceData::offsetOfGregorianDateTimeCachedForMS):
+        (JSC::DateInstanceData::offsetOfCachedGregorianDateTime):
+        (JSC::DateInstanceData::offsetOfGregorianDateTimeUTCCachedForMS):
+        (JSC::DateInstanceData::offsetOfCachedGregorianDateTimeUTC):
+        (JSC::DateInstanceData::DateInstanceData): Deleted.
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::formateDateInstance):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncGetMonth):
+        (JSC::dateProtoFuncGetUTCMonth):
+        (JSC::dateProtoFuncGetDate):
+        (JSC::dateProtoFuncGetUTCDate):
+        (JSC::dateProtoFuncGetDay):
+        (JSC::dateProtoFuncGetUTCDay):
+        (JSC::dateProtoFuncGetHours):
+        (JSC::dateProtoFuncGetUTCHours):
+        (JSC::dateProtoFuncGetMinutes):
+        (JSC::dateProtoFuncGetUTCMinutes):
+        (JSC::dateProtoFuncGetSeconds):
+        (JSC::dateProtoFuncGetUTCSeconds):
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::dateProtoFuncGetTimezoneOffset):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        (JSC::dateProtoFuncGetYear):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSDateMath.cpp:
+        (JSC::msToGregorianDateTime):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+
 2019-10-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Intl.DateTimeFormat returns resolvedOptions in the wrong order

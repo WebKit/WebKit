@@ -2320,6 +2320,11 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
 
+        case DateGetInt32OrNaN:
+        case DateGetTime:
+            fixEdge<DateObjectUse>(node->child1());
+            break;
+
         case DataViewGetInt:
         case DataViewGetFloat: {
             fixEdge<DataViewObjectUse>(node->child1());

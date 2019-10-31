@@ -242,6 +242,8 @@ bool doesGC(Graph& graph, Node* node)
     case FilterGetByIdStatus:
     case FilterPutByIdStatus:
     case FilterInByIdStatus:
+    case DateGetInt32OrNaN:
+    case DateGetTime:
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:

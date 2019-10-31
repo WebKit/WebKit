@@ -62,7 +62,7 @@ void GregorianDateTime::setToCurrentLocalTime()
     m_hour = systemTime.wHour;
     m_minute = systemTime.wMinute;
     m_second = systemTime.wSecond;
-    m_utcOffset = -bias * secondsPerMinute;
+    m_utcOffsetInMinute = -bias;
     m_isDST = timeZoneId == TIME_ZONE_ID_DAYLIGHT ? 1 : 0;
 #else
     tm localTM;
@@ -83,9 +83,9 @@ void GregorianDateTime::setToCurrentLocalTime()
     m_second = localTM.tm_sec;
     m_isDST = localTM.tm_isdst;
 #if HAVE(TM_GMTOFF)
-    m_utcOffset = localTM.tm_gmtoff;
+    m_utcOffsetInMinute = localTM.tm_gmtoff / secondsPerMinute;
 #else
-    m_utcOffset = calculateLocalTimeOffset(localTime * msPerSecond).offset / msPerSecond;
+    m_utcOffsetInMinute = calculateLocalTimeOffset(localTime * msPerSecond).offset / msPerMinute;
 #endif
 #endif
 }

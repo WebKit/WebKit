@@ -33,6 +33,7 @@
 #include "B3MemoryValue.h"
 #include "B3PatchpointValue.h"
 #include "B3ValueInlines.h"
+#include "DateInstance.h"
 #include "DirectArguments.h"
 #include "FTLState.h"
 #include "GetterSetter.h"

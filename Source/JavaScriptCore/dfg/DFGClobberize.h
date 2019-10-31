@@ -1814,6 +1814,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node, node->validRadixConstant()));
         return;
 
+    case DateGetTime:
+    case DateGetInt32OrNaN: {
+        read(JSDateFields);
+        def(HeapLocation(DateFieldLoc, AbstractHeap(JSDateFields, static_cast<uint64_t>(node->intrinsic())), node->child1()), LazyNode(node));
+        return;
+    }
+
     case DataViewGetFloat:
     case DataViewGetInt: {
         read(MiscFields);

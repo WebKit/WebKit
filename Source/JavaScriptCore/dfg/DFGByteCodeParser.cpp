@@ -3195,6 +3195,41 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             return true;
         }
 
+        case DatePrototypeGetTimeIntrinsic: {
+            if (!is64Bit())
+                return false;
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            setResult(addToGraph(DateGetTime, OpInfo(intrinsic), OpInfo(), base));
+            return true;
+        }
+
+        case DatePrototypeGetFullYearIntrinsic:
+        case DatePrototypeGetUTCFullYearIntrinsic:
+        case DatePrototypeGetMonthIntrinsic:
+        case DatePrototypeGetUTCMonthIntrinsic:
+        case DatePrototypeGetDateIntrinsic:
+        case DatePrototypeGetUTCDateIntrinsic:
+        case DatePrototypeGetDayIntrinsic:
+        case DatePrototypeGetUTCDayIntrinsic:
+        case DatePrototypeGetHoursIntrinsic:
+        case DatePrototypeGetUTCHoursIntrinsic:
+        case DatePrototypeGetMinutesIntrinsic:
+        case DatePrototypeGetUTCMinutesIntrinsic:
+        case DatePrototypeGetSecondsIntrinsic:
+        case DatePrototypeGetUTCSecondsIntrinsic:
+        case DatePrototypeGetMillisecondsIntrinsic:
+        case DatePrototypeGetUTCMillisecondsIntrinsic:
+        case DatePrototypeGetTimezoneOffsetIntrinsic:
+        case DatePrototypeGetYearIntrinsic: {
+            if (!is64Bit())
+                return false;
+            insertChecks();
+            Node* base = get(virtualRegisterForArgument(0, registerOffset));
+            setResult(addToGraph(DateGetInt32OrNaN, OpInfo(intrinsic), OpInfo(prediction), base));
+            return true;
+        }
+
         case DataViewGetInt8:
         case DataViewGetUint8:
         case DataViewGetInt16:

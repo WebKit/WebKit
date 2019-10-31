@@ -54,28 +54,31 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    const GregorianDateTime* gregorianDateTime(JSGlobalObject* globalObject) const
+    const GregorianDateTime* gregorianDateTime(VM& vm) const
     {
         if (m_data && m_data->m_gregorianDateTimeCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTime;
-        return calculateGregorianDateTime(globalObject);
+        return calculateGregorianDateTime(vm);
     }
 
-    const GregorianDateTime* gregorianDateTimeUTC(JSGlobalObject* globalObject) const
+    const GregorianDateTime* gregorianDateTimeUTC(VM& vm) const
     {
         if (m_data && m_data->m_gregorianDateTimeUTCCachedForMS == internalNumber())
             return &m_data->m_cachedGregorianDateTimeUTC;
-        return calculateGregorianDateTimeUTC(globalObject);
+        return calculateGregorianDateTimeUTC(vm);
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSDateType, StructureFlags), info());
     }
 
+    static ptrdiff_t offsetOfInternalNumber() { return OBJECT_OFFSETOF(DateInstance, m_internalNumber); }
+    static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(DateInstance, m_data); }
+
 private:
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(VM&) const;
+    JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(VM&) const;
 
     double m_internalNumber { PNaN };
     mutable RefPtr<DateInstanceData> m_data;

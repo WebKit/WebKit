@@ -106,16 +106,16 @@ const char* const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "
 const char* const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 const char* const monthFullName[12] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
-const double hoursPerDay = 24.0;
-const double minutesPerHour = 60.0;
-const double secondsPerMinute = 60.0;
-const double msPerSecond = 1000.0;
-const double msPerMonth = 2592000000.0;
-const double secondsPerHour = secondsPerMinute * minutesPerHour;
-const double secondsPerDay = secondsPerHour * hoursPerDay;
-const double msPerMinute = msPerSecond * secondsPerMinute;
-const double msPerHour = msPerSecond * secondsPerHour;
-const double msPerDay = msPerSecond * secondsPerDay;
+static constexpr double hoursPerDay = 24.0;
+static constexpr double minutesPerHour = 60.0;
+static constexpr double secondsPerMinute = 60.0;
+static constexpr double msPerSecond = 1000.0;
+static constexpr double msPerMonth = 2592000000.0;
+static constexpr double secondsPerHour = secondsPerMinute * minutesPerHour;
+static constexpr double secondsPerDay = secondsPerHour * hoursPerDay;
+static constexpr double msPerMinute = msPerSecond * secondsPerMinute;
+static constexpr double msPerHour = msPerSecond * secondsPerHour;
+static constexpr double msPerDay = msPerSecond * secondsPerDay;
 
 WTF_EXPORT_PRIVATE bool isLeapYear(int year);
 

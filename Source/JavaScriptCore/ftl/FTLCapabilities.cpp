@@ -388,6 +388,8 @@ inline CapabilityLevel canCompile(Node* node)
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:
+    case DateGetInt32OrNaN:
+    case DateGetTime:
         // These are OK.
         break;
 
@@ -470,6 +472,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringOrStringObjectUse:
                 case SymbolUse:
                 case BigIntUse:
+                case DateObjectUse:
                 case MapObjectUse:
                 case SetObjectUse:
                 case WeakMapObjectUse:

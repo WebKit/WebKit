@@ -39,6 +39,7 @@
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "DFGSnippetParams.h"
+#include "DateInstance.h"
 #include "DirectArguments.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "JITAddGenerator.h"
@@ -10195,6 +10196,20 @@ void SpeculativeJIT::speculatePromiseObject(Edge edge)
     speculatePromiseObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateDateObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecDateObject, JSDateType);
+}
+
+void SpeculativeJIT::speculateDateObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecDateObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateDateObject(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateMapObject(Edge edge, GPRReg cell)
 {
     speculateCellType(edge, cell, SpecMapObject, JSMapType);
@@ -10599,6 +10614,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case DerivedArrayUse:
         speculateDerivedArray(edge);
+        break;
+    case DateObjectUse:
+        speculateDateObject(edge);
         break;
     case MapObjectUse:
         speculateMapObject(edge);

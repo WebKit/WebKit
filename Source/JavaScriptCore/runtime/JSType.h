@@ -107,6 +107,7 @@ enum JSType : uint8_t {
 
     ModuleNamespaceObjectType,
     RegExpObjectType,
+    JSDateType,
     ProxyObjectType,
     JSGeneratorType,
     JSAsyncGeneratorType,

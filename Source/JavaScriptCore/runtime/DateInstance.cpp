@@ -57,13 +57,12 @@ void DateInstance::destroy(JSCell* cell)
     static_cast<DateInstance*>(cell)->DateInstance::~DateInstance();
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTime(JSGlobalObject* globalObject) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM& vm) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
-        return 0;
+        return nullptr;
 
-    VM& vm = globalObject->vm();
     if (!m_data)
         m_data = vm.dateInstanceCache.add(milli);
 
@@ -74,13 +73,12 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTime(JSGlobalObject
     return &m_data->m_cachedGregorianDateTime;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(JSGlobalObject* globalObject) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(VM& vm) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
-        return 0;
+        return nullptr;
 
-    VM& vm = globalObject->vm();
     if (!m_data)
         m_data = vm.dateInstanceCache.add(milli);
 

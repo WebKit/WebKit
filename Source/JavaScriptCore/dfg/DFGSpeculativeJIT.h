@@ -1489,6 +1489,7 @@ public:
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
     void compileStringCodePointAt(Node*);
+    void compileDateGet(Node*);
 
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);
@@ -1616,6 +1617,8 @@ public:
     void speculateProxyObject(Edge);
     void speculateDerivedArray(Edge, GPRReg cell);
     void speculateDerivedArray(Edge);
+    void speculateDateObject(Edge);
+    void speculateDateObject(Edge, GPRReg cell);
     void speculateMapObject(Edge);
     void speculateMapObject(Edge, GPRReg cell);
     void speculateSetObject(Edge);

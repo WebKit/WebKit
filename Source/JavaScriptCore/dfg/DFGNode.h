@@ -1554,9 +1554,21 @@ public:
         return m_opInfo.as<EntrySwitchData*>();
     }
 
+    bool hasIntrinsic()
+    {
+        switch (op()) {
+        case CPUIntrinsic:
+        case DateGetTime:
+        case DateGetInt32OrNaN:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     Intrinsic intrinsic()
     {
-        RELEASE_ASSERT(op() == CPUIntrinsic);
+        ASSERT(hasIntrinsic());
         return m_opInfo.as<Intrinsic>();
     }
     
@@ -1753,6 +1765,7 @@ public:
         case ToThis:
         case DataViewGetInt:
         case DataViewGetFloat:
+        case DateGetInt32OrNaN:
             return true;
         default:
             return false;

@@ -97,8 +97,8 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         builder.appendLiteral(" GMT");
 
         if (!asUTCVariant) {
-            int offset = abs(t.utcOffset()) / 60;
-            builder.append(t.utcOffset() < 0 ? '-' : '+');
+            int offset = abs(t.utcOffsetInMinute());
+            builder.append(t.utcOffsetInMinute() < 0 ? '-' : '+');
             appendNumber<2>(builder, offset / 60);
             appendNumber<2>(builder, offset % 60);
 
