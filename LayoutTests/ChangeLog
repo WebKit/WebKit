@@ -1,3 +1,15 @@
+2019-10-31  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Batch multiple key requests into one request and response
+        https://bugs.webkit.org/show_bug.cgi?id=203580
+        <rdar://problem/54853345>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/encrypted-media/fps-multiple-pssh-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-multiple-pssh.html: Added.
+
 2019-10-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Color picker: incorrect saturation when selecting color on color square

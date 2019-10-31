@@ -1,3 +1,50 @@
+2019-10-31  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Batch multiple key requests into one request and response
+        https://bugs.webkit.org/show_bug.cgi?id=203580
+        <rdar://problem/54853345>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/encrypted-media/fps-multiple-pssh.html
+
+        Add a path for -didProvideRequests: giving an NSArray of AVContentKeyRequests to result in
+        an EME message containing a JSON object containing keyIDs and licence request payloads.
+
+        - CDMInstanceSessionFairPlayStreamingAVFObjC now defines a "Request" as a Vector of
+          AVContentKeyRequests.
+        - When we receive an NSArray of AVContentKeyRequests, we store that as a single "Request"
+          in m_currentRequest and m_requests, or in m_pendingRequests.
+        - Generating a key request message from such a vector will result in a JSON object in the format
+          of [{ keyID: ..., payload: ...}, ...].
+        - Clients can update these all at once with a matching JSON object in the same format, or alternatively
+          of the format [{ keyID: ..., error: ...}, ...] to indicate to the CDN that there was an error
+          encountered while completing the key request.
+        - There are a couple of helper classes that facilitate collecting delegate callbacks and completion handlers
+          into a single final callback: UpdateResponseCollector and CallbackAggregator.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (-[WebCoreFPSContentKeySessionDelegate contentKeySession:didProvideContentKeyRequests:forInitializationData:]):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector::UpdateResponseCollector):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector::addSuccessfulResponse):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector::addErrorResponse):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::UpdateResponseCollector::fail):
+        (WebCore::parseJSONValue):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs const):
+        (WebCore::keyIDsForRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::lastKeyRequest const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+
 2019-10-31  Alex Christensen  <achristensen@apple.com>
 
         Enable more features in Mac CMake build

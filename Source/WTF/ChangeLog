@@ -1,3 +1,16 @@
+2019-10-31  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Batch multiple key requests into one request and response
+        https://bugs.webkit.org/show_bug.cgi?id=203580
+        <rdar://problem/54853345>
+
+        Reviewed by Eric Carlson.
+
+        Support appending an r-value reference Vector to another.
+
+        * wtf/Vector.h:
+        (WTF::minCapacity>::appendVector):
+
 2019-10-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove unneeded HAVE_TIMINGDATAOPTIONS

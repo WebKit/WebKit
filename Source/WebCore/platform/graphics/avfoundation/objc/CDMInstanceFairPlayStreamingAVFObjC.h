@@ -72,7 +72,9 @@ public:
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
 
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
-    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Vector<Ref<SharedBuffer>>&) const;
+
+    using Keys = Vector<Ref<SharedBuffer>>;
+    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
 
 private:
     RefPtr<SharedBuffer> m_serverCertificate;
@@ -97,6 +99,7 @@ public:
     void clearClient() final;
 
     void didProvideRequest(AVContentKeyRequest*);
+    void didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&&);
     void didProvideRenewingRequest(AVContentKeyRequest*);
     void didProvidePersistableRequest(AVContentKeyRequest*);
     void didFailToProvideRequest(AVContentKeyRequest*, NSError*);
@@ -105,8 +108,11 @@ public:
     void sessionIdentifierChanged(NSData*);
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 
-    Vector<Ref<SharedBuffer>> keyIDs();
+    using Keys = CDMInstanceFairPlayStreamingAVFObjC::Keys;
+    Keys keyIDs();
     AVContentKeySession* contentKeySession() { return m_session.get(); }
+
+    using Request = Vector<RetainPtr<AVContentKeyRequest>>;
 
 private:
     AVContentKeySession* ensureSession();
@@ -114,18 +120,22 @@ private:
 
     KeyStatusVector keyStatuses() const;
     void nextRequest();
+    AVContentKeyRequest* lastKeyRequest() const;
 
     Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;
     RetainPtr<AVContentKeySession> m_session;
-    RetainPtr<AVContentKeyRequest> m_currentRequest;
+    Request m_currentRequest;
     RetainPtr<WebCoreFPSContentKeySessionDelegate> m_delegate;
     Vector<RetainPtr<NSData>> m_expiredSessions;
     WeakPtr<CDMInstanceSessionClient> m_client;
     String m_sessionId;
     bool m_outputObscured { false };
 
-    Vector<RetainPtr<AVContentKeyRequest>> m_pendingRequests;
-    Vector<RetainPtr<AVContentKeyRequest>> m_requests;
+    class UpdateResponseCollector;
+    std::unique_ptr<UpdateResponseCollector> m_updateResponseCollector;
+
+    Vector<Request> m_pendingRequests;
+    Vector<Request> m_requests;
 
     LicenseCallback m_requestLicenseCallback;
     LicenseUpdateCallback m_updateLicenseCallback;

@@ -776,6 +776,7 @@ public:
 
     template<typename U> void append(const U*, size_t);
     template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
+    template<typename U, size_t otherCapacity> void appendVector(Vector<U, otherCapacity>&&);
     template<typename U> bool tryAppend(const U*, size_t);
 
     template<typename U> void insert(size_t position, const U*, size_t);
@@ -1406,6 +1407,17 @@ template<typename U, size_t otherCapacity>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendVector(const Vector<U, otherCapacity>& val)
 {
     append(val.begin(), val.size());
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+template<typename U, size_t otherCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendVector(Vector<U, otherCapacity>&& val)
+{
+    size_t newSize = m_size + val.size();
+    if (newSize > capacity())
+        expandCapacity(newSize);
+    for (auto& item : val)
+        uncheckedAppend(WTFMove(item));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>

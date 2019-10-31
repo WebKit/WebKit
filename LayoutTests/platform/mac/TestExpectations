@@ -2023,3 +2023,6 @@ webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css
 webkit.org/b/203305 [ HighSierra Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 webkit.org/b/203357 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
 webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]
+
+# rdar://54275897 ([ macOS ] Add support for batched key requests)
+platform/mac/media/encrypted-media/fps-multiple-pssh.html [ Skip ]
