@@ -1040,7 +1040,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         bib t3, LowestTag, .op1NotIntOp2Double
         bineq t3, Int32Tag, .slow
         arithProfile(ArithProfileNumberInt)
-        ci2d t1, ft1
+        ci2ds t1, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
         fii2d t1, t3, ft1
@@ -1057,7 +1057,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         bia t3, LowestTag, .slow
         arithProfile(ArithProfileIntNumber)
-        ci2d t0, ft0
+        ci2ds t0, ft0
         fii2d t1, t3, ft1
         doubleOperation(ft1, ft0)
         stored ft0, [cfr, t2, 8]
@@ -1106,8 +1106,8 @@ binaryOp(sub, OpSub,
 
 binaryOpCustomStore(div, OpDiv,
     macro (int32Tag, left, right, slow, index)
-        ci2d left, ft0
-        ci2d right, ft1
+        ci2ds left, ft0
+        ci2ds right, ft1
         divd ft0, ft1
         bcd2i ft1, right, .notInt
         storei int32Tag, TagOffset[cfr, index, 8]
@@ -1571,7 +1571,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
                 const payload = operand
                 loadConstantOrVariable2Reg(size, operand, tag, payload)
                 bineq tag, Int32Tag, .notInt
-                ci2d payload, ft0
+                ci2ds payload, ft0
                 jmp .ready
             .notInt:
                 fii2d payload, tag, ft0
@@ -1768,7 +1768,7 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
         bia t0, LowestTag, .slow
         bib t2, LowestTag, .op1NotIntOp2Double
         bineq t2, Int32Tag, .slow
-        ci2d t3, ft1
+        ci2ds t3, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
         fii2d t3, t2, ft1
@@ -1778,7 +1778,7 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
         dispatch()
 
     .op2NotInt:
-        ci2d t1, ft0
+        ci2ds t1, ft0
         bia t2, LowestTag, .slow
         fii2d t3, t2, ft1
         doubleCompare(ft0, ft1, .jumpTarget)
