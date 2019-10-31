@@ -75,6 +75,12 @@ ALWAYS_INLINE Register& Register::operator=(JSScope* scope)
     return *this;
 }
 
+ALWAYS_INLINE Register& Register::operator=(EncodedJSValue encodedJSValue)
+{
+    u.value = encodedJSValue;
+    return *this;
+}
+
 ALWAYS_INLINE JSScope* Register::scope() const
 {
     return jsCast<JSScope*>(unboxedCell());

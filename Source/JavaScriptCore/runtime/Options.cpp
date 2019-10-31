@@ -359,6 +359,11 @@ static void overrideDefaults()
 #if !HAVE(MACH_EXCEPTIONS)
     Options::useMachForExceptions() = false;
 #endif
+
+    if (Options::useWasmLLInt()) {
+        Options::thresholdForOMGOptimizeAfterWarmUp() = 1500;
+        Options::thresholdForOMGOptimizeSoon() = 100;
+    }
 }
 
 static void correctOptions()

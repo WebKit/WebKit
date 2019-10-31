@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmBBQPlanInlines.h"
+#include "WasmLLIntPlan.h"
 #include "WasmModuleInformation.h"
 #include "WasmWorklist.h"
 
@@ -46,7 +46,7 @@ Wasm::SignatureIndex Module::signatureIndexFromFunctionIndexSpace(unsigned funct
     return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
 }
 
-static Module::ValidationResult makeValidationResult(BBQPlan& plan)
+static Module::ValidationResult makeValidationResult(EntryPlan& plan)
 {
     ASSERT(!plan.hasWork());
     if (plan.failed())
@@ -58,20 +58,20 @@ static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallba
 {
     return createSharedTask<Plan::CallbackType>([callback = WTFMove(callback)] (Plan& plan) {
         ASSERT(!plan.hasWork());
-        callback->run(makeValidationResult(static_cast<BBQPlan&>(plan)));
+        callback->run(makeValidationResult(static_cast<LLIntPlan&>(plan)));
     });
 }
 
 Module::ValidationResult Module::validateSync(Context* context, Vector<uint8_t>&& source)
 {
-    Ref<BBQPlan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), BBQPlan::Validation, Plan::dontFinalize(), nullptr, nullptr));
+    Ref<LLIntPlan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, Plan::dontFinalize(), nullptr, nullptr));
     plan->parseAndValidateModule();
     return makeValidationResult(plan.get());
 }
 
 void Module::validateAsync(Context* context, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    Ref<Plan> plan = adoptRef(*new BBQPlan(context, WTFMove(source), BBQPlan::Validation, makeValidationCallback(WTFMove(callback)), nullptr, nullptr));
+    Ref<Plan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, makeValidationCallback(WTFMove(callback)), nullptr, nullptr));
     Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 

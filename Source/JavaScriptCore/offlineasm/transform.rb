@@ -205,8 +205,11 @@ class Variable
         if @name =~ $concatenation
             name = @name.gsub($concatenation) { |match|
                 var = Variable.forName(codeOrigin, match[1...-1])
-                raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin} - #{mapping} " unless mapping[var]
-                mapping[var].name
+                if mapping[var]
+                    mapping[var].name
+                else
+                    match
+                end
             }
             Variable.forName(codeOrigin, name)
         elsif mapping[self]
@@ -238,8 +241,11 @@ class StructOffset
         if dump =~ $concatenation
             names = dump.gsub($concatenation) { |match|
                 var = Variable.forName(codeOrigin, match[1...-1])
-                raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin}" unless mapping[var]
-                mapping[var].name
+                if mapping[var]
+                    mapping[var].name
+                else
+                    match
+                end
             }.split('::')
             StructOffset.forField(codeOrigin, names[0..-2].join('::'), names[-1])
         else
@@ -272,8 +278,11 @@ class Label
         if @name =~ $concatenation
             name = @name.gsub($concatenation) { |match|
                 var = Variable.forName(codeOrigin, match[1...-1])
-                raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin}" unless mapping[var]
-                mapping[var].name
+                if mapping[var]
+                    mapping[var].name
+                else
+                    match
+                end
             }
             result = Label.forName(codeOrigin, name, @definedInFile)
             result.setGlobal() if global?
@@ -306,8 +315,11 @@ class ConstExpr
         if @value =~ $concatenation
             value = @value.gsub($concatenation) { |match|
                 var = Variable.forName(codeOrigin, match[1...-1])
-                raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin}" unless mapping[var]
-                mapping[var].name
+                if mapping[var]
+                    mapping[var].name
+                else
+                    match
+                end
             }
             ConstExpr.forName(codeOrigin, value)
         else
@@ -337,8 +349,11 @@ class Sizeof
         if struct =~ $concatenation
             value = struct.gsub($concatenation) { |match|
                 var = Variable.forName(codeOrigin, match[1...-1])
-                raise "Unknown variable `#{var.originalName}` in substitution at #{codeOrigin}" unless mapping[var]
-                mapping[var].name
+                if mapping[var]
+                    mapping[var].name
+                else
+                    match
+                end
             }
             Sizeof.forName(codeOrigin, value)
         else
@@ -357,13 +372,7 @@ class LocalLabel
     end
 end
 
-class MacroError < RuntimeError
-    attr_reader :message
-    attr_reader :backtrace
-    def initialize(message, backtrace)
-        @message = message
-        @backtrace = backtrace
-    end
+class MacroError < StandardError
 end
 
 class Sequence
@@ -399,11 +408,12 @@ class Sequence
         backtrace = @@demacroifyStack.reverse.map { |macroCall|
             "#{macroCall.codeOrigin} in call to #{macroCall.originalName}"
         }
-        raise MacroError.new(msg, backtrace)
+        raise MacroError, msg, backtrace
     end
 
     def demacroify(macros)
         myMacros = macros.dup
+        # We do an initial pass looking for all macros in order to allow forward references
         @list.each {
             | item |
             if item.is_a? Macro
@@ -414,7 +424,7 @@ class Sequence
         @list.each {
             | item |
             if item.is_a? Macro
-                # Ignore.
+                # Ignore. We already looked for macros above and they should not be part of the final output
             elsif item.is_a? MacroCall
                 @@demacroifyStack << item
                 mapping = {}
@@ -439,6 +449,7 @@ class Sequence
                     newList << Instruction.new(item.codeOrigin, "localAnnotation", [], item.annotation)
                 end
                 newList += macro.body.substitute(mapping).demacroify(myMyMacros).renameLabels(item.originalName).list
+
                 @@demacroifyStack.pop
             else
                 newList << item.demacroify(myMacros)

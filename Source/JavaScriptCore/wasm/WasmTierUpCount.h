@@ -56,7 +56,6 @@ public:
         NotCompiled,
         StartCompilation,
         Compiled,
-        Failed,
     };
 
     TierUpCount();
@@ -126,7 +125,6 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    Atomic<bool> m_tierUpStarted { false };
     Lock m_lock;
     CompilationStatus m_compilationStatusForOMG { CompilationStatus::NotCompiled };
     CompilationStatus m_compilationStatusForOMGForOSREntry { CompilationStatus::NotCompiled };

@@ -38,6 +38,7 @@
 
 namespace JSC {
 
+class LLIntOffsetsExtractor;
 class JSWebAssemblyInstance;
 
 namespace Wasm {
@@ -46,6 +47,8 @@ struct Context;
 class Instance;
 
 class Instance : public ThreadSafeRefCounted<Instance>, public CanMakeWeakPtr<Instance> {
+    friend LLIntOffsetsExtractor;
+
 public:
     using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
     using FunctionWrapperMap = HashMap<uint32_t, WriteBarrier<Unknown>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;

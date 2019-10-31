@@ -212,6 +212,7 @@ public:
 
     static ExpressionType emptyExpression() { return { }; };
     Stack createStack() { return Stack(); }
+    bool isControlTypeIf(const ControlType& control) { return control.blockType() == BlockType::If; }
 
     using ErrorType = String;
     using UnexpectedResult = Unexpected<ErrorType>;
@@ -1711,10 +1712,6 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex)
     for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
         ExpressionList& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
         for (auto& value : expressionStack)
-            patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
-
-        const auto& results = m_parser->controlStack()[controlIndex].controlData.results;
-        for (auto& value : results)
             patchArgs.append(ConstrainedTmp(value, B3::ValueRep::ColdAny));
     }
 

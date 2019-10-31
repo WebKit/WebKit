@@ -31,60 +31,85 @@
 #include "RegisterAtOffsetList.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"
+#include "WasmFunctionCodeBlock.h"
 #include "WasmIndexOrName.h"
 #include "WasmTierUpCount.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class LLIntOffsetsExtractor;
+
+namespace Wasm {
+
+class OMGForOSREntryCallee;
 
 class Callee : public ThreadSafeRefCounted<Callee> {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
 
-    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
+public:
+    JS_EXPORT_PRIVATE virtual ~Callee();
+
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
 
-    std::tuple<void*, void*> range() const
+    virtual MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const = 0;
+    virtual RegisterAtOffsetList* calleeSaveRegisters() = 0;
+    virtual std::tuple<void*, void*> range() const = 0;
+
+    virtual void setOSREntryCallee(Ref<OMGForOSREntryCallee>&&)
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void dump(PrintStream&) const;
+
+protected:
+    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
+    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+private:
+    CompilationMode m_compilationMode;
+    IndexOrName m_indexOrName;
+};
+
+class JITCallee : public Callee {
+public:
+    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const override { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
+    RegisterAtOffsetList* calleeSaveRegisters() override { return &m_entrypoint.calleeSaveRegisters; }
+    Vector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
+
+protected:
+    JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&);
+    JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&, Vector<UnlinkedWasmToWasmCall>&&);
+
+    std::tuple<void*, void*> range() const override
     {
         void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
         void* end = m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr();
         return { start, end };
     }
 
-    JS_EXPORT_PRIVATE virtual ~Callee();
-
-protected:
-    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, Wasm::Entrypoint&&);
-    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
-
 private:
-    CompilationMode m_compilationMode;
+    Vector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
     Wasm::Entrypoint m_entrypoint;
-    IndexOrName m_indexOrName;
 };
 
-class OMGCallee final : public Callee {
+class OMGCallee final : public JITCallee {
 public:
     static Ref<OMGCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
     {
         return adoptRef(*new OMGCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls)));
     }
 
-    Vector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
-
 private:
     OMGCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-        : Callee(Wasm::CompilationMode::OMGMode, WTFMove(entrypoint), index, WTFMove(name))
-        , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
+        : JITCallee(Wasm::CompilationMode::OMGMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
     {
     }
-
-    Vector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
 };
 
-class OMGForOSREntryCallee final : public Callee {
+class OMGForOSREntryCallee final : public JITCallee {
 public:
     static Ref<OMGForOSREntryCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
     {
@@ -93,23 +118,20 @@ public:
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
     uint32_t loopIndex() const { return m_loopIndex; }
-    Vector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
 
 private:
     OMGForOSREntryCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, unsigned osrEntryScratchBufferSize, uint32_t loopIndex, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
-        : Callee(Wasm::CompilationMode::OMGForOSREntryMode, WTFMove(entrypoint), index, WTFMove(name))
-        , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
+        : JITCallee(Wasm::CompilationMode::OMGForOSREntryMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
         , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
         , m_loopIndex(loopIndex)
     {
     }
 
-    Vector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
     unsigned m_osrEntryScratchBufferSize;
     uint32_t m_loopIndex;
 };
 
-class EmbedderEntrypointCallee final : public Callee {
+class EmbedderEntrypointCallee final : public JITCallee {
 public:
     static Ref<EmbedderEntrypointCallee> create(Wasm::Entrypoint&& entrypoint)
     {
@@ -118,20 +140,20 @@ public:
 
 private:
     EmbedderEntrypointCallee(Wasm::Entrypoint&& entrypoint)
-        : Callee(Wasm::CompilationMode::EmbedderEntrypointMode, WTFMove(entrypoint))
+        : JITCallee(Wasm::CompilationMode::EmbedderEntrypointMode, WTFMove(entrypoint))
     {
     }
 };
 
-class BBQCallee final : public Callee {
+class BBQCallee final : public JITCallee {
 public:
-    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount)
+    static Ref<BBQCallee> create(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
     {
-        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount)));
+        return adoptRef(*new BBQCallee(WTFMove(entrypoint), index, WTFMove(name), WTFMove(tierUpCount), WTFMove(unlinkedCalls)));
     }
 
     OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee)
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) override
     {
         m_osrEntryCallee = WTFMove(osrEntryCallee);
     }
@@ -148,8 +170,8 @@ public:
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
 private:
-    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount)
-        : Callee(Wasm::CompilationMode::BBQMode, WTFMove(entrypoint), index, WTFMove(name))
+    BBQCallee(Wasm::Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
+        : JITCallee(Wasm::CompilationMode::BBQMode, WTFMove(entrypoint), index, WTFMove(name), WTFMove(unlinkedCalls))
         , m_tierUpCount(WTFMove(tierUpCount))
     {
     }
@@ -158,6 +180,47 @@ private:
     RefPtr<OMGCallee> m_replacement;
     std::unique_ptr<TierUpCount> m_tierUpCount;
     bool m_didStartCompilingOSREntryCallee { false };
+};
+
+class LLIntCallee final : public Callee {
+    friend LLIntOffsetsExtractor;
+
+public:
+    static Ref<LLIntCallee> create(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    {
+        return adoptRef(*new LLIntCallee(WTFMove(codeBlock), index, WTFMove(name)));
+    }
+
+    JS_EXPORT_PRIVATE void setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag>);
+    JS_EXPORT_PRIVATE MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const override;
+    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() override;
+    JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const override;
+
+    JITCallee* replacement() { return m_replacement.get(); }
+    void setReplacement(Ref<JITCallee>&& replacement)
+    {
+        m_replacement = WTFMove(replacement);
+    }
+
+    OMGForOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
+    void setOSREntryCallee(Ref<OMGForOSREntryCallee>&& osrEntryCallee) override
+    {
+        m_osrEntryCallee = WTFMove(osrEntryCallee);
+    }
+
+    LLIntTierUpCounter& tierUpCounter() { return m_codeBlock->tierUpCounter(); }
+
+private:
+    LLIntCallee(std::unique_ptr<FunctionCodeBlock> codeBlock, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+        : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
+        , m_codeBlock(WTFMove(codeBlock))
+    {
+    }
+
+    RefPtr<JITCallee> m_replacement;
+    RefPtr<OMGForOSREntryCallee> m_osrEntryCallee;
+    std::unique_ptr<FunctionCodeBlock> m_codeBlock;
+    MacroAssemblerCodePtr<WasmEntryPtrTag> m_entrypoint;
 };
 
 } } // namespace JSC::Wasm

@@ -43,9 +43,9 @@ typedef void (*LLIntCode)();
 
 namespace LLInt {
 
-extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMap[numOpcodeIDs];
-extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMapWide16[numOpcodeIDs];
-extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMapWide32[numOpcodeIDs];
+extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMap[numOpcodeIDs + numWasmOpcodeIDs];
+extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMapWide16[numOpcodeIDs + numWasmOpcodeIDs];
+extern "C" JS_EXPORT_PRIVATE Opcode g_opcodeMapWide32[numOpcodeIDs + numWasmOpcodeIDs];
 
 class Data {
 
@@ -54,10 +54,12 @@ public:
 
 private:
     static uint8_t s_exceptionInstructions[maxOpcodeLength + 1];
+    static uint8_t s_wasmExceptionInstructions[maxOpcodeLength + 1];
 
     friend void initialize();
 
     friend Instruction* exceptionInstructions();
+    friend Instruction* wasmExceptionInstructions();
     friend Opcode* opcodeMap();
     friend Opcode* opcodeMapWide16();
     friend Opcode* opcodeMapWide32();
@@ -77,6 +79,11 @@ inline Instruction* exceptionInstructions()
     return reinterpret_cast<Instruction*>(Data::s_exceptionInstructions);
 }
     
+inline Instruction* wasmExceptionInstructions()
+{
+    return bitwise_cast<Instruction*>(Data::s_wasmExceptionInstructions);
+}
+
 inline Opcode* opcodeMap()
 {
     return g_opcodeMap;

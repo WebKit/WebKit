@@ -51,6 +51,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JSArrayInlines.h"
+#include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"

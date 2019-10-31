@@ -65,11 +65,11 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
             ++numberOfPinnedRegisters;
         Vector<GPRReg> pinnedRegs = getPinnedRegisters(numberOfPinnedRegisters);
 
-        GPRReg baseMemoryPointer = pinnedRegs.takeLast();
-        GPRReg sizeRegister = pinnedRegs.takeLast();
+        GPRReg baseMemoryPointer = GPRInfo::regCS3;
+        GPRReg sizeRegister = GPRInfo::regCS4;
         GPRReg wasmContextInstancePointer = InvalidGPRReg;
         if (!Context::useFastTLS())
-            wasmContextInstancePointer = pinnedRegs.takeLast();
+            wasmContextInstancePointer = GPRInfo::regCS0;
 
         staticPinnedRegisterInfo.construct(sizeRegister, baseMemoryPointer, wasmContextInstancePointer);
     });

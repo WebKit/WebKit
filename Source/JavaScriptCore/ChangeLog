@@ -1,3 +1,350 @@
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Create a Wasm interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=194257
+        <rdar://problem/44186794>
+
+        Reviewed by Saam Barati.
+
+        Add an interpreter tier to WebAssembly which reuses the LLInt infrastructure. The interpreter
+        currently tiers up straight to OMG and can OSR enter at the prologue and from loops. The initial
+        implementation of the interpreter is very naive, but despite the lack of optimizations it still
+        shows a 2x improvement on the WebAssembly subtests in JetStream2 and 2x improvement on the
+        PSPDFKit benchmark. It reduces "compilation" times by ~3x and it's neutral on throughput.
+
+        The interpreter follows the same calling conventions as the BBQ/OMG, this means that:
+        - We have to allocate locals for all argument registers and write all arguments registers to the
+          stack in the prologue.
+        - Calls have to allocate space for at least as many arguments as the number of argument registers.
+          Before each call, all argument registers must be loaded from the stack, and after we return from
+          the call, all registers must be stored back to the stack, in case they contain return values. We
+          carefully layout the stack so that the arguments that would already have to be passed in the stack
+          end up in the right place. The stack layout for calls is:
+            [ gprs ][ fprs ][ optional stack arguments ][ callee frame ]
+                                                                       ^ sp
+        - The return opcode has to load all registers from the stack, since they might need to contain
+          results of the function.
+        - The calling convention requires that the callee should store itself in the callee slot of the call
+          frame, which is impossible in the interpreter, since the code we execute is the same for all callees.
+          In order to work around that, we generate an entry thunk to the wasm interpreter for each function.
+          All this thunk does is store the callee in the call frame and tail call the interpreter.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::constantName const):
+        (JSC::BytecodeDumper<Block>::dumpValue):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        (JSC::CodeBlockBytecodeDumper<Block>::vm const):
+        (JSC::CodeBlockBytecodeDumper<Block>::identifier const):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpIdentifiers):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpConstants):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpExceptionHandlers):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables):
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpBlock):
+        * bytecode/BytecodeDumper.h:
+        (JSC::BytecodeDumper::dumpValue):
+        (JSC::BytecodeDumper::BytecodeDumper):
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::performGeneratorification):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Fits.h:
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::BaseInstruction):
+        (JSC::BaseInstruction::Impl::opcodeID const):
+        (JSC::BaseInstruction::opcodeID const):
+        (JSC::BaseInstruction::name const):
+        (JSC::BaseInstruction::isWide16 const):
+        (JSC::BaseInstruction::isWide32 const):
+        (JSC::BaseInstruction::hasMetadata const):
+        (JSC::BaseInstruction::sizeShiftAmount const):
+        (JSC::BaseInstruction::size const):
+        (JSC::BaseInstruction::is const):
+        (JSC::BaseInstruction::as const):
+        (JSC::BaseInstruction::cast):
+        (JSC::BaseInstruction::cast const):
+        (JSC::BaseInstruction::wide16 const):
+        (JSC::BaseInstruction::wide32 const):
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStream::iterator::operator+=):
+        (JSC::InstructionStream::iterator::operator++):
+        (JSC::InstructionStreamWriter::iterator::operator+=):
+        (JSC::InstructionStreamWriter::iterator::operator++):
+        * bytecode/Opcode.cpp:
+        * bytecode/Opcode.h:
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/VirtualRegister.cpp:
+        (JSC::VirtualRegister::VirtualRegister):
+        * bytecode/VirtualRegister.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::GenericLabel<JSGeneratorTraits>::setLocation):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGeneratorBase.h: Added.
+        * bytecompiler/BytecodeGeneratorBaseInlines.h: Added.
+        (JSC::shrinkToFit):
+        (JSC::BytecodeGeneratorBase<Traits>::BytecodeGeneratorBase):
+        (JSC::BytecodeGeneratorBase<Traits>::newLabel):
+        (JSC::BytecodeGeneratorBase<Traits>::newEmittedLabel):
+        (JSC::BytecodeGeneratorBase<Traits>::reclaimFreeRegisters):
+        (JSC::BytecodeGeneratorBase<Traits>::emitLabel):
+        (JSC::BytecodeGeneratorBase<Traits>::recordOpcode):
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode16):
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode32):
+        (JSC::BytecodeGeneratorBase<Traits>::write):
+        (JSC::BytecodeGeneratorBase<Traits>::newRegister):
+        (JSC::BytecodeGeneratorBase<Traits>::newTemporary):
+        (JSC::BytecodeGeneratorBase<Traits>::addVar):
+        (JSC::BytecodeGeneratorBase<Traits>::allocateCalleeSaveSpace):
+        * bytecompiler/Label.h:
+        (JSC::GenericBoundLabel::GenericBoundLabel):
+        (JSC::GenericBoundLabel::target):
+        (JSC::GenericBoundLabel::saveTarget):
+        (JSC::GenericBoundLabel::commitTarget):
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOperations.cpp:
+        * generator/Argument.rb:
+        * generator/DSL.rb:
+        * generator/GeneratedFile.rb:
+        * generator/Opcode.rb:
+        * generator/Options.rb:
+        * generator/Section.rb:
+        * generator/Wasm.rb: Added.
+        * interpreter/Register.h:
+        * interpreter/RegisterInlines.h:
+        (JSC::Register::operator=):
+        * jit/JITArithmetic.cpp:
+        * jit/JITOpcodes.cpp:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::wasmExceptionInstructions):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::wasmFunctionEntryThunk):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm: Added.
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/registers.rb:
+        * offlineasm/transform.rb:
+        * offlineasm/x86.rb:
+        * parser/Nodes.h:
+        * runtime/Error.cpp:
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator() const):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::recordJITFrame):
+        (JSC::FrameWalker::resetAtMachineFrame):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::isControlTypeIf):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::isControlTypeIf):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepareImpl):
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        (JSC::Wasm::BBQPlan::initializeCallees):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBBQPlanInlines.h: Removed.
+        * wasm/WasmCallee.cpp:
+        (JSC::Wasm::Callee::Callee):
+        (JSC::Wasm::Callee::dump const):
+        (JSC::Wasm::JITCallee::JITCallee):
+        (JSC::Wasm::LLIntCallee::setEntrypoint):
+        (JSC::Wasm::LLIntCallee::entrypoint const):
+        (JSC::Wasm::LLIntCallee::calleeSaveRegisters):
+        (JSC::Wasm:: const):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::setOSREntryCallee):
+        (JSC::Wasm::JITCallee::wasmToWasmCallsites):
+        (JSC::Wasm::JITCallee:: const):
+        * wasm/WasmCallingConvention.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmBBQCalleeFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmToWasmExitStub):
+        * wasm/WasmCompilationMode.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmCompilationMode.h:
+        * wasm/WasmEmbedder.h:
+        * wasm/WasmEntryPlan.cpp: Added.
+        (JSC::Wasm::EntryPlan::EntryPlan):
+        (JSC::Wasm::EntryPlan::stateString):
+        (JSC::Wasm::EntryPlan::moveToState):
+        (JSC::Wasm::EntryPlan::didReceiveFunctionData):
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::prepare):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::~ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::complete):
+        (JSC::Wasm::EntryPlan::compileFunctions):
+        (JSC::Wasm::EntryPlan::work):
+        * wasm/WasmEntryPlan.h: Copied from Source/JavaScriptCore/wasm/WasmBBQPlan.h.
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::exports const):
+        (JSC::Wasm::EntryPlan::internalFunctionCount const):
+        (JSC::Wasm::EntryPlan::takeModuleInformation):
+        (JSC::Wasm::EntryPlan::takeWasmToWasmExitStubs):
+        (JSC::Wasm::EntryPlan::takeWasmToWasmCallsites):
+        (JSC::Wasm::EntryPlan::hasBeenPrepared const):
+        (JSC::Wasm::EntryPlan::tryReserveCapacity):
+        * wasm/WasmFunctionCodeBlock.cpp: Added.
+        (JSC::Wasm::FunctionCodeBlock::setInstructions):
+        (JSC::Wasm::FunctionCodeBlock::dumpBytecode):
+        (JSC::Wasm::FunctionCodeBlock::addOutOfLineJumpTarget):
+        (JSC::Wasm::FunctionCodeBlock::outOfLineJumpOffset):
+        (JSC::Wasm::FunctionCodeBlock::outOfLineJumpTarget):
+        (JSC::Wasm::FunctionCodeBlock::addSignature):
+        (JSC::Wasm::FunctionCodeBlock::signature const):
+        (JSC::Wasm::FunctionCodeBlock::addJumpTable):
+        (JSC::Wasm::FunctionCodeBlock::jumpTable const const):
+        (JSC::Wasm::FunctionCodeBlock::numberOfJumpTables const):
+        * wasm/WasmFunctionCodeBlock.h: Added.
+        (JSC::Wasm::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::Wasm::FunctionCodeBlock::getConstant const):
+        (JSC::Wasm::FunctionCodeBlock::functionIndex const):
+        (JSC::Wasm::FunctionCodeBlock::addJumpTarget):
+        (JSC::Wasm::FunctionCodeBlock::numberOfJumpTargets):
+        (JSC::Wasm::FunctionCodeBlock::lastJumpTarget):
+        (JSC::Wasm::FunctionCodeBlock::outOfLineJumpOffset):
+        (JSC::Wasm::FunctionCodeBlock::bytecodeOffset):
+        (JSC::Wasm::FunctionCodeBlock::tierUpCounter):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.h:
+        * wasm/WasmLLIntGenerator.cpp: Added.
+        (JSC::Wasm::LLIntGenerator::ControlType::ControlType):
+        (JSC::Wasm::LLIntGenerator::ControlType::loop):
+        (JSC::Wasm::LLIntGenerator::ControlType::topLevel):
+        (JSC::Wasm::LLIntGenerator::ControlType::block):
+        (JSC::Wasm::LLIntGenerator::ControlType::if_):
+        (JSC::Wasm::LLIntGenerator::ControlType::targetLabelForBranch const):
+        (JSC::Wasm::LLIntGenerator::fail const):
+        (JSC::Wasm::LLIntGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::LLIntGenerator::emptyExpression):
+        (JSC::Wasm::LLIntGenerator::createStack):
+        (JSC::Wasm::LLIntGenerator::isControlTypeIf):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        (JSC::Wasm::LLIntGenerator::setParser):
+        (JSC::Wasm::LLIntGenerator::dump):
+        (JSC::Wasm::LLIntGenerator::virtualRegisterForLocal):
+        (JSC::Wasm::LLIntGenerator::tmpsForSignature):
+        (JSC::Wasm::LLIntGenerator::jsNullConstant):
+        (JSC::Wasm::LLIntGenerator::isConstant):
+        (JSC::Wasm::parseAndCompileBytecode):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationFor):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        (JSC::Wasm::LLIntGenerator::addConstant):
+        (JSC::Wasm::LLIntGenerator::getLocal):
+        (JSC::Wasm::LLIntGenerator::setLocal):
+        (JSC::Wasm::LLIntGenerator::getGlobal):
+        (JSC::Wasm::LLIntGenerator::setGlobal):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTopLevel):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addElse):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addReturn):
+        (JSC::Wasm::LLIntGenerator::addBranch):
+        (JSC::Wasm::LLIntGenerator::addSwitch):
+        (JSC::Wasm::LLIntGenerator::endBlock):
+        (JSC::Wasm::LLIntGenerator::addCall):
+        (JSC::Wasm::LLIntGenerator::addCallIndirect):
+        (JSC::Wasm::LLIntGenerator::addRefIsNull):
+        (JSC::Wasm::LLIntGenerator::addRefFunc):
+        (JSC::Wasm::LLIntGenerator::addTableGet):
+        (JSC::Wasm::LLIntGenerator::addTableSet):
+        (JSC::Wasm::LLIntGenerator::addTableSize):
+        (JSC::Wasm::LLIntGenerator::addTableGrow):
+        (JSC::Wasm::LLIntGenerator::addTableFill):
+        (JSC::Wasm::LLIntGenerator::addUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCurrentMemory):
+        (JSC::Wasm::LLIntGenerator::addGrowMemory):
+        (JSC::Wasm::LLIntGenerator::addSelect):
+        (JSC::Wasm::LLIntGenerator::load):
+        (JSC::Wasm::LLIntGenerator::store):
+        (JSC::GenericLabel<Wasm::GeneratorTraits>::setLocation):
+        * wasm/WasmLLIntGenerator.h: Copied from Source/JavaScriptCore/wasm/WasmCompilationMode.h.
+        * wasm/WasmLLIntPlan.cpp: Added.
+        (JSC::Wasm::LLIntPlan::prepareImpl):
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        (JSC::Wasm::LLIntPlan::initializeCallees):
+        * wasm/WasmLLIntPlan.h: Copied from Source/JavaScriptCore/wasm/WasmOMGForOSREntryPlan.h.
+        * wasm/WasmLLIntTierUpCounter.cpp: Copied from Source/JavaScriptCore/wasm/WasmCompilationMode.cpp.
+        (JSC::Wasm::LLIntTierUpCounter::addOSREntryDataForLoop):
+        (JSC::Wasm::LLIntTierUpCounter::osrEntryDataForLoop const const):
+        * wasm/WasmLLIntTierUpCounter.h: Copied from Source/JavaScriptCore/wasm/WasmOMGForOSREntryPlan.h.
+        (JSC::Wasm::LLIntTierUpCounter::LLIntTierUpCounter):
+        (JSC::Wasm::LLIntTierUpCounter::optimizeAfterWarmUp):
+        (JSC::Wasm::LLIntTierUpCounter::checkIfOptimizationThresholdReached):
+        (JSC::Wasm::LLIntTierUpCounter::optimizeSoon):
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::makeValidationResult):
+        (JSC::Wasm::makeValidationCallback):
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGForOSREntryPlan.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmSlowPaths.cpp: Added.
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        (JSC::LLInt::doWasmCall):
+        (JSC::LLInt::doWasmCallIndirect):
+        (JSC::LLInt::slow_path_wasm_throw_exception):
+        (JSC::LLInt::slow_path_wasm_popcount):
+        (JSC::LLInt::slow_path_wasm_popcountll):
+        * wasm/WasmSlowPaths.h: Added.
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::FuncRefTable::function const):
+        (JSC::Wasm::FuncRefTable::instance const):
+        * wasm/WasmTable.h:
+        * wasm/WasmTierUpCount.h:
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::isControlTypeIf):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasm.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::calleeSaves const):
+
 2019-10-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make String#localeCompare faster by inlining JSGlobalObject::defaultCollator

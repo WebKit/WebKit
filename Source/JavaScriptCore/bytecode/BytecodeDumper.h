@@ -40,7 +40,6 @@ template<class Block>
 class BytecodeDumper {
 public:
     static void dumpBytecode(Block*, PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
-    static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
 
     void printLocationAndOp(InstructionStream::Offset location, const char* op);
 
@@ -52,28 +51,49 @@ public:
         dumpValue(operand);
     }
 
-    void dumpValue(VirtualRegister reg) { m_out.printf("%s", registerName(reg.offset()).data()); }
-    void dumpValue(BoundLabel label)
+    void dumpValue(VirtualRegister);
+
+    template<typename Traits>
+    void dumpValue(GenericBoundLabel<Traits> label)
     {
         InstructionStream::Offset targetOffset = label.target() + m_currentLocation;
         m_out.print(label.target(), "(->", targetOffset, ")");
     }
+
+
     template<typename T>
     void dumpValue(T v) { m_out.print(v); }
 
-private:
     BytecodeDumper(Block* block, PrintStream& out)
-        : m_block(block)
-        , m_out(out)
+        : m_out(out)
+        , m_block(block)
     {
     }
 
+protected:
     Block* block() const { return m_block; }
 
-    ALWAYS_INLINE VM& vm() const;
+    void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
 
+    PrintStream& m_out;
+
+private:
     CString registerName(int r) const;
     CString constantName(int index) const;
+
+    Block* m_block;
+    InstructionStream::Offset m_currentLocation { 0 };
+};
+
+template<class Block>
+class CodeBlockBytecodeDumper : public BytecodeDumper<Block> {
+public:
+    static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
+
+private:
+    using BytecodeDumper<Block>::BytecodeDumper;
+
+    ALWAYS_INLINE VM& vm() const;
 
     const Identifier& identifier(int index) const;
 
@@ -82,12 +102,6 @@ private:
     void dumpExceptionHandlers();
     void dumpSwitchJumpTables();
     void dumpStringSwitchJumpTables();
-
-    void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
-
-    Block* m_block;
-    PrintStream& m_out;
-    InstructionStream::Offset m_currentLocation { 0 };
 };
 
 }

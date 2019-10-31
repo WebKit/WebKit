@@ -1003,11 +1003,16 @@ wasm/WasmCodeBlock.cpp
 wasm/WasmCompilationMode.cpp
 wasm/WasmContext.cpp
 wasm/WasmEmbedder.h
+wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
+wasm/WasmFunctionCodeBlock.cpp
 wasm/WasmIndexOrName.cpp
 wasm/WasmInstance.cpp
 wasm/WasmInstance.h
+wasm/WasmLLIntGenerator.cpp
+wasm/WasmLLIntPlan.cpp
+wasm/WasmLLIntTierUpCounter.cpp
 wasm/WasmMachineThreads.cpp
 wasm/WasmMemory.cpp
 wasm/WasmMemoryInformation.cpp
@@ -1023,6 +1028,7 @@ wasm/WasmPageCount.cpp
 wasm/WasmPlan.cpp
 wasm/WasmSectionParser.cpp
 wasm/WasmSignature.cpp
+wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmTable.cpp
 wasm/WasmTable.h

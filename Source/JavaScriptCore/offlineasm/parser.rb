@@ -350,7 +350,7 @@ class Parser
     
     def parseVariable
         if isRegister(@tokens[@idx])
-            if @tokens[@idx] =~ FPR_PATTERN
+            if @tokens[@idx] =~ FPR_PATTERN || @tokens[@idx] =~ WASM_FPR_PATTERN
                 result = FPRegisterID.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string)
             else
                 result = RegisterID.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string)

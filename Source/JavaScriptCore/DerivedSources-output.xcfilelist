@@ -17,8 +17,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/DateConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/DatePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/EnabledInspectorDomains
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ErrorPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/GeneratedWasmOps.asm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/GeneratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InitBytecodes.asm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InitWasm.asm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InjectedScriptSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InspectorInstrumentationObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlCanonicalizeLanguage.h
@@ -57,6 +59,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmB3IRGeneratorInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmLLIntGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOps.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmValidateInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyCompileErrorConstructor.lut.h

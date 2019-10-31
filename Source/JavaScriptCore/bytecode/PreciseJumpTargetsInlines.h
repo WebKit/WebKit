@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeGenerator.h"
 #include "BytecodeStructs.h"
 #include "InterpreterInlines.h"
 #include "Opcode.h"

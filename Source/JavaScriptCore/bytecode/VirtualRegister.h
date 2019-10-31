@@ -50,6 +50,7 @@ public:
     friend VirtualRegister virtualRegisterForArgument(int, int);
 
     VirtualRegister(RegisterID*);
+    VirtualRegister(RefPtr<RegisterID>);
 
     VirtualRegister()
         : m_virtualRegister(s_invalidVirtualRegister)

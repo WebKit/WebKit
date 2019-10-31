@@ -246,7 +246,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
 {
     ICStatusMap statusMap;
     getICStatusMap(statusMap);
-    BytecodeDumper<CodeBlock>::dumpBlock(this, instructions(), out, statusMap);
+    CodeBlockBytecodeDumper<CodeBlock>::dumpBlock(this, instructions(), out, statusMap);
 }
 
 void CodeBlock::dumpBytecode(PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& statusMap)

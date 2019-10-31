@@ -314,6 +314,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_get_by_val_return_location:
     case op_put_by_id_return_location:
     case op_put_by_val_return_location:
+    case wasm_function_prologue:
+    case wasm_function_prologue_no_tls:
         return CannotCompile;
     }
     return CannotCompile;

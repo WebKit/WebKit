@@ -66,14 +66,14 @@ class Argument
         "#{field_name}(#{Fits::convert(size, "stream[#{index}]", @type)})"
     end
 
-    def setter
+    def setter(traits)
         <<-EOF
     template<typename Functor>
     void set#{capitalized_name}(#{@type.to_s} value, Functor func)
     {
-        if (isWide32())
+        if (isWide32<#{traits}>())
             set#{capitalized_name}<OpcodeSize::Wide32>(value, func);
-        else if (isWide16())
+        else if (isWide16<#{traits}>())
             set#{capitalized_name}<OpcodeSize::Wide16>(value, func);
         else
             set#{capitalized_name}<OpcodeSize::Narrow>(value, func);

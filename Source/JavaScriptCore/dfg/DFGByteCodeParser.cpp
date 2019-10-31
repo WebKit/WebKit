@@ -32,7 +32,7 @@
 #include "ArrayConstructor.h"
 #include "BasicBlockLocation.h"
 #include "BuiltinNames.h"
-#include "BytecodeStructs.h"
+#include "BytecodeGenerator.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"

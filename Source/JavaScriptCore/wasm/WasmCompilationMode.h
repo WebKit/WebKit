@@ -28,6 +28,7 @@
 namespace JSC { namespace Wasm {
 
 enum class CompilationMode : uint8_t {
+    LLIntMode,
     BBQMode,
     OMGMode,
     OMGForOSREntryMode,

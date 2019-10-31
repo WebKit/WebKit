@@ -215,13 +215,22 @@ BYTECODE_FILES = \
     BytecodeIndices.h \
     BytecodeStructs.h \
     InitBytecodes.asm \
+    WasmLLIntGeneratorInlines.h \
+    InitWasm.asm \
 #
 BYTECODE_FILES_PATTERNS = $(subst .,%,$(BYTECODE_FILES))
 
 all : $(BYTECODE_FILES)
 
-$(BYTECODE_FILES_PATTERNS): $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaScriptCore)/bytecode/BytecodeList.rb
-	$(RUBY) $(JavaScriptCore)/generator/main.rb $(JavaScriptCore)/bytecode/BytecodeList.rb --bytecode_structs_h BytecodeStructs.h --init_bytecodes_asm InitBytecodes.asm --bytecodes_h Bytecodes.h --bytecode_indices_h BytecodeIndices.h
+$(BYTECODE_FILES_PATTERNS): $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaScriptCore)/bytecode/BytecodeList.rb $(JavaScriptCore)/wasm/wasm.json
+	$(RUBY) $(JavaScriptCore)/generator/main.rb $(JavaScriptCore)/bytecode/BytecodeList.rb \
+    --bytecode_structs_h BytecodeStructs.h \
+    --init_bytecodes_asm InitBytecodes.asm \
+    --bytecodes_h Bytecodes.h \
+    --bytecode_indices_h BytecodeIndices.h \
+    --wasm_json $(JavaScriptCore)/wasm/wasm.json \
+    --wasm_llint_generator_h WasmLLIntGeneratorInlines.h \
+    --init_wasm_llint InitWasm.asm \
 
 # Inspector interfaces
 

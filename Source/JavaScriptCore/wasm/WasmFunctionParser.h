@@ -585,7 +585,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 
     case End: {
         ControlEntry data = m_controlStack.takeLast();
-        if (data.controlData.blockType() == BlockType::If) {
+        if (m_context.isControlTypeIf(data.controlData)) {
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
             m_expressionStack = WTFMove(data.elseBlockStack);
         }
@@ -670,7 +670,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case End: {
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
-            if (data.controlData.blockType() == BlockType::If) {
+            if (m_context.isControlTypeIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
                 m_expressionStack = WTFMove(data.elseBlockStack);
                 WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));

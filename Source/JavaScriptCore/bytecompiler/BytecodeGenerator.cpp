@@ -34,9 +34,9 @@
 #include "ArithProfile.h"
 #include "BuiltinExecutables.h"
 #include "BuiltinNames.h"
+#include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
-#include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
 #include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
@@ -85,15 +85,8 @@ struct VarArgsOp<CallOp, std::enable_if_t<!std::is_same<CallOp, OpTailCall>::val
     using type = OpCallVarargs;
 };
 
-
-template<typename T>
-static inline void shrinkToFit(T& segmentedVector)
-{
-    while (segmentedVector.size() && !segmentedVector.last().refCount())
-        segmentedVector.removeLast();
-}
-
-void Label::setLocation(BytecodeGenerator& generator, unsigned location)
+template<>
+void GenericLabel<JSGeneratorTraits>::setLocation(BytecodeGenerator& generator, unsigned location)
 {
     m_location = location;
     
@@ -137,41 +130,6 @@ void Label::setLocation(BytecodeGenerator& generator, unsigned location)
         }
 #undef CASE
     }
-}
-
-int BoundLabel::target()
-{
-    switch (m_type) {
-    case Offset:
-        return m_target;
-    case GeneratorBackward:
-        return m_target - m_generator->m_writer.position();
-    case GeneratorForward:
-        return 0;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-int BoundLabel::saveTarget()
-{
-    if (m_type == GeneratorForward) {
-        m_savedTarget = m_generator->m_writer.position();
-        return 0;
-    }
-
-    m_savedTarget = target();
-    return m_savedTarget;
-}
-
-int BoundLabel::commitTarget()
-{
-    if (m_type == GeneratorForward) {
-        m_label->m_unresolvedJumps.append(m_savedTarget);
-        return 0;
-    }
-
-    return m_savedTarget;
 }
 
 void Variable::dump(PrintStream& out) const
@@ -340,9 +298,9 @@ ParserError BytecodeGenerator::generate()
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_codeGenerationMode(codeGenerationMode)
+    : BytecodeGeneratorBase(Strong<UnlinkedCodeBlock>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
+    , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
-    , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(GlobalCode)
     , m_vm(vm)
@@ -352,8 +310,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
-
-    allocateCalleeSaveSpace();
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
@@ -386,9 +342,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_codeGenerationMode(codeGenerationMode)
+    : BytecodeGeneratorBase(Strong<UnlinkedCodeBlock>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
+    , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
-    , m_codeBlock(vm, codeBlock)
     , m_codeType(FunctionCode)
     , m_vm(vm)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
@@ -407,8 +363,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
 
-    allocateCalleeSaveSpace();
-    
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = 0;
@@ -884,9 +838,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_codeGenerationMode(codeGenerationMode)
+    : BytecodeGeneratorBase(Strong<UnlinkedCodeBlock>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
+    , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
-    , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(EvalCode)
     , m_vm(vm)
@@ -896,8 +850,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
-
-    allocateCalleeSaveSpace();
 
     m_codeBlock->setNumParameters(1);
 
@@ -947,9 +899,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const VariableEnvironment* parentScopeTDZVariables)
-    : m_codeGenerationMode(codeGenerationMode)
+    : BytecodeGeneratorBase(Strong<UnlinkedCodeBlock>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
+    , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
-    , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(ModuleCode)
     , m_vm(vm)
@@ -960,8 +912,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
-
-    allocateCalleeSaveSpace();
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
@@ -1308,34 +1258,11 @@ UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatte
     return nullptr;
 }
 
-RegisterID* BytecodeGenerator::newRegister()
-{
-    m_calleeLocals.append(virtualRegisterForLocal(m_calleeLocals.size()));
-    int numCalleeLocals = std::max<int>(m_codeBlock->m_numCalleeLocals, m_calleeLocals.size());
-    numCalleeLocals = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numCalleeLocals);
-    m_codeBlock->m_numCalleeLocals = numCalleeLocals;
-    return &m_calleeLocals.last();
-}
-
-void BytecodeGenerator::reclaimFreeRegisters()
-{
-    shrinkToFit(m_calleeLocals);
-}
-
 RegisterID* BytecodeGenerator::newBlockScopeVariable()
 {
     reclaimFreeRegisters();
 
     return newRegister();
-}
-
-RegisterID* BytecodeGenerator::newTemporary()
-{
-    reclaimFreeRegisters();
-
-    RegisterID* result = newRegister();
-    result->setTemporary();
-    return result;
 }
 
 Ref<LabelScope> BytecodeGenerator::newLabelScope(LabelScope::Type type, const Identifier* name)
@@ -1345,65 +1272,6 @@ Ref<LabelScope> BytecodeGenerator::newLabelScope(LabelScope::Type type, const Id
     // Allocate new label scope.
     m_labelScopes.append(type, name, labelScopeDepth(), newLabel(), type == LabelScope::Loop ? RefPtr<Label>(newLabel()) : RefPtr<Label>()); // Only loops have continue targets.
     return m_labelScopes.last();
-}
-
-Ref<Label> BytecodeGenerator::newLabel()
-{
-    shrinkToFit(m_labels);
-
-    // Allocate new label ID.
-    m_labels.append();
-    return m_labels.last();
-}
-
-Ref<Label> BytecodeGenerator::newEmittedLabel()
-{
-    Ref<Label> label = newLabel();
-    emitLabel(label.get());
-    return label;
-}
-
-void BytecodeGenerator::recordOpcode(OpcodeID opcodeID)
-{
-    ASSERT(m_lastOpcodeID == op_end || (m_lastOpcodeID == m_lastInstruction->opcodeID() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size()));
-    m_lastInstruction = m_writer.ref();
-    m_lastOpcodeID = opcodeID;
-}
-
-void BytecodeGenerator::alignWideOpcode16()
-{
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    while ((m_writer.position() + 1) % OpcodeSize::Wide16)
-        OpNop::emit<OpcodeSize::Narrow>(this);
-#endif
-}
-
-void BytecodeGenerator::alignWideOpcode32()
-{
-#if CPU(NEEDS_ALIGNED_ACCESS)
-    while ((m_writer.position() + 1) % OpcodeSize::Wide32)
-        OpNop::emit<OpcodeSize::Narrow>(this);
-#endif
-}
-
-void BytecodeGenerator::emitLabel(Label& l0)
-{
-    unsigned newLabelIndex = instructions().size();
-    l0.setLocation(*this, newLabelIndex);
-
-    if (m_codeBlock->numberOfJumpTargets()) {
-        unsigned lastLabelIndex = m_codeBlock->lastJumpTarget();
-        ASSERT(lastLabelIndex <= newLabelIndex);
-        if (newLabelIndex == lastLabelIndex) {
-            // Peephole optimizations have already been disabled by emitting the last label
-            return;
-        }
-    }
-
-    m_codeBlock->addJumpTarget(newLabelIndex);
-
-    // This disables peephole optimizations when an instruction is a jump target
-    m_lastOpcodeID = op_end;
 }
 
 void BytecodeGenerator::emitEnter()
@@ -3685,17 +3553,6 @@ LabelScope* BytecodeGenerator::continueTarget(const Identifier& name)
             return result; // may be null.
     }
     return nullptr;
-}
-
-void BytecodeGenerator::allocateCalleeSaveSpace()
-{
-    size_t virtualRegisterCountForCalleeSaves = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
-
-    for (size_t i = 0; i < virtualRegisterCountForCalleeSaves; i++) {
-        RegisterID* localRegister = addVar();
-        localRegister->ref();
-        m_localRegistersForCalleeSaveRegisters.append(localRegister);
-    }
 }
 
 void BytecodeGenerator::allocateAndEmitScope()

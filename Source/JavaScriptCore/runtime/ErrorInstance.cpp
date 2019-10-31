@@ -127,10 +127,8 @@ void ErrorInstance::finishCreation(JSGlobalObject* globalObject, VM& vm, const S
         BytecodeIndex bytecodeIndex;
         CallFrame* callFrame;
         getBytecodeIndex(vm, vm.topCallFrame, m_stackTrace.get(), callFrame, bytecodeIndex);
-        if (callFrame && callFrame->codeBlock()) {
-            ASSERT(!callFrame->callee().isWasm());
+        if (callFrame && callFrame->codeBlock() && !callFrame->callee().isWasm())
             appendSourceToError(globalObject, callFrame, this, bytecodeIndex);
-        }
     }
 }
 

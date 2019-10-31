@@ -134,7 +134,7 @@ public:
             m_foundStartCallFrame = true;
 
         if (m_foundStartCallFrame) {
-            if (visitor->callFrame()->codeBlock()) {
+            if (!visitor->isWasmFrame() && visitor->callFrame()->codeBlock()) {
                 m_foundCallFrame = visitor->callFrame();
                 return StackVisitor::Done;
             }

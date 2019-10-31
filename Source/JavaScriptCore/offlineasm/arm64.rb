@@ -88,9 +88,17 @@ def arm64GPRName(name, kind)
 end
 
 def arm64FPRName(name, kind)
-    raise "bad FPR kind #{kind}" unless kind == :double
     raise "bad FPR name #{name}" unless name =~ /^q/
-    "d" + name[1..-1]
+    case kind
+    when :double
+        "d" + name[1..-1]
+    when :float
+        "s" + name[1..-1]
+    when :vector
+        "v" + name[1..-1]
+    else
+        raise "bad FPR kind #{kind}"
+    end
 end
 
 class SpecialRegister
@@ -112,22 +120,26 @@ ARM64_EXTRA_FPRS = [SpecialRegister.new("q31")]
 class RegisterID
     def arm64Operand(kind)
         case @name
-        when 't0', 'a0', 'r0'
+        when 't0', 'a0', 'r0', 'wa0'
             arm64GPRName('x0', kind)
-        when 't1', 'a1', 'r1'
+        when 't1', 'a1', 'r1', 'wa1'
             arm64GPRName('x1', kind)
-        when 't2', 'a2'
+        when 't2', 'a2', 'wa2'
             arm64GPRName('x2', kind)
-        when 't3', 'a3'
+        when 't3', 'a3', 'wa3'
             arm64GPRName('x3', kind)
-        when 't4'
+        when 't4', 'wa4'
             arm64GPRName('x4', kind)
-        when 't5'
+        when 't5', 'wa5'
           arm64GPRName('x5', kind)
-        when 't6'
+        when 't6', 'wa6'
           arm64GPRName('x6', kind)
-        when 't7'
+        when 't7', 'wa7'
           arm64GPRName('x7', kind)
+        when 'ws0'
+          arm64GPRName('x9', kind)
+        when 'ws1'
+          arm64GPRName('x10', kind)
         when 'cfr'
             arm64GPRName('x29', kind)
         when 'csr0'
@@ -163,18 +175,22 @@ end
 class FPRegisterID
     def arm64Operand(kind)
         case @name
-        when 'ft0', 'fr', 'fa0'
+        when 'ft0', 'fr', 'fa0', 'wfa0'
             arm64FPRName('q0', kind)
-        when 'ft1', 'fa1'
+        when 'ft1', 'fa1', 'wfa1'
             arm64FPRName('q1', kind)
-        when 'ft2', 'fa2'
+        when 'ft2', 'fa2', 'wfa2'
             arm64FPRName('q2', kind)
-        when 'ft3', 'fa3'
+        when 'ft3', 'fa3', 'wfa3'
             arm64FPRName('q3', kind)
-        when 'ft4'
+        when 'ft4', 'wfa4'
             arm64FPRName('q4', kind)
-        when 'ft5'
+        when 'ft5', 'wfa5'
             arm64FPRName('q5', kind)
+        when 'wfa6'
+            arm64FPRName('q6', kind)
+        when 'wfa7'
+            arm64FPRName('q7', kind)
         when 'csfr0'
             arm64FPRName('q8', kind)
         when 'csfr1'
@@ -378,11 +394,11 @@ class Sequence
             case node.opcode
             when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/
                 size = 1
-            when "loadh", "loadhsi", "loadhsq"
+            when "loadh", "loadhsi", "loadhsq", "storeh"
                 size = 2
             when "loadi", "loadis", "storei", "addi", "andi", "lshifti", "muli", "negi",
                 "noti", "ori", "rshifti", "urshifti", "subi", "xori", /^bi/, /^bti/,
-                /^ci/, /^ti/, "addis", "subis", "mulis", "smulli", "leai"
+                /^ci/, /^ti/, "addis", "subis", "mulis", "smulli", "leai", "loadf", "storef"
                 size = 4
             when "loadp", "storep", "loadq", "storeq", "loadd", "stored", "lshiftp", "lshiftq", "negp", "negq", "rshiftp", "rshiftq",
                 "urshiftp", "urshiftq", "addp", "addq", "mulp", "mulq", "andp", "andq", "orp", "orq", "subp", "subq", "xorp", "xorq", "addd",
@@ -531,6 +547,33 @@ def emitARM64TAC(opcode, operands, kind)
     $asm.puts "#{opcode} #{arm64TACOperands(operands, kind)}"
 end
 
+def emitARM64Div(opcode, operands, kind)
+    if operands.size == 2
+        operands = [operands[1], operands[1], operands[0]]
+    elsif operands.size == 3
+        operands = [operands[2], operands[1], operands[0]]
+    else
+        raise
+    end
+    $asm.puts "#{opcode} #{arm64Operands(operands, kind)}"
+end
+
+def emitARM64TACWithOperandSuffix(opcode, operands, kind)
+    raise unless [:float, :double].include? kind
+    size = kind == :float ? 8 : 16
+    operands = operands.map { |operand|
+        raise unless operand.is_a? FPRegisterID
+        "#{operand.arm64Operand(:vector)}.#{size}b"
+    }
+    if operands.length == 2
+      operands = [operands[1], operands[1], operands[0]]
+    else
+      raise unless operands.length == 3
+      operands = [operands[2], operands[0], operands[1]]
+    end
+    $asm.puts "#{opcode} #{operands.join(", ")}"
+end
+
 def emitARM64(opcode, operands, kind)
     $asm.puts "#{opcode} #{arm64FlippedOperands(operands, kind)}"
 end
@@ -579,6 +622,11 @@ end
 def emitARM64Branch(opcode, operands, kind, branchOpcode)
     emitARM64Unflipped(opcode, operands[0..-2], kind)
     $asm.puts "#{branchOpcode} #{operands[-1].asmLabel}"
+end
+
+def emitARM64CompareFP(operands, kind, compareCode)
+    emitARM64Unflipped("fcmp", operands[0..-2], kind)
+    $asm.puts "cset #{operands[-1].arm64Operand(:word)}, #{compareCode}"
 end
 
 def emitARM64Compare(operands, kind, compareCode)
@@ -637,6 +685,14 @@ class Instruction
             emitARM64TAC("eor", operands, :ptr)
         when "xorq"
             emitARM64TAC("eor", operands, :quad)
+        when 'divi'
+            emitARM64Div("udiv", operands, :word)
+        when 'divis'
+            emitARM64Div("sdiv", operands, :word)
+        when 'divq'
+            emitARM64Div("udiv", operands, :quad)
+        when 'divqs'
+            emitARM64Div("sdiv", operands, :quad)
         when "lshifti"
             emitARM64LShift(operands, :word)
         when "lshiftp"
@@ -739,8 +795,6 @@ class Instruction
             emitARM64TAC("fmul", operands, :double)
         when "sqrtd"
             emitARM64("fsqrt", operands, :double)
-        when "ci2d"
-            emitARM64("scvtf", operands, [:word, :double])
         when "bdeq"
             emitARM64Branch("fcmp", operands, :double, "b.eq")
         when "bdneq"
@@ -748,7 +802,7 @@ class Instruction
             isUnordered = LocalLabel.unique("bdneq")
             $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
             $asm.puts "b.ne #{operands[2].asmLabel}"
-            isUnordered.lower("ARM64")
+            isUnordered.lower($activeBackend)
         when "bdgt"
             emitARM64Branch("fcmp", operands, :double, "b.gt")
         when "bdgteq"
@@ -809,6 +863,8 @@ class Instruction
             else
                 emitARM64("mov", operands, :quad)
             end
+        when "moved"
+            emitARM64("fmov", operands, :double)
         when "sxi2p"
             emitARM64("sxtw", operands, [:word, :ptr])
         when "sxi2q"
@@ -1056,6 +1112,189 @@ class Instruction
                 $asm.puts ".loh AdrpLdrGot L_offlineasm_loh_adrp_#{uid}, L_offlineasm_loh_ldr_#{uid}"
                 $asm.putStr("#endif")
             }
+
+        when "andf", "andd"
+            emitARM64TACWithOperandSuffix("and", operands, :double)
+        when "orf", "ord"
+            emitARM64TACWithOperandSuffix("orr", operands, :double)
+        when "lrotatei"
+            tmp = Tmp.new(codeOrigin, :gpr)
+            Sequence.new(codeOrigin, [
+                Instruction.new(codeOrigin, "move", [operands[0], tmp]),
+                Instruction.new(codeOrigin, "negq", [tmp]),
+                Instruction.new(codeOrigin, "rrotatei", [tmp, operands[1]]),
+            ]).lower($activeBackend)
+        when "lrotateq"
+            tmp = Tmp.new(codeOrigin, :gpr)
+            Sequence.new(codeOrigin, [
+                Instruction.new(codeOrigin, "move", [operands[0], tmp]),
+                Instruction.new(codeOrigin, "negq", [tmp]),
+                Instruction.new(codeOrigin, "rrotateq", [tmp, operands[1]]),
+            ]).lower($activeBackend)
+        when "rrotatei"
+            emitARM64TAC("ror", operands, :word)
+        when "rrotateq"
+            emitARM64TAC("ror", operands, :quad)
+        when "loadf"
+            emitARM64Access("ldr", "ldur", operands[1], operands[0], :float)
+        when "storef"
+            emitARM64Unflipped("str", operands, :float)
+        when "addf"
+            emitARM64TAC("fadd", operands, :float)
+        when "divf"
+            emitARM64TAC("fdiv", operands, :float)
+        when "subf"
+            emitARM64TAC("fsub", operands, :float)
+        when "mulf"
+            emitARM64TAC("fmul", operands, :float)
+        when "sqrtf"
+            emitARM64("fsqrt", operands, :float)
+        when "floorf"
+            emitARM64("frintm", operands, :float)
+        when "floord"
+            emitARM64("frintm", operands, :double)
+        when "roundf"
+            emitARM64("frintn", operands, :float)
+        when "roundd"
+            emitARM64("frintn", operands, :double)
+        when "truncatef"
+            emitARM64("frintz", operands, :float)
+        when "truncated"
+            emitARM64("frintz", operands, :double)
+        when "truncatef2i"
+            emitARM64("fcvtzu", operands, [:float, :word])
+        when "truncatef2q"
+            emitARM64("fcvtzu", operands, [:float, :quad])
+        when "truncated2q"
+            emitARM64("fcvtzu", operands, [:double, :quad])
+        when "truncated2i"
+            emitARM64("fcvtzu", operands, [:double, :word])
+        when "truncatef2is"
+            emitARM64("fcvtzs", operands, [:float, :word])
+        when "truncated2is"
+            emitARM64("fcvtzs", operands, [:double, :word])
+        when "truncatef2qs"
+            emitARM64("fcvtzs", operands, [:float, :quad])
+        when "truncated2qs"
+            emitARM64("fcvtzs", operands, [:double, :quad])
+        when "ci2d"
+            emitARM64("ucvtf", operands, [:word, :double])
+        when "ci2ds"
+            emitARM64("scvtf", operands, [:word, :double])
+        when "ci2f"
+            emitARM64("ucvtf", operands, [:word, :float])
+        when "ci2fs"
+            emitARM64("scvtf", operands, [:word, :float])
+        when "cq2f"
+            emitARM64("ucvtf", operands, [:quad, :float])
+        when "cq2fs"
+            emitARM64("scvtf", operands, [:quad, :float])
+        when "cq2d"
+            emitARM64("ucvtf", operands, [:quad, :double])
+        when "cq2ds"
+            emitARM64("scvtf", operands, [:quad, :double])
+        when "cd2f"
+            emitARM64("fcvt", operands, [:double, :float])
+        when "cf2d"
+            emitARM64("fcvt", operands, [:float, :double])
+        when "bfeq"
+            emitARM64Branch("fcmp", operands, :float, "b.eq")
+        when "bfgt"
+            emitARM64Branch("fcmp", operands, :float, "b.gt")
+        when "bflt"
+            emitARM64Branch("fcmp", operands, :float, "b.mi")
+        when "bfgtun"
+            emitARM64Branch("fcmp", operands, :float, "b.hi")
+        when "bfgtequn"
+            emitARM64Branch("fcmp", operands, :float, "b.pl")
+        when "bfltun"
+            emitARM64Branch("fcmp", operands, :float, "b.lt")
+        when "bfltequn"
+            emitARM64Branch("fcmp", operands, :float, "b.le")
+        when "tzcnti"
+            emitARM64("rbit", operands, :word)
+            emitARM64("clz", [operands[1], operands[1]], :word)
+        when "tzcntq"
+            emitARM64("rbit", operands, :quad)
+            emitARM64("clz", [operands[1], operands[1]], :quad)
+        when "lzcnti"
+            emitARM64("clz", operands, :word)
+        when "lzcntq"
+            emitARM64("clz", operands, :quad)
+        when "absf"
+            emitARM64("fabs", operands, :float)
+        when "absd"
+            emitARM64("fabs", operands, :double)
+        when "negf"
+            emitARM64("fneg", operands, :float)
+        when "negd"
+            emitARM64("fneg", operands, :double)
+        when "ceilf"
+            emitARM64("frintp", operands, :float)
+        when "ceild"
+            emitARM64("frintp", operands, :double)
+        when "cfeq"
+            emitARM64CompareFP(operands, :float, "eq")
+        when "cdeq"
+            emitARM64CompareFP(operands, :double, "eq")
+        when "cfneq"
+            $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
+            emitARM64Unflipped("fcmp", operands[0..1], :float)
+            isUnordered = LocalLabel.unique("cdneq")
+            $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
+            $asm.puts "cset #{operands[2].arm64Operand(:word)}, ne"
+            isUnordered.lower($activeBackend)
+        when "cdneq"
+            $asm.puts "move $0, #{operands[2].arm64Operand(:word)}"
+            emitARM64Unflipped("fcmp", operands[0..1], :double)
+            isUnordered = LocalLabel.unique("cdneq")
+            $asm.puts "b.vs #{LocalLabelReference.new(codeOrigin, isUnordered).asmLabel}"
+            $asm.puts "cset #{operands[2].arm64Operand(:word)}, ne"
+            isUnordered.lower($activeBackend)
+        when "cfnequn"
+            emitARM64CompareFP(operands, :float, "ne")
+        when "cdnequn"
+            emitARM64CompareFP(operands, :double, "ne")
+        when "cflt"
+            emitARM64CompareFP(operands, :float, "mi")
+        when "cdlt"
+            emitARM64CompareFP(operands, :double, "mi")
+        when "cflteq"
+            emitARM64CompareFP(operands, :float, "ls")
+        when "cdlteq"
+            emitARM64CompareFP(operands, :double, "ls")
+        when "cfgt"
+            emitARM64CompareFP(operands, :float, "gt")
+        when "cdgt"
+            emitARM64CompareFP(operands, :double, "gt")
+        when "cfgteq"
+            emitARM64CompareFP(operands, :float, "ge")
+        when "cdgteq"
+            emitARM64CompareFP(operands, :double, "ge")
+        when "fi2f"
+            emitARM64("fmov", operands, [:word, :float])
+        when "ff2i"
+            emitARM64("fmov", operands, [:float, :word])
+        when "tls_loadp"
+            tmp = ARM64_EXTRA_GPRS[0].arm64Operand(:ptr)
+            if operands[0].immediate?
+              offset = "\##{operands[0].value * 8}"
+            else
+              offset = operands[0].arm64Operand(:word)
+            end
+            $asm.puts "mrs #{tmp}, tpidrro_el0"
+            $asm.puts "bic #{tmp}, #{tmp}, #7"
+            $asm.puts "ldr #{operands[1].arm64Operand(:ptr)}, [#{tmp}, #{offset}]"
+        when "tls_storep"
+            tmp = ARM64_EXTRA_GPRS[0].arm64Operand(:ptr)
+            if operands[1].immediate?
+              offset = "\##{operands[1].value * 8}"
+            else
+              offset = operands[1].arm64Operand(:word)
+            end
+            $asm.puts "mrs #{tmp}, tpidrro_el0"
+            $asm.puts "bic #{tmp}, #{tmp}, #7"
+            $asm.puts "str #{operands[0].arm64Operand(:ptr)}, [#{tmp}, #{offset}]"
         else
             lowerDefault
         end

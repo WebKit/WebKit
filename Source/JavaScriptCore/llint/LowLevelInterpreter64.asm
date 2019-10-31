@@ -387,7 +387,7 @@ macro traceValue(fromWhere, operand)
     restoreStateAfterCCall()
 end
 
-# Call a slow path for call call opcodes.
+# Call a slow path for call opcodes.
 macro callCallSlowPath(slowPath, action)
     storei PC, ArgumentCount + TagOffset[cfr]
     prepareStateForCCall()
@@ -1019,7 +1019,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         jmp .op1NotIntReady
     .op1NotIntOp2Int:
         profile(ArithProfileNumberInt)
-        ci2d t1, ft1
+        ci2ds t1, ft1
     .op1NotIntReady:
         get(m_dst, t2)
         addq numberTag, t0
@@ -1035,7 +1035,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         btqz t1, numberTag, .slow
         profile(ArithProfileIntNumber)
-        ci2d t0, ft0
+        ci2ds t0, ft0
         addq numberTag, t1
         fq2d t1, ft1
         doubleOperation(ft1, ft0)
@@ -1678,7 +1678,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
             macro (operand, scratch, address)
                 loadConstantOrVariable(size, operand, scratch)
                 bqb scratch, numberTag, .notInt
-                ci2d scratch, ft0
+                ci2ds scratch, ft0
                 jmp .ready
             .notInt:
                 addq numberTag, scratch
@@ -1827,7 +1827,7 @@ llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata
     metadata(t5, t0)
     storeb 1, OpJneqPtr::Metadata::m_hasJumped[t5]
     get(m_targetLabel, t0)
-    jumpImpl(t0)
+    jumpImpl(dispatchIndirect, t0)
 end)
 
 
@@ -1845,7 +1845,7 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
     .op1NotInt:
         btqz t0, numberTag, .slow
         bqb t1, numberTag, .op1NotIntOp2NotInt
-        ci2d t1, ft1
+        ci2ds t1, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2NotInt:
         btqz t1, numberTag, .slow
@@ -1858,7 +1858,7 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
         dispatch()
 
     .op2NotInt:
-        ci2d t0, ft0
+        ci2ds t0, ft0
         btqz t1, numberTag, .slow
         addq numberTag, t1
         fq2d t1, ft1

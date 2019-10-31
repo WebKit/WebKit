@@ -46,7 +46,6 @@ namespace JSC {
         Register();
 
         Register(const JSValue&);
-        Register& operator=(const JSValue&);
         JSValue jsValue() const;
         JSValue asanUnsafeJSValue() const;
         EncodedJSValue encodedJSValue() const;
@@ -55,6 +54,7 @@ namespace JSC {
         ALWAYS_INLINE Register& operator=(CodeBlock*);
         ALWAYS_INLINE Register& operator=(JSScope*);
         ALWAYS_INLINE Register& operator=(JSObject*);
+        ALWAYS_INLINE Register& operator=(EncodedJSValue);
 
         int32_t i() const;
         ALWAYS_INLINE CallFrame* callFrame() const;
@@ -110,12 +110,6 @@ namespace JSC {
     ALWAYS_INLINE Register::Register(const JSValue& v)
     {
         u.value = JSValue::encode(v);
-    }
-
-    ALWAYS_INLINE Register& Register::operator=(const JSValue& v)
-    {
-        u.value = JSValue::encode(v);
-        return *this;
     }
 
     // FIXME (rdar://problem/19379214): ASan only needs to be suppressed for Register::jsValue() when called from prepareOSREntry(), but there is currently no way to express this short of adding a separate copy of the function.

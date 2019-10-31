@@ -43,7 +43,7 @@ class Section
   end
 
   def create_opcode(name, config)
-      Opcode.new(self, name, config[:args], config[:metadata], config[:metadata_initializers])
+      Opcode.new(self, name, config[:extras], config[:args], config[:metadata], config[:metadata_initializers])
   end
 
   def add_opcode_group(name, opcodes, config)
@@ -55,6 +55,10 @@ class Section
   def sort!
       @opcodes = @opcodes.sort { |a, b| a.metadata.empty? ? b.metadata.empty? ? 0 : 1 : -1 }
       @opcodes.each(&:create_id!)
+  end
+
+  def is_wasm?
+    @name == :Wasm
   end
 
   def header_helpers(num_opcodes)
@@ -108,4 +112,14 @@ class Section
       end
       out.string
   end
+
+    def for_each_struct
+        <<-EOF
+#define FOR_EACH_#{config[:macro_name_component]}_STRUCT(macro) \\
+#{opcodes.map do |op|
+    "    macro(#{op.capitalized_name}) \\"
+end.join("\n")}
+EOF
+    end
+
 end

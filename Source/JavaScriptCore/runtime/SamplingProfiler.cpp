@@ -123,6 +123,8 @@ protected:
         CallSiteIndex callSiteIndex;
         CalleeBits unsafeCallee = m_callFrame->unsafeCallee();
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
+        if (unsafeCallee.isWasm())
+            codeBlock = nullptr;
         if (codeBlock) {
             ASSERT(isValidCodeBlock(codeBlock));
             callSiteIndex = m_callFrame->unsafeCallSiteIndex();
@@ -168,7 +170,7 @@ protected:
         }
 
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
-        if (!codeBlock)
+        if (!codeBlock || m_callFrame->callee().isWasm())
             return;
 
         if (!isValidCodeBlock(codeBlock)) {

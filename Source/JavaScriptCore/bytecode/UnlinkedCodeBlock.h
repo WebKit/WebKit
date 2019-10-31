@@ -50,7 +50,6 @@
 
 namespace JSC {
 
-class BytecodeGenerator;
 class BytecodeLivenessAnalysis;
 class BytecodeRewriter;
 class CodeBlock;
@@ -384,6 +383,8 @@ protected:
 private:
     friend class BytecodeRewriter;
     friend class BytecodeGenerator;
+    template<typename Traits>
+    friend class BytecodeGeneratorBase;
 
     template<typename CodeBlockType>
     friend class CachedCodeBlock;

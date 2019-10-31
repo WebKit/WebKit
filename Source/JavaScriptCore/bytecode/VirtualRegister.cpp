@@ -83,4 +83,9 @@ VirtualRegister::VirtualRegister(RegisterID* reg)
 {
 }
 
+VirtualRegister::VirtualRegister(RefPtr<RegisterID> reg)
+    : VirtualRegister(reg.get())
+{
+}
+
 } // namespace JSC

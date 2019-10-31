@@ -166,6 +166,7 @@ public:
     using ControlEntry = FunctionParser<B3IRGenerator>::ControlEntry;
 
     static constexpr ExpressionType emptyExpression() { return nullptr; }
+    bool isControlTypeIf(const ControlType& control) { return control.blockType() == BlockType::If; }
 
     typedef String ErrorType;
     typedef Unexpected<ErrorType> UnexpectedResult;

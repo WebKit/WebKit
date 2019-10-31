@@ -1720,7 +1720,7 @@ llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata
     metadata(t5, t2)
     storeb 1, OpJneqPtr::Metadata::m_hasJumped[t5]
     get(m_targetLabel, t0)
-    jumpImpl(t0)
+    jumpImpl(dispatchIndirect, t0)
 .opJneqPtrFallThrough:
     dispatch()
 end)

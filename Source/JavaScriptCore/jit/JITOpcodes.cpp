@@ -29,7 +29,7 @@
 #include "JIT.h"
 
 #include "BasicBlockLocation.h"
-#include "BytecodeStructs.h"
+#include "BytecodeGenerator.h"
 #include "Exception.h"
 #include "Heap.h"
 #include "InterpreterInlines.h"

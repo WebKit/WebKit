@@ -161,17 +161,7 @@ bool WebAssemblyFunction::useTagRegisters() const
 
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
-    RegisterSet toSave = Wasm::PinnedRegisterInfo::get().toSave(instance()->memoryMode());
-    if (useTagRegisters()) {
-        RegisterSet tagRegisters = RegisterSet::runtimeTagRegisters();
-        // We rely on these being disjoint sets.
-#if !ASSERT_DISABLED
-        for (Reg reg : tagRegisters)
-            ASSERT(!toSave.contains(reg));
-#endif
-        toSave.merge(tagRegisters);
-    }
-    return toSave;
+    return Wasm::PinnedRegisterInfo::get().toSave(instance()->memoryMode());
 }
 
 RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const

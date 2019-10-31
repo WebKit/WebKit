@@ -93,6 +93,7 @@ public:
 
     static constexpr ExpressionType emptyExpression() { return Void; }
     Stack createStack() { return Stack(); }
+    bool isControlTypeIf(const ControlType& control) { return control.blockType() == BlockType::If; }
 
     template <typename ...Args>
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(const Args&... args) const

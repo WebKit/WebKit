@@ -33,6 +33,8 @@ namespace JSC { namespace Wasm {
 const char* makeString(CompilationMode mode)
 {
     switch (mode) {
+    case CompilationMode::LLIntMode:
+        return "LLInt";
     case CompilationMode::BBQMode:
         return "BBQ";
     case CompilationMode::OMGMode:

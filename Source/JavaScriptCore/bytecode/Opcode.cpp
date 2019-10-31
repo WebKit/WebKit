@@ -52,6 +52,18 @@ const char* const opcodeNames[] = {
 #undef OPCODE_NAME_ENTRY
 };
 
+const unsigned wasmOpcodeLengths[] = {
+#define OPCODE_LENGTH(opcode, length) length,
+    FOR_EACH_WASM_ID(OPCODE_LENGTH)
+#undef OPCODE_LENGTH
+};
+
+const char* const wasmOpcodeNames[] = {
+#define OPCODE_NAME_ENTRY(opcode, size) #opcode,
+    FOR_EACH_WASM_ID(OPCODE_NAME_ENTRY)
+#undef OPCODE_NAME_ENTRY
+};
+
 #if ENABLE(OPCODE_STATS)
 
 inline const char* padOpcodeName(OpcodeID op, unsigned width)

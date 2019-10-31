@@ -27,6 +27,7 @@
 
 #include "BytecodeIntrinsicRegistry.h"
 #include "JITCode.h"
+#include "Label.h"
 #include "ParserArena.h"
 #include "ParserModes.h"
 #include "ParserTokens.h"
@@ -45,7 +46,6 @@ namespace JSC {
     class BytecodeGenerator;
     class FunctionMetadataNode;
     class FunctionParameters;
-    class Label;
     class ModuleAnalyzer;
     class ModuleScopeData;
     class PropertyListNode;

@@ -54,7 +54,7 @@ namespace WasmOMGForOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<BBQCallee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
+OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(context, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
     , m_module(WTFMove(module))
     , m_codeBlock(*m_module->codeBlockFor(mode))
@@ -127,10 +127,25 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     {
         auto locker = holdLock(m_codeBlock->m_lock);
         {
-            auto locker = holdLock(m_callee->tierUpCount()->getLock());
-            m_callee->setOSREntryCallee(callee.copyRef());
-            m_callee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
-            m_callee->tierUpCount()->m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::Compiled;
+            switch (m_callee->compilationMode()) {
+            case CompilationMode::LLIntMode: {
+                LLIntCallee* llintCallee = static_cast<LLIntCallee*>(m_callee.ptr());
+                auto locker = holdLock(llintCallee->tierUpCounter().m_lock);
+                llintCallee->setOSREntryCallee(callee.copyRef());
+                llintCallee->tierUpCounter().m_loopCompilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+                break;
+            }
+            case CompilationMode::BBQMode: {
+                BBQCallee* bbqCallee = static_cast<BBQCallee*>(m_callee.ptr());
+                auto locker = holdLock(bbqCallee->tierUpCount()->getLock());
+                bbqCallee->setOSREntryCallee(callee.copyRef());
+                bbqCallee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
+                bbqCallee->tierUpCount()->m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::Compiled;
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         }
         WTF::storeStoreFence();
         // It is possible that a new OMG callee is added while we release m_codeBlock->lock.
@@ -146,7 +161,7 @@ void OMGForOSREntryPlan::work(CompilationEffort)
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
     }
-    dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex, " with tier up count at: ", m_callee->tierUpCount()->count());
+    dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex);
     complete(holdLock(m_lock));
 }
 

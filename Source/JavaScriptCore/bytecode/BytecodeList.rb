@@ -53,6 +53,7 @@ types [
     :SymbolTableOrScopeDepth,
     :ToThisStatus,
     :TypeLocation,
+    :WasmBoundLabel,
     :WatchpointSet,
 
     :ValueProfile,
@@ -73,7 +74,7 @@ templates [
 ]
 
 
-begin_section :Bytecodes,
+begin_section :Bytecode,
     emit_in_h_file: true,
     emit_in_structs_file: true,
     emit_in_asm_file: true,
@@ -1170,7 +1171,7 @@ op :super_sampler_begin
 
 op :super_sampler_end
 
-end_section :Bytecodes
+end_section :Bytecode
 
 begin_section :CLoopHelpers,
     emit_in_h_file: true,
@@ -1246,5 +1247,217 @@ op :op_get_by_id_return_location
 op :op_get_by_val_return_location
 op :op_put_by_id_return_location
 op :op_put_by_val_return_location
+op :wasm_function_prologue
+op :wasm_function_prologue_no_tls
 
 end_section :NativeHelpers
+
+begin_section :Wasm,
+    emit_in_h_file: true,
+    emit_in_structs_file: true,
+    macro_name_component: :WASM,
+    op_prefix: "wasm_"
+
+autogenerate_wasm_opcodes
+
+# Helpers
+
+op :throw_from_slow_path_trampoline
+
+# FIXME: Wasm and JS LLInt should share common opcodes
+# https://bugs.webkit.org/show_bug.cgi?id=203656
+
+op :wide16
+op :wide32
+
+op :enter
+op :nop
+op :loop_hint
+
+op :mov,
+    args: {
+        dst: VirtualRegister,
+        src: VirtualRegister,
+    }
+
+op_group :ConditionalJump,
+    [
+        :jtrue,
+        :jfalse,
+    ],
+    args: {
+        condition: VirtualRegister,
+        targetLabel: WasmBoundLabel,
+    }
+
+op :jmp,
+    args: {
+        targetLabel: WasmBoundLabel,
+    }
+
+op :ret,
+    args: {
+        stackOffset: unsigned,
+    }
+
+op :switch,
+    args: {
+        scrutinee: VirtualRegister,
+        tableIndex: unsigned,
+        defaultTarget: WasmBoundLabel,
+    }
+
+# Wasm specific bytecodes
+
+op :unreachable
+op :ret_void
+
+op :ref_is_null,
+    args: {
+        dst: VirtualRegister,
+        ref: VirtualRegister,
+    }
+
+op :ref_func,
+    args: {
+        dst: VirtualRegister,
+        functionIndex: unsigned,
+    }
+
+op :get_global,
+    args: {
+        dst: VirtualRegister,
+        globalIndex: unsigned,
+    }
+
+op :set_global,
+    args: {
+        globalIndex: unsigned,
+        value: VirtualRegister,
+    }
+
+op :set_global_ref,
+    args: {
+        globalIndex: unsigned,
+        value: VirtualRegister,
+    }
+
+op :table_get,
+    args: {
+        dst: VirtualRegister,
+        index: VirtualRegister,
+        tableIndex: unsigned,
+    }
+
+op :table_set,
+    args: {
+        index: VirtualRegister,
+        value: VirtualRegister,
+        tableIndex: unsigned,
+    }
+
+op :table_size,
+    args: {
+        dst: VirtualRegister,
+        tableIndex: unsigned,
+    }
+
+op :table_grow,
+    args: {
+        dst: VirtualRegister,
+        fill: VirtualRegister,
+        size: VirtualRegister,
+        tableIndex: unsigned,
+    }
+
+op :table_fill,
+    args: {
+        offset: VirtualRegister,
+        fill: VirtualRegister,
+        size: VirtualRegister,
+        tableIndex: unsigned,
+    }
+
+op :call,
+    args: {
+        functionIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
+    }
+
+op :call_no_tls,
+    args: {
+        functionIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
+    }
+
+op :call_indirect,
+    args: {
+        functionIndex: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
+        tableIndex: unsigned,
+    }
+
+op :call_indirect_no_tls,
+    args: {
+        functionIndex: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
+        tableIndex: unsigned,
+    }
+
+op :current_memory,
+    args: {
+        dst: VirtualRegister,
+    }
+
+op :grow_memory,
+    args: {
+        dst: VirtualRegister,
+        delta: VirtualRegister
+    }
+
+op :select,
+    args: {
+        dst: VirtualRegister,
+        condition: VirtualRegister,
+        nonZero: VirtualRegister,
+        zero: VirtualRegister,
+    }
+
+op_group :Load,
+    [
+        :load8_u,
+        :load16_u,
+        :load32_u,
+        :load64_u,
+        :i32_load8_s,
+        :i64_load8_s,
+        :i32_load16_s,
+        :i64_load16_s,
+        :i64_load32_s,
+    ],
+    args: {
+        dst: VirtualRegister,
+        pointer: VirtualRegister,
+        offset: unsigned,
+    }
+
+op_group :Store,
+    [
+        :store8,
+        :store16,
+        :store32,
+        :store64,
+    ],
+    args: {
+        pointer: VirtualRegister,
+        value: VirtualRegister,
+        offset: unsigned,
+    }
+
+end_section :Wasm

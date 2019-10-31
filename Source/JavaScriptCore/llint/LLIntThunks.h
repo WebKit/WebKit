@@ -54,4 +54,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> evalEntryThunk();
 MacroAssemblerCodeRef<JITThunkPtrTag> programEntryThunk();
 MacroAssemblerCodeRef<JITThunkPtrTag> moduleProgramEntryThunk();
 
+#if ENABLE(WEBASSEMBLY)
+MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionEntryThunk();
+#endif // ENABLE(WEBASSEMBLY)
+
 } } // namespace JSC::LLInt

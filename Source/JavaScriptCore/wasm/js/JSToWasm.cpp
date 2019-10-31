@@ -126,10 +126,8 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
     }
 }
 
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& compilationContext, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
 {
-    CCallHelpers& jit = *compilationContext.embedderEntrypointJIT;
-
     auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
 

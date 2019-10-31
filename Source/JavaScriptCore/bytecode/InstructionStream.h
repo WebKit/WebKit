@@ -32,8 +32,6 @@
 
 namespace JSC {
 
-struct Instruction;
-
 class InstructionStream {
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -133,10 +131,15 @@ private:
             return *this;
         }
 
-        iterator operator++()
+        iterator& operator+=(size_t size)
         {
-            m_index += ptr()->size();
+            m_index += size;
             return *this;
+        }
+
+        iterator& operator++()
+        {
+            return *this += ptr()->size();
         }
     };
 
@@ -278,10 +281,15 @@ private:
             return *this;
         }
 
-        iterator operator++()
+        iterator& operator+=(size_t size)
         {
-            m_index += ptr()->size();
+            m_index += size;
             return *this;
+        }
+
+        iterator& operator++()
+        {
+            return *this += ptr()->size();
         }
     };
 

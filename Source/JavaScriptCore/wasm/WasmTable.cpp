@@ -198,6 +198,16 @@ void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmTo
     m_instances.get()[index & m_mask] = instance;
 }
 
+const WasmToWasmImportableFunction& FuncRefTable::function(uint32_t index) const
+{
+    return m_importableFunctions.get()[index & m_mask];
+}
+
+Instance* FuncRefTable::instance(uint32_t index) const
+{
+    return m_instances.get()[index & m_mask];
+}
+
 } } // namespace JSC::Table
 
 #endif // ENABLE(WEBASSEMBLY)

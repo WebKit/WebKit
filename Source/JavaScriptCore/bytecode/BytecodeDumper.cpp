@@ -28,6 +28,7 @@
 #include "BytecodeDumper.h"
 
 #include "ArithProfile.h"
+#include "BytecodeGenerator.h"
 #include "BytecodeStructs.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
@@ -40,20 +41,9 @@
 #include "ToThisStatus.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedMetadataTableInlines.h"
+#include "WasmFunctionCodeBlock.h"
 
 namespace JSC {
-
-template<class Block>
-VM& BytecodeDumper<Block>::vm() const
-{
-    return block()->vm();
-}
-
-template<class Block>
-const Identifier& BytecodeDumper<Block>::identifier(int index) const
-{
-    return block()->identifier(index);
-}
 
 static ALWAYS_INLINE bool isConstantRegisterIndex(int index)
 {
@@ -72,7 +62,7 @@ CString BytecodeDumper<Block>::registerName(int r) const
 template<class Block>
 CString BytecodeDumper<Block>::constantName(int index) const
 {
-    JSValue value = block()->getConstant(index);
+    auto value = block()->getConstant(index);
     return toCString(value, "(", VirtualRegister(index), ")");
 }
 
@@ -84,10 +74,16 @@ void BytecodeDumper<Block>::printLocationAndOp(InstructionStream::Offset locatio
 }
 
 template<class Block>
+void BytecodeDumper<Block>::dumpValue(VirtualRegister reg)
+{
+    m_out.printf("%s", registerName(reg.offset()).data());
+}
+
+template<class Block>
 void BytecodeDumper<Block>::dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&)
 {
     ::JSC::dumpBytecode(this, it.offset(), it.ptr());
-    m_out.print("\n");
+    this->m_out.print("\n");
 }
 
 template<class Block>
@@ -98,27 +94,39 @@ void BytecodeDumper<Block>::dumpBytecode(Block* block, PrintStream& out, const I
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpIdentifiers()
+VM& CodeBlockBytecodeDumper<Block>::vm() const
 {
-    if (size_t count = block()->numberOfIdentifiers()) {
-        m_out.printf("\nIdentifiers:\n");
+    return this->block()->vm();
+}
+
+template<class Block>
+const Identifier& CodeBlockBytecodeDumper<Block>::identifier(int index) const
+{
+    return this->block()->identifier(index);
+}
+
+template<class Block>
+void CodeBlockBytecodeDumper<Block>::dumpIdentifiers()
+{
+    if (size_t count = this->block()->numberOfIdentifiers()) {
+        this->m_out.printf("\nIdentifiers:\n");
         size_t i = 0;
         do {
-            m_out.print("  id", static_cast<unsigned>(i), " = ", identifier(i), "\n");
+            this->m_out.print("  id", static_cast<unsigned>(i), " = ", identifier(i), "\n");
             ++i;
         } while (i != count);
     }
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpConstants()
+void CodeBlockBytecodeDumper<Block>::dumpConstants()
 {
-    if (!block()->constantRegisters().isEmpty()) {
-        m_out.printf("\nConstants:\n");
+    if (!this->block()->constantRegisters().isEmpty()) {
+        this->m_out.printf("\nConstants:\n");
         size_t i = 0;
-        for (const auto& constant : block()->constantRegisters()) {
+        for (const auto& constant : this->block()->constantRegisters()) {
             const char* sourceCodeRepresentationDescription = nullptr;
-            switch (block()->constantsSourceCodeRepresentation()[i]) {
+            switch (this->block()->constantsSourceCodeRepresentation()[i]) {
             case SourceCodeRepresentation::Double:
                 sourceCodeRepresentationDescription = ": in source as double";
                 break;
@@ -129,68 +137,68 @@ void BytecodeDumper<Block>::dumpConstants()
                 sourceCodeRepresentationDescription = "";
                 break;
             }
-            m_out.printf("   k%u = %s%s\n", static_cast<unsigned>(i), toCString(constant.get()).data(), sourceCodeRepresentationDescription);
+            this->m_out.printf("   k%u = %s%s\n", static_cast<unsigned>(i), toCString(constant.get()).data(), sourceCodeRepresentationDescription);
             ++i;
         }
     }
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpExceptionHandlers()
+void CodeBlockBytecodeDumper<Block>::dumpExceptionHandlers()
 {
-    if (unsigned count = block()->numberOfExceptionHandlers()) {
-        m_out.printf("\nException Handlers:\n");
+    if (unsigned count = this->block()->numberOfExceptionHandlers()) {
+        this->m_out.printf("\nException Handlers:\n");
         unsigned i = 0;
         do {
-            const auto& handler = block()->exceptionHandler(i);
-            m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
+            const auto& handler = this->block()->exceptionHandler(i);
+            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
             ++i;
         } while (i < count);
     }
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpSwitchJumpTables()
+void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
 {
-    if (unsigned count = block()->numberOfSwitchJumpTables()) {
-        m_out.printf("Switch Jump Tables:\n");
+    if (unsigned count = this->block()->numberOfSwitchJumpTables()) {
+        this->m_out.printf("Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            m_out.printf("  %1d = {\n", i);
-            const auto& switchJumpTable = block()->switchJumpTable(i);
+            this->m_out.printf("  %1d = {\n", i);
+            const auto& switchJumpTable = this->block()->switchJumpTable(i);
             int entry = 0;
             auto end = switchJumpTable.branchOffsets.end();
             for (auto iter = switchJumpTable.branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.min, *iter);
+                this->m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.min, *iter);
             }
-            m_out.printf("      }\n");
+            this->m_out.printf("      }\n");
             ++i;
         } while (i < count);
     }
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpStringSwitchJumpTables()
+void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
 {
-    if (unsigned count = block()->numberOfStringSwitchJumpTables()) {
-        m_out.printf("\nString Switch Jump Tables:\n");
+    if (unsigned count = this->block()->numberOfStringSwitchJumpTables()) {
+        this->m_out.printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            m_out.printf("  %1d = {\n", i);
-            const auto& stringSwitchJumpTable = block()->stringSwitchJumpTable(i);
+            this->m_out.printf("  %1d = {\n", i);
+            const auto& stringSwitchJumpTable = this->block()->stringSwitchJumpTable(i);
             auto end = stringSwitchJumpTable.offsetTable.end();
             for (auto iter = stringSwitchJumpTable.offsetTable.begin(); iter != end; ++iter)
-                m_out.printf("\t\t\"%s\" => %04d\n", iter->key->utf8().data(), iter->value.branchOffset);
-            m_out.printf("      }\n");
+                this->m_out.printf("\t\t\"%s\" => %04d\n", iter->key->utf8().data(), iter->value.branchOffset);
+            this->m_out.printf("      }\n");
             ++i;
         } while (i < count);
     }
 }
 
 template<class Block>
-void BytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& instructions, PrintStream& out, const ICStatusMap& statusMap)
+void CodeBlockBytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& instructions, PrintStream& out, const ICStatusMap& statusMap)
 {
     size_t instructionCount = 0;
     size_t wide16InstructionCount = 0;
@@ -220,7 +228,7 @@ void BytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& ins
     out.print("; scope at ", block->scopeRegister());
     out.printf("\n");
 
-    BytecodeDumper<Block> dumper(block, out);
+    CodeBlockBytecodeDumper<Block> dumper(block, out);
     for (const auto& it : instructions)
         dumper.dumpBytecode(it, statusMap);
 
@@ -233,7 +241,11 @@ void BytecodeDumper<Block>::dumpBlock(Block* block, const InstructionStream& ins
     out.printf("\n");
 }
 
-template class BytecodeDumper<UnlinkedCodeBlock>;
 template class BytecodeDumper<CodeBlock>;
+#if ENABLE(WEBASSEMBLY)
+template class BytecodeDumper<Wasm::FunctionCodeBlock>;
+#endif
+template class CodeBlockBytecodeDumper<UnlinkedCodeBlock>;
+template class CodeBlockBytecodeDumper<CodeBlock>;
 
 }

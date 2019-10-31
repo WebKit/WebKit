@@ -107,7 +107,7 @@ void OMGPlan::work(CompilationEffort)
         ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
         Ref<OMGCallee> callee = OMGCallee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(unlinkedCalls));
         MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
-        ASSERT(!m_codeBlock->m_optimizedCallees[m_functionIndex]);
+        ASSERT(!m_codeBlock->m_omgCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();
 
         // We want to make sure we publish our callee at the same time as we link our callsites. This enables us to ensure we
@@ -115,12 +115,17 @@ void OMGPlan::work(CompilationEffort)
         // will update. It's also ok if they publish their code before we reset the instruction caches because after we release
         // the lock our code is ready to be published too.
         LockHolder holder(m_codeBlock->m_lock);
-        m_codeBlock->m_optimizedCallees[m_functionIndex] = callee.copyRef();
+        m_codeBlock->m_omgCallees[m_functionIndex] = callee.copyRef();
         {
-            BBQCallee& bbqCallee = *static_cast<BBQCallee*>(m_codeBlock->m_callees[m_functionIndex].get());
-            auto locker = holdLock(bbqCallee.tierUpCount()->getLock());
-            bbqCallee.setReplacement(callee.copyRef());
-            bbqCallee.tierUpCount()->m_compilationStatusForOMG = TierUpCount::CompilationStatus::Compiled;
+            if (BBQCallee* bbqCallee = m_codeBlock->m_bbqCallees[m_functionIndex].get()) {
+                auto locker = holdLock(bbqCallee->tierUpCount()->getLock());
+                bbqCallee->setReplacement(callee.copyRef());
+                bbqCallee->tierUpCount()->m_compilationStatusForOMG = TierUpCount::CompilationStatus::Compiled;
+            } else if (LLIntCallee* llintCallee = m_codeBlock->m_llintCallees[m_functionIndex].get()) {
+                auto locker = holdLock(llintCallee->tierUpCounter().m_lock);
+                llintCallee->setReplacement(callee.copyRef());
+                llintCallee->tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+            }
         }
         for (auto& call : callee->wasmToWasmCallsites()) {
             MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
@@ -155,14 +160,20 @@ void OMGPlan::work(CompilationEffort)
 
         for (unsigned i = 0; i < m_codeBlock->m_wasmToWasmCallsites.size(); ++i) {
             repatchCalls(m_codeBlock->m_wasmToWasmCallsites[i]);
-            if (OMGCallee* replacementCallee = static_cast<BBQCallee*>(m_codeBlock->m_callees[i].get())->replacement())
-                repatchCalls(replacementCallee->wasmToWasmCallsites());
-            if (OMGForOSREntryCallee* osrEntryCallee = static_cast<BBQCallee*>(m_codeBlock->m_callees[i].get())->osrEntryCallee())
-                repatchCalls(osrEntryCallee->wasmToWasmCallsites());
+            if (LLIntCallee* llintCallee = m_codeBlock->m_llintCallees[i].get()) {
+                if (JITCallee* replacementCallee = llintCallee->replacement())
+                    repatchCalls(replacementCallee->wasmToWasmCallsites());
+            }
+            if (BBQCallee* bbqCallee = m_codeBlock->m_bbqCallees[i].get()) {
+                if (OMGCallee* replacementCallee = bbqCallee->replacement())
+                    repatchCalls(replacementCallee->wasmToWasmCallsites());
+                if (OMGForOSREntryCallee* osrEntryCallee = bbqCallee->osrEntryCallee())
+                    repatchCalls(osrEntryCallee->wasmToWasmCallsites());
+            }
         }
     }
 
-    dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished OMG ", m_functionIndex, " with tier up count at: ", static_cast<BBQCallee*>(m_codeBlock->m_callees[m_functionIndex].get())->tierUpCount()->count());
+    dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished OMG ", m_functionIndex);
     complete(holdLock(m_lock));
 }
 

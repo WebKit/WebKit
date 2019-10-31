@@ -22,13 +22,15 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 require_relative 'Assertion'
+require_relative 'GeneratedFile'
 require_relative 'Section'
 require_relative 'Template'
 require_relative 'Type'
-require_relative 'GeneratedFile'
+require_relative 'Wasm'
 
 module DSL
     @sections = []
+    @wasm_section = nil
     @current_section = nil
     @context = binding()
     @namespaces = []
@@ -42,6 +44,10 @@ module DSL
         assert("current section's name is `#{@current_section.name}`, but end_section was called with `#{name}`") { @current_section.name == name }
         @current_section.sort!
         @sections << @current_section
+        if @current_section.is_wasm?
+          assert("Cannot have 2 wasm sections") { @wasm_section.nil? }
+          @wasm_section = @current_section
+        end
         @current_section = nil
     end
 
@@ -85,27 +91,37 @@ module DSL
         @namespaces.pop
     end
 
+    def self.autogenerate_wasm_opcodes()
+        assert("`autogenerate_wasm_opcodes` can only be called in between `begin_section` and `end_section`") { not @current_section.nil? }
+        assert("`autogenerate_wasm_opcodes` can only be called from the `Wasm` section") { @current_section.name == :Wasm }
+        Wasm::autogenerate_opcodes(@context, @wasm_json)
+    end
+
     def self.run(options)
-        bytecodeListPath = options[:bytecodeList]
-        bytecodeList = File.open(bytecodeListPath)
-        @context.eval(bytecodeList.read, bytecodeListPath)
+        bytecode_list_path = options[:bytecode_list]
+        bytecode_list = File.open(bytecode_list_path).read
+
+        @wasm_json = File.open(options[:wasm_json_filename]).read
+
+        @context.eval(bytecode_list, bytecode_list_path)
         assert("must end last section") { @current_section.nil? }
 
-        write_bytecodes(bytecodeList, options[:bytecodesFilename])
-        write_bytecode_structs(bytecodeList, options[:bytecodeStructsFilename])
-        write_init_asm(bytecodeList, options[:initAsmFilename])
-        write_indices(bytecodeList, options[:bytecodeIndicesFilename])
+        write_bytecodes(bytecode_list, options[:bytecodes_filename])
+        write_bytecode_structs(bytecode_list, options[:bytecode_structs_filename])
+        write_bytecodes_init(options[:init_asm_filename], bytecode_list)
+        write_indices(bytecode_list, options[:bytecode_indices_filename])
+        write_llint_generator(options[:wasm_llint_generator_filename], bytecode_list, @wasm_json)
+        write_wasm_init(options[:wasm_init_filename], bytecode_list, @wasm_json)
     end
 
     def self.write_bytecodes(bytecode_list, bytecodes_filename)
         GeneratedFile::create(bytecodes_filename, bytecode_list) do |template|
             template.prefix = "#pragma once\n"
             num_opcodes = @sections.map(&:opcodes).flatten.size
-            template.body = <<-EOF
-#{@sections.map { |s| s.header_helpers(num_opcodes) }.join("\n")}
-#define FOR_EACH_BYTECODE_STRUCT(macro) \\
-#{opcodes_for(:emit_in_structs_file).map { |op| "    macro(#{op.capitalized_name}) \\" }.join("\n")}
-            EOF
+            template.body = [
+                @sections.map { |s| s.header_helpers(num_opcodes) },
+                @sections.select { |s| s.config[:emit_in_structs_file] }.map(&:for_each_struct)
+            ].flatten.join("\n")
         end
     end
 
@@ -118,7 +134,6 @@ module DSL
 
 #include "ArithProfile.h"
 #include "BytecodeDumper.h"
-#include "BytecodeGenerator.h"
 #include "Fits.h"
 #include "GetByIdMetadata.h"
 #include "Instruction.h"
@@ -132,19 +147,32 @@ EOF
 
             template.body = <<-EOF
 #{opcodes.map(&:struct).join("\n")}
-#{Opcode.dump_bytecode(opcodes)}
+#{Opcode.dump_bytecode(:Bytecode, :JSOpcodeTraits, opcodes_filter { |s| s.config[:emit_in_structs_file] && !s.is_wasm? })}
+#{Opcode.dump_bytecode(:Wasm, :WasmOpcodeTraits, opcodes_filter { |s| s.is_wasm? })}
 EOF
             template.suffix = "} // namespace JSC"
         end
     end
 
-    def self.write_init_asm(bytecode_list, init_asm_filename)
-        opcodes = opcodes_for(:emit_in_asm_file)
-
-        GeneratedFile::create(init_asm_filename, bytecode_list) do |template|
+    def self.write_init_asm(opcodes, filename, *dependencies)
+        GeneratedFile::create(filename, *dependencies) do |template|
             template.multiline_comment = nil
             template.line_comment = "#"
             template.body = (opcodes.map.with_index(&:set_entry_address) + opcodes.map.with_index(&:set_entry_address_wide16) + opcodes.map.with_index(&:set_entry_address_wide32)) .join("\n")
+        end
+    end
+
+    def self.write_bytecodes_init(bytecodes_init_filename, *dependencies)
+        write_init_asm(opcodes_for(:emit_in_asm_file), bytecodes_init_filename, *dependencies)
+    end
+
+    def self.write_wasm_init(wasm_init_filename, *dependencies)
+        write_init_asm(@wasm_section.opcodes, wasm_init_filename, *dependencies)
+    end
+
+    def self.write_llint_generator(generator_filename, *dependencies)
+        GeneratedFile::create(generator_filename, *dependencies) do |template|
+            template.body = Wasm::generate_llint_generator(@wasm_section)
         end
     end
 
@@ -160,6 +188,11 @@ EOF
 
     def self.opcodes_for(file)
         sections = @sections.select { |s| s.config[file] }
+        sections.map(&:opcodes).flatten
+    end
+
+    def self.opcodes_filter
+        sections = @sections.select { |s| yield s }
         sections.map(&:opcodes).flatten
     end
 end

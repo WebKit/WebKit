@@ -44,7 +44,7 @@ namespace Wasm {
 struct CallInformation;
 
 void marshallJSResult(CCallHelpers& jit, const Signature&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters);
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext&, const Signature&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, const Signature&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

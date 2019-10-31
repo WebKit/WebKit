@@ -48,7 +48,7 @@ public:
     bool multiThreaded() const override { return false; }
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
-    OMGForOSREntryPlan(Context*, Ref<Module>&&, Ref<BBQCallee>&&, uint32_t functionIndex, uint32_t loopIndex, MemoryMode, CompletionTask&&);
+    OMGForOSREntryPlan(Context*, Ref<Module>&&, Ref<Callee>&&, uint32_t functionIndex, uint32_t loopIndex, MemoryMode, CompletionTask&&);
 
 private:
     // For some reason friendship doesn't extend to parent classes...
@@ -63,7 +63,7 @@ private:
 
     Ref<Module> m_module;
     Ref<CodeBlock> m_codeBlock;
-    Ref<BBQCallee> m_callee;
+    Ref<Callee> m_callee;
     bool m_completed { false };
     uint32_t m_functionIndex;
     uint32_t m_loopIndex;

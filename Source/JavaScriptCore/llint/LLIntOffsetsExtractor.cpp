@@ -66,8 +66,13 @@
 #include "TypeProfilerLog.h"
 #include "VM.h"
 #include "ValueProfile.h"
+#include "WasmCallingConvention.h"
+#include "WasmFunctionCodeBlock.h"
+#include "WasmInstance.h"
 #include "Watchdog.h"
+#include "WebAssemblyFunction.h"
 #include <stdio.h>
+#include <wtf/FastTLS.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

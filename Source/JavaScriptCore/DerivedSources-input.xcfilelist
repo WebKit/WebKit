@@ -74,6 +74,7 @@ $(PROJECT_DIR)/generator/Options.rb
 $(PROJECT_DIR)/generator/Section.rb
 $(PROJECT_DIR)/generator/Template.rb
 $(PROJECT_DIR)/generator/Type.rb
+$(PROJECT_DIR)/generator/Wasm.rb
 $(PROJECT_DIR)/generator/main.rb
 $(PROJECT_DIR)/inspector/InjectedScriptSource.js
 $(PROJECT_DIR)/inspector/protocol/ApplicationCache.json

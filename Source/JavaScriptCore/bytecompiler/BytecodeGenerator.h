@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include "BytecodeGeneratorBase.h"
+#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "Instruction.h"
 #include "Interpreter.h"
@@ -360,13 +362,20 @@ namespace JSC {
         TryData* tryData;
     };
 
-    class BytecodeGenerator {
+
+    struct JSGeneratorTraits {
+        using OpcodeTraits = JSOpcodeTraits;
+        using OpcodeID = ::JSC::OpcodeID;
+        using OpNop = ::JSC::OpNop;
+        using CodeBlock = Strong<UnlinkedCodeBlock>;
+        static constexpr OpcodeID opcodeForDisablingOptimizations = op_end;
+    };
+
+    class BytecodeGenerator : public BytecodeGeneratorBase<JSGeneratorTraits> {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(BytecodeGenerator);
 
-        friend class BoundLabel;
         friend class FinallyContext;
-        friend class Label;
         friend class IndexedForInContext;
         friend class StructureForInContext;
     public:
@@ -433,12 +442,6 @@ namespace JSC {
 
         RegisterID* promiseRegister() { return m_promiseRegister; }
 
-        // Returns the next available temporary register. Registers returned by
-        // newTemporary require a modified form of reference counting: any
-        // register with a refcount of 0 is considered "available", meaning that
-        // the next instruction may overwrite it.
-        RegisterID* newTemporary();
-
         // The same as newTemporary(), but this function returns "suggestion" if
         // "suggestion" is a temporary. This function is helpful in situations
         // where you've put "suggestion" in a RefPtr, but you'd like to allow
@@ -488,8 +491,6 @@ namespace JSC {
         }
 
         Ref<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = 0);
-        Ref<Label> newLabel();
-        Ref<Label> newEmittedLabel();
 
         void emitNode(RegisterID* dst, StatementNode* n)
         {
@@ -509,8 +510,6 @@ namespace JSC {
                 emitDebugHook(n);
             n->emitBytecode(*this, dst);
         }
-
-        void recordOpcode(OpcodeID);
 
         ALWAYS_INLINE unsigned addMetadataFor(OpcodeID opcodeID)
         {
@@ -840,7 +839,6 @@ namespace JSC {
 
         RegisterID* initializeVariable(const Variable&, RegisterID* value);
 
-        void emitLabel(Label&);
         void emitLoopHint();
         void emitJump(Label& target);
         void emitJumpIfTrue(RegisterID* cond, Label& target);
@@ -1055,7 +1053,6 @@ namespace JSC {
 
     private:
         ParserError generate();
-        void reclaimFreeRegisters();
         Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int symbolTableConstantIndex, bool isLexicallyScoped);
 
         RegisterID* kill(RegisterID* dst)
@@ -1067,7 +1064,6 @@ namespace JSC {
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         ALWAYS_INLINE void rewind();
 
-        void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
 
         template<typename JumpOp>
@@ -1090,17 +1086,6 @@ namespace JSC {
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
 
         RegisterID* emitCallIterator(RegisterID* iterator, RegisterID* argument, ThrowableExpressionData*);
-        RegisterID* newRegister();
-
-        // Adds an anonymous local var slot. To give this slot a name, add it to symbolTable().
-        RegisterID* addVar()
-        {
-            ++m_codeBlock->m_numVars;
-            RegisterID* result = newRegister();
-            ASSERT(VirtualRegister(result->index()).toLocal() == m_codeBlock->m_numVars - 1);
-            result->ref(); // We should never free this slot.
-            return result;
-        }
 
         // Initializes the stack form the parameter; does nothing for the symbol table.
         RegisterID* initializeNextParameter();
@@ -1177,15 +1162,6 @@ namespace JSC {
 
         RegisterID* emitThrowExpressionTooDeepException();
 
-        void write(uint8_t byte) { m_writer.write(byte); }
-        void write(uint16_t h) { m_writer.write(h); }
-        void write(uint32_t i) { m_writer.write(i); }
-        void write(int8_t byte) { m_writer.write(static_cast<uint8_t>(byte)); }
-        void write(int16_t h) { m_writer.write(static_cast<uint16_t>(h)); }
-        void write(int32_t i) { m_writer.write(static_cast<uint32_t>(i)); }
-        void alignWideOpcode16();
-        void alignWideOpcode32();
-
         class PreservedTDZStack {
         private:
             Vector<TDZMap> m_preservedTDZStack;
@@ -1210,8 +1186,6 @@ namespace JSC {
         }
 
     private:
-        InstructionStreamWriter m_writer;
-
         OptionSet<CodeGenerationMode> m_codeGenerationMode;
 
         struct LexicalScopeStackEntry {
@@ -1227,7 +1201,6 @@ namespace JSC {
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 
         ScopeNode* const m_scopeNode;
-        Strong<UnlinkedCodeBlock> m_codeBlock;
 
         // Some of these objects keep pointers to one another. They are arranged
         // to ensure a sane destruction order that avoids references to freed memory.
@@ -1249,11 +1222,7 @@ namespace JSC {
 
         FinallyContext* m_currentFinallyContext { nullptr };
 
-        SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
-        SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
-        SegmentedVector<RegisterID, 32> m_calleeLocals;
         SegmentedVector<RegisterID, 32> m_parameters;
-        SegmentedVector<Label, 32> m_labels;
         SegmentedVector<LabelScope, 32> m_labelScopes;
         unsigned m_finallyDepth { 0 };
         unsigned m_localScopeDepth { 0 };
@@ -1302,9 +1271,6 @@ namespace JSC {
         StaticPropertyAnalyzer m_staticPropertyAnalyzer;
 
         VM& m_vm;
-
-        OpcodeID m_lastOpcodeID = op_end;
-        InstructionStream::MutableRef m_lastInstruction { m_writer.ref() };
 
         bool m_usesExceptions { false };
         bool m_expressionTooDeep { false };

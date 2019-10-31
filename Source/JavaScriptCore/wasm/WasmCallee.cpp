@@ -28,20 +28,19 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "LLIntThunks.h"
 #include "WasmCalleeRegistry.h"
 
 namespace JSC { namespace Wasm {
 
-Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
+Callee::Callee(Wasm::CompilationMode compilationMode)
     : m_compilationMode(compilationMode)
-    , m_entrypoint(WTFMove(entrypoint))
 {
     CalleeRegistry::singleton().registerCallee(this);
 }
 
-Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+Callee::Callee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : m_compilationMode(compilationMode)
-    , m_entrypoint(WTFMove(entrypoint))
     , m_indexOrName(index, WTFMove(name))
 {
     CalleeRegistry::singleton().registerCallee(this);
@@ -50,6 +49,61 @@ Callee::Callee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, s
 Callee::~Callee()
 {
     CalleeRegistry::singleton().unregisterCallee(this);
+}
+
+void Callee::dump(PrintStream& out) const
+{
+    out.print(makeString(m_indexOrName));
+}
+
+JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint)
+    : Callee(compilationMode)
+    , m_entrypoint(WTFMove(entrypoint))
+{
+}
+
+JITCallee::JITCallee(Wasm::CompilationMode compilationMode, Entrypoint&& entrypoint, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls)
+    : Callee(compilationMode, index, WTFMove(name))
+    , m_wasmToWasmCallsites(WTFMove(unlinkedCalls))
+    , m_entrypoint(WTFMove(entrypoint))
+{
+}
+
+void LLIntCallee::setEntrypoint(MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint)
+{
+    m_entrypoint = entrypoint;
+}
+
+MacroAssemblerCodePtr<WasmEntryPtrTag> LLIntCallee::entrypoint() const
+{
+    return m_entrypoint;
+}
+
+RegisterAtOffsetList* LLIntCallee::calleeSaveRegisters()
+{
+    static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
+    static std::once_flag initializeFlag;
+    std::call_once(initializeFlag, [] {
+        RegisterSet registers;
+        registers.set(GPRInfo::regCS0); // Wasm::Instance
+#if CPU(X86_64)
+        registers.set(GPRInfo::regCS2); // PB
+#elif CPU(ARM64)
+        registers.set(GPRInfo::regCS7); // PB
+#else
+#error Unsupported architecture.
+#endif
+        registers.set(GPRInfo::regCS3); // Memory base
+        registers.set(GPRInfo::regCS4); // Memory size
+        ASSERT(registers.numberOfSetRegisters() == numberOfLLIntCalleeSaveRegisters);
+        calleeSaveRegisters.construct(WTFMove(registers));
+    });
+    return &calleeSaveRegisters.get();
+}
+
+std::tuple<void*, void*> LLIntCallee::range() const
+{
+    return { nullptr, nullptr };
 }
 
 } } // namespace JSC::Wasm

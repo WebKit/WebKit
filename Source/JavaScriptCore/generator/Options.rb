@@ -24,25 +24,37 @@
 require 'optparse'
 
 $config = {
-    bytecodesFilename: {
+    bytecodes_filename: {
         short: "-b",
         long: "--bytecodes_h FILE",
         desc: "generate bytecodes macro .h FILE",
     },
-    bytecodeStructsFilename: {
+    bytecode_structs_filename: {
         short: "-s",
         long: "--bytecode_structs_h FILE",
         desc: "generate bytecode structs .h FILE",
     },
-    initAsmFilename: {
+    init_asm_filename: {
         short: "-a",
         long: "--init_bytecodes_asm FILE",
         desc: "generate ASM bytecodes init FILE",
     },
-    bytecodeIndicesFilename: {
+    bytecode_indices_filename: {
         short: "-i",
         long: "--bytecode_indices_h FILE",
         desc: "generate indices of bytecode structs .h FILE",
+    },
+    wasm_json_filename: {
+        long: "--wasm_json FILE",
+        desc: "Path to JavaScriptCore's wasm.json file",
+    },
+    wasm_llint_generator_filename: {
+        long: "--wasm_llint_generator_h FILE",
+        desc: "Path to generate WasmLLIntGenerator entries from wasm.json file",
+    },
+    wasm_init_filename: {
+        long: "--init_wasm_llint FILE",
+        desc: "generate Wasm bytecodes init FILE",
     },
 };
 
@@ -51,7 +63,7 @@ module Options
         OptionParser.new do |opts|
             opts.banner = "usage: #{opts.program_name} [options] <bytecode-list-file>"
             $config.map do |key, option|
-                opts.on(option[:short], option[:long], option[:desc]) do |v|
+                opts.on(*option.values) do |v|
                     options[key] = v
                 end
             end
@@ -81,7 +93,7 @@ module Options
             exit 1
         end
 
-        options[:bytecodeList] = argv[0]
+        options[:bytecode_list] = argv[0]
         options
     end
 end

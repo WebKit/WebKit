@@ -1,4 +1,4 @@
-# Copyrsght (C) 2011-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -184,6 +184,7 @@ const CallFrameHeaderSize = ThisArgumentOffset
 
 const MetadataOffsetTable16Offset = 0
 const MetadataOffsetTable32Offset = constexpr UnlinkedMetadataTable::s_offset16TableSize
+const NumberOfJSOpcodeIDs = constexpr numOpcodeIDs
 
 # Some value representation constants.
 if JSVALUE64
@@ -312,7 +313,7 @@ macro dispatchIndirect(offsetReg)
     dispatch(offsetReg)
 end
 
-macro dispatchOp(size, opcodeName)
+macro genericDispatchOp(dispatch, size, opcodeName)
     macro dispatchNarrow()
         dispatch(constexpr %opcodeName%_length)
     end
@@ -327,6 +328,11 @@ macro dispatchOp(size, opcodeName)
 
     size(dispatchNarrow, dispatchWide16, dispatchWide32, macro (dispatch) dispatch() end)
 end
+
+macro dispatchOp(size, opcodeName)
+    genericDispatchOp(dispatch, size, opcodeName)
+end
+
 
 macro getu(size, opcodeStruct, fieldName, dst)
     size(getuOperandNarrow, getuOperandWide16, getuOperandWide32, macro (getu)
@@ -363,7 +369,7 @@ macro metadata(size, opcode, dst, scratch)
     addp metadataTable, dst # return &metadataTable[offset]
 end
 
-macro jumpImpl(targetOffsetReg)
+macro jumpImpl(dispatchIndirect, targetOffsetReg)
     btiz targetOffsetReg, .outOfLineJumpTarget
     dispatchIndirect(targetOffsetReg)
 .outOfLineJumpTarget:
@@ -375,6 +381,10 @@ macro commonOp(label, prologue, fn)
 _%label%:
     prologue()
     fn(narrow)
+    if ASSERT_ENABLED
+        break
+        break
+    end
 
 # FIXME: We cannot enable wide16 bytecode in Windows CLoop. With MSVC, as CLoop::execute gets larger code
 # size, CLoop::execute gets higher stack height requirement. This makes CLoop::execute takes 160KB stack
@@ -384,11 +394,19 @@ if not C_LOOP_WIN
 _%label%_wide16:
     prologue()
     fn(wide16)
+    if ASSERT_ENABLED
+        break
+        break
+    end
 end
 
 _%label%_wide32:
     prologue()
     fn(wide32)
+    if ASSERT_ENABLED
+        break
+        break
+    end
 end
 
 macro op(l, fn)
@@ -432,7 +450,7 @@ macro llintOpWithJump(opcodeName, opcodeStruct, impl)
     llintOpWithMetadata(opcodeName, opcodeStruct, macro(size, get, dispatch, metadata, return)
         macro jump(fieldName)
             get(fieldName, t0)
-            jumpImpl(t0)
+            jumpImpl(dispatchIndirect, t0)
         end
 
         impl(size, get, jump, dispatch)
@@ -557,6 +575,14 @@ macro crash()
 end
 
 macro assert(assertion)
+    if ASSERT_ENABLED
+        assertion(.ok)
+        crash()
+    .ok:
+    end
+end
+
+macro assert_with(assertion, crash)
     if ASSERT_ENABLED
         assertion(.ok)
         crash()
@@ -781,47 +807,53 @@ macro restoreCalleeSavesUsedByLLInt()
     end
 end
 
+macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or MIPS
+        vmEntryRecord(entryFrame, entryFrame)
+        leap VMEntryRecord::calleeSaveRegistersBuffer[entryFrame], entryFrame
+        if ARM64 or ARM64E
+            storeq csr0, [entryFrame]
+            storeq csr1, 8[entryFrame]
+            storeq csr2, 16[entryFrame]
+            storeq csr3, 24[entryFrame]
+            storeq csr4, 32[entryFrame]
+            storeq csr5, 40[entryFrame]
+            storeq csr6, 48[entryFrame]
+            storeq csr7, 56[entryFrame]
+            storeq csr8, 64[entryFrame]
+            storeq csr9, 72[entryFrame]
+            stored csfr0, 80[entryFrame]
+            stored csfr1, 88[entryFrame]
+            stored csfr2, 96[entryFrame]
+            stored csfr3, 104[entryFrame]
+            stored csfr4, 112[entryFrame]
+            stored csfr5, 120[entryFrame]
+            stored csfr6, 128[entryFrame]
+            stored csfr7, 136[entryFrame]
+        elsif X86_64
+            storeq csr0, [entryFrame]
+            storeq csr1, 8[entryFrame]
+            storeq csr2, 16[entryFrame]
+            storeq csr3, 24[entryFrame]
+            storeq csr4, 32[entryFrame]
+        elsif X86_64_WIN
+            storeq csr0, [entryFrame]
+            storeq csr1, 8[entryFrame]
+            storeq csr2, 16[entryFrame]
+            storeq csr3, 24[entryFrame]
+            storeq csr4, 32[entryFrame]
+            storeq csr5, 40[entryFrame]
+            storeq csr6, 48[entryFrame]
+        elsif ARMv7 or MIPS
+            storep csr0, [entryFrame]
+        end
+    end
+end
+
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
     if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7 or MIPS
         loadp VM::topEntryFrame[vm], temp
-        vmEntryRecord(temp, temp)
-        leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
-        if ARM64 or ARM64E
-            storeq csr0, [temp]
-            storeq csr1, 8[temp]
-            storeq csr2, 16[temp]
-            storeq csr3, 24[temp]
-            storeq csr4, 32[temp]
-            storeq csr5, 40[temp]
-            storeq csr6, 48[temp]
-            storeq csr7, 56[temp]
-            storeq csr8, 64[temp]
-            storeq csr9, 72[temp]
-            stored csfr0, 80[temp]
-            stored csfr1, 88[temp]
-            stored csfr2, 96[temp]
-            stored csfr3, 104[temp]
-            stored csfr4, 112[temp]
-            stored csfr5, 120[temp]
-            stored csfr6, 128[temp]
-            stored csfr7, 136[temp]
-        elsif X86_64
-            storeq csr0, [temp]
-            storeq csr1, 8[temp]
-            storeq csr2, 16[temp]
-            storeq csr3, 24[temp]
-            storeq csr4, 32[temp]
-        elsif X86_64_WIN
-            storeq csr0, [temp]
-            storeq csr1, 8[temp]
-            storeq csr2, 16[temp]
-            storeq csr3, 24[temp]
-            storeq csr4, 32[temp]
-            storeq csr5, 40[temp]
-            storeq csr6, 48[temp]
-        elsif ARMv7 or MIPS
-            storep csr0, [temp]
-        end
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(temp)
     end
 end
 
@@ -1155,6 +1187,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp
     end
     codeBlockGetter(t1)
+    codeBlockSetter(t1)
     if not (C_LOOP or C_LOOP_WIN)
         baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
         if JSVALUE64
@@ -1184,11 +1217,9 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         end
         jmp r0, JSEntryPtrTag
     .recover:
-        codeBlockGetter(t1)
+        notFunctionCodeBlockGetter(t1)
     .continue:
     end
-
-    codeBlockSetter(t1)
 
     preserveCalleeSavesUsedByLLInt()
 
@@ -1229,7 +1260,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 .stackHeightOKGetCodeBlock:
     # Stack check slow path returned that the stack was ok.
     # Since they were clobbered, need to get CodeBlock and new sp
-    codeBlockGetter(t1)
+    notFunctionCodeBlockGetter(t1)
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
 
@@ -1371,89 +1402,102 @@ if C_LOOP or C_LOOP_WIN
     _llint_entry:
         crash()
 else
-    macro initPCRelative(pcBase)
+    macro initPCRelative(kind, pcBase)
         if X86_64 or X86_64_WIN or X86 or X86_WIN
-            call _relativePCBase
-        _relativePCBase:
+            call _%kind%_relativePCBase
+        _%kind%_relativePCBase:
             pop pcBase
         elsif ARM64 or ARM64E
         elsif ARMv7
-        _relativePCBase:
+        _%kind%_relativePCBase:
             move pc, pcBase
             subp 3, pcBase   # Need to back up the PC and set the Thumb2 bit
         elsif MIPS
-            la _relativePCBase, pcBase
+            la _%kind%_relativePCBase, pcBase
             setcallreg pcBase # needed to set $t9 to the right value for the .cpload created by the label.
-        _relativePCBase:
+        _%kind%_relativePCBase:
         end
-end
-
-# The PC base is in t3, as this is what _llint_entry leaves behind through
-# initPCRelative(t3)
-macro setEntryAddress(index, label)
-    setEntryAddressCommon(index, label, a0)
-end
-
-macro setEntryAddressWide16(index, label)
-     setEntryAddressCommon(index, label, a1)
-end
-
-macro setEntryAddressWide32(index, label)
-     setEntryAddressCommon(index, label, a2)
-end
-
-macro setEntryAddressCommon(index, label, map)
-    if X86_64
-        leap (label - _relativePCBase)[t3], t4
-        move index, t5
-        storep t4, [map, t5, 8]
-    elsif X86_64_WIN
-        leap (label - _relativePCBase)[t3], t4
-        move index, t0
-        storep t4, [map, t0, 8]
-    elsif X86 or X86_WIN
-        leap (label - _relativePCBase)[t3], t4
-        move index, t5
-        storep t4, [map, t5, 4]
-    elsif ARM64 or ARM64E
-        pcrtoaddr label, t3
-        move index, t4
-        storep t3, [map, t4, PtrSize]
-    elsif ARMv7
-        mvlbl (label - _relativePCBase), t4
-        addp t4, t3, t4
-        move index, t5
-        storep t4, [map, t5, 4]
-    elsif MIPS
-        la label, t4
-        la _relativePCBase, t3
-        subp t3, t4
-        addp t4, t3, t4
-        move index, t5
-        storep t4, [map, t5, 4]
     end
+
+    # The PC base is in t3, as this is what _llint_entry leaves behind through
+    # initPCRelative(t3)
+    macro setEntryAddressCommon(kind, index, label, map)
+        if X86_64
+            leap (label - _%kind%_relativePCBase)[t3], t4
+            move index, t5
+            storep t4, [map, t5, 8]
+        elsif X86_64_WIN
+            leap (label - _%kind%_relativePCBase)[t3], t4
+            move index, t0
+            storep t4, [map, t0, 8]
+        elsif X86 or X86_WIN
+            leap (label - _%kind%_relativePCBase)[t3], t4
+            move index, t5
+            storep t4, [map, t5, 4]
+        elsif ARM64 or ARM64E
+            pcrtoaddr label, t3
+            move index, t4
+            storep t3, [map, t4, PtrSize]
+        elsif ARMv7
+            mvlbl (label - _%kind%_relativePCBase), t4
+            addp t4, t3, t4
+            move index, t5
+            storep t4, [map, t5, 4]
+        elsif MIPS
+            la label, t4
+            la _%kind%_relativePCBase, t3
+            subp t3, t4
+            addp t4, t3, t4
+            move index, t5
+            storep t4, [map, t5, 4]
+        end
+    end
+
+
+
+    macro includeEntriesAtOffset(kind, fn)
+        macro setEntryAddress(index, label)
+            setEntryAddressCommon(kind, index, label, a0)
+        end
+
+        macro setEntryAddressWide16(index, label)
+             setEntryAddressCommon(kind, index, label, a1)
+        end
+
+        macro setEntryAddressWide32(index, label)
+             setEntryAddressCommon(kind, index, label, a2)
+        end
+
+        fn()
+    end
+
+
+macro entry(kind, initialize)
+    global _%kind%_entry
+    _%kind%_entry:
+        functionPrologue()
+        pushCalleeSaves()
+        if X86 or X86_WIN
+            loadp 20[sp], a0
+            loadp 24[sp], a1
+            loadp 28[sp], a2
+        end
+
+        initPCRelative(kind, t3)
+
+        # Include generated bytecode initialization file.
+        includeEntriesAtOffset(kind, initialize)
+        popCalleeSaves()
+        functionEpilogue()
+        ret
 end
 
-global _llint_entry
 # Entry point for the llint to initialize.
-_llint_entry:
-    functionPrologue()
-    pushCalleeSaves()
-    if X86 or X86_WIN
-        loadp 20[sp], a0
-        loadp 24[sp], a1
-        loadp 28[sp], a2
-    end
-
-    initPCRelative(t3)
-
-    # Include generated bytecode initialization file.
+entry(llint, macro()
     include InitBytecodes
+end)
 
-    popCalleeSaves()
-    functionEpilogue()
-    ret
-end
+end // not (C_LOOP or C_LOOP_WIN)
 
 _llint_op_wide16:
     nextInstructionWide16()
@@ -1462,16 +1506,16 @@ _llint_op_wide32:
     nextInstructionWide32()
 
 macro noWide(label)
-_llint_%label%_wide16:
+_%label%_wide16:
     crash()
 
-_llint_%label%_wide32:
+_%label%_wide32:
     crash()
 end
 
-noWide(op_wide16)
-noWide(op_wide32)
-noWide(op_enter)
+noWide(llint_op_wide16)
+noWide(llint_op_wide32)
+noWide(llint_op_enter)
 
 op(llint_program_prologue, macro ()
     prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
@@ -1969,4 +2013,30 @@ macro notSupported()
         # on Intel, which is 1 byte, and bkpt on ARMv7, which is 2 bytes.)
         break
     end
+end
+
+if WEBASSEMBLY
+
+entry(wasm, macro()
+    include InitWasm
+end)
+
+macro wasmScope()
+    # Wrap the script in a macro since it overwrites some of the LLInt macros,
+    # but we don't want to interfere with the LLInt opcodes
+    include WebAssembly
+end
+wasmScope()
+
+else
+
+# These need to be defined even when WebAssembly is disabled
+op(wasm_function_prologue, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_no_tls, macro ()
+    crash()
+end)
+
 end

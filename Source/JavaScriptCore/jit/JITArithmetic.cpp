@@ -29,6 +29,7 @@
 #include "JIT.h"
 
 #include "ArithProfile.h"
+#include "BytecodeGenerator.h"
 #include "CodeBlock.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"

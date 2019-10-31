@@ -27,6 +27,7 @@
 #include "LLIntSlowPaths.h"
 
 #include "ArrayConstructor.h"
+#include "BytecodeGenerator.h"
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
 #include "Error.h"

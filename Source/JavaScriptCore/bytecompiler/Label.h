@@ -28,44 +28,82 @@
 
 #pragma once
 
-#include "Instruction.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 #include <limits.h>
 
 namespace JSC {
-    class BytecodeGenerator;
-    class Label;
+    template<typename Traits>
+    class BytecodeGeneratorBase;
+    struct JSGeneratorTraits;
 
-    class BoundLabel {
+    template<typename Traits>
+    class GenericLabel;
+
+    template<typename Traits>
+    class GenericBoundLabel {
+        using BytecodeGenerator = BytecodeGeneratorBase<Traits>;
+        using Label = GenericLabel<Traits>;
+
     public:
-        BoundLabel()
+        GenericBoundLabel()
             : m_type(Offset)
             , m_generator(nullptr)
             , m_target(0)
         { }
 
-        explicit BoundLabel(int target)
+        explicit GenericBoundLabel(int target)
             : m_type(Offset)
             , m_generator(nullptr)
             , m_target(target)
         { }
 
-        BoundLabel(BytecodeGenerator* generator, Label* label)
+        GenericBoundLabel(BytecodeGenerator* generator, Label* label)
             : m_type(GeneratorForward)
             , m_generator(generator)
             , m_label(label)
         { }
 
-        BoundLabel(BytecodeGenerator* generator, int offset)
+        GenericBoundLabel(BytecodeGenerator* generator, int offset)
             : m_type(GeneratorBackward)
             , m_generator(generator)
             , m_target(offset)
         { }
 
-        int target();
-        int saveTarget();
-        int commitTarget();
+        int target()
+        {
+            switch (m_type) {
+            case Offset:
+                return m_target;
+            case GeneratorBackward:
+                return m_target - m_generator->m_writer.position();
+            case GeneratorForward:
+                return 0;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+
+        int saveTarget()
+        {
+            if (m_type == GeneratorForward) {
+                m_savedTarget = m_generator->m_writer.position();
+                return 0;
+            }
+
+            m_savedTarget = target();
+            return m_savedTarget;
+        }
+
+        int commitTarget()
+        {
+            if (m_type == GeneratorForward) {
+                m_label->m_unresolvedJumps.append(m_savedTarget);
+                return 0;
+            }
+
+            return m_savedTarget;
+        }
 
         operator int() { return target(); }
 
@@ -85,12 +123,16 @@ namespace JSC {
         };
     };
 
-    class Label {
-    WTF_MAKE_NONCOPYABLE(Label);
-    public:
-        Label() = default;
+    template<typename Traits>
+    class GenericLabel {
+        WTF_MAKE_NONCOPYABLE(GenericLabel);
+        using BytecodeGenerator = BytecodeGeneratorBase<Traits>;
+        using BoundLabel = GenericBoundLabel<Traits>;
 
-        void setLocation(BytecodeGenerator&, unsigned);
+    public:
+        GenericLabel() = default;
+
+        void setLocation(BytecodeGenerator&, unsigned location);
 
         BoundLabel bind(BytecodeGenerator* generator)
         {
@@ -129,7 +171,7 @@ namespace JSC {
         bool isBound() const { return m_bound; }
 
     private:
-        friend class BoundLabel;
+        friend BoundLabel;
 
         typedef Vector<int, 8> JumpVector;
 
@@ -140,5 +182,17 @@ namespace JSC {
         mutable bool m_bound { false };
         mutable JumpVector m_unresolvedJumps;
     };
+
+    using Label = GenericLabel<JSGeneratorTraits>;
+    using BoundLabel = GenericBoundLabel<JSGeneratorTraits>;
+
+    namespace Wasm {
+    struct GeneratorTraits;
+    using Label = GenericLabel<Wasm::GeneratorTraits>;
+    }
+
+    // This cannot be declared in the Wasm namespace as it conflicts with the
+    // ruby Wasm namespace when referencing it from BytecodeList.rb
+    using WasmBoundLabel = GenericBoundLabel<Wasm::GeneratorTraits>;
 
 } // namespace JSC

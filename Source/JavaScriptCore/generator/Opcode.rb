@@ -29,6 +29,7 @@ class Opcode
     attr_reader :id
     attr_reader :args
     attr_reader :metadata
+    attr_reader :extras
 
     module Size
         Narrow = "OpcodeSize::Narrow"
@@ -44,9 +45,10 @@ class Opcode
         tid
     end
 
-    def initialize(section, name, args, metadata, metadata_initializers)
+    def initialize(section, name, extras, args, metadata, metadata_initializers)
         @section = section
         @name = name
+        @extras = extras || {}
         @metadata = Metadata.new metadata, metadata_initializers
         @args = args.map.with_index { |(arg_name, type), index| Argument.new arg_name, type, index + 1 } unless args.nil?
     end
@@ -87,8 +89,24 @@ class Opcode
         @args.map(&:name).unshift("").join(", ")
     end
 
+    def opcodeIDType
+      @section.is_wasm? ? :WasmOpcodeID : :OpcodeID
+    end
+
+    def wide16
+      @section.is_wasm? ? :wasm_wide16 : :op_wide16
+    end
+
+    def wide32
+      @section.is_wasm? ? :wasm_wide32 : :op_wide32
+    end
+
+    def traits
+      @section.is_wasm? ? "WasmOpcodeTraits" : "JSOpcodeTraits"
+    end
+
     def map_fields_with_size(prefix, size, &block)
-        args = [Argument.new("opcodeID", :OpcodeID, 0)]
+        args = [Argument.new("opcodeID", opcodeIDType, 0)]
         args += @args.dup if @args
         unless @metadata.empty?
             args << @metadata.emitter_local
@@ -111,88 +129,89 @@ EOF
     end
 
     def opcodeID
-        "static constexpr OpcodeID opcodeID = #{name};"
+        "static constexpr #{opcodeIDType} opcodeID = #{name};"
     end
 
     def emitter
-        op_wide16 = Argument.new("op_wide16", :OpcodeID, 0)
-        op_wide32 = Argument.new("op_wide32", :OpcodeID, 0)
+        op_wide16 = Argument.new(wide16, opcodeIDType, 0)
+        op_wide32 = Argument.new(wide32, opcodeIDType, 0)
         metadata_param = @metadata.empty? ? "" : ", #{@metadata.emitter_local.create_param}"
         metadata_arg = @metadata.empty? ? "" : ", #{@metadata.emitter_local.name}"
         <<-EOF.chomp
+    template<typename BytecodeGenerator>
     static void emit(BytecodeGenerator* gen#{typed_args})
     {
-        emitWithSmallestSizeRequirement<OpcodeSize::Narrow>(gen#{untyped_args});
+        emitWithSmallestSizeRequirement<OpcodeSize::Narrow, BytecodeGenerator>(gen#{untyped_args});
     }
 #{%{
-    template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
+    template<OpcodeSize __size, typename BytecodeGenerator, FitsAssertion shouldAssert = Assert>
     static bool emit(BytecodeGenerator* gen#{typed_args})
     {#{@metadata.create_emitter_local}
-        return emit<size, shouldAssert>(gen#{untyped_args}#{metadata_arg});
+        return emit<__size, BytecodeGenerator, shouldAssert>(gen#{untyped_args}#{metadata_arg});
     }
 
-    template<OpcodeSize size>
+    template<OpcodeSize __size, typename BytecodeGenerator>
     static bool checkWithoutMetadataID(BytecodeGenerator* gen#{typed_args})
     {
         decltype(gen->addMetadataFor(opcodeID)) __metadataID { };
-        return checkImpl<size>(gen#{untyped_args}#{metadata_arg});
+        return checkImpl<__size, BytecodeGenerator>(gen#{untyped_args}#{metadata_arg});
     }
 } unless @metadata.empty?}
-    template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
+    template<OpcodeSize __size, typename BytecodeGenerator, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
     static bool emit(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
-        bool didEmit = emitImpl<size, recordOpcode>(gen#{untyped_args}#{metadata_arg});
+        bool didEmit = emitImpl<__size, recordOpcode, BytecodeGenerator>(gen#{untyped_args}#{metadata_arg});
         if (shouldAssert == Assert)
             ASSERT(didEmit);
         return didEmit;
     }
 
-    template<OpcodeSize size>
+    template<OpcodeSize __size, typename BytecodeGenerator>
     static void emitWithSmallestSizeRequirement(BytecodeGenerator* gen#{typed_args})
     {
         #{@metadata.create_emitter_local}
-        if (static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Narrow)) {
-            if (emit<OpcodeSize::Narrow, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
+        if (static_cast<unsigned>(__size) <= static_cast<unsigned>(OpcodeSize::Narrow)) {
+            if (emit<OpcodeSize::Narrow, BytecodeGenerator, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
                 return;
         }
-        if (static_cast<unsigned>(size) <= static_cast<unsigned>(OpcodeSize::Wide16)) {
-            if (emit<OpcodeSize::Wide16, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
+        if (static_cast<unsigned>(__size) <= static_cast<unsigned>(OpcodeSize::Wide16)) {
+            if (emit<OpcodeSize::Wide16, BytecodeGenerator, NoAssert, true>(gen#{untyped_args}#{metadata_arg}))
                 return;
         }
-        emit<OpcodeSize::Wide32, Assert, true>(gen#{untyped_args}#{metadata_arg});
+        emit<OpcodeSize::Wide32, BytecodeGenerator, Assert, true>(gen#{untyped_args}#{metadata_arg});
     }
 
 private:
-    template<OpcodeSize size>
+    template<OpcodeSize __size, typename BytecodeGenerator>
     static bool checkImpl(BytecodeGenerator* gen#{typed_reference_args}#{metadata_param})
     {
         UNUSED_PARAM(gen);
 #if OS(WINDOWS) && ENABLE(C_LOOP)
         // FIXME: Disable wide16 optimization for Windows CLoop
         // https://bugs.webkit.org/show_bug.cgi?id=198283
-        if (size == OpcodeSize::Wide16)
+        if (__size == OpcodeSize::Wide16)
             return false;
 #endif
-        return #{map_fields_with_size("", "size", &:fits_check).join "\n            && "}
-            && (size == OpcodeSize::Wide16 ? #{op_wide16.fits_check(Size::Narrow)} : true)
-            && (size == OpcodeSize::Wide32 ? #{op_wide32.fits_check(Size::Narrow)} : true);
+        return #{map_fields_with_size("", "__size", &:fits_check).join "\n            && "}
+            && (__size == OpcodeSize::Wide16 ? #{op_wide16.fits_check(Size::Narrow)} : true)
+            && (__size == OpcodeSize::Wide32 ? #{op_wide32.fits_check(Size::Narrow)} : true);
     }
 
-    template<OpcodeSize size, bool recordOpcode>
+    template<OpcodeSize __size, bool recordOpcode, typename BytecodeGenerator>
     static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
-        if (size == OpcodeSize::Wide16)
+        if (__size == OpcodeSize::Wide16)
             gen->alignWideOpcode16();
-        else if (size == OpcodeSize::Wide32)
+        else if (__size == OpcodeSize::Wide32)
             gen->alignWideOpcode32();
-        if (checkImpl<size>(gen#{untyped_args}#{metadata_arg})) {
+        if (checkImpl<__size>(gen#{untyped_args}#{metadata_arg})) {
             if (recordOpcode)
                 gen->recordOpcode(opcodeID);
-            if (size == OpcodeSize::Wide16)
+            if (__size == OpcodeSize::Wide16)
                 #{op_wide16.fits_write Size::Narrow}
-            else if (size == OpcodeSize::Wide32)
+            else if (__size == OpcodeSize::Wide32)
                 #{op_wide32.fits_write Size::Narrow}
-#{map_fields_with_size("            ", "size", &:fits_write).join "\n"}
+#{map_fields_with_size("            ", "__size", &:fits_write).join "\n"}
             return true;
         }
         return false;
@@ -243,9 +262,9 @@ EOF
 
     static #{capitalized_name} decode(const uint8_t* stream)
     {
-        if (*stream == op_wide32) 
+        if (*stream == #{wide32})
             return { bitwise_cast<const uint32_t*>(stream + 1) };
-        if (*stream == op_wide16) 
+        if (*stream == #{wide16})
             return { bitwise_cast<const uint16_t*>(stream + 1) };
         return { stream };
     }
@@ -253,7 +272,7 @@ EOF
     end
 
     def setters
-        print_args(&:setter)
+        print_args { |a| a.setter(traits) }
     end
 
     def metadata_struct_and_accessor
@@ -297,20 +316,24 @@ EOF
         "#{@section.config[:op_prefix]}#{@name}"
     end
 
+    def unprefixed_name
+      @name
+    end
+
     def length
         1 + (@args.nil? ? 0 : @args.length) + (@metadata.empty? ? 0 : 1)
     end
 
-    def self.dump_bytecode(opcodes)
+    def self.dump_bytecode(name, opcode_traits, opcodes)
         <<-EOF.chomp
-template<typename Block>
-static void dumpBytecode(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
+template<typename BytecodeDumper>
+static void dump#{name}(BytecodeDumper* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
 {
-    switch (__instruction->opcodeID()) {
+    switch (__instruction->opcodeID<#{opcode_traits}>()) {
 #{opcodes.map { |op|
         <<-EOF.chomp
     case #{op.name}:
-        __instruction->as<#{op.capitalized_name}>().dump(dumper, __location, __instruction->sizeShiftAmount());
+        __instruction->as<#{op.capitalized_name}, #{opcode_traits}>().dump(dumper, __location, __instruction->sizeShiftAmount<#{opcode_traits}>());
         break;
 EOF
     }.join "\n"}
