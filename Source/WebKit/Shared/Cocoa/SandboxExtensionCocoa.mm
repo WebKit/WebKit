@@ -92,9 +92,9 @@ private:
         case SandboxExtension::Type::ReadWrite:
             return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, 0);
         case SandboxExtension::Type::Mach:
-#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             if (!auditToken)
-                return nullptr;
+                return sandbox_extension_issue_mach("com.apple.webkit.extension.mach"_s, path, 0);
+#if HAVE(SANDBOX_ISSUE_MACH_EXTENSION_TO_PROCESS_BY_AUDIT_TOKEN)
             return sandbox_extension_issue_mach_to_process("com.apple.webkit.extension.mach"_s, path, 0, *auditToken);
 #else
             UNUSED_PARAM(auditToken);
@@ -336,7 +336,7 @@ bool SandboxExtension::createHandleForGenericExtension(const String& extensionCl
     return true;
 }
 
-bool SandboxExtension::createHandleForMachLookupByAuditToken(const String& service, audit_token_t auditToken, Handle& handle)
+bool SandboxExtension::createHandleForMachLookup(const String& service, Optional<audit_token_t> auditToken, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
     

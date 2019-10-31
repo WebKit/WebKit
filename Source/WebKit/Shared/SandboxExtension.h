@@ -105,7 +105,7 @@ public:
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
 #if HAVE(AUDIT_TOKEN)
-    static bool createHandleForMachLookupByAuditToken(const String& service, audit_token_t, Handle&);
+    static bool createHandleForMachLookup(const String& service, Optional<audit_token_t>, Handle&);
     static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
 #endif
     ~SandboxExtension();

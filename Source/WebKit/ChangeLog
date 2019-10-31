@@ -1,5 +1,27 @@
 2019-10-30  Per Arne Vollan  <pvollan@apple.com>
 
+        It should be possible to create a mach sandbox extension for the WebContent process before the audit token is known
+        https://bugs.webkit.org/show_bug.cgi?id=203618
+
+        Reviewed by Brent Fulgham.
+
+        Currently, we are only able to create a mach sandbox extension for the WebContent process if we know its
+        audit token. It should be possible to create a mach extension without the audit token, since this is
+        needed when we want to create extensions before the PID or audit token is known. These extensions are
+        typically sent in the WebProcess creation parameters.
+        
+        No new tests, this is not a behavior change, but a patch in preparation for future patches.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        (WebKit::SandboxExtension::createHandleForMachLookup):
+        (WebKit::SandboxExtension::createHandleForMachLookupByAuditToken): Deleted.
+        * Shared/SandboxExtension.h:
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+
+2019-10-30  Per Arne Vollan  <pvollan@apple.com>
+
         Fix some sysctl read violations in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=203632
 
