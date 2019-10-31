@@ -171,19 +171,19 @@ SecurityOrigin::SecurityOrigin()
 {
 }
 
-SecurityOrigin::SecurityOrigin(const SecurityOrigin& other)
-    : m_data { other.m_data.isolatedCopy() }
-    , m_domain { other.m_domain.isolatedCopy() }
-    , m_filePath { other.m_filePath.isolatedCopy() }
-    , m_isUnique { other.m_isUnique }
-    , m_universalAccess { other.m_universalAccess }
-    , m_domainWasSetInDOM { other.m_domainWasSetInDOM }
-    , m_canLoadLocalResources { other.m_canLoadLocalResources }
-    , m_storageBlockingPolicy { other.m_storageBlockingPolicy }
-    , m_enforcesFilePathSeparation { other.m_enforcesFilePathSeparation }
-    , m_needsStorageAccessFromFileURLsQuirk { other.m_needsStorageAccessFromFileURLsQuirk }
-    , m_isPotentiallyTrustworthy { other.m_isPotentiallyTrustworthy }
-    , m_isLocal { other.m_isLocal }
+SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
+    : m_data { other->m_data.isolatedCopy() }
+    , m_domain { other->m_domain.isolatedCopy() }
+    , m_filePath { other->m_filePath.isolatedCopy() }
+    , m_isUnique { other->m_isUnique }
+    , m_universalAccess { other->m_universalAccess }
+    , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
+    , m_canLoadLocalResources { other->m_canLoadLocalResources }
+    , m_storageBlockingPolicy { other->m_storageBlockingPolicy }
+    , m_enforcesFilePathSeparation { other->m_enforcesFilePathSeparation }
+    , m_needsStorageAccessFromFileURLsQuirk { other->m_needsStorageAccessFromFileURLsQuirk }
+    , m_isPotentiallyTrustworthy { other->m_isPotentiallyTrustworthy }
+    , m_isLocal { other->m_isLocal }
 {
 }
 
@@ -218,7 +218,7 @@ Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL&
 
 Ref<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 {
-    return adoptRef(*new SecurityOrigin(*this));
+    return adoptRef(*new SecurityOrigin(this));
 }
 
 void SecurityOrigin::setDomainFromDOM(const String& newDomain)

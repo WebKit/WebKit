@@ -221,7 +221,7 @@ public:
 private:
     SecurityOrigin();
     explicit SecurityOrigin(const URL&);
-    explicit SecurityOrigin(const SecurityOrigin&);
+    explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin&) const;

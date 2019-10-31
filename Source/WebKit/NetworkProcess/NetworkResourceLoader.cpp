@@ -410,8 +410,11 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
         return true;
     case XFrameOptionsSameOrigin: {
         auto origin = SecurityOrigin::create(url);
+        auto topFrameOrigin = m_parameters.frameAncestorOrigins.last();
+        if (!origin->isSameSchemeHostPort(*topFrameOrigin))
+            return true;
         for (auto& ancestorOrigin : m_parameters.frameAncestorOrigins) {
-            if (!origin->isSameSchemeHostPort(ancestorOrigin.securityOrigin()))
+            if (!origin->isSameSchemeHostPort(*ancestorOrigin))
                 return true;
         }
         return false;

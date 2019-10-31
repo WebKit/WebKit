@@ -1,3 +1,16 @@
+2019-10-31  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r251861.
+
+        Caused 50+ Layout Test Crashes
+
+        Reverted changeset:
+
+        "Use SecurityOriginData in NetworkProcess where possible
+        without other changes"
+        https://bugs.webkit.org/show_bug.cgi?id=203615
+        https://trac.webkit.org/changeset/251861
+
 2019-10-31  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251854.
