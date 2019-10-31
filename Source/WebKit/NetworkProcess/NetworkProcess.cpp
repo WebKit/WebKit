@@ -2740,17 +2740,4 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
     });
 }
 
-const Seconds NetworkProcess::defaultServiceWorkerFetchTimeout = 70_s;
-void NetworkProcess::setServiceWorkerFetchTimeoutForTesting(Seconds timeout, CompletionHandler<void()>&& completionHandler)
-{
-    m_serviceWorkerFetchTimeout = timeout;
-    completionHandler();
-}
-
-void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&& completionHandler)
-{
-    m_serviceWorkerFetchTimeout = defaultServiceWorkerFetchTimeout;
-    completionHandler();
-}
-
 } // namespace WebKit

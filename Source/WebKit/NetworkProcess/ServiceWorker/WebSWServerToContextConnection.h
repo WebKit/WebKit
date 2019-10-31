@@ -48,7 +48,6 @@ class SessionID;
 namespace WebKit {
 
 class NetworkProcess;
-class WebSWServerConnection;
 
 class WebSWServerToContextConnection : public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
@@ -66,7 +65,7 @@ public:
 
     void terminate();
 
-    void startFetch(PAL::SessionID, WebSWServerConnection&, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&, const String&);
+    void startFetch(PAL::SessionID, Ref<IPC::Connection>&&, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&, const String&);
     void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
     void continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
 
@@ -74,8 +73,6 @@ public:
 
     void setThrottleState(bool isThrottleable);
     bool isThrottleable() const { return m_isThrottleable; }
-
-    void fetchTaskTimedOut(ServiceWorkerFetchTask&);
 
 private:
     WebSWServerToContextConnection(NetworkProcess&, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);

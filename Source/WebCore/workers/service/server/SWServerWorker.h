@@ -112,9 +112,6 @@ public:
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 
-    void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
-    bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
-
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
@@ -133,7 +130,6 @@ private:
     bool m_isSkipWaitingFlagSet { false };
     Vector<Function<void(bool)>> m_whenActivatedHandlers;
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
-    bool m_hasTimedOutAnyFetchTasks { false };
 };
 
 } // namespace WebCore

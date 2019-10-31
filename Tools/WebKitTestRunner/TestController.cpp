@@ -3608,11 +3608,6 @@ void TestController::sendDisplayConfigurationChangedMessageForTesting()
     WKSendDisplayConfigurationChangedMessageForTesting(platformContext());
 }
 
-void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
-{
-    WKContextSetServiceWorkerFetchTimeoutForTesting(platformContext(), seconds);
-}
-
 struct AdClickAttributionStringResultCallbackContext {
     explicit AdClickAttributionStringResultCallbackContext(TestController& controller)
         : testController(controller)

@@ -345,10 +345,6 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
-    void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
-    void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
-    Seconds serviceWorkerFetchTimeout() const { return m_serviceWorkerFetchTimeout; }
-
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -571,9 +567,6 @@ private:
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
 
     HashMap<IPC::Connection::UniqueID, PAL::SessionID> m_sessionByConnection;
-
-    static const Seconds defaultServiceWorkerFetchTimeout;
-    Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 };
 
 } // namespace WebKit
