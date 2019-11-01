@@ -178,6 +178,9 @@ WI.SourceCode = class SourceCode extends WI.Object
 
     revisionContentDidChange(revision)
     {
+        if (revision === this._originalRevision)
+            this._initializeCurrentRevisionIfNeeded();
+
         if (this._ignoreRevisionContentDidChangeEvent)
             return;
 
@@ -224,7 +227,7 @@ WI.SourceCode = class SourceCode extends WI.Object
     _initializeCurrentRevisionIfNeeded()
     {
         if (this._currentRevision === this._originalRevision)
-            this.currentRevision = this._originalRevision.copy();
+            this._currentRevision = this._originalRevision.copy();
     }
 
     _processContent(parameters)
@@ -248,8 +251,6 @@ WI.SourceCode = class SourceCode extends WI.Object
             blobContent: content instanceof Blob ? content : null,
         });
         this._ignoreRevisionContentDidChangeEvent = false;
-
-        this._initializeCurrentRevisionIfNeeded();
 
         // FIXME: Returning the content in this promise is misleading. It may not be current content
         // now, and it may become out-dated later on. We should drop content from this promise

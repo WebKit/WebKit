@@ -1,5 +1,22 @@
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r249831): content view is empty if a breakpoint is hit in the main resource
+        https://bugs.webkit.org/show_bug.cgi?id=203722
+        <rdar://problem/56802409>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype.get currentRevision):
+        (WI.SourceCode.prototype.revisionContentDidChange):
+        (WI.SourceCode.prototype._initializeCurrentRevisionIfNeeded):
+        (WI.SourceCode.prototype._processContent):
+        Don't wait to lazily clone the `originalRevision` and use it as the `currentRevision`. Some
+        listeners expect the `currentRevision` to already be set by the time this happens, so as
+        soon as the original revision's content is changed, clone it into the `currentRevision`.
+
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: tab isn't visible after removal of Debugger Tab and Resources Tab
         https://bugs.webkit.org/show_bug.cgi?id=203719
         <rdar://problem/56802389>
