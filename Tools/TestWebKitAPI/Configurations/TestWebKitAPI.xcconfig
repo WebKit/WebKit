@@ -33,8 +33,9 @@ WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(WK_PRIVATE_FRAMEWORKS_DIR_iphone_$(USE_INTERNAL_SDK));
 WK_PRIVATE_FRAMEWORKS_DIR_iphone_ = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
 
-FRAMEWORK_SEARCH_PATHS[sdk=mac*] = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
-FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR);
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
+FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR);
 
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
@@ -47,15 +48,14 @@ WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
-WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
-OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
-OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework WebCore -framework CoreGraphics -framework UIKit -framework MobileCoreServices;
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework WebCore -framework CoreGraphics -framework UIKit -framework MobileCoreServices;
 
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 

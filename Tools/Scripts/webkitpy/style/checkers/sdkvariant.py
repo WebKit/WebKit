@@ -49,6 +49,7 @@ SDK_VARIANT_FILES = [
     "Source/WebCore/Configurations/SDKVariant.xcconfig",
     "Source/WebCore/PAL/Configurations/SDKVariant.xcconfig",
     "Source/ThirdParty/ANGLE/Configurations/SDKVariant.xcconfig",
+    "Source/ThirdParty/gtest/xcode/Config/SDKVariant.xcconfig",
     "Source/ThirdParty/libwebrtc/Configurations/SDKVariant.xcconfig",
 ]
 

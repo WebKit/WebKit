@@ -145,7 +145,7 @@ TEST(Challenge, SecIdentity)
 
 @end
 
-#if HAVE(SEC_KEY_PROXY)
+#if HAVE(SEC_KEY_PROXY) && HAVE(SSL)
 TEST(Challenge, ClientCertificate)
 {
     using namespace TestWebKitAPI;

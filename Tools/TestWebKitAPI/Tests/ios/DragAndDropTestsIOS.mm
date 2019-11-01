@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "ClassMethodSwizzler.h"
 #import "DragAndDropSimulator.h"
@@ -2138,4 +2138,4 @@ TEST(DragAndDropTests, DropPreviewForImageInEditableArea)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

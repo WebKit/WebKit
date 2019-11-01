@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DragAndDropSimulator.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -924,4 +924,4 @@ IGNORE_WARNINGS_END
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

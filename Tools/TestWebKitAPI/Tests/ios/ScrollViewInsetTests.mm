@@ -34,7 +34,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 
 @interface AsyncPolicyDelegateForInsetTest : NSObject<WKNavigationDelegate> {
-    @public BOOL _navigationComplete;
+    @public bool _navigationComplete;
 }
 @property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
 @end
@@ -43,7 +43,7 @@
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
 {
-    _navigationComplete = YES;
+    _navigationComplete = true;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
@@ -178,7 +178,7 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyD
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
     [webView scrollView].contentInset = UIEdgeInsetsMake(400, 0, 0, 0);
     [webView setNavigationDelegate:delegate.get()];
-    delegate->_navigationComplete = NO;
+    delegate->_navigationComplete = false;
     NSURL *testResourceURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
     [webView loadHTMLString:veryTallDocumentMarkup baseURL:testResourceURL];
     Util::run(&delegate->_navigationComplete);

@@ -1,3 +1,13 @@
+2019-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Get TestWebKitAPI building
+        https://bugs.webkit.org/show_bug.cgi?id=203728
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile:
+        Descend into Tools/.
+
 2019-10-31  Alex Christensen  <achristensen@apple.com>
 
         Enable more features in Mac CMake build

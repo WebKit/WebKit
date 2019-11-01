@@ -16,6 +16,10 @@ ifeq (,$(DO_NOT_BUILD_IMAGE_DIFF))
 	MODULES += ImageDiff
 endif
 
+ifeq (iosmac,$(SDK_VARIANT))
+	MODULES = ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+endif
+
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
 	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done

@@ -1,3 +1,45 @@
+2019-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Get TestWebKitAPI building
+        https://bugs.webkit.org/show_bug.cgi?id=203728
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile:
+        Only build gtest and TestWebKitAPI for macCatalyst.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        Make use of WK_COCOA_TOUCH instead of SDK conditionals.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        Fix some #ifdefs for macCatalyst.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollToRevealSelection.mm:
+        (-[LegacyLoadingDelegate webViewDidFinishLoad:]):
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (-[AsyncPolicyDelegateForInsetTest webView:didFinishNavigation:]):
+        (TestWebKitAPI::TEST):
+        Util::runUntil wants a bool, not a BOOL.
+
+        * TestWebKitAPI/config.h:
+        Import WebKitLegacy.h after WebKit.h. Traditionally WebKit.h includes
+        WebKitLegacy.h, except in macCatalyst. Many tests depend on being able
+        to get WebKitLegacy.h this way.
+
+        * Scripts/webkitpy/style/checkers/sdkvariant.py:
+
+        * Scripts/webkitpy/port/factory.py:
+        * Scripts/webkitpy/port/mac.py:
+        Add a MacCatalyst port behind --maccatalyst, and do the bare minimum
+        required to get it working and finding the right binaries.
+        It inherits from Mac instead of iOS because for the purposes of
+        finding and running binaries, dealing with I/O, etc., these are
+        100% bona fide macOS products.
+
 2019-11-01  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Improve summary string when there are flaky failures in API tests

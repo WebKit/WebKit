@@ -68,6 +68,9 @@ def platform_options(use_globs=False):
         optparse.make_option('--ftw', action='store_const', dest='platform',
             const=('ftw'),
             help=('Alias for --platform=ftw')),
+        optparse.make_option('--maccatalyst', action='store_const', dest='platform',
+            const=('maccatalyst'),
+            help=('Alias for --platform=maccatalyst')),
         ] + (config.apple_additions().platform_options() if config.apple_additions() else [])
 
 
@@ -105,6 +108,7 @@ class PortFactory(object):
         'watch_simulator.WatchSimulatorPort',
         'watch_device.WatchDevicePort',
         'jsc_only.JscOnlyPort',
+        'mac.MacCatalystPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
         'test.TestPort',
