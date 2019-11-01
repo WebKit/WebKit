@@ -1800,10 +1800,7 @@ IsLoggedInAPIEnabled:
 
 PictureInPictureAPIEnabled:
   type: bool
-  defaultValue: false
-  humanReadableName: "Picture-in-Picture API"
-  humanReadableDescription: "Enable Picture-in-Picture API support"
-  category: experimental
+  defaultValue: true
   condition: ENABLE(PICTURE_IN_PICTURE_API)
 
 RemotePlaybackEnabled:
