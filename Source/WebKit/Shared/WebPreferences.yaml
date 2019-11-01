@@ -1466,6 +1466,15 @@ CSSShadowPartsEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+GenericCueAPIEnabled:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(VIDEO_TRACK)
+  humanReadableName: "Generic Text Track Cue API"
+  humanReadableDescription: "Enable Generic Text Track Cue API"
+  category: experimental
+  webcoreName: genericCueAPIEnabled
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

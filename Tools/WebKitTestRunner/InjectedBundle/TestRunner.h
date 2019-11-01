@@ -130,6 +130,7 @@ public:
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
     void setEncryptedMediaAPIEnabled(bool);
     void setPictureInPictureAPIEnabled(bool);
+    void setGenericCueAPIEnabled(bool);
     void setMediaDevicesEnabled(bool);
     void setWebRTCMDNSICECandidatesEnabled(bool);
     void setCustomUserAgent(JSStringRef);

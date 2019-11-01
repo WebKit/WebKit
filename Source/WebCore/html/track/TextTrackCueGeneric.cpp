@@ -229,7 +229,7 @@ bool TextTrackCueGeneric::isEqual(const TextTrackCue& cue, TextTrackCue::CueMatc
     if (!TextTrackCue::isEqual(cue, match))
         return false;
 
-    if (cue.cueType() != TextTrackCue::Generic)
+    if (cue.cueType() != TextTrackCue::ConvertedToWebVTT)
         return false;
 
     return cueContentsMatch(cue);
@@ -249,7 +249,7 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
     if (VTTCue::isOrderedBefore(that))
         return true;
 
-    if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
+    if (that->cueType() == ConvertedToWebVTT && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         std::pair<double, double> thisPosition = getPositionCoordinates();
         std::pair<double, double> thatPosition = toVTTCue(that)->getPositionCoordinates();
@@ -261,14 +261,14 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 
 bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
 {
-    if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
+    if (that->cueType() == ConvertedToWebVTT && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         std::pair<double, double> thisPosition = getPositionCoordinates();
         std::pair<double, double> thatPosition = toVTTCue(that)->getPositionCoordinates();
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
     
-    if (that->cueType() == Generic)
+    if (that->cueType() == ConvertedToWebVTT)
         return startTime() > that->startTime();
     
     return VTTCue::isOrderedBefore(that);

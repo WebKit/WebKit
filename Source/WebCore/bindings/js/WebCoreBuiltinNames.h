@@ -217,6 +217,7 @@ namespace WebCore {
     macro(StaticRange) \
     macro(StylePropertyMapReadOnly) \
     macro(StylePropertyMap) \
+    macro(TextTrackCue) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VRDisplay) \

@@ -237,11 +237,8 @@ void TextTrack::setMode(Mode mode)
         m_client->textTrackRemoveCues(*this, *m_cues);
 
     if (mode != Mode::Showing && m_cues) {
-        for (size_t i = 0; i < m_cues->length(); ++i) {
-            RefPtr<TextTrackCue> cue = m_cues->item(i);
-            if (cue->isRenderable())
-                toVTTCue(cue.get())->removeDisplayTree();
-        }
+        for (size_t i = 0; i < m_cues->length(); ++i)
+            m_cues->item(i)->removeDisplayTree();
     }
 
     m_mode = mode;

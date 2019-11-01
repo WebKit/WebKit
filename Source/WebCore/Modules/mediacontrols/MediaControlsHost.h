@@ -72,7 +72,8 @@ public:
     bool shouldForceControlsDisplay() const;
     void setPreparedToReturnVideoLayerToInline(bool);
 
-    void updateCaptionDisplaySizes();
+    enum class ForceUpdate { Yes, No };
+    void updateCaptionDisplaySizes(ForceUpdate force = ForceUpdate::No);
     void enteredFullscreen();
     void exitedFullscreen();
 

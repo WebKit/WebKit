@@ -2435,7 +2435,7 @@ sub GenerateDictionaryImplementationContent
                 my $needsRuntimeCheck = NeedsRuntimeCheck($dictionary, $member);
                 my $indent = "";
                 if ($needsRuntimeCheck) {
-                    my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($dictionary, $member, "true");
+                    my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($dictionary, $member, "&globalObject");
                     $result .= "    if (${runtimeEnableConditionalString}) {\n";
                     $indent = "    ";
                 }
@@ -3734,7 +3734,7 @@ sub GenerateRuntimeEnableConditionalString
     my ($interface, $context, $globalObjectIsParam) = @_;
 
     my @conjuncts;
-    my $globalObjectPtr = $globalObjectIsParam ? "&globalObject" : "globalObject()";
+    my $globalObjectPtr = $globalObjectIsParam ? $globalObjectIsParam : "globalObject()";
     
     if ($context->extendedAttributes->{SecureContext}) {
         AddToImplIncludes("ScriptExecutionContext.h");
@@ -3821,6 +3821,15 @@ sub GenerateRuntimeEnableConditionalString
         my $contextRef = "*jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()";
         my $name = $context->name;
         push(@conjuncts,  "${name}::enabledForContext(" . $contextRef . ")");
+    }
+
+    if ($context->extendedAttributes->{ConstructorEnabledBySetting}) {
+        assert("Must specify value for ConstructorEnabledBySetting.") if $context->extendedAttributes->{ConstructorEnabledBySetting} eq "VALUE_IS_MISSING";
+
+        my @settings = split(/&/, $context->extendedAttributes->{ConstructorEnabledBySetting});
+        foreach my $setting (@settings) {
+            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($setting) . "Enabled()");
+        }
     }
 
     my $result = join(" && ", @conjuncts);
@@ -7261,6 +7270,14 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(callFrame->jsCallee());\n");
             push(@$outputArray, "    ASSERT(castedThis);\n");
 
+             if ($interface->extendedAttributes->{ConstructorEnabledBySetting}) {
+                 my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operation, "lexicalGlobalObject");
+                 push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
+                 push(@$outputArray, "        throwTypeError(lexicalGlobalObject, throwScope, \"Illegal constructor\"_s);\n");
+                 push(@$outputArray, "        return JSValue::encode(jsNull());\n");
+                 push(@$outputArray, "    }\n");
+             }
+
             GenerateArgumentsCountCheck($outputArray, $operation, $interface, "    ");
 
             my $functionImplementationName = $generatingNamedConstructor ? "createForJSConstructor" : "create";
@@ -7394,7 +7411,16 @@ sub GenerateConstructorHelperMethods
     }
 
     push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, String(\"$visibleInterfaceName\"_s)), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n") if defined $leastConstructorLength;
+
+    if ($interface->extendedAttributes->{ConstructorEnabledBySetting}) {
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");
+        push(@$outputArray, "    int constructorLength = ${leastConstructorLength};\n");
+        push(@$outputArray, "    if (!${runtimeEnableConditionalString})\n");
+        push(@$outputArray, "        constructorLength = 0;\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(constructorLength), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    } else {
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    }
 
     my $classForThis = "${className}::info()";
     if ($interface->isCallback) {
@@ -7407,7 +7433,7 @@ sub GenerateConstructorHelperMethods
     foreach my $operationOrAttribute (@runtimeEnabledProperties) {
         my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
         push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "true");
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "&globalObject");
         my $name = $operationOrAttribute->name;
         push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
         push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");

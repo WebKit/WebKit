@@ -261,6 +261,7 @@
 #define WebKitLegacyEncryptedMediaAPIEnabledKey @"WebKitLegacyEncryptedMediaAPIEnabled"
 #define WebKitEncryptedMediaAPIEnabledKey @"WebKitEncryptedMediaAPIEnabled"
 #define WebKitPictureInPictureAPIEnabledKey @"WebKitPictureInPictureAPIEnabled"
+#define WebKitGenericCueAPIEnabledKey @"WebKitGenericCueAPIEnabled"
 #define WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey @"WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallback"
 #define WebKitInspectorAdditionsEnabledPreferenceKey @"WebKitInspectorAdditionsEnabled"
 #define WebKitAccessibilityObjectModelEnabledPreferenceKey @"WebKitAccessibilityObjectModelEnabled"

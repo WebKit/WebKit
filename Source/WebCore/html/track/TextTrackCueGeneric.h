@@ -82,7 +82,7 @@ private:
     bool cueContentsMatch(const TextTrackCue&) const final;
     bool doesExtendCue(const TextTrackCue&) const final;
 
-    CueType cueType() const final { return Generic; }
+    CueType cueType() const final { return ConvertedToWebVTT; }
 
     Color m_foregroundColor;
     Color m_backgroundColor;
@@ -111,7 +111,7 @@ struct LogArgument<WebCore::TextTrackCueGeneric> {
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrackCueGeneric)
-static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::Generic; }
+static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::ConvertedToWebVTT; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

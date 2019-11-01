@@ -490,6 +490,13 @@ void TestRunner::setPictureInPictureAPIEnabled(bool enabled)
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
+void TestRunner::setGenericCueAPIEnabled(bool enabled)
+{
+    WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("WebKitGenericCueAPIEnabled"));
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
+}
+
 void TestRunner::setAllowsAnySSLCertificate(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();

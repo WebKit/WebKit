@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -467,6 +467,8 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 
+class VTTCue;
+
 class MediaControlTextTrackContainerElement final
     : public MediaControlDivElement
     , public TextTrackRepresentationClient
@@ -478,8 +480,10 @@ class MediaControlTextTrackContainerElement final
 public:
     static Ref<MediaControlTextTrackContainerElement> create(Document&);
 
+    enum class ForceUpdate { Yes, No };
+    void updateSizes(ForceUpdate force = ForceUpdate::No);
+
     void updateDisplay();
-    void updateSizes(bool forceUpdate = false);
     void enteredFullscreen();
     void exitedFullscreen();
 
@@ -487,6 +491,7 @@ private:
     void updateTimerFired();
     void updateActiveCuesFontSize();
     void updateTextStrokeStyle();
+    void processActiveVTTCue(VTTCue&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;

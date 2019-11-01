@@ -67,12 +67,14 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<T
     case TextTrackCue::Data:
         return createWrapper<DataCue>(globalObject, WTFMove(cue));
     case TextTrackCue::WebVTT:
-    case TextTrackCue::Generic:
+    case TextTrackCue::ConvertedToWebVTT:
         return createWrapper<VTTCue>(globalObject, WTFMove(cue));
-    default:
-        ASSERT_NOT_REACHED();
-        return jsNull();
+    case TextTrackCue::Generic:
+        return createWrapper<TextTrackCue>(globalObject, WTFMove(cue));
     }
+
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TextTrackCue& cue)

@@ -3204,6 +3204,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setPictureInPictureAPIEnabled(preferences.pictureInPictureAPIEnabled);
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    settings.setGenericCueAPIEnabled(preferences.genericCueAPIEnabled);
+#endif
+
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);
 
     settings.setAllowMediaContentTypesRequiringHardwareSupportAsFallback(preferences.allowMediaContentTypesRequiringHardwareSupportAsFallback);

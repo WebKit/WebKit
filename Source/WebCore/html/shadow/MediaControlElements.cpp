@@ -58,6 +58,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
 #include <wtf/IsoMallocInlines.h>
@@ -1125,14 +1126,13 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // 1. If the media element is an audio element, or is another playback
     // mechanism with no rendering area, abort these steps. There is nothing to
     // render.
-    if (!mediaElement || !mediaElement->isVideo())
+    if (!mediaElement || !mediaElement->isVideo() || m_videoDisplaySize.size().isEmpty())
         return;
 
     // 2. Let video be the media element or other playback mechanism.
     HTMLVideoElement& video = downcast<HTMLVideoElement>(*mediaElement);
 
     // 3. Let output be an empty list of absolutely positioned CSS block boxes.
-    Vector<RefPtr<HTMLDivElement>> output;
 
     // 4. If the user agent is exposing a user interface for video, add to
     // output one or more completely transparent positioned CSS block boxes that
@@ -1173,17 +1173,12 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        if (!is<VTTCue>(cueInterval.data()))
-            return true;
-
-        Ref<VTTCue> cue = downcast<VTTCue>(*cueInterval.data());
-
-        return !cue->isRenderable()
-            || !cue->track()
+        RefPtr<TextTrackCue> cue = cueInterval.data();
+        return !cue->track()
             || !cue->track()->isRendered()
             || cue->track()->mode() == TextTrack::Mode::Disabled
             || !cue->isActive()
-            || cue->text().isEmpty();
+            || !cue->isRenderable();
     });
 
     // Sort the active cues for the appropriate display order. For example, for roll-up
@@ -1191,37 +1186,20 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     // so that the newest captions appear at the bottom.
     std::sort(activeCues.begin(), activeCues.end(), &compareCueIntervalForDisplay);
 
-    // 10. For each text track cue cue in cues that has not yet had
-    // corresponding CSS boxes added to output, in text track cue order, run the
-    // following substeps:
-    for (size_t i = 0; i < activeCues.size(); ++i) {
-        if (!mediaController()->closedCaptionsVisible())
-            continue;
-
-        RefPtr<VTTCue> cue = downcast<VTTCue>(activeCues[i].data());
-
-        DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue ", i, ": \"", cue->text(), "\", start=", cue->startTime(), ", end=", cue->endTime(), ", line=", cue->line());
-        Ref<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
-        RefPtr<VTTRegion> region = cue->track()->regions()->getRegionById(cue->regionId());
-        if (!region) {
-            // If cue has an empty text track cue region identifier or there is no
-            // WebVTT region whose region identifier is identical to cue's text
-            // track cue region identifier, run the following substeps:
-            if (displayBox->hasChildNodes() && !contains(displayBox.ptr())) {
-                // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-                appendChild(displayBox);
-                cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
+    if (mediaController()->closedCaptionsVisible()) {
+        // 10. For each text track cue cue in cues that has not yet had
+        // corresponding CSS boxes added to output, in text track cue order, run the
+        // following substeps:
+        for (auto& interval : activeCues) {
+            auto cue = interval.data();
+            cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
+            if (is<VTTCue>(cue) || is<TextTrackCueGeneric>(cue))
+                processActiveVTTCue(*toVTTCue(cue));
+            else {
+                auto displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
+                if (displayBox->hasChildNodes() && !contains(displayBox.get()))
+                    appendChild(*displayBox);
             }
-        } else {
-            // Let region be the WebVTT region whose region identifier
-            // matches the text track cue region identifier of cue.
-            Ref<HTMLDivElement> regionNode = region->getDisplayTree();
-
-            // Append the region to the viewport, if it was not already.
-            if (!contains(regionNode.ptr()))
-                appendChild(region->getDisplayTree());
-
-            region->appendTextTrackCueBox(WTFMove(displayBox));
         }
     }
 
@@ -1232,6 +1210,33 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     } else {
         hide();
         clearTextTrackRepresentation();
+    }
+}
+
+void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
+{
+    ASSERT(is<VTTCue>(cue) || is<TextTrackCueGeneric>(cue));
+
+    DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime(), ", line=", cue.line());
+    Ref<TextTrackCueBox> displayBox = *cue.getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
+
+    if (auto region = cue.track()->regions()->getRegionById(cue.regionId())) {
+        // Let region be the WebVTT region whose region identifier
+        // matches the text track cue region identifier of cue.
+        Ref<HTMLDivElement> regionNode = region->getDisplayTree();
+
+        if (!contains(regionNode.ptr()))
+            appendChild(region->getDisplayTree());
+
+        region->appendTextTrackCueBox(WTFMove(displayBox));
+    } else {
+        // If cue has an empty text track cue region identifier or there is no
+        // WebVTT region whose region identifier is identical to cue's text
+        // track cue region identifier, run the following substeps:
+        if (displayBox->hasChildNodes() && !contains(displayBox.ptr())) {
+            // Note: the display tree of a cue is removed when the active flag of the cue is unset.
+            appendChild(displayBox);
+        }
     }
 }
 
@@ -1250,12 +1255,9 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
 
     for (auto& activeCue : mediaElement->currentlyActiveCues()) {
         RefPtr<TextTrackCue> cue = activeCue.data();
-        if (!cue->isRenderable())
-            continue;
-
-        toVTTCue(cue.get())->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
+        if (cue->isRenderable())
+            cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
     }
-
 }
 
 void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
@@ -1295,6 +1297,13 @@ void MediaControlTextTrackContainerElement::updateTimerFired()
     if (!document().page())
         return;
 
+    auto mediaElement = parentMediaElement(this);
+    if (!mediaElement)
+        return;
+
+    for (auto& activeCue : mediaElement->currentlyActiveCues())
+        activeCue.data()->recalculateStyles();
+
     if (m_textTrackRepresentation)
         updateStyleForTextTrackRepresentation();
 
@@ -1312,7 +1321,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
     if (!mediaElement->requiresTextTrackRepresentation()) {
         if (m_textTrackRepresentation) {
             clearTextTrackRepresentation();
-            updateSizes(true);
+            updateSizes(ForceUpdate::Yes);
         }
         return;
     }
@@ -1346,6 +1355,7 @@ void MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentatio
 {
     if (!m_updateTextTrackRepresentationStyle)
         return;
+
     m_updateTextTrackRepresentationStyle = false;
 
     if (m_textTrackRepresentation) {
@@ -1368,16 +1378,16 @@ void MediaControlTextTrackContainerElement::enteredFullscreen()
 {
     if (hasChildNodes())
         updateTextTrackRepresentation();
-    updateSizes(true);
+    updateSizes(ForceUpdate::Yes);
 }
 
 void MediaControlTextTrackContainerElement::exitedFullscreen()
 {
     clearTextTrackRepresentation();
-    updateSizes(true);
+    updateSizes(ForceUpdate::Yes);
 }
 
-void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
+void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
 {
     auto mediaElement = parentMediaElement(this);
     if (!mediaElement)
@@ -1398,7 +1408,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
         videoBox = downcast<RenderVideo>(*mediaElement->renderer()).videoBox();
     }
 
-    if (!forceUpdate && m_videoDisplaySize == videoBox)
+    if (force == ForceUpdate::No && m_videoDisplaySize == videoBox)
         return;
 
     m_videoDisplaySize = videoBox;

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -47,6 +47,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Text.h"
 #include "TextTrack.h"
+#include "TextTrackCueGeneric.h"
 #include "TextTrackCueList.h"
 #include "VTTRegionList.h"
 #include "VTTScanner.h"
@@ -59,8 +60,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
 WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCue);
+WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
 
 // This constant should correspond with the percentage returned by CaptionUserPreferences::captionFontSizeScaleAndImportance.
 static constexpr double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
@@ -126,31 +127,19 @@ static const String& verticalGrowingRightKeyword()
 
 // ----------------------------
 
-Ref<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
-{
-    VTTCueBox& cueBox = *new VTTCueBox(document, cue);
-    cueBox.setPseudo(VTTCueBox::vttCueBoxShadowPseudoId());
-    return adoptRef(cueBox);
-}
-
 VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
-    : HTMLElement(divTag, document)
-    , m_cue(makeWeakPtr(cue))
+    : TextTrackCueBox(document, cue)
 {
-    setPseudo(vttCueBoxShadowPseudoId());
-}
-
-VTTCue* VTTCueBox::getCue() const
-{
-    return m_cue.get();
 }
 
 void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 {
-    if (!m_cue)
+    auto textTrackCue = getCue();
+    if (!textTrackCue)
         return;
 
-    auto cue = makeRef(*m_cue);
+    ASSERT(is<VTTCue>(textTrackCue) || is<TextTrackCueGeneric>(textTrackCue));
+    auto cue = makeRef(*toVTTCue(textTrackCue));
 
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
     if (!cue->regionId().isEmpty()) {
@@ -242,24 +231,12 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     cue->element().setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
 }
 
-const AtomString& VTTCueBox::vttCueBoxShadowPseudoId()
-{
-    static NeverDestroyed<const AtomString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomString::ConstructFromLiteral);
-    return trackDisplayBoxShadowPseudoId;
-}
-
 RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderVTTCue>(*this, WTFMove(style));
 }
 
 // ----------------------------
-
-const AtomString& VTTCue::cueBackdropShadowPseudoId()
-{
-    static NeverDestroyed<const AtomString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomString::ConstructFromLiteral);
-    return cueBackdropShadowPseudoId;
-}
 
 Ref<VTTCue> VTTCue::create(ScriptExecutionContext& context, const WebVTTCueData& data)
 {
@@ -867,11 +844,11 @@ void VTTCue::updateDisplayTree(const MediaTime& movieTime)
     m_cueHighlightBox->appendChild(*referenceTree);
 }
 
-VTTCueBox& VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
+RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
 {
     Ref<VTTCueBox> displayTree = displayTreeInternal();
     if (!m_displayTreeShouldChange || !track()->isRendered())
-        return displayTree.get();
+        return displayTree;
 
     // 10.1 - 10.10
     calculateDisplayParameters();
@@ -917,15 +894,28 @@ VTTCueBox& VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
         }
     }
 
+    if (m_fontSize)
+        displayTree->setInlineStyleProperty(CSSPropertyFontSize, m_fontSize, CSSPrimitiveValue::CSS_PX, m_fontSizeIsImportant);
+
     m_displayTreeShouldChange = false;
+
+    if (track()) {
+        if (auto* regions = track()->regions()) {
+            if (auto region = regions->getRegionById(m_regionId))
+                region->cueStyleChanged();
+        }
+    }
 
     // 10.15. Let cue's text track cue display state have the CSS boxes in
     // boxes.
-    return displayTree.get();
+    return displayTree;
 }
 
 void VTTCue::removeDisplayTree()
 {
+    if (!hasDisplayTree())
+        return;
+
     // The region needs to be informed about the cue removal.
     if (m_notifyRegion && track()) {
         if (VTTRegionList* regions = track()->regions()) {
@@ -935,9 +925,6 @@ void VTTCue::removeDisplayTree()
             }
         }
     }
-
-    if (!hasDisplayTree())
-        return;
 
     // The display tree is never exposed to author scripts so it's safe to dispatch events here.
     ScriptDisallowedScope::EventAllowedScope allowedScope(displayTreeInternal());
@@ -1248,11 +1235,12 @@ bool VTTCue::doesExtendCue(const TextTrackCue& cue) const
     
 void VTTCue::setFontSize(int fontSize, const IntSize&, bool important)
 {
-    if (!hasDisplayTree() || !fontSize)
+    if (fontSize == m_fontSize && important == m_fontSizeIsImportant)
         return;
 
     m_displayTreeShouldChange = true;
-    displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSPrimitiveValue::CSS_PX, important);
+    m_fontSizeIsImportant = important;
+    m_fontSize = fontSize;
 }
 
 VTTCue* toVTTCue(TextTrackCue* cue)
@@ -1262,7 +1250,7 @@ VTTCue* toVTTCue(TextTrackCue* cue)
 
 const VTTCue* toVTTCue(const TextTrackCue* cue)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(cue->isRenderable());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is<VTTCue>(cue) || is<TextTrackCueGeneric>(cue));
     return static_cast<const VTTCue*>(cue);
 }
 

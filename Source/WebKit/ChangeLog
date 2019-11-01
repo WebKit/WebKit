@@ -1,3 +1,13 @@
+2019-11-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Add experimental TextTrackCue API
+        https://bugs.webkit.org/show_bug.cgi?id=203649
+        <rdar://problem/55675172>
+
+        Reviewed by Jer Noble.
+
+        * Shared/WebPreferences.yaml:
+
 2019-11-01  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r248696): Element Click on Mac is adding an extra page topContentInsets to y-coordinate

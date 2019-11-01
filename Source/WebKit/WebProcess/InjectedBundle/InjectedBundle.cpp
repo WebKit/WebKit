@@ -238,6 +238,15 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebRTCMDNSICECandidatesEnabled(enabled);
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    if (preference == "WebKitGenericCueAPIEnabled") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey(), enabled);
+        for (auto* page : pages)
+            page->settings().setGenericCueAPIEnabled(enabled);
+        return;
+    }
+#endif
+
     if (preference == "WebKitIsSecureContextAttributeEnabled") {
         WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::isSecureContextAttributeEnabledKey(), enabled);
         RuntimeEnabledFeatures::sharedFeatures().setIsSecureContextAttributeEnabled(enabled);

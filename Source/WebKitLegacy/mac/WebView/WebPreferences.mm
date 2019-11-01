@@ -613,6 +613,10 @@ public:
         @NO, WebKitPictureInPictureAPIEnabledKey,
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+        @NO, WebKitGenericCueAPIEnabledKey,
+#endif
+
 #if ENABLE(MEDIA_STREAM)
         @NO, WebKitMockCaptureDevicesEnabledPreferenceKey,
         @YES, WebKitMockCaptureDevicesPromptEnabledPreferenceKey,
@@ -3342,6 +3346,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setPictureInPictureAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitPictureInPictureAPIEnabledKey];
+}
+
+- (BOOL)genericCueAPIEnabled
+{
+    return [self _boolValueForKey:WebKitGenericCueAPIEnabledKey];
+}
+
+- (void)setGenericCueAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitGenericCueAPIEnabledKey];
 }
 
 - (BOOL)viewportFitEnabled

@@ -82,6 +82,10 @@
             "contextsAllowed": ["interface"],
             "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"]
         },
+        "ConstructorEnabledBySetting": {
+            "contextsAllowed": ["attribute", "interface"],
+            "values": ["*"]
+        },
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
         },

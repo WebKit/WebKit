@@ -410,7 +410,7 @@ void MediaControls::textTrackPreferencesChanged()
 {
     closedCaptionTracksChanged();
     if (m_textDisplayContainer)
-        m_textDisplayContainer->updateSizes(true);
+        m_textDisplayContainer->updateSizes(MediaControlTextTrackContainerElement::ForceUpdate::Yes);
 }
 
 void MediaControls::clearTextDisplayContainer()

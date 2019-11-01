@@ -1,3 +1,107 @@
+2019-11-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Add experimental TextTrackCue API
+        https://bugs.webkit.org/show_bug.cgi?id=203649
+        <rdar://problem/55675172>
+
+        Reviewed by Jer Noble.
+
+        Tests: media/track/texttrackcue/texttrackcue-addcue.html
+               media/track/texttrackcue/texttrackcue-constructor.html
+               media/track/texttrackcue/texttrackcue-displaycue.html
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::updateCaptionDisplaySizes):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck):
+        (GenerateRuntimeEnableConditionalString):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttributes):
+        * dom/DocumentFragment.idl:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateRenderer):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::textTrackRemoveCue):
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+        (WebCore::HTMLMediaElement::captionPreferencesChanged):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        (WebCore::MediaControlTextTrackContainerElement::processActiveVTTCue):
+        (WebCore::MediaControlTextTrackContainerElement::updateActiveCuesFontSize):
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired):
+        (WebCore::MediaControlTextTrackContainerElement::updateStyleForTextTrackRepresentation):
+        * html/shadow/MediaControlElements.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setMode):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueBoxShadowPseudoId):
+        (WebCore::TextTrackCue::cueBackdropShadowPseudoId):
+        (WebCore::cueAttributName):
+        (WebCore::cueBackgroundAttributName):
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        (WebCore::TextTrackCueBox::getCue const):
+        (WebCore::isLegalNode):
+        (WebCore::invalidNodeException):
+        (WebCore::checkForInvalidNodeTypes):
+        (WebCore::tagPseudoObjects):
+        (WebCore::removePseudoAttributes):
+        (WebCore::TextTrackCue::create):
+        (WebCore::TextTrackCue::TextTrackCue):
+        (WebCore::TextTrackCue::didChange):
+        (WebCore::TextTrackCue::setIsActive):
+        (WebCore::TextTrackCue::toJSON const):
+        (WebCore::TextTrackCue::debugString const):
+        (WebCore::TextTrackCue::getCueAsHTML):
+        (WebCore::TextTrackCue::isRenderable const):
+        (WebCore::TextTrackCue::getDisplayTree):
+        (WebCore::TextTrackCue::removeDisplayTree):
+        (WebCore::TextTrackCue::setFontSize):
+        (WebCore::TextTrackCue::rebuildDisplayTree):
+        * html/track/TextTrackCue.h:
+        (WebCore::TextTrackCueBox::create):
+        (WebCore::TextTrackCueBox::applyCSSProperties):
+        (WebCore::TextTrackCueBox::~TextTrackCueBox):
+        (WebCore::TextTrackCue::cueType const):
+        (WebCore::TextTrackCue::recalculateStyles):
+        (WebCore::TextTrackCue::updateDisplayTree):
+        (WebCore::TextTrackCue::isRenderable const): Deleted.
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::isEqual const):
+        (WebCore::TextTrackCueGeneric::isOrderedBefore const):
+        (WebCore::TextTrackCueGeneric::isPositionedAbove const):
+        * html/track/TextTrackCueGeneric.h:
+        (isType):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::VTTCueBox):
+        (WebCore::VTTCueBox::applyCSSProperties):
+        (WebCore::VTTCue::getDisplayTree):
+        (WebCore::VTTCue::removeDisplayTree):
+        (WebCore::VTTCue::setFontSize):
+        (WebCore::toVTTCue):
+        (WebCore::VTTCueBox::create): Deleted.
+        (WebCore::VTTCueBox::getCue const): Deleted.
+        (WebCore::VTTCueBox::vttCueBoxShadowPseudoId): Deleted.
+        (WebCore::VTTCue::cueBackdropShadowPseudoId): Deleted.
+        * html/track/VTTCue.h:
+        (WebCore::VTTCueBox::create):
+        (isType):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::appendTextTrackCueBox):
+        (WebCore::VTTRegion::getDisplayTree):
+        (WebCore::VTTRegion::prepareRegionDisplayTree):
+        * html/track/VTTRegion.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride const):
+        * page/Settings.yaml:
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::RenderVTTCue):
+
 2019-11-01  Chris Dumez  <cdumez@apple.com>
 
         Port ServiceWorkerContainer to the HTML5 event loop

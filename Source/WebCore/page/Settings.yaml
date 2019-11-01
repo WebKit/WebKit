@@ -317,6 +317,9 @@ shouldDisplayCaptions:
 shouldDisplayTextDescriptions:
   initial: false
   conditional: VIDEO_TRACK
+genericCueAPIEnabled:
+    initial: false
+    conditional: VIDEO_TRACK
 scrollingCoordinatorEnabled:
   initial: false
 scrollingTreeIncludesFrames:

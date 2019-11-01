@@ -43,8 +43,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderVTTCue);
 
 RenderVTTCue::RenderVTTCue(VTTCueBox& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
-    , m_cue(element.getCue())
+    , m_cue(toVTTCue(element.getCue()))
 {
+    ASSERT(m_cue);
+    ASSERT(is<VTTCue>(m_cue));
 }
 
 void RenderVTTCue::layout()

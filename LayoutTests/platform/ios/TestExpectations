@@ -2494,6 +2494,9 @@ webkit.org/b/160367 media/track/track-remove-crash.html
 # They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
 webkit.org/b/131476 media/track/w3c/track/webvtt
 
+# VTTRegion height doesn't adjust when cue font size changes.
+webkit.org/b/203621 media/track/regions-webvtt/vtt-region-display.html [ Pass Failure ]
+
 media/video-object-fit-change.html [ ImageOnlyFailure ]
 media/video-object-fit.html [ ImageOnlyFailure ]
 

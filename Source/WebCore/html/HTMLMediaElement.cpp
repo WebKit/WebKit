@@ -962,6 +962,11 @@ inline void HTMLMediaElement::updateRenderer()
 {
     if (auto* renderer = this->renderer())
         renderer->updateFromElement();
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (m_mediaControlsHost)
+        m_mediaControlsHost->updateCaptionDisplaySizes();
+#endif
 }
 
 void HTMLMediaElement::didAttachRenderers()
@@ -1738,10 +1743,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 
     for (size_t i = 0; i < currentCuesSize; ++i) {
         RefPtr<TextTrackCue> cue = currentCues[i].data();
-
-        if (cue->isRenderable())
-            toVTTCue(cue.get())->updateDisplayTree(movieTime);
-
+        cue->updateDisplayTree(movieTime);
         if (!cue->isActive())
             activeSetChanged = true;
     }
@@ -2054,7 +2056,8 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
     // Since the cue will be removed from the media element and likely the
     // TextTrack might also be destructed, notifying the region of the cue
     // removal shouldn't be done.
-    if (cue.isRenderable())
+    auto isVTT = is<VTTCue>(cue);
+    if (isVTT)
         toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(false);
 
     size_t index = m_currentlyActiveCues.find(interval);
@@ -2063,11 +2066,10 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
         m_currentlyActiveCues.remove(index);
     }
 
-    if (cue.isRenderable())
-        toVTTCue(&cue)->removeDisplayTree();
+    cue.removeDisplayTree();
     updateActiveTextTrackCues(currentMediaTime());
 
-    if (cue.isRenderable())
+    if (isVTT)
         toVTTCue(&cue)->notifyRegionWhenRemovingDisplayTree(true);
 }
 
@@ -6599,6 +6601,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
         return;
 
     ensureMediaControlsShadowRoot();
+    updateTextTrackDisplay();
 #else
     if (!m_haveVisibleTextTrack && !hasMediaControls())
         return;
@@ -6622,7 +6625,7 @@ void HTMLMediaElement::captionPreferencesChanged()
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsHost)
-        m_mediaControlsHost->updateCaptionDisplaySizes();
+        m_mediaControlsHost->updateCaptionDisplaySizes(MediaControlsHost::ForceUpdate::Yes);
 #endif
 
     if (m_player)

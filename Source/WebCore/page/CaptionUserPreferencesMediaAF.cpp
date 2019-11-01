@@ -587,7 +587,7 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
         captionsOverrideStyleSheet.appendLiteral(" ::");
-        captionsOverrideStyleSheet.append(VTTCue::cueBackdropShadowPseudoId());
+        captionsOverrideStyleSheet.append(TextTrackCue::cueBackdropShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         
         if (!windowColor.isEmpty())

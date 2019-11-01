@@ -281,7 +281,7 @@ const AtomString& VTTRegion::textTrackRegionShadowPseudoId()
     return trackRegionShadowPseudoId;
 }
 
-void VTTRegion::appendTextTrackCueBox(Ref<VTTCueBox>&& displayBox)
+void VTTRegion::appendTextTrackCueBox(Ref<TextTrackCueBox>&& displayBox)
 {
     ASSERT(m_cueContainer);
 
@@ -342,8 +342,12 @@ HTMLDivElement& VTTRegion::getDisplayTree()
 {
     if (!m_regionDisplayTree) {
         m_regionDisplayTree = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
-        prepareRegionDisplayTree();
+        m_regionDisplayTree->setPseudo(textTrackRegionShadowPseudoId());
+        m_recalculateStyles = true;
     }
+
+    if (m_recalculateStyles)
+        prepareRegionDisplayTree();
 
     return *m_regionDisplayTree;
 }
@@ -383,14 +387,16 @@ void VTTRegion::prepareRegionDisplayTree()
 
     // The cue container is used to wrap the cues and it is the object which is
     // gradually scrolled out as multiple cues are appended to the region.
-    m_cueContainer = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
+    if (!m_cueContainer) {
+        m_cueContainer = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
+        m_cueContainer->setPseudo(textTrackCueContainerShadowPseudoId());
+        m_regionDisplayTree->appendChild(*m_cueContainer);
+    }
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, 0.0f, CSSPrimitiveValue::CSS_PX);
 
-    m_cueContainer->setPseudo(textTrackCueContainerShadowPseudoId());
-    m_regionDisplayTree->appendChild(*m_cueContainer);
-
     // 7.5 Every WebVTT region object is initialised with the following CSS
-    m_regionDisplayTree->setPseudo(textTrackRegionShadowPseudoId());
+
+    m_recalculateStyles = false;
 }
 
 void VTTRegion::startTimer()

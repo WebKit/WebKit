@@ -1,0 +1,63 @@
+<!doctype html>
+<title>TextTrackCue addcue</title>
+<div></div>
+<script src=../../../resources/testharness.js></script>
+<script src=../../../resources/testharnessreport.js></script>
+<script src=../../media-controls.js></script>
+<script src=../../media-file.js></script>
+<script>
+if (window.internals)
+    internals.settings.setGenericCueAPIEnabled(true);
+
+function createValidCueFragment(text)
+{
+    let cueNode = document.createElement('span');
+    cueNode.setAttribute('cue', '');
+    cueNode.innerText = text;
+
+    let backgroundNode = document.createElement('div');
+    backgroundNode.setAttribute('cuebackground', '');
+    backgroundNode.appendChild(cueNode);
+
+    fragment = document.createDocumentFragment();
+    fragment.appendChild(backgroundNode);
+
+    return fragment;
+}
+
+test(test => {
+    window.video = document.createElement('video');
+    video.controls = true;
+
+    window.track = video.addTextTrack('subtitles');
+    track.default = true;
+    track.mode = 'showing';
+
+    document.body.appendChild(video);
+}, 'setup');
+
+test(test => {
+    let cue1 = new TextTrackCue(0, 1, createValidCueFragment('First cue'));
+    cue1.id = "one";
+    track.addCue(cue1);
+    assert_equals(track.cues.length, 1, 'only one cue');
+
+    let cue2 = new TextTrackCue(1, 2, createValidCueFragment('Second cue'));
+    cue2.id = "two";
+    track.addCue(cue2);
+    assert_equals(track.cues.length, 2, "track.cues.length includes second cue");
+    assert_equals(track.cues[0].id, 'one', 'cue 1 should be first');
+    assert_equals(track.cues[1].id, 'two', 'cue 2 should be second');    
+}, 'track.addCue() adds to track.cues');
+
+test(test => {
+    track.mode = 'showing';
+    track.cues[1].startTime = 0;
+    assert_equals(track.cues[0].id, 'two', 'cue 2 should be first');
+    assert_equals(track.cues[1].id, 'one', 'cue 1 should be second');
+
+    track.cues[0].startTime = 0.5;
+    assert_equals(track.cues[0].id, 'one', 'cue 1 should be first');
+    assert_equals(track.cues[1].id, 'two', 'cue 2 should be second');
+}, 'cue order should change when start time is changed');
+</script>

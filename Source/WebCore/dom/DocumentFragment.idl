@@ -21,6 +21,7 @@
     Constructor,
     ConstructorCallWith=Document,
     CustomToJSObject,
+    JSGenerateToNativeObject,
     DOMJIT,
 ] interface DocumentFragment : Node {
 };

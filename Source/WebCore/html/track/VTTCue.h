@@ -49,15 +49,16 @@ class WebVTTCueData;
 
 // ----------------------------
 
-class VTTCueBox : public HTMLElement {
+class VTTCueBox : public TextTrackCueBox {
     WTF_MAKE_ISO_ALLOCATED(VTTCueBox);
 public:
-    static Ref<VTTCueBox> create(Document&, VTTCue&);
+    static Ref<VTTCueBox> create(Document& document, VTTCue& cue)
+    {
+        return adoptRef(*new VTTCueBox(document, cue));
+    }
 
-    VTTCue* getCue() const;
-    virtual void applyCSSProperties(const IntSize& videoSize);
+    void applyCSSProperties(const IntSize&) override;
 
-    static const AtomString& vttCueBoxShadowPseudoId();
     void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
 
 protected:
@@ -74,7 +75,7 @@ private:
 
 // ----------------------------
 
-class VTTCue : public TextTrackCue, public CanMakeWeakPtr<VTTCue> {
+class VTTCue : public TextTrackCue {
     WTF_MAKE_ISO_ALLOCATED(VTTCue);
 public:
     static Ref<VTTCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
@@ -88,8 +89,6 @@ public:
     }
 
     static Ref<VTTCue> create(ScriptExecutionContext&, const WebVTTCueData&);
-
-    static const AtomString& cueBackdropShadowPseudoId();
 
     virtual ~VTTCue();
 
@@ -123,7 +122,7 @@ public:
     const String& cueSettings() const { return m_settings; }
     void setCueSettings(const String&);
 
-    RefPtr<DocumentFragment> getCueAsHTML();
+    RefPtr<DocumentFragment> getCueAsHTML() final;
     RefPtr<DocumentFragment> createCueRenderingTree();
 
     const String& regionId() const { return m_regionId; }
@@ -133,11 +132,11 @@ public:
     void setIsActive(bool) override;
 
     bool hasDisplayTree() const { return m_displayTree; }
-    VTTCueBox& getDisplayTree(const IntSize& videoSize, int fontSize);
+    RefPtr<TextTrackCueBox> getDisplayTree(const IntSize&, int) final;
     HTMLSpanElement& element() const { return *m_cueHighlightBox; }
 
-    void updateDisplayTree(const MediaTime&);
-    void removeDisplayTree();
+    void updateDisplayTree(const MediaTime&) final;
+    void removeDisplayTree() final;
     void markFutureAndPastNodes(ContainerNode*, const MediaTime&, const MediaTime&);
 
     int calculateComputedLinePosition();
@@ -168,14 +167,15 @@ public:
     };
     CueAlignment getAlignment() const { return m_cueAlignment; }
 
-    virtual void setFontSize(int, const IntSize&, bool important);
+    void recalculateStyles() final { m_displayTreeShouldChange = true; }
+    void setFontSize(int, const IntSize&, bool important) override;
 
     bool isEqual(const TextTrackCue&, CueMatchRules) const override;
     bool cueContentsMatch(const TextTrackCue&) const override;
     bool doesExtendCue(const TextTrackCue&) const override;
 
     CueType cueType() const override { return WebVTT; }
-    bool isRenderable() const final { return true; }
+    bool isRenderable() const final { return !m_content.isEmpty(); }
 
     void didChange() override;
 
@@ -237,6 +237,9 @@ private:
 
     MediaTime m_originalStartTime;
 
+    int m_fontSize { 0 };
+    bool m_fontSizeIsImportant { false };
+
     bool m_snapToLines : 1;
     bool m_displayTreeShouldChange : 1;
     bool m_notifyRegion : 1;
@@ -263,7 +266,7 @@ struct LogArgument<WebCore::VTTCue> {
 } // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VTTCue)
-    static bool isType(const WebCore::TextTrackCue& cue) { return cue.isRenderable(); }
+static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::WebVTT; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif
