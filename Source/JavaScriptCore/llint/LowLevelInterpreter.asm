@@ -2015,7 +2015,9 @@ macro notSupported()
     end
 end
 
-if WEBASSEMBLY
+// FIXME: We should not need the X86_64_WIN condition here, since WEBASSEMBLY should already be false on Windows
+// https://bugs.webkit.org/show_bug.cgi?id=203716
+if WEBASSEMBLY and not X86_64_WIN
 
 entry(wasm, macro()
     include InitWasm

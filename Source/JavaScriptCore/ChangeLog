@@ -1,3 +1,14 @@
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Disable Wasm interpreter on WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=203705
+
+        Reviewed by Yusuke Suzuki.
+
+        The interpreter does not build on WinCairo.
+
+        * llint/LowLevelInterpreter.asm:
+
 2019-10-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove metadata(CallFrame*) accessor
