@@ -1,3 +1,16 @@
+2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't leak documents with a pending requestIdleCallback
+        https://bugs.webkit.org/show_bug.cgi?id=203708
+
+        Reviewed by Simon Fraser.
+
+        Added a test for removing iframes with a pending idle callback and test that
+        the current documents of those iframes are collected immediately by GCController.collect.
+
+        * requestidlecallback/requestidlecallback-document-gc-expected.txt: Added.
+        * requestidlecallback/requestidlecallback-document-gc.html: Added.
+
 2019-11-01  Peng Liu  <peng.liu6@apple.com>
 
         Picture-in-Picture layout test cases interfere with each other

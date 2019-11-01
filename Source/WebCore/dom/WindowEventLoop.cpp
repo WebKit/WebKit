@@ -56,6 +56,13 @@ void WindowEventLoop::resume(Document& document)
     scheduleToRunIfNeeded();
 }
 
+void WindowEventLoop::stop(Document& document)
+{
+    m_tasks.removeAllMatching([identifier = document.identifier()] (auto& task) {
+        return task.documentIdentifier == identifier;
+    });
+}
+
 void WindowEventLoop::scheduleToRunIfNeeded()
 {
     if (m_isScheduledToRun)
@@ -70,6 +77,9 @@ void WindowEventLoop::scheduleToRunIfNeeded()
 
 void WindowEventLoop::run()
 {
+    if (m_tasks.isEmpty())
+        return;
+
     Vector<Task> tasks = WTFMove(m_tasks);
     m_documentIdentifiersForSuspendedTasks.clear();
     Vector<Task> remainingTasks;

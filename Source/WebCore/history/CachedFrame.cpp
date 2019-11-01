@@ -107,9 +107,6 @@ void CachedFrameBase::restore()
         if (m_document->svgExtensions())
             m_document->accessSVGExtensions().unpauseAnimations();
 
-        if (auto* eventLoop = m_document->eventLoopIfExists())
-            eventLoop->resume(*m_document);
-
         m_document->resume(ReasonForSuspension::BackForwardCache);
 
         // It is necessary to update any platform script objects after restoring the
@@ -174,9 +171,6 @@ CachedFrame::CachedFrame(Frame& frame)
 
     // Active DOM objects must be suspended before we cache the frame script data.
     m_document->suspend(ReasonForSuspension::BackForwardCache);
-
-    if (auto* eventLoop = m_document->eventLoopIfExists())
-        eventLoop->suspend(*m_document);
 
     m_cachedFrameScriptData = makeUnique<ScriptCachedFrameData>(frame);
 

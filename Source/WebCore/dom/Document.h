@@ -1063,7 +1063,6 @@ public:
     WEBCORE_EXPORT void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
     AbstractEventLoop& eventLoop() final;
-    WindowEventLoop* eventLoopIfExists() { return m_eventLoop.get(); }
 
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
     void suspendScriptedAnimationControllerCallbacks();

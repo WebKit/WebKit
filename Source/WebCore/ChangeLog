@@ -1,3 +1,33 @@
+2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't leak documents with a pending requestIdleCallback
+        https://bugs.webkit.org/show_bug.cgi?id=203708
+
+        Reviewed by Simon Fraser.
+
+        Remove all tasks associated with a stopped document right away instead of waiting for
+        WindowEventLoop::run to execute so that even when author scripts synchronously add and remove
+        multiple documents, we don't end up leaking all of them until we yield to the run loop.
+
+        Also moved the code to suspend & resume event loops from CachedFrame to Document's
+        ActiveDOMObjects related functions for consistency.
+
+        Test: requestidlecallback/requestidlecallback-document-gc.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects): Moved the code from CachedFrameBase::restore.
+        (WebCore::Document::resumeActiveDOMObjects): Ditto from CachedFrame.
+        (WebCore::Document::stopActiveDOMObjects): Remove all tasks associated with this document.
+        * dom/Document.h:
+        (WebCore::Document::eventLoopIfExists): Deleted.
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::stop):
+        (WebCore::WindowEventLoop::run):
+        * dom/WindowEventLoop.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+
 2019-11-01  Peng Liu  <peng.liu6@apple.com>
 
         Picture-in-Picture layout test cases interfere with each other

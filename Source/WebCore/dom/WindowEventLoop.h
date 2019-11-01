@@ -42,6 +42,7 @@ public:
 
     void suspend(Document&);
     void resume(Document&);
+    void stop(Document&);
 
 private:
     WindowEventLoop() = default;
