@@ -1,3 +1,16 @@
+2019-10-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix mach lookup sandbox violations in the Mail app
+        https://bugs.webkit.org/show_bug.cgi?id=203697
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow mach lookup to the services "com.apple.logd.events" and "com.apple.distributed_notifications@1v3",
+        which are seen when running the Mail application. Also allow "com.apple.aggregated", which was previously
+        allowed, and is showing up in reports.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Turn on IOSurface support in the iOS Simulator

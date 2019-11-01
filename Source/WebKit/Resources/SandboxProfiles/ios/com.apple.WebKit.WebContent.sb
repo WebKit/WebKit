@@ -609,12 +609,10 @@
         (extension "com.apple.fileprovider.read-write")))
 
 (allow mach-lookup
-    (global-name "com.apple.logd"))
-
-(deny mach-lookup (with send-signal SIGKILL)
-    (global-name "com.apple.logd.events"))
-
-(allow mach-lookup
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events")
+    (global-name "com.apple.distributed_notifications@1v3")
+    (global-name "com.apple.aggregated")
     (global-name "com.apple.cfprefsd.daemon"))
 
 (allow ipc-posix-shm-read*
