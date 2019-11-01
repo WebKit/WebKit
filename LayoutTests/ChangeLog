@@ -1,3 +1,16 @@
+2019-11-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=176240
+        <rdar://problem/51445000>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Flakiness no longer reproducible.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         macOS WK1: requestidlecallback/requestidlecallback-document-gc.html is flaky
