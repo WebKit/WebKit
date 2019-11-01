@@ -331,6 +331,28 @@ Tests for the WI.Color model object.
 "HSLA(10turn 20% 30% / 40%)" resolves to "hsla(360, 20%, 30%, 0.4)"
 "hsla( 10turn  20%  30% / 40% )" resolves to "hsla(360, 20%, 30%, 0.4)"
 "hsla(999turn 999% 999% / 999%)" resolves to "hsla(360, 100%, 100%, 1)"
+"color(display-p3 0 1 0.5)" resolves to "color(display-p3 0 1 0.5)"
+"COLOR(DISPLAY-P3 0 1 0.5)" resolves to "color(display-p3 0 1 0.5)"
+"color(srgb 0.123 0.999 1)" resolves to "color(srgb 0.123 0.999 1)"
+"COLOR(SRGB 0.123 0.999 1)" resolves to "color(srgb 0.123 0.999 1)"
+"color( display-p3 0 1 0.5 )" resolves to "color(display-p3 0 1 0.5)"
+"color(display-p3 999 999 999)" resolves to "color(display-p3 1 1 1)"
+"color(srgb 0.123 0.999 1/0.5)" resolves to "color(srgb 0.123 0.999 1 / 0.5)"
+"COLOR(SRGB 0.123 0.999 1/0.5)" resolves to "color(srgb 0.123 0.999 1 / 0.5)"
+"color( display-p3 0 1 0.5/0.5)" resolves to "color(display-p3 0 1 0.5 / 0.5)"
+"color(display-p3 999 999 999/999)" resolves to "color(display-p3 1 1 1)"
+"color(srgb 0.123 0.999 1 / 0.5)" resolves to "color(srgb 0.123 0.999 1 / 0.5)"
+"COLOR(SRGB 0.123 0.999 1 / 0.5)" resolves to "color(srgb 0.123 0.999 1 / 0.5)"
+"color( display-p3 0 1 0.5 / 0.5)" resolves to "color(display-p3 0 1 0.5 / 0.5)"
+"color(display-p3 999 999 999 / 999)" resolves to "color(display-p3 1 1 1)"
+"color(srgb 0.123 0.999 1/33%)" resolves to "color(srgb 0.123 0.999 1 / 0.33)"
+"COLOR(SRGB 0.123 0.999 1/33%)" resolves to "color(srgb 0.123 0.999 1 / 0.33)"
+"color( display-p3 0 1 0.5/33%)" resolves to "color(display-p3 0 1 0.5 / 0.33)"
+"color(display-p3 999 999 999/999%)" resolves to "color(display-p3 1 1 1)"
+"color(srgb 0.123 0.999 1 / 33%)" resolves to "color(srgb 0.123 0.999 1 / 0.33)"
+"COLOR(SRGB 0.123 0.999 1 / 33%)" resolves to "color(srgb 0.123 0.999 1 / 0.33)"
+"color( display-p3 0 1 0.5 / 33%)" resolves to "color(display-p3 0 1 0.5 / 0.33)"
+"color(display-p3 999 999 999 / 999%)" resolves to "color(display-p3 1 1 1)"
 
 PASS: ' #000 ' should not be detected
 PASS: '#rgb' should not be detected
@@ -344,6 +366,8 @@ PASS: 'rgba(255, 255, 255, 0.5, 1)' should not be detected
 PASS: 'hsl(0, 0%, 50%, 1, 2)' should not be detected
 PASS: 'hsla(0, 0%, 50%, 1, 2)' should not be detected
 PASS: 'superblue' should not be detected
+PASS: 'color(display-p3 0 1)' should not be detected
+PASS: 'color(display-p3 0 1 2 4 5)' should not be detected
 
 -- Running test case: WI.Color properties
 PASS: 'red' should have alpha of 1.
@@ -370,6 +394,14 @@ PASS: '#11122233' has hsla of [236.47, 33.33, 10, 0.2].
 PASS: '#11122233' should not be serializable as a short Hex
 PASS: '#11223344' should be serializable as a short Hex
 PASS: '#11223345' should not be serializable as a short Hex
+PASS: 'color(display-p3 0 1 0.5)' color should have a default alpha of 1
+PASS: color function is not a keyword
+PASS: 'color(display-p3 0 1 0.5)' has rgb of [0, 1, 0.5]
+PASS: 'color(display-p3 0 1 0.5)' has rgba of [0, 1, 0.5, 1]
+PASS: 'color(display-p3 0 1 0.5 / 0.3)' should have an alpha of 0.3
+PASS: color function is not a keyword
+PASS: 'color(display-p3 0 1 0.5 / 0.3)' has rgb of [0, 1, 0.5]
+PASS: 'color(display-p3 0 1 0.5 / 0.3)' has rgba of [0, 1, 0.5, 0.3]
 
 -- Running test case: WI.Color from components
 Check components for color 'rgb(255, 0, 0)'.

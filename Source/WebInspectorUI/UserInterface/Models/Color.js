@@ -29,9 +29,10 @@
 
 WI.Color = class Color
 {
-    constructor(format, components)
+    constructor(format, components, gamut)
     {
         this.format = format;
+        this.gamut = gamut || "srgb";
 
         if (components.length === 3)
             components.push(1);
@@ -48,7 +49,7 @@ WI.Color = class Color
 
     static fromString(colorString)
     {
-        const matchRegExp = /^(?:#(?<hex>[0-9a-f]{3,8})|rgba?\((?<rgb>[^)]+)\)|(?<keyword>\w+)|hsla?\((?<hsl>[^)]+)\))$/i;
+        const matchRegExp = /^(?:#(?<hex>[0-9a-f]{3,8})|rgba?\((?<rgb>[^)]+)\)|(?<keyword>\w+)|color\((?<color>[^)]+)\)|hsla?\((?<hsl>[^)]+)\))$/i;
         let match = colorString.match(matchRegExp);
         if (!match)
             return null;
@@ -168,6 +169,33 @@ WI.Color = class Color
                 parsePercentageComponent(hsl[2]),
                 alpha,
             ]);
+        }
+
+        if (match.groups.color) {
+            let colorString = match.groups.color.trim();
+            let components = splitFunctionString(colorString);
+            if (components.length !== 4 && components.length !== 5)
+                return null;
+
+            let gamut = components[0].toLowerCase();
+            if (gamut !== "srgb" && gamut !== "display-p3")
+                return null;
+
+            let alpha = 1;
+            if (components.length === 5)
+                alpha = parseFunctionAlpha(components[4]);
+
+            function parseFunctionComponent(component) {
+                let value = parseFloat(component);
+                return Number.constrain(value, 0, 1);
+            }
+
+            return new WI.Color(WI.Color.Format.ColorFunction, [
+                parseFunctionComponent(components[1]),
+                parseFunctionComponent(components[2]),
+                parseFunctionComponent(components[3]),
+                alpha,
+            ], gamut);
         }
 
         return null;
@@ -386,10 +414,11 @@ WI.Color = class Color
         case WI.Color.Format.ShortHEXAlpha:
         case WI.Color.Format.Keyword:
         case WI.Color.Format.RGBA:
-            return new WI.Color(this.format, this.rgba);
+        case WI.Color.Format.ColorFunction:
+            return new WI.Color(this.format, this.rgba, this.gamut);
         case WI.Color.Format.HSL:
         case WI.Color.Format.HSLA:
-            return new WI.Color(this.format, this.hsla);
+            return new WI.Color(this.format, this.hsla, this.gamut);
         }
     }
 
@@ -405,6 +434,8 @@ WI.Color = class Color
             return this._toRGBString();
         case WI.Color.Format.RGBA:
             return this._toRGBAString();
+        case WI.Color.Format.ColorFunction:
+            return this._toFunctionString();
         case WI.Color.Format.HSL:
             return this._toHSLString();
         case WI.Color.Format.HSLA:
@@ -429,6 +460,9 @@ WI.Color = class Color
     {
         if (this.keyword)
             return true;
+
+        if (this.gamut !== "srgb")
+            return false;
 
         if (!this.simple)
             return Array.shallowEqual(this._rgba, [0, 0, 0, 0]) || Array.shallowEqual(this._hsla, [0, 0, 0, 0]);
@@ -567,6 +601,14 @@ WI.Color = class Color
         return `rgba(${r}, ${g}, ${b}, ${this.alpha})`;
     }
 
+    _toFunctionString()
+    {
+        let [r, g, b, alpha] = this.rgba;
+        if (alpha === 1)
+            return `color(${this.gamut} ${r} ${g} ${b})`;
+        return `color(${this.gamut} ${r} ${g} ${b} / ${alpha})`;
+    }
+
     _toHSLString()
     {
         if (!this.simple)
@@ -619,7 +661,8 @@ WI.Color.Format = {
     RGB: "color-format-rgb",
     RGBA: "color-format-rgba",
     HSL: "color-format-hsl",
-    HSLA: "color-format-hsla"
+    HSLA: "color-format-hsla",
+    ColorFunction: "color-format-color-function",
 };
 
 WI.Color.FunctionNames = new Set([
@@ -627,6 +670,7 @@ WI.Color.FunctionNames = new Set([
     "rgba",
     "hsl",
     "hsla",
+    "color",
 ]);
 
 WI.Color.Keywords = {

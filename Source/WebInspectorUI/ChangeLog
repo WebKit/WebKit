@@ -1,3 +1,21 @@
+2019-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Display color swatches for p3 colors
+        https://bugs.webkit.org/show_bug.cgi?id=203439
+        <rdar://problem/56637250>
+
+        Reviewed by Devin Rousso.
+
+        Detect `color(display-p3 0 1 0)` as a color in the style editor.
+
+        * UserInterface/Models/Color.js:
+        (WI.Color):
+        (WI.Color.fromString):
+        (WI.Color.prototype.copy):
+        (WI.Color.prototype.toString):
+        (WI.Color.prototype.isKeyword):
+        (WI.Color.prototype._toFunctionString):
+
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r249831): content view is empty if a breakpoint is hit in the main resource

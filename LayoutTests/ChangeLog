@@ -1,3 +1,14 @@
+2019-11-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Display color swatches for p3 colors
+        https://bugs.webkit.org/show_bug.cgi?id=203439
+        <rdar://problem/56637250>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate media query evaluation into HTML5 event loop

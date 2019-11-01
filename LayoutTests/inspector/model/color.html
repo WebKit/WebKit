@@ -27,6 +27,8 @@ function test()
             return "HSL";
         case WI.Color.Format.HSLA:
             return "HSLA";
+        case WI.Color.Format.ColorFunction:
+            return "Function";
         default:
             return "Unexpected format";
         }
@@ -224,6 +226,34 @@ function test()
                 testGood(`hsla(999${unit} 999% 999% / 999%)`, WI.Color.Format.HSLA);
             }
 
+            testGood("color(display-p3 0 1 0.5)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(DISPLAY-P3 0 1 0.5)", WI.Color.Format.ColorFunction);
+
+            testGood("color(srgb 0.123 0.999 1)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(SRGB 0.123 0.999 1)", WI.Color.Format.ColorFunction);
+            testGood("color( display-p3 0 1 0.5 )", WI.Color.Format.ColorFunction);
+            testGood("color(display-p3 999 999 999)", WI.Color.Format.ColorFunction);
+
+            testGood("color(srgb 0.123 0.999 1/0.5)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(SRGB 0.123 0.999 1/0.5)", WI.Color.Format.ColorFunction);
+            testGood("color( display-p3 0 1 0.5/0.5)", WI.Color.Format.ColorFunction);
+            testGood("color(display-p3 999 999 999/999)", WI.Color.Format.ColorFunction);
+
+            testGood("color(srgb 0.123 0.999 1 / 0.5)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(SRGB 0.123 0.999 1 / 0.5)", WI.Color.Format.ColorFunction);
+            testGood("color( display-p3 0 1 0.5 / 0.5)", WI.Color.Format.ColorFunction);
+            testGood("color(display-p3 999 999 999 / 999)", WI.Color.Format.ColorFunction);
+
+            testGood("color(srgb 0.123 0.999 1/33%)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(SRGB 0.123 0.999 1/33%)", WI.Color.Format.ColorFunction);
+            testGood("color( display-p3 0 1 0.5/33%)", WI.Color.Format.ColorFunction);
+            testGood("color(display-p3 999 999 999/999%)", WI.Color.Format.ColorFunction);
+
+            testGood("color(srgb 0.123 0.999 1 / 33%)", WI.Color.Format.ColorFunction);
+            testGood("COLOR(SRGB 0.123 0.999 1 / 33%)", WI.Color.Format.ColorFunction);
+            testGood("color( display-p3 0 1 0.5 / 33%)", WI.Color.Format.ColorFunction);
+            testGood("color(display-p3 999 999 999 / 999%)", WI.Color.Format.ColorFunction);
+
             InspectorTest.log("");
 
             testBad(" #000 "); // whitespace
@@ -238,6 +268,8 @@ function test()
             testBad("hsl(0, 0%, 50%, 1, 2)"); // extra value
             testBad("hsla(0, 0%, 50%, 1, 2)"); // extra values
             testBad("superblue"); // not a keyword
+            testBad("color(display-p3 0 1)"); // 2
+            testBad("color(display-p3 0 1 2 4 5)"); // 5
 
             // FIXME: currentColor?
             // FIXME: Should we consider missing %s as bad? Currently we just strip them.
@@ -287,6 +319,18 @@ function test()
 
             color = WI.Color.fromString("#11223345");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11223345' should not be serializable as a short Hex");
+
+            color = WI.Color.fromString("color(display-p3 0 1 0.5)");
+            InspectorTest.expectThat(color.alpha === 1, "'color(display-p3 0 1 0.5)' color should have a default alpha of 1");
+            InspectorTest.expectThat(color.isKeyword() === false, "color function is not a keyword");
+            InspectorTest.expectShallowEqual(color.rgb, [0, 1, 0.5], "'color(display-p3 0 1 0.5)' has rgb of [0, 1, 0.5]");
+            InspectorTest.expectShallowEqual(color.rgba, [0, 1, 0.5, 1], "'color(display-p3 0 1 0.5)' has rgba of [0, 1, 0.5, 1]");
+
+            color = WI.Color.fromString("color(display-p3 0 1 0.5 / 0.3)");
+            InspectorTest.expectThat(color.alpha === 0.3, "'color(display-p3 0 1 0.5 / 0.3)' should have an alpha of 0.3");
+            InspectorTest.expectThat(color.isKeyword() === false, "color function is not a keyword");
+            InspectorTest.expectShallowEqual(color.rgb, [0, 1, 0.5], "'color(display-p3 0 1 0.5 / 0.3)' has rgb of [0, 1, 0.5]");
+            InspectorTest.expectShallowEqual(color.rgba, [0, 1, 0.5, 0.3], "'color(display-p3 0 1 0.5 / 0.3)' has rgba of [0, 1, 0.5, 0.3]");
 
             return true;
         }
