@@ -1,3 +1,21 @@
+2019-11-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        TestWebKitAPI.EditorStateTests.TypingAttributesTextAlignmentStartEnd is flaky in iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203733
+        <rdar://problem/56814640>
+
+        Reviewed by Tim Horton.
+
+        Try to fix the flaky test by making EditingTestHarness more robust. Instead of checking for expected editor
+        state entries after the next presentation update, wait for the latest editor state entry to contain the expected
+        values.
+
+        * TestWebKitAPI/EditingTestHarness.mm:
+        (-[EditingTestHarness _execCommand:argument:expectEntries:]):
+
+        Preserve the existing log statement by printing it out once after a few seconds, if the entry is still not found
+        in the last known editor state.
+
 2019-11-01  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Pass clobber-old-results parameter to run-webkit-tests
