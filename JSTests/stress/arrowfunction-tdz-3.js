@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 var testCase = function (actual, expected, message) {
   if (actual !== expected) {
     throw message + ". Expected '" + expected + "', but was '" + actual + "'";

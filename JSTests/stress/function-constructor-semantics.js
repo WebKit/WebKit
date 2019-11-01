@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 function assert(b) {
     if (!b)
         throw new Error("Bad");

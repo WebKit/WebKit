@@ -1,3 +1,21 @@
+2019-10-31  Caio Lima  <ticaiolima@gmail.com>
+
+        Temporary skip broken tests on MIPS that is broken due to OSR exit to LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=203710
+
+        Unreviewed gardening.
+
+        * microbenchmarks/call-spread-call.js:
+        * microbenchmarks/throw.js:
+        * stress/allocation-sinking-hints-are-valid-ssa-2.js:
+        * stress/arith-profile-for-negate-can-see-non-number-due-to-dfg-osr-exit-profiling.js:
+        * stress/arrowfunction-lexical-bind-supercall-4.js:
+        * stress/arrowfunction-tdz-3.js:
+        * stress/function-constructor-semantics.js:
+        * stress/stress-cleared-calllinkinfo.js:
+        * stress/typedarray-configure-index.js:
+        * stress/v8-deltablue-strict.js:
+
 2019-10-31  Saam Barati  <sbarati@apple.com>
 
         Don't use memmove/memcpy/memset for memory that can be scanned concurrently

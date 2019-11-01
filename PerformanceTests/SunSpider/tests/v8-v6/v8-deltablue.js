@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.
 

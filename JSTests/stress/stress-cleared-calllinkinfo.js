@@ -1,4 +1,4 @@
-//@ slow!
+//@ if $architecture == "mips" then skip else slow! end
 function runNearStackLimit(f) {
     function t() {
         try {

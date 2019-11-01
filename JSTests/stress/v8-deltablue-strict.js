@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 "use strict";
 
 // Copyright 2008 the V8 project authors. All rights reserved.

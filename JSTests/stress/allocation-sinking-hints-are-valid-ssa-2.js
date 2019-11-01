@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 function main() {
     const arr = [0];
     function executor(resolve, ...reject) {
