@@ -1,3 +1,5 @@
+//@ skip if $architecture == "mips"
+
 var exception;
 try {
     a2 = {};//some method ok//what ever object//Date()

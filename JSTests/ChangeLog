@@ -1,3 +1,14 @@
+2019-11-01  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][MIPS] Skip tests failing in RELEASE_ASSERT_NOT_REACHED() at CallFrame.cpp:81
+        https://bugs.webkit.org/show_bug.cgi?id=203738
+
+        Unreviewed gardening.
+
+        * stress/allocation-sinking-hints-are-valid-ssa.js:
+        * stress/has-instance-exception-check.js:
+        * stress/regress-176485.js:
+
 2019-10-31  Caio Lima  <ticaiolima@gmail.com>
 
         Temporary skip broken tests on MIPS that is broken due to OSR exit to LLInt
