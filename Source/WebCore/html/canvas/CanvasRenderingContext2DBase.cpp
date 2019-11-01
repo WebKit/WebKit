@@ -402,14 +402,12 @@ void CanvasRenderingContext2DBase::setStrokeStyle(CanvasStyle style)
     if (state().strokeStyle.isValid() && state().strokeStyle.isEquivalentColor(style))
         return;
 
-    if (style.isCurrentColor() && is<HTMLCanvasElement>(canvasBase())) {
-        auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-
+    if (style.isCurrentColor()) {
         if (style.hasOverrideAlpha()) {
             // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvas).rgb(), style.overrideAlpha()));
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvasBase()).rgb(), style.overrideAlpha()));
         } else
-            style = CanvasStyle(currentColor(&canvas));
+            style = CanvasStyle(currentColor(&canvasBase()));
     } else
         checkOrigin(style.canvasPattern().get());
 
@@ -431,14 +429,12 @@ void CanvasRenderingContext2DBase::setFillStyle(CanvasStyle style)
     if (state().fillStyle.isValid() && state().fillStyle.isEquivalentColor(style))
         return;
 
-    if (style.isCurrentColor() && is<HTMLCanvasElement>(canvasBase())) {
-        auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-
+    if (style.isCurrentColor()) {
         if (style.hasOverrideAlpha()) {
             // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvas).rgb(), style.overrideAlpha()));
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(&canvasBase()).rgb(), style.overrideAlpha()));
         } else
-            style = CanvasStyle(currentColor(&canvas));
+            style = CanvasStyle(currentColor(&canvasBase()));
     } else
         checkOrigin(style.canvasPattern().get());
 
@@ -671,8 +667,7 @@ String CanvasRenderingContext2DBase::shadowColor() const
 
 void CanvasRenderingContext2DBase::setShadowColor(const String& colorString)
 {
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-    Color color = parseColorOrCurrentColor(colorString, &canvas);
+    Color color = parseColorOrCurrentColor(colorString, &canvasBase());
     if (!color.isValid())
         return;
     if (state().shadowColor == color)
@@ -1339,8 +1334,7 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
 {
     Color color = Color::transparent;
     if (!colorString.isNull()) {
-        auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-        color = parseColorOrCurrentColor(colorString, &canvas);
+        color = parseColorOrCurrentColor(colorString, &canvasBase());
         if (!color.isValid())
             return;
     }
@@ -2036,7 +2030,7 @@ void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, unsigned options)
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     // If we are drawing to hardware and we have a composited layer, just call contentChanged().
-    if (isAccelerated()) {
+    if (isAccelerated() && is<HTMLCanvasElement>(canvasBase())) {
         auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
         RenderBox* renderBox = canvas.renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing()) {
@@ -2197,9 +2191,8 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(ImageB
         return nullptr;
 
     IntRect imageDataRect = enclosingIntRect(logicalRect);
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
 
-    ImageBuffer* buffer = canvas.buffer();
+    ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
@@ -2230,9 +2223,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, ImageBuffer::CoordinateSystem coordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
 {
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
-
-    ImageBuffer* buffer = canvas.buffer();
+    ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
         return;
 
@@ -2285,9 +2276,10 @@ void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
 
 PlatformLayer* CanvasRenderingContext2DBase::platformLayer() const
 {
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
+    if (auto* buffer = canvasBase().buffer())
+        return buffer->platformLayer();
 
-    return canvas.buffer() ? canvas.buffer()->platformLayer() : nullptr;
+    return nullptr;
 }
 
 #endif

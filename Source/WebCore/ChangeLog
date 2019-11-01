@@ -1,3 +1,39 @@
+2019-11-01  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
+
+        CanvasRenderingContext2DBase: use CanvasBase more extensively
+        https://bugs.webkit.org/show_bug.cgi?id=182685
+
+        Reviewed by Adrian Perez de Castro.
+
+        In CanvasRenderingContext2DBase, stop downcasting the CanvasBase object
+        to HTMLCanvasElement where not necessary, and where necessary, do so
+        after testing that the CanvasBase object is indeed a HTMLCanvasElement.
+
+        All the functionality that previously required downcasting has now moved
+        into the CanvasBase class. Combined with these changes, this will allow
+        OffscreenCanvas to leverage CanvasRenderingContext2DBase for 2D
+        rasterization.
+
+        CanvasStyle is similarly modified to work on CanvasBase objects, only
+        retrieving current color value from the inline style only in case of
+        an HTMLCanvasElement derivative.
+
+        No new tests -- no change in behavior.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2DBase::setFillStyle):
+        (WebCore::CanvasRenderingContext2DBase::setShadowColor):
+        (WebCore::CanvasRenderingContext2DBase::setShadow):
+        (WebCore::CanvasRenderingContext2DBase::didDraw):
+        (WebCore::CanvasRenderingContext2DBase::getImageData const):
+        (WebCore::CanvasRenderingContext2DBase::putImageData):
+        (WebCore::CanvasRenderingContext2DBase::platformLayer const):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::currentColor):
+        (WebCore::parseColorOrCurrentColor):
+        * html/canvas/CanvasStyle.h:
+
 2019-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang] Unreviewed build fix

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Document;
 class GraphicsContext;
-class HTMLCanvasElement;
+class CanvasBase;
 
 class CanvasStyle {
 public:
@@ -89,8 +89,8 @@ private:
     Variant<Invalid, Color, CMYKAColor, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>, CurrentColor> m_style;
 };
 
-Color currentColor(HTMLCanvasElement*);
-Color parseColorOrCurrentColor(const String& colorString, HTMLCanvasElement*);
+Color currentColor(CanvasBase*);
+Color parseColorOrCurrentColor(const String& colorString, CanvasBase*);
 
 inline CanvasStyle::CanvasStyle()
     : m_style(Invalid { })
