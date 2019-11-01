@@ -1,3 +1,29 @@
+2019-10-31  Chris Dumez  <cdumez@apple.com>
+
+        Take down the gesture snapshot early when the back/forward cache is not leveraged
+        https://bugs.webkit.org/show_bug.cgi?id=203713
+        <rdar://problem/56803910>
+
+        Reviewed by Tim Horton.
+
+        Take down the gesture snapshot as soon as the gesture is done when the back/forward cache
+        is not leveraged. Otherwise, the snapshot may stay up for a long time (while we load, parse
+        and restore scroll position) and it would look to the user as if the view was unresponsive.
+        Showing the page slowly loading in such cases is less confusing as the user knows what's
+        going on and is even able to interact with the partially loaded page.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::hasCachedWebPage const):
+        * Shared/WebBackForwardListItem.h:
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::makeSnapshotBlank):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::makeSnapshotBlank):
+
 2019-10-31  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix mach lookup sandbox violations in the Mail app

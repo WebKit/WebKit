@@ -182,6 +182,16 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
     return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
 }
 
+bool WebBackForwardListItem::hasCachedWebPage() const
+{
+    if (!m_backForwardCacheEntry)
+        return false;
+    if (!m_backForwardCacheEntry->suspendedPage())
+        return true; // In-process cached page without suspended page proxy.
+    // Make sure the suspended page proxy has an associated WebPage.
+    return !m_backForwardCacheEntry->suspendedPage()->pageIsClosedOrClosing();
+}
+
 #if !LOG_DISABLED
 const char* WebBackForwardListItem::loggingString()
 {

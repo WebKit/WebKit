@@ -310,6 +310,8 @@ private:
     GRefPtr<GtkStyleContext> createStyleContext(const char*);
 #endif
 
+    void makeSnapshotBlank();
+
     WebPageProxy& m_webPageProxy;
     ViewGestureType m_activeGestureType { ViewGestureType::None };
 

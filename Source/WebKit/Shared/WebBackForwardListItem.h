@@ -82,6 +82,7 @@ public:
 
     void wasRemovedFromBackForwardList();
 
+    bool hasCachedWebPage() const;
     WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
     SuspendedPageProxy* suspendedPage() const;
 

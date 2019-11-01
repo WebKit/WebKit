@@ -590,10 +590,16 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
+    SnapshotRemovalTracker::Events desiredEvents;
+    if (targetItem->hasCachedWebPage()) {
+        desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
         | SnapshotRemovalTracker::MainFrameLoad
         | SnapshotRemovalTracker::SubresourceLoads
         | SnapshotRemovalTracker::ScrollPositionRestoration;
+    } else {
+        desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout;
+        makeSnapshotBlank();
+    }
 
     if (renderTreeSizeThreshold) {
         desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
