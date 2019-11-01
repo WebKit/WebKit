@@ -1,3 +1,28 @@
+2019-10-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][Clang] Unreviewed build fix
+        https://bugs.webkit.org/show_bug.cgi?id=203663
+
+        ServiceWorkerThreadProxy::notifyNetworkStateChange was not
+        exported from WebKit.dll even though it's marked with
+        WEBCORE_TESTSUPPORT_EXPORT because any symbols in the object file of
+        ServiceWorkerThreadProxy.cpp is not referred by WebKit.dll.
+
+        > WebCoreTestSupport.lib(ServiceWorkerInternals.cpp.obj) : error LNK2019: unresolved external symbol
+        >   "__declspec(dllimport) public: void __cdecl WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange(bool)"
+        >   (__imp_?notifyNetworkStateChange@ServiceWorkerThreadProxy@WebCore@@QEAAX_N@Z) referenced in function
+        >   "public: <auto> __cdecl `public: void __cdecl WebCore::ServiceWorkerInternals::setOnline(bool)'::`1'::<lambda_0>::operator()(void)const "
+        >   (??R<lambda_0>@?0??setOnline@ServiceWorkerInternals@WebCore@@QEAAX_N@Z@QEBA?A?<auto>@@XZ)
+
+        Uninline ServiceWorkerThreadProxy::identifier temporarily.
+        I will revert this change after fixing this issue properly in Bug 203663.
+
+        No behavioral changes.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::identifier const):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2019-10-31  Brent Fulgham  <bfulgham@apple.com>
 
         [FTW] Adopt DirectWrite in place of Uniscribe

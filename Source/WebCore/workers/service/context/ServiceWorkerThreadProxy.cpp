@@ -123,6 +123,11 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
     allServiceWorkerThreadProxies().remove(this);
 }
 
+ServiceWorkerIdentifier ServiceWorkerThreadProxy::identifier() const
+{
+    return m_serviceWorkerThread->identifier();
+}
+
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
     if (m_isTerminatingOrTerminated)

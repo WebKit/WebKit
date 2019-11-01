@@ -57,7 +57,7 @@ public:
     }
     WEBCORE_EXPORT ~ServiceWorkerThreadProxy();
 
-    ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
+    ServiceWorkerIdentifier identifier() const;
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
     ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
 
