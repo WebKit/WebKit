@@ -1,3 +1,10 @@
+2019-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the watchOS build after r251896
+
+        * Configurations/WebCore.xcconfig:
+        Whoops.
+
 2019-11-01  Peng Liu  <peng.liu6@apple.com>
 
         Turn on the Picture-in-Picture API feature by default
