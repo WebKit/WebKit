@@ -1,3 +1,21 @@
+2019-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on IOSurface support in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203026
+        <rdar://problem/56320993>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+        Don't use RGB10 if we don't have it.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        (TEST):
+        Don't allocate many megabytes on the stack.
+        This isn't currently a problem, but if you accidentally run the tests on
+        a 3x simulator it starts crashing.
+
 2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Create a Wasm interpreter

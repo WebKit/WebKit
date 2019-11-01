@@ -1,3 +1,33 @@
+2019-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on IOSurface support in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203026
+        <rdar://problem/56320993>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt:
+        * platform/ios-device/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/compositing/canvas/accelerated-canvas-compositing-expected.txt: Added.
+        * platform/ios/compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt: Removed.
+        * platform/ios/fast/canvas/canvas-render-layer-expected.txt: Added.
+        * platform/ios/fast/canvas/canvas-scale-shadowBlur-expected.txt: Added.
+        * platform/ios/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/drawing-images-to-the-canvas/drawimage_html_image-expected.txt: Removed.
+        Move and expand the scope of some TestExpectations for canvas tests
+        that fail due to noise introduced in the hardware accelerated drawing path.
+        We will separately investigate how to mitigate this, but it already affects
+        iOS on-device testing (as well as macOS in most cases). The tiny reduction
+        in coverage here is well worth the massive improvement in coverage of
+        accelerated drawing code paths.
+
+        * fast/images/exif-orientation-canvas-expected.html:
+        Due to rdar://problem/56755864, <canvas> and <img> render slightly differently.
+        Use <canvas> for the reference as well, but use transforms to translate it
+        instead of depending on EXIF orientation support, to continue testing
+        the intended behavior.
+
 2019-10-31  Jer Noble  <jer.noble@apple.com>
 
         [EME] Batch multiple key requests into one request and response

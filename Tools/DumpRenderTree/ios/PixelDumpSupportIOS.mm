@@ -70,7 +70,11 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     WebCore::FloatSize snapshotSize(viewSize);
     snapshotSize.scale(deviceScaleFactor);
 
+#if HAVE(IOSURFACE_RGB10)
     WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
+#else
+    WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::RGBA;
+#endif
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::sRGBColorSpaceRef(), snapshotFormat);
     RetainPtr<CGImageRef> cgImage = surface->createImage();
 

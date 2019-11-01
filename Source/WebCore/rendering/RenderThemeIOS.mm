@@ -2037,7 +2037,7 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
         m_ciContext = [CIContext context];
 
     RetainPtr<CGImageRef> cgImage;
-#if HAVE(IOSURFACE)
+#if HAVE(IOSURFACE_COREIMAGE_SUPPORT)
     // Crop the result to the badge location.
     CIImage *croppedImage = [sourceOverFilter.outputImage imageByCroppingToRect:flippedInsetBadgeRect];
     CIImage *translatedImage = [croppedImage imageByApplyingTransform:CGAffineTransformMakeTranslation(-flippedInsetBadgeRect.origin.x, -flippedInsetBadgeRect.origin.y)];

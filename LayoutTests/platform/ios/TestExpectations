@@ -3373,6 +3373,30 @@ imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusI
 imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_004.html [ Skip ]
 imported/w3c/web-platform-tests/2dcontext/drawing-paths-to-the-canvas/drawFocusIfNeeded_005.html [ Skip ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=175736
+canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+fast/canvas/canvas-currentColor.html [ Failure ]
+fast/canvas/canvas-radial-gradient-spreadMethod.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.touch1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.touch3.html [ Failure ]
+imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+
+webkit.org/b/202460 imported/w3c/web-platform-tests/2dcontext/image-smoothing/imagesmoothing.html [ Failure ]
+
+webkit.org/b/202523 imported/w3c/web-platform-tests/2dcontext/path-objects/2d.path.stroke.scale2.html [ Failure ]
+
 # canvas tests that fail with small antialiasing diffs
 imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/2dcontext/building-paths/canvas_complexshapes_beziercurveto_001.htm [ ImageOnlyFailure ]

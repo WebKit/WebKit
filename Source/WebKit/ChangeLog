@@ -1,3 +1,26 @@
+2019-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on IOSurface support in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203026
+        <rdar://problem/56320993>
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/WebKit.xcconfig:
+        Always link IOSurface now that we always have it.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        Turn on Accelerated Drawing and Accelerated Drawing for Canvas by default.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        Don't use RGB10 if we don't have it.
+
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        Don't use render server snapshotting in hidden windows, because it
+        (correctly, but unhelpfully) cannot capture contents in that case.
+
 2019-10-31  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r251215): Mail failed to build

@@ -15,7 +15,7 @@
         width: 52px;
         height: 102px;
     }
-    img {
+    canvas {
         border: 1px solid black;
     }
 </style>
@@ -25,58 +25,77 @@
     <br>
     <div class="container">
         <div class="horizontal">
-            <img src="resources/exif-orientation-1-ul.jpg">
+            <canvas class="horizontal" id="canvas1" ></canvas>
         </div>
         <br>Normal
     </div>
     <div class="container">
         <div class="horizontal">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: scaleX(-1);">
+            <canvas class="horizontal" id="canvas2" style="transform: scaleX(-1);"></canvas>
         </div>
         <br>Flipped horizontally
     </div>
     <div class="container">
         <div class="horizontal">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: rotate(180deg);">
+            <canvas class="horizontal" id="canvas3" style="transform: rotate(180deg);"></canvas>
         </div>
         <br>Rotated 180&deg;
     </div>
     <div class="container">
         <div class="horizontal">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: scaleX(-1) rotate(180deg);">
+            <canvas class="horizontal" id="canvas4" style="transform: scaleX(-1) rotate(180deg);"></canvas>
         </div>
         <br>Flipped vertically
     </div>
     <br>
     <div class="container">
         <div class="vertical">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(90deg) scaleY(-1);">
+            <canvas class="vertical" id="canvas5" style="transform: translate(-25px, 25px) rotate(90deg) scaleY(-1);"></canvas>
         </div>
         <br>Rotated 90&deg; CCW and flipped vertically
     </div>
     <div class="container">
         <div class="vertical">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(90deg);">
+            <canvas class="vertical" id="canvas6" style="transform: translate(-25px, 25px) rotate(90deg);"></canvas>
         </div>
         <br>Rotated 90&deg; CCW
     </div>
     <div class="container">
         <div class="vertical">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(270deg) scaleY(-1);">
+            <canvas class="vertical" id="canvas7" style="transform: translate(-25px, 25px) rotate(270deg) scaleY(-1);"></canvas>
         </div>
         <br>Rotated 90&deg; CW and flipped vertically
     </div>
     <div class="container">
         <div class="vertical">
-            <img src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(270deg);">
+            <canvas class="vertical" id="canvas8" style="transform: translate(-25px, 25px) rotate(270deg);"></canvas>
         </div>
         <br>Rotated 90&deg; CW
     </div>
     <br>
     <div class="container">
         <div class="horizontal">
-            <img src="resources/exif-orientation-1-ul.jpg">
+            <canvas class="horizontal" id="canvas9"></canvas>
         </div>
         <br>Undefined (invalid value)
     </div>
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        window.onload = function() {
+            var image = new Image;
+            image.src = "resources/exif-orientation-1-ul.jpg";
+            image.decode().then(() => {
+                document.querySelectorAll("canvas").forEach(canvas => {
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+                });
+
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            });
+        }
+    </script>
 </body>

@@ -119,7 +119,7 @@ ForceCompositingMode:
 
 CanvasUsesAcceleratedDrawing:
   type: bool
-  defaultValue: DEFAULT_CANVAS_USES_ACCELERATED_DRAWING
+  defaultValue: true
 
 WebGLEnabled:
   type: bool
@@ -1045,7 +1045,7 @@ ShouldIgnoreMetaViewport:
 
 AcceleratedDrawingEnabled:
   type: bool
-  defaultValue: DEFAULT_ACCELERATED_DRAWING_ENABLED
+  defaultValue: true
   category: debug
 
 SubpixelAntialiasedLayerTextEnabled:

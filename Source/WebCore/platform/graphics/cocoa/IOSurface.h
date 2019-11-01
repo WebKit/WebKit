@@ -31,7 +31,7 @@
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include "IntSize.h"
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #define HAVE_IOSURFACE_RGB10 1
 #endif
 

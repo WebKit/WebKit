@@ -2229,7 +2229,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
 #if HAVE(IOSURFACE)
+#if HAVE(IOSURFACE_RGB10)
     WebCore::IOSurface::Format snapshotFormat = WebCore::screenSupportsExtendedColor() ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGBA;
+#else
+    WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::RGBA;
+#endif
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::sRGBColorSpaceRef(), snapshotFormat);
     if (!surface)
         return nullptr;
@@ -6422,8 +6426,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     }
 
 #if HAVE(CORE_ANIMATION_RENDER_SERVER) && HAVE(IOSURFACE)
-    // If we are parented and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
-    if (NSString *displayName = self.window.screen.displayConfiguration.name) {
+    // If we are parented and not hidden, and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
+    NSString *displayName = self.window.screen.displayConfiguration.name;
+    if (displayName && !self.window.hidden) {
         auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::sRGBColorSpaceRef());
         if (!surface) {
             completionHandler(nullptr);
