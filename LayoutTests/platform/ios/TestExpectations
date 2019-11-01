@@ -3409,6 +3409,11 @@ imported/w3c/web-platform-tests/2dcontext/fill-and-stroke-styles/2d.gradient.rad
 
 # These tests fail with tiny (0.01%) image diffs with accelerated drawing enabled.
 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
+compositing/masks/become-tiled-mask.html [ ImageOnlyFailure ]
+css3/filters/backdrop/add-remove-add-backdrop-filter.html [ ImageOnlyFailure ]
+fast/css/object-fit/object-fit-canvas.html [ ImageOnlyFailure ]
+fast/hidpi/image-srcset-png-canvas.html [ ImageOnlyFailure ]
+scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ ImageOnlyFailure ]
 fast/canvas/canvas-transform-inverse.html [ ImageOnlyFailure ]
 fast/overflow/border-radius-clipping-2.html [ ImageOnlyFailure ]
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure ]
