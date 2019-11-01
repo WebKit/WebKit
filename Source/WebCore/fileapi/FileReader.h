@@ -36,6 +36,7 @@
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
+#include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -45,7 +46,6 @@ class ArrayBuffer;
 namespace WebCore {
 
 class Blob;
-class SuspendableTaskQueue;
 
 class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, private FileReaderLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(FileReader);
@@ -91,6 +91,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    void enqueueTask(Function<void()>&&);
+
     void didStartLoading() final;
     void didReceiveData() final;
     void didFinishLoading() final;
@@ -108,7 +110,7 @@ private:
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<FileError> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
-    UniqueRef<SuspendableTaskQueue> m_taskQueue;
+    HashMap<uint64_t, Function<void()>> m_pendingTasks;
 };
 
 } // namespace WebCore

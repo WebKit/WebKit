@@ -34,6 +34,7 @@ class ScriptExecutionContext;
 
 enum class TaskSource : uint8_t {
     DOMManipulation,
+    FileReading,
     IdleTask,
     Networking,
     UserInteraction

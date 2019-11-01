@@ -31,12 +31,12 @@
 #include "config.h"
 #include "FileReader.h"
 
+#include "AbstractEventLoop.h"
 #include "EventNames.h"
 #include "File.h"
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
-#include "SuspendableTaskQueue.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -57,7 +57,6 @@ Ref<FileReader> FileReader::create(ScriptExecutionContext& context)
 
 FileReader::FileReader(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
-    , m_taskQueue(SuspendableTaskQueue::create(&context))
 {
 }
 
@@ -74,6 +73,7 @@ const char* FileReader::activeDOMObjectName() const
 
 void FileReader::stop()
 {
+    m_pendingTasks.clear();
     if (m_loader) {
         m_loader->cancel();
         m_loader = nullptr;
@@ -83,7 +83,7 @@ void FileReader::stop()
 
 bool FileReader::hasPendingActivity() const
 {
-    return m_taskQueue->hasPendingTasks() || m_state == LOADING || ActiveDOMObject::hasPendingActivity();
+    return m_state == LOADING || ActiveDOMObject::hasPendingActivity();
 }
 
 ExceptionOr<void> FileReader::readAsArrayBuffer(Blob* blob)
@@ -155,8 +155,8 @@ void FileReader::abort()
     m_aborting = true;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
-    m_taskQueue->cancelAllTasks();
-    m_taskQueue->enqueueTask([this] {
+    m_pendingTasks.clear();
+    enqueueTask([this] {
         ASSERT(m_state != DONE);
 
         stop();
@@ -172,14 +172,14 @@ void FileReader::abort()
 
 void FileReader::didStartLoading()
 {
-    m_taskQueue->enqueueTask([this] {
+    enqueueTask([this] {
         fireEvent(eventNames().loadstartEvent);
     });
 }
 
 void FileReader::didReceiveData()
 {
-    m_taskQueue->enqueueTask([this] {
+    enqueueTask([this] {
         auto now = MonotonicTime::now();
         if (std::isnan(m_lastProgressNotificationTime)) {
             m_lastProgressNotificationTime = now;
@@ -197,7 +197,7 @@ void FileReader::didFinishLoading()
     if (m_aborting)
         return;
 
-    m_taskQueue->enqueueTask([this] {
+    enqueueTask([this] {
         ASSERT(m_state != DONE);
         m_state = DONE;
 
@@ -213,7 +213,7 @@ void FileReader::didFail(int errorCode)
     if (m_aborting)
         return;
 
-    m_taskQueue->enqueueTask([this, errorCode] {
+    enqueueTask([this, errorCode] {
         ASSERT(m_state != DONE);
         m_state = DONE;
 
@@ -243,6 +243,22 @@ Optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() const
     if (result.isNull())
         return WTF::nullopt;
     return { WTFMove(result) };
+}
+
+void FileReader::enqueueTask(Function<void()>&& task)
+{
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    static uint64_t taskIdentifierSeed = 0;
+    uint64_t taskIdentifier = ++taskIdentifierSeed;
+    m_pendingTasks.add(taskIdentifier, WTFMove(task));
+    context->eventLoop().queueTask(TaskSource::FileReading, *context, [this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this), taskIdentifier] {
+        auto task = m_pendingTasks.take(taskIdentifier);
+        if (task)
+            task();
+    });
 }
 
 } // namespace WebCore
