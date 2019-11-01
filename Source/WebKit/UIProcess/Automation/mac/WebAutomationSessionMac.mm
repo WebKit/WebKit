@@ -137,7 +137,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 {
     IntRect windowRect;
 
-    IntPoint locationInView = WebCore::IntPoint(locationInViewport.x(), locationInViewport.y() + page.topContentInset());
+    IntPoint locationInView = WebCore::IntPoint(locationInViewport.x(), locationInViewport.y());
     page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
     IntPoint locationInWindow = windowRect.location();
 

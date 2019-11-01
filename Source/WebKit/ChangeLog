@@ -1,3 +1,15 @@
+2019-11-01  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r248696): Element Click on Mac is adding an extra page topContentInsets to y-coordinate
+        https://bugs.webkit.org/show_bug.cgi?id=203765
+        <rdar://problem/56014369>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        The topContentInsets is accounted for by rootViewToWindow(), so don't add it in manually.
+
 2019-11-01  Per Arne Vollan  <pvollan@apple.com>
 
         Investigate if mach lookup access to *.apple-extension-service, *.viewservice, and com.apple.uikit.viewservice.* can be denied
