@@ -1520,11 +1520,13 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
             pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
-            message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+            message = ''
+            if clean_tree_failures:
+                message = 'Found {} pre-existing API test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
             if len(clean_tree_failures) > self.NUM_API_FAILURES_TO_DISPLAY:
                 message += ' ...'
             if flaky_failures:
-                message += '. Flaky tests: {}'.format(flaky_failures_string)
+                message += ' Found flaky tests: {}'.format(flaky_failures_string)
             self.build.buildFinished([message], SUCCESS)
 
     @defer.inlineCallbacks

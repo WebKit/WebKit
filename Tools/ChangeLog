@@ -1,3 +1,14 @@
+2019-11-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve summary string when there are flaky failures in API tests
+        https://bugs.webkit.org/show_bug.cgi?id=203747
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults): Display pre-existing failure string string only
+        if there are pre-existing API test failures.
+
 2019-11-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         TestWebKitAPI.EditorStateTests.TypingAttributesTextAlignmentStartEnd is flaky in iOS simulator
