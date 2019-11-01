@@ -1,5 +1,16 @@
 2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Fix build when WTF_CPU_NEEDS_ALIGNED_ACCESS=1 after r251886
+        https://bugs.webkit.org/show_bug.cgi?id=203718
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecompiler/BytecodeGeneratorBaseInlines.h:
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode16):
+        (JSC::BytecodeGeneratorBase<Traits>::alignWideOpcode32):
+
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
         offlineasm should emit the suffixes for floating point instructions on Windows x86
         https://bugs.webkit.org/show_bug.cgi?id=203720
 

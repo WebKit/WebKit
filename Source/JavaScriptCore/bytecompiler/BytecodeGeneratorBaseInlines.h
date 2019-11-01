@@ -101,7 +101,7 @@ void BytecodeGeneratorBase<Traits>::alignWideOpcode16()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
     while ((m_writer.position() + 1) % OpcodeSize::Wide16)
-        Traits::OpNop::emit<OpcodeSize::Narrow>(this);
+        Traits::OpNop::template emit<OpcodeSize::Narrow>(this);
 #endif
 }
 
@@ -110,7 +110,7 @@ void BytecodeGeneratorBase<Traits>::alignWideOpcode32()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
     while ((m_writer.position() + 1) % OpcodeSize::Wide32)
-        Traits::OpNop::emit<OpcodeSize::Narrow>(this);
+        Traits::OpNop::template emit<OpcodeSize::Narrow>(this);
 #endif
 }
 
