@@ -84,8 +84,9 @@ class DarwinPort(ApplePort):
         # We don't use self._run_script() because we don't want to wait for the script
         # to exit and we want the output to show up on stdout in case there are errors
         # launching the browser.
-        self._executive.popen([self.path_to_script('run-safari')] + self._arguments_for_configuration() + ['--no-saved-state', '-NSOpen', results_filename],
-            cwd=self.webkit_base(), stdout=os.devnull, stderr=os.devnull)
+        with open(os.devnull) as devnull:
+            self._executive.popen([self.path_to_script('run-safari')] + self._arguments_for_configuration() + ['--no-saved-state', '-NSOpen', results_filename],
+                cwd=self.webkit_base(), stdout=devnull, stderr=devnull)
 
     @memoized
     def path_to_crash_logs(self):

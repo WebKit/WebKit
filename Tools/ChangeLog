@@ -1,3 +1,14 @@
+2019-10-31  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r251808): run-webkit-test cannot show results.html
+        https://bugs.webkit.org/show_bug.cgi?id=203709
+        <rdar://problem/56798620>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.show_results_html_file): os.devnull is a string, not a file.
+
 2019-10-31  Matt Baker  <mattbaker@apple.com>
 
         Changed my emails list.
