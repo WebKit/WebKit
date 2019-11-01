@@ -34,6 +34,7 @@
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWContextManagerConnectionMessages.h"
+#include "WebSWServerConnection.h"
 #include <WebCore/ServiceWorkerContextData.h>
 
 namespace WebKit {
@@ -126,16 +127,18 @@ void WebSWServerToContextConnection::terminate()
     send(Messages::WebSWContextManagerConnection::TerminateProcess());
 }
 
-void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, Ref<IPC::Connection>&& contentConnection, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& data, const String& referrer)
+void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, WebSWServerConnection& contentConnection, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& data, const String& referrer)
 {
+    auto serverConnectionIdentifier = contentConnection.identifier();
     auto fetchIdentifier = FetchIdentifier::generate();
-    
-    m_ongoingFetches.add(fetchIdentifier, ServiceWorkerFetchTask::create(sessionID, WTFMove(contentConnection), serverConnectionIdentifier, contentFetchIdentifier));
 
-    ASSERT(!m_ongoingFetchIdentifiers.contains({serverConnectionIdentifier, contentFetchIdentifier}));
-    m_ongoingFetchIdentifiers.add({serverConnectionIdentifier, contentFetchIdentifier}, fetchIdentifier);
+    auto result = m_ongoingFetches.add(fetchIdentifier, ServiceWorkerFetchTask::create(sessionID, contentConnection, *this, contentFetchIdentifier, serviceWorkerIdentifier, m_networkProcess->serviceWorkerFetchTimeout()));
 
-    send(Messages::WebSWContextManagerConnection::StartFetch { serverConnectionIdentifier, serviceWorkerIdentifier, fetchIdentifier, request, options, data, referrer });
+    ASSERT(!m_ongoingFetchIdentifiers.contains({ serverConnectionIdentifier, contentFetchIdentifier }));
+    m_ongoingFetchIdentifiers.add({ serverConnectionIdentifier, contentFetchIdentifier }, fetchIdentifier);
+
+    if (!send(Messages::WebSWContextManagerConnection::StartFetch { serverConnectionIdentifier, serviceWorkerIdentifier, fetchIdentifier, request, options, data, referrer }))
+        result.iterator->value->didNotHandle();
 }
 
 void WebSWServerToContextConnection::cancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
@@ -176,6 +179,44 @@ void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection&
         ASSERT(m_ongoingFetchIdentifiers.contains(iterator->value->identifier()));
         m_ongoingFetchIdentifiers.remove(iterator->value->identifier());
         m_ongoingFetches.remove(iterator);
+    }
+}
+
+void WebSWServerToContextConnection::fetchTaskTimedOut(ServiceWorkerFetchTask& task)
+{
+    ASSERT(m_ongoingFetchIdentifiers.contains(task.identifier()));
+    auto takenIdentifier = m_ongoingFetchIdentifiers.take(task.identifier());
+
+    ASSERT(m_ongoingFetches.contains(takenIdentifier));
+    auto takenTask = m_ongoingFetches.take(takenIdentifier);
+    ASSERT(takenTask);
+    ASSERT(takenTask->ptr() == &task);
+
+    // Gather all other fetches in this service worker
+    HashSet<Ref<ServiceWorkerFetchTask>> otherFetches;
+    for (auto& fetchTask : m_ongoingFetches.values()) {
+        if (fetchTask->serviceWorkerIdentifier() == task.serviceWorkerIdentifier())
+            otherFetches.add(fetchTask.copyRef());
+    }
+
+    // Signal load failure for them
+    for (auto& fetchTask : otherFetches) {
+        if (fetchTask->wasHandled())
+            fetchTask->fail({ errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+        else
+            fetchTask->didNotHandle();
+
+        auto identifier = m_ongoingFetchIdentifiers.take(fetchTask->identifier());
+        m_ongoingFetches.remove(identifier);
+    }
+
+    if (auto* connection = task.swServerConnection()) {
+        auto& server = connection->server();
+        if (auto* worker = server.workerByID(task.serviceWorkerIdentifier())) {
+            worker->setHasTimedOutAnyFetchTasks();
+            if (worker->isRunning())
+                server.syncTerminateWorker(*worker);
+        }
     }
 }
 

@@ -168,6 +168,9 @@ WK_EXPORT void WKContextRefreshPlugIns(WKContextRef context);
 
 WK_EXPORT void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name);
 
+WK_EXPORT void WKContextSetServiceWorkerFetchTimeoutForTesting(WKContextRef contextRef, double seconds);
+WK_EXPORT void WKContextResetServiceWorkerFetchTimeoutForTesting(WKContextRef contextRef);
+
 #ifdef __cplusplus
 }
 #endif

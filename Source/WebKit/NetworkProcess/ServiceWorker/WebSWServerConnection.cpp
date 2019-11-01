@@ -175,7 +175,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
         }
 
         auto* worker = server().workerByID(serviceWorkerIdentifier);
-        if (!worker) {
+        if (!worker || worker->hasTimedOutAnyFetchTasks()) {
             m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
             return;
         }
@@ -189,7 +189,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
 
             if (contextConnection) {
                 SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %s via service worker %s", fetchIdentifier.loggingString().utf8().data(), serviceWorkerIdentifier.loggingString().utf8().data());
-                static_cast<WebSWServerToContextConnection&>(*contextConnection).startFetch(m_sessionID, m_contentConnection.get(), this->identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer);
+                static_cast<WebSWServerToContextConnection&>(*contextConnection).startFetch(m_sessionID, *this, fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer);
             } else {
                 SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because failed to run service worker", fetchIdentifier.loggingString().utf8().data());
                 m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
