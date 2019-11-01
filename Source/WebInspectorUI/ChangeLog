@@ -1,5 +1,17 @@
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: make the default content of the Inspector Bootstrap Script a comment that explains how it works
+        https://bugs.webkit.org/show_bug.cgi?id=203704
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.async createBootstrapScript):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Settings: Blackbox: hide icon is missing
         https://bugs.webkit.org/show_bug.cgi?id=203727
 

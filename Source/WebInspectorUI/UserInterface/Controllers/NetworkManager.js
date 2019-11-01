@@ -297,10 +297,26 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!arguments.length)
             source = await WI.objectStores.general.get(NetworkManager.bootstrapScriptSourceObjectStoreKey);
 
+        if (!source) {
+            source = `
+/*
+ * ${WI.UIString("The Inspector Bootstrap Script is guaranteed to be the first script evaluated in any page, as well as any sub-frames.")}
+ * ${WI.UIString("It is evaluated immediately after the global object is created, before any other content has loaded.")}
+ * 
+ * ${WI.UIString("Modifications made here will take effect on the next load of any page or sub-frame.")}
+ * ${WI.UIString("The contents and enabled state will be preserved across Web Inspector sessions.")}
+ * 
+ * ${WI.UIString("Some examples of ways to use this script include (but are not limited to):")}
+ *  - ${WI.UIString("overriding built-in functions to log call traces or add `debugger` statements")}
+ *  - ${WI.UIString("ensuring that common debugging functions are available on every page via the Console")}
+ */
+`;
+        }
+
         const target = null;
         const url = null;
         const sourceURL = NetworkManager.bootstrapScriptURL;
-        this._bootstrapScript = new WI.LocalScript(target, url, sourceURL, WI.Script.SourceType.Program, source || "", {injected: true, editable: true});
+        this._bootstrapScript = new WI.LocalScript(target, url, sourceURL, WI.Script.SourceType.Program, source, {injected: true, editable: true});
         this._bootstrapScript.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleBootstrapScriptContentDidChange, this);
 
         if (!this._bootstrapScript.content)
