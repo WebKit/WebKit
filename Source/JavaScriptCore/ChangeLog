@@ -1,5 +1,14 @@
 2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
+        offlineasm should emit the suffixes for floating point instructions on Windows x86
+        https://bugs.webkit.org/show_bug.cgi?id=203720
+
+        Reviewed by Yusuke Suzuki.
+
+        * offlineasm/x86.rb:
+
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
         Disable Wasm interpreter on WinCairo
         https://bugs.webkit.org/show_bug.cgi?id=203705
 

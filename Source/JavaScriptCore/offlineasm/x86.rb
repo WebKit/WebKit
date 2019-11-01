@@ -522,7 +522,7 @@ class Instruction
     end
 
     def x86Suffix(kind)
-        if isIntelSyntax
+        if isIntelSyntax and not [:float, :double].include? kind
             return ""
         end
 
