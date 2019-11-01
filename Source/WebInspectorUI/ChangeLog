@@ -1,5 +1,23 @@
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Settings: Blackbox: hide icon is missing
+        https://bugs.webkit.org/show_bug.cgi?id=203727
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Hide.svg:
+        `WI.ImageUtilities.useSVGSymbol` links directly to a specific part of the SVG resource based
+        on an `id` attribute (default to `#root` if not otherwise given). As a result, any `<style>`
+        that are not a child of that specific part won't be included, meaning that any CSS variables
+        used for controlling colors won't exist. Adding a fallback value to the `var()` for these
+        cases allows a specific part to be used without needing any surrounding styles.
+
+        * UserInterface/Views/BlackboxSettingsView.css:
+        (.settings-view.blackbox > p > .toggle-script-blackbox):
+        Slightly adjust the size and vertical alignment to better match the surrounding text.
+
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: enable line wrapping by default
         https://bugs.webkit.org/show_bug.cgi?id=203726
 

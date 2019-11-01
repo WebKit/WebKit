@@ -43,9 +43,9 @@
 
 .settings-view.blackbox > p > .toggle-script-blackbox {
     display: inline-block;
-    width: 15px;
-    height: 15px;
-    vertical-align: bottom;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
 }
 
 .settings-view.blackbox > table {
