@@ -43,14 +43,13 @@ class Builder;
 
 class BuilderState {
 public:
-    BuilderState(Builder&, StyleResolver&);
+    BuilderState(Builder&, RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* rootElementStyle, const Document&, const Element*);
 
     Builder& builder() { return m_builder; }
-    StyleResolver& styleResolver() { return m_styleResolver; }
 
     RenderStyle& style() { return m_style; }
     const RenderStyle& parentStyle() const { return m_parentStyle; }
-    const RenderStyle& rootElementStyle() const { return m_rootElementStyle; }
+    const RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
     const Document& document() const { return m_document.get(); }
     const Element* element() const { return m_element.get(); }
@@ -78,7 +77,12 @@ public:
 
     RefPtr<StyleImage> createStyleImage(CSSValue&);
     bool createFilterOperations(const CSSValue&, FilterOperations& outOperations);
+
+    static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
     Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
+
+    const Vector<AtomString>& registeredContentAttributes() const { return m_registeredContentAttributes; }
+    void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
     CSSToStyleMap& styleMap() { return m_styleMap; }
@@ -99,14 +103,12 @@ private:
     Builder& m_builder;
 
     CSSToStyleMap m_styleMap;
-    CSSToLengthConversionData m_cssToLengthConversionData;
-
-    // FIXME: Remove.
-    StyleResolver& m_styleResolver;
 
     RenderStyle& m_style;
     const RenderStyle& m_parentStyle;
-    const RenderStyle& m_rootElementStyle;
+    const RenderStyle* m_rootElementStyle;
+
+    const CSSToLengthConversionData m_cssToLengthConversionData;
 
     Ref<const Document> m_document;
     RefPtr<const Element> m_element;
@@ -121,6 +123,7 @@ private:
     SelectorChecker::LinkMatchMask m_linkMatch { };
 
     bool m_fontDirty { false };
+    Vector<AtomString> m_registeredContentAttributes;
 };
 
 }

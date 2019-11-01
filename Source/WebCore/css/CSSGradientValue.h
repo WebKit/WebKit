@@ -35,6 +35,10 @@ namespace WebCore {
 class FloatPoint;
 class StyleResolver;
 
+namespace Style {
+class BuilderState;
+}
+
 enum CSSGradientType {
     CSSDeprecatedLinearGradient,
     CSSDeprecatedRadialGradient,
@@ -86,7 +90,8 @@ public:
     bool knownToBeOpaque(const RenderElement&) const;
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&) { }
-    Ref<CSSGradientValue> gradientWithStylesResolved(const StyleResolver&);
+    Ref<CSSGradientValue> gradientWithStylesResolved(Style::BuilderState&);
+    void resolveRGBColors();
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType)

@@ -34,6 +34,7 @@
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 namespace Style {
@@ -47,8 +48,10 @@ static PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
 
 Builder::Builder(StyleResolver& resolver, const MatchResult& matchResult, OptionSet<CascadeLevel> cascadeLevels, PropertyCascade::IncludedProperties includedProperties)
     : m_cascade(matchResult, cascadeLevels, includedProperties, directionFromStyle(*resolver.style()))
-    , m_state(*this, resolver)
+    , m_state(*this, *resolver.style(), *resolver.parentStyle(), resolver.rootElementStyle(), resolver.document(), resolver.element())
 {
+    ASSERT(resolver.style());
+    ASSERT(resolver.parentStyle());
 }
 
 Builder::~Builder() = default;

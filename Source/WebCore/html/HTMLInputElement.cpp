@@ -62,7 +62,7 @@
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "Settings.h"
-#include "StyleResolver.h"
+#include "StyleGeneratedImage.h"
 #include "TextControlInnerElements.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -2066,6 +2066,8 @@ static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
     gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSPrimitiveValue::UnitType::CSS_DEG));
     gradient->addStop(firstStop);
     gradient->addStop(secondStop);
+    gradient->resolveRGBColors();
+
     return gradient;
 }
 
@@ -2088,7 +2090,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
         textBlockStyle.setMaxWidth(Length { 100, Percent });
         textBlockStyle.setColor({ 0.0f, 0.0f, 0.0f, 0.6f });
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
-        textBlockStyle.setMaskImage(styleResolver().styleImage(autoFillStrongPasswordMaskImage()));
+        textBlockStyle.setMaskImage(StyleGeneratedImage::create(autoFillStrongPasswordMaskImage()));
         // A stacking context is needed for the mask.
         if (textBlockStyle.hasAutoZIndex())
             textBlockStyle.setZIndex(0);

@@ -39,7 +39,10 @@ class CachedImage;
 class FilterSubimageObserverProxy;
 class RenderElement;
 class Document;
-class StyleResolver;
+
+namespace Style {
+class BuilderState;
+}
 
 class CSSFilterImageValue final : public CSSImageGeneratorValue {
     friend class FilterSubimageObserverProxy;
@@ -68,7 +71,7 @@ public:
 
     bool equalInputImages(const CSSFilterImageValue&) const;
 
-    void createFilterOperations(StyleResolver*);
+    void createFilterOperations(Style::BuilderState&);
 
     const FilterOperations& filterOperations() const { return m_filterOperations; }
     void setFilterOperations(const FilterOperations& filterOperations)

@@ -30,29 +30,18 @@
 #include "config.h"
 #include "StyleResolver.h"
 
-#include "CSSCalculationValue.h"
-#include "CSSCursorImageValue.h"
 #include "CSSDefaultStyleSheets.h"
-#include "CSSFilterImageValue.h"
 #include "CSSFontSelector.h"
-#include "CSSFunctionValue.h"
-#include "CSSGradientValue.h"
-#include "CSSImageSetValue.h"
-#include "CSSImageValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
-#include "CSSReflectValue.h"
 #include "CSSSelector.h"
-#include "CSSShadowValue.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
-#include "CSSValueList.h"
 #include "CachedResourceLoader.h"
 #include "ElementRuleCollector.h"
-#include "FilterOperation.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -88,17 +77,12 @@
 #include "ShadowRoot.h"
 #include "SharedStringHash.h"
 #include "StyleBuilder.h"
-#include "StyleColor.h"
-#include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
-#include "StyleGeneratedImage.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
-#include "TransformFunctions.h"
-#include "TransformOperations.h"
 #include "UserAgentStyleSheets.h"
 #include "ViewportStyleResolver.h"
 #include "VisitedLinkState.h"
@@ -128,7 +112,6 @@ inline void StyleResolver::State::clear()
     m_element = nullptr;
     m_parentStyle = nullptr;
     m_ownedParentStyle = nullptr;
-    m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
 StyleResolver::StyleResolver(Document& document)
@@ -249,19 +232,11 @@ StyleResolver::State::State(const Element& element, const RenderStyle* parentSty
         m_rootElementStyle = document.renderStyle();
     else
         m_rootElementStyle = documentElementStyle ? documentElementStyle : documentElement->renderStyle();
-
-    updateConversionData();
-}
-
-inline void StyleResolver::State::updateConversionData()
-{
-    m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle, m_element ? m_element->document().renderView() : nullptr);
 }
 
 inline void StyleResolver::State::setStyle(std::unique_ptr<RenderStyle> style)
 {
     m_style = WTFMove(style);
-    updateConversionData();
 }
 
 inline void StyleResolver::State::setParentStyle(std::unique_ptr<RenderStyle> parentStyle)
@@ -1273,6 +1248,9 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
     builder.applyLowPriorityProperties();
 
+    for (auto& contentAttribute : builder.state().registeredContentAttributes())
+        ruleSets().mutableFeatures().registerContentAttribute(contentAttribute);
+
     if (cacheItem || !cacheHash)
         return;
     if (!isCacheableInMatchedPropertiesCache(*state.element(), state.style(), state.parentStyle()))
@@ -1298,25 +1276,6 @@ void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* valu
     builder.applyPropertyValue(id, *value);
 }
 
-RefPtr<StyleImage> StyleResolver::styleImage(CSSValue& value)
-{
-    if (is<CSSImageGeneratorValue>(value)) {
-        if (is<CSSGradientValue>(value))
-            return StyleGeneratedImage::create(downcast<CSSGradientValue>(value).gradientWithStylesResolved(*this));
-
-        if (is<CSSFilterImageValue>(value)) {
-            // FilterImage needs to calculate FilterOperations.
-            downcast<CSSFilterImageValue>(value).createFilterOperations(this);
-        }
-        return StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(value));
-    }
-
-    if (is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSCursorImageValue>(value))
-        return StyleCachedImage::create(value);
-
-    return nullptr;
-}
-
 void StyleResolver::initializeFontStyle()
 {
     FontCascadeDescription fontDescription;
@@ -1330,44 +1289,6 @@ void StyleResolver::initializeFontStyle()
 
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
     style()->setFontDescription(WTFMove(fontDescription));
-}
-
-bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue& value)
-{
-    switch (value.valueID()) {
-    case CSSValueWebkitText:
-    case CSSValueWebkitLink:
-    case CSSValueWebkitActivelink:
-    case CSSValueCurrentcolor:
-        return true;
-    default:
-        return false;
-    }
-}
-
-Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool forVisitedLink) const
-{
-    if (value.isRGBColor())
-        return value.color();
-
-    auto identifier = value.valueID();
-    switch (identifier) {
-    case CSSValueWebkitText:
-        return document().textColor();
-    case CSSValueWebkitLink:
-        return (m_state.element()->isLink() && forVisitedLink) ? document().visitedLinkColor() : document().linkColor();
-    case CSSValueWebkitActivelink:
-        return document().activeLinkColor();
-    case CSSValueWebkitFocusRingColor:
-        return RenderTheme::singleton().focusRingColor(document().styleColorOptions(m_state.style()));
-    case CSSValueCurrentcolor:
-        // Color is an inherited property so depending on it effectively makes the property inherited.
-        // FIXME: Setting the flag as a side effect of calling this function is a bit oblique. Can we do better?
-        m_state.style()->setHasExplicitlyInheritedProperties();
-        return m_state.style()->color();
-    default:
-        return StyleColor::colorFromKeyword(identifier, document().styleColorOptions(m_state.style()));
-    }
 }
 
 void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExpression& expression, bool result)
@@ -1413,173 +1334,6 @@ bool StyleResolver::hasMediaQueriesAffectedByAppearanceChange() const
             return true;
     }
     return false;
-}
-
-static FilterOperation::OperationType filterOperationForType(CSSValueID type)
-{
-    switch (type) {
-    case CSSValueUrl:
-        return FilterOperation::REFERENCE;
-    case CSSValueGrayscale:
-        return FilterOperation::GRAYSCALE;
-    case CSSValueSepia:
-        return FilterOperation::SEPIA;
-    case CSSValueSaturate:
-        return FilterOperation::SATURATE;
-    case CSSValueHueRotate:
-        return FilterOperation::HUE_ROTATE;
-    case CSSValueInvert:
-        return FilterOperation::INVERT;
-    case CSSValueAppleInvertLightness:
-        return FilterOperation::APPLE_INVERT_LIGHTNESS;
-    case CSSValueOpacity:
-        return FilterOperation::OPACITY;
-    case CSSValueBrightness:
-        return FilterOperation::BRIGHTNESS;
-    case CSSValueContrast:
-        return FilterOperation::CONTRAST;
-    case CSSValueBlur:
-        return FilterOperation::BLUR;
-    case CSSValueDropShadow:
-        return FilterOperation::DROP_SHADOW;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return FilterOperation::NONE;
-}
-
-bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations)
-{
-    State& state = m_state;
-    ASSERT(outOperations.isEmpty());
-
-    if (is<CSSPrimitiveValue>(inValue)) {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
-        if (primitiveValue.valueID() == CSSValueNone)
-            return true;
-    }
-
-    if (!is<CSSValueList>(inValue))
-        return false;
-
-    FilterOperations operations;
-    for (auto& currentValue : downcast<CSSValueList>(inValue)) {
-
-        if (is<CSSPrimitiveValue>(currentValue)) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
-            if (!primitiveValue.isURI())
-                continue;
-
-            String cssUrl = primitiveValue.stringValue();
-            URL url = document().completeURL(cssUrl);
-
-            auto operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
-            operations.operations().append(WTFMove(operation));
-            continue;
-        }
-
-        if (!is<CSSFunctionValue>(currentValue))
-            continue;
-
-        auto& filterValue = downcast<CSSFunctionValue>(currentValue.get());
-        FilterOperation::OperationType operationType = filterOperationForType(filterValue.name());
-
-        // Check that all parameters are primitive values, with the
-        // exception of drop shadow which has a CSSShadowValue parameter.
-        const CSSPrimitiveValue* firstValue = nullptr;
-        if (operationType != FilterOperation::DROP_SHADOW) {
-            bool haveNonPrimitiveValue = false;
-            for (unsigned j = 0; j < filterValue.length(); ++j) {
-                if (!is<CSSPrimitiveValue>(*filterValue.itemWithoutBoundsCheck(j))) {
-                    haveNonPrimitiveValue = true;
-                    break;
-                }
-            }
-            if (haveNonPrimitiveValue)
-                continue;
-            if (filterValue.length())
-                firstValue = downcast<CSSPrimitiveValue>(filterValue.itemWithoutBoundsCheck(0));
-        }
-
-        switch (operationType) {
-        case FilterOperation::GRAYSCALE:
-        case FilterOperation::SEPIA:
-        case FilterOperation::SATURATE: {
-            double amount = 1;
-            if (filterValue.length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
-
-            operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
-            break;
-        }
-        case FilterOperation::HUE_ROTATE: {
-            double angle = 0;
-            if (filterValue.length() == 1)
-                angle = firstValue->computeDegrees();
-
-            operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
-            break;
-        }
-        case FilterOperation::INVERT:
-        case FilterOperation::BRIGHTNESS:
-        case FilterOperation::CONTRAST:
-        case FilterOperation::OPACITY: {
-            double amount = 1;
-            if (filterValue.length() == 1) {
-                amount = firstValue->doubleValue();
-                if (firstValue->isPercentage())
-                    amount /= 100;
-            }
-
-            operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
-            break;
-        }
-        case FilterOperation::APPLE_INVERT_LIGHTNESS: {
-            operations.operations().append(InvertLightnessFilterOperation::create());
-            break;
-        }
-        case FilterOperation::BLUR: {
-            Length stdDeviation = Length(0, Fixed);
-            if (filterValue.length() >= 1)
-                stdDeviation = convertToFloatLength(firstValue, state.cssToLengthConversionData());
-            if (stdDeviation.isUndefined())
-                return false;
-
-            operations.operations().append(BlurFilterOperation::create(stdDeviation));
-            break;
-        }
-        case FilterOperation::DROP_SHADOW: {
-            if (filterValue.length() != 1)
-                return false;
-
-            const auto* cssValue = filterValue.itemWithoutBoundsCheck(0);
-            if (!is<CSSShadowValue>(cssValue))
-                continue;
-
-            const auto& item = downcast<CSSShadowValue>(*cssValue);
-            int x = item.x->computeLength<int>(state.cssToLengthConversionData());
-            int y = item.y->computeLength<int>(state.cssToLengthConversionData());
-            IntPoint location(x, y);
-            int blur = item.blur ? item.blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
-            Color color;
-            if (item.color)
-                color = colorFromPrimitiveValue(*item.color);
-
-            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent));
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-    outOperations = operations;
-    return true;
 }
 
 } // namespace WebCore

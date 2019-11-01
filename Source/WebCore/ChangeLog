@@ -1,3 +1,80 @@
+2019-11-01  Antti Koivisto  <antti@apple.com>
+
+        Style::Builder should not depend on StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=203729
+
+        Reviewed by Zalan Bujtas.
+
+        With all style building state in builder, we can remove the back-reference to style resolver.
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::createFilterOperations):
+        * css/CSSFilterImageValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::gradientWithStylesResolved):
+        (WebCore::CSSGradientValue::resolveRGBColors):
+
+        Add helper for resolving basic colors without style builder.
+
+        * css/CSSGradientValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::applyMatchedProperties):
+
+        Register content attributes encountered during style building.
+
+        (WebCore::StyleResolver::State::updateConversionData): Deleted.
+
+        This is now created by BuilderState constructor.
+
+        (WebCore::StyleResolver::styleImage): Deleted.
+        (WebCore::StyleResolver::colorFromPrimitiveValueIsDerivedFromElement): Deleted.
+        (WebCore::StyleResolver::colorFromPrimitiveValue const): Deleted.
+        (WebCore::filterOperationForType): Deleted.
+        (WebCore::StyleResolver::createFilterOperations): Deleted.
+
+        Move image mapping functions to BuilderState.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::cssToLengthConversionData const): Deleted.
+        * html/HTMLInputElement.cpp:
+        (WebCore::autoFillStrongPasswordMaskImage):
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+
+        Create mask image without requiring style resolver.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::Builder):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueZoom):
+        (WebCore::Style::BuilderCustom::applyValueContent):
+        (WebCore::Style::BuilderCustom::applyValueFontSize):
+        (WebCore::Style::BuilderCustom::applyValueAlt):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::BuilderState):
+
+        No more m_styleResolver.
+
+        (WebCore::Style::BuilderState::createStyleImage):
+        (WebCore::Style::filterOperationForType):
+        (WebCore::Style::BuilderState::createFilterOperations):
+        (WebCore::Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement):
+        (WebCore::Style::BuilderState::colorFromPrimitiveValue const):
+        (WebCore::Style::BuilderState::registerContentAttribute):
+
+        Collect content attributes so they can be applied later by StyleResolver.
+
+        * style/StyleBuilderState.h:
+        (WebCore::Style::BuilderState::builder):
+        (WebCore::Style::BuilderState::rootElementStyle const):
+
+        Restore this to be nullable for simplicity.
+
+        (WebCore::Style::BuilderState::registeredContentAttributes const):
+        (WebCore::Style::BuilderState::styleResolver): Deleted.
+
 2019-11-01  Zan Dobersek  <zdobersek@igalia.com>  and  Chris Lord  <clord@igalia.com>
 
         CanvasRenderingContext2DBase: use CanvasBase more extensively

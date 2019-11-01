@@ -33,8 +33,8 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderElement.h"
+#include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
-#include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -140,10 +140,10 @@ void CSSFilterImageValue::filterImageChanged(const IntRect&)
         client.key->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
-void CSSFilterImageValue::createFilterOperations(StyleResolver* resolver)
+void CSSFilterImageValue::createFilterOperations(Style::BuilderState& builderState)
 {
     m_filterOperations.clear();
-    resolver->createFilterOperations(m_filterValue, m_filterOperations);
+    builderState.createFilterOperations(m_filterValue, m_filterOperations);
 }
 
 void CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged(CachedImage*, const IntRect* rect)

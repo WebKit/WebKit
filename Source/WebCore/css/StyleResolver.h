@@ -22,8 +22,6 @@
 #pragma once
 
 #include "CSSSelector.h"
-#include "CSSToLengthConversionData.h"
-#include "CSSToStyleMap.h"
 #include "DocumentRuleSets.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
@@ -159,9 +157,6 @@ public:
 
     void initializeFontStyle();
 
-    static bool colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue&);
-    Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
-
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
 
@@ -190,14 +185,10 @@ public:
 
     void clearCachedPropertiesAffectedByViewportUnits();
 
-    bool createFilterOperations(const CSSValue& inValue, FilterOperations& outOperations);
-
 private:
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
     void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
-    
-    void adjustStyleForInterCharacterRuby();
-    
+        
     enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
     void applyMatchedProperties(const MatchResult&, const Element&, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
 
@@ -233,13 +224,9 @@ public:
         FillLayer backgroundData() const { return m_backgroundData; }
         const Color& backgroundColor() const { return m_backgroundColor; }
 
-        const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-
         const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
     private:
-        void updateConversionData();
-
         const Element* m_element { nullptr };
         std::unique_ptr<RenderStyle> m_style;
         const RenderStyle* m_parentStyle { nullptr };
@@ -252,15 +239,11 @@ public:
         FillLayer m_backgroundData { FillLayerType::Background };
         Color m_backgroundColor;
 
-        CSSToLengthConversionData m_cssToLengthConversionData;
-
         bool m_hasUAAppearance { false };
     };
 
     State& state() { return m_state; }
     const State& state() const { return m_state; }
-
-    RefPtr<StyleImage> styleImage(CSSValue&);
 
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
 
@@ -268,8 +251,6 @@ public:
 
 private:
     void cacheBorderAndBackground();
-
-    void applySVGProperty(CSSPropertyID, CSSValue*);
 
     static unsigned computeMatchedPropertiesHash(const MatchResult&);
     struct MatchedPropertiesCacheItem {

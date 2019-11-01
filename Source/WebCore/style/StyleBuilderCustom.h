@@ -219,7 +219,7 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
         builderState.setEffectiveZoom(RenderStyle::initialZoom());
         builderState.setZoom(RenderStyle::initialZoom());
     } else if (primitiveValue.valueID() == CSSValueDocument) {
-        float docZoom = builderState.rootElementStyle().zoom();
+        float docZoom = builderState.rootElementStyle() ? builderState.rootElementStyle()->zoom() : RenderStyle::initialZoom();
         builderState.setEffectiveZoom(docZoom);
         builderState.setZoom(docZoom);
     } else if (primitiveValue.isPercentage()) {
@@ -1320,7 +1320,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
     for (auto& item : downcast<CSSValueList>(value)) {
         if (is<CSSImageGeneratorValue>(item)) {
             if (is<CSSGradientValue>(item))
-                builderState.style().setContent(StyleGeneratedImage::create(downcast<CSSGradientValue>(item.get()).gradientWithStylesResolved(builderState.styleResolver())), didSet);
+                builderState.style().setContent(StyleGeneratedImage::create(downcast<CSSGradientValue>(item.get()).gradientWithStylesResolved(builderState)), didSet);
             else
                 builderState.style().setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
             didSet = true;
@@ -1353,7 +1353,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             builderState.style().setContent(value.isNull() ? emptyAtom() : value.impl(), didSet);
             didSet = true;
             // Register the fact that the attribute value affects the style.
-            builderState.styleResolver().ruleSets().mutableFeatures().registerContentAttribute(attr.localName());
+            builderState.registerContentAttribute(attr.localName());
         } else if (contentValue.isCounter()) {
             auto* counterValue = contentValue.counterValue();
             ListStyleType listStyleType = ListStyleType::None;
@@ -1611,7 +1611,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     } else {
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
         if (primitiveValue.isLength()) {
-            size = primitiveValue.computeLength<float>(CSSToLengthConversionData(&builderState.parentStyle(), &builderState.rootElementStyle(), builderState.document().renderView(), 1.0f, true));
+            size = primitiveValue.computeLength<float>(CSSToLengthConversionData(&builderState.parentStyle(), builderState.rootElementStyle(), builderState.document().renderView(), 1.0f, true));
             if (primitiveValue.isViewportPercentageLength())
                 builderState.style().setHasViewportUnits();
         } else if (primitiveValue.isPercentage())
@@ -1747,7 +1747,7 @@ void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
         builderState.style().setContentAltText(value.isNull() ? emptyAtom() : value);
 
         // Register the fact that the attribute value affects the style.
-        builderState.styleResolver().ruleSets().mutableFeatures().registerContentAttribute(attr.localName());
+        builderState.registerContentAttribute(attr.localName());
     } else
         builderState.style().setContentAltText(emptyAtom());
 }

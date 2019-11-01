@@ -36,7 +36,7 @@
 #include "Pair.h"
 #include "RenderElement.h"
 #include "RenderView.h"
-#include "StyleResolver.h"
+#include "StyleBuilderState.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -103,31 +103,47 @@ static inline Ref<CSSGradientValue> clone(CSSGradientValue& value)
     return downcast<CSSConicGradientValue>(value).clone();
 }
 
-Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleResolver& styleResolver)
+template<typename Function>
+void resolveStopColors(Vector<CSSGradientColorStop, 2>& stops, Function&& colorResolveFunction)
+{
+    for (size_t i = 0; i < stops.size(); ++i) {
+        auto& stop = stops[i];
+        if (stop.isMidpoint)
+            continue;
+        if (stop.m_color)
+            stop.m_resolvedColor = colorResolveFunction(*stop.m_color);
+        else if (i) {
+            auto& previousStop = stops[i - 1];
+            ASSERT(previousStop.m_color);
+            stop.m_color = previousStop.m_color;
+            stop.m_resolvedColor = previousStop.m_resolvedColor;
+        }
+    }
+}
+
+Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(Style::BuilderState& builderState)
 {
     bool colorIsDerivedFromElement = false;
     for (auto& stop : m_stops) {
-        if (!stop.isMidpoint && stop.m_color && styleResolver.colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
+        if (!stop.isMidpoint && stop.m_color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.m_color)) {
             stop.m_colorIsDerivedFromElement = true;
             colorIsDerivedFromElement = true;
             break;
         }
     }
     auto result = colorIsDerivedFromElement ? clone(*this) : makeRef(*this);
-    for (size_t i = 0; i < result->m_stops.size(); ++i) {
-        auto& stop = result->m_stops[i];
-        if (stop.isMidpoint)
-            continue;
-        if (stop.m_color)
-            stop.m_resolvedColor = styleResolver.colorFromPrimitiveValue(*stop.m_color);
-        else if (i) {
-            auto& previousStop = result->m_stops[i - 1];
-            ASSERT(previousStop.m_color);
-            stop.m_color = previousStop.m_color;
-            stop.m_resolvedColor = previousStop.m_resolvedColor;
-        }
-    }
+    resolveStopColors(result->m_stops, [&](const CSSPrimitiveValue& colorValue) {
+        return builderState.colorFromPrimitiveValue(colorValue);
+    });
     return result;
+}
+
+void CSSGradientValue::resolveRGBColors()
+{
+    resolveStopColors(m_stops, [&](const CSSPrimitiveValue& colorValue) {
+        ASSERT(colorValue.isRGBColor());
+        return colorValue.color();
+    });
 }
 
 class LinearGradientAdapter {
