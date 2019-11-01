@@ -46,6 +46,7 @@ Ref<WorkerEventLoop> WorkerEventLoop::create(WorkletGlobalScope& context)
 WorkerEventLoop::WorkerEventLoop(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
 {
+    suspendIfNeeded();
 }
 
 void WorkerEventLoop::queueTask(TaskSource source, ScriptExecutionContext& context, TaskFunction&& function)

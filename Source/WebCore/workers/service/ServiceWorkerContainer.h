@@ -94,6 +94,7 @@ public:
 
 private:
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
+    void enqueueTask(Function<void()>&&);
 
     void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);
 
@@ -144,7 +145,6 @@ private:
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
     HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
     UniqueRef<GenericEventQueue> m_messageQueue;
-    UniqueRef<SuspendableTaskQueue> m_taskQueue;
 };
 
 } // namespace WebCore

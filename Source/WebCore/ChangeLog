@@ -1,3 +1,23 @@
+2019-11-01  Chris Dumez  <cdumez@apple.com>
+
+        Port ServiceWorkerContainer to the HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203680
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/AbstractEventLoop.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::enqueueTask):
+        * workers/service/ServiceWorkerContainer.h:
+
 2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate media query evaluation into HTML5 event loop

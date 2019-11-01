@@ -33,6 +33,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 enum class TaskSource : uint8_t {
+    DOMManipulation,
     IdleTask,
     Networking,
     UserInteraction

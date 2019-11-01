@@ -65,6 +65,9 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 
 void DeferredPromise::whenSettled(Function<void()>&& callback)
 {
+    if (isSuspended())
+        return;
+
     DOMPromise::whenPromiseIsSettled(globalObject(), deferred(), WTFMove(callback));
 }
 
