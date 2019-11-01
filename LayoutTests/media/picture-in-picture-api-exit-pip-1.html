@@ -8,18 +8,15 @@
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+
             run('video.src = findMediaFile("video", "content/test")');
             await waitFor(video, 'canplaythrough');
+
             runWithKeyDown(function() { video.requestPictureInPicture() });
             await waitFor(video, 'enterpictureinpicture');
-            runWithKeyDown(function() {
-                document.exitPictureInPicture()
-                .then(() => {
-                    endTest();
-                })
-                .catch(() => {
-                    failTest('Exit Picture-in-Picture resolves when there is a Picture-in-Picture video.')
-                });
+            document.exitPictureInPicture().then(endTest).catch(() => {
+                failTest('Failed to exit the Picture-in-Picture mode.');
             });
         });
     </script>

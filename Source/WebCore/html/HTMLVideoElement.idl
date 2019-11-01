@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO,
+    ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface HTMLVideoElement : HTMLMediaElement {
     [CEReactions=NotNeeded, Reflect] attribute unsigned long width;

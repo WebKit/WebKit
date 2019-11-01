@@ -6,16 +6,18 @@
     <script>
         window.addEventListener('load', async event => {
             findMediaElement();
-            runWithKeyDown(function() {
-                document.exitPictureInPicture()
-                .then(() => {
-                    failTest('Exit Picture-in-Picture rejects when there is no Picture-in-Picture video.');
-                })
-                .catch(error => {
-                    window.error = error;
-                    testExpected('error.name', 'InvalidStateError');
-                    endTest();
-                });
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+
+            document.exitPictureInPicture()
+            .then(() => {
+                failTest('Exit Picture-in-Picture rejects when there is no Picture-in-Picture video.');
+            })
+            .catch(error => {
+                window.error = error;
+                testExpected('error.name', 'InvalidStateError');
+                endTest();
             });
         });
     </script>

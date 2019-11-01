@@ -72,6 +72,7 @@ class HTMLLinkElement;
 class HTMLMediaElement;
 class HTMLPictureElement;
 class HTMLSelectElement;
+class HTMLVideoElement;
 class ImageData;
 class InspectorStubFrontend;
 class InternalSettings;
@@ -896,6 +897,10 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    void setPictureInPictureAPITestEnabled(HTMLVideoElement&, bool);
 #endif
 
     int processIdentifier() const;

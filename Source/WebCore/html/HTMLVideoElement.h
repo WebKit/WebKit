@@ -92,6 +92,7 @@ public:
 #if ENABLE(PICTURE_IN_PICTURE_API)
     WEBCORE_EXPORT void didBecomeFullscreenElement() final;
     void setPictureInPictureObserver(PictureInPictureObserver*);
+    WEBCORE_EXPORT void setPictureInPictureAPITestEnabled(bool);
 #endif
 #endif
 
@@ -139,6 +140,8 @@ private:
     bool m_waitingForPictureInPictureWindowFrame { false };
     bool m_isFullscreen { false };
     PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
+
+    bool m_pictureInPictureAPITestEnabled { false };
 #endif
 };
 

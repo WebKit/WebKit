@@ -449,6 +449,22 @@ void HTMLVideoElement::webkitSetPresentationMode(VideoPresentationMode mode)
 
 void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (m_pictureInPictureAPITestEnabled) {
+        if (mode == VideoFullscreenModePictureInPicture) {
+            fullscreenModeChanged(mode);
+            didBecomeFullscreenElement();
+            setVideoFullscreenFrame({0, 0, 100, 100});
+            return;
+        }
+
+        if (mode == VideoFullscreenModeNone) {
+            fullscreenModeChanged(mode);
+            return;
+        }
+    }
+#endif
+
     if (mode == VideoFullscreenModeNone && isFullscreen()) {
         exitFullscreen();
         return;
@@ -516,6 +532,11 @@ void HTMLVideoElement::didBecomeFullscreenElement()
 void HTMLVideoElement::setPictureInPictureObserver(PictureInPictureObserver* observer)
 {
     m_pictureInPictureObserver = observer;
+}
+
+void HTMLVideoElement::setPictureInPictureAPITestEnabled(bool enabled)
+{
+    m_pictureInPictureAPITestEnabled = enabled;
 }
 #endif
 

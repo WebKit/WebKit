@@ -1,3 +1,30 @@
+2019-11-01  Peng Liu  <peng.liu6@apple.com>
+
+        Picture-in-Picture layout test cases interfere with each other
+        https://bugs.webkit.org/show_bug.cgi?id=203614
+
+        Reviewed by Eric Carlson.
+
+        Use "internals.setPictureInPictureAPITestEnabled(video, true)" to test
+        the picture-in-picture API implementation without AVKit/CoreMedia stuffs.
+
+        * media/picture-in-picture-api-enter-pip-1-expected.txt:
+        * media/picture-in-picture-api-enter-pip-1.html:
+        * media/picture-in-picture-api-enter-pip-2-expected.txt:
+        * media/picture-in-picture-api-enter-pip-2.html:
+        * media/picture-in-picture-api-enter-pip-3-expected.txt:
+        * media/picture-in-picture-api-enter-pip-3.html:
+        * media/picture-in-picture-api-enter-pip-4-expected.txt:
+        * media/picture-in-picture-api-enter-pip-4.html:
+        * media/picture-in-picture-api-exit-pip-1-expected.txt:
+        * media/picture-in-picture-api-exit-pip-1.html:
+        * media/picture-in-picture-api-exit-pip-2-expected.txt:
+        * media/picture-in-picture-api-exit-pip-2.html:
+        * media/picture-in-picture-api-pip-events-expected.txt:
+        * media/picture-in-picture-api-pip-events.html:
+        * media/picture-in-picture-api-pip-window-expected.txt:
+        * media/picture-in-picture-api-pip-window.html:
+
 2019-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Turn on IOSurface support in the iOS Simulator

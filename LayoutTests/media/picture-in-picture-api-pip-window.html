@@ -8,6 +8,7 @@
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
 
             run('video.src = findMediaFile("video", "content/test")');
             await waitFor(video, 'canplaythrough');
@@ -18,12 +19,16 @@
                     window.pipWindow = pipWindow;
                     testExpected('pipWindow.width', 0, '>');
                     testExpected('pipWindow.height', 0, '>');
-                    endTest();
+
+                    document.exitPictureInPicture().then(endTest).catch(() => {
+                        failTest('Failed to exit the Picture-in-Picture mode.');
+                    });
                 })
                 .catch(error => {
                     failTest("Failed to enter the Picture-in-Picture mode.");
                 });
             });
+
         });
     </script>
 </head>

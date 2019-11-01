@@ -8,6 +8,7 @@
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
             run('video.src = findMediaFile("audio", "content/test")');
             await waitFor(video, 'canplaythrough');
             runWithKeyDown(function() {

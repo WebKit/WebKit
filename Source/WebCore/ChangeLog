@@ -1,3 +1,29 @@
+2019-11-01  Peng Liu  <peng.liu6@apple.com>
+
+        Picture-in-Picture layout test cases interfere with each other
+        https://bugs.webkit.org/show_bug.cgi?id=203614
+
+        Reviewed by Eric Carlson.
+
+        Fix test running issues, no new test is needed.
+
+        Add a member variable m_pictureInPictureAPITestEnabled to the HTMLVideoElement class.
+        When this variable is true, HTMLVideoElement::setFullscreenMode() will mock the
+        behavior of the Picture-in-Picture mode changing without the AVKit/CoreMedia involvement.
+        So we can run multiple layout test cases for Picture-in-Picture API simultaneously.
+        Note: this solution only tests the code for the Picture-in-Picture API implementation!
+        We still need to use the API tests to test the Picture-in-Picture implementation end-to-end.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        (WebCore::HTMLVideoElement::setPictureInPictureAPITestEnabled):
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPictureInPictureAPITestEnabled):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-11-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for text-align: justify

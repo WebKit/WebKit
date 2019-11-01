@@ -8,6 +8,7 @@
             findMediaElement();
 
             run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
             runWithKeyDown(function() {
                 video.requestPictureInPicture()
                 .then(() => {
