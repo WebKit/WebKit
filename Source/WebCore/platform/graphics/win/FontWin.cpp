@@ -33,9 +33,11 @@
 #include "LayoutRect.h"
 #include "Logging.h"
 #include "TextRun.h"
-#include "UniscribeController.h"
 #include <wtf/MathExtras.h>
 
+#if !USE(DIRECT2D)
+#include "UniscribeController.h"
+#endif
 
 namespace WebCore {
 
@@ -48,6 +50,8 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
 {
     return false;
 }
+
+#if !USE(DIRECT2D)
 
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
@@ -112,5 +116,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float xFloa
     UniscribeController controller(this, run);
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
+
+#endif
 
 }

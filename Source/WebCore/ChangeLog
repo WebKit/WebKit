@@ -1,3 +1,54 @@
+2019-10-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [FTW] Adopt DirectWrite in place of Uniscribe
+        https://bugs.webkit.org/show_bug.cgi?id=203548
+        <rdar://problem/56695130>
+
+        Reviewed by Fujii Hironori.
+
+        This patch switches from the Uniscribe text controller to a
+        DirectWrite based ComplexTextController.
+
+        * PlatformFTW.cmake:
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Treat Windows
+        like any other ComplexTextController platform.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::platformGlyphInit): Add hack for DirectWrite
+        zero-width space handling.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const): Don't use Uniscribe.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::dwFontCollection const):
+        (WebCore::FontPlatformData::faceName const):
+        * platform/graphics/win/ComplexTextControllerDirectWrite.cpp:
+        (WebCore::shape): Added,
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        Added.
+        * platform/graphics/win/DirectWriteUtilities.cpp:
+        (WebCore::DirectWrite::createWithPlatformFont): Modify to return a
+        pair of font and font collection.
+        (WebCore::DirectWrite::fontWeight): Added stub.
+        (WebCore::DirectWrite::fontStyle): Ditto.
+        (WebCore::DirectWrite::fontStretch): Ditto.
+        * platform/graphics/win/DirectWriteUtilities.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Add more
+        information to help DirectWrite handle font styles.
+        * platform/graphics/win/FontPlatformDataDirect2D.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::createFallbackFont): Deleted.
+        * platform/graphics/win/FontWin.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp:
+        (WebCore::GlyphPage::fill): Update to handle multiple runs in a
+        given string.
+        * platform/graphics/win/TextAnalyzerHelper.cpp:
+        (WebCore::TextAnalyzerHelper::TextAnalyzerHelper): Update to handle
+        analysis of strings with multiple runs.
+        (WebCore::TextAnalyzerHelper::SetScriptAnalysis): Ditto.
+        * platform/graphics/win/TextAnalyzerHelper.h:
+
 2019-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Turn on IOSurface support in the iOS Simulator

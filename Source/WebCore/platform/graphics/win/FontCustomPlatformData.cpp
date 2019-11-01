@@ -53,8 +53,14 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     ASSERT(m_fontReference);
 
+    auto faceName = m_name.charactersWithNullTermination();
+    if (faceName.size() > LF_FACESIZE) {
+        faceName.resize(LF_FACESIZE);
+        faceName.last() = 0;
+    }
+
     LOGFONT logFont { };
-    memcpy(logFont.lfFaceName, m_name.charactersWithNullTermination().data(), sizeof(logFont.lfFaceName[0]) * std::min<size_t>(static_cast<size_t>(LF_FACESIZE), 1 + m_name.length()));
+    memcpy(logFont.lfFaceName, faceName.data(), sizeof(logFont.lfFaceName[0]) * std::min<size_t>(static_cast<size_t>(LF_FACESIZE), 1 + m_name.length()));
 
     logFont.lfHeight = -size;
     if (renderingMode == FontRenderingMode::Normal)
@@ -80,8 +86,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
     return FontPlatformData(WTFMove(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 #else
-    COMPtr<IDWriteFont> dwFont = DirectWrite::createWithPlatformFont(logFont);
-    return FontPlatformData(WTFMove(hfont), dwFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
+    auto font = DirectWrite::createWithPlatformFont(logFont);
+    return FontPlatformData(WTFMove(hfont), WTFMove(font), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 #endif
 }
 

@@ -41,7 +41,7 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !USE(DIRECT2D)
 #include "UniscribeController.h"
 #endif
 
@@ -350,7 +350,7 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
 
     auto codePathToUse = codePath(run);
     if (codePathToUse == Complex) {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !USE(DIRECT2D)
         UniscribeController it(this, run);
         it.advance(from);
         offsetBeforeRange = it.runWidthSoFar();
@@ -1397,7 +1397,7 @@ float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigne
     return initialAdvance;
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || USE(DIRECT2D)
 float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     float initialAdvance;
@@ -1545,7 +1545,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     return it.m_runWidthSoFar;
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || USE(DIRECT2D)
 float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
@@ -1578,7 +1578,7 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || USE(DIRECT2D)
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     ComplexTextController controller(*this, run);
@@ -1638,7 +1638,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     return offset;
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || USE(DIRECT2D)
 int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
     ComplexTextController controller(*this, run);

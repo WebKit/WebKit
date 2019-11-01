@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-TextAnalyzerHelper::TextAnalyzerHelper(WCHAR* localeName, WCHAR* buffer, unsigned bufferLength)
+TextAnalyzerHelper::TextAnalyzerHelper(const WCHAR* localeName, const WCHAR* buffer, unsigned bufferLength)
     : m_localeName(localeName)
     , m_buffer(buffer)
     , m_bufferLength(bufferLength)
@@ -122,7 +122,8 @@ HRESULT TextAnalyzerHelper::SetLineBreakpoints(UINT32 textPosition, UINT32 textL
 
 HRESULT TextAnalyzerHelper::SetScriptAnalysis(UINT32 textPosition, UINT32 textLength, const DWRITE_SCRIPT_ANALYSIS* analysis)
 {
-    m_analysis = *analysis;
+    AnalyzedRun current = { textPosition, textLength, *analysis };
+    m_analyzedRuns.append(WTFMove(current));
 
     return S_OK;
 }

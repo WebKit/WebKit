@@ -190,14 +190,20 @@ COMPtr<IDWriteFont> createWithPlatformFont(const LOGFONT& logFont)
 
     Vector<wchar_t> localeName(LOCALE_NAME_MAX_LENGTH);
     int localeLength = GetUserDefaultLocaleName(localeName.data(), LOCALE_NAME_MAX_LENGTH);
+    RELEASE_ASSERT(localeLength <= LOCALE_NAME_MAX_LENGTH);
 
-    COMPtr<IDWriteFontFamily> fontFamily = fontFamilyForCollection(systemFontCollection.get(), localeName, logFont);
-    if (!fontFamily)
-        fontFamily = fontFamilyForCollection(webProcessFontCollection(), localeName, logFont);
+    COMPtr<IDWriteFontCollection1> collection(Query, systemFontCollection);
+
+    COMPtr<IDWriteFontFamily> fontFamily = fontFamilyForCollection(collection.get(), localeName, logFont);
+    if (!fontFamily) {
+        collection = webProcessFontCollection();
+        fontFamily = fontFamilyForCollection(collection.get(), localeName, logFont);
+    }
 
     if (!fontFamily) {
         // Just return the first system font.
-        hr = systemFontCollection->GetFontFamily(0, &fontFamily);
+        collection = COMPtr<IDWriteFontCollection1>(Query, systemFontCollection);
+        hr = collection->GetFontFamily(0, &fontFamily);
         if (FAILED(hr))
             return nullptr;
 
@@ -216,6 +222,21 @@ COMPtr<IDWriteFont> createWithPlatformFont(const LOGFONT& logFont)
     ASSERT(SUCCEEDED(hr));
 
     return dwFont;
+}
+
+DWRITE_FONT_WEIGHT fontWeight(const FontPlatformData&)
+{
+    return DWRITE_FONT_WEIGHT_REGULAR;
+}
+
+DWRITE_FONT_STYLE fontStyle(const FontPlatformData&)
+{
+    return DWRITE_FONT_STYLE_NORMAL;
+}
+
+DWRITE_FONT_STRETCH fontStretch(const FontPlatformData&)
+{
+    return DWRITE_FONT_STRETCH_NORMAL;
 }
 
 } // namespace DirectWrite

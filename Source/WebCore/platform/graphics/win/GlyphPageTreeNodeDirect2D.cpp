@@ -52,27 +52,45 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     UChar localeName[LOCALE_NAME_MAX_LENGTH + 1] = { };
     int localeLength = GetUserDefaultLocaleName(reinterpret_cast<LPWSTR>(&localeName), LOCALE_NAME_MAX_LENGTH);
     RELEASE_ASSERT(localeLength <= LOCALE_NAME_MAX_LENGTH);
-    localeName[localeLength] = '\0';
 
     TextAnalyzerHelper helper(reinterpret_cast<LPWSTR>(&localeName), reinterpret_cast<LPWSTR>(buffer), bufferLength);
 
     hr = analyzer->AnalyzeScript(&helper, 0, bufferLength, &helper);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
-    unsigned returnedCount = 0;
-    Glyph localGlyphBuffer[GlyphPage::size];
-    Glyph clusterMap[GlyphPage::size];
+    Vector<Glyph> glyphs(GlyphPage::size, 0);
+    Vector<Glyph> clusterMap(GlyphPage::size, 0);
     Vector<DWRITE_SHAPING_TEXT_PROPERTIES> textProperties(GlyphPage::size);
     Vector<DWRITE_SHAPING_GLYPH_PROPERTIES> glyphProperties(GlyphPage::size);
 
-    hr = analyzer->GetGlyphs(reinterpret_cast<LPCWSTR>(buffer), bufferLength, fontPlatformData.dwFontFace(), fontPlatformData.orientation() == FontOrientation::Vertical, false,
-        &helper.m_analysis, nullptr, nullptr, nullptr, nullptr, 0, GlyphPage::size, clusterMap, textProperties.data(),
-        localGlyphBuffer, glyphProperties.data(), &returnedCount);
-    if (!SUCCEEDED(hr))
-        return false;
+    const WCHAR* textStart = reinterpret_cast<LPCWSTR>(buffer);
+    Glyph* glyphData = glyphs.data();
+    Glyph* clusterMapData = clusterMap.data();
+    DWRITE_SHAPING_TEXT_PROPERTIES* textPropertiesData = textProperties.data();
+    DWRITE_SHAPING_GLYPH_PROPERTIES* glyphPropertiesData = glyphProperties.data();
 
-    for (unsigned i = 0; i < GlyphPage::size; i++) {
-        Glyph glyph = localGlyphBuffer[i];
+    unsigned total = 0;
+    unsigned maxGlyphCount = GlyphPage::size;
+    for (const auto& run : helper.m_analyzedRuns) {
+        RELEASE_ASSERT(total + run.length <= bufferLength);
+
+        unsigned returnedCount = 0;
+        hr = analyzer->GetGlyphs(textStart + run.startPosition, run.length, fontPlatformData.dwFontFace(), fontPlatformData.orientation() == FontOrientation::Vertical, false,
+            &run.analysis, nullptr, nullptr, nullptr, nullptr, 0, maxGlyphCount, clusterMapData, textPropertiesData,
+            glyphData, glyphPropertiesData, &returnedCount);
+
+        if (!SUCCEEDED(hr))
+            return false;
+
+        glyphData += returnedCount;
+        clusterMapData += returnedCount;
+        textPropertiesData += returnedCount;
+        glyphPropertiesData += returnedCount;
+        maxGlyphCount -= returnedCount;
+    }
+
+    for (unsigned i = 0; i < GlyphPage::size; ++i) {
+        Glyph glyph = glyphs[i];
         if (!glyph)
             setGlyphForIndex(i, 0);
         else {

@@ -26,11 +26,18 @@
 #pragma once
 
 #include <dwrite.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+struct AnalyzedRun {
+    unsigned startPosition { 0 };
+    unsigned length { 0 };
+    DWRITE_SCRIPT_ANALYSIS analysis;
+};
+
 struct TextAnalyzerHelper : public IDWriteTextAnalysisSink, IDWriteTextAnalysisSource {
-    TextAnalyzerHelper(WCHAR* localeName, WCHAR* buffer, unsigned bufferLength);
+    TextAnalyzerHelper(const WCHAR* localeName, const WCHAR* buffer, unsigned bufferLength);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void**);
@@ -50,10 +57,10 @@ struct TextAnalyzerHelper : public IDWriteTextAnalysisSink, IDWriteTextAnalysisS
     virtual HRESULT STDMETHODCALLTYPE SetBidiLevel(UINT32 textPosition, UINT32 textLength, UINT8 explicitLevel, UINT8 resolvedLevel);
     virtual HRESULT STDMETHODCALLTYPE SetNumberSubstitution(UINT32 textPosition, UINT32 textLength, IDWriteNumberSubstitution*);
 
-    WCHAR* m_localeName { nullptr };
-    WCHAR* m_buffer { nullptr };
+    const WCHAR* m_localeName { nullptr };
+    const WCHAR* m_buffer { nullptr };
     unsigned m_bufferLength { 0 };
-    DWRITE_SCRIPT_ANALYSIS m_analysis { };
+    Vector<AnalyzedRun> m_analyzedRuns;
     ULONG m_refCount { 0 };
 };
 

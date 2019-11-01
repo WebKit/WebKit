@@ -119,19 +119,20 @@ void Font::platformGlyphInit()
     // every character and the space are the same width. Otherwise we round.
     if (glyphPageSpace)
         m_spaceGlyph = glyphPageSpace->glyphDataForCharacter(space).glyph;
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
     if (glyphPageCharacterZero)
         m_zeroGlyph = glyphPageCharacterZero->glyphDataForCharacter('0').glyph;
-    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
-    determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
     // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178> and Font::isZeroWidthSpaceGlyph()
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph)
         m_zeroWidthSpaceGlyph = 0;
+
+    float width = widthForGlyph(m_spaceGlyph);
+    m_spaceWidth = width;
+    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
+    determinePitch();
+    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 }
 
 Font::~Font()

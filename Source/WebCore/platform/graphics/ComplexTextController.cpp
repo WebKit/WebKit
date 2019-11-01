@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !USE(DIRECT2D)
 
 class TextLayout {
 };
@@ -61,6 +61,11 @@ float FontCascade::width(TextLayout&, unsigned, unsigned, HashSet<const Font*>*)
 {
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+void ComplexTextController::collectComplexTextRunsForCharacters(const UChar*, unsigned, unsigned, const Font*)
+{
+    ASSERT_NOT_REACHED();
 }
 
 #else
@@ -146,10 +151,6 @@ ComplexTextController::ComplexTextController(const FontCascade& font, const Text
     , m_mayUseNaturalWritingDirection(mayUseNaturalWritingDirection)
     , m_forTextEmphasis(forTextEmphasis)
 {
-#if PLATFORM(WIN)
-    ASSERT_NOT_REACHED();
-#endif
-
     computeExpansionOpportunity();
 
     collectComplexTextRuns();

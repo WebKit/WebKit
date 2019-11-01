@@ -101,7 +101,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TextAnalyzerHelper.cpp
     platform/graphics/win/TransformationMatrixDirect2D.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
-    platform/graphics/win/UniscribeController.cpp
 
     platform/network/win/CurlSSLHandleWin.cpp
     platform/network/win/DownloadBundleWin.cpp

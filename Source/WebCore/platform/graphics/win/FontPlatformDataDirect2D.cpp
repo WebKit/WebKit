@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,12 +53,12 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
         m_isSystemFont = !wcscmp(faceName, L"Lucida Grande");
 }
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT>&& hfont, IDWriteFont* font, float size, bool bold, bool oblique, bool useGDI)
+FontPlatformData::FontPlatformData(GDIObject<HFONT>&& hfont, COMPtr<IDWriteFont>&& font, float size, bool bold, bool oblique, bool useGDI)
     : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_size(size)
     , m_font(SharedGDIObject<HFONT>::create(WTFMove(hfont)))
-    , m_dwFont(font)
+    , m_dwFont(WTFMove(font))
     , m_useGDI(useGDI)
 {
     HRESULT hr = m_dwFont->CreateFontFace(&m_dwFontFace);
@@ -114,55 +114,6 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_font == other.m_font
         && m_useGDI == other.m_useGDI
         && fontsAreEqual(m_dwFont.get(), other.m_dwFont.get());
-}
-
-HRESULT FontPlatformData::createFallbackFont(const LOGFONT& logFont, IDWriteFont** dwFont)
-{
-    if (!dwFont)
-        return E_POINTER;
-
-    *dwFont = DirectWrite::createWithPlatformFont(logFont).get();
-
-    return S_OK;
-}
-
-HRESULT FontPlatformData::createFallbackFont(HFONT hfont, IDWriteFont** dwFont)
-{
-    if (!dwFont)
-        return E_POINTER;
-
-    COMPtr<IDWriteFontCollection> fontCollection;
-    HRESULT hr = DirectWrite::factory()->GetSystemFontCollection(&fontCollection);
-    if (FAILED(hr))
-        return hr;
-
-    HWndDC hdc(0);
-    HGDIOBJ oldFont = ::SelectObject(hdc, hfont);
-
-    COMPtr<IDWriteFontFace> fontFace;
-    hr = DirectWrite::gdiInterop()->CreateFontFaceFromHdc(hdc, &fontFace);
-    if (FAILED(hr)) {
-        ::SelectObject(hdc, oldFont);
-        return hr;
-    }
-
-    LOGFONT gdiBasedFont = { };
-    hr = DirectWrite::gdiInterop()->ConvertFontFaceToLOGFONT(fontFace.get(), &gdiBasedFont);
-    if (FAILED(hr)) {
-        ::SelectObject(hdc, oldFont);
-        return hr;
-    }
-
-    hr = fontCollection->GetFontFromFontFace(fontFace.get(), dwFont);
-
-    if (!SUCCEEDED(hr))
-        hr = DirectWrite::webProcessFontCollection()->GetFontFromFontFace(fontFace.get(), dwFont);
-
-    ::SelectObject(hdc, oldFont);
-    if (SUCCEEDED(hr))
-        return hr;
-
-    return createFallbackFont(gdiBasedFont, dwFont);
 }
 
 }

@@ -36,8 +36,13 @@ interface IDWriteFontCollection1;
 interface IDWriteFontFamily;
 interface IDWriteGdiInterop;
 
+enum DWRITE_FONT_WEIGHT;
+enum DWRITE_FONT_STYLE;
+enum DWRITE_FONT_STRETCH;
+
 namespace WebCore {
 
+class FontPlatformData;
 class SharedBuffer;
 
 namespace DirectWrite {
@@ -51,6 +56,10 @@ HRESULT addFontFromDataToProcessCollection(const Vector<char>& fontData);
 COMPtr<IDWriteFontFamily> fontFamilyForCollection(IDWriteFontCollection*, const Vector<wchar_t>& localeName, const LOGFONT&);
 COMPtr<IDWriteFont> createWithPlatformFont(const LOGFONT&);
 Vector<wchar_t> familyNameForLocale(IDWriteFontFamily*, const Vector<wchar_t>& localeName);
+
+DWRITE_FONT_WEIGHT fontWeight(const FontPlatformData&);
+DWRITE_FONT_STYLE fontStyle(const FontPlatformData&);
+DWRITE_FONT_STRETCH fontStretch(const FontPlatformData&);
 
 } // namespace DirectWrite
 
