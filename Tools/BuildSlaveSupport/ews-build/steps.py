@@ -980,8 +980,9 @@ class RunWebKitTests(shell.Test):
     logfiles = {'json': jsonFileName}
     command = ['python', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
-               '--no-new-test-results',
                '--no-show-results',
+               '--no-new-test-results',
+               '--clobber-old-results',
                '--exit-after-n-failures', '30',
                '--skip-failing-tests',
                WithProperties('--%(configuration)s')]
