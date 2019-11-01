@@ -193,8 +193,13 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (httpPipeliningEnabled())
         CFURLRequestSetShouldPipelineHTTP(cfRequest, true, true);
 
-    if (resourcePrioritiesEnabled())
+    if (resourcePrioritiesEnabled()) {
         CFURLRequestSetRequestPriority(cfRequest, toPlatformRequestPriority(priority()));
+
+        // Used by PLT to ignore very low priority beacon and ping loads.
+        if (priority() == ResourceLoadPriority::VeryLow)
+            _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("WKVeryLowLoadPriority"), kCFBooleanTrue);
+    }
 
     setHeaderFields(cfRequest, httpHeaderFields());
 

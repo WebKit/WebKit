@@ -1,3 +1,20 @@
+2019-11-01  Benjamin Nham  <nham@apple.com>
+
+        Mark VeryLow priority requests using a request dictionary key
+        https://bugs.webkit.org/show_bug.cgi?id=203594
+
+        Reviewed by Alex Christensen.
+
+        Mark very-low-pri beacon/ping loads using a request dictionary key. PLT currently ignores
+        these loads by checking if a request's CFURLRequestPriority is 0, but that won't work
+        anymore once I make VeryLow and Low pri requests both have a priority of 0 for
+        https://bugs.webkit.org/show_bug.cgi?id=203423.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2019-11-01  Chris Dumez  <cdumez@apple.com>
 
         Port FileReader to the HTML5 event loop
