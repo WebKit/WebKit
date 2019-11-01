@@ -397,7 +397,7 @@ WASM_SLOW_PATH_DECL(set_global_ref)
     WASM_END_IMPL();
 }
 
-SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
+extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
     WASM_RETURN_TWO(Wasm::Thunks::singleton().throwWasmException()(callFrame, exceptionType, instance), 0);

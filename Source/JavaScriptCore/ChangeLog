@@ -1,5 +1,17 @@
 2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Fix GTK build after r251886
+        https://bugs.webkit.org/show_bug.cgi?id=203703
+
+        Reviewed by Yusuke Suzuki.
+
+        slow_path_wasm_throw_exception was missing `extern "C"` in the implementation file.
+
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::slow_path_wasm_throw_exception):
+
+2019-10-31  Tadeu Zagallo  <tzagallo@apple.com>
+
         gcSafeMemmove references undefined slowPathBackwardsMemmove on non-gcc compatible compilers
         https://bugs.webkit.org/show_bug.cgi?id=203721
 
