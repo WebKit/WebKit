@@ -1732,14 +1732,15 @@ char* JIT_OPERATION operationTryOSREnterAtCatch(VM* vmPointer, uint32_t bytecode
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
 
-    CodeBlock* optimizedReplacement = callFrame->codeBlock()->replacement();
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    CodeBlock* optimizedReplacement = codeBlock->replacement();
     if (UNLIKELY(!optimizedReplacement))
         return nullptr;
 
     switch (optimizedReplacement->jitType()) {
     case JITType::DFGJIT:
     case JITType::FTLJIT: {
-        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, optimizedReplacement, bytecodeIndex);
+        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
         return entry.executableAddress<char*>();
     }
     default:
@@ -1763,7 +1764,7 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(VM* vmPointer, ui
     switch (optimizedReplacement->jitType()) {
     case JITType::DFGJIT:
     case JITType::FTLJIT: {
-        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, optimizedReplacement, bytecodeIndex);
+        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
         return entry.executableAddress<char*>();
     }
     default:

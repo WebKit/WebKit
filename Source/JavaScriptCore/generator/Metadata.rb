@@ -83,11 +83,6 @@ EOF
     {
         return codeBlock->metadata<Metadata>(opcodeID, #{Metadata.field_name});
     }
-
-    Metadata& metadata(CallFrame* callFrame) const
-    {
-        return metadata(callFrame->codeBlock());
-    }
 EOF
     end
 

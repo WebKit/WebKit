@@ -84,7 +84,7 @@ struct CatchEntrypointData {
 void* prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex);
 
 // If null is returned, we can't OSR enter. If it's not null, it's the PC to jump to.
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex);
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM&, CallFrame*, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex);
 #else
 inline MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareOSREntry(VM&, CallFrame*, CodeBlock*, BytecodeIndex) { return nullptr; }
 #endif

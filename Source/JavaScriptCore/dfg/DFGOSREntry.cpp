@@ -329,17 +329,17 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     return scratch;
 }
 
-MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, BytecodeIndex bytecodeIndex)
 {
-    ASSERT(codeBlock->jitType() == JITType::DFGJIT || codeBlock->jitType() == JITType::FTLJIT);
-    ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
+    ASSERT(optimizedCodeBlock->jitType() == JITType::DFGJIT || optimizedCodeBlock->jitType() == JITType::FTLJIT);
+    ASSERT(optimizedCodeBlock->jitCode()->dfgCommon()->isStillValid);
 
-    if (!Options::useOSREntryToDFG() && codeBlock->jitCode()->jitType() == JITType::DFGJIT)
+    if (!Options::useOSREntryToDFG() && optimizedCodeBlock->jitCode()->jitType() == JITType::DFGJIT)
         return nullptr;
-    if (!Options::useOSREntryToFTL() && codeBlock->jitCode()->jitType() == JITType::FTLJIT)
+    if (!Options::useOSREntryToFTL() && optimizedCodeBlock->jitCode()->jitType() == JITType::FTLJIT)
         return nullptr;
 
-    CommonData* dfgCommon = codeBlock->jitCode()->dfgCommon();
+    CommonData* dfgCommon = optimizedCodeBlock->jitCode()->dfgCommon();
     RELEASE_ASSERT(dfgCommon);
     DFG::CatchEntrypointData* catchEntrypoint = dfgCommon->catchOSREntryDataForBytecodeIndex(bytecodeIndex);
     if (!catchEntrypoint) {
@@ -380,9 +380,9 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
     if (UNLIKELY(!vm.ensureStackCapacityFor(&callFrame->registers()[virtualRegisterForLocal(frameSizeForCheck).offset()])))
         return nullptr;
 
-    auto instruction = callFrame->codeBlock()->instructions().at(callFrame->bytecodeIndex());
+    auto instruction = baselineCodeBlock->instructions().at(callFrame->bytecodeIndex());
     ASSERT(instruction->is<OpCatch>());
-    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(callFrame).m_buffer;
+    ValueProfileAndOperandBuffer* buffer = instruction->as<OpCatch>().metadata(baselineCodeBlock).m_buffer;
     JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
     buffer->forEach([&] (ValueProfileAndOperand& profile) {
