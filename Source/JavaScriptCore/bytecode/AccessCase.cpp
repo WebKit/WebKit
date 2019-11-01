@@ -465,7 +465,6 @@ void AccessCase::generateWithGuard(
     VM& vm = state.m_vm;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
-    GPRReg thisGPR = state.thisGPR != InvalidGPRReg ? state.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     UNUSED_PARAM(vm);
@@ -603,25 +602,26 @@ void AccessCase::generateWithGuard(
         
         fallThrough.append(
             jit.branchPtr(
-                CCallHelpers::NotEqual, thisGPR,
+                CCallHelpers::NotEqual, state.u.prototypeGPR,
                 CCallHelpers::TrustedImmPtr(as<InstanceOfAccessCase>().prototype())));
         break;
         
     case InstanceOfGeneric: {
-        // Legend: value = `base instanceof this`.
+        GPRReg prototypeGPR = state.u.prototypeGPR;
+        // Legend: value = `base instanceof prototypeGPR`.
         
         GPRReg valueGPR = valueRegs.payloadGPR();
         
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
         allocator.lock(baseGPR);
         allocator.lock(valueGPR);
-        allocator.lock(thisGPR);
+        allocator.lock(prototypeGPR);
         allocator.lock(scratchGPR);
         
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
         
         if (!state.stubInfo->prototypeIsKnownObject)
-            state.failAndIgnore.append(jit.branchIfNotObject(thisGPR));
+            state.failAndIgnore.append(jit.branchIfNotObject(prototypeGPR));
         
         ScratchRegisterAllocator::PreservedState preservedState =
             allocator.preserveReusedRegistersByPushing(
@@ -659,7 +659,7 @@ void AccessCase::generateWithGuard(
 #endif
         jit.move(scratch2GPR, valueGPR);
         
-        CCallHelpers::Jump isInstance = jit.branchPtr(CCallHelpers::Equal, valueGPR, thisGPR);
+        CCallHelpers::Jump isInstance = jit.branchPtr(CCallHelpers::Equal, valueGPR, prototypeGPR);
 
 #if USE(JSVALUE64)
         jit.branchIfCell(JSValueRegs(valueGPR)).linkTo(loop, &jit);
@@ -716,7 +716,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     const Identifier& ident = *state.ident;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
-    GPRReg thisGPR = state.thisGPR != InvalidGPRReg ? state.thisGPR : baseGPR;
+    GPRReg thisGPR = state.u.thisGPR != InvalidGPRReg ? state.u.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     for (const ObjectPropertyCondition& condition : m_conditionSet) {

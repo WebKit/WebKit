@@ -1,3 +1,27 @@
+2019-11-01  Saam Barati  <sbarati@apple.com>
+
+        Refactor uses of StructureStubInfo 'thisGPR' to a union for thisGPR and prototypeGPR
+        https://bugs.webkit.org/show_bug.cgi?id=203693
+
+        Reviewed by Mark Lam and Yusuke Suzuki.
+
+        I'm going to be adding a third overload for this field when making
+        GetByVal inline caching part of StructureStubInfo. It's nicer for
+        each use case of this field to use it by the proper name.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * bytecode/StructureStubInfo.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+
 2019-11-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [[HasProperty]] result of Proxy in prototype chain is ignored

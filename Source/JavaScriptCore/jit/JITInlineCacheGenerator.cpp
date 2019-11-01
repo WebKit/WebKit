@@ -74,7 +74,7 @@ JITByIdGenerator::JITByIdGenerator(
 {
     m_stubInfo->patch.baseGPR = base.payloadGPR();
     m_stubInfo->patch.valueGPR = value.payloadGPR();
-    m_stubInfo->patch.thisGPR = InvalidGPRReg;
+    m_stubInfo->patch.u.thisGPR = InvalidGPRReg;
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.baseTagGPR = base.tagGPR();
     m_stubInfo->patch.valueTagGPR = value.tagGPR();
@@ -122,7 +122,7 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
 
-    m_stubInfo->patch.thisGPR = thisRegs.payloadGPR();
+    m_stubInfo->patch.u.thisGPR = thisRegs.payloadGPR();
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.thisTagGPR = thisRegs.tagGPR();
 #endif
@@ -186,7 +186,7 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
 {
     m_stubInfo->patch.baseGPR = value;
     m_stubInfo->patch.valueGPR = result;
-    m_stubInfo->patch.thisGPR = prototype;
+    m_stubInfo->patch.u.prototypeGPR = prototype;
 #if USE(JSVALUE32_64)
     m_stubInfo->patch.baseTagGPR = InvalidGPRReg;
     m_stubInfo->patch.valueTagGPR = InvalidGPRReg;

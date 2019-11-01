@@ -201,7 +201,10 @@ public:
 
         GPRReg baseGPR;
         GPRReg valueGPR;
-        GPRReg thisGPR;
+        union {
+            GPRReg thisGPR;
+            GPRReg prototypeGPR;
+        } u;
 #if USE(JSVALUE32_64)
         GPRReg valueTagGPR;
         GPRReg baseTagGPR;

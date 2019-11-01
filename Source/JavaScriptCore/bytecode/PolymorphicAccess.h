@@ -193,6 +193,7 @@ struct AccessGenerationState {
         , m_needsToRestoreRegistersIfException(false)
         , m_calculatedCallSiteIndex(false)
     {
+        u.thisGPR = InvalidGPRReg;
     }
     VM& m_vm;
     JSGlobalObject* m_globalObject;
@@ -205,7 +206,10 @@ struct AccessGenerationState {
     MacroAssembler::JumpList failAndRepatch;
     MacroAssembler::JumpList failAndIgnore;
     GPRReg baseGPR { InvalidGPRReg };
-    GPRReg thisGPR { InvalidGPRReg };
+    union {
+        GPRReg thisGPR;
+        GPRReg prototypeGPR;
+    } u;
     JSValueRegs valueRegs;
     GPRReg scratchGPR { InvalidGPRReg };
     const Identifier* ident;
