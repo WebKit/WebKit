@@ -143,7 +143,21 @@ LineLayout::LineContent LineLayout::close()
     if (m_overflowTextLength)
         overflowContent = PartialContent { *m_overflowTextLength };
     auto trailingInlineItemIndex = m_lineInput.leadingInlineItemIndex + m_committedInlineItemCount - 1;
-    return LineContent { trailingInlineItemIndex, overflowContent, WTFMove(m_floats), m_line.close(), m_line.lineBox() };
+
+    auto isLastLineWithInlineContent = [&] {
+        if (overflowContent)
+            return Line::IsLastLineWithInlineContent::No;
+        // Skip floats backwards to see if this is going to be the last line with inline content.
+        for (auto i = m_lineInput.inlineItems.size(); i--;) {
+            if (!m_lineInput.inlineItems[i]->isFloat())
+                return i == trailingInlineItemIndex ? Line::IsLastLineWithInlineContent::Yes : Line::IsLastLineWithInlineContent::No;
+        }
+        // There has to be at least one non-float item.
+        ASSERT_NOT_REACHED();
+        return Line::IsLastLineWithInlineContent::No;
+    };
+
+    return LineContent { trailingInlineItemIndex, overflowContent, WTFMove(m_floats), m_line.close(isLastLineWithInlineContent()), m_line.lineBox() };
 }
 
 LineLayout::IsEndOfLine LineLayout::placeInlineItem(const InlineItem& inlineItem)

@@ -97,6 +97,7 @@ public:
         bool hasExpansionOpportunity() const { return m_expansionOpportunityCount.hasValue(); }
         Optional<ExpansionBehavior> expansionBehavior() const;
         Optional<unsigned> expansionOpportunityCount() const { return m_expansionOpportunityCount; }
+        void adjustExpansionBehavior(ExpansionBehavior);
         void setComputedHorizontalExpansion(LayoutUnit logicalExpansion);
 
         bool isCollapsible() const { return m_isCollapsible; }
@@ -114,7 +115,8 @@ public:
         Optional<unsigned> m_expansionOpportunityCount;
     };
     using RunList = Vector<std::unique_ptr<Run>>;
-    RunList close();
+    enum class IsLastLineWithInlineContent { No, Yes };
+    RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
     static LineBox::Baseline halfLeadingMetrics(const FontMetrics&, LayoutUnit lineLogicalHeight);
 
@@ -141,12 +143,15 @@ private:
     void appendLineBreak(const InlineItem&);
 
     void removeTrailingTrimmableContent();
-    void alignContentHorizontally();
+    void alignContentHorizontally(IsLastLineWithInlineContent);
     void alignContentVertically();
 
     void adjustBaselineAndLineHeight(const InlineItem&);
     LayoutUnit inlineItemContentHeight(const InlineItem&) const;
     bool isVisuallyEmpty() const;
+
+    bool isTextAlignJustify() const { return m_horizontalAlignment == TextAlignMode::Justify; };
+    void justifyRuns();
 
     LayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const; 
@@ -161,21 +166,6 @@ private:
     bool m_skipAlignment { false };
     LineBox m_lineBox;
 };
-
-inline void Line::Run::expand(const Run& other)
-{
-    ASSERT(isText());
-    ASSERT(other.isText());
-    ASSERT(!isCollapsedToZeroAdvanceWidth());
-    ASSERT(!hasTrailingCollapsedContent());
-
-    auto& otherDisplayRun = other.displayRun();
-    m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
-    m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
-    m_hasTrailingCollapsedContent = other.isCollapsed();
-    m_isWhitespace &= other.isWhitespace();
-    m_isCollapsible = false;
-}
 
 inline void Line::Run::setIsCollapsed()
 {
@@ -195,6 +185,8 @@ inline void Line::Run::setCollapsesToZeroAdvanceWidth()
     setIsCollapsed();
     m_collapsedToZeroAdvanceWidth = true;
     m_displayRun.setLogicalWidth({ });
+    m_expansionOpportunityCount = { };
+    m_displayRun.textContext()->resetExpansion();
 }
 
 inline Optional<ExpansionBehavior> Line::Run::expansionBehavior() const
@@ -211,6 +203,13 @@ inline void Line::Run::setHasExpansionOpportunity(ExpansionBehavior expansionBeh
     ASSERT(!hasExpansionOpportunity());
     m_expansionOpportunityCount = 1;
     m_displayRun.textContext()->setExpansion({ expansionBehavior, { } });
+}
+
+inline void Line::Run::adjustExpansionBehavior(ExpansionBehavior expansionBehavior)
+{
+    ASSERT(isText());
+    ASSERT(hasExpansionOpportunity());
+    m_displayRun.textContext()->setExpansion({ expansionBehavior, m_displayRun.textContext()->expansion()->horizontalExpansion });
 }
 
 inline void Line::Run::setComputedHorizontalExpansion(LayoutUnit logicalExpansion)

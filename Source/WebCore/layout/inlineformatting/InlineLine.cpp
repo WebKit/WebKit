@@ -46,6 +46,35 @@ Line::Run::Run(const InlineItem& inlineItem, const Display::Run& displayRun)
 {
 }
 
+void Line::Run::expand(const Run& other)
+{
+    ASSERT(isText());
+    ASSERT(other.isText());
+    ASSERT(!isCollapsedToZeroAdvanceWidth());
+    ASSERT(!hasTrailingCollapsedContent());
+
+    auto& otherDisplayRun = other.displayRun();
+    m_displayRun.expandHorizontally(otherDisplayRun.logicalWidth());
+    m_displayRun.textContext()->expand(*otherDisplayRun.textContext());
+    m_hasTrailingCollapsedContent = other.isCollapsed();
+    m_isWhitespace &= other.isWhitespace();
+    m_isCollapsible = false;
+
+    // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount. 
+    if (hasExpansionOpportunity() && other.hasExpansionOpportunity()) {
+        // Run is expanded with a whitespace content.
+        adjustExpansionBehavior(ForbidLeadingExpansion | AllowTrailingExpansion);
+        m_expansionOpportunityCount = *m_expansionOpportunityCount + *other.expansionOpportunityCount();
+    } else if (!hasExpansionOpportunity() && other.hasExpansionOpportunity()) {
+        // Nonwhitespace runs is expanded with whitespace.
+        setHasExpansionOpportunity(ForbidLeadingExpansion | AllowTrailingExpansion);
+        m_expansionOpportunityCount = other.expansionOpportunityCount();
+    } else if (hasExpansionOpportunity() && !other.hasExpansionOpportunity()) {
+        // Run is expanded with a nonwhitespace content.
+        adjustExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
+    }
+}
+
 Line::Line(const InlineFormattingContext& inlineFormattingContext, const InitialConstraints& initialConstraints, Optional<TextAlignMode> horizontalAlignment, SkipAlignment skipAlignment)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_initialStrut(initialConstraints.heightAndBaseline ? initialConstraints.heightAndBaseline->strut : WTF::nullopt)
@@ -112,7 +141,7 @@ bool Line::isVisuallyEmpty() const
     return true;
 }
 
-Line::RunList Line::close()
+Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
     removeTrailingTrimmableContent();
     // Join text runs together when possible.
@@ -145,7 +174,7 @@ Line::RunList Line::close()
 
     if (!m_skipAlignment) {
         alignContentVertically();
-        alignContentHorizontally();
+        alignContentHorizontally(isLastLineWithInlineContent);
     }
 
     return WTFMove(m_runList);
@@ -223,9 +252,52 @@ void Line::alignContentVertically()
     }
 }
 
-void Line::alignContentHorizontally()
+void Line::justifyRuns()
+{
+    ASSERT(!m_runList.isEmpty());
+    ASSERT(availableWidth() > 0);
+    // Need to fix up the last run first.
+    auto& lastRun = m_runList.last();
+    if (lastRun->hasExpansionOpportunity())
+        lastRun->adjustExpansionBehavior(*lastRun->expansionBehavior() | ForbidTrailingExpansion);
+    // Collect the expansion opportunity numbers.
+    auto expansionOpportunityCount = 0;
+    for (auto& run : m_runList) {
+        if (!run->hasExpansionOpportunity())
+            continue;
+        expansionOpportunityCount += *run->expansionOpportunityCount();
+    }
+    // Nothing to distribute?
+    if (!expansionOpportunityCount)
+        return;
+    // Distribute the extra space.
+    auto expansionToDistribute = availableWidth() / expansionOpportunityCount;
+    LayoutUnit accumulatedExpansion;
+    for (auto& run : m_runList) {
+        // Expand and moves runs by the accumulated expansion.
+        if (!run->hasExpansionOpportunity()) {
+            run->moveHorizontally(accumulatedExpansion);
+            continue;
+        }
+        auto computedExpansion = expansionToDistribute * *run->expansionOpportunityCount();
+        run->setComputedHorizontalExpansion(computedExpansion);
+        run->moveHorizontally(accumulatedExpansion);
+        accumulatedExpansion += computedExpansion;
+    }
+}
+
+void Line::alignContentHorizontally(IsLastLineWithInlineContent lastLine)
 {
     ASSERT(!m_skipAlignment);
+    if (m_runList.isEmpty() || availableWidth() <= 0)
+        return;
+
+    if (isTextAlignJustify()) {
+        // Do not justify align the last line.
+        if (lastLine == IsLastLineWithInlineContent::No)
+            justifyRuns();
+        return;
+    }
 
     auto adjustmentForAlignment = [&]() -> Optional<LayoutUnit> {
         switch (*m_horizontalAlignment) {
@@ -381,6 +453,12 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto contentLength =  collapsedRun ? 1 : inlineItem.length();
     auto textContent = inlineItem.layoutBox().textContent().substring(contentStart, contentLength);
     auto lineRun = makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect, Display::Run::TextContext { contentStart, contentLength, textContent } });
+
+    if (isTextAlignJustify()) {
+        // Register expansion opportunity for whitespace runs.
+        if (inlineItem.isWhitespace())
+            lineRun->setHasExpansionOpportunity(DefaultExpansion);
+    }
 
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)

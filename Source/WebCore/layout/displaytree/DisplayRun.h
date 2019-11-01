@@ -53,9 +53,10 @@ struct Run {
 
         struct ExpansionContext {
             ExpansionBehavior behavior;
-            LayoutUnit horiztontalExpansion;
+            LayoutUnit horizontalExpansion;
         };
         void setExpansion(ExpansionContext expansionContext) { m_expansionContext = expansionContext; }
+        void resetExpansion() { m_expansionContext = WTF::nullopt; }
         Optional<ExpansionContext> expansion() const { return m_expansionContext; }
 
         void expand(const TextContext& other);

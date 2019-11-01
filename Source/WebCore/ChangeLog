@@ -1,3 +1,33 @@
+2019-11-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for text-align: justify
+        https://bugs.webkit.org/show_bug.cgi?id=203715
+        <rdar://problem/56804607>
+
+        Reviewed by Antti Koivisto.
+
+        Add basic support for text-align: justify. Register expansion opportunities as the text content is being
+        appended to the line (Line::appendTextContent) and distribute the extra space when the line is being closed (Line::close).
+        Now LFC rendering of OpenSource/PerformanceTests/Layout/line-layout-simple.html visually matches trunk rendering.
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/displaytree/DisplayRun.h:
+        (WebCore::Display::Run::TextContext::resetExpansion):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::justifyRuns):
+        (WebCore::Layout::Line::alignContentHorizontally):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::isTextAlignJustify const):
+        (WebCore::Layout::Line::Run::setCollapsesToZeroAdvanceWidth):
+        (WebCore::Layout::Line::Run::adjustExpansionBehavior):
+        (WebCore::Layout::Line::Run::expand): Deleted.
+        * layout/inlineformatting/InlineLineLayout.cpp:
+        (WebCore::Layout::LineLayout::close):
+
 2019-11-01  Antti Koivisto  <antti@apple.com>
 
         Style::Builder should not depend on StyleResolver

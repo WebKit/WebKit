@@ -127,7 +127,7 @@ static void paintInlineContent(GraphicsContext& context, const Box& rootAbsolute
             auto& lineBox = formattingState.lineBoxForRun(*run);
             auto baselineOffset = rootAbsoluteDisplayBox.top() + lineBox.logicalTop() + lineBox.baselineOffset();
             if (auto expansionContext = textContext->expansion())
-                context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft, expansionContext->horiztontalExpansion, expansionContext->behavior }, { logicalLeft, baselineOffset });
+                context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft, expansionContext->horizontalExpansion, expansionContext->behavior }, { logicalLeft, baselineOffset });
             else
                 context.drawText(style.fontCascade(), TextRun { textContext->content(), logicalLeft }, { logicalLeft, baselineOffset });
         } else if (auto* cachedImage = run->image()) {
