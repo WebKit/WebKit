@@ -4,6 +4,15 @@
         https://bugs.webkit.org/show_bug.cgi?id=203026
         <rdar://problem/56320993>
 
+        * platform/ios/TestExpectations:
+        Adjust some more test expectations after turning on accelerated drawing.
+
+2019-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on IOSurface support in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=203026
+        <rdar://problem/56320993>
+
         Reviewed by Simon Fraser.
 
         * compositing/canvas/accelerated-canvas-compositing-size-limit-expected.txt:
