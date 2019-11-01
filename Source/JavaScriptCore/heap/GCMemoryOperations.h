@@ -159,13 +159,13 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
         return;
     }
 
-#if COMPILER(GCC_COMPATIBLE) 
-
     auto slowPathBackwardsMemmove = [&] {
         size_t count = bytes / 8;
         for (size_t i = count; i--; )
             bitwise_cast<volatile uint64_t*>(dst)[i] = bitwise_cast<volatile uint64_t*>(src)[i];
     };
+
+#if COMPILER(GCC_COMPATIBLE)
 
     if (bytes <= smallCutoff)
         slowPathBackwardsMemmove();
