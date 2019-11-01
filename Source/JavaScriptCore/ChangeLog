@@ -1,3 +1,20 @@
+2019-11-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [[HasProperty]] result of Proxy in prototype chain is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=203560
+
+        Reviewed by Ross Kirsling.
+
+        Before this change, when [[HasProperty]] was called on ordinary object with Proxy in prototype chain,
+        falsy result of Proxy's "has" trap was ignored and prototype chain was inspected further.
+
+        According to spec, OrdinaryHasProperty unconditionally returns result of parent's [[HasProperty]] call.
+        (step 5.a of https://tc39.es/ecma262/#sec-ordinaryhasproperty)
+
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+
 2019-10-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative GTK build fix r251886

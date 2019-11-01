@@ -1,3 +1,13 @@
+2019-11-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [[HasProperty]] result of Proxy in prototype chain is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=203560
+
+        Reviewed by Ross Kirsling.
+
+        * stress/proxy-get-prototype-of.js: Correct Proxy "has" trap test.
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2019-11-01  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][MIPS] Skip tests failing in RELEASE_ASSERT_NOT_REACHED() at CallFrame.cpp:81
