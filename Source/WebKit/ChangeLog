@@ -1,3 +1,14 @@
+2019-11-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Investigate if mach lookup access to *.apple-extension-service, *.viewservice, and com.apple.uikit.viewservice.* can be denied
+        https://bugs.webkit.org/show_bug.cgi?id=203626
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modify the allow rule for these services to include the telemetry option.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-01  Peng Liu  <peng.liu6@apple.com>
 
         Turn on the Picture-in-Picture API feature by default

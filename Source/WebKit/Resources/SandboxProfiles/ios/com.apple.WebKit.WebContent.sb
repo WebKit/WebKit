@@ -425,11 +425,14 @@
 
     (allow mach-lookup
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
+        (global-name "com.apple.CARenderServer")
+        (global-name "com.apple.iohideventsystem")
+    )
+
+    (allow mach-lookup (with telemetry)
         (global-name-regex #"^com\.apple\.uikit\.viewservice\..+")
         (xpc-service-name-regex #"\.apple-extension-service$") ;; <rdar://problem/19525887>
         (xpc-service-name-regex #"\.viewservice$") ;; <rdar://problem/31252371>
-        (global-name "com.apple.CARenderServer")
-        (global-name "com.apple.iohideventsystem")
     )
 
     ; UIKit-required IOKit nodes.
