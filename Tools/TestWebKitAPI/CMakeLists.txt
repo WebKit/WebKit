@@ -147,11 +147,10 @@ if (ENABLE_WEBCORE)
     )
 
     set(TestWebCore_LIBRARIES
-        WebCoreTestSupport
         gtest
     )
     if (NOT APPLE)
-        list(APPEND TestWebCore_LIBRARIES WebCore)
+        list(APPEND TestWebCore_LIBRARIES WebCore WebCoreHeaderInterface)
     endif ()
 
     set(TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
