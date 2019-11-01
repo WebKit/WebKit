@@ -29,8 +29,9 @@
 import sys
 import unittest
 
+import webkitpy.common.find_files as find_files
+
 from webkitpy.common.system.filesystem import FileSystem
-import find_files
 
 
 class MockWinFileSystem(object):

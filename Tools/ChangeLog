@@ -1,3 +1,21 @@
+2019-11-01  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.common
+        https://bugs.webkit.org/show_bug.cgi?id=202462
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.common.
+        * Scripts/webkitpy/common/find_files_unittest.py: Use full import path.
+        * Scripts/webkitpy/common/lru_cache_unittest.py:
+        (LRUCacheTest.test_size_one_pop): Convert iterator to list
+        * Scripts/webkitpy/common/prettypatch_unittest.py: Check for byte array explicitly.
+        * Scripts/webkitpy/common/read_checksum_from_png_unittest.py: Use unicode compatible
+        StringIO.
+        (ReadChecksumFromPngTest.test_read_checksum):
+        * Scripts/webkitpy/common/timeout_context.py:
+        (Timeout.__enter__): Use range instead of xrange.
+
 2019-11-01  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Get TestWebKitAPI building

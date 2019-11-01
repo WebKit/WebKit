@@ -71,7 +71,7 @@ class LRUCacheTest(unittest.TestCase):
 
     def test_size_one_pop(self):
         self.lru2['key_2'] = 'item_2'
-        self.assertEqual(self.lru2.keys(), ['key_2'])
+        self.assertEqual(list(self.lru2.keys()), ['key_2'])
 
     def test_size_one_delete(self):
         del self.lru2['key_1']

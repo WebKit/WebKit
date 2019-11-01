@@ -94,7 +94,7 @@ class Timeout(object):
 
         # Another timeout is more urgent.
         if current_timeout and current_timeout.alarm_time < self.data.alarm_time:
-            for i in xrange(len(Timeout._process_to_timeout_map[os.getpid()]) - 1):
+            for i in range(len(Timeout._process_to_timeout_map[os.getpid()]) - 1):
                 if self.data.alarm_time < Timeout._process_to_timeout_map[os.getpid()][i + 1].alarm_time:
                     Timeout._process_to_timeout_map[os.getpid()].insert(i, self.data)
                     break
