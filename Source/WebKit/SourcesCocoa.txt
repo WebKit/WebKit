@@ -101,7 +101,7 @@ Shared/API/c/mac/WKCertificateInfoMac.mm
 Shared/API/c/mac/WKObjCTypeWrapperRef.mm
 Shared/API/c/mac/WKURLRequestNS.mm
 Shared/API/c/mac/WKURLResponseNS.mm
-Shared/API/c/mac/WKWebArchive.cpp
+Shared/API/c/mac/WKWebArchiveRef.cpp
 Shared/API/c/mac/WKWebArchiveResource.cpp
 
 Shared/API/Cocoa/_WKFrameHandle.mm

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WKWebArchive.h"
+#include "WKWebArchiveRef.h"
 
 #include "APIArray.h"
 #include "APIData.h"
