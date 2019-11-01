@@ -151,6 +151,26 @@ WI.loaded = function()
     ]);
     WI._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
 
+    // Replace the Debugger/Resources Tab with the Sources Tab.
+    let debuggerIndex = WI._openTabsSetting.value.indexOf("debugger");
+    let resourcesIndex = WI._openTabsSetting.value.indexOf("resources");
+    if (debuggerIndex >= 0 || resourcesIndex >= 0) {
+        WI._openTabsSetting.value.remove("debugger");
+        WI._openTabsSetting.value.remove("resources");
+
+        if (debuggerIndex === -1)
+            debuggerIndex = Infinity;
+        if (resourcesIndex === -1)
+            resourcesIndex = Infinity;
+
+        let sourcesIndex = Math.min(debuggerIndex, resourcesIndex);
+        WI._openTabsSetting.value.splice(sourcesIndex, 1, WI.SourcesTabContentView.Type);
+        WI._openTabsSetting.save();
+
+        if (WI._selectedTabIndexSetting.value === debuggerIndex || WI._selectedTabIndexSetting.value === resourcesIndex)
+            WI._selectedTabIndexSetting.value = sourcesIndex;
+    }
+
     // State.
     WI.printStylesEnabled = false;
     WI.setZoomFactor(WI.settings.zoomFactor.value);

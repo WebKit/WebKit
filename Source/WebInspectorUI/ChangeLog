@@ -1,5 +1,18 @@
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: tab isn't visible after removal of Debugger Tab and Resources Tab
+        https://bugs.webkit.org/show_bug.cgi?id=203719
+        <rdar://problem/56802389>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        If the Debugger Tab identifier or Resources Tab identifier still exists in the list of open
+        tabs, remove both and replace the first one with the Sources Tab identifier.
+
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: make the default content of the Inspector Bootstrap Script a comment that explains how it works
         https://bugs.webkit.org/show_bug.cgi?id=203704
 
