@@ -1,3 +1,42 @@
+2019-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Integrate media query evaluation into HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203134
+        <rdar://problem/56396316>
+
+        Reviewed by Antti Koivisto.
+
+        Moved the code to call media query listeners to HTML5 event loop's step to update the rendering:
+        https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
+
+        Tests: fast/media/mq-inverted-colors-live-update-for-listener.html
+               fast/media/mq-prefers-reduced-motion-live-update-for-listener.html
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::evaluateAll): Renamed from styleResolverChanged.
+        * css/MediaQueryMatcher.h:
+        * dom/Document.cpp:
+        (WebCore::Document::updateElementsAffectedByMediaQueries): Split from evaluateMediaQueryList.
+        This function is still called right after each layout update so that picture element may start
+        requesting newly selected image resources without having to wait for a rendering update.
+        But this function will no longer execute arbitrary scripts.
+        (WebCore::Document::evaluateMediaQueriesAndReportChanges): Split from evaluateMediaQueryList.
+        Evaluates media query listeners.
+        * dom/Document.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia): Force the evaluation of media queries for now
+        but this code should really be scheduling a rendering update instead so added a FIXME.
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Evaluate media queries. We should consider invoking the full
+        algorithm to update the rendering here. e.g. intersection observer may add more contents.
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment): Schedule a rendering update after
+        accessibility settings have changed.
+        (WebCore::Page::updateRendering): Call evaluateMediaQueriesAndReportChanges.
+        (WebCore::Page::accessibilitySettingsDidChange): Schedule a rendering update after accessibility
+        settings have changed.
+        (WebCore::Page::appearanceDidChange): Ditto.
+
 2019-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Fix the watchOS build after r251896
