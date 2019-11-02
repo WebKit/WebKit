@@ -1,3 +1,13 @@
+2019-11-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG pair properties must be detached from their owner before it's deleted
+        https://bugs.webkit.org/show_bug.cgi?id=203545
+
+        Reviewed by Simon Fraser.
+
+        * svg/custom/pair-properties-detach-expected.txt: Added.
+        * svg/custom/pair-properties-detach.html: Added.
+
 2019-11-01  Eric Carlson  <eric.carlson@apple.com>
 
         Add experimental TextTrackCue API

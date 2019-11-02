@@ -58,6 +58,12 @@ protected:
     Ref<AnimatedPropertyType2>& property2(OwnerType& owner) const { return m_accessor2.property(owner); }
     const Ref<AnimatedPropertyType2>& property2(const OwnerType& owner) const { return m_accessor2.property(owner); }
 
+    void detach(const OwnerType& owner) const override
+    {
+        property1(owner)->detach();
+        property2(owner)->detach();
+    }
+
     bool matches(const OwnerType& owner, const SVGAnimatedProperty& animatedProperty) const override
     {
         return m_accessor1.matches(owner, animatedProperty) || m_accessor2.matches(owner, animatedProperty);
