@@ -79,6 +79,11 @@ public:
     void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
 
+#if ENABLE(INSPECTOR_TELEMETRY)
+    bool supportsDiagnosticLogging() override;
+    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+#endif
+
     bool canSave() override { return true; }
     bool isUnderTest() override { return false; }
     unsigned inspectionLevel() const override { return 1; }

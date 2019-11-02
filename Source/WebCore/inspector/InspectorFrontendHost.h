@@ -118,6 +118,11 @@ public:
     void inspectInspector();
     bool isBeingInspected();
 
+    bool supportsDiagnosticLogging();
+#if ENABLE(INSPECTOR_TELEMETRY)
+    void logDiagnosticEvent(const String& eventName, const String& payload);
+#endif
+
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;

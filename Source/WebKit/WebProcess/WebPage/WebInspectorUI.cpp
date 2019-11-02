@@ -38,6 +38,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/Settings.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -288,6 +289,18 @@ void WebInspectorUI::showCertificate(const CertificateInfo& certificateInfo)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ShowCertificate(certificateInfo), m_inspectedPageIdentifier);
 }
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+bool WebInspectorUI::supportsDiagnosticLogging()
+{
+    return m_page.corePage()->settings().diagnosticLoggingEnabled();
+}
+
+void WebInspectorUI::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
+{
+    m_page.corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+}
+#endif
 
 void WebInspectorUI::showConsole()
 {

@@ -120,6 +120,8 @@
     preferences._logsPageMessagesToSystemConsoleEnabled = YES;
 #endif
 
+    preferences._diagnosticLoggingEnabled = YES;
+
     if (!!_delegate && [_delegate respondsToSelector:@selector(inspectorViewControllerInspectorIsUnderTest:)]) {
         if ([_delegate inspectorViewControllerInspectorIsUnderTest:self]) {
             preferences._hiddenPageDOMTimerThrottlingEnabled = NO;

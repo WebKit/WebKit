@@ -139,6 +139,11 @@ public:
     void inspectedURLChanged(const String& newURL) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
 
+#if ENABLE(INSPECTOR_TELEMETRY)
+    bool supportsDiagnosticLogging() override;
+    void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
+#endif
+
 private:
     void updateWindowTitle() const;
 

@@ -51,6 +51,7 @@
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/Settings.h>
 #import <WebKitLegacy/DOMExtensions.h>
 #import <algorithm>
 #import <wtf/text/Base64.h>
@@ -324,6 +325,20 @@ void WebInspectorFrontendClient::showCertificate(const CertificateInfo& certific
     [certificateView setDisplayDetails:YES];
     [certificateView setDetailsDisclosed:YES];
 }
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+bool WebInspectorFrontendClient::supportsDiagnosticLogging()
+{
+    auto* page = frontendPage();
+    return page ? page->settings().diagnosticLoggingEnabled() : false;
+}
+
+void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
+{
+    if (auto* page = frontendPage())
+        page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+}
+#endif
 
 void WebInspectorFrontendClient::updateWindowTitle() const
 {

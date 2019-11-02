@@ -545,6 +545,9 @@ WI.contentLoaded = function()
 
     if (WI.runBootstrapOperations)
         WI.runBootstrapOperations();
+
+    if (WI.DiagnosticController.supportsDiagnosticLogging())
+        WI._diagnosticController = new WI.DiagnosticController;
 };
 
 WI.performOneTimeFrontendInitializationsUsingTarget = function(target)

@@ -36,6 +36,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/Settings.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -168,5 +169,17 @@ void RemoteWebInspectorUI::showCertificate(const CertificateInfo& certificateInf
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::ShowCertificate(certificateInfo), m_page.identifier());
 }
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+bool RemoteWebInspectorUI::supportsDiagnosticLogging()
+{
+    return m_page.corePage()->settings().diagnosticLoggingEnabled();
+}
+
+void RemoteWebInspectorUI::logDiagnosticEvent(const String& eventName,  const DiagnosticLoggingClient::ValueDictionary& dictionary)
+{
+    m_page.corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Remote Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+}
+#endif
 
 } // namespace WebKit

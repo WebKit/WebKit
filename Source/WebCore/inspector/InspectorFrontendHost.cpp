@@ -57,6 +57,7 @@
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>
+#include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 
@@ -510,5 +511,72 @@ bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
     m_client->showCertificate(certificateInfo);
     return true;
 }
+
+bool InspectorFrontendHost::supportsDiagnosticLogging()
+{
+#if ENABLE(INSPECTOR_TELEMETRY)
+    return m_client && m_client->supportsDiagnosticLogging();
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(const RefPtr<JSON::Value>& value)
+{
+    switch (value->type()) {
+    case JSON::Value::Type::Array:
+    case JSON::Value::Type::Null:
+    case JSON::Value::Type::Object:
+        ASSERT_NOT_REACHED();
+        return WTF::nullopt;
+
+    case JSON::Value::Type::Boolean:
+        bool boolValue;
+        value->asBoolean(boolValue);
+        return DiagnosticLoggingClient::ValuePayload(boolValue);
+
+    case JSON::Value::Type::Double:
+        double doubleValue;
+        value->asDouble(doubleValue);
+        return DiagnosticLoggingClient::ValuePayload(doubleValue);
+
+    case JSON::Value::Type::Integer:
+        long long intValue;
+        value->asInteger(intValue);
+        return DiagnosticLoggingClient::ValuePayload(intValue);
+
+    case JSON::Value::Type::String:
+        String stringValue;
+        value->asString(stringValue);
+        return DiagnosticLoggingClient::ValuePayload(stringValue);
+    }
+
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
+}
+
+void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const String& payloadString)
+{
+    if (!supportsDiagnosticLogging())
+        return;
+
+    RefPtr<JSON::Value> payloadValue;
+    if (!JSON::Value::parseJSON(payloadString, payloadValue))
+        return;
+
+    RefPtr<JSON::Object> payloadObject;
+    if (!payloadValue->asObject(payloadObject))
+        return;
+
+    DiagnosticLoggingClient::ValueDictionary dictionary;
+    for (const auto& [key, value] : *payloadObject) {
+        if (auto valuePayload = valuePayloadFromJSONValue(value))
+            dictionary.set(key, WTFMove(valuePayload.value()));
+    }
+
+    m_client->logDiagnosticEvent(makeString("WebInspector."_s, eventName), dictionary);
+}
+#endif
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #pragma once
 
 #include "CertificateInfo.h"
+#include "DiagnosticLoggingClient.h"
 #include "UserInterfaceLayoutDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -83,6 +84,11 @@ public:
 
     virtual void inspectedURLChanged(const String&) = 0;
     virtual void showCertificate(const CertificateInfo&) = 0;
+
+#if ENABLE(INSPECTOR_TELEMETRY)
+    virtual bool supportsDiagnosticLogging() { return false; }
+    virtual void logDiagnosticEvent(const String& /* eventName */, const DiagnosticLoggingClient::ValueDictionary&) { }
+#endif
 
     virtual void pagePaused() { }
     virtual void pageUnpaused() { }
