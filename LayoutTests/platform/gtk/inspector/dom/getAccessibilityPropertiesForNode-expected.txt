@@ -13,7 +13,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     mouseEventNodeId: exists
     parentNodeId: exists
 
@@ -21,7 +20,6 @@ Total elements to be tested: 122.
     exists: true
     label: Tree Item Level 2
     role: treeitem
-    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 1
 
@@ -31,7 +29,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <li role="treeitem">
@@ -43,7 +40,7 @@ Total elements to be tested: 122.
     exists: true
     label: Tree Item Level 1
     role: treeitem
-    childNodeIds.length: 2
+    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 1
 
@@ -63,17 +60,15 @@ Total elements to be tested: 122.
 
 <li aria-level="1">List Item Level 1</li>
     exists: true
-    label: 
+    label: List Item Level 1
     role: listitem
-    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 1
 
 <li aria-level="2">List Item Level 2</li>
     exists: true
-    label: 
+    label: List Item Level 2
     role: listitem
-    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 2
 
@@ -93,9 +88,9 @@ Total elements to be tested: 122.
         </ol>
     </li>
     exists: true
-    label: 
+    label: List Item Level 1
     role: listitem
-    childNodeIds.length: 2
+    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 1
 
@@ -118,7 +113,6 @@ Total elements to be tested: 122.
     exists: true
     label: H1
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 8
 
@@ -126,7 +120,6 @@ Total elements to be tested: 122.
     exists: true
     label: H6
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 6
 
@@ -134,7 +127,6 @@ Total elements to be tested: 122.
     exists: true
     label: H5
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 5
 
@@ -142,7 +134,6 @@ Total elements to be tested: 122.
     exists: true
     label: H4
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 4
 
@@ -150,7 +141,6 @@ Total elements to be tested: 122.
     exists: true
     label: H3
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 3
 
@@ -158,7 +148,6 @@ Total elements to be tested: 122.
     exists: true
     label: H2
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 2
 
@@ -166,7 +155,6 @@ Total elements to be tested: 122.
     exists: true
     label: H1
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 1
 
@@ -174,7 +162,6 @@ Total elements to be tested: 122.
     exists: true
     label: expanded
     role: treeitem
-    childNodeIds.length: 1
     parentNodeId: exists
     hierarchyLevel: 1
 
@@ -182,7 +169,6 @@ Total elements to be tested: 122.
     exists: true
     label: collapsed
     role: treeitem
-    childNodeIds.length: 1
     expanded: false
     parentNodeId: exists
     selected: true
@@ -192,7 +178,6 @@ Total elements to be tested: 122.
     exists: true
     label: expanded
     role: treeitem
-    childNodeIds.length: 1
     expanded: true
     parentNodeId: exists
     hierarchyLevel: 1
@@ -420,21 +405,18 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: navigation
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-tip">doc-tip</div>
     exists: true
     label: 
     role: note
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-subtitle">doc-subtitle</div>
     exists: true
     label: doc-subtitle
     role: heading
-    childNodeIds.length: 1
     parentNodeId: exists
     headingLevel: 2
 
@@ -442,42 +424,36 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-pullquote">doc-pullquote</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-prologue">doc-prologue</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-preface">doc-preface</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-part">doc-part</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-pagelist">doc-pagelist</div>
     exists: true
     label: 
     role: navigation
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-pagebreak">doc-pagebreak</div>
@@ -490,119 +466,102 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: note
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-noteref">doc-noteref</div>
     exists: true
     label: doc-noteref
     role: link
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-introduction">doc-introduction</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-index">doc-index</div>
     exists: true
     label: 
     role: navigation
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-glossref">doc-glossref</div>
     exists: true
     label: doc-glossref
     role: link
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-glossary">doc-glossary</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-foreword">doc-foreword</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-footnote">doc-footnote</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-example">doc-example</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-errata">doc-errata</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-epilogue">doc-epilogue</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-epigraph">doc-epigraph</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-endnotes">doc-endnotes</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-endnote">doc-endnote</div>
     exists: true
-    label: 
+    label: doc-endnote
     role: listitem
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-dedication">doc-dedication</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-credits">doc-credits</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-credit">doc-credit</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-cover">doc-cover</div>
@@ -615,77 +574,66 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-colophon">doc-colophon</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-chapter">doc-chapter</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-biblioref">doc-biblioref</div>
     exists: true
     label: doc-biblioref
     role: link
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-bibliography">doc-bibliography</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-biblioentry">doc-biblioentry</div>
     exists: true
-    label: 
+    label: doc-biblioentry
     role: listitem
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-backlink">doc-backlink</div>
     exists: true
     label: doc-backlink
     role: link
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-appendix">doc-appendix</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-afterword">doc-afterword</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-acknowledgments">doc-acknowledgments</div>
     exists: true
     label: 
     role: region
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-abstract">doc-abstract</div>
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="checkbox" aria-checked="false">unchecked</div>
@@ -749,7 +697,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     disabled: true
     required: false
 
@@ -766,7 +713,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     focused: false
     readonly: true
     required: false
@@ -775,7 +721,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     focused: false
     invalid: true
     required: false
@@ -784,7 +729,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     focused: false
     invalid: spelling
     required: false
@@ -793,7 +737,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 1
     focused: false
     required: true
 
@@ -869,7 +812,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     liveRegionAtomic: true
     liveRegionRelevant: additions,text
     liveRegionStatus: assertive
@@ -879,7 +821,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     liveRegionAtomic: false
     liveRegionRelevant: additions,text
     liveRegionStatus: polite
@@ -889,7 +830,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="listbox" aria-busy="true">
@@ -955,7 +895,7 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: group
-    childNodeIds.length: 3
+    childNodeIds.length: 2
     parentNodeId: exists
 
 <div><div></div></div>

@@ -1,3 +1,14 @@
+2019-11-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        REGRESSION: [ Mac ] inspector/dom/getAccessibilityPropertiesForNode.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=203746
+
+        Unreviewed. Move custom test expectation under platform/gtk and revert generic
+        one to the previous state (it was wrongly updated in r251818).
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * platform/gtk/inspector/dom/getAccessibilityPropertiesForNode-expected.txt: Copied from LayoutTests/inspector/dom/getAccessibilityPropertiesForNode-expected.txt.
+
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: add a timeline that shows information about any recorded CSS animation/transition
