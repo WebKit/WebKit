@@ -209,6 +209,8 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (action == @selector(saveAsPDF:))
         return YES;
+    if (action == @selector(saveAsWebArchive:))
+        return YES;
 
     if (action == @selector(zoomIn:))
         return [self canZoomIn];
@@ -825,6 +827,19 @@ static NSSet *dataTypes()
         if (result == NSModalResponseOK) {
             [_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
                 [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
+            }];
+        }
+    }];
+}
+
+- (IBAction)saveAsWebArchive:(id)sender
+{
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.allowedFileTypes = @[ @"webarchive" ];
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if (result == NSModalResponseOK) {
+            [_webView createWebArchiveDataWithCompletionHandler:^(NSData *archiveData, NSError *error) {
+                [archiveData writeToURL:[panel URL] options:0 error:nil];
             }];
         }
     }];

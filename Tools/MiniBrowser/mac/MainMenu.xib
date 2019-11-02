@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14854.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -139,10 +139,16 @@
                                     <action selector="saveAsPDF:" target="-1" id="25T-Id-334"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Revert to Saved" id="112">
+                            <menuItem title="Save As WebArchive..." id="112">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="revertDocumentToSaved:" target="-1" id="364"/>
+                                    <action selector="saveAsWebArchive:" target="-1" id="AGx-3e-6Nt"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Revert to Saved" id="nek-8q-bdB">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="revertDocumentToSaved:" target="-1" id="7iJ-l6-TWs"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="74">
@@ -886,6 +892,7 @@
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="139" y="-50"/>
         </menu>
         <customObject id="494" customClass="BrowserAppDelegate">
             <connections>

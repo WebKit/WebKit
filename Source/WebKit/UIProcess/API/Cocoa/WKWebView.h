@@ -243,6 +243,14 @@ If the data is written to a file the resulting file is a valid PDF document.
 */
 - (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/* @abstract Create WebKit web archive data representing the current web content of the WKWebView
+@param completionHandler A block to invoke when the web archive data is ready.
+@discussion WebKit web archive data represents a snapshot of web content.
+It can be used to represent web content on a pasteboard, loaded into a WKWebView directly, and saved to a file for later use.
+The uniform type identifier kUTTypeWebArchive can be used get the related pasteboard type and MIME type.
+*/
+- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
  @discussion The default value is NO.

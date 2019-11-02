@@ -136,6 +136,8 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (action == @selector(saveAsPDF:))
         return NO;
+    if (action == @selector(saveAsWebArchive:))
+        return NO;
 
     if (action == @selector(zoomIn:))
         return [self canZoomIn];
