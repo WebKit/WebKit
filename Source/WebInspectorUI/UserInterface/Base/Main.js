@@ -51,6 +51,8 @@ WI.LayoutDirection = {
 WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
+    if (InspectorBackend.registerAnimationDispatcher)
+        InspectorBackend.registerAnimationDispatcher(WI.AnimationObserver);
     if (InspectorBackend.registerApplicationCacheDispatcher)
         InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
     if (InspectorBackend.registerCPUProfilerDispatcher)

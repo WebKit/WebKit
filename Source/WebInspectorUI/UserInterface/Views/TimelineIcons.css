@@ -117,24 +117,24 @@
     content: url(../Images/TimelineRecordTimer.svg);
 }
 
-.animation-record .icon {
-    content: url(../Images/TimelineRecordAnimation.svg);
+.animation-frame-record .icon {
+    content: url(../Images/TimelineRecordAnimationFrame.svg);
+}
+
+.css-animation-record .icon {
+    content: url(../Images/TimelineRecordCSSAnimation.svg);
+}
+
+.css-transition-record .icon {
+    content: url(../Images/TimelineRecordCSSTransition.svg);
+}
+
+.media-element-record .icon {
+    content: url(../Images/TimelineRecordMediaElement.svg);
 }
 
 .heap-snapshot-record .icon {
     content: url(../Images/HeapSnapshot.svg);
-}
-
-.dom-event-record .icon {
-    content: url(../Images/DOMEvent.svg);
-}
-
-.dom-event-record.fullscreen .icon {
-    content: url(../Images/DOMEventFullscreen.svg);
-}
-
-.power-efficient-playback-state-changed-record .icon {
-    content: url(../Images/PowerEfficientPlaybackStateChanged.svg);
 }
 
 @media (prefers-color-scheme: dark) {

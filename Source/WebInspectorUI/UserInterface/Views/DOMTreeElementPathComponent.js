@@ -30,48 +30,39 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
         var node = domTreeElement.representedObject;
 
         var title = null;
-        var className = null;
 
         switch (node.nodeType()) {
         case Node.ELEMENT_NODE:
             if (node.isPseudoElement()) {
-                className = WI.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName;
                 title = "::" + node.pseudoType();
             } else {
-                className = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
                 title = node.displayName;
             }
             break;
 
         case Node.TEXT_NODE:
-            className = WI.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
             title = "\"" + node.nodeValue().truncateEnd(32) + "\"";
             break;
 
         case Node.COMMENT_NODE:
-            className = WI.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
             title = "<!--" + node.nodeValue().truncateEnd(32) + "-->";
             break;
 
         case Node.DOCUMENT_TYPE_NODE:
-            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             title = "<!DOCTYPE>";
             break;
 
         case Node.DOCUMENT_NODE:
-            className = WI.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
             title = node.nodeNameInCorrectCase();
             break;
 
         case Node.CDATA_SECTION_NODE:
-            className = WI.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
             title = "<![CDATA[" + node.truncateEnd(32) + "]]>";
             break;
 
         case Node.DOCUMENT_FRAGMENT_NODE:
             // FIXME: At some point we might want a different icon for this.
             // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
-            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             if (node.shadowRootType())
                 title = WI.UIString("Shadow Content");
             else
@@ -81,19 +72,55 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
         case Node.PROCESSING_INSTRUCTION_NODE:
             // FIXME: At some point we might want a different icon for this.
             // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE.
-            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             title = node.nodeNameInCorrectCase();
             break;
 
         default:
             console.error("Unknown DOM node type: ", node.nodeType());
-            className = WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
             title = node.nodeNameInCorrectCase();
         }
 
-        super(title, className, representedObject || domTreeElement.representedObject);
+        super(title, DOMTreeElementPathComponent.iconClassNameForNode(node), representedObject || domTreeElement.representedObject);
 
         this._domTreeElement = domTreeElement;
+    }
+
+    static iconClassNameForNode(domNode)
+    {
+        switch (domNode.nodeType()) {
+        case Node.ELEMENT_NODE:
+            if (domNode.isPseudoElement())
+                return WI.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName;
+            return WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+
+        case Node.TEXT_NODE:
+            return WI.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
+
+        case Node.COMMENT_NODE:
+            return WI.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
+
+        case Node.DOCUMENT_TYPE_NODE:
+            return WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+
+        case Node.DOCUMENT_NODE:
+            return WI.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
+
+        case Node.CDATA_SECTION_NODE:
+            return WI.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
+
+        case Node.DOCUMENT_FRAGMENT_NODE:
+            // FIXME: At some point we might want a different icon for this.
+            // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
+            return WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            // FIXME: At some point we might want a different icon for this.
+            // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE.
+            return WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+        }
+
+        console.error("Unknown DOM node type: ", domNode.nodeType());
+        return WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
     }
 
     // Public

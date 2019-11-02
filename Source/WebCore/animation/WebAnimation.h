@@ -135,6 +135,10 @@ public:
 
     bool hasPendingActivity() const final;
 
+    // ContextDestructionObserver.
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    void contextDestroyed() final;
+
     using RefCounted::ref;
     using RefCounted::deref;
 
@@ -204,7 +208,6 @@ private:
     EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 };
 
 } // namespace WebCore

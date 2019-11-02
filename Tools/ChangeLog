@@ -1,3 +1,15 @@
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: add a timeline that shows information about any recorded CSS animation/transition
+        https://bugs.webkit.org/show_bug.cgi?id=203651
+        <rdar://problem/56128726>
+
+        Reviewed by Brian Burg.
+
+        * TestWebKitAPI/Tests/WTF/Markable.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for extra utility operators.
+
 2019-11-01  Brady Eidson  <beidson@apple.com>
 
         Promote "_getWebArchive" to API.

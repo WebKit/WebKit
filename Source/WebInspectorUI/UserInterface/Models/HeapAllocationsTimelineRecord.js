@@ -38,7 +38,7 @@ WI.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends W
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         // NOTE: This just goes through and generates a new heap snapshot,
         // it is not perfect but does what we want. It asynchronously creates
@@ -46,14 +46,14 @@ WI.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends W
         // recording, which on an import should be the newly imported recording.
         let {timestamp, title, snapshotStringData} = json;
 
-        let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-        workerProxy.createImportedSnapshot(snapshotStringData, title, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-            snapshot.snapshotStringData = snapshotStringData;
-            WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+        return await new Promise((resolve, reject) => {
+            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+            workerProxy.createImportedSnapshot(snapshotStringData, title, ({objectId, snapshot: serializedSnapshot}) => {
+                let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                snapshot.snapshotStringData = snapshotStringData;
+                resolve(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
+            });
         });
-
-        return null;
     }
 
     toJSON()

@@ -1140,6 +1140,7 @@ set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
 )
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Animation.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ApplicationCache.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Audit.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/CSS.json

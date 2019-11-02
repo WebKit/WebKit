@@ -110,7 +110,6 @@ WI.TimelineRecordTreeElement.APIRecordIconStyleClass = "api-record";
 WI.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
 WI.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
 WI.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";
-WI.TimelineRecordTreeElement.AnimationRecordIconStyleClass = "animation-record";
 WI.TimelineRecordTreeElement.ProbeRecordIconStyleClass = "probe-record";
 WI.TimelineRecordTreeElement.ConsoleProfileIconStyleClass = "console-profile-record";
 WI.TimelineRecordTreeElement.GarbageCollectionIconStyleClass = "garbage-collection-profile-record";

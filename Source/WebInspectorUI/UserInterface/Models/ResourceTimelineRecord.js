@@ -35,7 +35,7 @@ WI.ResourceTimelineRecord = class ResourceTimelineRecord extends WI.TimelineReco
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         let {entry, archiveStartTime} = json;
         let localResource = WI.LocalResource.fromHAREntry(entry, archiveStartTime);

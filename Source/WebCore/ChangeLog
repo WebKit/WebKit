@@ -1,3 +1,66 @@
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: add a timeline that shows information about any recorded CSS animation/transition
+        https://bugs.webkit.org/show_bug.cgi?id=203651
+        <rdar://problem/56128726>
+
+        Reviewed by Brian Burg.
+
+        Unlike all other forms of Web Animations, CSS animations/transitions, are _not_ created by
+        JavaScript, and therefore can seemingly appear out of nowhere. This patch expands the Media
+        timeline to be the Media & Animations timeline, which tracks when CSS animations/transitions
+        are created, started, delayed, iterated, canceled, or finished.
+
+        Test: inspector/animation/tracking.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply):
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::~WebAnimation):
+        (WebCore::WebAnimation::contextDestroyed): Added.
+        (WebCore::WebAnimation::setEffectInternal):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willApplyKeyframeEffect): Added.
+        (WebCore::InspectorInstrumentation::didChangeWebAnimationEffect): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebAnimation): Added.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willApplyKeyframeEffectImpl): Added.
+        (WebCore::InspectorInstrumentation::didChangeWebAnimationEffectImpl): Added.
+        (WebCore::InspectorInstrumentation::willDestroyWebAnimationImpl): Added.
+        Add instrumentation points for CSS animations/transitions.
+
+        * inspector/agents/InspectorAnimationAgent.h: Added.
+        * inspector/agents/InspectorAnimationAgent.cpp: Added.
+        (WebCore::InspectorAnimationAgent::InspectorAnimationAgent):
+        (WebCore::InspectorAnimationAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorAnimationAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorAnimationAgent::startTracking):
+        (WebCore::InspectorAnimationAgent::stopTracking):
+        (WebCore::isDelayed):
+        (WebCore::InspectorAnimationAgent::willApplyKeyframeEffect):
+        (WebCore::InspectorAnimationAgent::didChangeWebAnimationEffect):
+        (WebCore::InspectorAnimationAgent::willDestroyWebAnimation):
+        (WebCore::InspectorAnimationAgent::stopTrackingDeclarativeAnimation):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::persistentInspectorAnimationAgent const): Added.
+        (WebCore::InstrumentingAgents::setPersistentInspectorAnimationAgent): Added.
+        (WebCore::InstrumentingAgents::trackingInspectorAnimationAgent const): Added.
+        (WebCore::InstrumentingAgents::setTrackingInspectorAnimationAgent): Added.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createLazyAgents):
+        Add an Animation domain for handling the tracking of CSS Web Animations.
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::toggleInstruments):
+        (WebCore::InspectorTimelineAgent::toggleAnimationInstrument): Added.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-11-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG pair properties must be detached from their owner before it's deleted

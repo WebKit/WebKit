@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MediaInstrument = class MediaInstrument extends WI.Instrument
+WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatcher
 {
-    constructor()
-    {
-        super();
+    // Events defined by the "Animation" domain.
 
-        console.assert(WI.MediaInstrument.supported());
+    trackingStart(timestamp)
+    {
+        WI.timelineManager.animationTrackingStarted(timestamp);
     }
 
-    // Static
-
-    static supported()
+    trackingUpdate(timestamp, event)
     {
-        // COMPATIBILITY (iOS 12): DOM.didFireEvent did not exist yet.
-        return InspectorBackend.hasEvent("DOM.didFireEvent");
+        WI.timelineManager.animationTrackingUpdated(timestamp, event);
     }
 
-    // Protected
-
-    get timelineRecordType()
+    trackingComplete(timestamp)
     {
-        return WI.TimelineRecord.Type.Media;
-    }
-
-    startInstrumentation(initiatedByBackend)
-    {
-        // Audio/Video/Picture instrumentation is always happening.
-
-        if (!initiatedByBackend) {
-            // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
-            if (InspectorBackend.hasDomain("Animation")) {
-                let target = WI.assumingMainTarget();
-                target.AnimationAgent.startTracking();
-            }
-        }
-    }
-
-    stopInstrumentation(initiatedByBackend)
-    {
-        // Audio/Video/Picture instrumentation is always happening.
-
-        if (!initiatedByBackend) {
-            // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
-            if (InspectorBackend.hasDomain("Animation")) {
-                let target = WI.assumingMainTarget();
-                target.AnimationAgent.stopTracking();
-            }
-        }
+        WI.timelineManager.animationTrackingCompleted(timestamp);
     }
 };

@@ -69,6 +69,8 @@ void InstrumentingAgents::reset()
     m_inspectorDOMDebuggerAgent = nullptr;
     m_pageDOMDebuggerAgent = nullptr;
     m_inspectorCanvasAgent = nullptr;
+    m_persistentInspectorAnimationAgent = nullptr;
+    m_trackingInspectorAnimationAgent = nullptr;
 }
 
 } // namespace WebCore

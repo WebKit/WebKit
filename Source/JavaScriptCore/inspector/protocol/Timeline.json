@@ -42,7 +42,8 @@
                 "Timeline",
                 "CPU",
                 "Memory",
-                "Heap"
+                "Heap",
+                "Animation"
             ]
         },
         {

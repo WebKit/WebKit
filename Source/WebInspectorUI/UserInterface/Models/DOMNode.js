@@ -151,7 +151,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._domEvents = [];
         this._powerEfficientPlaybackRanges = [];
 
-        if (this._shouldListenForEventListeners())
+        if (this.isMediaElement())
             WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
     }
 
@@ -767,6 +767,12 @@ WI.DOMNode = class DOMNode extends WI.Object
         return !!this.ownerSVGElement;
     }
 
+    isMediaElement()
+    {
+        let lowerCaseName = this.localName() || this.nodeName().toLowerCase();
+        return lowerCaseName === "video" || lowerCaseName === "audio";
+    }
+
     didFireEvent(eventName, timestamp, data)
     {
         // Called from WI.DOMManager.
@@ -822,12 +828,6 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._domEvents.push(domEvent);
 
         this.dispatchEventToListeners(WI.DOMNode.Event.DidFireEvent, {domEvent});
-    }
-
-    _shouldListenForEventListeners()
-    {
-        let lowerCaseName = this.localName() || this.nodeName().toLowerCase();
-        return lowerCaseName === "video" || lowerCaseName === "audio";
     }
 
     _setAttributesPayload(attrs)

@@ -25,25 +25,73 @@
 
 .timeline-record-bar {
     position: absolute;
-    height: 12px;
     z-index: var(--timeline-record-z-index);
+    height: 12px;
+}
 
-    --timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start: 1px solid hsla(215, 67%, 53%, 0.7) !important;
+.timeline-record-bar > :matches(img, .segment) {
+    position: absolute;
+    z-index: var(--timeline-record-z-index);
+}
+
+.timeline-record-bar > img {
+    width: 14px;
+    height: 14px;
+    margin-top: -1px;
+    -webkit-margin-start: -7px;
 }
 
 .timeline-record-bar > .segment {
-    position: absolute;
+    min-width: 4px;
     height: 100%;
     background-color: hsl(0, 0%, 88%);
-    border: 1px solid hsl(0, 0%, 78%);
-    border-radius: 3px;
-    min-width: 4px;
-    z-index: var(--timeline-record-z-index);
+    border-top: 1px solid var(--record-bar-segment-border-color);
+    border-bottom: 1px solid var(--record-bar-segment-border-color);
+
+    --record-bar-segment-border-color: hsl(0, 0%, 78%);
+    --record-bar-segment-border-start: 1px solid var(--record-bar-segment-border-color);
+    --record-bar-segment-border-end: 1px solid var(--record-bar-segment-border-color);
+    --record-bar-segment-border-start-radius: 3px;
+    --record-bar-segment-border-end-radius: 3px;
+}
+
+body[dir=ltr] .timeline-record-bar > .segment {
+    border-right: var(--record-bar-segment-border-end);
+    border-left: var(--record-bar-segment-border-start);
+}
+
+body[dir=ltr] .timeline-record-bar > .segment:first-of-type {
+    border-top-left-radius: var(--record-bar-segment-border-start-radius);
+    border-bottom-left-radius: var(--record-bar-segment-border-start-radius);
+}
+
+body[dir=ltr] .timeline-record-bar > .segment:last-of-type {
+    border-top-right-radius: var(--record-bar-segment-border-end-radius);
+    border-bottom-right-radius: var(--record-bar-segment-border-end-radius);
+}
+
+body[dir=rtl] .timeline-record-bar > .segment {
+    border-right: var(--record-bar-segment-border-start);
+    border-left: var(--record-bar-segment-border-end);
+}
+
+body[dir=rtl] .timeline-record-bar > .segment:first-of-type {
+    border-top-left-radius: var(--record-bar-segment-border-end-radius);
+    border-bottom-left-radius: var(--record-bar-segment-border-end-radius);
+}
+
+body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
+    border-top-right-radius: var(--record-bar-segment-border-start-radius);
+    border-bottom-right-radius: var(--record-bar-segment-border-start-radius);
+}
+
+.timeline-record-bar > .segment:not(:last-of-type) {
+    --record-bar-segment-border-end: none;
 }
 
 .timeline-record-bar.selected > .segment {
     background-color: var(--selected-text-background-color) !important;
-    border-color: var(--glyph-color-active) !important;
+    --record-bar-segment-border-color: var(--glyph-color-active) !important;
 }
 
 .timeline-record-bar:not(.has-inactive-segment) > .segment {
@@ -55,80 +103,95 @@
     z-index: 0;
 }
 
-/*
-The selector `.timeline-record-bar.has-inactive-segment > .segment:not(.inactive)` is used to
-differentiate between the "active" and "inactive" parts of a network entry.  As an example, the
-"active" part would be the Response and the "inactive" part would be the Request.  This selector
-ensures that there is a different style between "active" and "inactive" only when the network entry
-has an "inactive" segment.
-*/
-
-body[dir=ltr] .timeline-record-bar > .segment.inactive,
-body[dir=ltr] .timeline-record-bar.unfinished > .segment,
-body[dir=rtl] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
-    border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-right: none;
+.timeline-record-bar > .segment.inactive,
+.timeline-record-bar.unfinished > .segment:last-child {
+    --record-bar-segment-border-end: none;
+    --record-bar-segment-border-end-radius: 0;
 }
 
-body[dir=ltr] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive),
-body[dir=rtl] .timeline-record-bar > .segment.inactive,
-body[dir=rtl] .timeline-record-bar.unfinished > .segment {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+.timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    --record-bar-segment-border-start-radius: 0;
 }
 
-:focus .selected .timeline-record-bar > .segment {
+:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment {
     background-color: white !important;
     border: none !important;
 }
 
-:focus .selected .timeline-record-bar > .segment.inactive {
+:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment.inactive {
     background-color: hsl(215, 63%, 85%) !important;
 }
 
-body[dir=ltr] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
-    border-left: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
-}
-
-body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
-    border-right: var(--timeline-record-bar-has-inactive-segment-not-inactive-segment-border-start);
+:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    --record-bar-segment-border-start: 1px solid hsla(215, 67%, 53%, 0.7);
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment {
     background-color: hsl(207, 63%, 67%);
-    border-color: hsl(202, 55%, 51%);
+    --record-bar-segment-border-color: hsl(202, 55%, 51%);
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment.inactive {
     background-color: hsl(208, 66%, 79%);
-    border-color: hsl(202, 57%, 68%);
+    --record-bar-segment-border-color: hsl(202, 57%, 68%);
 }
 
 .timeline-record-bar.timeline-record-type-layout > .segment {
     background-color: hsl(0, 65%, 75%);
-    border-color: hsl(0, 54%, 62%);
+    --record-bar-segment-border-color: hsl(0, 54%, 62%);
 }
 
 
 .timeline-record-bar.timeline-record-type-layout.paint > .segment,
 .timeline-record-bar.timeline-record-type-layout.composite > .segment {
     background-color: hsl(76, 49%, 60%);
-    border-color: hsl(79, 45%, 51%);
+    --record-bar-segment-border-color: hsl(79, 45%, 51%);
 }
 
 .timeline-record-bar.timeline-record-type-script > .segment {
     background-color: hsl(269, 65%, 74%);
-    border-color: hsl(273, 33%, 58%);
+    --record-bar-segment-border-color: hsl(273, 33%, 58%);
 }
 
 .timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,
 .timeline-record-bar.timeline-record-type-heap-allocations > .segment {
     background-color: hsl(23, 69%, 73%);
-    border-color: hsl(11, 54%, 62%);
+    --record-bar-segment-border-color: hsl(11, 54%, 62%);
 }
 
 .timeline-record-bar.timeline-record-type-media > .segment {
     background-color: hsl(143, 24%, 66%);
-    border-color: hsl(153, 24%, 51%);
+    --record-bar-segment-border-color: hsl(153, 24%, 51%);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment {
+    height: 8px;
+    margin-top: 2px;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment.css-animation-ready {
+    background-color: var(--text-color-quaternary);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment:matches(.css-animation-delay, .media-element-paused) {
+    background-color: hsl(143, 24%, 84%);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment {
+    --record-bar-segment-border-start-radius: 0;
+    --record-bar-segment-border-end-radius: 0;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-full-screen {
+    height: 14px;
+    margin-top: -1px;
+    background-color: lightgrey;
+    border: none;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-power-efficient-playback {
+    height: 12px;
+    margin-top: 0;
+    background-color: var(--network-request-color);
+    border: none;
 }

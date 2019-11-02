@@ -1,3 +1,23 @@
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: add a timeline that shows information about any recorded CSS animation/transition
+        https://bugs.webkit.org/show_bug.cgi?id=203651
+        <rdar://problem/56128726>
+
+        Reviewed by Brian Burg.
+
+        Unlike all other forms of Web Animations, CSS animations/transitions, are _not_ created by
+        JavaScript, and therefore can seemingly appear out of nowhere. This patch expands the Media
+        timeline to be the Media & Animations timeline, which tracks when CSS animations/transitions
+        are created, started, delayed, iterated, canceled, or finished.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * inspector/protocol/Animation.json: Added.
+        * inspector/protocol/Timeline.json:
+        Add an Animation domain for handling the tracking of CSS Web Animations.
+
 2019-11-01  Saam Barati  <sbarati@apple.com>
 
         Refactor uses of StructureStubInfo 'thisGPR' to a union for thisGPR and prototypeGPR

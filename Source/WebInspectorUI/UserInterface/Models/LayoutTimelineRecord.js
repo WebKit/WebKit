@@ -63,7 +63,7 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         let {eventType, startTime, endTime, callFrames, sourceCodeLocation, quad} = json;
         quad = quad ? WI.Quad.fromJSON(quad) : null;

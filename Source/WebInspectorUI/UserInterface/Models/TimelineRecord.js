@@ -44,7 +44,7 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         switch (json.type) {
         case WI.TimelineRecord.Type.Network:
@@ -90,7 +90,7 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
     get activeStartTime()
     {
         // Implemented by subclasses if needed.
-        return this._startTime;
+        return this.startTime;
     }
 
     get unadjustedStartTime()

@@ -36,6 +36,7 @@
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
 #include "Database.h"
+#include "DeclarativeAnimation.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "EventTarget.h"
@@ -45,6 +46,7 @@
 #include "InspectorInstrumentationPublic.h"
 #include "Page.h"
 #include "StorageArea.h"
+#include "WebAnimation.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <initializer_list>
 #include <wtf/CompletionHandler.h>
@@ -78,6 +80,7 @@ class EventListener;
 class HTTPHeaderMap;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
+class KeyframeEffect;
 class NetworkLoadMetrics;
 class Node;
 class PseudoElement;
@@ -107,6 +110,7 @@ class WebGPUSwapChain;
 
 enum class StorageType;
 
+struct ComputedEffectTiming;
 struct WebSocketFrame;
 
 class InspectorInstrumentation {
@@ -298,6 +302,10 @@ public:
     static void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
     static void willDestroyWebGPUPipeline(WebGPUPipeline&);
 #endif
+
+    static void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
+    static void didChangeWebAnimationEffect(WebAnimation&);
+    static void willDestroyWebAnimation(WebAnimation&);
 
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
@@ -493,6 +501,10 @@ private:
     static void willDestroyWebGPUPipelineImpl(InstrumentingAgents&, WebGPUPipeline&);
     static InstrumentingAgents* instrumentingAgentsForWebGPUDevice(WebGPUDevice&);
 #endif
+
+    static void willApplyKeyframeEffectImpl(InstrumentingAgents&, Element&, KeyframeEffect&, ComputedEffectTiming);
+    static void didChangeWebAnimationEffectImpl(InstrumentingAgents&, WebAnimation&);
+    static void willDestroyWebAnimationImpl(InstrumentingAgents&, WebAnimation&);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -1444,6 +1456,27 @@ inline void InspectorInstrumentation::willDestroyWebGPUPipeline(WebGPUPipeline& 
         willDestroyWebGPUPipelineImpl(*instrumentingAgents, pipeline);
 }
 #endif
+
+inline void InspectorInstrumentation::willApplyKeyframeEffect(Element& target, KeyframeEffect& effect, ComputedEffectTiming computedTiming)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForDocument(target.document()))
+        willApplyKeyframeEffectImpl(*instrumentingAgents, target, effect, computedTiming);
+}
+
+inline void InspectorInstrumentation::didChangeWebAnimationEffect(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        didChangeWebAnimationEffectImpl(*instrumentingAgents, animation);
+}
+
+inline void InspectorInstrumentation::willDestroyWebAnimation(WebAnimation& animation)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(animation.scriptExecutionContext()))
+        willDestroyWebAnimationImpl(*instrumentingAgents, animation);
+}
 
 inline void InspectorInstrumentation::networkStateChanged(Page& page)
 {

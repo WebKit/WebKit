@@ -44,6 +44,7 @@ class InspectorScriptProfilerAgent;
 
 namespace WebCore {
 
+class InspectorAnimationAgent;
 class InspectorApplicationCacheAgent;
 class InspectorCPUProfilerAgent;
 class InspectorCSSAgent;
@@ -152,6 +153,12 @@ public:
     InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
     void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
 
+    InspectorAnimationAgent* persistentInspectorAnimationAgent() const { return m_persistentInspectorAnimationAgent; }
+    void setPersistentInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_persistentInspectorAnimationAgent = agent; }
+
+    InspectorAnimationAgent* trackingInspectorAnimationAgent() const { return m_trackingInspectorAnimationAgent; }
+    void setTrackingInspectorAnimationAgent(InspectorAnimationAgent* agent) { m_trackingInspectorAnimationAgent = agent; }
+
 private:
     InstrumentingAgents(Inspector::InspectorEnvironment&);
 
@@ -182,6 +189,8 @@ private:
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent { nullptr };
     PageDOMDebuggerAgent* m_pageDOMDebuggerAgent { nullptr };
     InspectorCanvasAgent* m_inspectorCanvasAgent { nullptr };
+    InspectorAnimationAgent* m_persistentInspectorAnimationAgent { nullptr };
+    InspectorAnimationAgent* m_trackingInspectorAnimationAgent { nullptr };
 };
 
 } // namespace WebCore

@@ -71,7 +71,7 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         let {startTime, endTime} = json;
         let record = new WI.RenderingFrameTimelineRecord(startTime, endTime);

@@ -347,7 +347,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         let overviewData = json.overview;
 
         let identifier = this._nextRecordingIdentifier++;
-        let newRecording = WI.TimelineRecording.import(identifier, recordingData, filename);
+        let newRecording = await WI.TimelineRecording.import(identifier, recordingData, filename);
         this._recordings.push(newRecording);
 
         this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingCreated, {recording: newRecording});
@@ -742,6 +742,58 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._addRecord(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
 
         this.capturingStopped();
+    }
+
+    // AnimationObserver
+
+    animationTrackingStarted(timestamp)
+    {
+        this.capturingStarted(timestamp);
+    }
+
+    animationTrackingUpdated(timestamp, event)
+    {
+        if (!this._enabled)
+            return;
+
+        console.assert(this.isCapturing());
+        if (!this.isCapturing())
+            return;
+
+        let mediaTimeline = this._activeRecording.timelineForRecordType(WI.TimelineRecord.Type.Media);
+        console.assert(mediaTimeline);
+
+        let record = mediaTimeline.recordForTrackingAnimationId(event.trackingAnimationId);
+        if (!record) {
+            let details = {
+                trackingAnimationId: event.trackingAnimationId,
+            };
+
+            let eventType;
+            if (event.animationName) {
+                eventType = WI.MediaTimelineRecord.EventType.CSSAnimation;
+                details.animationName = event.animationName;
+            } else if (event.transitionProperty) {
+                eventType = WI.MediaTimelineRecord.EventType.CSSTransition;
+                details.transitionProperty = event.transitionProperty;
+            } else {
+                WI.reportInternalError(`Unknown event type for event '${JSON.stringify(event)}'`);
+                return;
+            }
+
+            let domNode = WI.domManager.nodeForId(event.nodeId) || null;
+            console.assert(domNode);
+
+            record = new WI.MediaTimelineRecord(eventType, domNode, details);
+            this._addRecord(record);
+        }
+
+        record.updateAnimationState(timestamp, event.animationState);
+    }
+
+    animationTrackingCompleted(timestamp)
+    {
+        this.capturingStopped(timestamp);
     }
 
     // Private
@@ -1308,7 +1360,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 case WI.TimelineRecord.Type.Network:
                 case WI.TimelineRecord.Type.RenderingFrame:
                 case WI.TimelineRecord.Type.Layout:
-                case WI.TimelineRecord.Type.Media:
                     instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Timeline);
                     break;
                 case WI.TimelineRecord.Type.CPU:
@@ -1316,6 +1367,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                     break;
                 case WI.TimelineRecord.Type.Memory:
                     instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Memory);
+                    break;
+                case WI.TimelineRecord.Type.Media:
+                    // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
+                    if (InspectorBackend.hasDomain("Animation"))
+                        instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Animation);
                     break;
                 }
             }
@@ -1329,12 +1385,22 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._enabled)
             return;
 
+        let domNode = event.target;
+        if (!domNode.isMediaElement())
+            return;
+
         let {domEvent} = event.data;
 
-        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.DOMEvent, domEvent.timestamp, {
-            domNode: event.target,
-            domEvent,
-        }));
+        let mediaTimeline = this._activeRecording.timelineForRecordType(WI.TimelineRecord.Type.Media);
+        console.assert(mediaTimeline);
+
+        let record = mediaTimeline.recordForMediaElementEvents(domNode);
+        if (!record) {
+            record = new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.MediaElement, domNode);
+            this._addRecord(record);
+        }
+
+        record.addDOMEvent(domEvent.timestamp, domEvent);
     }
 
     _handleDOMNodePowerEfficientPlaybackStateChanged(event)
@@ -1342,12 +1408,21 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._enabled)
             return;
 
+        let domNode = event.target;
+        console.assert(domNode.isMediaElement());
+
         let {timestamp, isPowerEfficient} = event.data;
 
-        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged, timestamp, {
-            domNode: event.target,
-            isPowerEfficient,
-        }));
+        let mediaTimeline = this._activeRecording.timelineForRecordType(WI.TimelineRecord.Type.Media);
+        console.assert(mediaTimeline);
+
+        let record = mediaTimeline.recordForMediaElementEvents(domNode);
+        if (!record) {
+            record = new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.MediaElement, domNode);
+            this._addRecord(record);
+        }
+
+        record.powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient);
     }
 };
 

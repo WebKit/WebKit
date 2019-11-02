@@ -88,7 +88,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         let {timestamp, categories} = json;
         return new WI.MemoryTimelineRecord(timestamp, categories);

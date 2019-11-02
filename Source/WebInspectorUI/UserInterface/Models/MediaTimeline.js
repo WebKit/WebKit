@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MediaInstrument = class MediaInstrument extends WI.Instrument
+WI.MediaTimeline = class MediaTimeline extends WI.Timeline
 {
-    constructor()
-    {
-        super();
+    // Public
 
-        console.assert(WI.MediaInstrument.supported());
+    recordForTrackingAnimationId(trackingAnimationId)
+    {
+        return this._trackingAnimationIdRecordMap.get(trackingAnimationId) || null;
     }
 
-    // Static
-
-    static supported()
+    recordForMediaElementEvents(domNode)
     {
-        // COMPATIBILITY (iOS 12): DOM.didFireEvent did not exist yet.
-        return InspectorBackend.hasEvent("DOM.didFireEvent");
+        console.assert(domNode.isMediaElement());
+        return this._mediaElementRecordMap.get(domNode) || null;
     }
 
-    // Protected
-
-    get timelineRecordType()
+    reset(suppressEvents)
     {
-        return WI.TimelineRecord.Type.Media;
+        this._trackingAnimationIdRecordMap = new Map;
+        this._mediaElementRecordMap = new Map;
+
+        super.reset(suppressEvents);
     }
 
-    startInstrumentation(initiatedByBackend)
+    addRecord(record, options = {})
     {
-        // Audio/Video/Picture instrumentation is always happening.
+        console.assert(record instanceof WI.MediaTimelineRecord);
 
-        if (!initiatedByBackend) {
-            // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
-            if (InspectorBackend.hasDomain("Animation")) {
-                let target = WI.assumingMainTarget();
-                target.AnimationAgent.startTracking();
-            }
+        if (record.trackingAnimationId) {
+            console.assert(!this._trackingAnimationIdRecordMap.has(record.trackingAnimationId));
+            this._trackingAnimationIdRecordMap.set(record.trackingAnimationId, record);
         }
-    }
 
-    stopInstrumentation(initiatedByBackend)
-    {
-        // Audio/Video/Picture instrumentation is always happening.
-
-        if (!initiatedByBackend) {
-            // COMPATIBILITY (iOS 13): Animation domain did not exist yet.
-            if (InspectorBackend.hasDomain("Animation")) {
-                let target = WI.assumingMainTarget();
-                target.AnimationAgent.stopTracking();
-            }
+        if (record.eventType === WI.MediaTimelineRecord.EventType.MediaElement) {
+            console.assert(!(record.domNode instanceof WI.DOMNode) || record.domNode.isMediaElement());
+            console.assert(!this._mediaElementRecordMap.has(record.domNode));
+            this._mediaElementRecordMap.set(record.domNode, record);
         }
+
+        super.addRecord(record, options);
     }
 };

@@ -32,35 +32,46 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
 
         super(timelineOverview);
 
-        this._timeline = timeline;
-        this._recordBars = [];
-
         this.element.classList.add("media");
 
         this.reset();
+
+        for (let record of timeline.records)
+            this._processRecord(record);
+
+        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._handleRecordAdded, this);
+        timeline.addEventListener(WI.Timeline.Event.TimesUpdated, this._handleTimesUpdated, this);
+    }
+
+    // Static
+
+    static get maximumRowCount() {
+        return 6;
     }
 
     // Public
 
     reset()
     {
+        super.reset();
+
+        this._recordsWithoutStartTime = new Set;
+
         this.element.removeChildren();
 
-        super.reset();
-    }
+        this._nextDumpRow = 0;
+        this._timelineRecordGridRows = [];
 
-    shown()
-    {
-        super.shown();
+        for (let i = 0; i < MediaTimelineOverviewGraph.maximumRowCount; ++i) {
+            let rowElement = this.element.appendChild(document.createElement("div"));
+            rowElement.className = "graph-row";
 
-        this._timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._handleRecordAdded, this);
-    }
-
-    hidden()
-    {
-        this._timeline.removeEventListener(null, null, this);
-
-        super.hidden();
+            this._timelineRecordGridRows.push({
+                records: [],
+                recordBars: [],
+                element: rowElement,
+            });
+        }
     }
 
     // Protected
@@ -70,27 +81,33 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
         if (!this.visible)
             return;
 
+        let secondsPerPixel = this.timelineOverview.secondsPerPixel;
         let recordBarIndex = 0;
 
-        let createBar = (records, renderMode) => {
-            let timelineRecordBar = this._recordBars[recordBarIndex];
-            if (timelineRecordBar) {
+        let createBar = (element, recordBars, records, renderMode) => {
+            let timelineRecordBar = recordBars[recordBarIndex];
+            if (!timelineRecordBar)
+                timelineRecordBar = recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
+            else {
                 timelineRecordBar.renderMode = renderMode;
                 timelineRecordBar.records = records;
-            } else
-                timelineRecordBar = this._recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
+            }
             timelineRecordBar.refresh(this);
             if (!timelineRecordBar.element.parentNode)
-                this.element.appendChild(timelineRecordBar.element);
+                element.appendChild(timelineRecordBar.element);
             ++recordBarIndex;
         };
 
-        WI.TimelineRecordBar.createCombinedBars(this._timeline.records, this.timelineOverview.secondsPerPixel, this, createBar);
+        for (let {records, recordBars, element} of this._timelineRecordGridRows) {
+            recordBarIndex = 0;
 
-        // Remove the remaining unused TimelineRecordBars.
-        for (let i = recordBarIndex; i < this._recordBars.length; ++i) {
-            this._recordBars[i].records = null;
-            this._recordBars[i].element.remove();
+            WI.TimelineRecordBar.createCombinedBars(records, secondsPerPixel, this, createBar.bind(this, element, recordBars));
+
+            // Remove the remaining unused `WI.TimelineRecordBar`.
+            for (; recordBarIndex < recordBars.length; ++recordBarIndex) {
+                recordBars[recordBarIndex].records = null;
+                recordBars[recordBarIndex].element.remove();
+            }
         }
     }
 
@@ -98,10 +115,12 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
     {
         super.updateSelectedRecord();
 
-        for (let recordBar of this._recordBars) {
-            if (recordBar.records.includes(this.selectedRecord)) {
-                this.selectedRecordBar = recordBar;
-                return;
+        for (let {recordBars} of this._timelineRecordGridRows) {
+            for (let recordBar of recordBars) {
+                if (recordBar.records.includes(this.selectedRecord)) {
+                    this.selectedRecordBar = recordBar;
+                    return;
+                }
             }
         }
 
@@ -110,7 +129,65 @@ WI.MediaTimelineOverviewGraph = class MediaTimelineOverviewGraph extends WI.Time
 
     // Private
 
+    _processRecord(record)
+    {
+        console.assert(record instanceof WI.MediaTimelineRecord);
+
+        if (isNaN(record.startTime)) {
+            this._recordsWithoutStartTime.add(record);
+            record.singleFireEventListener(WI.TimelineRecord.Event.Updated, (event) => {
+                this._processRecord(record);
+
+                this.needsLayout();
+            });
+            return;
+        }
+
+        this._recordsWithoutStartTime.delete(record);
+
+        function compareByStartTime(a, b) {
+            return a.startTime - b.startTime;
+        }
+
+        let minimumBarPaddingTime = WI.TimelineOverview.MinimumDurationPerPixel * (WI.TimelineRecordBar.MinimumWidthPixels + WI.TimelineRecordBar.MinimumMarginPixels);
+
+        // Try to find a row that has room and does not overlap a previous record.
+        for (let i = 0; i < this._timelineRecordGridRows.length; ++i) {
+            let records = this._timelineRecordGridRows[i].records;
+            let lastRecord = records.lastValue;
+            if (!lastRecord || lastRecord.endTime + minimumBarPaddingTime <= record.startTime) {
+                insertObjectIntoSortedArray(record, records, compareByStartTime);
+                this._nextDumpRow = i + 1;
+                return;
+            }
+        }
+
+        // Try to find a row that does not overlap a previous record's active time, but it can overlap the inactive time.
+        for (let i = 0; i < this._timelineRecordGridRows.length; ++i) {
+            let records = this._timelineRecordGridRows[i].records;
+            let lastRecord = records.lastValue;
+            console.assert(lastRecord);
+            if (lastRecord.usesActiveStartTime && lastRecord.activeStartTime + minimumBarPaddingTime <= record.startTime) {
+                insertObjectIntoSortedArray(record, records, compareByStartTime);
+                this._nextDumpRow = i + 1;
+                break;
+            }
+        }
+
+        // We didn't find a empty spot, so dump into the designated dump row.
+        if (this._nextDumpRow >= MediaTimelineOverviewGraph.maximumRowCount)
+            this._nextDumpRow = 0;
+        insertObjectIntoSortedArray(record, this._timelineRecordGridRows[this._nextDumpRow++].records, compareByStartTime);
+    }
+
     _handleRecordAdded(event)
+    {
+        this._processRecord(event.data.record);
+
+        this.needsLayout();
+    }
+
+    _handleTimesUpdated(event)
     {
         this.needsLayout();
     }

@@ -259,4 +259,60 @@ TEST(WTF_Markable, MoveOptional)
     }
 }
 
+TEST(WTF_Markable, Equality)
+{
+    Markable<int, IntegralMarkableTraits<int, 42>> unengaged1;
+    Markable<int, IntegralMarkableTraits<int, 42>> unengaged2;
+
+    Markable<int, IntegralMarkableTraits<int, 42>> engaged1 { 1 };
+    Markable<int, IntegralMarkableTraits<int, 42>> engaged2 { 2 };
+    Markable<int, IntegralMarkableTraits<int, 42>> engagedx2 { 2 };
+
+    EXPECT_TRUE(unengaged1 == unengaged2);
+    EXPECT_FALSE(engaged1 == engaged2);
+    EXPECT_FALSE(engaged1 == unengaged1);
+    EXPECT_TRUE(engaged2 == engagedx2);
+
+    EXPECT_FALSE(unengaged1 == 42);
+    EXPECT_FALSE(engaged1 == 42);
+    EXPECT_FALSE(42 == unengaged1);
+    EXPECT_FALSE(42 == engaged1);
+
+    EXPECT_TRUE(engaged1 == 1);
+    EXPECT_FALSE(engaged1 == 2);
+    EXPECT_TRUE(1 == engaged1);
+    EXPECT_FALSE(2 == engaged1);
+
+    EXPECT_FALSE(unengaged1 == 1);
+    EXPECT_FALSE(1 == unengaged1);
+}
+
+TEST(WTF_Markable, Inequality)
+{
+    Markable<int, IntegralMarkableTraits<int, 42>> unengaged1;
+    Markable<int, IntegralMarkableTraits<int, 42>> unengaged2;
+
+    Markable<int, IntegralMarkableTraits<int, 42>> engaged1 { 1 };
+    Markable<int, IntegralMarkableTraits<int, 42>> engaged2 { 2 };
+    Markable<int, IntegralMarkableTraits<int, 42>> engagedx2 { 2 };
+
+    EXPECT_FALSE(unengaged1 != unengaged2);
+    EXPECT_TRUE(engaged1 != engaged2);
+    EXPECT_TRUE(engaged1 != unengaged1);
+    EXPECT_FALSE(engaged2 != engagedx2);
+
+    EXPECT_TRUE(unengaged1 != 42);
+    EXPECT_TRUE(engaged1 != 42);
+    EXPECT_TRUE(42 != unengaged1);
+    EXPECT_TRUE(42 != engaged1);
+
+    EXPECT_FALSE(engaged1 != 1);
+    EXPECT_TRUE(engaged1 != 2);
+    EXPECT_FALSE(1 != engaged1);
+    EXPECT_TRUE(2 != engaged1);
+
+    EXPECT_TRUE(unengaged1 != 1);
+    EXPECT_TRUE(1 != unengaged1);
+}
+
 } // namespace TestWebKitAPI

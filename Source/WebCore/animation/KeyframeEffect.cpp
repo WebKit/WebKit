@@ -39,6 +39,7 @@
 #include "FontCascade.h"
 #include "FrameView.h"
 #include "GeometryUtilities.h"
+#include "InspectorInstrumentation.h"
 #include "JSCompositeOperation.h"
 #include "JSCompositeOperationOrAuto.h"
 #include "JSDOMConvert.h"
@@ -1019,11 +1020,14 @@ void KeyframeEffect::apply(RenderStyle& targetStyle)
 
     updateAcceleratedAnimationState();
 
-    auto progress = getComputedTiming().progress;
-    if (!progress)
+    auto computedTiming = getComputedTiming();
+
+    InspectorInstrumentation::willApplyKeyframeEffect(*m_target, *this, computedTiming);
+
+    if (!computedTiming.progress)
         return;
 
-    setAnimatedPropertiesInStyle(targetStyle, progress.value());
+    setAnimatedPropertiesInStyle(targetStyle, computedTiming.progress.value());
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent

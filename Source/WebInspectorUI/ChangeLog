@@ -1,5 +1,220 @@
 2019-11-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: add a timeline that shows information about any recorded CSS animation/transition
+        https://bugs.webkit.org/show_bug.cgi?id=203651
+        <rdar://problem/56128726>
+
+        Reviewed by Brian Burg.
+
+        Unlike all other forms of Web Animations, CSS animations/transitions, are _not_ created by
+        JavaScript, and therefore can seemingly appear out of nowhere. This patch expands the Media
+        timeline to be the Media & Animations timeline, which tracks when CSS animations/transitions
+        are created, started, delayed, iterated, canceled, or finished.
+
+        * UserInterface/Protocol/AnimationObserver.js: Added.
+        (WI.AnimationObserver.prototype.trackingStart):
+        (WI.AnimationObserver.prototype.trackingUpdate):
+        (WI.AnimationObserver.prototype.trackingComplete):
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.get AnimationAgent): Added.
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Add an Animation domain for handling the tracking of CSS Web Animations.
+
+        * UserInterface/Models/MediaInstrument.js:
+        (WI.MediaInstrument.prototype.startInstrumentation):
+        (WI.MediaInstrument.prototype.stopInstrumentation):
+        (WI.MediaInstrument):
+        * UserInterface/Models/MediaTimeline.js: Added.
+        (WI.MediaTimeline.prototype.recordForTrackingAnimationId):
+        (WI.MediaTimeline.prototype.recordForMediaElementEvents):
+        (WI.MediaTimeline.prototype.reset):
+        (WI.MediaTimeline.prototype.addRecord):
+        * UserInterface/Models/MediaTimelineRecord.js:
+        (WI.MediaTimelineRecord):
+        (WI.MediaTimelineRecord.async fromJSON):
+        (WI.MediaTimelineRecord.prototype.toJSON):
+        (WI.MediaTimelineRecord.prototype.get trackingAnimationId): Added.
+        (WI.MediaTimelineRecord.prototype.get timestamps): Added.
+        (WI.MediaTimelineRecord.prototype.get activeStartTime): Added.
+        (WI.MediaTimelineRecord.prototype.get updatesDynamically): Added.
+        (WI.MediaTimelineRecord.prototype.get usesActiveStartTime): Added.
+        (WI.MediaTimelineRecord.prototype.get displayName):
+        (WI.MediaTimelineRecord.prototype.get subtitle): Added.
+        (WI.MediaTimelineRecord.prototype.saveIdentityToCookie):
+        (WI.MediaTimelineRecord.prototype.updateProgress): Added.
+        (WI.MediaTimelineRecord.prototype.addDOMEvent): Added.
+        (WI.MediaTimelineRecord.prototype.powerEfficientPlaybackStateChanged): Added.
+        (WI.MediaTimelineRecord.prototype._updateTimes): Added.
+        (WI.MediaTimelineRecord.fromJSON): Deleted.
+        (WI.MediaTimelineRecord.prototype.get domEvent): Deleted.
+        (WI.MediaTimelineRecord.prototype.get isPowerEfficient): Deleted.
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.create):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.async processJSON):
+        (WI.TimelineManager.prototype.animationTrackingStarted): Added.
+        (WI.TimelineManager.prototype.animationTrackingUpdated): Added.
+        (WI.TimelineManager.prototype.animationTrackingCompleted): Added.
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        (WI.TimelineManager.prototype._handleDOMNodeDidFireEvent):
+        (WI.TimelineManager.prototype._handleDOMNodePowerEfficientPlaybackStateChanged):
+        Start/Stop tracking animations based on whether the Media & Animations timeline is enabled.
+
+        * UserInterface/Views/MediaTimelineOverviewGraph.js:
+        (WI.MediaTimelineOverviewGraph):
+        (WI.MediaTimelineOverviewGraph.get maximumRowCount): Added.
+        (WI.MediaTimelineOverviewGraph.prototype.reset):
+        (WI.MediaTimelineOverviewGraph.prototype.layout):
+        (WI.MediaTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WI.MediaTimelineOverviewGraph.prototype._processRecord): Added.
+        (WI.MediaTimelineOverviewGraph.prototype._processRecord.compareByStartTime): Added.
+        (WI.MediaTimelineOverviewGraph.prototype._handleRecordAdded):
+        (WI.MediaTimelineOverviewGraph.prototype._handleTimesUpdated): Added.
+        (WI.MediaTimelineOverviewGraph.prototype.shown): Deleted.
+        (WI.MediaTimelineOverviewGraph.prototype.hidden): Deleted.
+        * UserInterface/Views/MediaTimelineOverviewGraph.css:
+        (.timeline-overview-graph.media): Added.
+        (.timeline-overview-graph.media > .graph-row): Added.
+        (.timeline-overview-graph.media > .graph-row > .timeline-record-bar): Added.
+        (.timeline-overview-graph.media > .graph-row > .timeline-record-bar:not(.unfinished) > .segment:not(.inactive)): Added.
+        (.timeline-overview-graph.media:nth-child(even) > .graph-row > .timeline-record-bar:not(.unfinished) > .segment:not(.inactive)): Added.
+        (.timeline-overview-graph.media > .timeline-record-bar): Deleted.
+        (.timeline-overview-graph.media > .timeline-record-bar > .segment): Deleted.
+        * UserInterface/Views/MediaTimelineView.js:
+        (WI.MediaTimelineView):
+        (WI.MediaTimelineView.prototype.shown): Added.
+        (WI.MediaTimelineView.prototype.hidden): Added.
+        (WI.MediaTimelineView.prototype.closed):
+        (WI.MediaTimelineView.prototype.reset):
+        (WI.MediaTimelineView.prototype.dataGridSortComparator):
+        (WI.MediaTimelineView.prototype.dataGridSortComparator.compareDOMNodes):
+        (WI.MediaTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/MediaTimelineDataGridNode.js:
+        (WI.MediaTimelineDataGridNode):
+        (WI.MediaTimelineDataGridNode.prototype.get data):
+        (WI.MediaTimelineDataGridNode.prototype.createCellContent):
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren): Added.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addReadySegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addDelaySegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addActiveSegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addFullScreenSegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addPowerEfficientPlaybackSegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addPausedSegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.timelineRecordBarCustomChildren.addPlayingSegment): ADded.
+        (WI.MediaTimelineDataGridNode.prototype.filterableDataForColumn):
+        (WI.MediaTimelineDataGridNode.prototype._createNameCellDocumentFragment): Added.
+        (WI.MediaTimelineDataGridNode.prototype.iconClassNames): Deleted.
+
+         * UserInterface/Views/TimelineRecordBar.js:
+        (WI.TimelineRecordBar):
+        (WI.TimelineRecordBar.prototype.refresh):
+        (WI.TimelineRecordBar.prototype._handleClick):
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar):
+        (.timeline-record-bar > :matches(img, .segment)):
+        (.timeline-record-bar > img):
+        (.timeline-record-bar > .segment):
+        (body[dir=ltr] .timeline-record-bar > .segment):
+        (body[dir=ltr] .timeline-record-bar > .segment:first-of-type):
+        (body[dir=ltr] .timeline-record-bar > .segment:last-of-type):
+        (body[dir=rtl] .timeline-record-bar > .segment):
+        (body[dir=rtl] .timeline-record-bar > .segment:first-of-type):
+        (body[dir=rtl] .timeline-record-bar > .segment:last-of-type):
+        (.timeline-record-bar > .segment:not(:last-of-type)):
+        (.timeline-record-bar.selected > .segment):
+        (.timeline-record-bar > .segment.inactive,):
+        (.timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment):
+        (:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment.inactive):
+        (:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (.timeline-record-bar.timeline-record-type-network > .segment):
+        (.timeline-record-bar.timeline-record-type-network > .segment.inactive):
+        (.timeline-record-bar.timeline-record-type-layout > .segment):
+        (.timeline-record-bar.timeline-record-type-layout.paint > .segment,):
+        (.timeline-record-bar.timeline-record-type-script > .segment):
+        (.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,):
+        (.timeline-record-bar.timeline-record-type-media > .segment):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment.css-animation-ready):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment:matches(.css-animation-delay, .media-element-paused)):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-full-screen):
+        (.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-power-efficient-playback):
+        (body[dir=ltr] .timeline-record-bar > .segment.inactive,): Deleted.
+        (body[dir=ltr] .timeline-record-bar.has-inactive-segment > .segment:not(.inactive),): Deleted.
+        (:focus .selected .timeline-record-bar > .segment): Deleted.
+        (:focus .selected .timeline-record-bar > .segment.inactive): Deleted.
+        (body[dir=ltr] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+        (body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)): Deleted.
+        Allow timeline record bars to be customized through a delegate callback. If provided, it
+        will be used instead of any default content. It is expected to return an array of objects,
+        each having a `startTime` number, `classNames` array, and `title` string. It can also have a
+        `endTime` number and an `image` string. If `endTime` is `NaN`, the record is unfinished. If
+        `image` is provided, an `<img>` will be used instead of a segment, allowing for markers.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode.prototype.createCellContent):
+        Add a default fallback for `WI.DOMNode` values.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForRecord):
+        (WI.TimelineTabContentView.displayNameForRecord):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        * UserInterface/Views/TimelineIcons.css:
+        (.animation-frame-record .icon):
+        (.css-animation-record .icon): Added.
+        (.css-transition-record .icon): Added.
+        (.media-element-record .icon): Added.
+        (.animation-record .icon): Deleted.
+        (.dom-event-record .icon): Deleted.
+        (.dom-event-record.fullscreen .icon): Deleted.
+        (.power-efficient-playback-state-changed-record .icon): Deleted.
+        * UserInterface/Images/DOMEventFullscreen.svg: Removed.
+        * UserInterface/Images/EventCancel.svg: Added.
+        * UserInterface/Images/EventIteration.svg: Added.
+        * UserInterface/Images/EventPause.svg:
+        * UserInterface/Images/EventPlay.svg:
+        * UserInterface/Images/EventProcessing.svg:
+        * UserInterface/Images/EventStop.svg:
+        * UserInterface/Images/PowerEfficientPlaybackStateChanged.svg: Removed.
+        * UserInterface/Images/TimelineRecordAnimationFrame.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/TimelineRecordAnimation.svg.
+        * UserInterface/Images/TimelineRecordCSSAnimation.svg: Added.
+        * UserInterface/Images/TimelineRecordCSSTransition.svg: Added.
+        * UserInterface/Images/TimelineRecordMediaElement.svg: Added.
+        Add new media icons.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.async import): Added.
+        (WI.TimelineRecording.import): Deleted.
+        * UserInterface/Models/TimelineRecord.js:
+        * UserInterface/Models/CPUTimelineRecord.js:
+        * UserInterface/Models/HeapAllocationsTimelineRecord.js:
+        (WI.HeapAllocationsTimelineRecord.async fromJSON): Added.
+        (WI.HeapAllocationsTimelineRecord.fromJSON): Deleted.
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        * UserInterface/Models/ResourceTimelineRecord.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        Make the importing of timeline records `async` so we can attempt to rehydrate the DOM nodes
+        of any media records (as well as wait for heap snapshots).
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode):
+        (WI.DOMNode.prototype.isMediaElement): Added.
+        (WI.DOMNode.prototype._shouldListenForEventListeners): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-11-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: default to focusing the console prompt if no other content is focused after opening Web Inspector
         https://bugs.webkit.org/show_bug.cgi?id=203743
 

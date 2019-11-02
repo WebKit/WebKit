@@ -25,75 +25,155 @@
 
 WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, timestamp, {domNode, domEvent, isPowerEfficient} = {})
+    constructor(eventType, domNodeOrInfo, {trackingAnimationId, animationName, transitionProperty} = {})
     {
-        console.assert(Object.values(WI.MediaTimelineRecord.EventType).includes(eventType));
+        console.assert(Object.values(MediaTimelineRecord.EventType).includes(eventType));
+        console.assert(domNodeOrInfo instanceof WI.DOMNode || (!isEmptyObject(domNodeOrInfo) && domNodeOrInfo.displayName && domNodeOrInfo.cssPath));
 
-        super(WI.TimelineRecord.Type.Media, timestamp, timestamp);
+        super(WI.TimelineRecord.Type.Media);
 
         this._eventType = eventType;
-        this._domNode = domNode || null;
-        this._domEvent = domEvent || null;
-        this._isPowerEfficient = isPowerEfficient || false;
+        this._domNode = domNodeOrInfo;
+        this._domNodeDisplayName = domNodeOrInfo.displayName;
+        this._domNodeCSSPath = domNodeOrInfo instanceof WI.DOMNode ? WI.cssPath(domNodeOrInfo, {full: true}) : domNodeOrInfo.cssPath;
+
+        // Web Animation
+        console.assert(trackingAnimationId === undefined || typeof trackingAnimationId === "string");
+        this._trackingAnimationId = trackingAnimationId || null;
+
+        // CSS Web Animation
+        console.assert(animationName === undefined || typeof animationName === "string");
+        console.assert(transitionProperty === undefined || typeof transitionProperty === "string");
+        this._animationName = animationName || null;
+        this._transitionProperty = transitionProperty || null;
+
+        this._timestamps = [];
+        this._activeStartTime = NaN;
     }
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
-        let {eventType, timestamp} = json;
+        let {eventType, domNodeDisplayName, domNodeCSSPath, animationName, transitionProperty, timestamps} = json;
 
-        // COMPATIBILITY (iOS 12.2): isLowPower was renamed to isPowerEfficient.
-        if ("isLowPower" in json && !("isPowerEfficient" in json))
-            json.isPowerEfficient = json.isLowPower;
+        let documentNode = null;
+        if (InspectorBackend.hasDomain("DOM"))
+            documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
 
-        return new WI.MediaTimelineRecord(eventType, timestamp, json);
+        let domNode = null;
+        if (documentNode && domNodeCSSPath) {
+            try {
+                let nodeId = await WI.domManager.querySelector(documentNode, domNodeCSSPath);
+                if (nodeId)
+                    domNode = WI.domManager.nodeForId(nodeId);
+            } catch { }
+        }
+        if (!domNode) {
+            domNode = {
+                displayName: domNodeDisplayName,
+                cssPath: domNodeCSSPath,
+            };
+        }
+
+        let record = new MediaTimelineRecord(eventType, domNode, {animationName, transitionProperty});
+
+        if (Array.isArray(timestamps) && timestamps.length) {
+            record._timestamps = [];
+            for (let item of timestamps) {
+                if (item.type === MediaTimelineRecord.TimestampType.MediaElementDOMEvent) {
+                    if (documentNode && item.originatorCSSPath) {
+                        try {
+                            let nodeId = await WI.domManager.querySelector(documentNode, item.originatorCSSPath);
+                            if (nodeId)
+                                item.originator = WI.domManager.nodeForId(nodeId);
+                        } catch { }
+                        if (!item.originator) {
+                            item.originator = {
+                                displayName: item.originatorDisplayName,
+                                cssPath: item.originatorCSSPath,
+                            };
+                        }
+                    }
+                }
+                record._timestamps.push(item);
+            }
+        }
+
+        return record;
     }
 
     toJSON()
     {
-        // FIXME: DOMNode
+        let json = {
+            eventType: this._eventType,
+            domNodeDisplayName: this._domNodeDisplayName,
+            domNodeCSSPath: this._domNodeCSSPath,
+        };
 
-        // Don't include the DOMEvent's originator.
-        let domEvent = this._domEvent;
-        if (domEvent && domEvent.originator) {
-            domEvent = Object.shallowCopy(domEvent);
-            domEvent.originator = undefined;
+        if (this._animationName)
+            json.animationName = this._animationName;
+
+        if (this._transitionProperty)
+            json.transitionProperty = this._transitionProperty;
+
+        if (this._timestamps.length) {
+            json.timestamps = this._timestamps.map((item) => {
+                if (item.type === MediaTimelineRecord.TimestampType.MediaElementDOMEvent && item.originator instanceof WI.DOMNode)
+                    delete item.originator;
+                return item;
+            });
         }
 
-        return {
-            type: this.type,
-            eventType: this._eventType,
-            timestamp: this.startTime,
-            domEvent,
-            isPowerEfficient: this._isPowerEfficient,
-        };
+        return json;
     }
 
     // Public
 
     get eventType() { return this._eventType; }
     get domNode() { return this._domNode; }
-    get domEvent() { return this._domEvent; }
-    get isPowerEfficient() { return this._isPowerEfficient; }
+    get trackingAnimationId() { return this._trackingAnimationId; }
+    get timestamps() { return this._timestamps; }
+    get activeStartTime() { return this._activeStartTime; }
+
+    get updatesDynamically()
+    {
+        return true;
+    }
+
+    get usesActiveStartTime()
+    {
+        return true;
+    }
 
     get displayName()
     {
-        if (this._eventType === WI.MediaTimelineRecord.EventType.DOMEvent && this._domEvent) {
-            let eventName = this._domEvent.eventName;
-            if (eventName === "webkitfullscreenchange" && this._domEvent.data)
-                return this._domEvent.data.enabled ? WI.UIString("Entered Full-Screen Mode") : WI.UIString("Exited Full-Screen Mode");
-            return eventName;
+        switch (this._eventType) {
+        case MediaTimelineRecord.EventType.CSSAnimation:
+            return this._animationName;
+
+        case MediaTimelineRecord.EventType.CSSTransition:
+            return this._transitionProperty;
+
+        case MediaTimelineRecord.EventType.MediaElement:
+            return WI.UIString("Media Element");
         }
-
-        if (this._eventType === MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged)
-            return this._isPowerEfficient ? WI.UIString("Power Efficient Playback Started") : WI.UIString("Power Efficient Playback Stopped");
-
-        if (this._domNode)
-            return this._domNode.displayName;
 
         console.error("Unknown media record event type: ", this._eventType, this);
         return WI.UIString("Media Event");
+    }
+
+    get subtitle()
+    {
+        switch (this._eventType) {
+        case MediaTimelineRecord.EventType.CSSAnimation:
+            return WI.UIString("CSS Animation");
+
+        case MediaTimelineRecord.EventType.CSSTransition:
+            return WI.UIString("CSS Transition");
+        }
+
+        return "";
     }
 
     saveIdentityToCookie(cookie)
@@ -101,19 +181,134 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
         super.saveIdentityToCookie(cookie);
 
         cookie["media-timeline-record-event-type"] = this._eventType;
-        if (this._eventType === MediaTimelineRecord.EventType.PowerEfficientPlaybackStateChanged)
-            cookie["media-timeline-record-power-efficient-playback"] = this._isPowerEfficient;
-        if (this._domNode)
-            cookie["media-timeline-record-dom-node"] = this._domNode.path();
-        if (this._domEvent) {
-            cookie["media-timeline-record-dom-event"] = this._domEvent.eventName;
-            if (this._domEvent.data && this._domEvent.data.enabled)
-                cookie["media-timeline-record-dom-event-active"] = true;
+        cookie["media-timeline-record-dom-node"] = this._domNode instanceof WI.DOMNode ? this._domNode.path() : this._domNode;
+        if (this._animationName)
+            cookie["media-timeline-record-animation-name"] = this._animationName;
+        if (this._transitionProperty)
+            cookie["media-timeline-record-transition-property"] = this._transitionProperty;
+    }
+
+    // TimelineManager
+
+    updateAnimationState(timestamp, animationState)
+    {
+        console.assert(this._eventType === MediaTimelineRecord.EventType.CSSAnimation || this._eventType === MediaTimelineRecord.EventType.CSSTransition);
+        console.assert(!this._timestamps.length || timestamp > this._timestamps.lastValue.timestamp);
+
+        let type;
+        switch (animationState) {
+        case InspectorBackend.Enum.Animation.AnimationState.Ready:
+            type = MediaTimelineRecord.TimestampType.CSSAnimationReady;
+            break;
+        case InspectorBackend.Enum.Animation.AnimationState.Delayed:
+            type = MediaTimelineRecord.TimestampType.CSSAnimationDelay;
+            break;
+        case InspectorBackend.Enum.Animation.AnimationState.Active:
+            type = MediaTimelineRecord.TimestampType.CSSAnimationActive;
+            break;
+        case InspectorBackend.Enum.Animation.AnimationState.Canceled:
+            type = MediaTimelineRecord.TimestampType.CSSAnimationCancel;
+            break;
+        case InspectorBackend.Enum.Animation.AnimationState.Done:
+            type = MediaTimelineRecord.TimestampType.CSSAnimationDone;
+            break;
         }
+        console.assert(type);
+
+        this._timestamps.push({type, timestamp});
+
+        this._updateTimes();
+    }
+
+    addDOMEvent(timestamp, domEvent)
+    {
+        console.assert(this._eventType === MediaTimelineRecord.EventType.MediaElement);
+        console.assert(!this._timestamps.length || timestamp > this._timestamps.lastValue.timestamp);
+
+        let data = {
+            type: MediaTimelineRecord.TimestampType.MediaElementDOMEvent,
+            timestamp,
+            eventName: domEvent.eventName,
+        };
+        if (domEvent.originator instanceof WI.DOMNode) {
+            data.originator = domEvent.originator;
+            data.originatorDisplayName = data.originator.displayName;
+            data.originatorCSSPath = WI.cssPath(data.originator, {full: true});
+        }
+        if (!isEmptyObject(domEvent.data))
+            data.data = domEvent.data;
+        this._timestamps.push(data);
+
+        this._updateTimes();
+    }
+
+    powerEfficientPlaybackStateChanged(timestamp, isPowerEfficient)
+    {
+        console.assert(this._eventType === MediaTimelineRecord.EventType.MediaElement);
+        console.assert(!this._timestamps.length || timestamp > this._timestamps.lastValue.timestamp);
+
+        this._timestamps.push({
+            type: MediaTimelineRecord.TimestampType.MediaElementPowerEfficientPlaybackStateChange,
+            timestamp,
+            isPowerEfficient,
+        });
+
+        this._updateTimes();
+    }
+
+    // Private
+
+    _updateTimes()
+    {
+        let oldStartTime = this.startTime;
+        let oldEndTime = this.endTime;
+
+        let firstItem = this._timestamps[0];
+        let lastItem = this._timestamps.lastValue;
+
+        if (isNaN(this._startTime))
+            this._startTime = firstItem.timestamp;
+
+        if (isNaN(this._activeStartTime)) {
+            if (this._eventType === MediaTimelineRecord.EventType.MediaElement)
+                this._activeStartTime = firstItem.timestamp;
+            else if (firstItem.type === MediaTimelineRecord.TimestampType.CSSAnimationActive)
+                this._activeStartTime = firstItem.timestamp;
+        }
+
+        switch (lastItem.type) {
+        case MediaTimelineRecord.TimestampType.CSSAnimationCancel:
+        case MediaTimelineRecord.TimestampType.CSSAnimationDone:
+            this._endTime = lastItem.timestamp;
+            break;
+
+        case MediaTimelineRecord.TimestampType.MediaElementDOMEvent:
+            if (WI.DOMNode.isPlayEvent(lastItem.eventName))
+                this._endTime = NaN;
+            else if (!isNaN(this._endTime) || WI.DOMNode.isPauseEvent(lastItem.eventName) || WI.DOMNode.isStopEvent(lastItem.eventName))
+                this._endTime = lastItem.timestamp;
+            break;
+        }
+
+        if (this.startTime !== oldStartTime || this.endTime !== oldEndTime)
+            this.dispatchEventToListeners(WI.TimelineRecord.Event.Updated);
     }
 };
 
 WI.MediaTimelineRecord.EventType = {
-    DOMEvent: "dom-event",
-    PowerEfficientPlaybackStateChanged: "power-efficient-playback-state-changed",
+    CSSAnimation: "css-animation",
+    CSSTransition: "css-transition",
+    MediaElement: "media-element",
+};
+
+WI.MediaTimelineRecord.TimestampType = {
+    CSSAnimationReady: "css-animation-ready",
+    CSSAnimationDelay: "css-animation-delay",
+    CSSAnimationActive: "css-animation-active",
+    CSSAnimationCancel: "css-animation-cancel",
+    CSSAnimationDone: "css-animation-done",
+    // CSS transitions share the same timestamp types.
+
+    MediaElementDOMEvent: "media-element-dom-event",
+    MediaElementPowerEfficientPlaybackStateChange: "media-element-power-efficient-playback-state-change",
 };

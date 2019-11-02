@@ -38,6 +38,7 @@
 #include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "InspectorAnimationAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorCSSAgent.h"
@@ -185,6 +186,7 @@ void InspectorController::createLazyAgents()
     m_agents.append(makeUnique<PageAuditAgent>(pageContext));
     m_agents.append(makeUnique<InspectorCanvasAgent>(pageContext));
     m_agents.append(makeUnique<InspectorTimelineAgent>(pageContext));
+    m_agents.append(makeUnique<InspectorAnimationAgent>(pageContext));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_instrumentingAgents.copyRef());

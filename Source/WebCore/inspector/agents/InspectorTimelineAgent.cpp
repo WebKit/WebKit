@@ -36,6 +36,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "Frame.h"
+#include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
@@ -558,6 +559,9 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
         case Inspector::Protocol::Timeline::Instrument::Timeline:
             toggleTimelineInstrument(state);
             break;
+        case Inspector::Protocol::Timeline::Instrument::Animation:
+            toggleAnimationInstrument(state);
+            break;
         }
     }
 }
@@ -622,6 +626,17 @@ void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
         internalStart();
     else
         internalStop();
+}
+
+void InspectorTimelineAgent::toggleAnimationInstrument(InstrumentState state)
+{
+    if (auto* animationAgent = m_instrumentingAgents.persistentInspectorAnimationAgent()) {
+        ErrorString ignored;
+        if (state == InstrumentState::Start)
+            animationAgent->startTracking(ignored);
+        else
+            animationAgent->stopTracking(ignored);
+    }
 }
 
 void InspectorTimelineAgent::didRequestAnimationFrame(int callbackId, Frame* frame)

@@ -33,6 +33,7 @@
 #include "InspectorInstrumentation.h"
 
 #include "CachedResource.h"
+#include "ComputedEffectTiming.h"
 #include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
@@ -54,6 +55,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "KeyframeEffect.h"
 #include "LoaderStrategy.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebuggerAgent.h"
@@ -1108,6 +1110,24 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWebGPUDevic
     return instrumentingAgentsForContext(device.scriptExecutionContext());
 }
 #endif
+
+void InspectorInstrumentation::willApplyKeyframeEffectImpl(InstrumentingAgents& instrumentingAgents, Element& target, KeyframeEffect& effect, ComputedEffectTiming computedTiming)
+{
+    if (auto* animationAgent = instrumentingAgents.trackingInspectorAnimationAgent())
+        animationAgent->willApplyKeyframeEffect(target, effect, computedTiming);
+}
+
+void InspectorInstrumentation::didChangeWebAnimationEffectImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
+{
+    if (auto* animationAgent = instrumentingAgents.trackingInspectorAnimationAgent())
+        animationAgent->didChangeWebAnimationEffect(animation);
+}
+
+void InspectorInstrumentation::willDestroyWebAnimationImpl(InstrumentingAgents& instrumentingAgents, WebAnimation& animation)
+{
+    if (auto* animationAgent = instrumentingAgents.trackingInspectorAnimationAgent())
+        animationAgent->willDestroyWebAnimation(animation);
+}
 
 #if ENABLE(RESOURCE_USAGE)
 void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)

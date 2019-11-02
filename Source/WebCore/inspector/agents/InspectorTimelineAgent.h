@@ -159,6 +159,7 @@ private:
     void toggleCPUInstrument(InstrumentState);
     void toggleMemoryInstrument(InstrumentState);
     void toggleTimelineInstrument(InstrumentState);
+    void toggleAnimationInstrument(InstrumentState);
     void disableBreakpoints();
     void enableBreakpoints();
 

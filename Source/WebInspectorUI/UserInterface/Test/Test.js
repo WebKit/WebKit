@@ -27,6 +27,7 @@ WI.loaded = function()
 {
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
+    InspectorBackend.registerAnimationDispatcher(WI.AnimationObserver);
     InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
     InspectorBackend.registerCPUProfilerDispatcher(WI.CPUProfilerObserver);
     InspectorBackend.registerCSSDispatcher(WI.CSSObserver);

@@ -1,0 +1,63 @@
+{
+    "domain": "Animation",
+    "description": "Domain for tracking/modifying Web Animations, as well as CSS (declarative) animations and transitions.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "types": [
+        {
+            "id": "AnimationId",
+            "type": "string",
+            "description": "Unique Web Animation identifier."
+        },
+        {
+            "id": "AnimationState",
+            "type": "string",
+            "enum": ["ready", "delayed", "active", "canceled", "done"]
+        },
+        {
+            "id": "TrackingUpdate",
+            "type": "object",
+            "properties": [
+                { "name": "trackingAnimationId", "$ref": "AnimationId" },
+                { "name": "animationState", "$ref": "AnimationState" },
+                { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true },
+                { "name": "animationName", "type": "string", "optional": true, "description": "Equal to the corresponding `animation-name` CSS property. Should not be provided if `transitionProperty` is also provided." },
+                { "name": "transitionProperty", "type": "string", "optional": true, "description": "Equal to the corresponding `transition-property` CSS property. Should not be provided if `animationName` is also provided." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "startTracking",
+            "description": "Start tracking animations. This will produce a `trackingStart` event."
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking animations. This will produce a `trackingComplete` event."
+        }
+    ],
+    "events": [
+        {
+            "name": "trackingStart",
+            "description": "Dispatched after `startTracking` command.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "trackingUpdate",
+            "description": "Fired for each phase of Web Animation.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "event", "$ref": "TrackingUpdate" }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "Dispatched after `stopTracking` command.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        }
+    ]
+}

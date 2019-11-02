@@ -199,6 +199,11 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
             return fragment;
         }
 
+        if (value instanceof WI.DOMNode) {
+            cell.classList.add(WI.DOMTreeElementPathComponent.iconClassNameForNode(value));
+            return WI.linkifyNodeReference(value);
+        }
+
         return super.createCellContent(columnIdentifier, cell);
     }
 

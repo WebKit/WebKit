@@ -47,6 +47,9 @@ WI.Timeline = class Timeline extends WI.Object
         if (type === WI.TimelineRecord.Type.Memory)
             return new WI.MemoryTimeline(type);
 
+        if (type === WI.TimelineRecord.Type.Media)
+            return new WI.MediaTimeline(type);
+
         return new WI.Timeline(type);
     }
 

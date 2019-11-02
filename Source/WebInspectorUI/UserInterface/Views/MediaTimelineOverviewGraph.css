@@ -23,11 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.media > .timeline-record-bar {
-    margin-top: 8px;
-    height: 20px;
+.timeline-overview-graph.media {
+    padding-top: 2px;
 }
 
-.timeline-overview-graph.media > .timeline-record-bar > .segment {
-    border-radius: 2px;
+.timeline-overview-graph.media > .graph-row {
+    height: 5px;
+}
+
+.timeline-overview-graph.media > .graph-row > .timeline-record-bar {
+    height: 4px;
+    margin-top: 1px;
+}
+
+.timeline-overview-graph.media > .graph-row > .timeline-record-bar:not(.unfinished) > .segment:not(.inactive) {
+    box-shadow: var(--timeline-odd-background-color) 1px 0 0;
+}
+
+.timeline-overview-graph.media:nth-child(even) > .graph-row > .timeline-record-bar:not(.unfinished) > .segment:not(.inactive) {
+    box-shadow: var(--timeline-even-background-color) 1px 0 0;
 }

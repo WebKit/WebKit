@@ -78,7 +78,7 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         return new WI.CPUTimelineRecord(json);
     }

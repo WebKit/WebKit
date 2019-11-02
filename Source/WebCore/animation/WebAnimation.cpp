@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventNames.h"
+#include "InspectorInstrumentation.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
@@ -75,8 +76,17 @@ WebAnimation::WebAnimation(Document& document)
 
 WebAnimation::~WebAnimation()
 {
+    InspectorInstrumentation::willDestroyWebAnimation(*this);
+
     if (m_timeline)
         m_timeline->forgetAnimation(this);
+}
+
+void WebAnimation::contextDestroyed()
+{
+    InspectorInstrumentation::willDestroyWebAnimation(*this);
+
+    ActiveDOMObject::contextDestroyed();
 }
 
 void WebAnimation::remove()
@@ -174,6 +184,8 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
         if (m_timeline && newTarget && previousTarget != newTarget)
             m_timeline->animationWasAddedToElement(*this, *newTarget);
     }
+
+    InspectorInstrumentation::didChangeWebAnimationEffect(*this);
 }
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)

@@ -51,7 +51,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     // Import / Export
 
-    static fromJSON(json)
+    static async fromJSON(json)
     {
         let {eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload, extraDetails} = json;
 
