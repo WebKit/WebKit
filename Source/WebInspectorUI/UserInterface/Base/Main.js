@@ -933,9 +933,14 @@ WI.close = function()
     InspectorFrontendHost.closeWindow();
 };
 
+WI.isContentAreaFocused = function()
+{
+    return WI._contentElement.contains(document.activeElement);
+}
+
 WI.isConsoleFocused = function()
 {
-    return WI.quickConsole.prompt.focused;
+    return !WI._didAutofocusConsolePrompt && WI.quickConsole.prompt.focused;
 };
 
 WI.isShowingSplitConsole = function()
@@ -1374,6 +1379,8 @@ WI._focusSearchField = function(event)
 
 WI._focusChanged = function(event)
 {
+    WI._didAutofocusConsolePrompt = false;
+
     // Make a caret selection inside the focused element if there isn't a range selection and there isn't already
     // a caret selection inside. This is needed (at least) to remove caret from console when focus is moved.
     // The selection change should not apply to text fields and text areas either.
@@ -1548,6 +1555,14 @@ WI._restoreCookieForOpenTabs = function(restorationType)
             continue;
         tabContentView.restoreStateFromCookie(restorationType);
     }
+
+    window.requestAnimationFrame(() => {
+        if (WI.isContentAreaFocused())
+            return;
+
+        WI.quickConsole.prompt.focus();
+        WI._didAutofocusConsolePrompt = true;
+    });
 };
 
 WI._saveCookieForOpenTabs = function()
