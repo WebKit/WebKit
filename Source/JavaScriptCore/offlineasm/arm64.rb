@@ -214,7 +214,6 @@ end
 
 class Immediate
     def arm64Operand(kind)
-        raise "Invalid immediate #{value} at #{codeOriginString}" if value < 0 or value > 4095
         "\##{value}"
     end
 end
@@ -418,8 +417,41 @@ class Sequence
                 false
             end
         }
+
         result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep", "storeq"])
-        result = riscLowerMalformedImmediates(result, 0..4095)
+
+        # The rules for which immediates are valid for and/or/xor instructions are fairly involved, see https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/
+        validLogicalImmediates = []
+        def rotate(value, n, size)
+            mask = (1 << size) - 1
+            shiftedValue = value << n
+            result = (shiftedValue & mask) | ((shiftedValue & ~mask) >> size)
+            return result
+        end
+        def replicate(value, size)
+            until size == 64 do
+                value = value | (value << size)
+                size *= 2
+            end
+            return value
+        end
+        size = 2
+        until size > 64 do
+            for numberOfOnes in 1..(size-1) do
+                for rotation in 0..(size-1) do
+                    immediate = 0;
+                    for i in 0..(numberOfOnes-1) do
+                        immediate = immediate*2 + 1
+                    end
+                    immediate = rotate(immediate, rotation, size)
+                    immediate = replicate(immediate, size)
+                    validLogicalImmediates << immediate
+                end
+            end
+            size *= 2
+        end
+        result = riscLowerMalformedImmediates(result, 0..4095, validLogicalImmediates)
+
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |

@@ -1,3 +1,17 @@
+2019-11-02  Robin Morisset  <rmorisset@apple.com>
+
+        The offline assembler is wrong about which immediates are supported by and/or/xor on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=203752
+
+        Reviewed by Tadeu Zagallo.
+
+        See https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/ for the details of which immediates are supported.
+        This patch is a minimal fix, ideally we should refactor all of the code dealing with immediates in risc.rb, but considering that I don't know ruby and this code is poorly/not tested, I went for the simplest possible fix.
+
+        * offlineasm/arm64.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/risc.rb:
+
 2019-11-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add diagnostic logging for frontend feature usage

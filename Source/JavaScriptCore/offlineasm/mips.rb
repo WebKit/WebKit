@@ -729,7 +729,7 @@ class Sequence
         result = riscLowerMalformedAddressesDouble(result)
         result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep"])
         result = mipsLowerMisplacedImmediates(result)
-        result = riscLowerMalformedImmediates(result, -0x7fff..0x7fff)
+        result = riscLowerMalformedImmediates(result, -0x7fff..0x7fff, -0x7fff..0x7fff)
         result = mipsLowerMisplacedAddresses(result)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)

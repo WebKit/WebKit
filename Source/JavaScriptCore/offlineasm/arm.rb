@@ -300,7 +300,7 @@ class Sequence
         }
         result = riscLowerMalformedAddressesDouble(result)
         result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep", "storeq"])
-        result = riscLowerMalformedImmediates(result, 0..0xff)
+        result = riscLowerMalformedImmediates(result, 0..0xff, 0..0x0ff)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)
         result = assignRegistersToTemporaries(result, :gpr, ARM_EXTRA_GPRS)
