@@ -263,7 +263,10 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         bool isDefault = true;
         NSString *voiceURI = [voice identifier];
         NSString *name = [voice name];
-        m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
+        
+        // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
+        if (voice.quality == AVSpeechSynthesisVoiceQualityDefault)
+            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
     }
     END_BLOCK_OBJC_EXCEPTIONS
 }
