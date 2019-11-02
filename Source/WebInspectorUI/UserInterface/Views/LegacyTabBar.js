@@ -371,6 +371,8 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
         if (this._selectedTabBarItem === tabBarItem)
             return;
 
+        let previousTabBarItem = this._selectedTabBarItem;
+
         if (this._selectedTabBarItem)
             this._selectedTabBarItem.selected = false;
 
@@ -382,7 +384,7 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
                 this.needsLayout();
         }
 
-        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected);
+        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected, {previousTabBarItem});
     }
 
     get tabBarItems()

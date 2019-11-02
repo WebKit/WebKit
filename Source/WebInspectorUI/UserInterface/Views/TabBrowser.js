@@ -226,6 +226,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
     _tabBarItemSelected(event)
     {
+        this._saveFocusedNodeForTabContentView(event.data.previousTabBarItem ? event.data.previousTabBarItem.representedObject : null);
+
         let tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
 
         if (tabContentView) {
@@ -256,6 +258,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
         }
 
         this.dispatchEventToListeners(WI.TabBrowser.Event.SelectedTabContentViewDidChange);
+
+        this._restoreFocusedNodeForTabContentView(tabContentView);
     }
 
     _tabBarItemAdded(event)
@@ -339,6 +343,29 @@ WI.TabBrowser = class TabBrowser extends WI.View
             tabContentView.detailsSidebarWidthSetting.value = event.data.newWidth;
             break;
         }
+    }
+
+    _saveFocusedNodeForTabContentView(tabContentView)
+    {
+        if (!tabContentView)
+            return;
+
+        if (!WI.isContentAreaFocused())
+            return;
+
+        tabContentView[WI.TabBrowser.FocusedNodeSymbol] = document.activeElement;
+    }
+
+    _restoreFocusedNodeForTabContentView(tabContentView)
+    {
+        if (!tabContentView)
+            return;
+
+        let node = tabContentView[WI.TabBrowser.FocusedNodeSymbol];
+        if (node && !WI.isContentAreaFocused())
+            node.focus();
+
+        tabContentView[WI.TabBrowser.FocusedNodeSymbol] = null;
     }
 
     _showNavigationSidebarPanelForTabContentView(tabContentView)
@@ -456,6 +483,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
 };
 
 WI.TabBrowser.NeedsResizeLayoutSymbol = Symbol("needs-resize-layout");
+WI.TabBrowser.FocusedNodeSymbol = Symbol("focused-node");
 
 WI.TabBrowser.Event = {
     SelectedTabContentViewDidChange: "tab-browser-selected-tab-content-view-did-change"
