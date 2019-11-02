@@ -8,6 +8,9 @@ PASS Property grid-template-rows value '[a] 1px [b]' computes to '[a] 1px [b]'
 FAIL Property grid-template-rows value '1px repeat(1, 2px) 3px' computes to '1px repeat(1, 2px) 3px' assert_equals: expected "1px repeat(1, 2px) 3px" but got "1px 2px 3px"
 PASS Property grid-template-rows value '1px repeat(auto-fill, 2px) 3px' computes to '1px repeat(auto-fill, 2px) 3px' 
 PASS Property grid-template-rows value '1px repeat(auto-fit, 2px) 3px' computes to '1px repeat(auto-fit, 2px) 3px' 
+FAIL Property grid-template-rows value '1px [a] repeat(1, 2px 3px) [b] 4px' computes to '1px [a] repeat(1, 2px 3px) [b] 4px' assert_equals: expected "1px [a] repeat(1, 2px 3px) [b] 4px" but got "1px [a] 2px 3px [b] 4px"
+PASS Property grid-template-rows value '1px [a] repeat(auto-fill, 2px 3px) [b] 4px' computes to '1px [a] repeat(auto-fill, 2px 3px) [b] 4px' 
+PASS Property grid-template-rows value '1px [a] repeat(auto-fit, 2px 3px) [b] 4px' computes to '1px [a] repeat(auto-fit, 2px 3px) [b] 4px' 
 FAIL Property grid-template-rows value '1px [a] repeat(1, [b] 2px [c]) [d] 3px' computes to '1px [a] repeat(1, [b] 2px [c]) [d] 3px' assert_equals: expected "1px [a] repeat(1, [b] 2px [c]) [d] 3px" but got "1px [a b] 2px [c d] 3px"
 PASS Property grid-template-rows value '1px [a] repeat(auto-fill, [b] 2px [c]) [d] 3px' computes to '1px [a] repeat(auto-fill, [b] 2px [c]) [d] 3px' 
 PASS Property grid-template-rows value '1px [a] repeat(auto-fit, [b] 2px [c]) [d] 3px' computes to '1px [a] repeat(auto-fit, [b] 2px [c]) [d] 3px' 

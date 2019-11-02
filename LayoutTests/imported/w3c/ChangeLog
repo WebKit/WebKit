@@ -1,3 +1,28 @@
+2019-11-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix line name positions after auto repeat with no line names
+        https://bugs.webkit.org/show_bug.cgi?id=203670
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import WPT tests.
+        There are some test failures because integer repeat() is still expanded
+        at computed-value time (https://webkit.org/b/202259).
+
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-withcontent.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid.html:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent-expected.txt: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-withcontent.html: Added.
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed.html:
+        * web-platform-tests/css/css-grid/parsing/w3c-import.log:
+
 2019-10-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGGeometryElement.getPointAtLength should clamp its argument to [0, length]
