@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import functools
 import itertools
 
 
@@ -97,7 +98,7 @@ class SpecifierSorter(object):
         return self._specifier_to_category.get(specifier)
 
     def sort_specifiers(self, specifiers):
-        category_slots = map(lambda x: [], TestConfiguration.category_order())
+        category_slots = list(map(lambda x: [], TestConfiguration.category_order()))
         for specifier in specifiers:
             category_slots[self.specifier_priority(specifier)].append(specifier)
 
@@ -105,7 +106,7 @@ class SpecifierSorter(object):
             specifier_list.sort()
             return result + specifier_list
 
-        return reduce(sort_and_return, category_slots, [])
+        return functools.reduce(sort_and_return, category_slots, [])
 
 
 class TestConfigurationConverter(object):
@@ -162,7 +163,7 @@ class TestConfigurationConverter(object):
                 category = self._specifier_sorter.category_for_specifier(expanded_specifier)
                 matching_sets.setdefault(category, set()).update(configurations)
 
-        return reduce(set.intersection, matching_sets.values())
+        return functools.reduce(set.intersection, matching_sets.values())
 
     @classmethod
     def collapse_macros(cls, macros_dict, specifiers_list):
@@ -196,7 +197,7 @@ class TestConfigurationConverter(object):
 
     @classmethod
     def intersect_combination(cls, combination):
-        return reduce(set.intersection, [set(specifiers) for specifiers in combination])
+        return functools.reduce(set.intersection, [set(specifiers) for specifiers in combination])
 
     @classmethod
     def symmetric_difference(cls, iterable):

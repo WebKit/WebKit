@@ -30,7 +30,9 @@
 import datetime
 import logging
 import signal
+import sys
 
+from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 
@@ -220,16 +222,16 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
     num_missing = 0
     num_regressions = 0
     keywords = {}
-    for expectation_string, expectation_enum in test_expectations.TestExpectations.EXPECTATIONS.iteritems():
+    for expectation_string, expectation_enum in test_expectations.TestExpectations.EXPECTATIONS.items():
         keywords[expectation_enum] = expectation_string.upper()
 
-    for modifier_string, modifier_enum in test_expectations.TestExpectations.MODIFIERS.iteritems():
+    for modifier_string, modifier_enum in test_expectations.TestExpectations.MODIFIERS.items():
         keywords[modifier_enum] = modifier_string.upper()
 
     tests = {}
     other_crashes_dict = {}
 
-    for test_name, result in initial_results.results_by_name.iteritems():
+    for test_name, result in iteritems(initial_results.results_by_name):
         # Note that if a test crashed in the original run, we ignore
         # whether or not it crashed when we retried it (if we retried it),
         # and always consider the result not flaky.
@@ -238,8 +240,8 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
         # We're basically trying to find the first non-skip expectation, and use that expectation object for the remainder of the loop.
         # This works because tests are run on the first device type which won't skip them, regardless of other expectations, and never re-run.
         expected = 'SKIP'
-        expectations = expectations_by_type.values()[0]
-        for element in expectations_by_type.itervalues():
+        expectations = list(expectations_by_type.values())[0]
+        for element in expectations_by_type.values():
             test_expectation = element.filtered_expectations_for_test(test_name, pixel_tests_enabled, port_obj._options.world_leaks)
             expected = element.model().expectations_to_string(test_expectation)
             if expected != 'SKIP':

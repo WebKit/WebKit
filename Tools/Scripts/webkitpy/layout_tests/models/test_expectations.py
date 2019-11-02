@@ -32,7 +32,9 @@ for layout tests.
 
 import logging
 import re
+import sys
 
+from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 
 _log = logging.getLogger(__name__)
@@ -566,7 +568,7 @@ class TestExpectationsModel(object):
 
         # We must not have an index on this modifier.
         matching_tests = set()
-        for test, modifiers in self._test_to_modifiers.iteritems():
+        for test, modifiers in iteritems(self._test_to_modifiers):
             if keyword.lower() in modifiers:
                 matching_tests.add(test)
         return matching_tests
@@ -694,7 +696,7 @@ class TestExpectationsModel(object):
         Args:
           test: test to look for
           dict: dict of sets of files"""
-        for set_of_tests in dict_of_sets_of_tests.itervalues():
+        for set_of_tests in itervalues(dict_of_sets_of_tests):
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
@@ -949,21 +951,21 @@ class TestExpectations(object):
     def parse_generic_expectations(self):
         if self._port.path_to_generic_test_expectations_file() in self._expectations_dict:
             if self._include_generic:
-                expectations = self._parser.parse(self._expectations_dict.keys()[self._expectations_dict_index], self._expectations_dict.values()[self._expectations_dict_index])
+                expectations = self._parser.parse(list(self._expectations_dict.keys())[self._expectations_dict_index], list(self._expectations_dict.values())[self._expectations_dict_index])
                 self._add_expectations(expectations)
                 self._expectations += expectations
             self._expectations_dict_index += 1
 
     def parse_default_port_expectations(self):
         if len(self._expectations_dict) > self._expectations_dict_index:
-            expectations = self._parser.parse(self._expectations_dict.keys()[self._expectations_dict_index], self._expectations_dict.values()[self._expectations_dict_index])
+            expectations = self._parser.parse(list(self._expectations_dict.keys())[self._expectations_dict_index], list(self._expectations_dict.values())[self._expectations_dict_index])
             self._add_expectations(expectations)
             self._expectations += expectations
             self._expectations_dict_index += 1
 
     def parse_override_expectations(self):
         while len(self._expectations_dict) > self._expectations_dict_index and self._include_overrides:
-            expectations = self._parser.parse(self._expectations_dict.keys()[self._expectations_dict_index], self._expectations_dict.values()[self._expectations_dict_index])
+            expectations = self._parser.parse(list(self._expectations_dict.keys())[self._expectations_dict_index], list(self._expectations_dict.values())[self._expectations_dict_index])
             self._add_expectations(expectations)
             self._expectations += expectations
             self._expectations_dict_index += 1
@@ -1050,7 +1052,7 @@ class TestExpectations(object):
         for expectation in self._expectations:
             if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
                 continue
-            if iter(expectation.parsed_expectations).next() not in (FAIL, IMAGE):
+            if not any([value in (FAIL, IMAGE) for value in expectation.parsed_expectations]):
                 continue
             if test_configuration not in expectation.matching_configurations:
                 continue
