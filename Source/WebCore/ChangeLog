@@ -1,5 +1,22 @@
 2019-11-03  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Runs collapsed to zero advanced width are not always whitespace collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=203778
+        <rdar://problem/56839642>
+
+        Reviewed by Antti Koivisto.
+
+        Just because a run collapses to zero advanced width, it does not necessarily mean it is a collapsed run (in whitespace collapsing sense)
+        e.g. trimmed trailing whitespace (m_collapsedToZeroAdvanceWidth should probably be renamed to something other than "collapsed" to avoid confusion).
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::close):
+        (WebCore::Layout::Line::appendTextContent):
+        * layout/inlineformatting/InlineLine.h:
+        (WebCore::Layout::Line::Run::setCollapsesToZeroAdvanceWidth):
+
+2019-11-03  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Pre-wrap: Overflown whitespace should stay on the current line
         https://bugs.webkit.org/show_bug.cgi?id=203780
         <rdar://problem/56839822>

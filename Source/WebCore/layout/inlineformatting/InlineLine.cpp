@@ -158,7 +158,7 @@ Line::RunList Line::close(IsLastLineWithInlineContent isLastLineWithInlineConten
             if (previousRun->hasTrailingCollapsedContent())
                 return false;
             // Visually empty runs are ignored.
-            if (currentRun->isCollapsedToZeroAdvanceWidth())
+            if (currentRun->isCollapsedToZeroAdvanceWidth() || previousRun->isCollapsedToZeroAdvanceWidth())
                 return false;
             return true;
         };
@@ -463,7 +463,7 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
         lineRun->setCollapsesToZeroAdvanceWidth();
-    else if (collapsedRun)
+    if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
         m_trimmableContent.add(lineRun.get());

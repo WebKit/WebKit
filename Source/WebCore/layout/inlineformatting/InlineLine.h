@@ -182,7 +182,6 @@ inline bool Line::Run::isCollapsedToZeroAdvanceWidth() const
 
 inline void Line::Run::setCollapsesToZeroAdvanceWidth()
 {
-    setIsCollapsed();
     m_collapsedToZeroAdvanceWidth = true;
     m_displayRun.setLogicalWidth({ });
     m_expansionOpportunityCount = { };
