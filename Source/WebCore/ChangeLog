@@ -1,3 +1,16 @@
+2019-11-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Verification] Forced line break display runs don't have TextContext
+        https://bugs.webkit.org/show_bug.cgi?id=203779
+        <rdar://problem/56839710>
+
+        Reviewed by Antti Koivisto.
+
+        Display::Run's optional TextContext is not available for forced line breaks (since they are not text runs).
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingTextRuns):
+
 2019-11-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a helper function to schedule a task to dispatch an event to ActiveDOMObject

@@ -125,8 +125,7 @@ static bool checkForMatchingTextRuns(const Display::Run& inlineRun, const Inline
         && areEssentiallyEqual(inlineTextBox.logicalRight(), inlineRun.logicalRight())
         && areEssentiallyEqual(inlineTextBox.logicalTop(), inlineRun.logicalTop())
         && areEssentiallyEqual(inlineTextBox.logicalBottom(), inlineRun.logicalBottom())
-        && inlineTextBox.start() == inlineRun.textContext()->start()
-        && inlineTextBox.end() == inlineRun.textContext()->end();
+        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == inlineRun.textContext()->start() && inlineTextBox.end() == inlineRun.textContext()->end()));
 }
 
 static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
