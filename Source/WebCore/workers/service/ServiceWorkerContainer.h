@@ -94,7 +94,6 @@ public:
 
 private:
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
-    void enqueueTask(Function<void()>&&);
 
     void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ActiveDOMObject.h"
 
+#include "AbstractEventLoop.h"
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 
@@ -128,6 +129,14 @@ bool ActiveDOMObject::isContextStopped() const
 bool ActiveDOMObject::isAllowedToRunScript() const
 {
     return scriptExecutionContext() && !scriptExecutionContext()->activeDOMObjectsAreStopped() && !scriptExecutionContext()->activeDOMObjectsAreSuspended();
+}
+
+void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&& task)
+{
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    context->eventLoop().queueTask(source, *context, WTFMove(task));
 }
 
 } // namespace WebCore

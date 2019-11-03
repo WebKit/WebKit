@@ -1,3 +1,36 @@
+2019-11-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a helper function to schedule a task to dispatch an event to ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=203714
+
+        Reviewed by Chris Dumez.
+
+        Added two helper static member functions queueTaskKeepingObjectAlive and queueTaskToDispatchEvent
+        to ActiveDOMObject and deployed them in ServiceWorkerContainer.
+
+        No new tests since there should be no behavioral changes.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/AbstractEventLoop.h:
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::queueTaskInEventLoop): Added.
+        * dom/ActiveDOMObject.h:
+        (WebCore::ActiveDOMObject::queueTaskKeepingObjectAlive): Added.
+        (WebCore::ActiveDOMObject::queueTaskToDispatchEvent): Added.
+        * dom/TaskSource.h: Added.
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::fireControllerChangeEvent):
+        (WebCore::ServiceWorkerContainer::enqueueTask): Deleted.
+        * workers/service/ServiceWorkerContainer.h:
+
 2019-11-03  Andres Gonzalez  <andresg_22@apple.com>
 
         Make AXIsolatedTreeNode a subclass of AXCoreObject.

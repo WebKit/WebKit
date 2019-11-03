@@ -25,24 +25,14 @@
 
 #pragma once
 
-#include "TaskSource.h"
-#include <wtf/Function.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class ScriptExecutionContext;
-
-// https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
-class AbstractEventLoop : public RefCounted<AbstractEventLoop> {
-public:
-    virtual ~AbstractEventLoop() = default;
-
-    typedef WTF::Function<void ()> TaskFunction;
-    virtual void queueTask(TaskSource, ScriptExecutionContext&, TaskFunction&&) = 0;
-
-protected:
-    AbstractEventLoop() = default;
+enum class TaskSource : uint8_t {
+    DOMManipulation,
+    FileReading,
+    IdleTask,
+    Networking,
+    UserInteraction
 };
 
 } // namespace WebCore
