@@ -1287,7 +1287,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add the text of the list marker item if necessary.
-            String listMarkerText = m_object->listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
+            String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, VisiblePosition(it.range()->startPosition()));
             if (!listMarkerText.isEmpty())
                 AXAttributedStringAppendText(attrString, &node, listMarkerText, spellCheck);
             AXAttributedStringAppendText(attrString, &node, it.text(), spellCheck);
@@ -1922,7 +1922,7 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
     unsigned length = [array count];
     vector.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        AccessibilityObject* obj = [[array objectAtIndex:i] accessibilityObject];
+        AXCoreObject* obj = [[array objectAtIndex:i] accessibilityObject];
         if (obj)
             vector.append(obj);
     }
@@ -2005,28 +2005,11 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 
 - (size_t)childrenVectorSize
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread())
-        return self.isolatedTreeNode->children().size();
-#endif
-    
     return m_object->children().size();
 }
 
 - (NSArray<WebAccessibilityObjectWrapper *> *)childrenVectorArray
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
-        auto treeNode = self.isolatedTreeNode;
-        auto nodeChildren = treeNode->children();
-        Vector<RefPtr<AXIsolatedTreeNode>> children;
-        children.reserveInitialCapacity(nodeChildren.size());
-        auto tree = treeNode->tree();
-        for (auto childID : nodeChildren)
-            children.uncheckedAppend(tree->nodeForID(childID));
-        return convertToNSArray(children);
-    }
-#endif
     return convertToNSArray(m_object->children());
 }
 
@@ -3118,7 +3101,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     
     if ([attributeName isEqualToString:NSAccessibilityIndexAttribute]) {
         if (m_object->isTreeItem()) {
-            AccessibilityObject* parent = m_object->parentObject();
+            AXCoreObject* parent = m_object->parentObject();
             for (; parent && !parent->isTree(); parent = parent->parentObject())
             { }
             
@@ -3157,7 +3140,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // The row that contains this row. It should be the same as the first parent that is a treeitem.
     if ([attributeName isEqualToString:NSAccessibilityDisclosedByRowAttribute]) {
         if (m_object->isTreeItem()) {
-            AccessibilityObject* parent = m_object->parentObject();
+            AXCoreObject* parent = m_object->parentObject();
             while (parent) {
                 if (parent->isTreeItem())
                     return parent->wrapper();
@@ -3224,8 +3207,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
         if (!m_object->exposesTitleUIElement())
             return nil;
-        
-        AccessibilityObject* obj = m_object->titleUIElement();
+
+        AXCoreObject* obj = m_object->titleUIElement();
         if (obj)
             return obj->wrapper();
         return nil;
@@ -3249,13 +3232,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
     
     if ([attributeName isEqualToString:NSAccessibilityHorizontalScrollBarAttribute]) {
-        AccessibilityObject* scrollBar = m_object->scrollBar(AccessibilityOrientation::Horizontal);
+        AXCoreObject* scrollBar = m_object->scrollBar(AccessibilityOrientation::Horizontal);
         if (scrollBar)
             return scrollBar->wrapper();
         return nil;
     }
     if ([attributeName isEqualToString:NSAccessibilityVerticalScrollBarAttribute]) {
-        AccessibilityObject* scrollBar = m_object->scrollBar(AccessibilityOrientation::Vertical);
+        AXCoreObject* scrollBar = m_object->scrollBar(AccessibilityOrientation::Vertical);
         if (scrollBar)
             return scrollBar->wrapper();
         return nil;
@@ -3466,17 +3449,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
-        AccessibilityObject* object = m_object->focusableAncestor();
+        AXCoreObject* object = m_object->focusableAncestor();
         return object ? object->wrapper() : nil;
     }
 
     if ([attributeName isEqualToString:NSAccessibilityEditableAncestorAttribute]) {
-        AccessibilityObject* object = m_object->editableAncestor();
+        AXCoreObject* object = m_object->editableAncestor();
         return object ? object->wrapper() : nil;
     }
 
     if ([attributeName isEqualToString:NSAccessibilityHighestEditableAncestorAttribute]) {
-        AccessibilityObject* object = m_object->highestEditableAncestor();
+        AXCoreObject* object = m_object->highestEditableAncestor();
         return object ? object->wrapper() : nil;
     }
 
@@ -3781,7 +3764,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // On WK1, we need to convert rect to window space to match mouse clicking.
     if (frameView) {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        for (AccessibilityObject* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+        for (auto* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
             if (is<AccessibilityScrollView>(*parent)) {
                 if (auto scrollView = downcast<AccessibilityScrollView>(*parent).scrollView()) {
                     if (!frameView->platformWidget())
@@ -4126,7 +4109,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     NSNumber* number = nil;
     NSArray* array = nil;
     NSDictionary* dictionary = nil;
-    RefPtr<AccessibilityObject> uiElement = nullptr;
+    RefPtr<AXCoreObject> uiElement;
     NSPoint point = NSZeroPoint;
     bool pointSet = false;
     NSRange range = {0, 0};

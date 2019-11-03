@@ -31,8 +31,6 @@
 
 #if ENABLE(ACCESSIBILITY)
 
-#import "AXIsolatedTree.h"
-#import "AXIsolatedTreeNode.h"
 #import "AXObjectCache.h"
 #import "AccessibilityARIAGridRow.h"
 #import "AccessibilityList.h"
@@ -275,20 +273,10 @@ static void addChildToArray(AXCoreObject& child, RetainPtr<NSMutableArray> array
         [array.get() addObject:wrapper];
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-NSArray *convertToNSArray(const Vector<RefPtr<WebCore::AXIsolatedTreeNode>>& children)
+NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
-    for (auto& child : children)
-        addChildToArray(*child, result);
-    return [result autorelease];
-}
-#endif
-
-NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChildrenVector& children)
-{
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:children.size()];
-    for (auto& child : children)
+    for (const auto& child : children)
         addChildToArray(*child, result);
     return [result autorelease];
 }
@@ -296,11 +284,8 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
 @implementation WebAccessibilityObjectWrapperBase
 
 @synthesize identifier=_identifier;
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-@synthesize isolatedTreeIdentifier=_isolatedTreeIdentifier;
-#endif
 
-- (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
+- (id)initWithAccessibilityObject:(AXCoreObject*)axObject
 {
     if (!(self = [super init]))
         return nil;
@@ -311,46 +296,14 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
     return self;
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (RefPtr<WebCore::AXIsolatedTreeNode>)isolatedTreeNode
-{
-    RELEASE_ASSERT(!isMainThread());
-
-    if (!_identifier)
-        return nullptr;
-
-    if (m_isolatedTreeNode)
-        return m_isolatedTreeNode;
-
-    m_isolatedTreeNode = AXIsolatedTree::nodeInTreeForID(_isolatedTreeIdentifier, _identifier);
-    return m_isolatedTreeNode;
-}
-#endif
-
 - (void)detach
 {
     m_object = nullptr;
     _identifier = 0;
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    m_isolatedTreeNode = nullptr;
-    _isolatedTreeIdentifier = 0;
-#endif
 }
 
 - (BOOL)updateObjectBackingStore
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
-        RELEASE_ASSERT(!isMainThread());
-        if (auto treeNode = self.isolatedTreeNode) {
-            if (auto tree = treeNode->tree())
-                tree->applyPendingChanges();
-        }
-        return _identifier;
-    }
-#endif
-    
     // Calling updateBackingStore() can invalidate this element so self must be retained.
     // If it does become invalidated, m_object will be nil.
     CFRetain((__bridge CFTypeRef)self);
@@ -371,7 +324,7 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
     return nil;
 }
 
-- (AccessibilityObject*)accessibilityObject
+- (AXCoreObject*)accessibilityObject
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     ASSERT(!_AXUIElementRequestServicedBySecondaryAXThread());
@@ -388,10 +341,6 @@ NSArray *convertToNSArray(const WebCore::AccessibilityObject::AccessibilityChild
 
 - (WebCore::AXCoreObject*)axBackingObject
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (_AXUIElementRequestServicedBySecondaryAXThread())
-        return self.isolatedTreeNode.get();
-#endif
     return m_object;
 }
 
@@ -785,7 +734,7 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParamet
     if ([searchTextParameter isKindOfClass:[NSString class]])
         searchText = searchTextParameter;
     
-    AccessibilityObject* startElement = nullptr;
+    AXCoreObject* startElement = nullptr;
     if ([startElementParameter isKindOfClass:[WebAccessibilityObjectWrapperBase class]])
         startElement = [startElementParameter accessibilityObject];
     

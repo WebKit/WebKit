@@ -1,3 +1,90 @@
+2019-11-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make AXIsolatedTreeNode a subclass of AXCoreObject.
+        https://bugs.webkit.org/show_bug.cgi?id=203717
+
+        Reviewed by Chris Fleizach.
+
+        No new tests needed, no new functionality.
+
+        - AXIsolatedTreeNOde derives from AXCoreObject.
+        - AccessibilityObjectWrapper can now have a single pointer to a AXCoreObject instead of one for the live object and one for the isolated object.
+        - Simplified wrapper code by making it agnostic of the nature of the underlying AXCoreObject.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::characterOffsetForPoint):
+        (WebCore::AXObjectCache::characterOffsetForIndex):
+        (WebCore::AXObjectCache::createIsolatedAccessibilityTreeHierarchy):
+        (WebCore::AXObjectCache::generateIsolatedAccessibilityTree):
+        * accessibility/AXObjectCache.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::attachWrapper):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::attachWrapper):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AccessibilityUnignoredAncestor):
+        (-[WebAccessibilityTextMarker initWithData:accessibilityObject:]):
+        (-[WebAccessibilityObjectWrapper initWithAccessibilityObject:]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTreeAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityArticleAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityLandmarkAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFieldsetAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFrameAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTraitsFromAncestors]):
+        (-[WebAccessibilityObjectWrapper tableCellParent]):
+        (-[WebAccessibilityObjectWrapper tableParent]):
+        (-[WebAccessibilityObjectWrapper accessibilityTitleElement]):
+        (-[WebAccessibilityObjectWrapper accessibilityDatetimeValue]):
+        (-[WebAccessibilityObjectWrapper detailParentForSummaryObject:]):
+        (-[WebAccessibilityObjectWrapper detailParentForObject:]):
+        (-[WebAccessibilityObjectWrapper treeItemParentForObject:]):
+        (AXAttributeStringSetStyle):
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        (-[WebAccessibilityObjectWrapper accessibilitySupportsARIAExpanded]):
+        (-[WebAccessibilityObjectWrapper accessibilityIsExpanded]):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::setRoot):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        (WebCore::AXIsolatedTree::setRootNodeID): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedTreeNode::AXIsolatedTreeNode):
+        (WebCore::AXIsolatedTreeNode::create):
+        (WebCore::AXIsolatedTreeNode::initializeAttributeData):
+        (WebCore::AXIsolatedTreeNode::appendChild):
+        (WebCore::AXIsolatedTreeNode::children):
+        (WebCore::AXIsolatedTreeNode::parentObjectUnignored const):
+        (WebCore::AXIsolatedTreeNode::accessibilityHitTest const):
+        (WebCore::AXIsolatedTreeNode::updateBackingStore):
+        (WebCore::AXIsolatedTreeNode::parentObjectInterfaceUnignored const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::associateIsolatedTreeNode): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        (-[WebAccessibilityObjectWrapperBase initWithAccessibilityObject:]):
+        (-[WebAccessibilityObjectWrapperBase detach]):
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityObject]):
+        (-[WebAccessibilityObjectWrapperBase axBackingObject]):
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute):
+        (-[WebAccessibilityObjectWrapperBase isolatedTreeNode]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+        (convertToVector):
+        (-[WebAccessibilityObjectWrapper childrenVectorSize]):
+        (-[WebAccessibilityObjectWrapper childrenVectorArray]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::attachWrapper):
+
 2019-11-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Runs collapsed to zero advanced width are not always whitespace collapsed

@@ -57,7 +57,7 @@ public:
     void appendNodeChanges(Vector<Ref<AXIsolatedTreeNode>>&);
     void removeNode(AXID);
 
-    void setRootNodeID(AXID);
+    void setRoot(Ref<AXIsolatedTreeNode>&);
     void setFocusedNodeID(AXID);
     
     // Call on AX thread
@@ -78,7 +78,6 @@ private:
     Vector<Ref<AXIsolatedTreeNode>> m_pendingAppends;
     Vector<AXID> m_pendingRemovals;
     AXID m_pendingFocusedNodeID;
-    AXID m_pendingRootNodeID;
     Lock m_changeLogLock;
 
     AXIsolatedTreeID m_treeID;

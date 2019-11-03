@@ -174,7 +174,7 @@ public:
     void remove(AXID);
 
     void detachWrapper(AccessibilityObject*, AccessibilityDetachmentType);
-    void attachWrapper(AccessibilityObject*);
+    void attachWrapper(AXCoreObject*);
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AXCoreObject*);
@@ -194,8 +194,7 @@ public:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT Ref<AXIsolatedTree> generateIsolatedAccessibilityTree();
 
-    void associateIsolatedTreeNode(AccessibilityObject&, AXIsolatedTreeNode&, AXIsolatedTreeID);
-    Ref<AXIsolatedTreeNode> createIsolatedAccessibilityTreeHierarchy(AccessibilityObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedTreeNode>>&);
+    Ref<AXIsolatedTreeNode> createIsolatedAccessibilityTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedTreeNode>>&);
 #endif
     
 #if ENABLE(ACCESSIBILITY)
@@ -257,7 +256,7 @@ public:
     CharacterOffset previousSentenceStartCharacterOffset(const CharacterOffset&);
     
     // Bounds
-    CharacterOffset characterOffsetForPoint(const IntPoint&, AccessibilityObject*);
+    CharacterOffset characterOffsetForPoint(const IntPoint&, AXCoreObject*);
     IntRect absoluteCaretBoundsForCharacterOffset(const CharacterOffset&);
     CharacterOffset characterOffsetForBounds(const IntRect&, bool);
     
@@ -266,7 +265,7 @@ public:
     CharacterOffset startCharacterOffsetOfLine(const CharacterOffset&);
     
     // Index
-    CharacterOffset characterOffsetForIndex(int, const AccessibilityObject*);
+    CharacterOffset characterOffsetForIndex(int, const AXCoreObject*);
     int indexForCharacterOffset(const CharacterOffset&, AccessibilityObject*);
 
     enum AXNotification {

@@ -114,10 +114,11 @@ RefPtr<AXIsolatedTreeNode> AXIsolatedTree::rootNode()
     return nodeForID(m_rootNodeID);
 }
 
-void AXIsolatedTree::setRootNodeID(AXID axID)
+void AXIsolatedTree::setRoot(Ref<AXIsolatedTreeNode>& root)
 {
     LockHolder locker { m_changeLogLock };
-    m_pendingRootNodeID = axID;
+    m_rootNodeID = root->objectID();
+    m_readerThreadNodeMap.add(root->objectID(), WTFMove(root));
 }
     
 void AXIsolatedTree::setFocusedNodeID(AXID axID)
@@ -150,11 +151,10 @@ void AXIsolatedTree::applyPendingChanges()
 
     // We don't clear the pending IDs beacause if the next round of updates does not modify them, then they stay the same
     // value without extra bookkeeping.
-    m_rootNodeID = m_pendingRootNodeID;
     m_focusedNodeID = m_pendingFocusedNodeID;
-    
+
     for (auto& item : appendCopy)
-        m_readerThreadNodeMap.add(item->identifier(), WTFMove(item));
+        m_readerThreadNodeMap.add(item->objectID(), WTFMove(item));
 
     for (auto item : removeCopy)
         m_readerThreadNodeMap.remove(item);

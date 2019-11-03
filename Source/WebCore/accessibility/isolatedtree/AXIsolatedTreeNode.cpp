@@ -30,10 +30,12 @@
 
 #include "AccessibilityObject.h"
 
+extern "C" bool _AXUIElementRequestServicedBySecondaryAXThread(void);
+
 namespace WebCore {
 
-AXIsolatedTreeNode::AXIsolatedTreeNode(const AccessibilityObject& object)
-    : m_identifier(object.axObjectID())
+AXIsolatedTreeNode::AXIsolatedTreeNode(const AXCoreObject& object)
+    : m_id(object.objectID())
 {
     ASSERT(isMainThread());
     initializeAttributeData(object);
@@ -42,14 +44,14 @@ AXIsolatedTreeNode::AXIsolatedTreeNode(const AccessibilityObject& object)
 #endif
 }
 
-Ref<AXIsolatedTreeNode> AXIsolatedTreeNode::create(const AccessibilityObject& object)
+Ref<AXIsolatedTreeNode> AXIsolatedTreeNode::create(const AXCoreObject& object)
 {
     return adoptRef(*new AXIsolatedTreeNode(object));
 }
 
 AXIsolatedTreeNode::~AXIsolatedTreeNode() = default;
 
-void AXIsolatedTreeNode::initializeAttributeData(const AccessibilityObject& object)
+void AXIsolatedTreeNode::initializeAttributeData(const AXCoreObject& object)
 {
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
@@ -82,7 +84,7 @@ void AXIsolatedTreeNode::setProperty(AXPropertyName propertyName, AttributeValue
 void AXIsolatedTreeNode::appendChild(AXID axID)
 {
     ASSERT(isMainThread());
-    m_children.append(axID);
+    m_childrenIDs.append(axID);
 }
 
 void AXIsolatedTreeNode::setParent(AXID parent)
@@ -98,6 +100,18 @@ void AXIsolatedTreeNode::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
         m_cachedTree = tree;
 }
 
+const AXCoreObject::AccessibilityChildrenVector& AXIsolatedTreeNode::children(bool)
+{
+    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
+        m_children.clear();
+        m_children.reserveInitialCapacity(m_childrenIDs.size());
+        auto tree = this->tree();
+        for (auto childID : m_childrenIDs)
+            m_children.uncheckedAppend(tree->nodeForID(childID));
+    }
+    return m_children;
+}
+
 AXCoreObject* AXIsolatedTreeNode::focusedUIElement() const
 {
     if (auto focusedElement = tree()->focusedUIElement())
@@ -105,7 +119,7 @@ AXCoreObject* AXIsolatedTreeNode::focusedUIElement() const
     return nullptr;
 }
     
-AXCoreObject* AXIsolatedTreeNode::parentObjectInterfaceUnignored() const
+AXCoreObject* AXIsolatedTreeNode::parentObjectUnignored() const
 {
     return tree()->nodeForID(parent()).get();
 }
@@ -114,7 +128,7 @@ AXCoreObject* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) co
 {
     if (!relativeFrame().contains(point))
         return nullptr;
-    for (auto childID : children()) {
+    for (const auto& childID : m_childrenIDs) {
         auto child = tree()->nodeForID(childID);
         ASSERT(child);
         if (child && child->relativeFrame().contains(point))
@@ -184,6 +198,15 @@ int AXIsolatedTreeNode::intAttributeValue(AXPropertyName propertyName) const
         [&] (int& typedValue) { return typedValue; },
         [] (auto&) { return 0; }
     );
+}
+
+void AXIsolatedTreeNode::updateBackingStore()
+{
+    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
+        RELEASE_ASSERT(!isMainThread());
+        if (auto tree = this->tree())
+            tree->applyPendingChanges();
+    }
 }
 
 } // namespace WebCore
