@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-class SuspendableTaskQueue;
 
 class DOMCache final : public RefCounted<DOMCache>, public ActiveDOMObject {
 public:
@@ -63,9 +62,6 @@ public:
 
     CacheStorageConnection& connection() { return m_connection.get(); }
 
-    // ActiveDOMObject
-    bool hasPendingActivity() const final;
-
 private:
     DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
@@ -88,13 +84,14 @@ private:
     Vector<Ref<FetchResponse>> cloneResponses(const Vector<CacheStorageRecord>&);
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
+    void enqueueTask(Function<void()>&&);
+
     String m_name;
     uint64_t m_identifier;
     Ref<CacheStorageConnection> m_connection;
 
     Vector<CacheStorageRecord> m_records;
     bool m_isStopped { false };
-    UniqueRef<SuspendableTaskQueue> m_taskQueue;
 };
 
 } // namespace WebCore

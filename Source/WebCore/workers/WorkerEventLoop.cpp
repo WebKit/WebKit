@@ -98,7 +98,8 @@ void WorkerEventLoop::run()
     auto* context = scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreStopped() || context->activeDOMObjectsAreSuspended())
         return;
-    for (auto& task : m_tasks)
+    auto tasks = std::exchange(m_tasks, Vector<Task>());
+    for (auto& task : tasks)
         task.task();
 }
 
