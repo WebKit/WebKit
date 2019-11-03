@@ -1,3 +1,18 @@
+2019-11-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Pre-wrap: Overflown whitespace should stay on the current line
+        https://bugs.webkit.org/show_bug.cgi?id=203780
+        <rdar://problem/56839822>
+
+        Reviewed by Antti Koivisto.
+
+        white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal'
+        but apparently we need to keep the overlapping whitespace on the line (and hang it I'd assume).
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::isTrailingWhitespaceWithPreWrap):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+
 2019-11-02  Chris Dumez  <cdumez@apple.com>
 
         Port DOMCache / DOMCacheStorage to the HTML5 event loop

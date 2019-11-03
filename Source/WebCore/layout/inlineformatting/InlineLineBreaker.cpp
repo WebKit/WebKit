@@ -40,6 +40,13 @@ static inline bool isContentWrappingAllowed(const RenderStyle& style)
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
+static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInlineItem)
+{
+    if (!trailingInlineItem.isText())
+        return false;
+    return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
+}
+
 LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Vector<LineLayout::Run>& runs, LayoutUnit logicalWidth, LayoutUnit availableWidth, bool lineIsEmpty)
 {
     if (logicalWidth <= availableWidth)
@@ -64,6 +71,10 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         // <span style="white-space: pre;">this fits</span> <span style="white-space: pre;">this does not fit but does not wrap either</span>
         // ^^ could wrap at the whitespace position between the 2 inline containers.
         auto contentShouldWrap = !lineIsEmpty && isContentWrappingAllowed(runs[0].inlineItem.style());
+        // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
+        // we need to keep the overlapping whitespace on the line (and hang it I'd assume).
+        if (isTrailingWhitespaceWithPreWrap(runs.last().inlineItem))
+            contentShouldWrap = false;
         return { contentShouldWrap ? BreakingContext::ContentBreak::Wrap : BreakingContext::ContentBreak::Keep, { } };
     }
 
