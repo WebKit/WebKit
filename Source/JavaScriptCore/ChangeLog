@@ -1,3 +1,46 @@
+2019-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert http://trac.webkit.org/r251875
+        Don't use memmove/memcpy/memset for memory that can be scanned concurrently
+
+        This is suspected to have broken performance tests on iOS.
+
+        Also reverted http://trac.webkit.org/r251909, because that was necessary for clean revert.
+        gcSafeMemmove references undefined slowPathBackwardsMemmove on non-gcc compatible compilers
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/GCMemoryOperations.h: Removed.
+        * heap/Heap.h:
+        * runtime/ArrayConventions.cpp:
+        (JSC::clearArrayMemset):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::copyElements):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::reallocArrayRightIfPossible):
+        (JSC::Butterfly::resizeArray):
+        (JSC::Butterfly::unshift):
+        (JSC::Butterfly::shift):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::convertFromCopyOnWrite):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+
 2019-11-02  Robin Morisset  <rmorisset@apple.com>
 
         The offline assembler is wrong about which immediates are supported by and/or/xor on ARM64

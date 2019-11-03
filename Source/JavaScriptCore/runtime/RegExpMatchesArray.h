@@ -98,7 +98,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         ASSERT(!array->butterfly()->indexingHeader()->preCapacity(matchStructure));
         auto capacity = matchStructure->outOfLineCapacity();
         auto size = matchStructure->outOfLineSize();
-        gcSafeZeroMemory(static_cast<JSValue*>(array->butterfly()->base(0, capacity)), (capacity - size) * sizeof(JSValue));
+        memset(array->butterfly()->base(0, capacity), 0, (capacity - size) * sizeof(JSValue));
     };
 
     if (UNLIKELY(globalObject->isHavingABadTime())) {

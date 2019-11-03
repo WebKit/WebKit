@@ -1,3 +1,12 @@
+2019-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert http://trac.webkit.org/r251875
+        Don't use memmove/memcpy/memset for memory that can be scanned concurrently
+
+        This is suspected to have broken performance tests on iOS.
+
+        * stress/torn-js-value-concurrent-collector.js: Removed.
+
 2019-11-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [[HasProperty]] result of Proxy in prototype chain is ignored

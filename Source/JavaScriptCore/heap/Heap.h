@@ -28,7 +28,6 @@
 #include "DeleteAllCodeEffort.h"
 #include "GCConductor.h"
 #include "GCIncomingRefCountedSet.h"
-#include "GCMemoryOperations.h"
 #include "GCRequest.h"
 #include "HandleSet.h"
 #include "HeapFinalizerCallback.h"
