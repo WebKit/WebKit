@@ -38,7 +38,6 @@
 @implementation WKApplicationStateTrackingView {
     WeakObjCPtr<WKWebView> _webViewToTrack;
     std::unique_ptr<WebKit::ApplicationStateTracker> _applicationStateTracker;
-    BOOL _lastObservedStateWasBackground;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -55,10 +54,8 @@
     if (!self._contentView.window || newWindow)
         return;
 
-    _lastObservedStateWasBackground = [self isBackground];
-
     auto page = [_webViewToTrack _page];
-    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was removed from a window, _lastObservedStateWasBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground);
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was removed from a window, _lastObservedStateWasBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, page ? page->lastObservedStateWasBackground() : false);
     ASSERT(_applicationStateTracker);
     _applicationStateTracker = nullptr;
 }
@@ -69,12 +66,14 @@
         return;
 
     auto page = [_webViewToTrack _page];
-    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
-    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was added to a window, _lastObservedStateWasBackground: %d, isNowBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, _lastObservedStateWasBackground, [self isBackground]);
+    bool lastObservedStateWasBackground = page ? page->lastObservedStateWasBackground() : false;
 
-    if (_lastObservedStateWasBackground && ![self isBackground])
+    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID: %" PRIu64 "] was added to a window, _lastObservedStateWasBackground: %d, isNowBackground: %d", self, page, page ? page->identifier().toUInt64() : 0, lastObservedStateWasBackground, [self isBackground]);
+
+    if (lastObservedStateWasBackground && ![self isBackground])
         [self _applicationWillEnterForeground];
-    else if (!_lastObservedStateWasBackground && [self isBackground])
+    else if (!lastObservedStateWasBackground && [self isBackground])
         [self _applicationDidEnterBackground];
 }
 
@@ -84,7 +83,6 @@
     if (!page)
         return;
 
-    _lastObservedStateWasBackground = YES;
     page->applicationDidEnterBackground();
     page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow);
 }
@@ -101,7 +99,6 @@
     if (!page)
         return;
 
-    _lastObservedStateWasBackground = NO;
     page->applicationWillEnterForeground();
     page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, true, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 }

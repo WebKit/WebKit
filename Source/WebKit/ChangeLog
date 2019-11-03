@@ -1,3 +1,49 @@
+2019-11-03  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView can get stuck blank (Web Content process thinks the app is backgrounded)
+        https://bugs.webkit.org/show_bug.cgi?id=203774
+        <rdar://problem/53399054>
+
+        Reviewed by Chris Dumez.
+
+        With careful timing, if a WKWebView swaps out its content view in the
+        background, the incoming view can fail to inform the Web Content process
+        when the app comes to the foreground, leaving the layer tree frozen.
+
+        This occurs because the last-sent state is stored per-WKApplicationStateTrackingView,
+        and the content view is the WKApplicationStateTrackingView, so it is possible
+        for e.g. a WKPDFView to be in the hierarchy, keeping the correct state,
+        with an initialized-but-never-parented WKContentView hanging off the WKWebView.
+
+        If it is never parented, WKContentView will think that the current application
+        state is foreground (_lastObservedStateWasBackground is initialized to NO).
+
+        If you go into the background with a WKPDFView as the current content view,
+        it will inform the Web Content process that the application has backgrounded.
+
+        If, still in the background, WKWebView swaps from the WKPDFView to
+        the WKContentView, and then comes into the foreground, when we get the
+        notification that the app came to the foreground, we will not forward it
+        to the Web Content process, because WKContentView's _lastObservedStateWasBackground
+        remains NO.
+
+        To fix this, move _lastObservedStateWasBackground to WebPageProxy, so that
+        it always tracks the most recently sent state, regardless of which content view
+        is active.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::lastObservedStateWasBackground const):
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView willMoveToWindow:]):
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        (-[WKApplicationStateTrackingView _applicationDidEnterBackground]):
+        (-[WKApplicationStateTrackingView _applicationWillEnterForeground]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+        (WebKit::WebPageProxy::applicationWillEnterForeground):
+
 2019-11-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add diagnostic logging for frontend feature usage
