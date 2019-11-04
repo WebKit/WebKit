@@ -1,3 +1,10 @@
+2019-11-04  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failure after r251959
+
+        * inspector/timeline/timeline-recording.html:
+        `WI.TimelineRecording.import` was made `async`, so add an `await`.
+
 2019-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Flaky Test: imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual.svg

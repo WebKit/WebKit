@@ -104,7 +104,7 @@ function test()
             let jsonData = JSON.parse(JSON.stringify(exportData));
 
             const identifier = 999;
-            let recording = WI.TimelineRecording.import(identifier, jsonData, "TEST");
+            let recording = await WI.TimelineRecording.import(identifier, jsonData, "TEST");
             InspectorTest.expectNotEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording is not this imported recording.");
             InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
             InspectorTest.expectTrue(recording.readonly, "TimelineRecording should be readonly.");
