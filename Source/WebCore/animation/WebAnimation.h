@@ -29,7 +29,6 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
-#include "SuspendableTaskQueue.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
@@ -179,7 +178,6 @@ private:
     RefPtr<AnimationTimeline> m_timeline;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
-    UniqueRef<SuspendableTaskQueue> m_taskQueue;
     Markable<Seconds, Seconds::MarkableTraits> m_previousCurrentTime;
     Markable<Seconds, Seconds::MarkableTraits> m_startTime;
     Markable<Seconds, Seconds::MarkableTraits> m_holdTime;
