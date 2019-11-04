@@ -1,3 +1,21 @@
+2019-11-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [[Set]] isn't correct with respect to the spec and Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=155012
+
+        Reviewed by Saam Barati.
+
+        This patch merely removes a FIXME comment, as JavaScriptCore has already correct
+        implementation of ordinary [[Set]]. In step 2.b of https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor,
+        if `parent` is a Proxy, the algorithm returns result of Proxy's [[Set]] method call.
+        It is up to the author of "set" trap (if any) to consult the prototype chain.
+
+        All browsers pass https://test262.report/browse/built-ins/Proxy/set/call-parameters-prototype.js,
+        which asserts that no traps besides "set" are invoked on Proxies in prototype chain during [[Set]].
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+
 2019-11-04  Robin Morisset  <rmorisset@apple.com>
 
         Split ArithProfile into a Unary and a Binary version

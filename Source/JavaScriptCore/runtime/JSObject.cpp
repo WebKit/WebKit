@@ -838,9 +838,6 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
             }
         }
         if (obj->type() == ProxyObjectType) {
-            // FIXME: We shouldn't unconditionally perform [[Set]] here.
-            // We need to do more because this is observable behavior.
-            // https://bugs.webkit.org/show_bug.cgi?id=155012
             ProxyObject* proxy = jsCast<ProxyObject*>(obj);
             RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
         }
