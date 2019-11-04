@@ -595,6 +595,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/GCIncomingRefCountedInlines.h
     heap/GCIncomingRefCountedSet.h
     heap/GCLogging.h
+    heap/GCMemoryOperations.h
     heap/GCRequest.h
     heap/GCSegmentedArray.h
     heap/Handle.h

@@ -1180,7 +1180,7 @@ private:
     explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSObject(vm, structure, butterfly)
     {
-        memset(inlineStorageUnsafe(), 0, structure->inlineCapacity() * sizeof(EncodedJSValue));
+        gcSafeZeroMemory(inlineStorageUnsafe(), structure->inlineCapacity() * sizeof(EncodedJSValue));
     }
 };
 

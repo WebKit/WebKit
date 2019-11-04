@@ -104,7 +104,7 @@ inline Butterfly* Butterfly::tryCreate(VM& vm, JSObject*, size_t preCapacity, si
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     if (hasIndexingHeader)
         *result->indexingHeader() = indexingHeader;
-    memset(result->propertyStorage() - propertyCapacity, 0, propertyCapacity * sizeof(EncodedJSValue));
+    gcSafeZeroMemory(result->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
     return result;
 }
 
@@ -139,13 +139,12 @@ inline Butterfly* Butterfly::createOrGrowPropertyStorage(
     size_t indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
     bool hasIndexingHeader = structure->hasIndexingHeader(intendedOwner);
     Butterfly* result = createUninitialized(vm, intendedOwner, preCapacity, newPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    memcpy(
+    gcSafeMemcpy(
         result->propertyStorage() - oldPropertyCapacity,
         oldButterfly->propertyStorage() - oldPropertyCapacity,
         totalSize(0, oldPropertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes));
-    memset(
+    gcSafeZeroMemory(
         result->propertyStorage() - newPropertyCapacity,
-        0,
         (newPropertyCapacity - oldPropertyCapacity) * sizeof(EncodedJSValue));
     return result;
 }
@@ -179,7 +178,7 @@ inline Butterfly* Butterfly::growArrayRight(
     if (!newBase)
         return nullptr;
     // FIXME: This probably shouldn't be a memcpy.
-    memcpy(newBase, theBase, oldSize);
+    gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
     return fromBase(newBase, 0, propertyCapacity);
 }
 
@@ -221,7 +220,7 @@ inline Butterfly* Butterfly::reallocArrayRightIfPossible(
     void* newBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, newSize, &deferralContext, AllocationFailureMode::ReturnNull);
     if (!newBase)
         return nullptr;
-    memcpy(newBase, theBase, oldSize);
+    gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(theBase), oldSize);
     return fromBase(newBase, 0, propertyCapacity);
 }
 
@@ -238,7 +237,7 @@ inline Butterfly* Butterfly::resizeArray(
     size_t size = std::min(
         totalSize(0, propertyCapacity, oldHasIndexingHeader, oldIndexingPayloadSizeInBytes),
         totalSize(0, propertyCapacity, newHasIndexingHeader, newIndexingPayloadSizeInBytes));
-    memcpy(to, from, size);
+    gcSafeMemcpy(static_cast<JSValue*>(to), static_cast<JSValue*>(from), size);
     return result;
 }
 
@@ -265,7 +264,7 @@ inline Butterfly* Butterfly::unshift(Structure* structure, size_t numberOfSlots)
     // inline memmove (particularly since the size argument is likely to be variable), nor can
     // we rely on the compiler to recognize the ordering of the pointer arguments (since
     // propertyCapacity is variable and could cause wrap-around as far as the compiler knows).
-    memmove(
+    gcSafeMemmove(
         propertyStorage() - numberOfSlots - propertyCapacity,
         propertyStorage() - propertyCapacity,
         sizeof(EncodedJSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
@@ -277,7 +276,7 @@ inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
     ASSERT(hasAnyArrayStorage(structure->indexingType()));
     unsigned propertyCapacity = structure->outOfLineCapacity();
     // FIXME: See comment in unshift(), above.
-    memmove(
+    gcSafeMemmove(
         propertyStorage() - propertyCapacity + numberOfSlots,
         propertyStorage() - propertyCapacity,
         sizeof(EncodedJSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));

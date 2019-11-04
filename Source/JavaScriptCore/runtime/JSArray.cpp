@@ -421,11 +421,11 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
 
     if (addToFront) {
         ASSERT(count + usedVectorLength <= newVectorLength);
-        memmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
-        memmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+        gcSafeMemmove(newButterfly->arrayStorage()->m_vector + count, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+        gcSafeMemmove(newButterfly->propertyStorage() - propertySize, butterfly->propertyStorage() - propertySize, sizeof(JSValue) * propertySize + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
 
         // We don't need to zero the pre-capacity for the concurrent GC because it is not available to use as property storage.
-        memset(newButterfly->base(0, propertyCapacity), 0, (propertyCapacity - propertySize) * sizeof(JSValue));
+        gcSafeZeroMemory(static_cast<JSValue*>(newButterfly->base(0, propertyCapacity)), (propertyCapacity - propertySize) * sizeof(JSValue));
 
         if (allocatedNewStorage) {
             // We will set the vectorLength to newVectorLength. We populated requiredVectorLength
@@ -434,8 +434,8 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
                 newButterfly->arrayStorage()->m_vector[i].clear();
         }
     } else if ((newAllocBase != butterfly->base(structure)) || (preCapacity != storage->m_indexBias)) {
-        memmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
-        memmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
+        gcSafeMemmove(newButterfly->propertyStorage() - propertyCapacity, butterfly->propertyStorage() - propertyCapacity, sizeof(JSValue) * propertyCapacity + sizeof(IndexingHeader) + ArrayStorage::sizeFor(0));
+        gcSafeMemmove(newButterfly->arrayStorage()->m_vector, storage->m_vector, sizeof(JSValue) * usedVectorLength);
         
         for (unsigned i = requiredVectorLength; i < newVectorLength; i++)
             newButterfly->arrayStorage()->m_vector[i].clear();
@@ -569,9 +569,9 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
                 butterfly->contiguousInt32().at(this, i).setWithoutWriteBarrier(JSValue());
         }
     } else if (type == ArrayWithDouble)
-        memcpy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), sizeof(JSValue) * otherLength);
+        gcSafeMemcpy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), sizeof(JSValue) * otherLength);
     else {
-        memcpy(butterfly()->contiguous().data() + startIndex, otherArray->butterfly()->contiguous().data(), sizeof(JSValue) * otherLength);
+        gcSafeMemcpy(butterfly()->contiguous().data() + startIndex, otherArray->butterfly()->contiguous().data(), sizeof(JSValue) * otherLength);
         vm.heap.writeBarrier(this);
     }
 
@@ -789,9 +789,9 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, unsigned startIndex, u
 
         auto& resultButterfly = *resultArray->butterfly();
         if (arrayType == ArrayWithDouble)
-            memcpy(resultButterfly.contiguousDouble().data(), butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
+            gcSafeMemcpy(resultButterfly.contiguousDouble().data(), butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
         else
-            memcpy(resultButterfly.contiguous().data(), butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * count);
+            gcSafeMemcpy(resultButterfly.contiguous().data(), butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * count);
 
         ASSERT(resultButterfly.publicLength() == count);
         return resultArray;
@@ -849,7 +849,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         // after the shift region, so we move the elements before to the right.
         if (numElementsBeforeShiftRegion) {
             RELEASE_ASSERT(count + startIndex <= vectorLength);
-            memmove(storage->m_vector + count,
+            gcSafeMemmove(storage->m_vector + count,
                 storage->m_vector,
                 sizeof(JSValue) * startIndex);
         }
@@ -867,7 +867,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     } else {
         // The number of elements before the shift region is greater than or equal to the number 
         // of elements after the shift region, so we move the elements after the shift region to the left.
-        memmove(storage->m_vector + startIndex,
+        gcSafeMemmove(storage->m_vector + startIndex,
             storage->m_vector + firstIndexAfterShiftRegion,
             sizeof(JSValue) * numElementsAfterShiftRegion);
 
@@ -927,7 +927,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
                 butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
             }
         } else {
-            memmove(butterfly->contiguous().data() + startIndex, 
+            gcSafeMemmove(butterfly->contiguous().data() + startIndex, 
                 butterfly->contiguous().data() + startIndex + count, 
                 sizeof(JSValue) * (end - startIndex));
         }
@@ -969,7 +969,7 @@ bool JSArray::shiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsign
                 butterfly->contiguousDouble().at(this, i) = v;
             }
         } else {
-            memmove(butterfly->contiguousDouble().data() + startIndex,
+            gcSafeMemmove(butterfly->contiguousDouble().data() + startIndex,
                 butterfly->contiguousDouble().data() + startIndex + count,
                 sizeof(JSValue) * (end - startIndex));
         }
@@ -1033,9 +1033,9 @@ bool JSArray::unshiftCountWithArrayStorage(JSGlobalObject* globalObject, unsigne
 
     if (startIndex) {
         if (moveFront)
-            memmove(vector, vector + count, startIndex * sizeof(JSValue));
+            gcSafeMemmove(vector, vector + count, startIndex * sizeof(JSValue));
         else if (length - startIndex)
-            memmove(vector + startIndex + count, vector + startIndex, (length - startIndex) * sizeof(JSValue));
+            gcSafeMemmove(vector + startIndex + count, vector + startIndex, (length - startIndex) * sizeof(JSValue));
     }
 
     for (unsigned i = 0; i < count; i++)
