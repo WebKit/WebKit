@@ -1,3 +1,23 @@
+2019-11-04  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Flush the shared ResourceLoadObserver when the webpage is closed by JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=203623
+        <rdar://problem/56756427>
+
+        Reviewed by Alex Christensen.
+
+        New API test added.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::shared):
+            Now returns its own empty observer if no shared one has been set.
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::logSubresourceLoadingForTesting):
+            Test function to seed the web process' observer.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+            Now flushes the shared observer.
+
 2019-11-04  Alex Christensen  <achristensen@webkit.org>
 
         Collect all documents before iterating in Page::forEachDocument

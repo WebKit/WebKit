@@ -160,4 +160,8 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
 #endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> () Async
+#endif
 }

@@ -484,3 +484,66 @@ TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
+
+TEST(ResourceLoadStatistics, FlushObserverWhenWebPageIsClosedByJavaScript)
+{
+    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool: sharedProcessPool];
+    configuration.get().websiteDataStore = dataStore;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    static bool doneFlag = false;
+    [dataStore _clearResourceLoadStatistics:^(void) {
+        doneFlag = true;
+    }];
+
+    static bool statisticsUpdated = false;
+    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
+        if (![message isEqualToString:@"Statistics Updated"])
+            return;
+        statisticsUpdated = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Seed test data in the web process' observer.
+    doneFlag = false;
+    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil.com"] shouldScheduleNotification:NO completionHandler: ^() {
+        doneFlag = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Check that the third-party is not yet registered.
+    doneFlag = false;
+    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL isRegistered) {
+        EXPECT_FALSE(isRegistered);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    statisticsUpdated = false;
+    [webView loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    // Wait for the statistics to be updated in the network process.
+    TestWebKitAPI::Util::run(&statisticsUpdated);
+
+    // Check that the third-party is now registered.
+    doneFlag = false;
+    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil.com"] completionHandler: ^(BOOL isRegistered) {
+        EXPECT_TRUE(isRegistered);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+}

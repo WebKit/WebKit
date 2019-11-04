@@ -49,6 +49,7 @@
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/PluginData.h>
+#import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockPtr.h>
@@ -651,6 +652,20 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (void)_allowAnyTLSCertificateForWebSocketTesting
 {
     _processPool->setAllowsAnySSLCertificateForWebSocket(true);
+}
+
+- (void)_seedResourceLoadStatisticsForTestingWithFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL shouldScheduleNotification:(BOOL)shouldScheduleNotification completionHandler:(void(^)(void))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _processPool->seedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain { firstPartyURL }, WebCore::RegistrableDomain { thirdPartyURL }, shouldScheduleNotification, [completionHandler = makeBlockPtr(completionHandler)] () {
+        completionHandler();
+    });
+#else
+    UNUSED_PARAM(firstPartyURL);
+    UNUSED_PARAM(thirdPartyURL);
+    UNUSED_PARAM(shouldScheduleNotification);
+    UNUSED_PARAM(completionHandler);
+#endif
 }
 
 @end

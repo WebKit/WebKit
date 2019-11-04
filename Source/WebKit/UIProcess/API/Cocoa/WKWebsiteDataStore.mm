@@ -29,6 +29,7 @@
 #import "APIString.h"
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "CompletionHandlerCallChecker.h"
+#import "ShouldGrandfatherStatistics.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -492,6 +493,28 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 #else
     completionHandler();
+#endif
+}
+
+- (void)_clearResourceLoadStatistics:(void (^)(void))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->scheduleClearInMemoryAndPersistent(WebKit::ShouldGrandfatherStatistics::No, [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
+- (void)_isRegisteredAsSubresourceUnderFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL completionHandler:(void (^)(BOOL))completionHandler
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    _websiteDataStore->isRegisteredAsSubresourceUnder(thirdPartyURL, firstPartyURL, [completionHandler = makeBlockPtr(completionHandler)](bool enabled) {
+        completionHandler(enabled);
+    });
+#else
+    completionHandler(NO);
 #endif
 }
 

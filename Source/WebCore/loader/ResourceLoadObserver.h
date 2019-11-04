@@ -52,6 +52,7 @@ public:
     virtual void logCanvasWriteOrMeasure(const Document&, const String& /* textWritten */) { }
     virtual void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI) { }
     virtual void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI) { }
+    virtual void logSubresourceLoadingForTesting(const RegistrableDomain& /* firstPartyDomain */, const RegistrableDomain& /* thirdPartyDomain */, bool /* shouldScheduleNotification */) { }
 
     virtual String statisticsForURL(const URL&) { return { }; }
     virtual void updateCentralStatisticsStore() { }

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ResourceLoadObserver.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -42,8 +43,9 @@ void ResourceLoadObserver::setShared(ResourceLoadObserver& observer)
 
 ResourceLoadObserver& ResourceLoadObserver::shared()
 {
+    static NeverDestroyed<ResourceLoadObserver> emptyObserver;
     if (!sharedObserver())
-        sharedObserver() = new ResourceLoadObserver;
+        return emptyObserver;
     return *sharedObserver();
 }
 

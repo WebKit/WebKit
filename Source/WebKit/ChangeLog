@@ -1,3 +1,59 @@
+2019-11-04  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Flush the shared ResourceLoadObserver when the webpage is closed by JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=203623
+        <rdar://problem/56756427>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds flushing of pending statistics when a window is closed by JavaScript,
+        when a webpage is removed from the web process, and when the web process prepares to
+        suspend.
+
+        New API test added.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            Now calls logTestingEvent() so that the test infrastructure can wait for updates.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:thirdParty:shouldScheduleNotification:completionHandler:]):
+            Test infrastructure to seed every web process' WebCore::ResourceLoadObserver with test data.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _clearResourceLoadStatistics:]):
+        (-[WKWebsiteDataStore _isRegisteredAsSubresourceUnderFirstParty:thirdParty:completionHandler:]):
+            Test infrastructure.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::seedResourceLoadStatisticsForTesting):
+            Test infrastructure.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::isRegisteredAsSubresourceUnder):
+            Made sure the completion handler is called even if there is no network process.
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+            Now tells all web processes to turn ITP on or off.
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::~WebResourceLoadObserver):
+        (WebKit::WebResourceLoadObserver::logSubresourceLoadingForTesting):
+            Test infrastructure to seed the observer with test data.
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+            Now checks whether a shared observer already exists before setting one.
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::prepareToSuspend):
+            These two functions now call WebProcess::flushResourceLoadStatistics().
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+            This function now sets the process' shared WebCore::ResourceLoadObserver if none exists.
+        (WebKit::WebProcess::flushResourceLoadStatistics):
+            This function tells the shared WebCore::ResourceLoadObserver to send any pending
+            statistics to the central ITP store.
+        (WebKit::WebProcess::seedResourceLoadStatisticsForTesting):
+            Test infrastructure to seed the shared observer with test data.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-11-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Simplify process assertion handling for the network process and service worker processes

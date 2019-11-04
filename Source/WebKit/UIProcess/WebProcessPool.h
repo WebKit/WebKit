@@ -45,7 +45,6 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
@@ -90,6 +89,7 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class RegistrableDomain;
 struct MockMediaDevice;
 }
 
@@ -495,6 +495,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const WebCore::RegistrableDomain& fromDomain, const WebCore::RegistrableDomain& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
+    void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

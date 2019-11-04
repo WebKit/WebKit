@@ -65,6 +65,12 @@ WebResourceLoadObserver::WebResourceLoadObserver()
 {
 }
 
+WebResourceLoadObserver::~WebResourceLoadObserver()
+{
+    if (hasStatistics())
+        updateCentralStatisticsStore();
+}
+
 void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableDomain& domainInNeedOfStorageAccess, PageIdentifier openerPageID, Document& openerDocument)
 {
     auto openerUrl = openerDocument.url();
@@ -354,6 +360,19 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 #undef LOCAL_LOG
     }
 #endif
+}
+
+void WebResourceLoadObserver::logSubresourceLoadingForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification)
+{
+    auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(thirdPartyDomain);
+    auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
+    targetStatistics.lastSeen = lastSeen;
+    targetStatistics.subresourceUnderTopFrameDomains.add(firstPartyDomain);
+
+    if (shouldScheduleNotification)
+        scheduleNotificationIfNeeded();
+    else
+        m_notificationTimer.stop();
 }
 
 } // namespace WebKit

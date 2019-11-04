@@ -87,6 +87,7 @@ class ApplicationCacheStorage;
 class CPUMonitor;
 class CertificateInfo;
 class PageGroup;
+class RegistrableDomain;
 class ResourceRequest;
 class UserGestureToken;
 struct BackForwardItemIdentifier;
@@ -346,6 +347,8 @@ private:
     void setShouldUseFontSmoothing(bool);
     void setResourceLoadStatisticsEnabled(bool);
     void clearResourceLoadStatistics();
+    void flushResourceLoadStatistics();
+    void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 

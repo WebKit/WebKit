@@ -89,10 +89,12 @@
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/RegistrationDatabase.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/SessionID.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -2275,6 +2277,14 @@ void WebProcessPool::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessi
         return;
 
     m_networkProcess->didCommitCrossSiteLoadWithDataTransfer(sessionID, fromDomain, toDomain, navigationDataTransfer, webPageProxyID, webPageID);
+}
+
+void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& process : processes())
+        process->sendWithAsyncReply(Messages::WebProcess::SeedResourceLoadStatisticsForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification), [callbackAggregator = callbackAggregator.copyRef()] { });
 }
 #endif
 

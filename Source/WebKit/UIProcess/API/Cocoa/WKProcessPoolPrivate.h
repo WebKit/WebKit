@@ -132,4 +132,7 @@
 @property (nonatomic, getter=_isStorageAccessAPIEnabled, setter=_setStorageAccessAPIEnabled:) BOOL _storageAccessAPIEnabled WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_synthesizeAppIsBackground:(BOOL)background WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// Test only.
+- (void)_seedResourceLoadStatisticsForTestingWithFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL shouldScheduleNotification:(BOOL)shouldScheduleNotification completionHandler:(void(^)(void))completionHandler  WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end

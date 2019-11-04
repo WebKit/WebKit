@@ -458,7 +458,7 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (parameters.resourceLoadStatisticsEnabled && !parameters.sessionID.isEphemeral())
+    if (parameters.resourceLoadStatisticsEnabled && !parameters.sessionID.isEphemeral() && !ResourceLoadObserver::sharedIfExists())
         ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
 #endif
 
@@ -670,6 +670,8 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 void WebProcess::removeWebPage(PageIdentifier pageID)
 {
     ASSERT(m_pageMap.contains(pageID));
+
+    flushResourceLoadStatistics();
 
     pageWillLeaveWindow(pageID);
     m_pageMap.remove(pageID);
@@ -1383,6 +1385,8 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
     SetForScope<bool> suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
+    flushResourceLoadStatistics();
+
 #if PLATFORM(COCOA)
     if (m_processType == ProcessType::PrewarmedWebContent) {
         RELEASE_LOG(ProcessSuspension, "%p - WebProcess::prepareToSuspend() Process is ready to suspend", this);
@@ -1552,7 +1556,13 @@ StorageAreaMap* WebProcess::storageAreaMap(StorageAreaIdentifier identifier) con
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
 {
+    if (WebCore::DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() == enabled || m_sessionID->isEphemeral())
+        return;
     WebCore::DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(enabled);
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (enabled && !ResourceLoadObserver::sharedIfExists())
+        WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver);
+#endif
 }
 
 void WebProcess::clearResourceLoadStatistics()
@@ -1561,6 +1571,23 @@ void WebProcess::clearResourceLoadStatistics()
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->clearState();
 #endif
+}
+
+void WebProcess::flushResourceLoadStatistics()
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (auto* observer = ResourceLoadObserver::sharedIfExists())
+        observer->updateCentralStatisticsStore();
+#endif
+}
+
+void WebProcess::seedResourceLoadStatisticsForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (auto* observer = ResourceLoadObserver::sharedIfExists())
+        observer->logSubresourceLoadingForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification);
+#endif
+    completionHandler();
 }
 
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)

@@ -273,7 +273,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
     // It is safe to move the origins to the background queue without isolated copy here because this is an r-value
     // coming from IPC. ResourceLoadStatistics only contains strings which are safe to move to other threads as long
     // as nobody on this thread holds a reference to those strings.
-    postTask([this, statistics = WTFMove(statistics)]() mutable {
+    postTask([this, protectedThis = makeRef(*this), statistics = WTFMove(statistics)]() mutable {
         if (!m_statisticsStore)
             return;
 
@@ -283,7 +283,11 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
         m_statisticsStore->cancelPendingStatisticsProcessingRequest();
 
         // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
-        m_statisticsStore->updateCookieBlocking([]() { });
+        m_statisticsStore->updateCookieBlocking([this, protectedThis = protectedThis.copyRef()]() {
+            postTaskReply([this, protectedThis = protectedThis.copyRef()]() {
+                logTestingEvent("Statistics Updated"_s);
+            });
+        });
         m_statisticsStore->processStatisticsAndDataRecords();
     });
 }
