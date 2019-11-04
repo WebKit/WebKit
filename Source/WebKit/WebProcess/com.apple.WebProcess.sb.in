@@ -984,6 +984,7 @@
         (syscall-number SYS_kqueue) ;; <rdar://problem/49609201>
         (syscall-number SYS_kqueue_workloop_ctl) ;; <rdar://problem/50999499>
         (syscall-number SYS_faccessat) ;; <rdar://problem/56690456>
+        (syscall-number SYS_fsetxattr) ;; <rdar://problem/56332491>
     )
 )
 

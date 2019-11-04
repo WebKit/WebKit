@@ -1,3 +1,15 @@
+2019-11-04  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix crash caused by syscall sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=203826
+        <rdar://problem/56332491>
+
+        Reviewed by Brent Fulgham.
+
+        A new syscall needs to be allowed in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-11-04  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Flush the shared ResourceLoadObserver when the webpage is closed by JavaScript
