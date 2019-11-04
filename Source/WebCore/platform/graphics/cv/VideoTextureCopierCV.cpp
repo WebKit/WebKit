@@ -51,7 +51,7 @@ enum class PixelRange {
     Full,
 };
 
-enum class TransferFunction {
+enum class TransferFunctionCV {
     Unknown,
     kITU_R_709_2,
     kITU_R_601_4,
@@ -85,23 +85,23 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     }
 }
 
-static TransferFunction transferFunctionFromString(CFStringRef string)
+static TransferFunctionCV transferFunctionFromString(CFStringRef string)
 {
     if (!string || CFGetTypeID(string) != CFStringGetTypeID())
-        return TransferFunction::Unknown;
+        return TransferFunctionCV::Unknown;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
-        return TransferFunction::kITU_R_709_2;
+        return TransferFunctionCV::kITU_R_709_2;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
-        return TransferFunction::kITU_R_601_4;
+        return TransferFunctionCV::kITU_R_601_4;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
-        return TransferFunction::kSMPTE_240M_1995;
+        return TransferFunctionCV::kSMPTE_240M_1995;
     if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_DCI_P3() && CFEqual(string, kCVImageBufferYCbCrMatrix_DCI_P3))
-        return TransferFunction::kDCI_P3;
+        return TransferFunctionCV::kDCI_P3;
     if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_P3_D65() && CFEqual(string, kCVImageBufferYCbCrMatrix_P3_D65))
-        return TransferFunction::kP3_D65;
+        return TransferFunctionCV::kP3_D65;
     if (canLoad_CoreVideo_kCVImageBufferYCbCrMatrix_ITU_R_2020() && CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_2020))
-        return TransferFunction::kITU_R_2020;
-    return TransferFunction::Unknown;
+        return TransferFunctionCV::kITU_R_2020;
+    return TransferFunctionCV::Unknown;
 }
 
 struct GLfloatColor {
@@ -236,9 +236,9 @@ constexpr GLfloatColor YCbCrMatrix::operator*(const GLfloatColor& color) const
     );
 }
 
-static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunction transferFunction)
+static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunctionCV transferFunction)
 {
-    using MapKey = std::pair<PixelRange, TransferFunction>;
+    using MapKey = std::pair<PixelRange, TransferFunctionCV>;
     using MatrixMap = StdMap<MapKey, Vector<GLfloat>>;
 
     static NeverDestroyed<MatrixMap> matrices;
@@ -337,14 +337,14 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
     static_assert((smpte240MFullMatrix * GLfloatColor(201, 158, 1,   255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "SMPTE 240M full matrix does not produce cyan color");
 
     dispatch_once(&onceToken, ^{
-        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_601_4), r601VideoMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_601_4), r601FullMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_709_2), r709VideoMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_709_2), r709FullMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_2020), bt2020VideoMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_2020), bt2020FullMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kSMPTE_240M_1995), smpte240MVideoMatrix);
-        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kSMPTE_240M_1995), smpte240MFullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunctionCV::kITU_R_601_4), r601VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunctionCV::kITU_R_601_4), r601FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunctionCV::kITU_R_709_2), r709VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunctionCV::kITU_R_709_2), r709FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunctionCV::kITU_R_2020), bt2020VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunctionCV::kITU_R_2020), bt2020FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunctionCV::kSMPTE_240M_1995), smpte240MVideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunctionCV::kSMPTE_240M_1995), smpte240MFullMatrix);
     });
 
     // We should never be asked to handle a Pixel Format whose range value is unknown.
@@ -356,7 +356,7 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
 
     // Assume unknown transfer functions are r.601:
     if (iterator == matrices.get().end())
-        iterator = matrices.get().find({range, TransferFunction::kITU_R_601_4});
+        iterator = matrices.get().find({range, TransferFunctionCV::kITU_R_601_4});
 
     ASSERT(iterator != matrices.get().end());
     return iterator->second;
