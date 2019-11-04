@@ -68,6 +68,7 @@ bool isSolidStateNetworksDownloader();
 WEBCORE_EXPORT bool isVersions();
 WEBCORE_EXPORT bool isHRBlock();
 WEBCORE_EXPORT bool isIAdProducer();
+WEBCORE_EXPORT bool isEpsonSoftwareUpdater();
 
 } // MacApplication
 

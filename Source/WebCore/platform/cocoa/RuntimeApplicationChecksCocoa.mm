@@ -193,6 +193,12 @@ bool MacApplication::isSolidStateNetworksDownloader()
     return isSolidStateNetworksDownloader;
 }
 
+bool MacApplication::isEpsonSoftwareUpdater()
+{
+    static bool isEpsonSoftwareUpdater = applicationBundleIsEqualTo("com.epson.EPSON_Software_Updater"_s);
+    return isEpsonSoftwareUpdater;
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

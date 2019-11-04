@@ -1,3 +1,26 @@
+2019-11-04  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r243947) Epson software updater fails to install new version
+        https://bugs.webkit.org/show_bug.cgi?id=203809
+        <rdar://problem/56002179>
+
+        Reviewed by Brady Eidson.
+
+        * Misc/WebDownload.mm:
+        (shouldCallOnNetworkThread):
+        (callOnDelegateThread):
+        (isDelegateThread):
+        (-[WebDownloadInternal downloadDidBegin:]):
+        (-[WebDownloadInternal download:willSendRequest:redirectResponse:]):
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        (-[WebDownloadInternal download:didReceiveResponse:]):
+        (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+        (-[WebDownloadInternal download:shouldDecodeSourceDataOfMIMEType:]):
+        (-[WebDownloadInternal download:decideDestinationWithSuggestedFilename:]):
+        (-[WebDownloadInternal download:didCreateDestination:]):
+        (-[WebDownloadInternal downloadDidFinish:]):
+        (-[WebDownloadInternal download:didFailWithError:]):
+
 2019-11-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add diagnostic logging for frontend feature usage
