@@ -71,6 +71,8 @@ public:
     void rendererWillBeDestroyed(const Element&);
     void willNotProceedWithClick();
 
+    void willNotProceedWithFixedObservationTimeWindow();
+
     void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = makeWeakPtr(targetElement); }
     void resetHiddenTouchTarget() { m_hiddenTouchTargetElement = { }; }
     Element* hiddenTouchTarget() const { return m_hiddenTouchTargetElement.get(); }
@@ -197,6 +199,7 @@ private:
         CanceledTransition,
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,
+        WillNotProceedWithFixedObservationTimeWindow,
         ElementDidBecomeVisible
     };
     void adjustObservedState(Event);

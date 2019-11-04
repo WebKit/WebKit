@@ -470,6 +470,12 @@ void ContentChangeObserver::mouseMovedDidFinish()
     setMouseMovedEventIsBeingDispatched(false);
 }
 
+void ContentChangeObserver::willNotProceedWithFixedObservationTimeWindow()
+{
+    ASSERT(!isMouseMovedEventBeingDispatched());
+    adjustObservedState(Event::WillNotProceedWithFixedObservationTimeWindow);
+}
+
 void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
 {
     if (shouldObserve)
@@ -558,6 +564,10 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedFixedObservationTimeWindow) {
+            notifyClientIfNeeded();
+            return;
+        }
+        if (event == Event::WillNotProceedWithFixedObservationTimeWindow) {
             notifyClientIfNeeded();
             return;
         }

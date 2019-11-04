@@ -1,3 +1,49 @@
+2019-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r248750): Drop-down menu for Walgreens 2FA unresponsive to touch
+        https://bugs.webkit.org/show_bug.cgi?id=203821
+        <rdar://problem/56550488>
+
+        Reviewed by Zalan Bujtas.
+
+        The dropdown in question in the Walgreens app uses UIWebView. In this report, tapping the dropdown menu (which
+        installs DOMTimers upon touchstart) no longer dispatches a click event. This reproduces in WebKit1, but not in
+        WebKit2.
+
+        After r248750, we no longer transition from IndeterminateChange to NoChange before calling out to the client
+        layer to report a deferred content observation change (in legacy WebKit, this is a call to the delegate method
+        -webView:didObserveDeferredContentChange:forFrame:).
+
+        In WebKit2, logic in WebPage::handleSyntheticClick handles indeterminate content changes after dispatching
+        mousemove by starting a fixed 32ms content observation timer, after the end of which we transition from
+        indeterminate to either NoChange or VisibilityChange, and call out to the client. This logic is absent in
+        WebKitLegacy, where we directly report the current content observation state to the client.
+
+        As such, the content change is still indeterminate when we finally call out to the client layer in the runloop
+        after dispatching the mousemove event in EventHandler::mouseMoved(). Client code in UIKit does not expect this,
+        and assumes that the given WKContentChange must either be NoChange or VisibilityChange; thus, it handles
+        indeterminate change as VisibilityChange and does not dispatch a click.
+
+        This legacy-WebKit-specific call to didFinishContentChangeObserving is intended to act as a failsafe to stop
+        content observation after mousemove, if any active timers scheduled during touchstart have already finished
+        executing. To fix this bug, instead of calling out to WebChromeClient::didFinishContentChangeObserving directly,
+        add a new method to ContentChangeObserver to inform it that a mousemove event has been handled; here, we call
+        notifyClientIfNeeded, which will transition the content change state from indeterminate to NoChange if needed
+        before calling out to the client.
+
+        No new test, because we don't have any mechanism for simulating user interaction in UIWebView (and inventing one
+        at this stage would have diminishing returns at best).
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::willNotProceedWithFixedObservationTimeWindow):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+
+        Replace the call to WebChromeClient::didFinishContentChangeObserving with a ContentChangeObserver method that
+        turns around and calls into notifyClientIfNeeded, via ContentChangeObserver::adjustObservedState.
+
 2019-11-04  Chris Dumez  <cdumez@apple.com>
 
         Port FontFaceSet to the HTML5 event loop
