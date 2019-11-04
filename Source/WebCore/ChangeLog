@@ -1,3 +1,19 @@
+2019-11-04  Eric Carlson  <eric.carlson@apple.com>
+
+        enumerateDevices() doesn't return correct list of devices after device was changed by user in a system preferences
+        https://bugs.webkit.org/show_bug.cgi?id=203407
+        <rdar://problem/56648063>
+
+        Reviewed by Youenn Fablet.
+
+        Tested manually as this doesn't reproduce with mock capture devices.
+
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioCaptureDevices): Refresh the list of capture
+        devices when the default input device changes.
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices): Assert if not called
+        on the main thread.
+
 2019-11-04  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r251623): When downloading a QuickLook file, the web view navigates to a "The URL can't be shown" error page instead of staying on the current page
