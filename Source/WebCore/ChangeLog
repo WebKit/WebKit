@@ -1,3 +1,23 @@
+2019-11-04  youenn fablet  <youenn@apple.com>
+
+        Order of postMessage and fetch events should be preserved when going from client to service worker
+        https://bugs.webkit.org/show_bug.cgi?id=203236
+
+        Reviewed by Chris Dumez.
+
+        Now that post message is going through network process, we can make the order predictable.
+        Remove unnecessary task posting when firing events in service worker context and when posting message from a client.
+        Test: http/wpt/service-workers/service-worker/postMessage-fetch-order.https.html
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::swConnection):
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorker.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::postFetchTask):
+        (WebCore::ServiceWorkerThread::fireInstallEvent):
+        (WebCore::ServiceWorkerThread::fireActivateEvent):
+
 2019-11-03  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Verification] Forced line break display runs don't have TextContext

@@ -40,6 +40,7 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerThread.h"
+#include "WorkerSWClientConnection.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -95,6 +96,14 @@ void ServiceWorker::updateState(State state)
     updatePendingActivityForEventDispatch();
 }
 
+SWClientConnection& ServiceWorker::swConnection()
+{
+    ASSERT(scriptExecutionContext());
+    if (is<WorkerGlobalScope>(scriptExecutionContext()))
+        return downcast<WorkerGlobalScope>(scriptExecutionContext())->swClientConnection();
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection();
+}
+
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     if (m_isStopped)
@@ -121,11 +130,8 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
         sourceIdentifier = ServiceWorkerClientIdentifier { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() };
     }
 
-    MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
-    callOnMainThread([destinationIdentifier = identifier(), message = WTFMove(message), sourceIdentifier = WTFMove(sourceIdentifier)]() mutable {
-        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-        connection.postMessageToServiceWorker(destinationIdentifier, WTFMove(message), sourceIdentifier);
-    });
+    MessageWithMessagePorts message { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
+    swConnection().postMessageToServiceWorker(identifier(), WTFMove(message), sourceIdentifier);
     return { };
 }
 

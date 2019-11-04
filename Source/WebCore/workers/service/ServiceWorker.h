@@ -42,6 +42,7 @@ class JSValue;
 namespace WebCore {
 
 class Frame;
+class SWClientConnection;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorker);
@@ -81,6 +82,8 @@ private:
     void stop() final;
 
     bool isAlwaysOnLoggingAllowed() const;
+
+    SWClientConnection& swConnection();
 
     ServiceWorkerData m_data;
     bool m_isStopped { false };
