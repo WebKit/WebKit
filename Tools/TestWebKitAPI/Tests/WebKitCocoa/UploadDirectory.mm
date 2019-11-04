@@ -72,7 +72,7 @@ TEST(WebKit, UploadDirectory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error = nil;
     NSURL *directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"UploadDirectory"] isDirectory:YES];
-    EXPECT_FALSE([fileManager fileExistsAtPath:directory.path]);
+    [fileManager removeItemAtPath:directory.path error:nil];
     EXPECT_TRUE([fileManager createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:nil error:&error]);
     EXPECT_FALSE(error);
     NSData *testData = [@"testdata" dataUsingEncoding:NSUTF8StringEncoding];

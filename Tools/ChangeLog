@@ -1,3 +1,17 @@
+2019-11-04  Alex Christensen  <achristensen@webkit.org>
+
+        Flaky API Test TestWebKitAPI.WebKit.UploadDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=203652
+
+        Reviewed by Alexey Proskuryakov.
+
+        It is not important that the directory to upload does not exist before the test starts.
+        Make the test more robust to state left behind by previous iterations of this test by removing the check.
+        The important check in this test is the uploaded body size.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UploadDirectory.mm:
+        (TEST):
+
 2019-11-04  Kate Cheney  <katherine_cheney@apple.com>
 
         updated email in contributors.json to match bugzilla.
