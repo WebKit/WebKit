@@ -271,14 +271,14 @@ String generateHTMLContent(unsigned contentLength)
     builder.append("<html><body>");
 
     if (contentLength <= baseLength)
-        builder.append(baseString, 0, contentLength);
+        builder.appendSubstring(baseString, 0, contentLength);
     else {
         unsigned currentLength = 0;
         while (currentLength < contentLength) {
             if ((currentLength + baseLength) <= contentLength)
                 builder.append(baseString);
             else
-                builder.append(baseString, 0, contentLength - currentLength);
+                builder.appendSubstring(baseString, 0, contentLength - currentLength);
 
             // Account for the 12 characters of the '<html><body>' prefix.
             currentLength = builder.length() - 12;

@@ -150,12 +150,12 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
         CharacterType character = text[i];
         uint8_t substitution = character < WTF_ARRAY_LENGTH(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionNullIndex);
         if (UNLIKELY(substitution != EntitySubstitutionNullIndex) && entitySubstitutionList[substitution].mask & entityMask) {
-            result.append(text + positionAfterLastEntity, i - positionAfterLastEntity);
-            result.append(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
+            result.appendCharacters(text + positionAfterLastEntity, i - positionAfterLastEntity);
+            result.appendCharacters(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
             positionAfterLastEntity = i + 1;
         }
     }
-    result.append(text + positionAfterLastEntity, length - positionAfterLastEntity);
+    result.appendCharacters(text + positionAfterLastEntity, length - positionAfterLastEntity);
 }
 
 void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)

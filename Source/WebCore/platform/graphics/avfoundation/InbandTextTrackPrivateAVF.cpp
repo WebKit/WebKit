@@ -529,7 +529,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             // A WebVTT header is terminated by "One or more WebVTT line terminators" so append two line feeds to make sure the parser
             // reccognized this string as a full header.
             StringBuilder header;
-            header.append(reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(webvttHeaderData)), length);
+            header.appendCharacters(reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(webvttHeaderData)), length);
             header.append("\n\n");
 
             INFO_LOG(LOGIDENTIFIER, "VTT header ", &header);

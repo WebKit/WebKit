@@ -190,7 +190,7 @@ static int writeToStringBuilder(void* context, const char* buffer, int length)
         }
     }
 
-    resultOutput.append(outputBuffer.data(), outputOffset);
+    resultOutput.appendCharacters(outputBuffer.data(), outputOffset);
     return inputOffset;
 }
 

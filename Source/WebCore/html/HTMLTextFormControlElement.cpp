@@ -717,13 +717,13 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
             unsigned position = 0;
             while (breakNode == node && breakOffset <= length) {
                 if (breakOffset > position) {
-                    result.append(data, position, breakOffset - position);
+                    result.appendSubstring(data, position, breakOffset - position);
                     position = breakOffset;
                     result.append(newlineCharacter);
                 }
                 getNextSoftBreak(line, breakNode, breakOffset);
             }
-            result.append(data, position, length - position);
+            result.appendSubstring(data, position, length - position);
         }
         while (breakNode == node)
             getNextSoftBreak(line, breakNode, breakOffset);

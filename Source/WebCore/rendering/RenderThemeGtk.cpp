@@ -1176,9 +1176,9 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
 String RenderThemeGtk::mediaControlsScript()
 {
     StringBuilder scriptBuilder;
-    scriptBuilder.append(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
-    scriptBuilder.append(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
-    scriptBuilder.append(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsGtkJavaScript, sizeof(mediaControlsGtkJavaScript));
     return scriptBuilder.toString();
 }
 #endif // ENABLE(VIDEO)

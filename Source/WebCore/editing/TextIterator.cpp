@@ -335,7 +335,7 @@ void TextIteratorCopyableText::appendToStringBuilder(StringBuilder& builder) con
     if (m_singleCharacter)
         builder.append(m_singleCharacter);
     else
-        builder.append(m_string, m_offset, m_length);
+        builder.appendSubstring(m_string, m_offset, m_length);
 }
 
 // --------

@@ -58,8 +58,8 @@ String RenderThemeWPE::mediaControlsStyleSheet()
 String RenderThemeWPE::mediaControlsScript()
 {
     StringBuilder scriptBuilder;
-    scriptBuilder.append(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
-    scriptBuilder.append(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsLocalizedStringsJavaScript, sizeof(mediaControlsLocalizedStringsJavaScript));
+    scriptBuilder.appendCharacters(mediaControlsBaseJavaScript, sizeof(mediaControlsBaseJavaScript));
     return scriptBuilder.toString();
 }
 #endif
