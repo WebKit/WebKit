@@ -68,7 +68,7 @@ class PlatformInfo(object):
             self.os_version = self._win_version()
         else:
             # Most other platforms (namely iOS) return conforming version strings.
-            version = re.search(r'\d+.\d+.\d+', platform_module.release())
+            version = re.search(r'\d+.\d+(.\d+)?', platform_module.release())
             if version:
                 self.os_version = Version.from_string(version.group(0))
             else:
