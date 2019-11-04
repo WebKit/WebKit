@@ -28,6 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include "AbstractEventLoop.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Page.h"
@@ -54,7 +55,6 @@ WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, We
     : ActiveDOMObject(&context)
     , m_keys(&keys)
     , m_keySystem(keySystem)
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
     , m_session(keys.cdm().createSession(*this))
     , m_keyRequestTimer(*this, &WebKitMediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(*this, &WebKitMediaKeySession::addKeyTimerFired)
@@ -67,8 +67,6 @@ WebKitMediaKeySession::~WebKitMediaKeySession()
 {
     if (m_session)
         m_session->setClient(nullptr);
-
-    m_asyncEventQueue->cancelAllEvents();
 }
 
 void WebKitMediaKeySession::close()
@@ -183,7 +181,7 @@ void WebKitMediaKeySession::addKeyTimerFired()
         if (didStoreKey) {
             auto keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, Event::CanBubble::No, Event::IsCancelable::No);
             keyaddedEvent->setTarget(this);
-            m_asyncEventQueue->enqueueEvent(WTFMove(keyaddedEvent));
+            enqueueEvent(WTFMove(keyaddedEvent));
 
             ASSERT(m_keys);
             m_keys->keyAdded();
@@ -207,7 +205,7 @@ void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationU
 {
     auto event = WebKitMediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(WTFMove(event));
+    enqueueEvent(WTFMove(event));
 }
 
 void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
@@ -216,7 +214,7 @@ void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t syst
 
     auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, Event::CanBubble::No, Event::IsCancelable::No);
     keyerrorEvent->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(WTFMove(keyerrorEvent));
+    enqueueEvent(WTFMove(keyerrorEvent));
 }
 
 String WebKitMediaKeySession::mediaKeysStorageDirectory() const
@@ -238,7 +236,7 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 
 bool WebKitMediaKeySession::hasPendingActivity() const
 {
-    return (m_keys && m_session) || m_asyncEventQueue->hasPendingEvents();
+    return (m_keys && m_session) || ActiveDOMObject::hasPendingActivity();
 }
 
 void WebKitMediaKeySession::stop()
@@ -251,10 +249,15 @@ const char* WebKitMediaKeySession::activeDOMObjectName() const
     return "WebKitMediaKeySession";
 }
 
-bool WebKitMediaKeySession::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+void WebKitMediaKeySession::enqueueEvent(Ref<Event>&& event)
 {
-    // FIXME: This should never prevent entering the back/forward cache.
-    return true;
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    context->eventLoop().queueTask(TaskSource::Networking, *context, [this, pendingActivity = makePendingActivity(*this), event = WTFMove(event)]() mutable {
+        dispatchEvent(WTFMove(event));
+    });
 }
 
 }

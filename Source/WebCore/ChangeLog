@@ -1,3 +1,44 @@
+2019-11-04  Chris Dumez  <cdumez@apple.com>
+
+        MediaKeySession / WebKitMediaKeySession should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203089
+
+        Reviewed by Youenn Fablet.
+
+        Port MediaKeySession / WebKitMediaKeySession to the HTML5 event loop instead of using its
+        own GenericEventQueue / GenericTaskQueue. Because the HTML5 event loop plays nicely with
+        the back/forward cache, we can now let pages using MediaKeySession / WebKitMediaKeySession
+        into the back/forward cache.
+
+        Test: http/tests/navigation/page-cache-mediakeysession.html
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        (WebCore::MediaKeySession::enqueueMessage):
+        (WebCore::MediaKeySession::updateKeyStatuses):
+        (WebCore::MediaKeySession::hasPendingActivity const):
+        (WebCore::MediaKeySession::activeDOMObjectName const):
+        (WebCore::MediaKeySession::enqueueTask):
+        (WebCore::MediaKeySession::enqueueEvent):
+        (WebCore::MediaKeySession::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        (WebCore::MediaKeySession::stop): Deleted.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::~WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::addKeyTimerFired):
+        (WebCore::WebKitMediaKeySession::sendMessage):
+        (WebCore::WebKitMediaKeySession::sendError):
+        (WebCore::WebKitMediaKeySession::hasPendingActivity const):
+        (WebCore::WebKitMediaKeySession::enqueueEvent):
+        (WebCore::WebKitMediaKeySession::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+
 2019-11-04  Eric Carlson  <eric.carlson@apple.com>
 
         enumerateDevices() doesn't return correct list of devices after device was changed by user in a system preferences

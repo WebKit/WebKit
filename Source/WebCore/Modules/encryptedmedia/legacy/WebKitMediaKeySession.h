@@ -30,7 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "GenericEventQueue.h"
 #include "LegacyCDMSession.h"
 #include "Timer.h"
 #include <JavaScriptCore/Uint8Array.h>
@@ -41,7 +40,7 @@ namespace WebCore {
 class WebKitMediaKeyError;
 class WebKitMediaKeys;
 
-class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, private ActiveDOMObject, private LegacyCDMSessionClient {
+class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, private LegacyCDMSessionClient {
     WTF_MAKE_ISO_ALLOCATED(WebKitMediaKeySession);
 public:
     static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
@@ -74,11 +73,12 @@ private:
     void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
     String mediaKeysStorageDirectory() const final;
 
+    void enqueueEvent(Ref<Event>&&);
+
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     void stop() final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     const char* activeDOMObjectName() const final;
 
     EventTargetInterface eventTargetInterface() const final { return WebKitMediaKeySessionEventTargetInterfaceType; }
@@ -88,7 +88,6 @@ private:
     String m_keySystem;
     String m_sessionId;
     RefPtr<WebKitMediaKeyError> m_error;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
     std::unique_ptr<LegacyCDMSession> m_session;
 
     struct PendingKeyRequest {
