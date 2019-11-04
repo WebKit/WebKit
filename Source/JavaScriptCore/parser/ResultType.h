@@ -48,6 +48,10 @@ namespace JSC {
         static constexpr int numBitsNeeded = 7;
         static_assert((TypeBits & ((1 << numBitsNeeded) - 1)) == TypeBits, "This is necessary for correctness.");
 
+        constexpr explicit ResultType()
+            : ResultType(unknownType())
+        {
+        }
         constexpr explicit ResultType(Type type)
             : m_bits(type)
         {

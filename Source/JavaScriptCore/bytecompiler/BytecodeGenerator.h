@@ -681,7 +681,7 @@ namespace JSC {
             return dst;
         }
 
-        RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, OperandTypes);
+        RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src, ResultType);
 
         template<typename BinaryOp>
         std::enable_if_t<

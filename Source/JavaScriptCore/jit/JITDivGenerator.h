@@ -37,7 +37,7 @@ public:
     JITDivGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
-        ArithProfile* arithProfile = nullptr)
+        BinaryArithProfile* arithProfile = nullptr)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -71,7 +71,7 @@ private:
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
     bool m_didEmitFastPath { false };
-    ArithProfile* m_arithProfile;
+    BinaryArithProfile* m_arithProfile;
 
     CCallHelpers::JumpList m_endJumpList;
     CCallHelpers::JumpList m_slowPathJumpList;

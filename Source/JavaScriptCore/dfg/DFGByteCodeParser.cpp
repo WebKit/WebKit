@@ -942,56 +942,60 @@ private:
         if (!isX86() && (node->op() == ArithMod || node->op() == ValueMod))
             return node;
 
-        {
-            ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeIndex(m_currentIndex);
-            if (arithProfile) {
-                switch (node->op()) {
-                case ArithAdd:
-                case ArithSub:
-                case ValueAdd:
-                    if (arithProfile->didObserveDouble())
-                        node->mergeFlags(NodeMayHaveDoubleResult);
-                    if (arithProfile->didObserveNonNumeric())
-                        node->mergeFlags(NodeMayHaveNonNumericResult);
-                    if (arithProfile->didObserveBigInt())
-                        node->mergeFlags(NodeMayHaveBigIntResult);
-                    break;
+        switch (node->op()) {
+        case ArithAdd:
+        case ArithSub:
+        case ValueAdd: {
+            BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
+            if (!arithProfile)
+                break;
+            if (arithProfile->didObserveDouble())
+                node->mergeFlags(NodeMayHaveDoubleResult);
+            if (arithProfile->didObserveNonNumeric())
+                node->mergeFlags(NodeMayHaveNonNumericResult);
+            if (arithProfile->didObserveBigInt())
+                node->mergeFlags(NodeMayHaveBigIntResult);
+            break;
+        }
+        case ValueMul:
+        case ArithMul: {
+            BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
+            if (!arithProfile)
+                break;
+            if (arithProfile->didObserveInt52Overflow())
+                node->mergeFlags(NodeMayOverflowInt52);
+            if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                node->mergeFlags(NodeMayOverflowInt32InBaseline);
+            if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+                node->mergeFlags(NodeMayNegZeroInBaseline);
+            if (arithProfile->didObserveDouble())
+                node->mergeFlags(NodeMayHaveDoubleResult);
+            if (arithProfile->didObserveNonNumeric())
+                node->mergeFlags(NodeMayHaveNonNumericResult);
+            if (arithProfile->didObserveBigInt())
+                node->mergeFlags(NodeMayHaveBigIntResult);
+            break;
+        }
+        case ValueNegate:
+        case ArithNegate: {
+            UnaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->unaryArithProfileForBytecodeIndex(m_currentIndex);
+            if (!arithProfile)
+                break;
+            if (arithProfile->argObservedType().sawNumber() || arithProfile->didObserveDouble())
+                node->mergeFlags(NodeMayHaveDoubleResult);
+            if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+                node->mergeFlags(NodeMayNegZeroInBaseline);
+            if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                node->mergeFlags(NodeMayOverflowInt32InBaseline);
+            if (arithProfile->didObserveNonNumeric())
+                node->mergeFlags(NodeMayHaveNonNumericResult);
+            if (arithProfile->didObserveBigInt())
+                node->mergeFlags(NodeMayHaveBigIntResult);
+            break;
+        }
 
-                case ValueMul:
-                case ArithMul: {
-                    if (arithProfile->didObserveInt52Overflow())
-                        node->mergeFlags(NodeMayOverflowInt52);
-                    if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-                        node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                    if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
-                        node->mergeFlags(NodeMayNegZeroInBaseline);
-                    if (arithProfile->didObserveDouble())
-                        node->mergeFlags(NodeMayHaveDoubleResult);
-                    if (arithProfile->didObserveNonNumeric())
-                        node->mergeFlags(NodeMayHaveNonNumericResult);
-                    if (arithProfile->didObserveBigInt())
-                        node->mergeFlags(NodeMayHaveBigIntResult);
-                    break;
-                }
-                case ValueNegate:
-                case ArithNegate: {
-                    if (arithProfile->lhsObservedType().sawNumber() || arithProfile->didObserveDouble())
-                        node->mergeFlags(NodeMayHaveDoubleResult);
-                    if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
-                        node->mergeFlags(NodeMayNegZeroInBaseline);
-                    if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-                        node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                    if (arithProfile->didObserveNonNumeric())
-                        node->mergeFlags(NodeMayHaveNonNumericResult);
-                    if (arithProfile->didObserveBigInt())
-                        node->mergeFlags(NodeMayHaveBigIntResult);
-                    break;
-                }
-
-                default:
-                    break;
-                }
-            }
+        default:
+            break;
         }
         
         if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
@@ -1033,8 +1037,8 @@ private:
         
         // FIXME: It might be possible to make this more granular.
         node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
-        
-        ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeIndex(m_currentIndex);
+
+        BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex);
         if (arithProfile->didObserveBigInt())
             node->mergeFlags(NodeMayHaveBigIntResult);
 

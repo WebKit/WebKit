@@ -585,6 +585,8 @@ class Instruction
             cloopEmitOperation(operands, :int64, "|")
         when "orp"
             cloopEmitOperation(operands, :intptr, "|")
+        when "orh"
+            cloopEmitOperation(operands, :int16, "|")
 
         when "xori"
             cloopEmitOperation(operands, :int32, "^")

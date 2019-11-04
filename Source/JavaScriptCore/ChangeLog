@@ -1,3 +1,168 @@
+2019-11-04  Robin Morisset  <rmorisset@apple.com>
+
+        Split ArithProfile into a Unary and a Binary version
+        https://bugs.webkit.org/show_bug.cgi?id=202832
+        <rdar://problem/56266847>
+
+        Reviewed by Keith Miller.
+
+        ArithProfile was for a long time only used for add/sub/mul/div, but recently it started being used for negate. And it will soon also have to be used for inc and dec due to BigInt.
+        So in this patch I make a separate version that only has the data for a single argument, and thus takes half as much memory.
+
+        After discussing this change with Phil I realized that the ResultType(s) that were taking space in ArithProfile are not needed: they never change and a copy is already in the bytecode instruction itself.
+        Removing them allowed shrinking both kinds of ArithProfile to fit in 16 bits (9 and 13 respectively).
+        I kept the two kinds separate because they may shrink or grow independently in the future.
+
+        This also required adding the "orh" instruction to the offline assembler, to set bits in the ArithProfile.
+        This in turn motivated the addition of "storeh", as on RISC platforms "orh" on a memory location is actually loadh -> orh -> storeh.
+
+        * bytecode/ArithProfile.cpp:
+        (JSC::ArithProfile<BitfieldType>::emitObserveResult):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetDouble const):
+        (JSC::ArithProfile<BitfieldType>::emitSetDouble const):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetNonNumeric const):
+        (JSC::ArithProfile<BitfieldType>::shouldEmitSetBigInt const):
+        (JSC::ArithProfile<BitfieldType>::emitSetNonNumeric const):
+        (JSC::ArithProfile<BitfieldType>::emitSetBigInt const):
+        (WTF::printInternal):
+        * bytecode/ArithProfile.h:
+        (JSC::ArithProfile::didObserveNonInt32 const):
+        (JSC::ArithProfile::didObserveDouble const):
+        (JSC::ArithProfile::didObserveNonNegZeroDouble const):
+        (JSC::ArithProfile::didObserveNegZeroDouble const):
+        (JSC::ArithProfile::didObserveNonNumeric const):
+        (JSC::ArithProfile::didObserveBigInt const):
+        (JSC::ArithProfile::didObserveInt32Overflow const):
+        (JSC::ArithProfile::didObserveInt52Overflow const):
+        (JSC::ArithProfile::setObservedNonNegZeroDouble):
+        (JSC::ArithProfile::setObservedNegZeroDouble):
+        (JSC::ArithProfile::setObservedNonNumeric):
+        (JSC::ArithProfile::setObservedBigInt):
+        (JSC::ArithProfile::setObservedInt32Overflow):
+        (JSC::ArithProfile::setObservedInt52Overflow):
+        (JSC::ArithProfile::observeResult):
+        (JSC::ArithProfile::addressOfBits const):
+        (JSC::ArithProfile::bits const):
+        (JSC::ArithProfile::ArithProfile):
+        (JSC::ArithProfile::hasBits const):
+        (JSC::ArithProfile::setBit):
+        (JSC::UnaryArithProfile::UnaryArithProfile):
+        (JSC::UnaryArithProfile::observedIntBits):
+        (JSC::UnaryArithProfile::observedNumberBits):
+        (JSC::UnaryArithProfile::argObservedType const):
+        (JSC::UnaryArithProfile::setArgObservedType):
+        (JSC::UnaryArithProfile::argSawInt32):
+        (JSC::UnaryArithProfile::argSawNumber):
+        (JSC::UnaryArithProfile::argSawNonNumber):
+        (JSC::UnaryArithProfile::observeArg):
+        (JSC::UnaryArithProfile::isObservedTypeEmpty):
+        (JSC::BinaryArithProfile::BinaryArithProfile):
+        (JSC::BinaryArithProfile::observedIntIntBits):
+        (JSC::BinaryArithProfile::observedNumberIntBits):
+        (JSC::BinaryArithProfile::observedIntNumberBits):
+        (JSC::BinaryArithProfile::observedNumberNumberBits):
+        (JSC::BinaryArithProfile::setLhsObservedType):
+        (JSC::BinaryArithProfile::setRhsObservedType):
+        (JSC::BinaryArithProfile::observeLHS):
+        (JSC::BinaryArithProfile::observeLHSAndRHS):
+        (JSC::BinaryArithProfile::isObservedTypeEmpty):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::addJITNegIC):
+        (JSC::CodeBlock::binaryArithProfileForBytecodeOffset):
+        (JSC::CodeBlock::unaryArithProfileForBytecodeOffset):
+        (JSC::CodeBlock::binaryArithProfileForPC):
+        (JSC::CodeBlock::unaryArithProfileForPC):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addMathIC):
+        * bytecode/Fits.h:
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue const):
+        (JSC::MethodOfGettingAValueProfile::reportValue):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        (JSC::MethodOfGettingAValueProfile::MethodOfGettingAValueProfile):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::UnaryOpNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        * jit/JIT.h:
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateInline):
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITDivGenerator.h:
+        (JSC::JITDivGenerator::JITDivGenerator):
+        * jit/JITInlines.h:
+        (JSC::JIT::copiedArithProfile):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::JITMathIC):
+        (JSC::JITMathIC::generateInline):
+        (JSC::JITMathIC::arithProfile const):
+        (JSC::isBinaryProfileEmpty):
+        (JSC::JITBinaryMathIC::JITBinaryMathIC):
+        (JSC::isUnaryProfileEmpty):
+        (JSC::JITUnaryMathIC::JITUnaryMathIC):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateInline):
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h:
+        * jit/JITNegGenerator.cpp:
+        (JSC::JITNegGenerator::generateInline):
+        (JSC::JITNegGenerator::generateFastPath):
+        * jit/JITNegGenerator.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateInline):
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ResultType.h:
+        (JSC::ResultType::ResultType):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::updateArithProfileForBinaryArithOp):
+        (JSC::SLOW_PATH_DECL):
+
 2019-11-04  Mark Lam  <mark.lam@apple.com>
 
         Surpress ASAN in SamplingProfiler's FrameWalker::resetAtMachineFrame().

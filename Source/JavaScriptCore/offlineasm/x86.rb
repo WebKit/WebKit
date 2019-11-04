@@ -1123,6 +1123,8 @@ class Instruction
             handleX86Op("orps", :float)
         when "ord"
             handleX86Op("orpd", :double)
+        when "orh"
+            handleX86Op("or#{x86Suffix(:half)}", :half)
         when "rshifti"
             handleX86Shift("sar#{x86Suffix(:int)}", :int)
         when "rshiftp"

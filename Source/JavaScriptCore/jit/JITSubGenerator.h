@@ -53,8 +53,8 @@ public:
         , m_scratchFPR(scratchFPR)
     { }
 
-    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const ArithProfile*);
-    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile*, bool shouldEmitProfiling);
+    JITMathICInlineResult generateInline(CCallHelpers&, MathICGenerationState&, const BinaryArithProfile*);
+    bool generateFastPath(CCallHelpers&, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const BinaryArithProfile*, bool shouldEmitProfiling);
 
     static bool isLeftOperandValidConstant(SnippetOperand) { return false; }
     static bool isRightOperandValidConstant(SnippetOperand) { return false; }
