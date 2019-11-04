@@ -1,3 +1,29 @@
+2019-11-04  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r251623): When downloading a QuickLook file, the web view navigates to a "The URL can't be shown" error page instead of staying on the current page
+        https://bugs.webkit.org/show_bug.cgi?id=203790
+        <rdar://problem/56795440>
+
+        Reviewed by Alex Christensen.
+
+        When a PreviewConverter fails updating due to a call to PreviewConverter::failedUpdating(),
+        we should not dispatch previewConverterDidFailUpdating. LegacyPreviewLoader handles that
+        callback by calling ResourceLoader::didFail() with a WebKitErrorCannotShowURL error code,
+        but when downloading or cancelling we must fail with a
+        WebKitErrorFrameLoadInterruptedByPolicyChange error code instead.
+
+        This patch teaches PreviewConverter to distinguish between internal updating errors and
+        external calls to failedUpdating(), only dispatching previewConverterDidFailUpdating in the
+        former case.
+
+        Updated QuickLook API tests.
+
+        * platform/PreviewConverter.cpp:
+        (WebCore::PreviewConverter::updateMainResource):
+        (WebCore::PreviewConverter::failedUpdating):
+        (WebCore::PreviewConverter::didFailUpdating):
+        * platform/PreviewConverter.h:
+
 2019-11-04  youenn fablet  <youenn@apple.com>
 
         RealtimeOutgoingAudioSource/RealtimeOutgoingVideoSource should unobserve before destruction time

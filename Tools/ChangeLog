@@ -1,3 +1,20 @@
+2019-11-04  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r251623): When downloading a QuickLook file, the web view navigates to a "The URL can't be shown" error page instead of staying on the current page
+        https://bugs.webkit.org/show_bug.cgi?id=203790
+        <rdar://problem/56795440>
+
+        Reviewed by Alex Christensen.
+
+        Tested that "download" and "cancel" policy decisions for QuickLook files result in a
+        provisional navigation failure with error code WebKitErrorFrameLoadInterruptedByPolicyChange.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (-[QuickLookDelegate navigationError]):
+        (-[QuickLookDelegate _webView:didFailNavigation:withError:userInfo:]):
+        (-[QuickLookDelegate webView:didFailProvisionalNavigation:withError:]):
+        (TEST):
+
 2019-11-04  Peng Liu  <peng.liu6@apple.com>
 
         Cannot run WebKit layout tests on iOS devices

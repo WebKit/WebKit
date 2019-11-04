@@ -78,7 +78,7 @@ void PreviewConverter::updateMainResource()
 
     auto provider = m_provider.get();
     if (!provider) {
-        failedUpdating();
+        didFailUpdating();
         return;
     }
 
@@ -86,7 +86,7 @@ void PreviewConverter::updateMainResource()
         if (buffer)
             appendFromBuffer(*buffer);
         else
-            failedUpdating();
+            didFailUpdating();
     });
 }
 
@@ -124,10 +124,6 @@ void PreviewConverter::failedUpdating()
 
     m_state = State::FailedUpdating;
     platformFailedAppending();
-
-    iterateClients([&](auto& client) {
-        client.previewConverterDidFailUpdating(*this);
-    });
 }
 
 bool PreviewConverter::hasClient(PreviewConverterClient& client) const
@@ -192,6 +188,15 @@ void PreviewConverter::didFailConvertingWithError(const ResourceError& error)
 
     iterateClients([&](auto& client) {
         client.previewConverterDidFailConverting(*this);
+    });
+}
+
+void PreviewConverter::didFailUpdating()
+{
+    failedUpdating();
+
+    iterateClients([&](auto& client) {
+        client.previewConverterDidFailUpdating(*this);
     });
 }
 

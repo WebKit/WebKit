@@ -97,6 +97,7 @@ private:
     void appendFromBuffer(const SharedBuffer&);
     void didAddClient(PreviewConverterClient&);
     void didFailConvertingWithError(const ResourceError&);
+    void didFailUpdating();
     void replayToClient(PreviewConverterClient&);
 
     void platformAppend(const SharedBufferDataView&);
