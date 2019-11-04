@@ -1232,10 +1232,9 @@ void WebProcessProxy::sendProcessDidResume()
 
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
-#if PLATFORM(IOS_FAMILY)
     RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(%u)", this, state);
 
-    if (isRunningServiceWorkers() && !pageCount()) {
+    if (isStandaloneServiceWorkerProcess()) {
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState() release all assertions for network process because this is a service worker process without page", this);
         m_foregroundToken = nullptr;
         m_backgroundToken = nullptr;
@@ -1249,8 +1248,10 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Suspended) release all assertions for network process", this);
         m_foregroundToken = nullptr;
         m_backgroundToken = nullptr;
+#if PLATFORM(IOS_FAMILY)
         for (auto& page : m_pageMap.values())
             page->processWillBecomeSuspended();
+#endif
         break;
 
     case AssertionState::Background:
@@ -1263,8 +1264,10 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Foreground) taking foreground assertion for network process", this);
         m_foregroundToken = processPool().foregroundWebProcessToken();
         m_backgroundToken = nullptr;
+#if PLATFORM(IOS_FAMILY)
         for (auto& page : m_pageMap.values())
             page->processWillBecomeForeground();
+#endif
         break;
     
     case AssertionState::UnboundedNetworking:
@@ -1272,9 +1275,6 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
     }
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
-#else
-    UNUSED_PARAM(state);
-#endif
 }
 
 void WebProcessProxy::webPageMediaStateDidChange(WebPageProxy&)
@@ -1299,7 +1299,7 @@ void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     }
     if (!m_activityForHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the WebContent process is holding locked files");
-        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s);
+        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s).moveToUniquePtr();
     }
 }
 
@@ -1557,7 +1557,28 @@ void WebProcessProxy::updateServiceWorkerPreferencesStore(const WebPreferencesSt
     ASSERT(m_serviceWorkerInformation);
     send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
-#endif
+
+void WebProcessProxy::updateServiceWorkerProcessAssertion()
+{
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::updateServiceWorkerProcessAssertion() PID: %d", this, processIdentifier());
+    ASSERT(m_serviceWorkerInformation);
+    if (!m_serviceWorkerInformation)
+        return;
+
+    // FIXME: We could do better if we knew which WebContent processes needed this service worker process.
+    if (processPool().hasForegroundWebProcesses()) {
+        if (!ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity))
+            m_serviceWorkerInformation->activity = m_throttler.foregroundActivity("Service Worker for foreground view(s)"_s);
+        return;
+    }
+    if (processPool().hasBackgroundWebProcesses()) {
+        if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))
+            m_serviceWorkerInformation->activity = m_throttler.backgroundActivity("Service Worker for background view(s)"_s);
+        return;
+    }
+    m_serviceWorkerInformation->activity = nullptr;
+}
+#endif // ENABLE(SERVICE_WORKER)
 
 void WebProcessProxy::disableServiceWorkers()
 {
@@ -1605,7 +1626,9 @@ void WebProcessProxy::enableServiceWorkers(const Optional<UserContentControllerI
             contentRuleListsFromIdentifier(userContentControllerIdentifier),
 #endif
         },
+        nullptr,
     };
+    updateServiceWorkerProcessAssertion();
 }
 
 } // namespace WebKit

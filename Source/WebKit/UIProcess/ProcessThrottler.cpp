@@ -205,4 +205,18 @@ void ProcessThrottler::uiAssertionWillExpireImminently()
     m_prepareToSuspendTimeoutTimer.stop();
 }
 
+bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::ActivityVariant& activity)
+{
+    if (!WTF::holds_alternative<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity))
+        return false;
+    return WTF::get<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity)->isValid();
+}
+
+bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::ActivityVariant& activity)
+{
+    if (!WTF::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
+        return false;
+    return WTF::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
+}
+
 } // namespace WebKit

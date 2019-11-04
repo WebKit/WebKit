@@ -31,6 +31,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -86,10 +88,14 @@ public:
     };
 
     using ForegroundActivity = Activity<ActivityType::Foreground>;
-    std::unique_ptr<ForegroundActivity> foregroundActivity(ASCIILiteral name);
+    UniqueRef<ForegroundActivity> foregroundActivity(ASCIILiteral name);
 
     using BackgroundActivity = Activity<ActivityType::Background>;
-    std::unique_ptr<BackgroundActivity> backgroundActivity(ASCIILiteral name);
+    UniqueRef<BackgroundActivity> backgroundActivity(ASCIILiteral name);
+
+    using ActivityVariant = Variant<std::nullptr_t, UniqueRef<BackgroundActivity>, UniqueRef<ForegroundActivity>>;
+    static bool isValidBackgroundActivity(const ActivityVariant&);
+    static bool isValidForegroundActivity(const ActivityVariant&);
     
     void didConnectToProcess(ProcessID);
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
@@ -124,14 +130,14 @@ private:
     bool m_shouldTakeUIBackgroundAssertion;
 };
 
-inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> std::unique_ptr<ForegroundActivity>
+inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> UniqueRef<ForegroundActivity>
 {
-    return makeUnique<ForegroundActivity>(*this, name);
+    return makeUniqueRef<ForegroundActivity>(*this, name);
 }
 
-inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> std::unique_ptr<BackgroundActivity>
+inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> UniqueRef<BackgroundActivity>
 {
-    return makeUnique<BackgroundActivity>(*this, name);
+    return makeUniqueRef<BackgroundActivity>(*this, name);
 }
 
 } // namespace WebKit

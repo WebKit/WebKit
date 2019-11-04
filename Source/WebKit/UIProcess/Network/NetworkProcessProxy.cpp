@@ -1098,7 +1098,7 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     }
     if (!m_activityForHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files");
-        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s);
+        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s).moveToUniquePtr();
     }
 }
 
@@ -1111,7 +1111,7 @@ void NetworkProcessProxy::syncAllCookies()
         return;
     
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is syncing cookies", this);
-    m_syncAllCookiesActivity = throttler().backgroundActivity("Syncing cookies"_s);
+    m_syncAllCookiesActivity = throttler().backgroundActivity("Syncing cookies"_s).moveToUniquePtr();
 }
     
 void NetworkProcessProxy::didSyncAllCookies()
@@ -1203,16 +1203,6 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
     m_webUserContentControllerProxies.remove(&proxy);
 }
 #endif
-
-void NetworkProcessProxy::sendProcessDidTransitionToForeground()
-{
-    send(Messages::NetworkProcess::ProcessDidTransitionToForeground(), 0);
-}
-
-void NetworkProcessProxy::sendProcessDidTransitionToBackground()
-{
-    send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
-}
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 void NetworkProcessProxy::getSandboxExtensionsForBlobFiles(const Vector<String>& paths, Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles::AsyncReply&& reply)
@@ -1336,6 +1326,25 @@ void NetworkProcessProxy::getLocalStorageDetails(PAL::SessionID sessionID, Compl
     }
 
     sendWithAsyncReply(Messages::NetworkProcess::GetLocalStorageOriginDetails(sessionID), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::updateProcessAssertion()
+{
+    if (processPool().hasForegroundWebProcesses()) {
+        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
+            m_activityFromWebProcesses = throttler().foregroundActivity("Networking for foreground view(s)"_s);
+            send(Messages::NetworkProcess::ProcessDidTransitionToForeground(), 0);
+        }
+        return;
+    }
+    if (processPool().hasBackgroundWebProcesses()) {
+        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
+            m_activityFromWebProcesses = throttler().backgroundActivity("Networking for foreground background view(s)"_s);
+            send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
+        }
+        return;
+    }
+    m_activityFromWebProcesses = nullptr;
 }
 
 } // namespace WebKit

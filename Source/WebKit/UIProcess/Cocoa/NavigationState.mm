@@ -1237,7 +1237,7 @@ void NavigationState::didChangeIsLoading()
         }
         if (!m_networkActivity) {
             RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NavigationState is taking a process network assertion because a page load started", this);
-            m_networkActivity = m_webView->_page->process().throttler().backgroundActivity("Page Load"_s);
+            m_networkActivity = m_webView->_page->process().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();
         }
     } else if (m_networkActivity) {
         // The application is visible so we delay releasing the background activity for 3 seconds to give it a chance to start another navigation
@@ -1347,7 +1347,7 @@ void NavigationState::didSwapWebProcesses()
 #if PLATFORM(IOS_FAMILY)
     // Transfer our background assertion from the old process to the new one.
     if (m_networkActivity)
-        m_networkActivity = m_webView->_page->process().throttler().backgroundActivity("Page Load"_s);
+        m_networkActivity = m_webView->_page->process().throttler().backgroundActivity("Page Load"_s).moveToUniquePtr();
 #endif
 }
 

@@ -1,3 +1,50 @@
+2019-11-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Simplify process assertion handling for the network process and service worker processes
+        https://bugs.webkit.org/show_bug.cgi?id=203633
+
+        Reviewed by Alex Christensen.
+
+        Simplify process assertion handling for the network process and service worker processes.
+        In particular, the following changes were made:
+        1. Put the NetworkProcessProxy in charge of keeping the network process runnable instead
+           of relying on the WebProcessPool to do it.
+        2. Put the WebProcessProxy in charge of keeping the web process runnable due to service
+           worker activity, instead of relying on the WebProcessPool to do it.
+        3. Introduce a new Variant data type which can store a foreground activity, a background
+           activity or no activity. This avoid having 2 separate and mutually-exclusive data
+           members for foreground and background activities.
+        4. The new code is a bit more correct because it makes sure the the activity we're holding
+           is valid, instead of simply checking that it has an activity. This means that if the
+           process assertion was previously invalidated, we will now properly take a new activity,
+           which will re-take a process assertion.
+
+        This patch also reduces the #ifdefing for IOS_FAMILY, since ProcessThrottler and
+        ProcessAssertion exist on all platforms.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateProcessAssertion):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::isValidBackgroundActivity):
+        (WebKit::ProcessThrottler::isValidForegroundActivity):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_backgroundWebProcessCounter):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::networkProcessCrashed):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::terminateNetworkProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion):
+        (WebKit::WebProcessProxy::enableServiceWorkers):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isStandaloneServiceWorkerProcess const):
+
 2019-11-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] CtapAuthenticator::tryDowngrade should distinguish requestData().options

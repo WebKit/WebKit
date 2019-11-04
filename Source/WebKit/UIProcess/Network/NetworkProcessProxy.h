@@ -160,8 +160,6 @@ public:
     void setShouldBlockThirdPartyCookiesForTesting(PAL::SessionID, bool, CompletionHandler<void()>&&);
 #endif
     
-    void sendProcessDidTransitionToForeground();
-    void sendProcessDidTransitionToBackground();
     void synthesizeAppIsBackground(bool background);
 
     void setIsHoldingLockedFiles(bool);
@@ -172,6 +170,8 @@ public:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
 
     ProcessThrottler& throttler() { return m_throttler; }
+    void updateProcessAssertion();
+
     WebProcessPool& processPool() { return m_processPool; }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -279,6 +279,7 @@ private:
     ProcessThrottler m_throttler;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_syncAllCookiesActivity;
+    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
     
     unsigned m_syncAllCookiesCounter { 0 };
 

@@ -472,10 +472,10 @@ public:
     static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
     static void unregisterProcessPoolCreationListener(uint64_t identifier);
 
-#if PLATFORM(IOS_FAMILY)
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
-#endif
+    bool hasForegroundWebProcesses() const { return m_foregroundWebProcessCounter.value(); }
+    bool hasBackgroundWebProcesses() const { return m_backgroundWebProcessCounter.value(); }
 
     void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
@@ -554,7 +554,6 @@ private:
     void processStoppedUsingGamepads(WebProcessProxy&);
 #endif
 
-    void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
     void updateProcessAssertions();
 
     // IPC::MessageReceiver.
@@ -696,7 +695,6 @@ private:
 
     bool m_processTerminationEnabled { true };
 
-    bool m_didNetworkProcessCrash { false };
     std::unique_ptr<NetworkProcessProxy> m_networkProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
@@ -759,16 +757,8 @@ private:
     HashMap<PAL::SessionID, HashSet<WebPageProxyIdentifier>> m_sessionToPageIDsMap;
     RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessesTerminationTimer;
 
-#if PLATFORM(IOS_FAMILY)
     ForegroundWebProcessCounter m_foregroundWebProcessCounter;
     BackgroundWebProcessCounter m_backgroundWebProcessCounter;
-    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_foregroundActivityForNetworkProcess;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForNetworkProcess;
-#if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::RegistrableDomain, std::unique_ptr<ProcessThrottler::ForegroundActivity>> m_foregroundActivitiesForServiceWorkerProcesses;
-    HashMap<WebCore::RegistrableDomain, std::unique_ptr<ProcessThrottler::BackgroundActivity>> m_backgroundActivitiesForServiceWorkerProcesses;
-#endif
-#endif
 
     UniqueRef<WebBackForwardCache> m_backForwardCache;
 

@@ -269,7 +269,7 @@ void DownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
     if (auto* webPage = downloadProxy.originatingPage()) {
         RELEASE_LOG_IF(webPage->isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
         ASSERT(!m_activity);
-        m_activity = webPage->process().throttler().backgroundActivity("System preview download"_s);
+        m_activity = webPage->process().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
     }
 #else
     UNUSED_PARAM(downloadProxy);

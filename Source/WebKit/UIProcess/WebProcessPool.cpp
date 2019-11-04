@@ -234,10 +234,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
     , m_serviceWorkerProcessesTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcesses)
-#if PLATFORM(IOS_FAMILY)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
-#endif
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
 {
@@ -632,10 +630,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);
 #endif
 
-    if (m_didNetworkProcessCrash) {
-        m_didNetworkProcessCrash = false;
-        reinstateNetworkProcessAssertionState(*networkProcess);
-    }
+    networkProcess->updateProcessAssertion();
 
     if (withWebsiteDataStore) {
         networkProcess->addSession(makeRef(*withWebsiteDataStore));
@@ -656,7 +651,6 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessPr
 {
     ASSERT(m_networkProcess);
     ASSERT(&networkProcessProxy == m_networkProcess.get());
-    m_didNetworkProcessCrash = true;
 
     for (auto& supplement : m_supplements.values())
         supplement->processDidClose(&networkProcessProxy);
@@ -736,7 +730,6 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 
         RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "WebProcessPool::establishWorkerContextConnectionToNetworkProcess creating a new service worker process %p, process identifier %d", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
 
-        updateProcessAssertions();
         initializeNewWebProcess(newProcessProxy, websiteDataStore);
         m_processes.append(WTFMove(newProcessProxy));
     }
@@ -1130,7 +1123,6 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
         auto iterator = m_serviceWorkerProcesses.find(RegistrableDomainWithSessionID { process->registrableDomain(), process->websiteDataStore().sessionID() });
         if (iterator != m_serviceWorkerProcesses.end() && iterator->value == process)
             m_serviceWorkerProcesses.remove(iterator);
-        updateProcessAssertions();
     }
 #endif
 
@@ -1709,7 +1701,6 @@ void WebProcessPool::terminateNetworkProcess()
     
     m_networkProcess->terminate();
     m_networkProcess = nullptr;
-    m_didNetworkProcessCrash = true;
 }
 
 void WebProcessPool::sendNetworkProcessWillSuspendImminentlyForTesting()
@@ -2045,72 +2036,11 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 
 void WebProcessPool::updateProcessAssertions()
 {
-#if PLATFORM(IOS_FAMILY)
 #if ENABLE(SERVICE_WORKER)
-    auto updateServiceWorkerProcessAssertion = [&] {
-        if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
-            // FIXME: We can do better than this once we have process per origin.
-            for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto registrableDomain = serviceWorkerProcess->registrableDomain();
-                if (!m_foregroundActivitiesForServiceWorkerProcesses.contains(registrableDomain))
-                    m_foregroundActivitiesForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().foregroundActivity("Service Worker for visible view(s)"_s));
-            }
-            m_backgroundActivitiesForServiceWorkerProcesses.clear();
-            return;
-        }
-        if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
-            // FIXME: We can do better than this once we have process per origin.
-            for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto registrableDomain = serviceWorkerProcess->registrableDomain();
-                if (!m_backgroundActivitiesForServiceWorkerProcesses.contains(registrableDomain))
-                    m_backgroundActivitiesForServiceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcess->throttler().backgroundActivity("Service Worker for background view(s)"_s));
-            }
-            m_foregroundActivitiesForServiceWorkerProcesses.clear();
-            return;
-        }
-        m_foregroundActivitiesForServiceWorkerProcesses.clear();
-        m_backgroundActivitiesForServiceWorkerProcesses.clear();
-    };
-    updateServiceWorkerProcessAssertion();
+    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+        serviceWorkerProcess->updateServiceWorkerProcessAssertion();
 #endif
-
-    auto updateNetworkProcessAssertion = [&] {
-        auto& networkProcess = ensureNetworkProcess();
-
-        if (m_foregroundWebProcessCounter.value()) {
-            if (!m_foregroundActivityForNetworkProcess) {
-                m_foregroundActivityForNetworkProcess = networkProcess.throttler().foregroundActivity("Networking for foreground view(s)"_s);
-                networkProcess.sendProcessDidTransitionToForeground();
-            }
-            m_backgroundActivityForNetworkProcess = nullptr;
-            return;
-        }
-        if (m_backgroundWebProcessCounter.value()) {
-            if (!m_backgroundActivityForNetworkProcess) {
-                m_backgroundActivityForNetworkProcess = networkProcess.throttler().backgroundActivity("Networking for foreground background view(s)"_s);
-                networkProcess.sendProcessDidTransitionToBackground();
-            }
-            m_foregroundActivityForNetworkProcess = nullptr;
-            return;
-        }
-        m_foregroundActivityForNetworkProcess = nullptr;
-        m_backgroundActivityForNetworkProcess = nullptr;
-    };
-    updateNetworkProcessAssertion();
-#endif
-}
-
-void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
-{
-#if PLATFORM(IOS_FAMILY)
-    // The network process crashed; take new activities for the new network process.
-    if (m_backgroundActivityForNetworkProcess)
-        m_backgroundActivityForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivity("Networking for background view(s)"_s);
-    else if (m_foregroundActivityForNetworkProcess)
-        m_foregroundActivityForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivity("Networking for foreground view(s)"_s);
-#else
-    UNUSED_PARAM(newNetworkProcessProxy);
-#endif
+    ensureNetworkProcess().updateProcessAssertion();
 }
 
 bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const

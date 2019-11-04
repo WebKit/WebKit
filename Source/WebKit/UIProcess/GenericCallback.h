@@ -69,7 +69,7 @@ protected:
     struct TypeTag { };
     typedef const TypeTag* Type;
 
-    explicit CallbackBase(Type type, std::unique_ptr<ProcessThrottler::BackgroundActivity>&& activity)
+    explicit CallbackBase(Type type, ProcessThrottler::ActivityVariant&& activity)
         : m_type(type)
         , m_callbackID(CallbackID::generateID())
         , m_activity(WTFMove(activity))
@@ -79,7 +79,7 @@ protected:
 private:
     Type m_type;
     CallbackID m_callbackID;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
+    ProcessThrottler::ActivityVariant m_activity;
 };
 
 template<typename... T>
@@ -87,7 +87,7 @@ class GenericCallback : public CallbackBase {
 public:
     typedef Function<void (T..., Error)> CallbackFunction;
 
-    static Ref<GenericCallback> create(CallbackFunction&& callback, std::unique_ptr<ProcessThrottler::BackgroundActivity>&& activity = nullptr)
+    static Ref<GenericCallback> create(CallbackFunction&& callback, ProcessThrottler::ActivityVariant&& activity = nullptr)
     {
         return adoptRef(*new GenericCallback(WTFMove(callback), WTFMove(activity)));
     }
@@ -126,7 +126,7 @@ public:
     }
 
 private:
-    GenericCallback(CallbackFunction&& callback, std::unique_ptr<ProcessThrottler::BackgroundActivity>&& activity)
+    GenericCallback(CallbackFunction&& callback, ProcessThrottler::ActivityVariant&& activity)
         : CallbackBase(type(), WTFMove(activity))
         , m_callback(WTFMove(callback))
     {
@@ -189,7 +189,7 @@ public:
     };
 
     template<typename... T>
-    CallbackID put(Function<void(T...)>&& function, std::unique_ptr<ProcessThrottler::BackgroundActivity>&& activity)
+    CallbackID put(Function<void(T...)>&& function, ProcessThrottler::ActivityVariant&& activity)
     {
         auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), WTFMove(activity));
         return put(WTFMove(callback));

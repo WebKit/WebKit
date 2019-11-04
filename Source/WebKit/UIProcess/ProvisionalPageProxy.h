@@ -143,7 +143,7 @@ private:
     Vector<uint8_t> m_accessibilityToken;
 #endif
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_provisionalLoadActivity;
+    UniqueRef<ProcessThrottler::ForegroundActivity> m_provisionalLoadActivity;
 #endif
 };
 
