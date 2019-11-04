@@ -453,7 +453,7 @@ void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&)
 
 void JIT::emit_op_negate(const Instruction* currentInstruction)
 {
-    UnaryArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).m_arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpNegate>().metadata(m_codeBlock).m_arithProfile;
     JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, negateIC);
     emitMathICFast<OpNegate>(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
@@ -634,9 +634,14 @@ void JIT::emit_op_urshift(const Instruction* currentInstruction)
     emitRightShiftFastPath(currentInstruction, op_urshift);
 }
 
+ALWAYS_INLINE static OperandTypes getOperandTypes(const ArithProfile& arithProfile)
+{
+    return OperandTypes(arithProfile.lhsResultType(), arithProfile.rhsResultType());
+}
+
 void JIT::emit_op_add(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = &currentInstruction->as<OpAdd>().metadata(m_codeBlock).m_arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpAdd>().metadata(m_codeBlock).m_arithProfile;
     JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, addIC);
     emitMathICFast<OpAdd>(addIC, currentInstruction, operationValueAddProfiled, operationValueAdd);
@@ -681,7 +686,7 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
 
     bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
     if (!generatedInlineCode) {
-        UnaryArithProfile* arithProfile = mathIC->arithProfile();
+        ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
             callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, arithProfile);
         else
@@ -704,6 +709,7 @@ template <typename Op, typename Generator, typename ProfiledFunction, typename N
 void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
     auto bytecode = currentInstruction->as<Op>();
+    OperandTypes types = getOperandTypes(copiedArithProfile(bytecode));
     int result = bytecode.m_dst.offset();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
@@ -722,8 +728,8 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    SnippetOperand leftOperand(bytecode.m_operandTypes.first());
-    SnippetOperand rightOperand(bytecode.m_operandTypes.second());
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
@@ -753,7 +759,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
             emitGetVirtualRegister(op1, leftRegs);
         else if (rightOperand.isConst())
             emitGetVirtualRegister(op2, rightRegs);
-        BinaryArithProfile* arithProfile = mathIC->arithProfile();
+        ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
             callOperationWithResult(profiledFunction, resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, arithProfile);
         else
@@ -793,7 +799,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const Instruction* c
     auto slowPathStart = label();
 #endif
 
-    UnaryArithProfile* arithProfile = mathIC->arithProfile();
+    ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
             mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_GJMic>(profiledRepatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), srcRegs, TrustedImmPtr(mathIC));
@@ -825,6 +831,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     mathICGenerationState.slowPathStart = label();
 
     auto bytecode = currentInstruction->as<Op>();
+    OperandTypes types = getOperandTypes(copiedArithProfile(bytecode));
     int result = bytecode.m_dst.offset();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
@@ -839,8 +846,8 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     JSValueRegs resultRegs = leftRegs;
 #endif
     
-    SnippetOperand leftOperand(bytecode.m_operandTypes.first());
-    SnippetOperand rightOperand(bytecode.m_operandTypes.second());
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
@@ -858,7 +865,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     auto slowPathStart = label();
 #endif
 
-    BinaryArithProfile* arithProfile = mathIC->arithProfile();
+    ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
             mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(profiledRepatchFunction), resultRegs, TrustedImmPtr(m_codeBlock->globalObject()), leftRegs, rightRegs, TrustedImmPtr(mathIC));
@@ -886,16 +893,19 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 void JIT::emit_op_div(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDiv>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
     int result = bytecode.m_dst.offset();
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
 
 #if USE(JSVALUE64)
+    OperandTypes types = getOperandTypes(metadata.m_arithProfile);
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
 #else
+    OperandTypes types = getOperandTypes(metadata.m_arithProfile);
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
@@ -903,12 +913,12 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 #endif
     FPRReg scratchFPR = fpRegT2;
 
-    BinaryArithProfile* arithProfile = nullptr;
+    ArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
         arithProfile = &currentInstruction->as<OpDiv>().metadata(m_codeBlock).m_arithProfile;
 
-    SnippetOperand leftOperand(bytecode.m_operandTypes.first());
-    SnippetOperand rightOperand(bytecode.m_operandTypes.second());
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
 
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
@@ -950,7 +960,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 
 void JIT::emit_op_mul(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = &currentInstruction->as<OpMul>().metadata(m_codeBlock).m_arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpMul>().metadata(m_codeBlock).m_arithProfile;
     JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, mulIC);
     emitMathICFast<OpMul>(mulIC, currentInstruction, operationValueMulProfiled, operationValueMul);
@@ -966,7 +976,7 @@ void JIT::emitSlow_op_mul(const Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_sub(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = &currentInstruction->as<OpSub>().metadata(m_codeBlock).m_arithProfile;
+    ArithProfile* arithProfile = &currentInstruction->as<OpSub>().metadata(m_codeBlock).m_arithProfile;
     JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, subIC);
     emitMathICFast<OpSub>(subIC, currentInstruction, operationValueSubProfiled, operationValueSub);

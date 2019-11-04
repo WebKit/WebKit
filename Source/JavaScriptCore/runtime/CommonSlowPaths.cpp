@@ -476,8 +476,8 @@ SLOW_PATH_DECL(slow_path_to_string)
 #if ENABLE(JIT)
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSValue result, JSValue operand)
 {
-    UnaryArithProfile& profile = metadata.m_arithProfile;
-    profile.observeArg(operand);
+    ArithProfile& profile = metadata.m_arithProfile;
+    profile.observeLHS(operand);
     ASSERT(result.isNumber() || result.isBigInt());
     if (result.isNumber()) {
         if (!result.isInt32()) {
@@ -534,7 +534,7 @@ SLOW_PATH_DECL(slow_path_negate)
 #if ENABLE(DFG_JIT)
 static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeBlock, const Instruction* pc, JSValue result, JSValue left, JSValue right)
 {
-    BinaryArithProfile& profile = *codeBlock->binaryArithProfileForPC(pc);
+    ArithProfile& profile = *codeBlock->arithProfileForPC(pc);
 
     if (result.isNumber()) {
         if (!result.isInt32()) {
@@ -595,7 +595,7 @@ SLOW_PATH_DECL(slow_path_add)
     JSValue v1 = GET_C(bytecode.m_lhs).jsValue();
     JSValue v2 = GET_C(bytecode.m_rhs).jsValue();
 
-    BinaryArithProfile& arithProfile = *codeBlock->binaryArithProfileForPC(pc);
+    ArithProfile& arithProfile = *codeBlock->arithProfileForPC(pc);
     arithProfile.observeLHSAndRHS(v1, v2);
 
     JSValue result = jsAdd(globalObject, v1, v2);

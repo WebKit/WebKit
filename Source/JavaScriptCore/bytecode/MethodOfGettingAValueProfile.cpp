@@ -66,16 +66,10 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
         return;
     }
         
-    case UnaryArithProfileReady: {
-        u.unaryArithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
+    case ArithProfileReady: {
+        u.arithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
         return;
-    }
-
-    case BinaryArithProfileReady: {
-        u.binaryArithProfile->emitObserveResult(jit, regs, DoNotHaveTagRegisters);
-        return;
-    }
-    }
+    } }
     
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -100,16 +94,10 @@ void MethodOfGettingAValueProfile::reportValue(JSValue value)
         return;
     }
 
-    case UnaryArithProfileReady: {
-        u.unaryArithProfile->observeResult(value);
+    case ArithProfileReady: {
+        u.arithProfile->observeResult(value);
         return;
-    }
-
-    case BinaryArithProfileReady: {
-        u.binaryArithProfile->observeResult(value);
-        return;
-    }
-    }
+    } }
 
     RELEASE_ASSERT_NOT_REACHED();
 }

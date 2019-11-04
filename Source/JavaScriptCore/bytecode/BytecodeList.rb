@@ -41,7 +41,6 @@ types [
     :JSType,
     :JSValue,
     :LLIntCallLinkInfo,
-    :ResultType,
     :OperandTypes,
     :ProfileTypeBytecodeFlag,
     :PropertyOffset,
@@ -59,8 +58,7 @@ types [
 
     :ValueProfile,
     :ValueProfileAndOperandBuffer,
-    :UnaryArithProfile,
-    :BinaryArithProfile,
+    :ArithProfile,
     :ArrayProfile,
     :ArrayAllocationProfile,
     :ObjectAllocationProfile,
@@ -285,7 +283,10 @@ op_group :ProfiledBinaryOp,
         operandTypes: OperandTypes,
     },
     metadata: {
-        arithProfile: BinaryArithProfile
+        arithProfile: ArithProfile
+    },
+    metadata_initializers: {
+        arithProfile: :operandTypes
     }
 
 op_group :ValueProfiledBinaryOp,
@@ -367,10 +368,13 @@ op :negate,
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,
-        resultType: ResultType,
+        operandTypes: OperandTypes,
     },
     metadata: {
-        arithProfile: UnaryArithProfile,
+        arithProfile: ArithProfile,
+    },
+    metadata_initializers: {
+        arithProfile: :operandTypes
     }
 
 op :not,

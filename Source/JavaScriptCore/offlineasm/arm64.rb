@@ -393,7 +393,7 @@ class Sequence
             case node.opcode
             when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/
                 size = 1
-            when "loadh", "loadhsi", "loadhsq", "orh", "storeh"
+            when "loadh", "loadhsi", "loadhsq", "storeh"
                 size = 2
             when "loadi", "loadis", "storei", "addi", "andi", "lshifti", "muli", "negi",
                 "noti", "ori", "rshifti", "urshifti", "subi", "xori", /^bi/, /^bti/,
@@ -418,7 +418,7 @@ class Sequence
             end
         }
 
-        result = riscLowerMisplacedImmediates(result, ["storeb", "storeh", "storei", "storep", "storeq"])
+        result = riscLowerMisplacedImmediates(result, ["storeb", "storei", "storep", "storeq"])
 
         # The rules for which immediates are valid for and/or/xor instructions are fairly involved, see https://dinfuehr.github.io/blog/encoding-of-immediate-values-on-aarch64/
         validLogicalImmediates = []
@@ -711,8 +711,6 @@ class Instruction
             emitARM64TAC("orr", operands, :ptr)
         when "orq"
             emitARM64TAC("orr", operands, :quad)
-        when "orh"
-            emitARM64TAC("orr", operands, :word) # not :half because 16-bit registers don't exist on ARM.
         when "xori"
             emitARM64TAC("eor", operands, :word)
         when "xorp"

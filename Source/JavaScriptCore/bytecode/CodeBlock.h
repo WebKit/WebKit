@@ -83,8 +83,6 @@ struct OSRExitState;
 } // namespace DFG
 #endif
 
-class UnaryArithProfile;
-class BinaryArithProfile;
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
 class ExecutableToCodeBlockEdge;
@@ -98,6 +96,7 @@ class StructureStubInfo;
 
 enum class AccessType : int8_t;
 
+struct ArithProfile;
 struct OpCatch;
 
 enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
@@ -280,22 +279,22 @@ public:
     }
     JITData& ensureJITDataSlow(const ConcurrentJSLocker&);
 
-    JITAddIC* addJITAddIC(BinaryArithProfile*);
-    JITMulIC* addJITMulIC(BinaryArithProfile*);
-    JITNegIC* addJITNegIC(UnaryArithProfile*);
-    JITSubIC* addJITSubIC(BinaryArithProfile*);
+    JITAddIC* addJITAddIC(ArithProfile*);
+    JITMulIC* addJITMulIC(ArithProfile*);
+    JITNegIC* addJITNegIC(ArithProfile*);
+    JITSubIC* addJITSubIC(ArithProfile*);
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITAddGenerator>::value>::type>
-    JITAddIC* addMathIC(BinaryArithProfile* profile) { return addJITAddIC(profile); }
+    JITAddIC* addMathIC(ArithProfile* profile) { return addJITAddIC(profile); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITMulGenerator>::value>::type>
-    JITMulIC* addMathIC(BinaryArithProfile* profile) { return addJITMulIC(profile); }
+    JITMulIC* addMathIC(ArithProfile* profile) { return addJITMulIC(profile); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITNegGenerator>::value>::type>
-    JITNegIC* addMathIC(UnaryArithProfile* profile) { return addJITNegIC(profile); }
+    JITNegIC* addMathIC(ArithProfile* profile) { return addJITNegIC(profile); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
-    JITSubIC* addMathIC(BinaryArithProfile* profile) { return addJITSubIC(profile); }
+    JITSubIC* addMathIC(ArithProfile* profile) { return addJITSubIC(profile); }
 
     StructureStubInfo* addStubInfo(AccessType);
 
@@ -498,10 +497,8 @@ public:
     template<typename Functor> void forEachObjectAllocationProfile(const Functor&);
     template<typename Functor> void forEachLLIntCallLinkInfo(const Functor&);
 
-    BinaryArithProfile* binaryArithProfileForBytecodeIndex(BytecodeIndex);
-    UnaryArithProfile* unaryArithProfileForBytecodeIndex(BytecodeIndex);
-    BinaryArithProfile* binaryArithProfileForPC(const Instruction*);
-    UnaryArithProfile* unaryArithProfileForPC(const Instruction*);
+    ArithProfile* arithProfileForBytecodeIndex(BytecodeIndex);
+    ArithProfile* arithProfileForPC(const Instruction*);
 
     bool couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
 

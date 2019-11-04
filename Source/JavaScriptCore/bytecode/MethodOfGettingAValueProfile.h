@@ -36,11 +36,10 @@
 
 namespace JSC {
 
-class UnaryArithProfile;
-class BinaryArithProfile;
 class CCallHelpers;
 class CodeBlock;
 class LazyOperandValueProfileKey;
+struct ArithProfile;
 struct ValueProfile;
 
 class MethodOfGettingAValueProfile {
@@ -58,21 +57,12 @@ public:
         } else
             m_kind = None;
     }
-
-    MethodOfGettingAValueProfile(UnaryArithProfile* profile)
+    
+    MethodOfGettingAValueProfile(ArithProfile* profile)
     {
         if (profile) {
-            m_kind = UnaryArithProfileReady;
-            u.unaryArithProfile = profile;
-        } else
-            m_kind = None;
-    }
-
-    MethodOfGettingAValueProfile(BinaryArithProfile* profile)
-    {
-        if (profile) {
-            m_kind = BinaryArithProfileReady;
-            u.binaryArithProfile = profile;
+            m_kind = ArithProfileReady;
+            u.arithProfile = profile;
         } else
             m_kind = None;
     }
@@ -89,8 +79,7 @@ private:
     enum Kind {
         None,
         Ready,
-        UnaryArithProfileReady,
-        BinaryArithProfileReady,
+        ArithProfileReady,
         LazyOperand
     };
     
@@ -101,8 +90,7 @@ private:
         { }
 
         ValueProfile* profile;
-        UnaryArithProfile* unaryArithProfile;
-        BinaryArithProfile* binaryArithProfile;
+        ArithProfile* arithProfile;
         struct {
             CodeBlock* codeBlock;
             BytecodeIndex bytecodeOffset;

@@ -1478,25 +1478,25 @@ StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
     return ensureJITData(locker).m_stubInfos.add(accessType);
 }
 
-JITAddIC* CodeBlock::addJITAddIC(BinaryArithProfile* arithProfile)
+JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_addICs.add(arithProfile);
 }
 
-JITMulIC* CodeBlock::addJITMulIC(BinaryArithProfile* arithProfile)
+JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_mulICs.add(arithProfile);
 }
 
-JITSubIC* CodeBlock::addJITSubIC(BinaryArithProfile* arithProfile)
+JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_subICs.add(arithProfile);
 }
 
-JITNegIC* CodeBlock::addJITNegIC(UnaryArithProfile* arithProfile)
+JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile)
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_negICs.add(arithProfile);
@@ -3083,19 +3083,16 @@ const Instruction* CodeBlock::outOfLineJumpTarget(const Instruction* pc)
     return instructions().at(offset + target).ptr();
 }
 
-BinaryArithProfile* CodeBlock::binaryArithProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)
+ArithProfile* CodeBlock::arithProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    return binaryArithProfileForPC(instructions().at(bytecodeIndex.offset()).ptr());
+    return arithProfileForPC(instructions().at(bytecodeIndex.offset()).ptr());
 }
 
-UnaryArithProfile* CodeBlock::unaryArithProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)
-{
-    return unaryArithProfileForPC(instructions().at(bytecodeIndex.offset()).ptr());
-}
-
-BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
+ArithProfile* CodeBlock::arithProfileForPC(const Instruction* pc)
 {
     switch (pc->opcodeID()) {
+    case op_negate:
+        return &pc->as<OpNegate>().metadata(this).m_arithProfile;
     case op_add:
         return &pc->as<OpAdd>().metadata(this).m_arithProfile;
     case op_mul:
@@ -3111,23 +3108,11 @@ BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
     return nullptr;
 }
 
-UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const Instruction* pc)
-{
-    switch (pc->opcodeID()) {
-    case op_negate:
-        return &pc->as<OpNegate>().metadata(this).m_arithProfile;
-    default:
-        break;
-    }
-
-    return nullptr;
-}
-
 bool CodeBlock::couldTakeSpecialArithFastCase(BytecodeIndex bytecodeIndex)
 {
     if (!hasBaselineJITProfiling())
         return false;
-    BinaryArithProfile* profile = binaryArithProfileForBytecodeIndex(bytecodeIndex);
+    ArithProfile* profile = arithProfileForBytecodeIndex(bytecodeIndex);
     if (!profile)
         return false;
     return profile->tookSpecialFastPath();

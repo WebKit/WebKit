@@ -964,24 +964,22 @@ end)
 
 
 llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, return)
-
-    macro updateArithProfile(type)
-        orh type, OpNegate::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
-    end
-
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t3)
     metadata(t1, t2)
+    loadi OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1], t2
     bqb t3, numberTag, .opNegateNotInt
     btiz t3, 0x7fffffff, .opNegateSlow
     negi t3
     orq numberTag, t3
-    updateArithProfile(ArithProfileInt)
+    ori ArithProfileInt, t2
+    storei t2, OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1]
     return(t3)
 .opNegateNotInt:
     btqz t3, numberTag, .opNegateSlow
     xorq 0x8000000000000000, t3
-    updateArithProfile(ArithProfileNumber)
+    ori ArithProfileNumber, t2
+    storei t2, OpNegate::Metadata::m_arithProfile + ArithProfile::m_bits[t1]
     return(t3)
 
 .opNegateSlow:
@@ -995,7 +993,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         metadata(t5, t0)
 
         macro profile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t5]
+            ori type, %opcodeStruct%::Metadata::m_arithProfile + ArithProfile::m_bits[t5]
         end
 
         get(m_rhs, t0)
