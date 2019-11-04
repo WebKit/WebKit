@@ -2478,8 +2478,6 @@ webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Time
 
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Timeout Pass ]
 
-webkit.org/b/180096 inspector/runtime/getPreview.html [ Timeout Pass ]
-
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
