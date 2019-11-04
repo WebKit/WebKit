@@ -60,6 +60,7 @@ public:
         , m_source(WTFMove(source))
     {
     }
+    ~LibWebRTCRtpSenderBackend();
 
     void setRTCSender(rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender) { m_rtcSender = WTFMove(rtcSender); }
     webrtc::RtpSenderInterface* rtcSender() { return m_rtcSender.get(); }
@@ -105,6 +106,7 @@ public:
     {
         ASSERT(backend.hasSource());
         setSource(WTFMove(backend.m_source));
+        backend.m_source = nullptr;
     }
 
 private:

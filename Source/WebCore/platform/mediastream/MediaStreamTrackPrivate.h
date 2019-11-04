@@ -106,6 +106,9 @@ public:
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
+#if !ASSERT_DISABLED
+    bool hasObserver(Observer&) const;
+#endif
 
     const RealtimeMediaSourceSettings& settings() const;
     const RealtimeMediaSourceCapabilities& capabilities() const;
@@ -166,6 +169,14 @@ private:
 };
 
 typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
+
+#if !ASSERT_DISABLED
+inline bool MediaStreamTrackPrivate::hasObserver(Observer& observer) const
+{
+    auto locker = holdLock(m_observersLock);
+    return m_observers.contains(&observer);
+}
+#endif
 
 } // namespace WebCore
 

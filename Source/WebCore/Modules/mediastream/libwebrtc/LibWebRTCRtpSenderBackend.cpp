@@ -37,6 +37,16 @@
 
 namespace WebCore {
 
+LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
+{
+    WTF::switchOn(m_source, [] (Ref<RealtimeOutgoingAudioSource>& source) {
+        source->stop();
+    }, [] (Ref<RealtimeOutgoingVideoSource>& source) {
+        source->stop();
+    }, [] (std::nullptr_t&) {
+    });
+}
+
 template<typename Source>
 static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
 {

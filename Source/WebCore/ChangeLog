@@ -1,3 +1,26 @@
+2019-11-04  youenn fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource/RealtimeOutgoingVideoSource should unobserve before destruction time
+        https://bugs.webkit.org/show_bug.cgi?id=203802
+
+        Reviewed by Eric Carlson.
+
+        These classes are used by LibWebRTCRtpSenderBackend.
+        When the backend is destroyed, notify the sources to unobserve before unrefing them.
+        Add debug assertions to ensure this is done correctly.
+        Covered by existing tests.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        Fixed Variant Move issue.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::hasObserver const):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource):
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource):
+
 2019-11-04  Cathie Chen  <cathiechen@igalia.com>
 
         Build error: redefinition of `TransferFunction`

@@ -45,6 +45,7 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPri
 
 RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource()
 {
+    ASSERT(!m_audioSource->hasObserver(*this));
     ASSERT(m_sinks.isEmpty());
     stop();
 }

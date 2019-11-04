@@ -56,6 +56,7 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
 
 RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource()
 {
+    ASSERT(!m_videoSource->hasObserver(*this));
     ASSERT(m_sinks.isEmpty());
     stop();
 }
