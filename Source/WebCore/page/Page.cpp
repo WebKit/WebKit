@@ -2869,12 +2869,8 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
 
 void Page::forEachDocument(const Function<void(Document&)>& functor)
 {
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
-            continue;
-
-        functor(*frame->document());
-    }
+    for (auto& document : collectDocuments())
+        functor(document);
 }
 
 Vector<Ref<Document>> Page::collectDocuments()

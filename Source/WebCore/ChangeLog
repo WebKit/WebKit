@@ -1,3 +1,17 @@
+2019-11-04  Alex Christensen  <achristensen@webkit.org>
+
+        Collect all documents before iterating in Page::forEachDocument
+        https://bugs.webkit.org/show_bug.cgi?id=203811
+        <rdar://problem/56832747>
+
+        Reviewed by Ryosuke Niwa.
+
+        Some calls to forEachDocument, notably those introduced in r251930, can mutate the frames and documents as they are being iterated.
+        This causes problems that can be avoided by iterating, keeping all Documents referenced, then iterating the referenced Documents.
+
+        * page/Page.cpp:
+        (WebCore::Page::forEachDocument):
+
 2019-11-04  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251993.
