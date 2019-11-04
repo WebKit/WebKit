@@ -1538,6 +1538,8 @@ webkit.org/b/201918 imported/w3c/web-platform-tests/svg/render/reftests/change-s
 webkit.org/b/173154 imported/w3c/web-platform-tests/svg/linking/reftests/use-keyframes.html [ Skip ]
 webkit.org/b/201992 imported/w3c/web-platform-tests/svg/linking/reftests/href-filter-element.html [ Skip ]
 
+webkit.org/b/203172 imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-003-visual.svg [ Pass Timeout ]
+
 webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
 
 # Debug assertions are tracked as <rdar://problem/18216390>.
