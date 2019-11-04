@@ -47,6 +47,7 @@
 #include "MathMLElement.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "RenderTheme.h"
 #include "RuleSet.h"
 #include "SVGElement.h"
@@ -270,8 +271,12 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
 
 #if ENABLE(FULLSCREEN_API)
     if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
-        String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::singleton().extraFullScreenStyleSheet();
-        fullscreenStyleSheet = parseUASheet(fullscreenRules);
+        StringBuilder fullscreenRules;
+        fullscreenRules.appendCharacters(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet));
+        fullscreenRules.append(RenderTheme::singleton().extraFullScreenStyleSheet());
+        if (element.document().quirks().needsFullWidthHeightFullscreenStyleQuirk())
+            fullscreenRules.append(":-webkit-full-screen { width:100%; height:100%; }");
+        fullscreenStyleSheet = parseUASheet(fullscreenRules.toString());
         addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)

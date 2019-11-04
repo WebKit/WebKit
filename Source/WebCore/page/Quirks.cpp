@@ -618,4 +618,19 @@ bool Quirks::needsPreloadAutoQuirk() const
 #endif
 }
 
+bool Quirks::needsFullWidthHeightFullscreenStyleQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_needsFullWidthHeightFullscreenStyleQuirk)
+        return m_needsFullWidthHeightFullscreenStyleQuirk.value();
+
+    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+
+    m_needsFullWidthHeightFullscreenStyleQuirk = domain == "reddit.com" || domain.endsWith(".reddit.com");
+
+    return m_needsFullWidthHeightFullscreenStyleQuirk.value();
+}
+
 }
