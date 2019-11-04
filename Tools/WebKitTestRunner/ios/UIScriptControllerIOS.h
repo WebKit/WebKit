@@ -30,6 +30,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#if HAVE(PENCILKIT)
+@class PKCanvasView;
+#endif
+
 namespace WebCore {
 class FloatPoint;
 class FloatRect;
@@ -153,6 +157,9 @@ private:
     void waitForSingleTapToReset() const;
     WebCore::FloatRect rectForMenuAction(CFStringRef) const;
     void singleTapAtPointWithModifiers(WebCore::FloatPoint location, Vector<String>&& modifierFlags, BlockPtr<void()>&&);
+#if HAVE(PENCILKIT)
+    PKCanvasView *findEditableImageCanvas() const;
+#endif
 };
 
 }

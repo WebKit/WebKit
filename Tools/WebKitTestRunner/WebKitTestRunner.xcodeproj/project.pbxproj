@@ -85,6 +85,7 @@
 		2DD4C49B1D6E7D3B0007379C /* EventSerializerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */; };
 		2DFA98481D7F70CF00AFF2C9 /* SharedEventStreamsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */; };
 		2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFA98471D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm */; };
+		2E2A765D2370C8D1008F9FFE /* PlatformViewHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E2A765C2370C8A0008F9FFE /* PlatformViewHelpers.mm */; };
 		2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Copy Plug-Ins */ = {isa = PBXBuildFile; fileRef = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2E63ED8A1891AD7E002A7AFC /* AccessibilityControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */; };
 		2E63ED8B1891AD7E002A7AFC /* AccessibilityTextMarkerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */; };
@@ -285,6 +286,8 @@
 		2DD4C4991D6E7D3B0007379C /* EventSerializerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EventSerializerMac.mm; path = mac/EventSerializerMac.mm; sourceTree = "<group>"; };
 		2DFA98461D7F70CF00AFF2C9 /* SharedEventStreamsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedEventStreamsMac.h; path = mac/SharedEventStreamsMac.h; sourceTree = "<group>"; };
 		2DFA98471D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SharedEventStreamsMac.mm; path = mac/SharedEventStreamsMac.mm; sourceTree = "<group>"; };
+		2E2A765B2370C8A0008F9FFE /* PlatformViewHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformViewHelpers.h; path = ../TestRunnerShared/cocoa/PlatformViewHelpers.h; sourceTree = "<group>"; };
+		2E2A765C2370C8A0008F9FFE /* PlatformViewHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformViewHelpers.mm; path = ../TestRunnerShared/cocoa/PlatformViewHelpers.mm; sourceTree = "<group>"; };
 		2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityControllerIOS.mm; sourceTree = "<group>"; };
 		2E63ED761891ACE9002A7AFC /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerIOS.mm; sourceTree = "<group>"; };
@@ -890,6 +893,8 @@
 				F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */,
 				F4C3578B20E8444000FA0748 /* LayoutTestSpellChecker.h */,
 				F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */,
+				2E2A765B2370C8A0008F9FFE /* PlatformViewHelpers.h */,
+				2E2A765C2370C8A0008F9FFE /* PlatformViewHelpers.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -1181,6 +1186,7 @@
 				F4C3578C20E8444600FA0748 /* LayoutTestSpellChecker.mm in Sources */,
 				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
 				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
+				2E2A765D2370C8D1008F9FFE /* PlatformViewHelpers.mm in Sources */,
 				2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */,
 				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,
