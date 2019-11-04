@@ -23,14 +23,13 @@
 CRYPTO_rdrand:
 .cfi_startproc	
 	xorq	%rax,%rax
-
-
-.byte	0x48, 0x0f, 0xc7, 0xf1
+.byte	72,15,199,242
 
 	adcq	%rax,%rax
-	movq	%rcx,0(%rdi)
+	movq	%rdx,0(%rdi)
 	.byte	0xf3,0xc3
 .cfi_endproc	
+.size	CRYPTO_rdrand,.-CRYPTO_rdrand
 
 
 
@@ -46,9 +45,7 @@ CRYPTO_rdrand_multiple8_buf:
 	jz	.Lout
 	movq	$8,%rdx
 .Lloop:
-
-
-.byte	0x48, 0x0f, 0xc7, 0xf1
+.byte	72,15,199,241
 	jnc	.Lerr
 	movq	%rcx,0(%rdi)
 	addq	%rdx,%rdi
@@ -61,4 +58,5 @@ CRYPTO_rdrand_multiple8_buf:
 	xorq	%rax,%rax
 	.byte	0xf3,0xc3
 .cfi_endproc	
+.size	CRYPTO_rdrand_multiple8_buf,.-CRYPTO_rdrand_multiple8_buf
 #endif

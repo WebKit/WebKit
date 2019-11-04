@@ -709,6 +709,7 @@ L$ghash_epilogue:
 
 .p2align	4
 _gcm_init_clmul:
+
 L$_init_clmul:
 	movdqu	(%rsi),%xmm2
 	pshufd	$78,%xmm2,%xmm2
@@ -861,11 +862,13 @@ L$_init_clmul:
 	movdqu	%xmm4,80(%rdi)
 	.byte	0xf3,0xc3
 
+
 .globl	_gcm_gmult_clmul
 .private_extern _gcm_gmult_clmul
 
 .p2align	4
 _gcm_gmult_clmul:
+
 L$_gmult_clmul:
 	movdqu	(%rdi),%xmm0
 	movdqa	L$bswap_mask(%rip),%xmm5
@@ -913,11 +916,13 @@ L$_gmult_clmul:
 	movdqu	%xmm0,(%rdi)
 	.byte	0xf3,0xc3
 
+
 .globl	_gcm_ghash_clmul
 .private_extern _gcm_ghash_clmul
 
 .p2align	5
 _gcm_ghash_clmul:
+
 L$_ghash_clmul:
 	movdqa	L$bswap_mask(%rip),%xmm10
 
@@ -1298,11 +1303,13 @@ L$done:
 	movdqu	%xmm0,(%rdi)
 	.byte	0xf3,0xc3
 
+
 .globl	_gcm_init_avx
 .private_extern _gcm_init_avx
 
 .p2align	5
 _gcm_init_avx:
+
 	vzeroupper
 
 	vmovdqu	(%rsi),%xmm2
@@ -1406,18 +1413,22 @@ L$init_start_avx:
 	vzeroupper
 	.byte	0xf3,0xc3
 
+
 .globl	_gcm_gmult_avx
 .private_extern _gcm_gmult_avx
 
 .p2align	5
 _gcm_gmult_avx:
+
 	jmp	L$_gmult_clmul
+
 
 .globl	_gcm_ghash_avx
 .private_extern _gcm_ghash_avx
 
 .p2align	5
 _gcm_ghash_avx:
+
 	vzeroupper
 
 	vmovdqu	(%rdi),%xmm10
@@ -1789,6 +1800,7 @@ L$tail_no_xor_avx:
 	vmovdqu	%xmm10,(%rdi)
 	vzeroupper
 	.byte	0xf3,0xc3
+
 
 .p2align	6
 L$bswap_mask:

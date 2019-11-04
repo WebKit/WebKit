@@ -6,6 +6,8 @@
 #include <boringssl_prefix_symbols_asm.h>
 #endif
 .text
+#ifndef NDEBUG
+#endif
 .align	6,0x90
 L_vpaes_consts:
 .long	218628480,235210255,168496130,67568393
@@ -466,6 +468,18 @@ L_vpaes_set_encrypt_key_begin:
 	pushl	%ebx
 	pushl	%esi
 	pushl	%edi
+#ifndef NDEBUG
+	pushl	%ebx
+	pushl	%edx
+	call	L016pic
+L016pic:
+	popl	%ebx
+	leal	_BORINGSSL_function_hit+5-L016pic(%ebx),%ebx
+	movl	$1,%edx
+	movb	%dl,(%ebx)
+	popl	%edx
+	popl	%ebx
+#endif
 	movl	20(%esp),%esi
 	leal	-56(%esp),%ebx
 	movl	24(%esp),%eax
@@ -479,9 +493,9 @@ L_vpaes_set_encrypt_key_begin:
 	movl	%ebx,240(%edx)
 	movl	$48,%ecx
 	movl	$0,%edi
-	leal	L_vpaes_consts+0x30-L016pic_point,%ebp
+	leal	L_vpaes_consts+0x30-L017pic_point,%ebp
 	call	__vpaes_schedule_core
-L016pic_point:
+L017pic_point:
 	movl	48(%esp),%esp
 	xorl	%eax,%eax
 	popl	%edi
@@ -516,9 +530,9 @@ L_vpaes_set_decrypt_key_begin:
 	shrl	$1,%ecx
 	andl	$32,%ecx
 	xorl	$32,%ecx
-	leal	L_vpaes_consts+0x30-L017pic_point,%ebp
+	leal	L_vpaes_consts+0x30-L018pic_point,%ebp
 	call	__vpaes_schedule_core
-L017pic_point:
+L018pic_point:
 	movl	48(%esp),%esp
 	xorl	%eax,%eax
 	popl	%edi
@@ -535,9 +549,21 @@ L_vpaes_encrypt_begin:
 	pushl	%ebx
 	pushl	%esi
 	pushl	%edi
-	leal	L_vpaes_consts+0x30-L018pic_point,%ebp
+#ifndef NDEBUG
+	pushl	%ebx
+	pushl	%edx
+	call	L019pic
+L019pic:
+	popl	%ebx
+	leal	_BORINGSSL_function_hit+4-L019pic(%ebx),%ebx
+	movl	$1,%edx
+	movb	%dl,(%ebx)
+	popl	%edx
+	popl	%ebx
+#endif
+	leal	L_vpaes_consts+0x30-L020pic_point,%ebp
 	call	__vpaes_preheat
-L018pic_point:
+L020pic_point:
 	movl	20(%esp),%esi
 	leal	-56(%esp),%ebx
 	movl	24(%esp),%edi
@@ -563,9 +589,9 @@ L_vpaes_decrypt_begin:
 	pushl	%ebx
 	pushl	%esi
 	pushl	%edi
-	leal	L_vpaes_consts+0x30-L019pic_point,%ebp
+	leal	L_vpaes_consts+0x30-L021pic_point,%ebp
 	call	__vpaes_preheat
-L019pic_point:
+L021pic_point:
 	movl	20(%esp),%esi
 	leal	-56(%esp),%ebx
 	movl	24(%esp),%edi
@@ -596,7 +622,7 @@ L_vpaes_cbc_encrypt_begin:
 	movl	28(%esp),%eax
 	movl	32(%esp),%edx
 	subl	$16,%eax
-	jc	L020cbc_abort
+	jc	L022cbc_abort
 	leal	-56(%esp),%ebx
 	movl	36(%esp),%ebp
 	andl	$-16,%ebx
@@ -609,14 +635,14 @@ L_vpaes_cbc_encrypt_begin:
 	movl	%edx,4(%esp)
 	movl	%ebp,8(%esp)
 	movl	%eax,%edi
-	leal	L_vpaes_consts+0x30-L021pic_point,%ebp
+	leal	L_vpaes_consts+0x30-L023pic_point,%ebp
 	call	__vpaes_preheat
-L021pic_point:
+L023pic_point:
 	cmpl	$0,%ecx
-	je	L022cbc_dec_loop
-	jmp	L023cbc_enc_loop
+	je	L024cbc_dec_loop
+	jmp	L025cbc_enc_loop
 .align	4,0x90
-L023cbc_enc_loop:
+L025cbc_enc_loop:
 	movdqu	(%esi),%xmm0
 	pxor	%xmm1,%xmm0
 	call	__vpaes_encrypt_core
@@ -626,10 +652,10 @@ L023cbc_enc_loop:
 	movdqu	%xmm0,(%ebx,%esi,1)
 	leal	16(%esi),%esi
 	subl	$16,%edi
-	jnc	L023cbc_enc_loop
-	jmp	L024cbc_done
+	jnc	L025cbc_enc_loop
+	jmp	L026cbc_done
 .align	4,0x90
-L022cbc_dec_loop:
+L024cbc_dec_loop:
 	movdqu	(%esi),%xmm0
 	movdqa	%xmm1,16(%esp)
 	movdqa	%xmm0,32(%esp)
@@ -641,12 +667,12 @@ L022cbc_dec_loop:
 	movdqu	%xmm0,(%ebx,%esi,1)
 	leal	16(%esi),%esi
 	subl	$16,%edi
-	jnc	L022cbc_dec_loop
-L024cbc_done:
+	jnc	L024cbc_dec_loop
+L026cbc_done:
 	movl	8(%esp),%ebx
 	movl	48(%esp),%esp
 	movdqu	%xmm1,(%ebx)
-L020cbc_abort:
+L022cbc_abort:
 	popl	%edi
 	popl	%esi
 	popl	%ebx

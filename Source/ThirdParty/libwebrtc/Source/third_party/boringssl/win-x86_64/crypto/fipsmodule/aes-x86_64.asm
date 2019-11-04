@@ -167,6 +167,7 @@ DB	0xf3,0xc3
 
 ALIGN	16
 _x86_64_AES_encrypt_compact:
+
 	lea	r8,[128+r14]
 	mov	edi,DWORD[((0-128))+r8]
 	mov	ebp,DWORD[((32-128))+r8]
@@ -336,6 +337,7 @@ $L$enc_compact_done:
 	xor	ecx,DWORD[8+r15]
 	xor	edx,DWORD[12+r15]
 DB	0xf3,0xc3
+
 
 ALIGN	16
 global	aes_nohw_encrypt
@@ -589,6 +591,7 @@ DB	0xf3,0xc3
 
 ALIGN	16
 _x86_64_AES_decrypt_compact:
+
 	lea	r8,[128+r14]
 	mov	edi,DWORD[((0-128))+r8]
 	mov	ebp,DWORD[((32-128))+r8]
@@ -811,6 +814,7 @@ $L$dec_compact_done:
 	xor	edx,DWORD[12+r15]
 DB	0xf3,0xc3
 
+
 ALIGN	16
 global	aes_nohw_decrypt
 
@@ -955,6 +959,7 @@ $L$SEH_end_aes_nohw_set_encrypt_key:
 
 ALIGN	16
 _x86_64_AES_set_encrypt_key:
+
 	mov	ecx,esi
 	mov	rsi,rdi
 	mov	rdi,rdx
@@ -1190,6 +1195,7 @@ $L$badpointer:
 	mov	rax,-1
 $L$exit:
 DB	0xf3,0xc3
+
 
 ALIGN	16
 global	aes_nohw_set_decrypt_key
@@ -1428,6 +1434,8 @@ $L$SEH_begin_aes_nohw_cbc_encrypt:
 	je	NEAR $L$cbc_epilogue
 	pushfq
 
+
+
 	push	rbx
 
 	push	rbp
@@ -1449,6 +1457,7 @@ $L$cbc_prologue:
 	lea	r10,[$L$AES_Td]
 	cmp	r9,0
 	cmove	r14,r10
+
 
 	lea	r10,[OPENSSL_ia32cap_P]
 	mov	r10d,DWORD[r10]
@@ -1687,6 +1696,7 @@ $L$cbc_fast_cleanup:
 ALIGN	16
 $L$cbc_slow_prologue:
 
+
 	lea	rbp,[((-88))+rsp]
 	and	rbp,-64
 
@@ -1698,7 +1708,9 @@ $L$cbc_slow_prologue:
 
 	xchg	rbp,rsp
 
+
 	mov	QWORD[16+rsp],rbp
+
 $L$cbc_slow_body:
 
 
@@ -1887,6 +1899,8 @@ $L$cbc_exit:
 
 $L$cbc_popfq:
 	popfq
+
+
 
 $L$cbc_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue

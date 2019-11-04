@@ -72,13 +72,13 @@ yasm-win32.exe: Update to the appropriate release of Yasm. Use the same version
 
     The current revision is yasm-1.3.0-win32.exe.
 
-Finally, update sde-linux64.tar.bz2 by downloading the latet release from intel
-at
+Finally, update sde-linux64.tar.bz2 and sde-win32.tar.bz2 by downloading the
+latet release from Intel at
 https://software.intel.com/en-us/articles/intel-software-development-emulator,
 but upload it with the following command. (Note the bucket is different.)
 
-    upload_to_google_storage.py -b chrome-boringssl-sde sde-linux64.tar.bz2
+    upload_to_google_storage.py -b chrome-boringssl-sde sde-linux64.tar.bz2 sde-win32.tar.bz2
 
-The current revision is sde-external-8.9.0-2017-08-06-lin.tar.bz2.
+The current revision is sde-external-8.35.0-2019-03-11-*.tar.bz2.
 
 When adding new files, remember to update .gitignore.

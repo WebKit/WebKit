@@ -137,6 +137,7 @@
 
 #include <openssl/buf.h>
 #include <openssl/digest.h>
+#include <openssl/err.h>
 
 #include "internal.h"
 
@@ -205,8 +206,20 @@ bool SSLTranscript::UpdateForHelloRetryRequest() {
   return true;
 }
 
-bool SSLTranscript::CopyHashContext(EVP_MD_CTX *ctx) {
-  return EVP_MD_CTX_copy_ex(ctx, hash_.get());
+bool SSLTranscript::CopyToHashContext(EVP_MD_CTX *ctx, const EVP_MD *digest) {
+  const EVP_MD *transcript_digest = Digest();
+  if (transcript_digest != nullptr &&
+      EVP_MD_type(transcript_digest) == EVP_MD_type(digest)) {
+    return EVP_MD_CTX_copy_ex(ctx, hash_.get());
+  }
+
+  if (buffer_) {
+    return EVP_DigestInit_ex(ctx, digest, nullptr) &&
+           EVP_DigestUpdate(ctx, buffer_->data, buffer_->length);
+  }
+
+  OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+  return false;
 }
 
 bool SSLTranscript::Update(Span<const uint8_t> in) {

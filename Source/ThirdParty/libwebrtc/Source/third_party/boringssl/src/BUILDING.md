@@ -2,9 +2,17 @@
 
 ## Build Prerequisites
 
-  * [CMake](https://cmake.org/download/) 2.8.11 or later is required.
+The standalone CMake build is primarily intended for developers. If embedding
+BoringSSL into another project with a pre-existing build system, see
+[INCORPORATING.md](/INCORPORATING.md).
 
-  * Perl 5.6.1 or later is required. On Windows,
+Unless otherwise noted, build tools must at most five years old, matching
+[Abseil guidelines](https://abseil.io/about/compatibility). If in doubt, use the
+most recent stable version of each tool.
+
+  * [CMake](https://cmake.org/download/) 3.0 or later is required.
+
+  * A recent version of Perl is required. On Windows,
     [Active State Perl](http://www.activestate.com/activeperl/) has been
     reported to work, as has MSYS Perl.
     [Strawberry Perl](http://strawberryperl.com/) also works but it adds GCC
@@ -13,28 +21,27 @@
     If Perl is not found by CMake, it may be configured explicitly by setting
     `PERL_EXECUTABLE`.
 
-  * On Windows you currently must use [Ninja](https://ninja-build.org/)
-    to build; on other platforms, it is not required, but recommended, because
-    it makes builds faster.
-
-  * If you need to build Ninja from source, then a recent version of
-    [Python](https://www.python.org/downloads/) is required (Python 2.7.5 works).
+  * Building with [Ninja](https://ninja-build.org/) instead of Make is
+    recommended, because it makes builds faster. On Windows, CMake's Visual
+    Studio generator may also work, but it not tested regularly and requires
+    recent versions of CMake for assembly support.
 
   * On Windows only, [NASM](https://www.nasm.us/) is required. If not found
     by CMake, it may be configured explicitly by setting
     `CMAKE_ASM_NASM_COMPILER`.
 
-  * A C compiler is required. On Windows, MSVC 14 (Visual Studio 2015) or later
-    with Platform SDK 8.1 or later are supported. Recent versions of GCC (4.8+)
-    and Clang should work on non-Windows platforms, and maybe on Windows too.
-    To build the tests, you also need a C++ compiler with C++11 support.
+  * C and C++ compilers with C++11 support are required. On Windows, MSVC 14
+    (Visual Studio 2015) or later with Platform SDK 8.1 or later are supported.
+    Recent versions of GCC (4.8+) and Clang should work on non-Windows
+    platforms, and maybe on Windows too.
 
   * The most recent stable version of [Go](https://golang.org/dl/) is required.
-    If not found by CMake, the go executable may be configured explicitly by
-    setting `GO_EXECUTABLE`.
+    Note Go is exempt from the five year support window. If not found by CMake,
+    the go executable may be configured explicitly by setting `GO_EXECUTABLE`.
 
-  * To build the x86 and x86\_64 assembly, your assembler must support AVX2
-    instructions and MOVBE. If using GNU binutils, you must have 2.22 or later
+  * On x86_64 Linux, the tests have an optional
+    [libunwind](https://www.nongnu.org/libunwind/) dependency to test the
+    assembly more thoroughly.
 
 ## Building
 
@@ -96,11 +103,22 @@ Once you've run that, Ninja should produce Android-compatible binaries.  You
 can replace `armeabi-v7a` in the above with `arm64-v8a` and use API level 21 or
 higher to build aarch64 binaries.
 
-For older NDK versions, BoringSSL ships a third-party CMake toolchain file. Use
-`../third_party/android-cmake/android.toolchain.cmake` for
-`CMAKE_TOOLCHAIN_FILE` instead.
-
 For other options, see the documentation in the toolchain file.
+
+To debug the resulting binaries on an Android device with `gdb`, run the
+commands below. Replace `ARCH` with the architecture of the target device, e.g.
+`arm` or `arm64`.
+
+    adb push ${ANDROID_NDK}/prebuilt/android-ARCH/gdbserver/gdbserver \
+        /data/local/tmp
+    adb forward tcp:5039 tcp:5039
+    adb shell /data/local/tmp/gdbserver :5039 /path/on/device/to/binary
+
+Then run the following in a separate shell. Replace `HOST` with the OS and
+architecture of the host machine, e.g. `linux-x86_64`.
+
+    ${ANDROID_NDK}/prebuilt/HOST/bin/gdb
+    target remote :5039  # in gdb
 
 ### Building for iOS
 

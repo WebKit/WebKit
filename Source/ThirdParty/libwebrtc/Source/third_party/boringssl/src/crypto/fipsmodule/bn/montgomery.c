@@ -122,13 +122,6 @@
 #include "../../internal.h"
 
 
-#if !defined(OPENSSL_NO_ASM) &&                         \
-    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
-     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
-#define OPENSSL_BN_ASM_MONT
-#endif
-
-
 BN_MONT_CTX *BN_MONT_CTX_new(void) {
   BN_MONT_CTX *ret = OPENSSL_malloc(sizeof(BN_MONT_CTX));
 

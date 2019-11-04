@@ -45,8 +45,14 @@
 // Various pre-computed constants.
 #include "./curve25519_tables.h"
 
+#if defined(BORINGSSL_CURVE25519_64BIT)
+#include "./curve25519_64.h"
+#else
+#include "./curve25519_32.h"
+#endif  // BORINGSSL_CURVE25519_64BIT
 
-// Low-level intrinsic operations (hand-written).
+
+// Low-level intrinsic operations
 
 static uint64_t load_3(const uint8_t *in) {
   uint64_t result;
@@ -65,706 +71,111 @@ static uint64_t load_4(const uint8_t *in) {
   return result;
 }
 
-#if defined(BORINGSSL_CURVE25519_64BIT)
-static uint64_t load_8(const uint8_t *in) {
-  uint64_t result;
-  result = (uint64_t)in[0];
-  result |= ((uint64_t)in[1]) << 8;
-  result |= ((uint64_t)in[2]) << 16;
-  result |= ((uint64_t)in[3]) << 24;
-  result |= ((uint64_t)in[4]) << 32;
-  result |= ((uint64_t)in[5]) << 40;
-  result |= ((uint64_t)in[6]) << 48;
-  result |= ((uint64_t)in[7]) << 56;
-  return result;
-}
-
-static uint8_t /*bool*/ addcarryx_u51(uint8_t /*bool*/ c, uint64_t a,
-                                      uint64_t b, uint64_t *low) {
-  // This function extracts 51 bits of result and 1 bit of carry (52 total), so
-  // a 64-bit intermediate is sufficient.
-  uint64_t x = a + b + c;
-  *low = x & ((UINT64_C(1) << 51) - 1);
-  return (x >> 51) & 1;
-}
-
-static uint8_t /*bool*/ subborrow_u51(uint8_t /*bool*/ c, uint64_t a,
-                                      uint64_t b, uint64_t *low) {
-  // This function extracts 51 bits of result and 1 bit of borrow (52 total), so
-  // a 64-bit intermediate is sufficient.
-  uint64_t x = a - b - c;
-  *low = x & ((UINT64_C(1) << 51) - 1);
-  return x >> 63;
-}
-
-static uint64_t cmovznz64(uint64_t t, uint64_t z, uint64_t nz) {
-  t = -!!t; // all set if nonzero, 0 if 0
-  return (t&nz) | ((~t)&z);
-}
-
-#else
-
-static uint8_t /*bool*/ addcarryx_u25(uint8_t /*bool*/ c, uint32_t a,
-                                      uint32_t b, uint32_t *low) {
-  // This function extracts 25 bits of result and 1 bit of carry (26 total), so
-  // a 32-bit intermediate is sufficient.
-  uint32_t x = a + b + c;
-  *low = x & ((1 << 25) - 1);
-  return (x >> 25) & 1;
-}
-
-static uint8_t /*bool*/ addcarryx_u26(uint8_t /*bool*/ c, uint32_t a,
-                                      uint32_t b, uint32_t *low) {
-  // This function extracts 26 bits of result and 1 bit of carry (27 total), so
-  // a 32-bit intermediate is sufficient.
-  uint32_t x = a + b + c;
-  *low = x & ((1 << 26) - 1);
-  return (x >> 26) & 1;
-}
-
-static uint8_t /*bool*/ subborrow_u25(uint8_t /*bool*/ c, uint32_t a,
-                                      uint32_t b, uint32_t *low) {
-  // This function extracts 25 bits of result and 1 bit of borrow (26 total), so
-  // a 32-bit intermediate is sufficient.
-  uint32_t x = a - b - c;
-  *low = x & ((1 << 25) - 1);
-  return x >> 31;
-}
-
-static uint8_t /*bool*/ subborrow_u26(uint8_t /*bool*/ c, uint32_t a,
-                                      uint32_t b, uint32_t *low) {
-  // This function extracts 26 bits of result and 1 bit of borrow (27 total), so
-  // a 32-bit intermediate is sufficient.
-  uint32_t x = a - b - c;
-  *low = x & ((1 << 26) - 1);
-  return x >> 31;
-}
-
-static uint32_t cmovznz32(uint32_t t, uint32_t z, uint32_t nz) {
-  t = -!!t; // all set if nonzero, 0 if 0
-  return (t&nz) | ((~t)&z);
-}
-
-#endif
-
 
 // Field operations.
 
 #if defined(BORINGSSL_CURVE25519_64BIT)
 
-#define assert_fe(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 5; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < 1.125*(UINT64_C(1)<<51)); \
-  } \
-} while (0)
+typedef uint64_t fe_limb_t;
+#define FE_NUM_LIMBS 5
 
-#define assert_fe_loose(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 5; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < 3.375*(UINT64_C(1)<<51)); \
-  } \
-} while (0)
-
-#define assert_fe_frozen(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 5; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < (UINT64_C(1)<<51)); \
-  } \
-} while (0)
-
-static void fe_frombytes_impl(uint64_t h[5], const uint8_t *s) {
-  // Ignores top bit of s.
-  uint64_t a0 = load_8(s);
-  uint64_t a1 = load_8(s+8);
-  uint64_t a2 = load_8(s+16);
-  uint64_t a3 = load_8(s+24);
-  // Use 51 bits, 64-51 = 13 left.
-  h[0] = a0 & ((UINT64_C(1) << 51) - 1);
-  // (64-51) + 38 = 13 + 38 = 51
-  h[1] = (a0 >> 51) | ((a1 & ((UINT64_C(1) << 38) - 1)) << 13);
-  // (64-38) + 25 = 26 + 25 = 51
-  h[2] = (a1 >> 38) | ((a2 & ((UINT64_C(1) << 25) - 1)) << 26);
-  // (64-25) + 12 = 39 + 12 = 51
-  h[3] = (a2 >> 25) | ((a3 & ((UINT64_C(1) << 12) - 1)) << 39);
-  // (64-12) = 52, ignore top bit
-  h[4] = (a3 >> 12) & ((UINT64_C(1) << 51) - 1);
-  assert_fe(h);
-}
-
-static void fe_frombytes(fe *h, const uint8_t *s) {
-  fe_frombytes_impl(h->v, s);
-}
-
-static void fe_freeze(uint64_t out[5], const uint64_t in1[5]) {
-  { const uint64_t x7 = in1[4];
-  { const uint64_t x8 = in1[3];
-  { const uint64_t x6 = in1[2];
-  { const uint64_t x4 = in1[1];
-  { const uint64_t x2 = in1[0];
-  { uint64_t x10; uint8_t/*bool*/ x11 = subborrow_u51(0x0, x2, 0x7ffffffffffed, &x10);
-  { uint64_t x13; uint8_t/*bool*/ x14 = subborrow_u51(x11, x4, 0x7ffffffffffff, &x13);
-  { uint64_t x16; uint8_t/*bool*/ x17 = subborrow_u51(x14, x6, 0x7ffffffffffff, &x16);
-  { uint64_t x19; uint8_t/*bool*/ x20 = subborrow_u51(x17, x8, 0x7ffffffffffff, &x19);
-  { uint64_t x22; uint8_t/*bool*/ x23 = subborrow_u51(x20, x7, 0x7ffffffffffff, &x22);
-  { uint64_t x24 = cmovznz64(x23, 0x0, 0xffffffffffffffffL);
-  { uint64_t x25 = (x24 & 0x7ffffffffffed);
-  { uint64_t x27; uint8_t/*bool*/ x28 = addcarryx_u51(0x0, x10, x25, &x27);
-  { uint64_t x29 = (x24 & 0x7ffffffffffff);
-  { uint64_t x31; uint8_t/*bool*/ x32 = addcarryx_u51(x28, x13, x29, &x31);
-  { uint64_t x33 = (x24 & 0x7ffffffffffff);
-  { uint64_t x35; uint8_t/*bool*/ x36 = addcarryx_u51(x32, x16, x33, &x35);
-  { uint64_t x37 = (x24 & 0x7ffffffffffff);
-  { uint64_t x39; uint8_t/*bool*/ x40 = addcarryx_u51(x36, x19, x37, &x39);
-  { uint64_t x41 = (x24 & 0x7ffffffffffff);
-  { uint64_t x43; addcarryx_u51(x40, x22, x41, &x43);
-  out[0] = x27;
-  out[1] = x31;
-  out[2] = x35;
-  out[3] = x39;
-  out[4] = x43;
-  }}}}}}}}}}}}}}}}}}}}}
-}
-
-static void fe_tobytes(uint8_t s[32], const fe *f) {
-  assert_fe(f->v);
-  uint64_t h[5];
-  fe_freeze(h, f->v);
-  assert_fe_frozen(h);
-
-  s[0] = h[0] >> 0;
-  s[1] = h[0] >> 8;
-  s[2] = h[0] >> 16;
-  s[3] = h[0] >> 24;
-  s[4] = h[0] >> 32;
-  s[5] = h[0] >> 40;
-  s[6] = (h[0] >> 48) | (h[1] << 3);
-  s[7] = h[1] >> 5;
-  s[8] = h[1] >> 13;
-  s[9] = h[1] >> 21;
-  s[10] = h[1] >> 29;
-  s[11] = h[1] >> 37;
-  s[12] = (h[1] >> 45) | (h[2] << 6);
-  s[13] = h[2] >> 2;
-  s[14] = h[2] >> 10;
-  s[15] = h[2] >> 18;
-  s[16] = h[2] >> 26;
-  s[17] = h[2] >> 34;
-  s[18] = h[2] >> 42;
-  s[19] = (h[2] >> 50) | (h[3] << 1);
-  s[20] = h[3] >> 7;
-  s[21] = h[3] >> 15;
-  s[22] = h[3] >> 23;
-  s[23] = h[3] >> 31;
-  s[24] = h[3] >> 39;
-  s[25] = (h[3] >> 47) | (h[4] << 4);
-  s[26] = h[4] >> 4;
-  s[27] = h[4] >> 12;
-  s[28] = h[4] >> 20;
-  s[29] = h[4] >> 28;
-  s[30] = h[4] >> 36;
-  s[31] = h[4] >> 44;
-}
-
-// h = 0
-static void fe_0(fe *h) {
-  OPENSSL_memset(h, 0, sizeof(fe));
-}
-
-static void fe_loose_0(fe_loose *h) {
-  OPENSSL_memset(h, 0, sizeof(fe_loose));
-}
-
-// h = 1
-static void fe_1(fe *h) {
-  OPENSSL_memset(h, 0, sizeof(fe));
-  h->v[0] = 1;
-}
-
-static void fe_loose_1(fe_loose *h) {
-  OPENSSL_memset(h, 0, sizeof(fe_loose));
-  h->v[0] = 1;
-}
-
-static void fe_add_impl(uint64_t out[5], const uint64_t in1[5], const uint64_t in2[5]) {
-  { const uint64_t x10 = in1[4];
-  { const uint64_t x11 = in1[3];
-  { const uint64_t x9 = in1[2];
-  { const uint64_t x7 = in1[1];
-  { const uint64_t x5 = in1[0];
-  { const uint64_t x18 = in2[4];
-  { const uint64_t x19 = in2[3];
-  { const uint64_t x17 = in2[2];
-  { const uint64_t x15 = in2[1];
-  { const uint64_t x13 = in2[0];
-  out[0] = (x5 + x13);
-  out[1] = (x7 + x15);
-  out[2] = (x9 + x17);
-  out[3] = (x11 + x19);
-  out[4] = (x10 + x18);
-  }}}}}}}}}}
-}
-
-// h = f + g
-// Can overlap h with f or g.
-static void fe_add(fe_loose *h, const fe *f, const fe *g) {
-  assert_fe(f->v);
-  assert_fe(g->v);
-  fe_add_impl(h->v, f->v, g->v);
-  assert_fe_loose(h->v);
-}
-
-static void fe_sub_impl(uint64_t out[5], const uint64_t in1[5], const uint64_t in2[5]) {
-  { const uint64_t x10 = in1[4];
-  { const uint64_t x11 = in1[3];
-  { const uint64_t x9 = in1[2];
-  { const uint64_t x7 = in1[1];
-  { const uint64_t x5 = in1[0];
-  { const uint64_t x18 = in2[4];
-  { const uint64_t x19 = in2[3];
-  { const uint64_t x17 = in2[2];
-  { const uint64_t x15 = in2[1];
-  { const uint64_t x13 = in2[0];
-  out[0] = ((0xfffffffffffda + x5) - x13);
-  out[1] = ((0xffffffffffffe + x7) - x15);
-  out[2] = ((0xffffffffffffe + x9) - x17);
-  out[3] = ((0xffffffffffffe + x11) - x19);
-  out[4] = ((0xffffffffffffe + x10) - x18);
-  }}}}}}}}}}
-}
-
-// h = f - g
-// Can overlap h with f or g.
-static void fe_sub(fe_loose *h, const fe *f, const fe *g) {
-  assert_fe(f->v);
-  assert_fe(g->v);
-  fe_sub_impl(h->v, f->v, g->v);
-  assert_fe_loose(h->v);
-}
-
-static void fe_carry_impl(uint64_t out[5], const uint64_t in1[5]) {
-  { const uint64_t x7 = in1[4];
-  { const uint64_t x8 = in1[3];
-  { const uint64_t x6 = in1[2];
-  { const uint64_t x4 = in1[1];
-  { const uint64_t x2 = in1[0];
-  { uint64_t x9 = (x2 >> 0x33);
-  { uint64_t x10 = (x2 & 0x7ffffffffffff);
-  { uint64_t x11 = (x9 + x4);
-  { uint64_t x12 = (x11 >> 0x33);
-  { uint64_t x13 = (x11 & 0x7ffffffffffff);
-  { uint64_t x14 = (x12 + x6);
-  { uint64_t x15 = (x14 >> 0x33);
-  { uint64_t x16 = (x14 & 0x7ffffffffffff);
-  { uint64_t x17 = (x15 + x8);
-  { uint64_t x18 = (x17 >> 0x33);
-  { uint64_t x19 = (x17 & 0x7ffffffffffff);
-  { uint64_t x20 = (x18 + x7);
-  { uint64_t x21 = (x20 >> 0x33);
-  { uint64_t x22 = (x20 & 0x7ffffffffffff);
-  { uint64_t x23 = (x10 + (0x13 * x21));
-  { uint64_t x24 = (x23 >> 0x33);
-  { uint64_t x25 = (x23 & 0x7ffffffffffff);
-  { uint64_t x26 = (x24 + x13);
-  { uint64_t x27 = (x26 >> 0x33);
-  { uint64_t x28 = (x26 & 0x7ffffffffffff);
-  out[0] = x25;
-  out[1] = x28;
-  out[2] = (x27 + x16);
-  out[3] = x19;
-  out[4] = x22;
-  }}}}}}}}}}}}}}}}}}}}}}}}}
-}
-
-static void fe_carry(fe *h, const fe_loose* f) {
-  assert_fe_loose(f->v);
-  fe_carry_impl(h->v, f->v);
-  assert_fe(h->v);
-}
-
-static void fe_mul_impl(uint64_t out[5], const uint64_t in1[5], const uint64_t in2[5]) {
-  assert_fe_loose(in1);
-  assert_fe_loose(in2);
-  { const uint64_t x10 = in1[4];
-  { const uint64_t x11 = in1[3];
-  { const uint64_t x9 = in1[2];
-  { const uint64_t x7 = in1[1];
-  { const uint64_t x5 = in1[0];
-  { const uint64_t x18 = in2[4];
-  { const uint64_t x19 = in2[3];
-  { const uint64_t x17 = in2[2];
-  { const uint64_t x15 = in2[1];
-  { const uint64_t x13 = in2[0];
-  { uint128_t x20 = ((uint128_t)x5 * x13);
-  { uint128_t x21 = (((uint128_t)x5 * x15) + ((uint128_t)x7 * x13));
-  { uint128_t x22 = ((((uint128_t)x5 * x17) + ((uint128_t)x9 * x13)) + ((uint128_t)x7 * x15));
-  { uint128_t x23 = (((((uint128_t)x5 * x19) + ((uint128_t)x11 * x13)) + ((uint128_t)x7 * x17)) + ((uint128_t)x9 * x15));
-  { uint128_t x24 = ((((((uint128_t)x5 * x18) + ((uint128_t)x10 * x13)) + ((uint128_t)x11 * x15)) + ((uint128_t)x7 * x19)) + ((uint128_t)x9 * x17));
-  { uint64_t x25 = (x10 * 0x13);
-  { uint64_t x26 = (x7 * 0x13);
-  { uint64_t x27 = (x9 * 0x13);
-  { uint64_t x28 = (x11 * 0x13);
-  { uint128_t x29 = ((((x20 + ((uint128_t)x25 * x15)) + ((uint128_t)x26 * x18)) + ((uint128_t)x27 * x19)) + ((uint128_t)x28 * x17));
-  { uint128_t x30 = (((x21 + ((uint128_t)x25 * x17)) + ((uint128_t)x27 * x18)) + ((uint128_t)x28 * x19));
-  { uint128_t x31 = ((x22 + ((uint128_t)x25 * x19)) + ((uint128_t)x28 * x18));
-  { uint128_t x32 = (x23 + ((uint128_t)x25 * x18));
-  { uint64_t x33 = (uint64_t) (x29 >> 0x33);
-  { uint64_t x34 = ((uint64_t)x29 & 0x7ffffffffffff);
-  { uint128_t x35 = (x33 + x30);
-  { uint64_t x36 = (uint64_t) (x35 >> 0x33);
-  { uint64_t x37 = ((uint64_t)x35 & 0x7ffffffffffff);
-  { uint128_t x38 = (x36 + x31);
-  { uint64_t x39 = (uint64_t) (x38 >> 0x33);
-  { uint64_t x40 = ((uint64_t)x38 & 0x7ffffffffffff);
-  { uint128_t x41 = (x39 + x32);
-  { uint64_t x42 = (uint64_t) (x41 >> 0x33);
-  { uint64_t x43 = ((uint64_t)x41 & 0x7ffffffffffff);
-  { uint128_t x44 = (x42 + x24);
-  { uint64_t x45 = (uint64_t) (x44 >> 0x33);
-  { uint64_t x46 = ((uint64_t)x44 & 0x7ffffffffffff);
-  { uint64_t x47 = (x34 + (0x13 * x45));
-  { uint64_t x48 = (x47 >> 0x33);
-  { uint64_t x49 = (x47 & 0x7ffffffffffff);
-  { uint64_t x50 = (x48 + x37);
-  { uint64_t x51 = (x50 >> 0x33);
-  { uint64_t x52 = (x50 & 0x7ffffffffffff);
-  out[0] = x49;
-  out[1] = x52;
-  out[2] = (x51 + x40);
-  out[3] = x43;
-  out[4] = x46;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-  assert_fe(out);
-}
-
-static void fe_mul_ltt(fe_loose *h, const fe *f, const fe *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_mul_llt(fe_loose *h, const fe_loose *f, const fe *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_mul_ttt(fe *h, const fe *f, const fe *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_mul_tlt(fe *h, const fe_loose *f, const fe *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_mul_ttl(fe *h, const fe *f, const fe_loose *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_mul_tll(fe *h, const fe_loose *f, const fe_loose *g) {
-  fe_mul_impl(h->v, f->v, g->v);
-}
-
-static void fe_sqr_impl(uint64_t out[5], const uint64_t in1[5]) {
-  assert_fe_loose(in1);
-  { const uint64_t x7 = in1[4];
-  { const uint64_t x8 = in1[3];
-  { const uint64_t x6 = in1[2];
-  { const uint64_t x4 = in1[1];
-  { const uint64_t x2 = in1[0];
-  { uint64_t x9 = (x2 * 0x2);
-  { uint64_t x10 = (x4 * 0x2);
-  { uint64_t x11 = ((x6 * 0x2) * 0x13);
-  { uint64_t x12 = (x7 * 0x13);
-  { uint64_t x13 = (x12 * 0x2);
-  { uint128_t x14 = ((((uint128_t)x2 * x2) + ((uint128_t)x13 * x4)) + ((uint128_t)x11 * x8));
-  { uint128_t x15 = ((((uint128_t)x9 * x4) + ((uint128_t)x13 * x6)) + ((uint128_t)x8 * (x8 * 0x13)));
-  { uint128_t x16 = ((((uint128_t)x9 * x6) + ((uint128_t)x4 * x4)) + ((uint128_t)x13 * x8));
-  { uint128_t x17 = ((((uint128_t)x9 * x8) + ((uint128_t)x10 * x6)) + ((uint128_t)x7 * x12));
-  { uint128_t x18 = ((((uint128_t)x9 * x7) + ((uint128_t)x10 * x8)) + ((uint128_t)x6 * x6));
-  { uint64_t x19 = (uint64_t) (x14 >> 0x33);
-  { uint64_t x20 = ((uint64_t)x14 & 0x7ffffffffffff);
-  { uint128_t x21 = (x19 + x15);
-  { uint64_t x22 = (uint64_t) (x21 >> 0x33);
-  { uint64_t x23 = ((uint64_t)x21 & 0x7ffffffffffff);
-  { uint128_t x24 = (x22 + x16);
-  { uint64_t x25 = (uint64_t) (x24 >> 0x33);
-  { uint64_t x26 = ((uint64_t)x24 & 0x7ffffffffffff);
-  { uint128_t x27 = (x25 + x17);
-  { uint64_t x28 = (uint64_t) (x27 >> 0x33);
-  { uint64_t x29 = ((uint64_t)x27 & 0x7ffffffffffff);
-  { uint128_t x30 = (x28 + x18);
-  { uint64_t x31 = (uint64_t) (x30 >> 0x33);
-  { uint64_t x32 = ((uint64_t)x30 & 0x7ffffffffffff);
-  { uint64_t x33 = (x20 + (0x13 * x31));
-  { uint64_t x34 = (x33 >> 0x33);
-  { uint64_t x35 = (x33 & 0x7ffffffffffff);
-  { uint64_t x36 = (x34 + x23);
-  { uint64_t x37 = (x36 >> 0x33);
-  { uint64_t x38 = (x36 & 0x7ffffffffffff);
-  out[0] = x35;
-  out[1] = x38;
-  out[2] = (x37 + x26);
-  out[3] = x29;
-  out[4] = x32;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-  assert_fe(out);
-}
-
-static void fe_sq_tl(fe *h, const fe_loose *f) {
-  fe_sqr_impl(h->v, f->v);
-}
-
-static void fe_sq_tt(fe *h, const fe *f) {
-  fe_sqr_impl(h->v, f->v);
-}
-
-// Replace (f,g) with (g,f) if b == 1;
-// replace (f,g) with (f,g) if b == 0.
+// assert_fe asserts that |f| satisfies bounds:
 //
-// Preconditions: b in {0,1}.
-static void fe_cswap(fe *f, fe *g, uint64_t b) {
-  b = 0-b;
-  for (unsigned i = 0; i < 5; i++) {
-    uint64_t x = f->v[i] ^ g->v[i];
-    x &= b;
-    f->v[i] ^= x;
-    g->v[i] ^= x;
-  }
-}
-
-// NOTE: based on fiat-crypto fe_mul, edited for in2=121666, 0, 0..
-static void fe_mul_121666_impl(uint64_t out[5], const uint64_t in1[5]) {
-  { const uint64_t x10 = in1[4];
-  { const uint64_t x11 = in1[3];
-  { const uint64_t x9 = in1[2];
-  { const uint64_t x7 = in1[1];
-  { const uint64_t x5 = in1[0];
-  { const uint64_t x18 = 0;
-  { const uint64_t x19 = 0;
-  { const uint64_t x17 = 0;
-  { const uint64_t x15 = 0;
-  { const uint64_t x13 = 121666;
-  { uint128_t x20 = ((uint128_t)x5 * x13);
-  { uint128_t x21 = (((uint128_t)x5 * x15) + ((uint128_t)x7 * x13));
-  { uint128_t x22 = ((((uint128_t)x5 * x17) + ((uint128_t)x9 * x13)) + ((uint128_t)x7 * x15));
-  { uint128_t x23 = (((((uint128_t)x5 * x19) + ((uint128_t)x11 * x13)) + ((uint128_t)x7 * x17)) + ((uint128_t)x9 * x15));
-  { uint128_t x24 = ((((((uint128_t)x5 * x18) + ((uint128_t)x10 * x13)) + ((uint128_t)x11 * x15)) + ((uint128_t)x7 * x19)) + ((uint128_t)x9 * x17));
-  { uint64_t x25 = (x10 * 0x13);
-  { uint64_t x26 = (x7 * 0x13);
-  { uint64_t x27 = (x9 * 0x13);
-  { uint64_t x28 = (x11 * 0x13);
-  { uint128_t x29 = ((((x20 + ((uint128_t)x25 * x15)) + ((uint128_t)x26 * x18)) + ((uint128_t)x27 * x19)) + ((uint128_t)x28 * x17));
-  { uint128_t x30 = (((x21 + ((uint128_t)x25 * x17)) + ((uint128_t)x27 * x18)) + ((uint128_t)x28 * x19));
-  { uint128_t x31 = ((x22 + ((uint128_t)x25 * x19)) + ((uint128_t)x28 * x18));
-  { uint128_t x32 = (x23 + ((uint128_t)x25 * x18));
-  { uint64_t x33 = (uint64_t) (x29 >> 0x33);
-  { uint64_t x34 = ((uint64_t)x29 & 0x7ffffffffffff);
-  { uint128_t x35 = (x33 + x30);
-  { uint64_t x36 = (uint64_t) (x35 >> 0x33);
-  { uint64_t x37 = ((uint64_t)x35 & 0x7ffffffffffff);
-  { uint128_t x38 = (x36 + x31);
-  { uint64_t x39 = (uint64_t) (x38 >> 0x33);
-  { uint64_t x40 = ((uint64_t)x38 & 0x7ffffffffffff);
-  { uint128_t x41 = (x39 + x32);
-  { uint64_t x42 = (uint64_t) (x41 >> 0x33);
-  { uint64_t x43 = ((uint64_t)x41 & 0x7ffffffffffff);
-  { uint128_t x44 = (x42 + x24);
-  { uint64_t x45 = (uint64_t) (x44 >> 0x33);
-  { uint64_t x46 = ((uint64_t)x44 & 0x7ffffffffffff);
-  { uint64_t x47 = (x34 + (0x13 * x45));
-  { uint64_t x48 = (x47 >> 0x33);
-  { uint64_t x49 = (x47 & 0x7ffffffffffff);
-  { uint64_t x50 = (x48 + x37);
-  { uint64_t x51 = (x50 >> 0x33);
-  { uint64_t x52 = (x50 & 0x7ffffffffffff);
-  out[0] = x49;
-  out[1] = x52;
-  out[2] = (x51 + x40);
-  out[3] = x43;
-  out[4] = x46;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-}
-
-static void fe_mul121666(fe *h, const fe_loose *f) {
-  assert_fe_loose(f->v);
-  fe_mul_121666_impl(h->v, f->v);
-  assert_fe(h->v);
-}
-
-// Adapted from Fiat-synthesized |fe_sub_impl| with |out| = 0.
-static void fe_neg_impl(uint64_t out[5], const uint64_t in2[5]) {
-  { const uint64_t x10 = 0;
-  { const uint64_t x11 = 0;
-  { const uint64_t x9 = 0;
-  { const uint64_t x7 = 0;
-  { const uint64_t x5 = 0;
-  { const uint64_t x18 = in2[4];
-  { const uint64_t x19 = in2[3];
-  { const uint64_t x17 = in2[2];
-  { const uint64_t x15 = in2[1];
-  { const uint64_t x13 = in2[0];
-  out[0] = ((0xfffffffffffda + x5) - x13);
-  out[1] = ((0xffffffffffffe + x7) - x15);
-  out[2] = ((0xffffffffffffe + x9) - x17);
-  out[3] = ((0xffffffffffffe + x11) - x19);
-  out[4] = ((0xffffffffffffe + x10) - x18);
-  }}}}}}}}}}
-}
-
-// h = -f
-static void fe_neg(fe_loose *h, const fe *f) {
-  assert_fe(f->v);
-  fe_neg_impl(h->v, f->v);
-  assert_fe_loose(h->v);
-}
-
-// Replace (f,g) with (g,g) if b == 1;
-// replace (f,g) with (f,g) if b == 0.
+//  [[0x0 ~> 0x8cccccccccccc],
+//   [0x0 ~> 0x8cccccccccccc],
+//   [0x0 ~> 0x8cccccccccccc],
+//   [0x0 ~> 0x8cccccccccccc],
+//   [0x0 ~> 0x8cccccccccccc]]
 //
-// Preconditions: b in {0,1}.
-static void fe_cmov(fe_loose *f, const fe_loose *g, uint64_t b) {
-  b = 0-b;
-  for (unsigned i = 0; i < 5; i++) {
-    uint64_t x = f->v[i] ^ g->v[i];
-    x &= b;
-    f->v[i] ^= x;
-  }
-}
+// See comments in curve25519_64.h for which functions use these bounds for
+// inputs or outputs.
+#define assert_fe(f)                                                    \
+  do {                                                                  \
+    for (unsigned _assert_fe_i = 0; _assert_fe_i < 5; _assert_fe_i++) { \
+      assert(f[_assert_fe_i] <= UINT64_C(0x8cccccccccccc));             \
+    }                                                                   \
+  } while (0)
+
+// assert_fe_loose asserts that |f| satisfies bounds:
+//
+//  [[0x0 ~> 0x1a666666666664],
+//   [0x0 ~> 0x1a666666666664],
+//   [0x0 ~> 0x1a666666666664],
+//   [0x0 ~> 0x1a666666666664],
+//   [0x0 ~> 0x1a666666666664]]
+//
+// See comments in curve25519_64.h for which functions use these bounds for
+// inputs or outputs.
+#define assert_fe_loose(f)                                              \
+  do {                                                                  \
+    for (unsigned _assert_fe_i = 0; _assert_fe_i < 5; _assert_fe_i++) { \
+      assert(f[_assert_fe_i] <= UINT64_C(0x1a666666666664));            \
+    }                                                                   \
+  } while (0)
 
 #else
 
-#define assert_fe(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 10; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < 1.125*(1<<(26-(_assert_fe_i&1)))); \
-  } \
-} while (0)
+typedef uint32_t fe_limb_t;
+#define FE_NUM_LIMBS 10
 
-#define assert_fe_loose(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 10; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < 3.375*(1<<(26-(_assert_fe_i&1)))); \
-  } \
-} while (0)
+// assert_fe asserts that |f| satisfies bounds:
+//
+//  [[0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
+//   [0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
+//   [0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
+//   [0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
+//   [0x0 ~> 0x4666666], [0x0 ~> 0x2333333]]
+//
+// See comments in curve25519_32.h for which functions use these bounds for
+// inputs or outputs.
+#define assert_fe(f)                                                     \
+  do {                                                                   \
+    for (unsigned _assert_fe_i = 0; _assert_fe_i < 10; _assert_fe_i++) { \
+      assert(f[_assert_fe_i] <=                                          \
+             ((_assert_fe_i & 1) ? 0x2333333u : 0x4666666u));            \
+    }                                                                    \
+  } while (0)
 
-#define assert_fe_frozen(f) do { \
-  for (unsigned _assert_fe_i = 0; _assert_fe_i< 10; _assert_fe_i++) { \
-    assert(f[_assert_fe_i] < (1u<<(26-(_assert_fe_i&1)))); \
-  } \
-} while (0)
+// assert_fe_loose asserts that |f| satisfies bounds:
+//
+//  [[0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
+//   [0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
+//   [0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
+//   [0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
+//   [0x0 ~> 0xd333332], [0x0 ~> 0x6999999]]
+//
+// See comments in curve25519_32.h for which functions use these bounds for
+// inputs or outputs.
+#define assert_fe_loose(f)                                               \
+  do {                                                                   \
+    for (unsigned _assert_fe_i = 0; _assert_fe_i < 10; _assert_fe_i++) { \
+      assert(f[_assert_fe_i] <=                                          \
+             ((_assert_fe_i & 1) ? 0x6999999u : 0xd333332u));            \
+    }                                                                    \
+  } while (0)
 
-static void fe_frombytes_impl(uint32_t h[10], const uint8_t *s) {
-  // Ignores top bit of s.
-  uint32_t a0 = load_4(s);
-  uint32_t a1 = load_4(s+4);
-  uint32_t a2 = load_4(s+8);
-  uint32_t a3 = load_4(s+12);
-  uint32_t a4 = load_4(s+16);
-  uint32_t a5 = load_4(s+20);
-  uint32_t a6 = load_4(s+24);
-  uint32_t a7 = load_4(s+28);
-  h[0] = a0&((1<<26)-1);                    // 26 used, 32-26 left.   26
-  h[1] = (a0>>26) | ((a1&((1<<19)-1))<< 6); // (32-26) + 19 =  6+19 = 25
-  h[2] = (a1>>19) | ((a2&((1<<13)-1))<<13); // (32-19) + 13 = 13+13 = 26
-  h[3] = (a2>>13) | ((a3&((1<< 6)-1))<<19); // (32-13) +  6 = 19+ 6 = 25
-  h[4] = (a3>> 6);                          // (32- 6)              = 26
-  h[5] = a4&((1<<25)-1);                    //                        25
-  h[6] = (a4>>25) | ((a5&((1<<19)-1))<< 7); // (32-25) + 19 =  7+19 = 26
-  h[7] = (a5>>19) | ((a6&((1<<12)-1))<<13); // (32-19) + 12 = 13+12 = 25
-  h[8] = (a6>>12) | ((a7&((1<< 6)-1))<<20); // (32-12) +  6 = 20+ 6 = 26
-  h[9] = (a7>> 6)&((1<<25)-1); //                                     25
-  assert_fe(h);
+#endif  // BORINGSSL_CURVE25519_64BIT
+
+OPENSSL_STATIC_ASSERT(sizeof(fe) == sizeof(fe_limb_t) * FE_NUM_LIMBS,
+                      "fe_limb_t[FE_NUM_LIMBS] is inconsistent with fe");
+
+static void fe_frombytes_strict(fe *h, const uint8_t s[32]) {
+  // |fiat_25519_from_bytes| requires the top-most bit be clear.
+  assert((s[31] & 0x80) == 0);
+  fiat_25519_from_bytes(h->v, s);
+  assert_fe(h->v);
 }
 
-static void fe_frombytes(fe *h, const uint8_t *s) {
-  fe_frombytes_impl(h->v, s);
-}
-
-static void fe_freeze(uint32_t out[10], const uint32_t in1[10]) {
-  { const uint32_t x17 = in1[9];
-  { const uint32_t x18 = in1[8];
-  { const uint32_t x16 = in1[7];
-  { const uint32_t x14 = in1[6];
-  { const uint32_t x12 = in1[5];
-  { const uint32_t x10 = in1[4];
-  { const uint32_t x8 = in1[3];
-  { const uint32_t x6 = in1[2];
-  { const uint32_t x4 = in1[1];
-  { const uint32_t x2 = in1[0];
-  { uint32_t x20; uint8_t/*bool*/ x21 = subborrow_u26(0x0, x2, 0x3ffffed, &x20);
-  { uint32_t x23; uint8_t/*bool*/ x24 = subborrow_u25(x21, x4, 0x1ffffff, &x23);
-  { uint32_t x26; uint8_t/*bool*/ x27 = subborrow_u26(x24, x6, 0x3ffffff, &x26);
-  { uint32_t x29; uint8_t/*bool*/ x30 = subborrow_u25(x27, x8, 0x1ffffff, &x29);
-  { uint32_t x32; uint8_t/*bool*/ x33 = subborrow_u26(x30, x10, 0x3ffffff, &x32);
-  { uint32_t x35; uint8_t/*bool*/ x36 = subborrow_u25(x33, x12, 0x1ffffff, &x35);
-  { uint32_t x38; uint8_t/*bool*/ x39 = subborrow_u26(x36, x14, 0x3ffffff, &x38);
-  { uint32_t x41; uint8_t/*bool*/ x42 = subborrow_u25(x39, x16, 0x1ffffff, &x41);
-  { uint32_t x44; uint8_t/*bool*/ x45 = subborrow_u26(x42, x18, 0x3ffffff, &x44);
-  { uint32_t x47; uint8_t/*bool*/ x48 = subborrow_u25(x45, x17, 0x1ffffff, &x47);
-  { uint32_t x49 = cmovznz32(x48, 0x0, 0xffffffff);
-  { uint32_t x50 = (x49 & 0x3ffffed);
-  { uint32_t x52; uint8_t/*bool*/ x53 = addcarryx_u26(0x0, x20, x50, &x52);
-  { uint32_t x54 = (x49 & 0x1ffffff);
-  { uint32_t x56; uint8_t/*bool*/ x57 = addcarryx_u25(x53, x23, x54, &x56);
-  { uint32_t x58 = (x49 & 0x3ffffff);
-  { uint32_t x60; uint8_t/*bool*/ x61 = addcarryx_u26(x57, x26, x58, &x60);
-  { uint32_t x62 = (x49 & 0x1ffffff);
-  { uint32_t x64; uint8_t/*bool*/ x65 = addcarryx_u25(x61, x29, x62, &x64);
-  { uint32_t x66 = (x49 & 0x3ffffff);
-  { uint32_t x68; uint8_t/*bool*/ x69 = addcarryx_u26(x65, x32, x66, &x68);
-  { uint32_t x70 = (x49 & 0x1ffffff);
-  { uint32_t x72; uint8_t/*bool*/ x73 = addcarryx_u25(x69, x35, x70, &x72);
-  { uint32_t x74 = (x49 & 0x3ffffff);
-  { uint32_t x76; uint8_t/*bool*/ x77 = addcarryx_u26(x73, x38, x74, &x76);
-  { uint32_t x78 = (x49 & 0x1ffffff);
-  { uint32_t x80; uint8_t/*bool*/ x81 = addcarryx_u25(x77, x41, x78, &x80);
-  { uint32_t x82 = (x49 & 0x3ffffff);
-  { uint32_t x84; uint8_t/*bool*/ x85 = addcarryx_u26(x81, x44, x82, &x84);
-  { uint32_t x86 = (x49 & 0x1ffffff);
-  { uint32_t x88; addcarryx_u25(x85, x47, x86, &x88);
-  out[0] = x52;
-  out[1] = x56;
-  out[2] = x60;
-  out[3] = x64;
-  out[4] = x68;
-  out[5] = x72;
-  out[6] = x76;
-  out[7] = x80;
-  out[8] = x84;
-  out[9] = x88;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+static void fe_frombytes(fe *h, const uint8_t s[32]) {
+  uint8_t s_copy[32];
+  OPENSSL_memcpy(s_copy, s, 32);
+  s_copy[31] &= 0x7f;
+  fe_frombytes_strict(h, s_copy);
 }
 
 static void fe_tobytes(uint8_t s[32], const fe *f) {
   assert_fe(f->v);
-  uint32_t h[10];
-  fe_freeze(h, f->v);
-  assert_fe_frozen(h);
-
-  s[0] = h[0] >> 0;
-  s[1] = h[0] >> 8;
-  s[2] = h[0] >> 16;
-  s[3] = (h[0] >> 24) | (h[1] << 2);
-  s[4] = h[1] >> 6;
-  s[5] = h[1] >> 14;
-  s[6] = (h[1] >> 22) | (h[2] << 3);
-  s[7] = h[2] >> 5;
-  s[8] = h[2] >> 13;
-  s[9] = (h[2] >> 21) | (h[3] << 5);
-  s[10] = h[3] >> 3;
-  s[11] = h[3] >> 11;
-  s[12] = (h[3] >> 19) | (h[4] << 6);
-  s[13] = h[4] >> 2;
-  s[14] = h[4] >> 10;
-  s[15] = h[4] >> 18;
-  s[16] = h[5] >> 0;
-  s[17] = h[5] >> 8;
-  s[18] = h[5] >> 16;
-  s[19] = (h[5] >> 24) | (h[6] << 1);
-  s[20] = h[6] >> 7;
-  s[21] = h[6] >> 15;
-  s[22] = (h[6] >> 23) | (h[7] << 3);
-  s[23] = h[7] >> 5;
-  s[24] = h[7] >> 13;
-  s[25] = (h[7] >> 21) | (h[8] << 4);
-  s[26] = h[8] >> 4;
-  s[27] = h[8] >> 12;
-  s[28] = (h[8] >> 20) | (h[9] << 6);
-  s[29] = h[9] >> 2;
-  s[30] = h[9] >> 10;
-  s[31] = h[9] >> 18;
+  fiat_25519_to_bytes(s, f->v);
 }
 
 // h = 0
@@ -787,81 +198,13 @@ static void fe_loose_1(fe_loose *h) {
   h->v[0] = 1;
 }
 
-static void fe_add_impl(uint32_t out[10], const uint32_t in1[10], const uint32_t in2[10]) {
-  { const uint32_t x20 = in1[9];
-  { const uint32_t x21 = in1[8];
-  { const uint32_t x19 = in1[7];
-  { const uint32_t x17 = in1[6];
-  { const uint32_t x15 = in1[5];
-  { const uint32_t x13 = in1[4];
-  { const uint32_t x11 = in1[3];
-  { const uint32_t x9 = in1[2];
-  { const uint32_t x7 = in1[1];
-  { const uint32_t x5 = in1[0];
-  { const uint32_t x38 = in2[9];
-  { const uint32_t x39 = in2[8];
-  { const uint32_t x37 = in2[7];
-  { const uint32_t x35 = in2[6];
-  { const uint32_t x33 = in2[5];
-  { const uint32_t x31 = in2[4];
-  { const uint32_t x29 = in2[3];
-  { const uint32_t x27 = in2[2];
-  { const uint32_t x25 = in2[1];
-  { const uint32_t x23 = in2[0];
-  out[0] = (x5 + x23);
-  out[1] = (x7 + x25);
-  out[2] = (x9 + x27);
-  out[3] = (x11 + x29);
-  out[4] = (x13 + x31);
-  out[5] = (x15 + x33);
-  out[6] = (x17 + x35);
-  out[7] = (x19 + x37);
-  out[8] = (x21 + x39);
-  out[9] = (x20 + x38);
-  }}}}}}}}}}}}}}}}}}}}
-}
-
 // h = f + g
 // Can overlap h with f or g.
 static void fe_add(fe_loose *h, const fe *f, const fe *g) {
   assert_fe(f->v);
   assert_fe(g->v);
-  fe_add_impl(h->v, f->v, g->v);
+  fiat_25519_add(h->v, f->v, g->v);
   assert_fe_loose(h->v);
-}
-
-static void fe_sub_impl(uint32_t out[10], const uint32_t in1[10], const uint32_t in2[10]) {
-  { const uint32_t x20 = in1[9];
-  { const uint32_t x21 = in1[8];
-  { const uint32_t x19 = in1[7];
-  { const uint32_t x17 = in1[6];
-  { const uint32_t x15 = in1[5];
-  { const uint32_t x13 = in1[4];
-  { const uint32_t x11 = in1[3];
-  { const uint32_t x9 = in1[2];
-  { const uint32_t x7 = in1[1];
-  { const uint32_t x5 = in1[0];
-  { const uint32_t x38 = in2[9];
-  { const uint32_t x39 = in2[8];
-  { const uint32_t x37 = in2[7];
-  { const uint32_t x35 = in2[6];
-  { const uint32_t x33 = in2[5];
-  { const uint32_t x31 = in2[4];
-  { const uint32_t x29 = in2[3];
-  { const uint32_t x27 = in2[2];
-  { const uint32_t x25 = in2[1];
-  { const uint32_t x23 = in2[0];
-  out[0] = ((0x7ffffda + x5) - x23);
-  out[1] = ((0x3fffffe + x7) - x25);
-  out[2] = ((0x7fffffe + x9) - x27);
-  out[3] = ((0x3fffffe + x11) - x29);
-  out[4] = ((0x7fffffe + x13) - x31);
-  out[5] = ((0x3fffffe + x15) - x33);
-  out[6] = ((0x7fffffe + x17) - x35);
-  out[7] = ((0x3fffffe + x19) - x37);
-  out[8] = ((0x7fffffe + x21) - x39);
-  out[9] = ((0x3fffffe + x20) - x38);
-  }}}}}}}}}}}}}}}}}}}}
 }
 
 // h = f - g
@@ -869,190 +212,22 @@ static void fe_sub_impl(uint32_t out[10], const uint32_t in1[10], const uint32_t
 static void fe_sub(fe_loose *h, const fe *f, const fe *g) {
   assert_fe(f->v);
   assert_fe(g->v);
-  fe_sub_impl(h->v, f->v, g->v);
+  fiat_25519_sub(h->v, f->v, g->v);
   assert_fe_loose(h->v);
-}
-
-static void fe_carry_impl(uint32_t out[10], const uint32_t in1[10]) {
-  { const uint32_t x17 = in1[9];
-  { const uint32_t x18 = in1[8];
-  { const uint32_t x16 = in1[7];
-  { const uint32_t x14 = in1[6];
-  { const uint32_t x12 = in1[5];
-  { const uint32_t x10 = in1[4];
-  { const uint32_t x8 = in1[3];
-  { const uint32_t x6 = in1[2];
-  { const uint32_t x4 = in1[1];
-  { const uint32_t x2 = in1[0];
-  { uint32_t x19 = (x2 >> 0x1a);
-  { uint32_t x20 = (x2 & 0x3ffffff);
-  { uint32_t x21 = (x19 + x4);
-  { uint32_t x22 = (x21 >> 0x19);
-  { uint32_t x23 = (x21 & 0x1ffffff);
-  { uint32_t x24 = (x22 + x6);
-  { uint32_t x25 = (x24 >> 0x1a);
-  { uint32_t x26 = (x24 & 0x3ffffff);
-  { uint32_t x27 = (x25 + x8);
-  { uint32_t x28 = (x27 >> 0x19);
-  { uint32_t x29 = (x27 & 0x1ffffff);
-  { uint32_t x30 = (x28 + x10);
-  { uint32_t x31 = (x30 >> 0x1a);
-  { uint32_t x32 = (x30 & 0x3ffffff);
-  { uint32_t x33 = (x31 + x12);
-  { uint32_t x34 = (x33 >> 0x19);
-  { uint32_t x35 = (x33 & 0x1ffffff);
-  { uint32_t x36 = (x34 + x14);
-  { uint32_t x37 = (x36 >> 0x1a);
-  { uint32_t x38 = (x36 & 0x3ffffff);
-  { uint32_t x39 = (x37 + x16);
-  { uint32_t x40 = (x39 >> 0x19);
-  { uint32_t x41 = (x39 & 0x1ffffff);
-  { uint32_t x42 = (x40 + x18);
-  { uint32_t x43 = (x42 >> 0x1a);
-  { uint32_t x44 = (x42 & 0x3ffffff);
-  { uint32_t x45 = (x43 + x17);
-  { uint32_t x46 = (x45 >> 0x19);
-  { uint32_t x47 = (x45 & 0x1ffffff);
-  { uint32_t x48 = (x20 + (0x13 * x46));
-  { uint32_t x49 = (x48 >> 0x1a);
-  { uint32_t x50 = (x48 & 0x3ffffff);
-  { uint32_t x51 = (x49 + x23);
-  { uint32_t x52 = (x51 >> 0x19);
-  { uint32_t x53 = (x51 & 0x1ffffff);
-  out[0] = x50;
-  out[1] = x53;
-  out[2] = (x52 + x26);
-  out[3] = x29;
-  out[4] = x32;
-  out[5] = x35;
-  out[6] = x38;
-  out[7] = x41;
-  out[8] = x44;
-  out[9] = x47;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 }
 
 static void fe_carry(fe *h, const fe_loose* f) {
   assert_fe_loose(f->v);
-  fe_carry_impl(h->v, f->v);
+  fiat_25519_carry(h->v, f->v);
   assert_fe(h->v);
 }
 
-static void fe_mul_impl(uint32_t out[10], const uint32_t in1[10], const uint32_t in2[10]) {
+static void fe_mul_impl(fe_limb_t out[FE_NUM_LIMBS],
+                        const fe_limb_t in1[FE_NUM_LIMBS],
+                        const fe_limb_t in2[FE_NUM_LIMBS]) {
   assert_fe_loose(in1);
   assert_fe_loose(in2);
-  { const uint32_t x20 = in1[9];
-  { const uint32_t x21 = in1[8];
-  { const uint32_t x19 = in1[7];
-  { const uint32_t x17 = in1[6];
-  { const uint32_t x15 = in1[5];
-  { const uint32_t x13 = in1[4];
-  { const uint32_t x11 = in1[3];
-  { const uint32_t x9 = in1[2];
-  { const uint32_t x7 = in1[1];
-  { const uint32_t x5 = in1[0];
-  { const uint32_t x38 = in2[9];
-  { const uint32_t x39 = in2[8];
-  { const uint32_t x37 = in2[7];
-  { const uint32_t x35 = in2[6];
-  { const uint32_t x33 = in2[5];
-  { const uint32_t x31 = in2[4];
-  { const uint32_t x29 = in2[3];
-  { const uint32_t x27 = in2[2];
-  { const uint32_t x25 = in2[1];
-  { const uint32_t x23 = in2[0];
-  { uint64_t x40 = ((uint64_t)x23 * x5);
-  { uint64_t x41 = (((uint64_t)x23 * x7) + ((uint64_t)x25 * x5));
-  { uint64_t x42 = ((((uint64_t)(0x2 * x25) * x7) + ((uint64_t)x23 * x9)) + ((uint64_t)x27 * x5));
-  { uint64_t x43 = (((((uint64_t)x25 * x9) + ((uint64_t)x27 * x7)) + ((uint64_t)x23 * x11)) + ((uint64_t)x29 * x5));
-  { uint64_t x44 = (((((uint64_t)x27 * x9) + (0x2 * (((uint64_t)x25 * x11) + ((uint64_t)x29 * x7)))) + ((uint64_t)x23 * x13)) + ((uint64_t)x31 * x5));
-  { uint64_t x45 = (((((((uint64_t)x27 * x11) + ((uint64_t)x29 * x9)) + ((uint64_t)x25 * x13)) + ((uint64_t)x31 * x7)) + ((uint64_t)x23 * x15)) + ((uint64_t)x33 * x5));
-  { uint64_t x46 = (((((0x2 * ((((uint64_t)x29 * x11) + ((uint64_t)x25 * x15)) + ((uint64_t)x33 * x7))) + ((uint64_t)x27 * x13)) + ((uint64_t)x31 * x9)) + ((uint64_t)x23 * x17)) + ((uint64_t)x35 * x5));
-  { uint64_t x47 = (((((((((uint64_t)x29 * x13) + ((uint64_t)x31 * x11)) + ((uint64_t)x27 * x15)) + ((uint64_t)x33 * x9)) + ((uint64_t)x25 * x17)) + ((uint64_t)x35 * x7)) + ((uint64_t)x23 * x19)) + ((uint64_t)x37 * x5));
-  { uint64_t x48 = (((((((uint64_t)x31 * x13) + (0x2 * (((((uint64_t)x29 * x15) + ((uint64_t)x33 * x11)) + ((uint64_t)x25 * x19)) + ((uint64_t)x37 * x7)))) + ((uint64_t)x27 * x17)) + ((uint64_t)x35 * x9)) + ((uint64_t)x23 * x21)) + ((uint64_t)x39 * x5));
-  { uint64_t x49 = (((((((((((uint64_t)x31 * x15) + ((uint64_t)x33 * x13)) + ((uint64_t)x29 * x17)) + ((uint64_t)x35 * x11)) + ((uint64_t)x27 * x19)) + ((uint64_t)x37 * x9)) + ((uint64_t)x25 * x21)) + ((uint64_t)x39 * x7)) + ((uint64_t)x23 * x20)) + ((uint64_t)x38 * x5));
-  { uint64_t x50 = (((((0x2 * ((((((uint64_t)x33 * x15) + ((uint64_t)x29 * x19)) + ((uint64_t)x37 * x11)) + ((uint64_t)x25 * x20)) + ((uint64_t)x38 * x7))) + ((uint64_t)x31 * x17)) + ((uint64_t)x35 * x13)) + ((uint64_t)x27 * x21)) + ((uint64_t)x39 * x9));
-  { uint64_t x51 = (((((((((uint64_t)x33 * x17) + ((uint64_t)x35 * x15)) + ((uint64_t)x31 * x19)) + ((uint64_t)x37 * x13)) + ((uint64_t)x29 * x21)) + ((uint64_t)x39 * x11)) + ((uint64_t)x27 * x20)) + ((uint64_t)x38 * x9));
-  { uint64_t x52 = (((((uint64_t)x35 * x17) + (0x2 * (((((uint64_t)x33 * x19) + ((uint64_t)x37 * x15)) + ((uint64_t)x29 * x20)) + ((uint64_t)x38 * x11)))) + ((uint64_t)x31 * x21)) + ((uint64_t)x39 * x13));
-  { uint64_t x53 = (((((((uint64_t)x35 * x19) + ((uint64_t)x37 * x17)) + ((uint64_t)x33 * x21)) + ((uint64_t)x39 * x15)) + ((uint64_t)x31 * x20)) + ((uint64_t)x38 * x13));
-  { uint64_t x54 = (((0x2 * ((((uint64_t)x37 * x19) + ((uint64_t)x33 * x20)) + ((uint64_t)x38 * x15))) + ((uint64_t)x35 * x21)) + ((uint64_t)x39 * x17));
-  { uint64_t x55 = (((((uint64_t)x37 * x21) + ((uint64_t)x39 * x19)) + ((uint64_t)x35 * x20)) + ((uint64_t)x38 * x17));
-  { uint64_t x56 = (((uint64_t)x39 * x21) + (0x2 * (((uint64_t)x37 * x20) + ((uint64_t)x38 * x19))));
-  { uint64_t x57 = (((uint64_t)x39 * x20) + ((uint64_t)x38 * x21));
-  { uint64_t x58 = ((uint64_t)(0x2 * x38) * x20);
-  { uint64_t x59 = (x48 + (x58 << 0x4));
-  { uint64_t x60 = (x59 + (x58 << 0x1));
-  { uint64_t x61 = (x60 + x58);
-  { uint64_t x62 = (x47 + (x57 << 0x4));
-  { uint64_t x63 = (x62 + (x57 << 0x1));
-  { uint64_t x64 = (x63 + x57);
-  { uint64_t x65 = (x46 + (x56 << 0x4));
-  { uint64_t x66 = (x65 + (x56 << 0x1));
-  { uint64_t x67 = (x66 + x56);
-  { uint64_t x68 = (x45 + (x55 << 0x4));
-  { uint64_t x69 = (x68 + (x55 << 0x1));
-  { uint64_t x70 = (x69 + x55);
-  { uint64_t x71 = (x44 + (x54 << 0x4));
-  { uint64_t x72 = (x71 + (x54 << 0x1));
-  { uint64_t x73 = (x72 + x54);
-  { uint64_t x74 = (x43 + (x53 << 0x4));
-  { uint64_t x75 = (x74 + (x53 << 0x1));
-  { uint64_t x76 = (x75 + x53);
-  { uint64_t x77 = (x42 + (x52 << 0x4));
-  { uint64_t x78 = (x77 + (x52 << 0x1));
-  { uint64_t x79 = (x78 + x52);
-  { uint64_t x80 = (x41 + (x51 << 0x4));
-  { uint64_t x81 = (x80 + (x51 << 0x1));
-  { uint64_t x82 = (x81 + x51);
-  { uint64_t x83 = (x40 + (x50 << 0x4));
-  { uint64_t x84 = (x83 + (x50 << 0x1));
-  { uint64_t x85 = (x84 + x50);
-  { uint64_t x86 = (x85 >> 0x1a);
-  { uint32_t x87 = ((uint32_t)x85 & 0x3ffffff);
-  { uint64_t x88 = (x86 + x82);
-  { uint64_t x89 = (x88 >> 0x19);
-  { uint32_t x90 = ((uint32_t)x88 & 0x1ffffff);
-  { uint64_t x91 = (x89 + x79);
-  { uint64_t x92 = (x91 >> 0x1a);
-  { uint32_t x93 = ((uint32_t)x91 & 0x3ffffff);
-  { uint64_t x94 = (x92 + x76);
-  { uint64_t x95 = (x94 >> 0x19);
-  { uint32_t x96 = ((uint32_t)x94 & 0x1ffffff);
-  { uint64_t x97 = (x95 + x73);
-  { uint64_t x98 = (x97 >> 0x1a);
-  { uint32_t x99 = ((uint32_t)x97 & 0x3ffffff);
-  { uint64_t x100 = (x98 + x70);
-  { uint64_t x101 = (x100 >> 0x19);
-  { uint32_t x102 = ((uint32_t)x100 & 0x1ffffff);
-  { uint64_t x103 = (x101 + x67);
-  { uint64_t x104 = (x103 >> 0x1a);
-  { uint32_t x105 = ((uint32_t)x103 & 0x3ffffff);
-  { uint64_t x106 = (x104 + x64);
-  { uint64_t x107 = (x106 >> 0x19);
-  { uint32_t x108 = ((uint32_t)x106 & 0x1ffffff);
-  { uint64_t x109 = (x107 + x61);
-  { uint64_t x110 = (x109 >> 0x1a);
-  { uint32_t x111 = ((uint32_t)x109 & 0x3ffffff);
-  { uint64_t x112 = (x110 + x49);
-  { uint64_t x113 = (x112 >> 0x19);
-  { uint32_t x114 = ((uint32_t)x112 & 0x1ffffff);
-  { uint64_t x115 = (x87 + (0x13 * x113));
-  { uint32_t x116 = (uint32_t) (x115 >> 0x1a);
-  { uint32_t x117 = ((uint32_t)x115 & 0x3ffffff);
-  { uint32_t x118 = (x116 + x90);
-  { uint32_t x119 = (x118 >> 0x19);
-  { uint32_t x120 = (x118 & 0x1ffffff);
-  out[0] = x117;
-  out[1] = x120;
-  out[2] = (x119 + x93);
-  out[3] = x96;
-  out[4] = x99;
-  out[5] = x102;
-  out[6] = x105;
-  out[7] = x108;
-  out[8] = x111;
-  out[9] = x114;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+  fiat_25519_carry_mul(out, in1, in2);
   assert_fe(out);
 }
 
@@ -1080,297 +255,42 @@ static void fe_mul_tll(fe *h, const fe_loose *f, const fe_loose *g) {
   fe_mul_impl(h->v, f->v, g->v);
 }
 
-static void fe_sqr_impl(uint32_t out[10], const uint32_t in1[10]) {
-  assert_fe_loose(in1);
-  { const uint32_t x17 = in1[9];
-  { const uint32_t x18 = in1[8];
-  { const uint32_t x16 = in1[7];
-  { const uint32_t x14 = in1[6];
-  { const uint32_t x12 = in1[5];
-  { const uint32_t x10 = in1[4];
-  { const uint32_t x8 = in1[3];
-  { const uint32_t x6 = in1[2];
-  { const uint32_t x4 = in1[1];
-  { const uint32_t x2 = in1[0];
-  { uint64_t x19 = ((uint64_t)x2 * x2);
-  { uint64_t x20 = ((uint64_t)(0x2 * x2) * x4);
-  { uint64_t x21 = (0x2 * (((uint64_t)x4 * x4) + ((uint64_t)x2 * x6)));
-  { uint64_t x22 = (0x2 * (((uint64_t)x4 * x6) + ((uint64_t)x2 * x8)));
-  { uint64_t x23 = ((((uint64_t)x6 * x6) + ((uint64_t)(0x4 * x4) * x8)) + ((uint64_t)(0x2 * x2) * x10));
-  { uint64_t x24 = (0x2 * ((((uint64_t)x6 * x8) + ((uint64_t)x4 * x10)) + ((uint64_t)x2 * x12)));
-  { uint64_t x25 = (0x2 * (((((uint64_t)x8 * x8) + ((uint64_t)x6 * x10)) + ((uint64_t)x2 * x14)) + ((uint64_t)(0x2 * x4) * x12)));
-  { uint64_t x26 = (0x2 * (((((uint64_t)x8 * x10) + ((uint64_t)x6 * x12)) + ((uint64_t)x4 * x14)) + ((uint64_t)x2 * x16)));
-  { uint64_t x27 = (((uint64_t)x10 * x10) + (0x2 * ((((uint64_t)x6 * x14) + ((uint64_t)x2 * x18)) + (0x2 * (((uint64_t)x4 * x16) + ((uint64_t)x8 * x12))))));
-  { uint64_t x28 = (0x2 * ((((((uint64_t)x10 * x12) + ((uint64_t)x8 * x14)) + ((uint64_t)x6 * x16)) + ((uint64_t)x4 * x18)) + ((uint64_t)x2 * x17)));
-  { uint64_t x29 = (0x2 * (((((uint64_t)x12 * x12) + ((uint64_t)x10 * x14)) + ((uint64_t)x6 * x18)) + (0x2 * (((uint64_t)x8 * x16) + ((uint64_t)x4 * x17)))));
-  { uint64_t x30 = (0x2 * (((((uint64_t)x12 * x14) + ((uint64_t)x10 * x16)) + ((uint64_t)x8 * x18)) + ((uint64_t)x6 * x17)));
-  { uint64_t x31 = (((uint64_t)x14 * x14) + (0x2 * (((uint64_t)x10 * x18) + (0x2 * (((uint64_t)x12 * x16) + ((uint64_t)x8 * x17))))));
-  { uint64_t x32 = (0x2 * ((((uint64_t)x14 * x16) + ((uint64_t)x12 * x18)) + ((uint64_t)x10 * x17)));
-  { uint64_t x33 = (0x2 * ((((uint64_t)x16 * x16) + ((uint64_t)x14 * x18)) + ((uint64_t)(0x2 * x12) * x17)));
-  { uint64_t x34 = (0x2 * (((uint64_t)x16 * x18) + ((uint64_t)x14 * x17)));
-  { uint64_t x35 = (((uint64_t)x18 * x18) + ((uint64_t)(0x4 * x16) * x17));
-  { uint64_t x36 = ((uint64_t)(0x2 * x18) * x17);
-  { uint64_t x37 = ((uint64_t)(0x2 * x17) * x17);
-  { uint64_t x38 = (x27 + (x37 << 0x4));
-  { uint64_t x39 = (x38 + (x37 << 0x1));
-  { uint64_t x40 = (x39 + x37);
-  { uint64_t x41 = (x26 + (x36 << 0x4));
-  { uint64_t x42 = (x41 + (x36 << 0x1));
-  { uint64_t x43 = (x42 + x36);
-  { uint64_t x44 = (x25 + (x35 << 0x4));
-  { uint64_t x45 = (x44 + (x35 << 0x1));
-  { uint64_t x46 = (x45 + x35);
-  { uint64_t x47 = (x24 + (x34 << 0x4));
-  { uint64_t x48 = (x47 + (x34 << 0x1));
-  { uint64_t x49 = (x48 + x34);
-  { uint64_t x50 = (x23 + (x33 << 0x4));
-  { uint64_t x51 = (x50 + (x33 << 0x1));
-  { uint64_t x52 = (x51 + x33);
-  { uint64_t x53 = (x22 + (x32 << 0x4));
-  { uint64_t x54 = (x53 + (x32 << 0x1));
-  { uint64_t x55 = (x54 + x32);
-  { uint64_t x56 = (x21 + (x31 << 0x4));
-  { uint64_t x57 = (x56 + (x31 << 0x1));
-  { uint64_t x58 = (x57 + x31);
-  { uint64_t x59 = (x20 + (x30 << 0x4));
-  { uint64_t x60 = (x59 + (x30 << 0x1));
-  { uint64_t x61 = (x60 + x30);
-  { uint64_t x62 = (x19 + (x29 << 0x4));
-  { uint64_t x63 = (x62 + (x29 << 0x1));
-  { uint64_t x64 = (x63 + x29);
-  { uint64_t x65 = (x64 >> 0x1a);
-  { uint32_t x66 = ((uint32_t)x64 & 0x3ffffff);
-  { uint64_t x67 = (x65 + x61);
-  { uint64_t x68 = (x67 >> 0x19);
-  { uint32_t x69 = ((uint32_t)x67 & 0x1ffffff);
-  { uint64_t x70 = (x68 + x58);
-  { uint64_t x71 = (x70 >> 0x1a);
-  { uint32_t x72 = ((uint32_t)x70 & 0x3ffffff);
-  { uint64_t x73 = (x71 + x55);
-  { uint64_t x74 = (x73 >> 0x19);
-  { uint32_t x75 = ((uint32_t)x73 & 0x1ffffff);
-  { uint64_t x76 = (x74 + x52);
-  { uint64_t x77 = (x76 >> 0x1a);
-  { uint32_t x78 = ((uint32_t)x76 & 0x3ffffff);
-  { uint64_t x79 = (x77 + x49);
-  { uint64_t x80 = (x79 >> 0x19);
-  { uint32_t x81 = ((uint32_t)x79 & 0x1ffffff);
-  { uint64_t x82 = (x80 + x46);
-  { uint64_t x83 = (x82 >> 0x1a);
-  { uint32_t x84 = ((uint32_t)x82 & 0x3ffffff);
-  { uint64_t x85 = (x83 + x43);
-  { uint64_t x86 = (x85 >> 0x19);
-  { uint32_t x87 = ((uint32_t)x85 & 0x1ffffff);
-  { uint64_t x88 = (x86 + x40);
-  { uint64_t x89 = (x88 >> 0x1a);
-  { uint32_t x90 = ((uint32_t)x88 & 0x3ffffff);
-  { uint64_t x91 = (x89 + x28);
-  { uint64_t x92 = (x91 >> 0x19);
-  { uint32_t x93 = ((uint32_t)x91 & 0x1ffffff);
-  { uint64_t x94 = (x66 + (0x13 * x92));
-  { uint32_t x95 = (uint32_t) (x94 >> 0x1a);
-  { uint32_t x96 = ((uint32_t)x94 & 0x3ffffff);
-  { uint32_t x97 = (x95 + x69);
-  { uint32_t x98 = (x97 >> 0x19);
-  { uint32_t x99 = (x97 & 0x1ffffff);
-  out[0] = x96;
-  out[1] = x99;
-  out[2] = (x98 + x72);
-  out[3] = x75;
-  out[4] = x78;
-  out[5] = x81;
-  out[6] = x84;
-  out[7] = x87;
-  out[8] = x90;
-  out[9] = x93;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-  assert_fe(out);
-}
-
 static void fe_sq_tl(fe *h, const fe_loose *f) {
-  fe_sqr_impl(h->v, f->v);
+  assert_fe_loose(f->v);
+  fiat_25519_carry_square(h->v, f->v);
+  assert_fe(h->v);
 }
 
 static void fe_sq_tt(fe *h, const fe *f) {
-  fe_sqr_impl(h->v, f->v);
+  assert_fe_loose(f->v);
+  fiat_25519_carry_square(h->v, f->v);
+  assert_fe(h->v);
 }
 
 // Replace (f,g) with (g,f) if b == 1;
 // replace (f,g) with (f,g) if b == 0.
 //
 // Preconditions: b in {0,1}.
-static void fe_cswap(fe *f, fe *g, unsigned int b) {
+static void fe_cswap(fe *f, fe *g, fe_limb_t b) {
   b = 0-b;
-  unsigned i;
-  for (i = 0; i < 10; i++) {
-    uint32_t x = f->v[i] ^ g->v[i];
+  for (unsigned i = 0; i < FE_NUM_LIMBS; i++) {
+    fe_limb_t x = f->v[i] ^ g->v[i];
     x &= b;
     f->v[i] ^= x;
     g->v[i] ^= x;
   }
 }
 
-// NOTE: based on fiat-crypto fe_mul, edited for in2=121666, 0, 0..
-static void fe_mul_121666_impl(uint32_t out[10], const uint32_t in1[10]) {
-  { const uint32_t x20 = in1[9];
-  { const uint32_t x21 = in1[8];
-  { const uint32_t x19 = in1[7];
-  { const uint32_t x17 = in1[6];
-  { const uint32_t x15 = in1[5];
-  { const uint32_t x13 = in1[4];
-  { const uint32_t x11 = in1[3];
-  { const uint32_t x9 = in1[2];
-  { const uint32_t x7 = in1[1];
-  { const uint32_t x5 = in1[0];
-  { const uint32_t x38 = 0;
-  { const uint32_t x39 = 0;
-  { const uint32_t x37 = 0;
-  { const uint32_t x35 = 0;
-  { const uint32_t x33 = 0;
-  { const uint32_t x31 = 0;
-  { const uint32_t x29 = 0;
-  { const uint32_t x27 = 0;
-  { const uint32_t x25 = 0;
-  { const uint32_t x23 = 121666;
-  { uint64_t x40 = ((uint64_t)x23 * x5);
-  { uint64_t x41 = (((uint64_t)x23 * x7) + ((uint64_t)x25 * x5));
-  { uint64_t x42 = ((((uint64_t)(0x2 * x25) * x7) + ((uint64_t)x23 * x9)) + ((uint64_t)x27 * x5));
-  { uint64_t x43 = (((((uint64_t)x25 * x9) + ((uint64_t)x27 * x7)) + ((uint64_t)x23 * x11)) + ((uint64_t)x29 * x5));
-  { uint64_t x44 = (((((uint64_t)x27 * x9) + (0x2 * (((uint64_t)x25 * x11) + ((uint64_t)x29 * x7)))) + ((uint64_t)x23 * x13)) + ((uint64_t)x31 * x5));
-  { uint64_t x45 = (((((((uint64_t)x27 * x11) + ((uint64_t)x29 * x9)) + ((uint64_t)x25 * x13)) + ((uint64_t)x31 * x7)) + ((uint64_t)x23 * x15)) + ((uint64_t)x33 * x5));
-  { uint64_t x46 = (((((0x2 * ((((uint64_t)x29 * x11) + ((uint64_t)x25 * x15)) + ((uint64_t)x33 * x7))) + ((uint64_t)x27 * x13)) + ((uint64_t)x31 * x9)) + ((uint64_t)x23 * x17)) + ((uint64_t)x35 * x5));
-  { uint64_t x47 = (((((((((uint64_t)x29 * x13) + ((uint64_t)x31 * x11)) + ((uint64_t)x27 * x15)) + ((uint64_t)x33 * x9)) + ((uint64_t)x25 * x17)) + ((uint64_t)x35 * x7)) + ((uint64_t)x23 * x19)) + ((uint64_t)x37 * x5));
-  { uint64_t x48 = (((((((uint64_t)x31 * x13) + (0x2 * (((((uint64_t)x29 * x15) + ((uint64_t)x33 * x11)) + ((uint64_t)x25 * x19)) + ((uint64_t)x37 * x7)))) + ((uint64_t)x27 * x17)) + ((uint64_t)x35 * x9)) + ((uint64_t)x23 * x21)) + ((uint64_t)x39 * x5));
-  { uint64_t x49 = (((((((((((uint64_t)x31 * x15) + ((uint64_t)x33 * x13)) + ((uint64_t)x29 * x17)) + ((uint64_t)x35 * x11)) + ((uint64_t)x27 * x19)) + ((uint64_t)x37 * x9)) + ((uint64_t)x25 * x21)) + ((uint64_t)x39 * x7)) + ((uint64_t)x23 * x20)) + ((uint64_t)x38 * x5));
-  { uint64_t x50 = (((((0x2 * ((((((uint64_t)x33 * x15) + ((uint64_t)x29 * x19)) + ((uint64_t)x37 * x11)) + ((uint64_t)x25 * x20)) + ((uint64_t)x38 * x7))) + ((uint64_t)x31 * x17)) + ((uint64_t)x35 * x13)) + ((uint64_t)x27 * x21)) + ((uint64_t)x39 * x9));
-  { uint64_t x51 = (((((((((uint64_t)x33 * x17) + ((uint64_t)x35 * x15)) + ((uint64_t)x31 * x19)) + ((uint64_t)x37 * x13)) + ((uint64_t)x29 * x21)) + ((uint64_t)x39 * x11)) + ((uint64_t)x27 * x20)) + ((uint64_t)x38 * x9));
-  { uint64_t x52 = (((((uint64_t)x35 * x17) + (0x2 * (((((uint64_t)x33 * x19) + ((uint64_t)x37 * x15)) + ((uint64_t)x29 * x20)) + ((uint64_t)x38 * x11)))) + ((uint64_t)x31 * x21)) + ((uint64_t)x39 * x13));
-  { uint64_t x53 = (((((((uint64_t)x35 * x19) + ((uint64_t)x37 * x17)) + ((uint64_t)x33 * x21)) + ((uint64_t)x39 * x15)) + ((uint64_t)x31 * x20)) + ((uint64_t)x38 * x13));
-  { uint64_t x54 = (((0x2 * ((((uint64_t)x37 * x19) + ((uint64_t)x33 * x20)) + ((uint64_t)x38 * x15))) + ((uint64_t)x35 * x21)) + ((uint64_t)x39 * x17));
-  { uint64_t x55 = (((((uint64_t)x37 * x21) + ((uint64_t)x39 * x19)) + ((uint64_t)x35 * x20)) + ((uint64_t)x38 * x17));
-  { uint64_t x56 = (((uint64_t)x39 * x21) + (0x2 * (((uint64_t)x37 * x20) + ((uint64_t)x38 * x19))));
-  { uint64_t x57 = (((uint64_t)x39 * x20) + ((uint64_t)x38 * x21));
-  { uint64_t x58 = ((uint64_t)(0x2 * x38) * x20);
-  { uint64_t x59 = (x48 + (x58 << 0x4));
-  { uint64_t x60 = (x59 + (x58 << 0x1));
-  { uint64_t x61 = (x60 + x58);
-  { uint64_t x62 = (x47 + (x57 << 0x4));
-  { uint64_t x63 = (x62 + (x57 << 0x1));
-  { uint64_t x64 = (x63 + x57);
-  { uint64_t x65 = (x46 + (x56 << 0x4));
-  { uint64_t x66 = (x65 + (x56 << 0x1));
-  { uint64_t x67 = (x66 + x56);
-  { uint64_t x68 = (x45 + (x55 << 0x4));
-  { uint64_t x69 = (x68 + (x55 << 0x1));
-  { uint64_t x70 = (x69 + x55);
-  { uint64_t x71 = (x44 + (x54 << 0x4));
-  { uint64_t x72 = (x71 + (x54 << 0x1));
-  { uint64_t x73 = (x72 + x54);
-  { uint64_t x74 = (x43 + (x53 << 0x4));
-  { uint64_t x75 = (x74 + (x53 << 0x1));
-  { uint64_t x76 = (x75 + x53);
-  { uint64_t x77 = (x42 + (x52 << 0x4));
-  { uint64_t x78 = (x77 + (x52 << 0x1));
-  { uint64_t x79 = (x78 + x52);
-  { uint64_t x80 = (x41 + (x51 << 0x4));
-  { uint64_t x81 = (x80 + (x51 << 0x1));
-  { uint64_t x82 = (x81 + x51);
-  { uint64_t x83 = (x40 + (x50 << 0x4));
-  { uint64_t x84 = (x83 + (x50 << 0x1));
-  { uint64_t x85 = (x84 + x50);
-  { uint64_t x86 = (x85 >> 0x1a);
-  { uint32_t x87 = ((uint32_t)x85 & 0x3ffffff);
-  { uint64_t x88 = (x86 + x82);
-  { uint64_t x89 = (x88 >> 0x19);
-  { uint32_t x90 = ((uint32_t)x88 & 0x1ffffff);
-  { uint64_t x91 = (x89 + x79);
-  { uint64_t x92 = (x91 >> 0x1a);
-  { uint32_t x93 = ((uint32_t)x91 & 0x3ffffff);
-  { uint64_t x94 = (x92 + x76);
-  { uint64_t x95 = (x94 >> 0x19);
-  { uint32_t x96 = ((uint32_t)x94 & 0x1ffffff);
-  { uint64_t x97 = (x95 + x73);
-  { uint64_t x98 = (x97 >> 0x1a);
-  { uint32_t x99 = ((uint32_t)x97 & 0x3ffffff);
-  { uint64_t x100 = (x98 + x70);
-  { uint64_t x101 = (x100 >> 0x19);
-  { uint32_t x102 = ((uint32_t)x100 & 0x1ffffff);
-  { uint64_t x103 = (x101 + x67);
-  { uint64_t x104 = (x103 >> 0x1a);
-  { uint32_t x105 = ((uint32_t)x103 & 0x3ffffff);
-  { uint64_t x106 = (x104 + x64);
-  { uint64_t x107 = (x106 >> 0x19);
-  { uint32_t x108 = ((uint32_t)x106 & 0x1ffffff);
-  { uint64_t x109 = (x107 + x61);
-  { uint64_t x110 = (x109 >> 0x1a);
-  { uint32_t x111 = ((uint32_t)x109 & 0x3ffffff);
-  { uint64_t x112 = (x110 + x49);
-  { uint64_t x113 = (x112 >> 0x19);
-  { uint32_t x114 = ((uint32_t)x112 & 0x1ffffff);
-  { uint64_t x115 = (x87 + (0x13 * x113));
-  { uint32_t x116 = (uint32_t) (x115 >> 0x1a);
-  { uint32_t x117 = ((uint32_t)x115 & 0x3ffffff);
-  { uint32_t x118 = (x116 + x90);
-  { uint32_t x119 = (x118 >> 0x19);
-  { uint32_t x120 = (x118 & 0x1ffffff);
-  out[0] = x117;
-  out[1] = x120;
-  out[2] = (x119 + x93);
-  out[3] = x96;
-  out[4] = x99;
-  out[5] = x102;
-  out[6] = x105;
-  out[7] = x108;
-  out[8] = x111;
-  out[9] = x114;
-  }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
-}
-
 static void fe_mul121666(fe *h, const fe_loose *f) {
   assert_fe_loose(f->v);
-  fe_mul_121666_impl(h->v, f->v);
+  fiat_25519_carry_scmul_121666(h->v, f->v);
   assert_fe(h->v);
-}
-
-// Adapted from Fiat-synthesized |fe_sub_impl| with |out| = 0.
-static void fe_neg_impl(uint32_t out[10], const uint32_t in2[10]) {
-  { const uint32_t x20 = 0;
-  { const uint32_t x21 = 0;
-  { const uint32_t x19 = 0;
-  { const uint32_t x17 = 0;
-  { const uint32_t x15 = 0;
-  { const uint32_t x13 = 0;
-  { const uint32_t x11 = 0;
-  { const uint32_t x9 = 0;
-  { const uint32_t x7 = 0;
-  { const uint32_t x5 = 0;
-  { const uint32_t x38 = in2[9];
-  { const uint32_t x39 = in2[8];
-  { const uint32_t x37 = in2[7];
-  { const uint32_t x35 = in2[6];
-  { const uint32_t x33 = in2[5];
-  { const uint32_t x31 = in2[4];
-  { const uint32_t x29 = in2[3];
-  { const uint32_t x27 = in2[2];
-  { const uint32_t x25 = in2[1];
-  { const uint32_t x23 = in2[0];
-  out[0] = ((0x7ffffda + x5) - x23);
-  out[1] = ((0x3fffffe + x7) - x25);
-  out[2] = ((0x7fffffe + x9) - x27);
-  out[3] = ((0x3fffffe + x11) - x29);
-  out[4] = ((0x7fffffe + x13) - x31);
-  out[5] = ((0x3fffffe + x15) - x33);
-  out[6] = ((0x7fffffe + x17) - x35);
-  out[7] = ((0x3fffffe + x19) - x37);
-  out[8] = ((0x7fffffe + x21) - x39);
-  out[9] = ((0x3fffffe + x20) - x38);
-  }}}}}}}}}}}}}}}}}}}}
 }
 
 // h = -f
 static void fe_neg(fe_loose *h, const fe *f) {
   assert_fe(f->v);
-  fe_neg_impl(h->v, f->v);
+  fiat_25519_opp(h->v, f->v);
   assert_fe_loose(h->v);
 }
 
@@ -1378,17 +298,21 @@ static void fe_neg(fe_loose *h, const fe *f) {
 // replace (f,g) with (f,g) if b == 0.
 //
 // Preconditions: b in {0,1}.
-static void fe_cmov(fe_loose *f, const fe_loose *g, unsigned b) {
+static void fe_cmov(fe_loose *f, const fe_loose *g, fe_limb_t b) {
+  // Silence an unused function warning. |fiat_25519_selectznz| isn't quite the
+  // calling convention the rest of this code wants, so implement it by hand.
+  //
+  // TODO(davidben): Switch to fiat's calling convention, or ask fiat to emit a
+  // different one.
+  (void)fiat_25519_selectznz;
+
   b = 0-b;
-  unsigned i;
-  for (i = 0; i < 10; i++) {
-    uint32_t x = f->v[i] ^ g->v[i];
+  for (unsigned i = 0; i < FE_NUM_LIMBS; i++) {
+    fe_limb_t x = f->v[i] ^ g->v[i];
     x &= b;
     f->v[i] ^= x;
   }
 }
-
-#endif  // BORINGSSL_CURVE25519_64BIT
 
 // h = f
 static void fe_copy(fe *h, const fe *f) {
@@ -1584,7 +508,7 @@ static void ge_p3_tobytes(uint8_t s[32], const ge_p3 *h) {
   s[31] ^= fe_isnegative(&x) << 7;
 }
 
-int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t *s) {
+int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t s[32]) {
   fe u;
   fe_loose v;
   fe v3;
@@ -1813,10 +737,12 @@ void x25519_ge_scalarmult_small_precomp(
 
   unsigned i;
   for (i = 0; i < 15; i++) {
+    // The precomputed table is assumed to already clear the top bit, so
+    // |fe_frombytes_strict| may be used directly.
     const uint8_t *bytes = &precomp_table[i*(2 * 32)];
     fe x, y;
-    fe_frombytes(&x, bytes);
-    fe_frombytes(&y, bytes + 32);
+    fe_frombytes_strict(&x, bytes);
+    fe_frombytes_strict(&y, bytes + 32);
 
     ge_precomp *out = &multiples[i];
     fe_add(&out->yplusx, &y, &x);
@@ -2120,6 +1046,12 @@ static void ge_double_scalarmult_vartime(ge_p2 *r, const uint8_t *a,
   }
 }
 
+// int64_lshift21 returns |a << 21| but is defined when shifting bits into the
+// sign bit. This works around a language flaw in C.
+static inline int64_t int64_lshift21(int64_t a) {
+  return (int64_t)((uint64_t)a << 21);
+}
+
 // The set of scalars is \Z/l
 // where l = 2^252 + 27742317777372353535851937790883648493.
 
@@ -2223,38 +1155,38 @@ void x25519_sc_reduce(uint8_t s[64]) {
 
   carry6 = (s6 + (1 << 20)) >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry8 = (s8 + (1 << 20)) >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry10 = (s10 + (1 << 20)) >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
   carry12 = (s12 + (1 << 20)) >> 21;
   s13 += carry12;
-  s12 -= carry12 << 21;
+  s12 -= int64_lshift21(carry12);
   carry14 = (s14 + (1 << 20)) >> 21;
   s15 += carry14;
-  s14 -= carry14 << 21;
+  s14 -= int64_lshift21(carry14);
   carry16 = (s16 + (1 << 20)) >> 21;
   s17 += carry16;
-  s16 -= carry16 << 21;
+  s16 -= int64_lshift21(carry16);
 
   carry7 = (s7 + (1 << 20)) >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry9 = (s9 + (1 << 20)) >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry11 = (s11 + (1 << 20)) >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
   carry13 = (s13 + (1 << 20)) >> 21;
   s14 += carry13;
-  s13 -= carry13 << 21;
+  s13 -= int64_lshift21(carry13);
   carry15 = (s15 + (1 << 20)) >> 21;
   s16 += carry15;
-  s15 -= carry15 << 21;
+  s15 -= int64_lshift21(carry15);
 
   s5 += s17 * 666643;
   s6 += s17 * 470296;
@@ -2306,41 +1238,41 @@ void x25519_sc_reduce(uint8_t s[64]) {
 
   carry0 = (s0 + (1 << 20)) >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry2 = (s2 + (1 << 20)) >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry4 = (s4 + (1 << 20)) >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry6 = (s6 + (1 << 20)) >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry8 = (s8 + (1 << 20)) >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry10 = (s10 + (1 << 20)) >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
 
   carry1 = (s1 + (1 << 20)) >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry3 = (s3 + (1 << 20)) >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry5 = (s5 + (1 << 20)) >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry7 = (s7 + (1 << 20)) >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry9 = (s9 + (1 << 20)) >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry11 = (s11 + (1 << 20)) >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
 
   s0 += s12 * 666643;
   s1 += s12 * 470296;
@@ -2352,40 +1284,40 @@ void x25519_sc_reduce(uint8_t s[64]) {
 
   carry0 = s0 >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry1 = s1 >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry2 = s2 >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry3 = s3 >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry4 = s4 >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry5 = s5 >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry6 = s6 >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry7 = s7 >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry8 = s8 >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry9 = s9 >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry10 = s10 >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
   carry11 = s11 >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
 
   s0 += s12 * 666643;
   s1 += s12 * 470296;
@@ -2397,37 +1329,37 @@ void x25519_sc_reduce(uint8_t s[64]) {
 
   carry0 = s0 >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry1 = s1 >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry2 = s2 >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry3 = s3 >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry4 = s4 >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry5 = s5 >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry6 = s6 >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry7 = s7 >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry8 = s8 >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry9 = s9 >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry10 = s10 >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
 
   s[0] = s0 >> 0;
   s[1] = s0 >> 8;
@@ -2593,74 +1525,74 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 
   carry0 = (s0 + (1 << 20)) >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry2 = (s2 + (1 << 20)) >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry4 = (s4 + (1 << 20)) >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry6 = (s6 + (1 << 20)) >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry8 = (s8 + (1 << 20)) >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry10 = (s10 + (1 << 20)) >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
   carry12 = (s12 + (1 << 20)) >> 21;
   s13 += carry12;
-  s12 -= carry12 << 21;
+  s12 -= int64_lshift21(carry12);
   carry14 = (s14 + (1 << 20)) >> 21;
   s15 += carry14;
-  s14 -= carry14 << 21;
+  s14 -= int64_lshift21(carry14);
   carry16 = (s16 + (1 << 20)) >> 21;
   s17 += carry16;
-  s16 -= carry16 << 21;
+  s16 -= int64_lshift21(carry16);
   carry18 = (s18 + (1 << 20)) >> 21;
   s19 += carry18;
-  s18 -= carry18 << 21;
+  s18 -= int64_lshift21(carry18);
   carry20 = (s20 + (1 << 20)) >> 21;
   s21 += carry20;
-  s20 -= carry20 << 21;
+  s20 -= int64_lshift21(carry20);
   carry22 = (s22 + (1 << 20)) >> 21;
   s23 += carry22;
-  s22 -= carry22 << 21;
+  s22 -= int64_lshift21(carry22);
 
   carry1 = (s1 + (1 << 20)) >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry3 = (s3 + (1 << 20)) >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry5 = (s5 + (1 << 20)) >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry7 = (s7 + (1 << 20)) >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry9 = (s9 + (1 << 20)) >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry11 = (s11 + (1 << 20)) >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
   carry13 = (s13 + (1 << 20)) >> 21;
   s14 += carry13;
-  s13 -= carry13 << 21;
+  s13 -= int64_lshift21(carry13);
   carry15 = (s15 + (1 << 20)) >> 21;
   s16 += carry15;
-  s15 -= carry15 << 21;
+  s15 -= int64_lshift21(carry15);
   carry17 = (s17 + (1 << 20)) >> 21;
   s18 += carry17;
-  s17 -= carry17 << 21;
+  s17 -= int64_lshift21(carry17);
   carry19 = (s19 + (1 << 20)) >> 21;
   s20 += carry19;
-  s19 -= carry19 << 21;
+  s19 -= int64_lshift21(carry19);
   carry21 = (s21 + (1 << 20)) >> 21;
   s22 += carry21;
-  s21 -= carry21 << 21;
+  s21 -= int64_lshift21(carry21);
 
   s11 += s23 * 666643;
   s12 += s23 * 470296;
@@ -2712,38 +1644,38 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 
   carry6 = (s6 + (1 << 20)) >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry8 = (s8 + (1 << 20)) >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry10 = (s10 + (1 << 20)) >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
   carry12 = (s12 + (1 << 20)) >> 21;
   s13 += carry12;
-  s12 -= carry12 << 21;
+  s12 -= int64_lshift21(carry12);
   carry14 = (s14 + (1 << 20)) >> 21;
   s15 += carry14;
-  s14 -= carry14 << 21;
+  s14 -= int64_lshift21(carry14);
   carry16 = (s16 + (1 << 20)) >> 21;
   s17 += carry16;
-  s16 -= carry16 << 21;
+  s16 -= int64_lshift21(carry16);
 
   carry7 = (s7 + (1 << 20)) >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry9 = (s9 + (1 << 20)) >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry11 = (s11 + (1 << 20)) >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
   carry13 = (s13 + (1 << 20)) >> 21;
   s14 += carry13;
-  s13 -= carry13 << 21;
+  s13 -= int64_lshift21(carry13);
   carry15 = (s15 + (1 << 20)) >> 21;
   s16 += carry15;
-  s15 -= carry15 << 21;
+  s15 -= int64_lshift21(carry15);
 
   s5 += s17 * 666643;
   s6 += s17 * 470296;
@@ -2795,41 +1727,41 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 
   carry0 = (s0 + (1 << 20)) >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry2 = (s2 + (1 << 20)) >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry4 = (s4 + (1 << 20)) >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry6 = (s6 + (1 << 20)) >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry8 = (s8 + (1 << 20)) >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry10 = (s10 + (1 << 20)) >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
 
   carry1 = (s1 + (1 << 20)) >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry3 = (s3 + (1 << 20)) >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry5 = (s5 + (1 << 20)) >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry7 = (s7 + (1 << 20)) >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry9 = (s9 + (1 << 20)) >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry11 = (s11 + (1 << 20)) >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
 
   s0 += s12 * 666643;
   s1 += s12 * 470296;
@@ -2841,40 +1773,40 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 
   carry0 = s0 >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry1 = s1 >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry2 = s2 >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry3 = s3 >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry4 = s4 >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry5 = s5 >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry6 = s6 >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry7 = s7 >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry8 = s8 >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry9 = s9 >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry10 = s10 >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
   carry11 = s11 >> 21;
   s12 += carry11;
-  s11 -= carry11 << 21;
+  s11 -= int64_lshift21(carry11);
 
   s0 += s12 * 666643;
   s1 += s12 * 470296;
@@ -2886,37 +1818,37 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 
   carry0 = s0 >> 21;
   s1 += carry0;
-  s0 -= carry0 << 21;
+  s0 -= int64_lshift21(carry0);
   carry1 = s1 >> 21;
   s2 += carry1;
-  s1 -= carry1 << 21;
+  s1 -= int64_lshift21(carry1);
   carry2 = s2 >> 21;
   s3 += carry2;
-  s2 -= carry2 << 21;
+  s2 -= int64_lshift21(carry2);
   carry3 = s3 >> 21;
   s4 += carry3;
-  s3 -= carry3 << 21;
+  s3 -= int64_lshift21(carry3);
   carry4 = s4 >> 21;
   s5 += carry4;
-  s4 -= carry4 << 21;
+  s4 -= int64_lshift21(carry4);
   carry5 = s5 >> 21;
   s6 += carry5;
-  s5 -= carry5 << 21;
+  s5 -= int64_lshift21(carry5);
   carry6 = s6 >> 21;
   s7 += carry6;
-  s6 -= carry6 << 21;
+  s6 -= int64_lshift21(carry6);
   carry7 = s7 >> 21;
   s8 += carry7;
-  s7 -= carry7 << 21;
+  s7 -= int64_lshift21(carry7);
   carry8 = s8 >> 21;
   s9 += carry8;
-  s8 -= carry8 << 21;
+  s8 -= int64_lshift21(carry8);
   carry9 = s9 >> 21;
   s10 += carry9;
-  s9 -= carry9 << 21;
+  s9 -= int64_lshift21(carry9);
   carry10 = s10 >> 21;
   s11 += carry10;
-  s10 -= carry10 << 21;
+  s10 -= int64_lshift21(carry10);
 
   s[0] = s0 >> 0;
   s[1] = s0 >> 8;

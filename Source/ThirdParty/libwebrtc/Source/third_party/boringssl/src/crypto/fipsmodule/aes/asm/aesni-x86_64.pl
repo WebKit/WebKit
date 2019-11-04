@@ -274,6 +274,13 @@ $code.=<<___;
 .type	${PREFIX}_encrypt,\@abi-omnipotent
 .align	16
 ${PREFIX}_encrypt:
+.cfi_startproc
+#ifndef NDEBUG
+#ifndef BORINGSSL_FIPS
+.extern	BORINGSSL_function_hit
+	movb \$1,BORINGSSL_function_hit+1(%rip)
+#endif
+#endif
 	movups	($inp),$inout0		# load input
 	mov	240($key),$rounds	# key->rounds
 ___
@@ -284,12 +291,14 @@ $code.=<<___;
 	movups	$inout0,($out)		# output
 	 pxor	$inout0,$inout0
 	ret
+.cfi_endproc
 .size	${PREFIX}_encrypt,.-${PREFIX}_encrypt
 
 .globl	${PREFIX}_decrypt
 .type	${PREFIX}_decrypt,\@abi-omnipotent
 .align	16
 ${PREFIX}_decrypt:
+.cfi_startproc
 	movups	($inp),$inout0		# load input
 	mov	240($key),$rounds	# key->rounds
 ___
@@ -300,6 +309,7 @@ $code.=<<___;
 	movups	$inout0,($out)		# output
 	 pxor	$inout0,$inout0
 	ret
+.cfi_endproc
 .size	${PREFIX}_decrypt, .-${PREFIX}_decrypt
 ___
 }
@@ -325,6 +335,7 @@ $code.=<<___;
 .type	_aesni_${dir}rypt2,\@abi-omnipotent
 .align	16
 _aesni_${dir}rypt2:
+.cfi_startproc
 	$movkey	($key),$rndkey0
 	shl	\$4,$rounds
 	$movkey	16($key),$rndkey1
@@ -350,6 +361,7 @@ _aesni_${dir}rypt2:
 	aes${dir}last	$rndkey0,$inout0
 	aes${dir}last	$rndkey0,$inout1
 	ret
+.cfi_endproc
 .size	_aesni_${dir}rypt2,.-_aesni_${dir}rypt2
 ___
 }
@@ -361,6 +373,7 @@ $code.=<<___;
 .type	_aesni_${dir}rypt3,\@abi-omnipotent
 .align	16
 _aesni_${dir}rypt3:
+.cfi_startproc
 	$movkey	($key),$rndkey0
 	shl	\$4,$rounds
 	$movkey	16($key),$rndkey1
@@ -391,6 +404,7 @@ _aesni_${dir}rypt3:
 	aes${dir}last	$rndkey0,$inout1
 	aes${dir}last	$rndkey0,$inout2
 	ret
+.cfi_endproc
 .size	_aesni_${dir}rypt3,.-_aesni_${dir}rypt3
 ___
 }
@@ -406,6 +420,7 @@ $code.=<<___;
 .type	_aesni_${dir}rypt4,\@abi-omnipotent
 .align	16
 _aesni_${dir}rypt4:
+.cfi_startproc
 	$movkey	($key),$rndkey0
 	shl	\$4,$rounds
 	$movkey	16($key),$rndkey1
@@ -442,6 +457,7 @@ _aesni_${dir}rypt4:
 	aes${dir}last	$rndkey0,$inout2
 	aes${dir}last	$rndkey0,$inout3
 	ret
+.cfi_endproc
 .size	_aesni_${dir}rypt4,.-_aesni_${dir}rypt4
 ___
 }
@@ -453,6 +469,7 @@ $code.=<<___;
 .type	_aesni_${dir}rypt6,\@abi-omnipotent
 .align	16
 _aesni_${dir}rypt6:
+.cfi_startproc
 	$movkey		($key),$rndkey0
 	shl		\$4,$rounds
 	$movkey		16($key),$rndkey1
@@ -503,6 +520,7 @@ _aesni_${dir}rypt6:
 	aes${dir}last	$rndkey0,$inout4
 	aes${dir}last	$rndkey0,$inout5
 	ret
+.cfi_endproc
 .size	_aesni_${dir}rypt6,.-_aesni_${dir}rypt6
 ___
 }
@@ -514,6 +532,7 @@ $code.=<<___;
 .type	_aesni_${dir}rypt8,\@abi-omnipotent
 .align	16
 _aesni_${dir}rypt8:
+.cfi_startproc
 	$movkey		($key),$rndkey0
 	shl		\$4,$rounds
 	$movkey		16($key),$rndkey1
@@ -574,6 +593,7 @@ _aesni_${dir}rypt8:
 	aes${dir}last	$rndkey0,$inout6
 	aes${dir}last	$rndkey0,$inout7
 	ret
+.cfi_endproc
 .size	_aesni_${dir}rypt8,.-_aesni_${dir}rypt8
 ___
 }
@@ -598,6 +618,7 @@ $code.=<<___;
 .type	${PREFIX}_ecb_encrypt,\@function,5
 .align	16
 ${PREFIX}_ecb_encrypt:
+.cfi_startproc
 ___
 $code.=<<___ if ($win64);
 	lea	-0x58(%rsp),%rsp
@@ -943,6 +964,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	${PREFIX}_ecb_encrypt,.-${PREFIX}_ecb_encrypt
 ___
 
@@ -956,7 +978,7 @@ ___
 # does not update *ivec! Nor does it finalize CMAC value
 # (see engine/eng_aesni.c for details)
 #
-{
+if (0) {  # Omit these functions in BoringSSL
 my $cmac="%r9";	# 6th argument
 
 my $increment="%xmm9";
@@ -1183,6 +1205,11 @@ $code.=<<___;
 .align	16
 ${PREFIX}_ctr32_encrypt_blocks:
 .cfi_startproc
+#ifndef NDEBUG
+#ifndef BORINGSSL_FIPS
+	movb \$1,BORINGSSL_function_hit(%rip)
+#endif
+#endif
 	cmp	\$1,$len
 	jne	.Lctr32_bulk
 
@@ -1743,7 +1770,7 @@ ___
 #	const AES_KEY *key1, const AES_KEY *key2
 #	const unsigned char iv[16]);
 #
-{
+if (0) {  # Omit these functions in BoringSSL
 my @tweak=map("%xmm$_",(10..15));
 my ($twmask,$twres,$twtmp)=("%xmm8","%xmm9",@tweak[4]);
 my ($key2,$ivp,$len_)=("%r8","%r9","%r9");
@@ -2749,7 +2776,7 @@ ___
 #	unsigned char offset_i[16], const unsigned char L_[][16],
 #	unsigned char checksum[16]);
 #
-{
+if (0) {  # Omit these functions in BoringSSL
 my @offset=map("%xmm$_",(10..15));
 my ($checksum,$rndkey0l)=("%xmm8","%xmm9");
 my ($block_num,$offset_p)=("%r8","%r9");		# 5th and 6th arguments
@@ -4236,7 +4263,7 @@ $code.=<<___;
 .cfi_endproc
 .size	${PREFIX}_cbc_encrypt,.-${PREFIX}_cbc_encrypt
 ___
-} 
+}
 # int ${PREFIX}_set_decrypt_key(const unsigned char *inp,
 #				int bits, AES_KEY *key)
 #
@@ -4327,6 +4354,11 @@ $code.=<<___;
 ${PREFIX}_set_encrypt_key:
 __aesni_set_encrypt_key:
 .cfi_startproc
+#ifndef NDEBUG
+#ifndef BORINGSSL_FIPS
+	movb \$1,BORINGSSL_function_hit+3(%rip)
+#endif
+#endif
 	.byte	0x48,0x83,0xEC,0x08	# sub rsp,8
 .cfi_adjust_cfa_offset	8
 	mov	\$-1,%rax
@@ -4822,6 +4854,9 @@ ctr_xts_se_handler:
 	jmp	.Lcommon_seh_tail
 .size	ctr_xts_se_handler,.-ctr_xts_se_handler
 
+___
+# BoringSSL omits the OCB functions.
+$code.=<<___ if (0);
 .type	ocb_se_handler,\@abi-omnipotent
 .align	16
 ocb_se_handler:
@@ -4973,33 +5008,9 @@ $code.=<<___ if ($PREFIX eq "aes_hw");
 	.rva	.LSEH_end_${PREFIX}_ecb_encrypt
 	.rva	.LSEH_info_ecb
 
-	.rva	.LSEH_begin_${PREFIX}_ccm64_encrypt_blocks
-	.rva	.LSEH_end_${PREFIX}_ccm64_encrypt_blocks
-	.rva	.LSEH_info_ccm64_enc
-
-	.rva	.LSEH_begin_${PREFIX}_ccm64_decrypt_blocks
-	.rva	.LSEH_end_${PREFIX}_ccm64_decrypt_blocks
-	.rva	.LSEH_info_ccm64_dec
-
 	.rva	.LSEH_begin_${PREFIX}_ctr32_encrypt_blocks
 	.rva	.LSEH_end_${PREFIX}_ctr32_encrypt_blocks
 	.rva	.LSEH_info_ctr32
-
-	.rva	.LSEH_begin_${PREFIX}_xts_encrypt
-	.rva	.LSEH_end_${PREFIX}_xts_encrypt
-	.rva	.LSEH_info_xts_enc
-
-	.rva	.LSEH_begin_${PREFIX}_xts_decrypt
-	.rva	.LSEH_end_${PREFIX}_xts_decrypt
-	.rva	.LSEH_info_xts_dec
-
-	.rva	.LSEH_begin_${PREFIX}_ocb_encrypt
-	.rva	.LSEH_end_${PREFIX}_ocb_encrypt
-	.rva	.LSEH_info_ocb_enc
-
-	.rva	.LSEH_begin_${PREFIX}_ocb_decrypt
-	.rva	.LSEH_end_${PREFIX}_ocb_decrypt
-	.rva	.LSEH_info_ocb_dec
 ___
 $code.=<<___;
 	.rva	.LSEH_begin_${PREFIX}_cbc_encrypt
@@ -5021,38 +5032,10 @@ $code.=<<___ if ($PREFIX eq "aes_hw");
 	.byte	9,0,0,0
 	.rva	ecb_ccm64_se_handler
 	.rva	.Lecb_enc_body,.Lecb_enc_ret		# HandlerData[]
-.LSEH_info_ccm64_enc:
-	.byte	9,0,0,0
-	.rva	ecb_ccm64_se_handler
-	.rva	.Lccm64_enc_body,.Lccm64_enc_ret	# HandlerData[]
-.LSEH_info_ccm64_dec:
-	.byte	9,0,0,0
-	.rva	ecb_ccm64_se_handler
-	.rva	.Lccm64_dec_body,.Lccm64_dec_ret	# HandlerData[]
 .LSEH_info_ctr32:
 	.byte	9,0,0,0
 	.rva	ctr_xts_se_handler
 	.rva	.Lctr32_body,.Lctr32_epilogue		# HandlerData[]
-.LSEH_info_xts_enc:
-	.byte	9,0,0,0
-	.rva	ctr_xts_se_handler
-	.rva	.Lxts_enc_body,.Lxts_enc_epilogue	# HandlerData[]
-.LSEH_info_xts_dec:
-	.byte	9,0,0,0
-	.rva	ctr_xts_se_handler
-	.rva	.Lxts_dec_body,.Lxts_dec_epilogue	# HandlerData[]
-.LSEH_info_ocb_enc:
-	.byte	9,0,0,0
-	.rva	ocb_se_handler
-	.rva	.Locb_enc_body,.Locb_enc_epilogue	# HandlerData[]
-	.rva	.Locb_enc_pop
-	.long	0
-.LSEH_info_ocb_dec:
-	.byte	9,0,0,0
-	.rva	ocb_se_handler
-	.rva	.Locb_dec_body,.Locb_dec_epilogue	# HandlerData[]
-	.rva	.Locb_dec_pop
-	.long	0
 ___
 $code.=<<___;
 .LSEH_info_cbc:
@@ -5125,4 +5108,4 @@ $code =~ s/\bmovbe\s+%eax,\s*([0-9]+)\(%rsp\)/movbe($1)/gem;
 
 print $code;
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

@@ -72,11 +72,6 @@ void AES_ecb_encrypt(const uint8_t *in, uint8_t *out, const AES_KEY *key,
   }
 }
 
-#if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_X86_64) || defined(OPENSSL_X86))
-void aes_nohw_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
-                          const AES_KEY *key, uint8_t *ivec, const int enc);
-#endif
-
 void AES_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                      const AES_KEY *key, uint8_t *ivec, const int enc) {
   if (hwaes_capable()) {
@@ -84,16 +79,17 @@ void AES_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
     return;
   }
 
-#if !defined(OPENSSL_NO_ASM) && \
-    (defined(OPENSSL_X86_64) || defined(OPENSSL_X86))
-  aes_nohw_cbc_encrypt(in, out, len, key, ivec, enc);
-#else
+#if defined(AES_NOHW_CBC)
+  if (!vpaes_capable()) {
+    aes_nohw_cbc_encrypt(in, out, len, key, ivec, enc);
+    return;
+  }
+#endif
   if (enc) {
     CRYPTO_cbc128_encrypt(in, out, len, key, ivec, AES_encrypt);
   } else {
     CRYPTO_cbc128_decrypt(in, out, len, key, ivec, AES_decrypt);
   }
-#endif
 }
 
 void AES_ofb128_encrypt(const uint8_t *in, uint8_t *out, size_t length,

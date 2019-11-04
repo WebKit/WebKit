@@ -30,6 +30,7 @@ section	.text code align=64
 
 ALIGN	16
 _vpaes_encrypt_core:
+
 	mov	r9,rdx
 	mov	r11,16
 	mov	eax,DWORD[240+rdx]
@@ -118,8 +119,185 @@ DB	102,15,56,0,193
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALIGN	16
+_vpaes_encrypt_core_2x:
+
+	mov	r9,rdx
+	mov	r11,16
+	mov	eax,DWORD[240+rdx]
+	movdqa	xmm1,xmm9
+	movdqa	xmm7,xmm9
+	movdqa	xmm2,XMMWORD[$L$k_ipt]
+	movdqa	xmm8,xmm2
+	pandn	xmm1,xmm0
+	pandn	xmm7,xmm6
+	movdqu	xmm5,XMMWORD[r9]
+
+	psrld	xmm1,4
+	psrld	xmm7,4
+	pand	xmm0,xmm9
+	pand	xmm6,xmm9
+DB	102,15,56,0,208
+DB	102,68,15,56,0,198
+	movdqa	xmm0,XMMWORD[(($L$k_ipt+16))]
+	movdqa	xmm6,xmm0
+DB	102,15,56,0,193
+DB	102,15,56,0,247
+	pxor	xmm2,xmm5
+	pxor	xmm8,xmm5
+	add	r9,16
+	pxor	xmm0,xmm2
+	pxor	xmm6,xmm8
+	lea	r10,[$L$k_mc_backward]
+	jmp	NEAR $L$enc2x_entry
+
+ALIGN	16
+$L$enc2x_loop:
+
+	movdqa	xmm4,XMMWORD[$L$k_sb1]
+	movdqa	xmm0,XMMWORD[(($L$k_sb1+16))]
+	movdqa	xmm12,xmm4
+	movdqa	xmm6,xmm0
+DB	102,15,56,0,226
+DB	102,69,15,56,0,224
+DB	102,15,56,0,195
+DB	102,65,15,56,0,243
+	pxor	xmm4,xmm5
+	pxor	xmm12,xmm5
+	movdqa	xmm5,XMMWORD[$L$k_sb2]
+	movdqa	xmm13,xmm5
+	pxor	xmm0,xmm4
+	pxor	xmm6,xmm12
+	movdqa	xmm1,XMMWORD[((-64))+r10*1+r11]
+
+DB	102,15,56,0,234
+DB	102,69,15,56,0,232
+	movdqa	xmm4,XMMWORD[r10*1+r11]
+
+	movdqa	xmm2,XMMWORD[(($L$k_sb2+16))]
+	movdqa	xmm8,xmm2
+DB	102,15,56,0,211
+DB	102,69,15,56,0,195
+	movdqa	xmm3,xmm0
+	movdqa	xmm11,xmm6
+	pxor	xmm2,xmm5
+	pxor	xmm8,xmm13
+DB	102,15,56,0,193
+DB	102,15,56,0,241
+	add	r9,16
+	pxor	xmm0,xmm2
+	pxor	xmm6,xmm8
+DB	102,15,56,0,220
+DB	102,68,15,56,0,220
+	add	r11,16
+	pxor	xmm3,xmm0
+	pxor	xmm11,xmm6
+DB	102,15,56,0,193
+DB	102,15,56,0,241
+	and	r11,0x30
+	sub	rax,1
+	pxor	xmm0,xmm3
+	pxor	xmm6,xmm11
+
+$L$enc2x_entry:
+
+	movdqa	xmm1,xmm9
+	movdqa	xmm7,xmm9
+	movdqa	xmm5,XMMWORD[(($L$k_inv+16))]
+	movdqa	xmm13,xmm5
+	pandn	xmm1,xmm0
+	pandn	xmm7,xmm6
+	psrld	xmm1,4
+	psrld	xmm7,4
+	pand	xmm0,xmm9
+	pand	xmm6,xmm9
+DB	102,15,56,0,232
+DB	102,68,15,56,0,238
+	movdqa	xmm3,xmm10
+	movdqa	xmm11,xmm10
+	pxor	xmm0,xmm1
+	pxor	xmm6,xmm7
+DB	102,15,56,0,217
+DB	102,68,15,56,0,223
+	movdqa	xmm4,xmm10
+	movdqa	xmm12,xmm10
+	pxor	xmm3,xmm5
+	pxor	xmm11,xmm13
+DB	102,15,56,0,224
+DB	102,68,15,56,0,230
+	movdqa	xmm2,xmm10
+	movdqa	xmm8,xmm10
+	pxor	xmm4,xmm5
+	pxor	xmm12,xmm13
+DB	102,15,56,0,211
+DB	102,69,15,56,0,195
+	movdqa	xmm3,xmm10
+	movdqa	xmm11,xmm10
+	pxor	xmm2,xmm0
+	pxor	xmm8,xmm6
+DB	102,15,56,0,220
+DB	102,69,15,56,0,220
+	movdqu	xmm5,XMMWORD[r9]
+
+	pxor	xmm3,xmm1
+	pxor	xmm11,xmm7
+	jnz	NEAR $L$enc2x_loop
+
+
+	movdqa	xmm4,XMMWORD[((-96))+r10]
+	movdqa	xmm0,XMMWORD[((-80))+r10]
+	movdqa	xmm12,xmm4
+	movdqa	xmm6,xmm0
+DB	102,15,56,0,226
+DB	102,69,15,56,0,224
+	pxor	xmm4,xmm5
+	pxor	xmm12,xmm5
+DB	102,15,56,0,195
+DB	102,65,15,56,0,243
+	movdqa	xmm1,XMMWORD[64+r10*1+r11]
+
+	pxor	xmm0,xmm4
+	pxor	xmm6,xmm12
+DB	102,15,56,0,193
+DB	102,15,56,0,241
+	DB	0F3h,0C3h		;repret
+
+
+
+
+
+
+
+
+
 ALIGN	16
 _vpaes_decrypt_core:
+
 	mov	r9,rdx
 	mov	eax,DWORD[240+rdx]
 	movdqa	xmm1,xmm9
@@ -224,8 +402,10 @@ DB	102,15,56,0,194
 
 
 
+
 ALIGN	16
 _vpaes_schedule_core:
+
 
 
 
@@ -409,8 +589,10 @@ $L$schedule_mangle_last_dec:
 
 
 
+
 ALIGN	16
 _vpaes_schedule_192_smear:
+
 	pshufd	xmm1,xmm6,0x80
 	pshufd	xmm0,xmm7,0xFE
 	pxor	xmm6,xmm1
@@ -440,8 +622,10 @@ _vpaes_schedule_192_smear:
 
 
 
+
 ALIGN	16
 _vpaes_schedule_round:
+
 
 	pxor	xmm1,xmm1
 DB	102,65,15,58,15,200,15
@@ -507,8 +691,10 @@ DB	102,15,56,0,195
 
 
 
+
 ALIGN	16
 _vpaes_schedule_transform:
+
 	movdqa	xmm1,xmm9
 	pandn	xmm1,xmm0
 	psrld	xmm1,4
@@ -545,8 +731,10 @@ DB	102,15,56,0,193
 
 
 
+
 ALIGN	16
 _vpaes_schedule_mangle:
+
 	movdqa	xmm4,xmm0
 	movdqa	xmm5,XMMWORD[$L$k_mc_forward]
 	test	rcx,rcx
@@ -616,6 +804,7 @@ DB	102,15,56,0,217
 
 
 
+
 global	vpaes_set_encrypt_key
 
 ALIGN	16
@@ -628,6 +817,14 @@ $L$SEH_begin_vpaes_set_encrypt_key:
 	mov	rsi,rdx
 	mov	rdx,r8
 
+
+
+%ifndef NDEBUG
+%ifndef BORINGSSL_FIPS
+EXTERN	BORINGSSL_function_hit
+	mov	BYTE[((BORINGSSL_function_hit+5))],1
+%endif
+%endif
 
 	lea	rsp,[((-184))+rsp]
 	movaps	XMMWORD[16+rsp],xmm6
@@ -665,6 +862,7 @@ $L$enc_key_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_vpaes_set_encrypt_key:
 
 global	vpaes_set_decrypt_key
@@ -678,6 +876,7 @@ $L$SEH_begin_vpaes_set_decrypt_key:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
+
 
 
 	lea	rsp,[((-184))+rsp]
@@ -721,6 +920,7 @@ $L$dec_key_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_vpaes_set_decrypt_key:
 
 global	vpaes_encrypt
@@ -736,6 +936,13 @@ $L$SEH_begin_vpaes_encrypt:
 	mov	rdx,r8
 
 
+
+%ifndef NDEBUG
+%ifndef BORINGSSL_FIPS
+EXTERN	BORINGSSL_function_hit
+	mov	BYTE[((BORINGSSL_function_hit+4))],1
+%endif
+%endif
 	lea	rsp,[((-184))+rsp]
 	movaps	XMMWORD[16+rsp],xmm6
 	movaps	XMMWORD[32+rsp],xmm7
@@ -767,6 +974,7 @@ $L$enc_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_vpaes_encrypt:
 
 global	vpaes_decrypt
@@ -780,6 +988,7 @@ $L$SEH_begin_vpaes_decrypt:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
+
 
 
 	lea	rsp,[((-184))+rsp]
@@ -813,6 +1022,7 @@ $L$dec_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_vpaes_decrypt:
 global	vpaes_cbc_encrypt
 
@@ -828,6 +1038,7 @@ $L$SEH_begin_vpaes_cbc_encrypt:
 	mov	rcx,r9
 	mov	r8,QWORD[40+rsp]
 	mov	r9,QWORD[48+rsp]
+
 
 
 	xchg	rdx,rcx
@@ -891,7 +1102,107 @@ $L$cbc_abort:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_vpaes_cbc_encrypt:
+global	vpaes_ctr32_encrypt_blocks
+
+ALIGN	16
+vpaes_ctr32_encrypt_blocks:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_vpaes_ctr32_encrypt_blocks:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+	mov	rcx,r9
+	mov	r8,QWORD[40+rsp]
+
+
+
+
+	xchg	rdx,rcx
+	test	rcx,rcx
+	jz	NEAR $L$ctr32_abort
+	lea	rsp,[((-184))+rsp]
+	movaps	XMMWORD[16+rsp],xmm6
+	movaps	XMMWORD[32+rsp],xmm7
+	movaps	XMMWORD[48+rsp],xmm8
+	movaps	XMMWORD[64+rsp],xmm9
+	movaps	XMMWORD[80+rsp],xmm10
+	movaps	XMMWORD[96+rsp],xmm11
+	movaps	XMMWORD[112+rsp],xmm12
+	movaps	XMMWORD[128+rsp],xmm13
+	movaps	XMMWORD[144+rsp],xmm14
+	movaps	XMMWORD[160+rsp],xmm15
+$L$ctr32_body:
+	movdqu	xmm0,XMMWORD[r8]
+	movdqa	xmm8,XMMWORD[$L$ctr_add_one]
+	sub	rsi,rdi
+	call	_vpaes_preheat
+	movdqa	xmm6,xmm0
+	pshufb	xmm6,XMMWORD[$L$rev_ctr]
+
+	test	rcx,1
+	jz	NEAR $L$ctr32_prep_loop
+
+
+
+	movdqu	xmm7,XMMWORD[rdi]
+	call	_vpaes_encrypt_core
+	pxor	xmm0,xmm7
+	paddd	xmm6,xmm8
+	movdqu	XMMWORD[rdi*1+rsi],xmm0
+	sub	rcx,1
+	lea	rdi,[16+rdi]
+	jz	NEAR $L$ctr32_done
+
+$L$ctr32_prep_loop:
+
+
+	movdqa	xmm14,xmm6
+	movdqa	xmm15,xmm6
+	paddd	xmm15,xmm8
+
+$L$ctr32_loop:
+	movdqa	xmm1,XMMWORD[$L$rev_ctr]
+	movdqa	xmm0,xmm14
+	movdqa	xmm6,xmm15
+DB	102,15,56,0,193
+DB	102,15,56,0,241
+	call	_vpaes_encrypt_core_2x
+	movdqu	xmm1,XMMWORD[rdi]
+	movdqu	xmm2,XMMWORD[16+rdi]
+	movdqa	xmm3,XMMWORD[$L$ctr_add_two]
+	pxor	xmm0,xmm1
+	pxor	xmm6,xmm2
+	paddd	xmm14,xmm3
+	paddd	xmm15,xmm3
+	movdqu	XMMWORD[rdi*1+rsi],xmm0
+	movdqu	XMMWORD[16+rdi*1+rsi],xmm6
+	sub	rcx,2
+	lea	rdi,[32+rdi]
+	jnz	NEAR $L$ctr32_loop
+
+$L$ctr32_done:
+	movaps	xmm6,XMMWORD[16+rsp]
+	movaps	xmm7,XMMWORD[32+rsp]
+	movaps	xmm8,XMMWORD[48+rsp]
+	movaps	xmm9,XMMWORD[64+rsp]
+	movaps	xmm10,XMMWORD[80+rsp]
+	movaps	xmm11,XMMWORD[96+rsp]
+	movaps	xmm12,XMMWORD[112+rsp]
+	movaps	xmm13,XMMWORD[128+rsp]
+	movaps	xmm14,XMMWORD[144+rsp]
+	movaps	xmm15,XMMWORD[160+rsp]
+	lea	rsp,[184+rsp]
+$L$ctr32_epilogue:
+$L$ctr32_abort:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+
+$L$SEH_end_vpaes_ctr32_encrypt_blocks:
 
 
 
@@ -901,6 +1212,7 @@ $L$SEH_end_vpaes_cbc_encrypt:
 
 ALIGN	16
 _vpaes_preheat:
+
 	lea	r10,[$L$k_s0F]
 	movdqa	xmm10,XMMWORD[((-32))+r10]
 	movdqa	xmm11,XMMWORD[((-16))+r10]
@@ -910,6 +1222,7 @@ _vpaes_preheat:
 	movdqa	xmm15,XMMWORD[80+r10]
 	movdqa	xmm14,XMMWORD[96+r10]
 	DB	0F3h,0C3h		;repret
+
 
 
 
@@ -1012,6 +1325,17 @@ $L$k_dsbe:
 $L$k_dsbo:
 	DQ	0x1387EA537EF94000,0xC7AA6DB9D4943E2D
 	DQ	0x12D7560F93441D00,0xCA4B8159D8C58E9C
+
+
+$L$rev_ctr:
+	DQ	0x0706050403020100,0x0c0d0e0f0b0a0908
+
+
+$L$ctr_add_one:
+	DQ	0x0000000000000000,0x0000000100000000
+$L$ctr_add_two:
+	DQ	0x0000000000000000,0x0000000200000000
+
 DB	86,101,99,116,111,114,32,80,101,114,109,117,116,97,116,105
 DB	111,110,32,65,69,83,32,102,111,114,32,120,56,54,95,54
 DB	52,47,83,83,83,69,51,44,32,77,105,107,101,32,72,97
@@ -1120,6 +1444,10 @@ ALIGN	4
 	DD	$L$SEH_end_vpaes_cbc_encrypt wrt ..imagebase
 	DD	$L$SEH_info_vpaes_cbc_encrypt wrt ..imagebase
 
+	DD	$L$SEH_begin_vpaes_ctr32_encrypt_blocks wrt ..imagebase
+	DD	$L$SEH_end_vpaes_ctr32_encrypt_blocks wrt ..imagebase
+	DD	$L$SEH_info_vpaes_ctr32_encrypt_blocks wrt ..imagebase
+
 section	.xdata rdata align=8
 ALIGN	8
 $L$SEH_info_vpaes_set_encrypt_key:
@@ -1142,3 +1470,7 @@ $L$SEH_info_vpaes_cbc_encrypt:
 DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
 	DD	$L$cbc_body wrt ..imagebase,$L$cbc_epilogue wrt ..imagebase
+$L$SEH_info_vpaes_ctr32_encrypt_blocks:
+DB	9,0,0,0
+	DD	se_handler wrt ..imagebase
+	DD	$L$ctr32_body wrt ..imagebase,$L$ctr32_epilogue wrt ..imagebase

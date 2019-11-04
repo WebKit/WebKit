@@ -488,7 +488,7 @@ $code.=<<___;
 # void ecp_nistz256_ord_sqr_mont(
 #   uint64_t res[4],
 #   uint64_t a[4],
-#   int rep);
+#   uint64_t rep);
 
 .globl	ecp_nistz256_ord_sqr_mont
 .type	ecp_nistz256_ord_sqr_mont,\@function,3
@@ -1320,6 +1320,7 @@ $code.=<<___;
 .type	__ecp_nistz256_mul_montq,\@abi-omnipotent
 .align	32
 __ecp_nistz256_mul_montq:
+.cfi_startproc
 	########################################################################
 	# Multiply a by b[0]
 	mov	%rax, $t1
@@ -1531,6 +1532,7 @@ __ecp_nistz256_mul_montq:
 	mov	$acc1, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_mul_montq,.-__ecp_nistz256_mul_montq
 
 ################################################################################
@@ -1615,6 +1617,7 @@ $code.=<<___;
 .type	__ecp_nistz256_sqr_montq,\@abi-omnipotent
 .align	32
 __ecp_nistz256_sqr_montq:
+.cfi_startproc
 	mov	%rax, $acc5
 	mulq	$acc6			# a[1]*a[0]
 	mov	%rax, $acc1
@@ -1772,6 +1775,7 @@ __ecp_nistz256_sqr_montq:
 	mov	$acc7, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_sqr_montq,.-__ecp_nistz256_sqr_montq
 ___
 
@@ -1780,6 +1784,7 @@ $code.=<<___;
 .type	__ecp_nistz256_mul_montx,\@abi-omnipotent
 .align	32
 __ecp_nistz256_mul_montx:
+.cfi_startproc
 	########################################################################
 	# Multiply by b[0]
 	mulx	$acc1, $acc0, $acc1
@@ -1942,11 +1947,13 @@ __ecp_nistz256_mul_montx:
 	mov	$acc1, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_mul_montx,.-__ecp_nistz256_mul_montx
 
 .type	__ecp_nistz256_sqr_montx,\@abi-omnipotent
 .align	32
 __ecp_nistz256_sqr_montx:
+.cfi_startproc
 	mulx	$acc6, $acc1, $acc2	# a[0]*a[1]
 	mulx	$acc7, $t0, $acc3	# a[0]*a[2]
 	xor	%eax, %eax
@@ -2070,6 +2077,7 @@ __ecp_nistz256_sqr_montx:
 	mov	$acc7, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_sqr_montx,.-__ecp_nistz256_sqr_montx
 ___
 }
@@ -2087,6 +2095,7 @@ $code.=<<___;
 .type	ecp_nistz256_select_w5,\@abi-omnipotent
 .align	32
 ecp_nistz256_select_w5:
+.cfi_startproc
 ___
 $code.=<<___	if ($avx>1);
 	leaq	OPENSSL_ia32cap_P(%rip), %rax
@@ -2176,6 +2185,7 @@ $code.=<<___	if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .LSEH_end_ecp_nistz256_select_w5:
 .size	ecp_nistz256_select_w5,.-ecp_nistz256_select_w5
 
@@ -2185,6 +2195,7 @@ $code.=<<___;
 .type	ecp_nistz256_select_w7,\@abi-omnipotent
 .align	32
 ecp_nistz256_select_w7:
+.cfi_startproc
 ___
 $code.=<<___	if ($avx>1);
 	leaq	OPENSSL_ia32cap_P(%rip), %rax
@@ -2263,6 +2274,7 @@ $code.=<<___	if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .LSEH_end_ecp_nistz256_select_w7:
 .size	ecp_nistz256_select_w7,.-ecp_nistz256_select_w7
 ___
@@ -2279,6 +2291,7 @@ $code.=<<___;
 .type	ecp_nistz256_avx2_select_w5,\@abi-omnipotent
 .align	32
 ecp_nistz256_avx2_select_w5:
+.cfi_startproc
 .Lavx2_select_w5:
 	vzeroupper
 ___
@@ -2366,6 +2379,7 @@ $code.=<<___	if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .LSEH_end_ecp_nistz256_avx2_select_w5:
 .size	ecp_nistz256_avx2_select_w5,.-ecp_nistz256_avx2_select_w5
 ___
@@ -2385,6 +2399,7 @@ $code.=<<___;
 .type	ecp_nistz256_avx2_select_w7,\@abi-omnipotent
 .align	32
 ecp_nistz256_avx2_select_w7:
+.cfi_startproc
 .Lavx2_select_w7:
 	vzeroupper
 ___
@@ -2487,6 +2502,7 @@ $code.=<<___	if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .LSEH_end_ecp_nistz256_avx2_select_w7:
 .size	ecp_nistz256_avx2_select_w7,.-ecp_nistz256_avx2_select_w7
 ___
@@ -2556,6 +2572,7 @@ $code.=<<___;
 .type	__ecp_nistz256_add_toq,\@abi-omnipotent
 .align	32
 __ecp_nistz256_add_toq:
+.cfi_startproc
 	xor	$t4,$t4
 	add	8*0($b_ptr), $a0
 	adc	8*1($b_ptr), $a1
@@ -2583,11 +2600,13 @@ __ecp_nistz256_add_toq:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_add_toq,.-__ecp_nistz256_add_toq
 
 .type	__ecp_nistz256_sub_fromq,\@abi-omnipotent
 .align	32
 __ecp_nistz256_sub_fromq:
+.cfi_startproc
 	sub	8*0($b_ptr), $a0
 	sbb	8*1($b_ptr), $a1
 	 mov	$a0, $t0
@@ -2614,11 +2633,13 @@ __ecp_nistz256_sub_fromq:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_sub_fromq,.-__ecp_nistz256_sub_fromq
 
 .type	__ecp_nistz256_subq,\@abi-omnipotent
 .align	32
 __ecp_nistz256_subq:
+.cfi_startproc
 	sub	$a0, $t0
 	sbb	$a1, $t1
 	 mov	$t0, $a0
@@ -2641,11 +2662,13 @@ __ecp_nistz256_subq:
 	cmovnz	$t3, $a3
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_subq,.-__ecp_nistz256_subq
 
 .type	__ecp_nistz256_mul_by_2q,\@abi-omnipotent
 .align	32
 __ecp_nistz256_mul_by_2q:
+.cfi_startproc
 	xor	$t4, $t4
 	add	$a0, $a0		# a0:a3+a0:a3
 	adc	$a1, $a1
@@ -2673,6 +2696,7 @@ __ecp_nistz256_mul_by_2q:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_mul_by_2q,.-__ecp_nistz256_mul_by_2q
 ___
 									}
@@ -3088,17 +3112,24 @@ $code.=<<___;
 
 	or	$acc5, $acc4			# see if result is zero
 	or	$acc0, $acc4
-	or	$acc1, $acc4
+	or	$acc1, $acc4			# !is_equal(U1, U2)
 
-	.byte	0x3e				# predict taken
-	jnz	.Ladd_proceed$x			# is_equal(U1,U2)?
 	movq	%xmm2, $acc0
 	movq	%xmm3, $acc1
-	test	$acc0, $acc0
-	jnz	.Ladd_proceed$x			# (in1infty || in2infty)?
-	test	$acc1, $acc1
-	jz	.Ladd_double$x			# is_equal(S1,S2)?
+	or	$acc0, $acc4
+	.byte	0x3e				# predict taken
+	jnz	.Ladd_proceed$x			# !is_equal(U1, U2) || in1infty || in2infty
 
+	# We now know A = B or A = -B and neither is infinity. Compare the
+	# y-coordinates via S1 and S2.
+	test	$acc1, $acc1
+	jz	.Ladd_double$x			# is_equal(S1, S2)
+
+	# A = -B, so the result is infinity.
+	#
+	# TODO(davidben): Does .Ladd_proceed handle this case? It seems to, in
+	# which case we should eliminate this special-case and simplify the
+	# timing analysis.
 	movq	%xmm0, $r_ptr			# restore $r_ptr
 	pxor	%xmm0, %xmm0
 	movdqu	%xmm0, 0x00($r_ptr)
@@ -3114,7 +3145,9 @@ $code.=<<___;
 	movq	%xmm1, $a_ptr			# restore $a_ptr
 	movq	%xmm0, $r_ptr			# restore $r_ptr
 	add	\$`32*(18-5)`, %rsp		# difference in frame sizes
+.cfi_adjust_cfa_offset	`-32*(18-5)`
 	jmp	.Lpoint_double_shortcut$x
+.cfi_adjust_cfa_offset	`32*(18-5)`
 
 .align	32
 .Ladd_proceed$x:
@@ -3651,6 +3684,7 @@ $code.=<<___;
 .type	__ecp_nistz256_add_tox,\@abi-omnipotent
 .align	32
 __ecp_nistz256_add_tox:
+.cfi_startproc
 	xor	$t4, $t4
 	adc	8*0($b_ptr), $a0
 	adc	8*1($b_ptr), $a1
@@ -3679,11 +3713,13 @@ __ecp_nistz256_add_tox:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_add_tox,.-__ecp_nistz256_add_tox
 
 .type	__ecp_nistz256_sub_fromx,\@abi-omnipotent
 .align	32
 __ecp_nistz256_sub_fromx:
+.cfi_startproc
 	xor	$t4, $t4
 	sbb	8*0($b_ptr), $a0
 	sbb	8*1($b_ptr), $a1
@@ -3712,11 +3748,13 @@ __ecp_nistz256_sub_fromx:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_sub_fromx,.-__ecp_nistz256_sub_fromx
 
 .type	__ecp_nistz256_subx,\@abi-omnipotent
 .align	32
 __ecp_nistz256_subx:
+.cfi_startproc
 	xor	$t4, $t4
 	sbb	$a0, $t0
 	sbb	$a1, $t1
@@ -3741,11 +3779,13 @@ __ecp_nistz256_subx:
 	cmovc	$t3, $a3
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_subx,.-__ecp_nistz256_subx
 
 .type	__ecp_nistz256_mul_by_2x,\@abi-omnipotent
 .align	32
 __ecp_nistz256_mul_by_2x:
+.cfi_startproc
 	xor	$t4, $t4
 	adc	$a0, $a0		# a0:a3+a0:a3
 	adc	$a1, $a1
@@ -3774,6 +3814,7 @@ __ecp_nistz256_mul_by_2x:
 	mov	$a3, 8*3($r_ptr)
 
 	ret
+.cfi_endproc
 .size	__ecp_nistz256_mul_by_2x,.-__ecp_nistz256_mul_by_2x
 ___
 									}
@@ -4112,4 +4153,4 @@ ___
 
 $code =~ s/\`([^\`]*)\`/eval $1/gem;
 print $code;
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

@@ -16,6 +16,7 @@
 #define OPENSSL_HEADER_CRYPTO_H
 
 #include <openssl/base.h>
+#include <openssl/sha.h>
 
 // Upstream OpenSSL defines |OPENSSL_malloc|, etc., in crypto.h rather than
 // mem.h.
@@ -58,9 +59,13 @@ OPENSSL_EXPORT int CRYPTO_has_asm(void);
 // which case it returns one.
 OPENSSL_EXPORT int FIPS_mode(void);
 
-// BORINGSSL_self_test triggers the FIPS KAT-based self tests. It returns one
-// on success and zero on error.
-OPENSSL_EXPORT int BORINGSSL_self_test(void);
+// BORINGSSL_self_test triggers the FIPS KAT-based self tests. It returns one on
+// success and zero on error. The argument is the integrity hash of the FIPS
+// module and may be used to check and write flag files to suppress duplicate
+// self-tests. If it is all zeros, no flag file will be checked nor written and
+// tests will always be run.
+OPENSSL_EXPORT int BORINGSSL_self_test(
+    const uint8_t module_sha512_hash[SHA512_DIGEST_LENGTH]);
 
 
 // Deprecated functions.

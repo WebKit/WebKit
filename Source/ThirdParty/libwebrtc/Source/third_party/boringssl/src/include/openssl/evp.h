@@ -170,22 +170,13 @@ OPENSSL_EXPORT int EVP_PKEY_assign_EC_KEY(EVP_PKEY *pkey, EC_KEY *key);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get0_EC_KEY(const EVP_PKEY *pkey);
 OPENSSL_EXPORT EC_KEY *EVP_PKEY_get1_EC_KEY(const EVP_PKEY *pkey);
 
-// EVP_PKEY_new_ed25519_public returns a newly allocated |EVP_PKEY| wrapping an
-// Ed25519 public key, or NULL on allocation error.
-OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_ed25519_public(
-    const uint8_t public_key[32]);
-
-// EVP_PKEY_new_ed25519_private returns a newly allocated |EVP_PKEY| wrapping an
-// Ed25519 private key, or NULL on allocation error.
-OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_ed25519_private(
-    const uint8_t private_key[64]);
-
 #define EVP_PKEY_NONE NID_undef
 #define EVP_PKEY_RSA NID_rsaEncryption
 #define EVP_PKEY_RSA_PSS NID_rsassaPss
 #define EVP_PKEY_DSA NID_dsa
 #define EVP_PKEY_EC NID_X9_62_id_ecPublicKey
 #define EVP_PKEY_ED25519 NID_ED25519
+#define EVP_PKEY_X25519 NID_X25519
 
 // EVP_PKEY_assign sets the underlying key of |pkey| to |key|, which must be of
 // the given type. It returns one if successful or zero if the |type| argument
@@ -239,6 +230,48 @@ OPENSSL_EXPORT EVP_PKEY *EVP_parse_private_key(CBS *cbs);
 // structure (RFC 5208) and appends the result to |cbb|. It returns one on
 // success and zero on error.
 OPENSSL_EXPORT int EVP_marshal_private_key(CBB *cbb, const EVP_PKEY *key);
+
+
+// Raw keys
+//
+// Some keys types support a "raw" serialization. Currently the only supported
+// raw format is Ed25519, where the public key and private key formats are those
+// specified in RFC 8032. Note the RFC 8032 private key format is the 32-byte
+// prefix of |ED25519_sign|'s 64-byte private key.
+
+// EVP_PKEY_new_raw_private_key returns a newly allocated |EVP_PKEY| wrapping a
+// private key of the specified type. It returns one on success and zero on
+// error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_private_key(int type, ENGINE *unused,
+                                                      const uint8_t *in,
+                                                      size_t len);
+
+// EVP_PKEY_new_raw_public_key returns a newly allocated |EVP_PKEY| wrapping a
+// public key of the specified type. It returns one on success and zero on
+// error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_new_raw_public_key(int type, ENGINE *unused,
+                                                     const uint8_t *in,
+                                                     size_t len);
+
+// EVP_PKEY_get_raw_private_key outputs the private key for |pkey| in raw form.
+// If |out| is NULL, it sets |*out_len| to the size of the raw private key.
+// Otherwise, it writes at most |*out_len| bytes to |out| and sets |*out_len| to
+// the number of bytes written.
+//
+// It returns one on success and zero if |pkey| has no private key, the key
+// type does not support a raw format, or the buffer is too small.
+OPENSSL_EXPORT int EVP_PKEY_get_raw_private_key(const EVP_PKEY *pkey,
+                                                uint8_t *out, size_t *out_len);
+
+// EVP_PKEY_get_raw_public_key outputs the public key for |pkey| in raw form.
+// If |out| is NULL, it sets |*out_len| to the size of the raw public key.
+// Otherwise, it writes at most |*out_len| bytes to |out| and sets |*out_len| to
+// the number of bytes written.
+//
+// It returns one on success and zero if |pkey| has no public key, the key
+// type does not support a raw format, or the buffer is too small.
+OPENSSL_EXPORT int EVP_PKEY_get_raw_public_key(const EVP_PKEY *pkey,
+                                               uint8_t *out, size_t *out_len);
 
 
 // Signing
@@ -646,9 +679,23 @@ OPENSSL_EXPORT int EVP_PKEY_derive(EVP_PKEY_CTX *ctx, uint8_t *key,
 OPENSSL_EXPORT int EVP_PKEY_keygen_init(EVP_PKEY_CTX *ctx);
 
 // EVP_PKEY_keygen performs a key generation operation using the values from
-// |ctx| and sets |*ppkey| to a fresh |EVP_PKEY| containing the resulting key.
+// |ctx|. If |*out_pkey| is non-NULL, it overwrites |*out_pkey| with the
+// resulting key. Otherwise, it sets |*out_pkey| to a newly-allocated |EVP_PKEY|
+// containing the result. It returns one on success or zero on error.
+OPENSSL_EXPORT int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **out_pkey);
+
+// EVP_PKEY_paramgen_init initialises an |EVP_PKEY_CTX| for a parameter
+// generation operation. It should be called before |EVP_PKEY_paramgen|.
+//
 // It returns one on success or zero on error.
-OPENSSL_EXPORT int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey);
+OPENSSL_EXPORT int EVP_PKEY_paramgen_init(EVP_PKEY_CTX *ctx);
+
+// EVP_PKEY_paramgen performs a parameter generation using the values from
+// |ctx|. If |*out_pkey| is non-NULL, it overwrites |*out_pkey| with the
+// resulting parameters, but no key. Otherwise, it sets |*out_pkey| to a
+// newly-allocated |EVP_PKEY| containing the result. It returns one on success
+// or zero on error.
+OPENSSL_EXPORT int EVP_PKEY_paramgen(EVP_PKEY_CTX *ctx, EVP_PKEY **out_pkey);
 
 
 // Generic control functions.
@@ -746,6 +793,15 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx,
                                                     const uint8_t **out_label);
 
 
+// EC specific control functions.
+
+// EVP_PKEY_CTX_set_ec_paramgen_curve_nid sets the curve used for
+// |EVP_PKEY_keygen| or |EVP_PKEY_paramgen| operations to |nid|. It returns one
+// on success and zero on error.
+OPENSSL_EXPORT int EVP_PKEY_CTX_set_ec_paramgen_curve_nid(EVP_PKEY_CTX *ctx,
+                                                          int nid);
+
+
 // Deprecated functions.
 
 // EVP_PKEY_DH is defined for compatibility, but it is impossible to create an
@@ -826,11 +882,50 @@ OPENSSL_EXPORT EVP_PKEY *d2i_PrivateKey(int type, EVP_PKEY **out,
 OPENSSL_EXPORT EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp,
                                             long len);
 
+// d2i_PublicKey parse a public key from |len| bytes at |*inp| in a type-
+// specific format specified by |type|. If |out| is not NULL then, on exit, a
+// pointer to the result is in |*out|. Note that, even if |*out| is already non-
+// NULL on entry, it will not be written to. Rather, a fresh |EVP_PKEY| is
+// allocated and the previous one is freed. On successful exit, |*inp| is
+// advanced past the decoded key. It returns the result or NULL on error.
+//
+// RSA keys are parsed as a DER-encoded RSAPublicKey (RFC 3447) structure.
+// Parsing EC keys is not supported by this function.
+//
+// Use |RSA_parse_public_key| instead.
+OPENSSL_EXPORT EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out,
+                                       const uint8_t **inp, long len);
+
 // EVP_PKEY_get0_DH returns NULL.
 OPENSSL_EXPORT DH *EVP_PKEY_get0_DH(const EVP_PKEY *pkey);
 
 // EVP_PKEY_get1_DH returns NULL.
 OPENSSL_EXPORT DH *EVP_PKEY_get1_DH(const EVP_PKEY *pkey);
+
+// EVP_PKEY_CTX_set_ec_param_enc returns one if |encoding| is
+// |OPENSSL_EC_NAMED_CURVE| or zero with an error otherwise.
+OPENSSL_EXPORT int EVP_PKEY_CTX_set_ec_param_enc(EVP_PKEY_CTX *ctx,
+                                                 int encoding);
+
+// EVP_PKEY_set1_tls_encodedpoint replaces |pkey| with a public key encoded by
+// |in|. It returns one on success and zero on error.
+//
+// This function only works on X25519 keys.
+OPENSSL_EXPORT int EVP_PKEY_set1_tls_encodedpoint(EVP_PKEY *pkey,
+                                                  const uint8_t *in,
+                                                  size_t len);
+
+// EVP_PKEY_get1_tls_encodedpoint sets |*out_ptr| to a newly-allocated buffer
+// containing the raw encoded public key for |pkey|. The caller must call
+// |OPENSSL_free| to release this buffer. The function returns the length of the
+// buffer on success and zero on error.
+//
+// This function only works on X25519 keys.
+OPENSSL_EXPORT size_t EVP_PKEY_get1_tls_encodedpoint(const EVP_PKEY *pkey,
+                                                     uint8_t **out_ptr);
+
+// EVP_PKEY_base_id calls |EVP_PKEY_id|.
+OPENSSL_EXPORT int EVP_PKEY_base_id(const EVP_PKEY *pkey);
 
 
 // Preprocessor compatibility section (hidden).
@@ -920,5 +1015,6 @@ BSSL_NAMESPACE_END
 #define EVP_R_INVALID_SIGNATURE 131
 #define EVP_R_MEMORY_LIMIT_EXCEEDED 132
 #define EVP_R_INVALID_PARAMETERS 133
+#define EVP_R_INVALID_PEER_KEY 134
 
 #endif  // OPENSSL_HEADER_EVP_H

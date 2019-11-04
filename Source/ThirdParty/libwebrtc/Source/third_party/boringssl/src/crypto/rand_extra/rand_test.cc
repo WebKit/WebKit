@@ -14,10 +14,15 @@
 
 #include <openssl/rand.h>
 
+#include <stdio.h>
+
 #include <gtest/gtest.h>
 
+#include <openssl/cpu.h>
 #include <openssl/span.h>
 
+#include "../fipsmodule/rand/internal.h"
+#include "../test/abi_test.h"
 #include "../test/test_util.h"
 
 #if defined(OPENSSL_THREADS)
@@ -28,7 +33,6 @@
 
 #if !defined(OPENSSL_WINDOWS)
 #include <errno.h>
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -183,4 +187,21 @@ TEST(RandTest, Threads) {
   // Draw entropy in parallel with lower concurrency than the previous maximum.
   RunConcurrentRands(kFewerThreads);
 }
-#endif
+#endif  // OPENSSL_THREADS
+
+#if defined(OPENSSL_X86_64) && defined(SUPPORTS_ABI_TEST)
+TEST(RandTest, RdrandABI) {
+  if (!have_rdrand()) {
+    fprintf(stderr, "rdrand not supported. Skipping.\n");
+    return;
+  }
+
+  uint8_t buf[32];
+  CHECK_ABI_SEH(CRYPTO_rdrand, buf);
+  CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, nullptr, 0);
+  CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, buf, 8);
+  CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, buf, 16);
+  CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, buf, 24);
+  CHECK_ABI_SEH(CRYPTO_rdrand_multiple8_buf, buf, 32);
+}
+#endif  // OPENSSL_X86_64 && SUPPORTS_ABI_TEST

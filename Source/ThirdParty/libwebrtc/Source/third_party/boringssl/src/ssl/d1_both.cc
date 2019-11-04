@@ -405,7 +405,7 @@ ssl_open_record_t dtls1_open_handshake(SSL *ssl, size_t *out_consumed,
   return ssl_open_record_success;
 }
 
-bool dtls1_get_message(SSL *ssl, SSLMessage *out) {
+bool dtls1_get_message(const SSL *ssl, SSLMessage *out) {
   if (!dtls1_is_current_message_complete(ssl)) {
     return false;
   }
@@ -799,14 +799,14 @@ static int send_flight(SSL *ssl) {
       // Retry this packet the next time around.
       ssl->d1->outgoing_written = old_written;
       ssl->d1->outgoing_offset = old_offset;
-      ssl->s3->rwstate = SSL_WRITING;
+      ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
       ret = bio_ret;
       goto err;
     }
   }
 
   if (BIO_flush(ssl->wbio.get()) <= 0) {
-    ssl->s3->rwstate = SSL_WRITING;
+    ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
     goto err;
   }
 

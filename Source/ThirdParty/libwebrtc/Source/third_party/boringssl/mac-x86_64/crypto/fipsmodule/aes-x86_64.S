@@ -168,6 +168,7 @@ L$enc_loop:
 
 .p2align	4
 _x86_64_AES_encrypt_compact:
+
 	leaq	128(%r14),%r8
 	movl	0-128(%r8),%edi
 	movl	32-128(%r8),%ebp
@@ -337,6 +338,7 @@ L$enc_compact_done:
 	xorl	8(%r15),%ecx
 	xorl	12(%r15),%edx
 .byte	0xf3,0xc3
+
 
 .p2align	4
 .globl	_aes_nohw_encrypt
@@ -580,6 +582,7 @@ L$dec_loop:
 
 .p2align	4
 _x86_64_AES_decrypt_compact:
+
 	leaq	128(%r14),%r8
 	movl	0-128(%r8),%edi
 	movl	32-128(%r8),%ebp
@@ -802,6 +805,7 @@ L$dec_compact_done:
 	xorl	12(%r15),%edx
 .byte	0xf3,0xc3
 
+
 .p2align	4
 .globl	_aes_nohw_decrypt
 .private_extern _aes_nohw_decrypt
@@ -926,6 +930,7 @@ L$enc_key_epilogue:
 
 .p2align	4
 _x86_64_AES_set_encrypt_key:
+
 	movl	%esi,%ecx
 	movq	%rdi,%rsi
 	movq	%rdx,%rdi
@@ -1162,6 +1167,7 @@ L$badpointer:
 L$exit:
 .byte	0xf3,0xc3
 
+
 .p2align	4
 .globl	_aes_nohw_set_decrypt_key
 .private_extern _aes_nohw_set_decrypt_key
@@ -1378,6 +1384,8 @@ _aes_nohw_cbc_encrypt:
 	je	L$cbc_epilogue
 	pushfq
 
+
+
 	pushq	%rbx
 
 	pushq	%rbp
@@ -1399,6 +1407,7 @@ L$cbc_prologue:
 	leaq	L$AES_Td(%rip),%r10
 	cmpq	$0,%r9
 	cmoveq	%r10,%r14
+
 
 	leaq	_OPENSSL_ia32cap_P(%rip),%r10
 	movl	(%r10),%r10d
@@ -1637,6 +1646,7 @@ L$cbc_fast_cleanup:
 .p2align	4
 L$cbc_slow_prologue:
 
+
 	leaq	-88(%rsp),%rbp
 	andq	$-64,%rbp
 
@@ -1648,7 +1658,9 @@ L$cbc_slow_prologue:
 
 	xchgq	%rsp,%rbp
 
+
 	movq	%rbp,16(%rsp)
+
 L$cbc_slow_body:
 
 
@@ -1837,6 +1849,8 @@ L$cbc_exit:
 
 L$cbc_popfq:
 	popfq
+
+
 
 L$cbc_epilogue:
 	.byte	0xf3,0xc3

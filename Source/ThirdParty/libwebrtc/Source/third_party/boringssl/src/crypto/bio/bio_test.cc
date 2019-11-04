@@ -220,7 +220,7 @@ TEST_P(BIOASN1Test, ReadASN1) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(, BIOASN1Test, testing::ValuesIn(kASN1TestParams));
+INSTANTIATE_TEST_SUITE_P(, BIOASN1Test, testing::ValuesIn(kASN1TestParams));
 
 // Run through the tests twice, swapping |bio1| and |bio2|, for symmetry.
 class BIOPairTest : public testing::TestWithParam<bool> {};
@@ -322,4 +322,4 @@ TEST_P(BIOPairTest, TestPair) {
   EXPECT_EQ(Bytes("12345"), Bytes(buf, 5));
 }
 
-INSTANTIATE_TEST_CASE_P(, BIOPairTest, testing::Values(false, true));
+INSTANTIATE_TEST_SUITE_P(, BIOPairTest, testing::Values(false, true));

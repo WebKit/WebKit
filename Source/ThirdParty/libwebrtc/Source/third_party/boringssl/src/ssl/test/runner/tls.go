@@ -276,15 +276,13 @@ func isEd25519Certificate(cert *x509.Certificate) bool {
 }
 
 func getCertificatePublicKey(cert *x509.Certificate) crypto.PublicKey {
-	if cert.PublicKey != nil {
-		return cert.PublicKey
-	}
-
+	// TODO(davidben): When Go 1.13 is released, use the Ed25519 support in
+	// the standard library.
 	if isEd25519Certificate(cert) {
 		return ed25519.PublicKey(cert.RawSubjectPublicKeyInfo[len(ed25519SPKIPrefix):])
 	}
 
-	return nil
+	return cert.PublicKey
 }
 
 var ed25519PKCS8Prefix = []byte{0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70,
@@ -294,6 +292,12 @@ var ed25519PKCS8Prefix = []byte{0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06, 
 // PKCS#1 private keys by default, while OpenSSL 1.0.0 generates PKCS#8 keys.
 // OpenSSL ecparam generates SEC1 EC private keys for ECDSA. We try all three.
 func parsePrivateKey(der []byte) (crypto.PrivateKey, error) {
+	// TODO(davidben): When Go 1.13 is released, use the Ed25519 support in
+	// the standard library.
+	if bytes.HasPrefix(der, ed25519PKCS8Prefix) && len(der) == len(ed25519PKCS8Prefix)+32 {
+		seed := der[len(ed25519PKCS8Prefix):]
+		return ed25519.NewKeyFromSeed(seed), nil
+	}
 	if key, err := x509.ParsePKCS1PrivateKey(der); err == nil {
 		return key, nil
 	}
@@ -307,11 +311,6 @@ func parsePrivateKey(der []byte) (crypto.PrivateKey, error) {
 	}
 	if key, err := x509.ParseECPrivateKey(der); err == nil {
 		return key, nil
-	}
-
-	if bytes.HasPrefix(der, ed25519PKCS8Prefix) && len(der) == len(ed25519PKCS8Prefix)+32 {
-		seed := der[len(ed25519PKCS8Prefix):]
-		return ed25519.NewKeyFromSeed(seed), nil
 	}
 
 	return nil, errors.New("crypto/tls: failed to parse private key")

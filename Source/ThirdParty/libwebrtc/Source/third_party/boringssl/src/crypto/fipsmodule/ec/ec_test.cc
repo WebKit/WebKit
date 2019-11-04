@@ -347,6 +347,20 @@ TEST(ECTest, SetKeyWithoutGroup) {
       EC_KEY_set_public_key(key.get(), EC_GROUP_get0_generator(group.get())));
 }
 
+TEST(ECTest, SetNULLKey) {
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
+  ASSERT_TRUE(key);
+
+  EXPECT_TRUE(EC_KEY_set_public_key(
+      key.get(), EC_GROUP_get0_generator(EC_KEY_get0_group(key.get()))));
+  EXPECT_TRUE(EC_KEY_get0_public_key(key.get()));
+
+  // Setting a NULL public-key should clear the public-key and return zero, in
+  // order to match OpenSSL behaviour exactly.
+  EXPECT_FALSE(EC_KEY_set_public_key(key.get(), nullptr));
+  EXPECT_FALSE(EC_KEY_get0_public_key(key.get()));
+}
+
 TEST(ECTest, GroupMismatch) {
   bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(NID_secp384r1));
   ASSERT_TRUE(key);
@@ -750,7 +764,15 @@ TEST_P(ECCurveTest, P224Bug) {
   ASSERT_TRUE(BN_set_word(bn32.get(), 32));
   ASSERT_TRUE(EC_POINT_mul(group(), ret.get(), bn32.get(), p.get(), bn31.get(),
                            nullptr));
+  EXPECT_EQ(0, EC_POINT_cmp(group(), ret.get(), g, nullptr));
 
+  // Repeat the computation with |ec_point_mul_scalar_public|, which ties the
+  // additions together.
+  EC_SCALAR sc31, sc32;
+  ASSERT_TRUE(ec_bignum_to_scalar(group(), &sc31, bn31.get()));
+  ASSERT_TRUE(ec_bignum_to_scalar(group(), &sc32, bn32.get()));
+  ASSERT_TRUE(
+      ec_point_mul_scalar_public(group(), &ret->raw, &sc32, &p->raw, &sc31));
   EXPECT_EQ(0, EC_POINT_cmp(group(), ret.get(), g, nullptr));
 }
 
@@ -778,8 +800,8 @@ static std::string CurveToString(
   return OBJ_nid2sn(params.param.nid);
 }
 
-INSTANTIATE_TEST_CASE_P(, ECCurveTest, testing::ValuesIn(AllCurves()),
-                        CurveToString);
+INSTANTIATE_TEST_SUITE_P(, ECCurveTest, testing::ValuesIn(AllCurves()),
+                         CurveToString);
 
 static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
   std::string curve_name;

@@ -86,7 +86,9 @@
 #include <openssl/rand.h>
 
 #include "./internal.h"
+#include "./rsaz_exp.h"
 #include "../../internal.h"
+#include "../../test/abi_test.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
 
@@ -2377,3 +2379,109 @@ TEST_F(BNTest, WriteIntoNegative) {
   EXPECT_TRUE(BN_is_word(r.get(), 6));
   EXPECT_FALSE(BN_is_negative(r.get()));
 }
+
+#if defined(OPENSSL_BN_ASM_MONT) && defined(SUPPORTS_ABI_TEST)
+TEST_F(BNTest, BNMulMontABI) {
+  for (size_t words : {4, 5, 6, 7, 8, 16, 32}) {
+    SCOPED_TRACE(words);
+
+    bssl::UniquePtr<BIGNUM> m(BN_new());
+    ASSERT_TRUE(m);
+    ASSERT_TRUE(BN_set_bit(m.get(), 0));
+    ASSERT_TRUE(BN_set_bit(m.get(), words * BN_BITS2 - 1));
+    bssl::UniquePtr<BN_MONT_CTX> mont(
+        BN_MONT_CTX_new_for_modulus(m.get(), ctx()));
+    ASSERT_TRUE(mont);
+
+    std::vector<BN_ULONG> r(words), a(words), b(words);
+    a[0] = 1;
+    b[0] = 42;
+
+    CHECK_ABI(bn_mul_mont, r.data(), a.data(), b.data(), mont->N.d, mont->n0,
+              words);
+    CHECK_ABI(bn_mul_mont, r.data(), a.data(), a.data(), mont->N.d, mont->n0,
+              words);
+  }
+}
+#endif   // OPENSSL_BN_ASM_MONT && SUPPORTS_ABI_TEST
+
+#if defined(OPENSSL_BN_ASM_MONT5) && defined(SUPPORTS_ABI_TEST)
+TEST_F(BNTest, BNMulMont5ABI) {
+  for (size_t words : {4, 5, 6, 7, 8, 16, 32}) {
+    SCOPED_TRACE(words);
+
+    bssl::UniquePtr<BIGNUM> m(BN_new());
+    ASSERT_TRUE(m);
+    ASSERT_TRUE(BN_set_bit(m.get(), 0));
+    ASSERT_TRUE(BN_set_bit(m.get(), words * BN_BITS2 - 1));
+    bssl::UniquePtr<BN_MONT_CTX> mont(
+        BN_MONT_CTX_new_for_modulus(m.get(), ctx()));
+    ASSERT_TRUE(mont);
+
+    std::vector<BN_ULONG> r(words), a(words), b(words), table(words * 32);
+    a[0] = 1;
+    b[0] = 42;
+
+    bn_mul_mont(r.data(), a.data(), b.data(), mont->N.d, mont->n0, words);
+    CHECK_ABI(bn_scatter5, r.data(), words, table.data(), 13);
+    for (size_t i = 0; i < 32; i++) {
+      bn_mul_mont(r.data(), a.data(), b.data(), mont->N.d, mont->n0, words);
+      bn_scatter5(r.data(), words, table.data(), i);
+    }
+    CHECK_ABI(bn_gather5, r.data(), words, table.data(), 13);
+
+    CHECK_ABI(bn_mul_mont_gather5, r.data(), r.data(), table.data(), m->d,
+              mont->n0, words, 13);
+    CHECK_ABI(bn_mul_mont_gather5, r.data(), a.data(), table.data(), m->d,
+              mont->n0, words, 13);
+
+    if (words % 8 == 0) {
+      CHECK_ABI(bn_power5, r.data(), r.data(), table.data(), m->d, mont->n0,
+                words, 13);
+      CHECK_ABI(bn_power5, r.data(), a.data(), table.data(), m->d, mont->n0,
+                words, 13);
+      EXPECT_EQ(1, CHECK_ABI(bn_from_montgomery, r.data(), r.data(), nullptr,
+                             m->d, mont->n0, words));
+      EXPECT_EQ(1, CHECK_ABI(bn_from_montgomery, r.data(), a.data(), nullptr,
+                             m->d, mont->n0, words));
+    } else {
+      EXPECT_EQ(0, CHECK_ABI(bn_from_montgomery, r.data(), r.data(), nullptr,
+                             m->d, mont->n0, words));
+      EXPECT_EQ(0, CHECK_ABI(bn_from_montgomery, r.data(), a.data(), nullptr,
+                             m->d, mont->n0, words));
+    }
+  }
+}
+#endif  // OPENSSL_BN_ASM_MONT5 && SUPPORTS_ABI_TEST
+
+#if defined(RSAZ_ENABLED) && defined(SUPPORTS_ABI_TEST)
+TEST_F(BNTest, RSAZABI) {
+  if (!rsaz_avx2_capable()) {
+    return;
+  }
+
+  alignas(64) BN_ULONG table[32 * 18] = {0};
+  alignas(64) BN_ULONG rsaz1[40], rsaz2[40], rsaz3[40], n_rsaz[40];
+  BN_ULONG norm[16], n_norm[16];
+
+  OPENSSL_memset(norm, 0x42, sizeof(norm));
+  OPENSSL_memset(n_norm, 0x99, sizeof(n_norm));
+
+  bssl::UniquePtr<BIGNUM> n(BN_new());
+  ASSERT_TRUE(n);
+  ASSERT_TRUE(bn_set_words(n.get(), n_norm, 16));
+  bssl::UniquePtr<BN_MONT_CTX> mont(
+      BN_MONT_CTX_new_for_modulus(n.get(), nullptr));
+  ASSERT_TRUE(mont);
+  const BN_ULONG k = mont->n0[0];
+
+  CHECK_ABI(rsaz_1024_norm2red_avx2, rsaz1, norm);
+  CHECK_ABI(rsaz_1024_norm2red_avx2, n_rsaz, n_norm);
+  CHECK_ABI(rsaz_1024_sqr_avx2, rsaz2, rsaz1, n_rsaz, k, 1);
+  CHECK_ABI(rsaz_1024_sqr_avx2, rsaz3, rsaz2, n_rsaz, k, 4);
+  CHECK_ABI(rsaz_1024_mul_avx2, rsaz3, rsaz1, rsaz2, n_rsaz, k);
+  CHECK_ABI(rsaz_1024_scatter5_avx2, table, rsaz3, 7);
+  CHECK_ABI(rsaz_1024_gather5_avx2, rsaz1, table, 7);
+  CHECK_ABI(rsaz_1024_red2norm_avx2, norm, rsaz1);
+}
+#endif   // RSAZ_ENABLED && SUPPORTS_ABI_TEST

@@ -299,6 +299,8 @@ static int aead_tls_open(const EVP_AEAD_CTX *ctx, uint8_t *out, size_t *out_len,
   total += len;
   assert(total == in_len);
 
+  CONSTTIME_SECRET(out, total);
+
   // Remove CBC padding. Code from here on is timing-sensitive with respect to
   // |padding_ok| and |data_plus_mac_len| for CBC ciphers.
   size_t data_plus_mac_len;
@@ -375,10 +377,14 @@ static int aead_tls_open(const EVP_AEAD_CTX *ctx, uint8_t *out, size_t *out_len,
   crypto_word_t good =
       constant_time_eq_int(CRYPTO_memcmp(record_mac, mac, mac_len), 0);
   good &= padding_ok;
+  CONSTTIME_DECLASSIFY(&good, sizeof(good));
   if (!good) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }
+
+  CONSTTIME_DECLASSIFY(&data_len, sizeof(data_len));
+  CONSTTIME_DECLASSIFY(out, data_len);
 
   // End of timing-sensitive code.
 

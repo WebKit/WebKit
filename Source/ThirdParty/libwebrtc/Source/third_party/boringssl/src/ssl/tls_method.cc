@@ -125,9 +125,9 @@ static const SSL_PROTOCOL_METHOD kTLSProtocolMethod = {
     ssl3_set_write_state,
 };
 
-static int ssl_noop_x509_check_client_CA_names(
+static bool ssl_noop_x509_check_client_CA_names(
     STACK_OF(CRYPTO_BUFFER) *names) {
-  return 1;
+  return true;
 }
 
 static void ssl_noop_x509_clear(CERT *cert) {}
@@ -135,29 +135,29 @@ static void ssl_noop_x509_free(CERT *cert) {}
 static void ssl_noop_x509_dup(CERT *new_cert, const CERT *cert) {}
 static void ssl_noop_x509_flush_cached_leaf(CERT *cert) {}
 static void ssl_noop_x509_flush_cached_chain(CERT *cert) {}
-static int ssl_noop_x509_session_cache_objects(SSL_SESSION *sess) {
-  return 1;
+static bool ssl_noop_x509_session_cache_objects(SSL_SESSION *sess) {
+  return true;
 }
-static int ssl_noop_x509_session_dup(SSL_SESSION *new_session,
-                                       const SSL_SESSION *session) {
-  return 1;
+static bool ssl_noop_x509_session_dup(SSL_SESSION *new_session,
+                                      const SSL_SESSION *session) {
+  return true;
 }
 static void ssl_noop_x509_session_clear(SSL_SESSION *session) {}
-static int ssl_noop_x509_session_verify_cert_chain(SSL_SESSION *session,
-                                                   SSL_HANDSHAKE *hs,
-                                                   uint8_t *out_alert) {
-  return 0;
+static bool ssl_noop_x509_session_verify_cert_chain(SSL_SESSION *session,
+                                                    SSL_HANDSHAKE *hs,
+                                                    uint8_t *out_alert) {
+  return false;
 }
 
 static void ssl_noop_x509_hs_flush_cached_ca_names(SSL_HANDSHAKE *hs) {}
-static int ssl_noop_x509_ssl_new(SSL_HANDSHAKE *hs) { return 1; }
+static bool ssl_noop_x509_ssl_new(SSL_HANDSHAKE *hs) { return true; }
 static void ssl_noop_x509_ssl_config_free(SSL_CONFIG *cfg) {}
 static void ssl_noop_x509_ssl_flush_cached_client_CA(SSL_CONFIG *cfg) {}
-static int ssl_noop_x509_ssl_auto_chain_if_needed(SSL_HANDSHAKE *hs) {
-  return 1;
+static bool ssl_noop_x509_ssl_auto_chain_if_needed(SSL_HANDSHAKE *hs) {
+  return true;
 }
-static int ssl_noop_x509_ssl_ctx_new(SSL_CTX *ctx) { return 1; }
-static void ssl_noop_x509_ssl_ctx_free(SSL_CTX *ctx) { }
+static bool ssl_noop_x509_ssl_ctx_new(SSL_CTX *ctx) { return true; }
+static void ssl_noop_x509_ssl_ctx_free(SSL_CTX *ctx) {}
 static void ssl_noop_x509_ssl_ctx_flush_cached_client_CA(SSL_CTX *ctx) {}
 
 const SSL_X509_METHOD ssl_noop_x509_method = {

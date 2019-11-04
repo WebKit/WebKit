@@ -82,7 +82,7 @@
 #include "../../internal.h"
 
 
-DEFINE_STATIC_EX_DATA_CLASS(g_ec_ex_data_class);
+DEFINE_STATIC_EX_DATA_CLASS(g_ec_ex_data_class)
 
 static EC_WRAPPED_SCALAR *ec_wrapped_scalar_new(const EC_GROUP *group) {
   EC_WRAPPED_SCALAR *wrapped = OPENSSL_malloc(sizeof(EC_WRAPPED_SCALAR));
@@ -267,7 +267,7 @@ int EC_KEY_set_public_key(EC_KEY *key, const EC_POINT *pub_key) {
     return 0;
   }
 
-  if (EC_GROUP_cmp(key->group, pub_key->group, NULL) != 0) {
+  if (pub_key != NULL && EC_GROUP_cmp(key->group, pub_key->group, NULL) != 0) {
     OPENSSL_PUT_ERROR(EC, EC_R_GROUP_MISMATCH);
     return 0;
   }
@@ -322,8 +322,8 @@ int EC_KEY_check_key(const EC_KEY *eckey) {
   if (eckey->priv_key != NULL) {
     point = EC_POINT_new(eckey->group);
     if (point == NULL ||
-        !ec_point_mul_scalar(eckey->group, &point->raw,
-                             &eckey->priv_key->scalar, NULL, NULL)) {
+        !ec_point_mul_scalar_base(eckey->group, &point->raw,
+                                  &eckey->priv_key->scalar)) {
       OPENSSL_PUT_ERROR(EC, ERR_R_EC_LIB);
       goto err;
     }
@@ -394,6 +394,33 @@ err:
   return ok;
 }
 
+size_t EC_KEY_key2buf(EC_KEY *key, point_conversion_form_t form,
+                      unsigned char **out_buf, BN_CTX *ctx) {
+  if (key == NULL || key->pub_key == NULL || key->group == NULL) {
+    return 0;
+  }
+
+  const size_t len =
+      EC_POINT_point2oct(key->group, key->pub_key, form, NULL, 0, ctx);
+  if (len == 0) {
+    return 0;
+  }
+
+  uint8_t *buf = OPENSSL_malloc(len);
+  if (buf == NULL) {
+    return 0;
+  }
+
+  if (EC_POINT_point2oct(key->group, key->pub_key, form, buf, len, ctx) !=
+      len) {
+    OPENSSL_free(buf);
+    return 0;
+  }
+
+  *out_buf = buf;
+  return len;
+}
+
 int EC_KEY_generate_key(EC_KEY *key) {
   if (key == NULL || key->group == NULL) {
     OPENSSL_PUT_ERROR(EC, ERR_R_PASSED_NULL_PARAMETER);
@@ -413,8 +440,7 @@ int EC_KEY_generate_key(EC_KEY *key) {
       // Generate the private key by testing candidates (FIPS 186-4 B.4.2).
       !ec_random_nonzero_scalar(key->group, &priv_key->scalar,
                                 kDefaultAdditionalData) ||
-      !ec_point_mul_scalar(key->group, &pub_key->raw, &priv_key->scalar, NULL,
-                           NULL)) {
+      !ec_point_mul_scalar_base(key->group, &pub_key->raw, &priv_key->scalar)) {
     EC_POINT_free(pub_key);
     ec_wrapped_scalar_free(priv_key);
     return 0;

@@ -124,6 +124,9 @@ my %globals;
 		$self->{sz} = "";
 	    } elsif ($self->{op} =~ /mov[dq]/ && $$line =~ /%xmm/) {
 		$self->{sz} = "";
+	    } elsif ($self->{op} =~ /^or([qlwb])$/) {
+		$self->{op} = "or";
+		$self->{sz} = $1;
 	    } elsif ($self->{op} =~ /([a-z]{3,})([qlwb])$/) {
 		$self->{op} = $1;
 		$self->{sz} = $2;
@@ -536,6 +539,7 @@ my %globals;
 	);
 
     my ($cfa_reg, $cfa_rsp);
+    my @cfa_stack;
 
     # [us]leb128 format is variable-length integer representation base
     # 2^128, with most significant bit of each byte being 0 denoting
@@ -683,6 +687,14 @@ my %globals;
 						      cfa_expression($$line)));
 				last;
 			      };
+	    /remember_state/
+			&& do {	push @cfa_stack, [$cfa_reg, $cfa_rsp];
+				last;
+			      };
+	    /restore_state/
+			&& do {	($cfa_reg, $cfa_rsp) = @{pop @cfa_stack};
+				last;
+			      };
 	    }
 
 	    $self->{value} = ".cfi_$dir\t$$line" if ($dir);
@@ -720,7 +732,7 @@ my %globals;
 				    $$line = $globals{$$line} if ($prefix);
 				    last;
 				  };
-		/\.type/    && do { my ($sym,$type,$narg) = split(',',$$line);
+		/\.type/    && do { my ($sym,$type,$narg) = split(/\s*,\s*/,$$line);
 				    if ($type eq "\@function") {
 					undef $current_function;
 					$current_function->{name} = $sym;
@@ -742,7 +754,7 @@ my %globals;
 				    }
 				    last;
 				  };
-		/\.rva|\.long|\.quad/
+		/\.rva|\.long|\.quad|\.byte/
 			    && do { $$line =~ s/([_a-z][_a-z0-9]*)/$globals{$1} or $1/gei;
 				    $$line =~ s/\.L/$decor/g;
 				    last;
@@ -882,7 +894,7 @@ my %globals;
 							$var=~s/^(0b[0-1]+)/oct($1)/eig;
 							$var=~s/^0x([0-9a-f]+)/0$1h/ig if ($masm);
 							if ($sz eq "D" && ($current_segment=~/.[px]data/ || $dir eq ".rva"))
-							{ $var=~s/([_a-z\$\@][_a-z0-9\$\@]*)/$nasm?"$1 wrt ..imagebase":"imagerel $1"/egi; }
+							{ $var=~s/^([_a-z\$\@][_a-z0-9\$\@]*)/$nasm?"$1 wrt ..imagebase":"imagerel $1"/egi; }
 							$var;
 						    };
 
@@ -1169,7 +1181,20 @@ while(defined(my $line=<>)) {
 
     $line =~ s|\R$||;           # Better chomp
 
-    $line =~ s|[#!].*$||;	# get rid of asm-style comments...
+    if ($nasm) {
+	$line =~ s|^#ifdef |%ifdef |;
+	$line =~ s|^#ifndef |%ifndef |;
+	$line =~ s|^#endif|%endif|;
+	$line =~ s|[#!].*$||;	# get rid of asm-style comments...
+    } else {
+	# Get rid of asm-style comments but not preprocessor directives. The
+	# former are identified by having a letter after the '#' and starting in
+	# the first column.
+	$line =~ s|!.*$||;
+	$line =~ s|(?<=.)#.*$||;
+	$line =~ s|^#([^a-z].*)?$||;
+    }
+
     $line =~ s|/\*.*\*/||;	# ... and C-style comments...
     $line =~ s|^\s+||;		# ... and skip white spaces in beginning
     $line =~ s|\s+$||;		# ... and at the end

@@ -293,6 +293,10 @@ err:
   return ret;
 }
 
+// 1.2.840.113549.1.12.10.1.1
+static const uint8_t kKeyBag[] = {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d,
+                                  0x01, 0x0c, 0x0a, 0x01, 0x01};
+
 // 1.2.840.113549.1.12.10.1.2
 static const uint8_t kPKCS8ShroudedKeyBag[] = {
     0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x0a, 0x01, 0x02};
@@ -392,16 +396,20 @@ static int PKCS12_handle_safe_bag(CBS *safe_bag, struct pkcs12_context *ctx) {
     return 0;
   }
 
-  if (CBS_mem_equal(&bag_id, kPKCS8ShroudedKeyBag,
-                    sizeof(kPKCS8ShroudedKeyBag))) {
-    // See RFC 7292, section 4.2.2.
+  const int is_key_bag = CBS_mem_equal(&bag_id, kKeyBag, sizeof(kKeyBag));
+  const int is_shrouded_key_bag = CBS_mem_equal(&bag_id, kPKCS8ShroudedKeyBag,
+                                                sizeof(kPKCS8ShroudedKeyBag));
+  if (is_key_bag || is_shrouded_key_bag) {
+    // See RFC 7292, section 4.2.1 and 4.2.2.
     if (*ctx->out_key) {
       OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_MULTIPLE_PRIVATE_KEYS_IN_PKCS12);
       return 0;
     }
 
-    EVP_PKEY *pkey = PKCS8_parse_encrypted_private_key(
-        &wrapped_value, ctx->password, ctx->password_len);
+    EVP_PKEY *pkey =
+        is_key_bag ? EVP_parse_private_key(&wrapped_value)
+                   : PKCS8_parse_encrypted_private_key(
+                         &wrapped_value, ctx->password, ctx->password_len);
     if (pkey == NULL) {
       return 0;
     }
@@ -902,9 +910,25 @@ int PKCS12_parse(const PKCS12 *p12, const char *password, EVP_PKEY **out_pkey,
     return 0;
   }
 
+  // OpenSSL selects the last certificate which matches the private key as
+  // |out_cert|.
+  //
+  // TODO(davidben): OpenSSL additionally reverses the order of the
+  // certificates, which was likely originally a bug, but may be a feature by
+  // now. See https://crbug.com/boringssl/250 and
+  // https://github.com/openssl/openssl/issues/6698.
   *out_cert = NULL;
-  if (sk_X509_num(ca_certs) > 0) {
-    *out_cert = sk_X509_shift(ca_certs);
+  size_t num_certs = sk_X509_num(ca_certs);
+  if (*out_pkey != NULL && num_certs > 0) {
+    for (size_t i = num_certs - 1; i < num_certs; i--) {
+      X509 *cert = sk_X509_value(ca_certs, i);
+      if (X509_check_private_key(cert, *out_pkey)) {
+        *out_cert = cert;
+        sk_X509_delete(ca_certs, i);
+        break;
+      }
+      ERR_clear_error();
+    }
   }
 
   if (out_ca_certs) {

@@ -34,11 +34,6 @@ bool ssl_protocol_version_from_wire(uint16_t *out, uint16_t version) {
       *out = version;
       return true;
 
-    case TLS1_3_DRAFT23_VERSION:
-    case TLS1_3_DRAFT28_VERSION:
-      *out = TLS1_3_VERSION;
-      return true;
-
     case DTLS1_VERSION:
       // DTLS 1.0 is analogous to TLS 1.1, not TLS 1.0.
       *out = TLS1_1_VERSION;
@@ -58,8 +53,6 @@ bool ssl_protocol_version_from_wire(uint16_t *out, uint16_t version) {
 
 static const uint16_t kTLSVersions[] = {
     TLS1_3_VERSION,
-    TLS1_3_DRAFT28_VERSION,
-    TLS1_3_DRAFT23_VERSION,
     TLS1_2_VERSION,
     TLS1_1_VERSION,
     TLS1_VERSION,
@@ -95,14 +88,10 @@ bool ssl_method_supports_version(const SSL_PROTOCOL_METHOD *method,
 }
 
 // The following functions map between API versions and wire versions. The
-// public API works on wire versions, except that TLS 1.3 draft versions all
-// appear as TLS 1.3. This will get collapsed back down when TLS 1.3 is
-// finalized.
+// public API works on wire versions.
 
 static const char *ssl_version_to_string(uint16_t version) {
   switch (version) {
-    case TLS1_3_DRAFT23_VERSION:
-    case TLS1_3_DRAFT28_VERSION:
     case TLS1_3_VERSION:
       return "TLSv1.3";
 
@@ -127,26 +116,11 @@ static const char *ssl_version_to_string(uint16_t version) {
 }
 
 static uint16_t wire_version_to_api(uint16_t version) {
-  switch (version) {
-    // Report TLS 1.3 draft versions as TLS 1.3 in the public API.
-    case TLS1_3_DRAFT23_VERSION:
-    case TLS1_3_DRAFT28_VERSION:
-    case TLS1_3_VERSION:
-      return TLS1_3_VERSION;
-    default:
-      return version;
-  }
+  return version;
 }
 
-// api_version_to_wire maps |version| to some representative wire version. In
-// particular, it picks an arbitrary TLS 1.3 representative. This should only be
-// used in context where that does not matter.
+// api_version_to_wire maps |version| to some representative wire version.
 static bool api_version_to_wire(uint16_t *out, uint16_t version) {
-  if (version == TLS1_3_DRAFT23_VERSION ||
-      version == TLS1_3_DRAFT28_VERSION) {
-    return false;
-  }
-
   // Check it is a real protocol version.
   uint16_t unused;
   if (!ssl_protocol_version_from_wire(&unused, version)) {
@@ -160,12 +134,12 @@ static bool api_version_to_wire(uint16_t *out, uint16_t version) {
 static bool set_version_bound(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
                               uint16_t version) {
   if (!api_version_to_wire(&version, version) ||
-      !ssl_method_supports_version(method, version) ||
-      !ssl_protocol_version_from_wire(out, version)) {
+      !ssl_method_supports_version(method, version)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_SSL_VERSION);
     return false;
   }
 
+  *out = version;
   return true;
 }
 
@@ -173,8 +147,7 @@ static bool set_min_version(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
                             uint16_t version) {
   // Zero is interpreted as the default minimum version.
   if (version == 0) {
-    // TLS 1.0 does not exist in DTLS.
-    *out = method->is_dtls ? TLS1_1_VERSION : TLS1_VERSION;
+    *out = method->is_dtls ? DTLS1_VERSION : TLS1_VERSION;
     return true;
   }
 
@@ -185,7 +158,7 @@ static bool set_max_version(const SSL_PROTOCOL_METHOD *method, uint16_t *out,
                             uint16_t version) {
   // Zero is interpreted as the default maximum version.
   if (version == 0) {
-    *out = TLS1_2_VERSION;
+    *out = method->is_dtls ? DTLS1_2_VERSION : TLS1_2_VERSION;
     return true;
   }
 
@@ -214,11 +187,17 @@ bool ssl_get_version_range(const SSL_HANDSHAKE *hs, uint16_t *out_min_version,
     }
   }
 
-  uint16_t min_version = hs->config->conf_min_version;
-  uint16_t max_version = hs->config->conf_max_version;
+  uint16_t min_version, max_version;
+  if (!ssl_protocol_version_from_wire(&min_version,
+                                      hs->config->conf_min_version) ||
+      !ssl_protocol_version_from_wire(&max_version,
+                                      hs->config->conf_max_version)) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return false;
+  }
 
   // QUIC requires TLS 1.3.
-  if (hs->ssl->ctx->quic_method && min_version < TLS1_3_VERSION) {
+  if (hs->ssl->quic_method && min_version < TLS1_3_VERSION) {
     min_version = TLS1_3_VERSION;
   }
 
@@ -299,21 +278,6 @@ bool ssl_supports_version(SSL_HANDSHAKE *hs, uint16_t version) {
     return false;
   }
 
-  // If the TLS 1.3 variant is set to |tls13_default|, all variants are enabled,
-  // otherwise only the matching version is enabled.
-  if (protocol_version == TLS1_3_VERSION) {
-    switch (ssl->tls13_variant) {
-      case tls13_draft23:
-        return version == TLS1_3_DRAFT23_VERSION;
-      case tls13_draft28:
-        return version == TLS1_3_DRAFT28_VERSION;
-      case tls13_rfc:
-        return version == TLS1_3_VERSION;
-      case tls13_all:
-        return true;
-    }
-  }
-
   return true;
 }
 
@@ -373,10 +337,6 @@ bool ssl_negotiate_version(SSL_HANDSHAKE *hs, uint8_t *out_alert,
   return false;
 }
 
-bool ssl_is_draft28(uint16_t version) {
-  return version == TLS1_3_DRAFT28_VERSION || version == TLS1_3_VERSION;
-}
-
 BSSL_NAMESPACE_END
 
 using namespace bssl;
@@ -387,6 +347,14 @@ int SSL_CTX_set_min_proto_version(SSL_CTX *ctx, uint16_t version) {
 
 int SSL_CTX_set_max_proto_version(SSL_CTX *ctx, uint16_t version) {
   return set_max_version(ctx->method, &ctx->conf_max_version, version);
+}
+
+uint16_t SSL_CTX_get_min_proto_version(SSL_CTX *ctx) {
+  return ctx->conf_min_version;
+}
+
+uint16_t SSL_CTX_get_max_proto_version(SSL_CTX *ctx) {
+  return ctx->conf_max_version;
 }
 
 int SSL_set_min_proto_version(SSL *ssl, uint16_t version) {

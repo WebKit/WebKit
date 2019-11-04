@@ -77,7 +77,7 @@ extern "C" {
 //     int bar;
 //   };
 //
-//   DEFINE_LHASH_OF(struct foo);
+//   DEFINE_LHASH_OF(struct foo)
 //
 // Although note that the hash table will contain /pointers/ to |foo|.
 //

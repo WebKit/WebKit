@@ -48,6 +48,8 @@ foo:
 .loc 1 2 0
 BORINGSSL_bcm_text_end:
 .type OPENSSL_ia32cap_get, @function
+.globl OPENSSL_ia32cap_get
+.LOPENSSL_ia32cap_get_local_target:
 OPENSSL_ia32cap_get:
 	leaq OPENSSL_ia32cap_P(%rip), %rax
 	ret

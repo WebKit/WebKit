@@ -269,6 +269,11 @@ OPENSSL_EXPORT EVP_MD_CTX *EVP_MD_CTX_create(void);
 // EVP_MD_CTX_destroy calls |EVP_MD_CTX_free|.
 OPENSSL_EXPORT void EVP_MD_CTX_destroy(EVP_MD_CTX *ctx);
 
+// EVP_DigestFinalXOF returns zero and adds an error to the error queue.
+// BoringSSL does not support any XOF digests.
+OPENSSL_EXPORT int EVP_DigestFinalXOF(EVP_MD_CTX *ctx, uint8_t *out,
+                                      size_t len);
+
 
 struct evp_md_pctx_ops;
 

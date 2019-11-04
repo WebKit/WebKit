@@ -25,11 +25,17 @@ $L$SEH_begin_md5_block_asm_data_order:
 	mov	rdx,r8
 
 
+
 	push	rbp
+
 	push	rbx
+
 	push	r12
+
 	push	r14
+
 	push	r15
+
 $L$prologue:
 
 
@@ -679,15 +685,22 @@ $L$end:
 	mov	DWORD[12+rbp],edx
 
 	mov	r15,QWORD[rsp]
+
 	mov	r14,QWORD[8+rsp]
+
 	mov	r12,QWORD[16+rsp]
+
 	mov	rbx,QWORD[24+rsp]
+
 	mov	rbp,QWORD[32+rsp]
+
 	add	rsp,40
+
 $L$epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_md5_block_asm_data_order:
 EXTERN	__imp_RtlVirtualUnwind
 

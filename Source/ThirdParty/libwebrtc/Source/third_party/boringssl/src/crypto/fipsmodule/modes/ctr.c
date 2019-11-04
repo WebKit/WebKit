@@ -99,26 +99,6 @@ void CRYPTO_ctr128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
     --len;
     n = (n + 1) % 16;
   }
-
-#if STRICT_ALIGNMENT
-  if (((uintptr_t)in | (uintptr_t)out |
-        (uintptr_t)ecount_buf) % sizeof(size_t) != 0) {
-    size_t l = 0;
-    while (l < len) {
-      if (n == 0) {
-        (*block)(ivec, ecount_buf, key);
-        ctr128_inc(ivec);
-      }
-      out[l] = in[l] ^ ecount_buf[n];
-      ++l;
-      n = (n + 1) % 16;
-    }
-
-    *num = n;
-    return;
-  }
-#endif
-
   while (len >= 16) {
     (*block)(ivec, ecount_buf, key);
     ctr128_inc(ivec);

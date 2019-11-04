@@ -28,7 +28,6 @@ import generate_build_files
 GENERATED_FILES = [
     'BUILD.generated.gni',
     'BUILD.generated_tests.gni',
-    'crypto_test_data.cc',
     'err_data.c',
 ]
 
@@ -147,6 +146,7 @@ def main():
   subprocess.check_call(['python',
                          os.path.join(BORINGSSL_SRC_PATH, 'util',
                                       'generate_build_files.py'),
+                         '--embed_test_data=false',
                          'gn'],
                         cwd=BORINGSSL_PATH)
 

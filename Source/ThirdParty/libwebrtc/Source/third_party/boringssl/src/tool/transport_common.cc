@@ -661,7 +661,8 @@ void PrintSSLError(FILE *file, const char *msg, int ssl_err, int ret) {
       fprintf(file, "%s: received close_notify\n", msg);
       break;
     default:
-      fprintf(file, "%s: unknown error type (%d)\n", msg, ssl_err);
+      fprintf(file, "%s: unexpected error: %s\n", msg,
+              SSL_error_description(ssl_err));
   }
   ERR_print_errors_fp(file);
 }

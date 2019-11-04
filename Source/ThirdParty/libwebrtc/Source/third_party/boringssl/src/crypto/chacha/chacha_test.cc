@@ -23,7 +23,9 @@
 #include <openssl/crypto.h>
 #include <openssl/chacha.h>
 
+#include "internal.h"
 #include "../internal.h"
+#include "../test/abi_test.h"
 #include "../test/test_util.h"
 
 
@@ -234,3 +236,25 @@ TEST(ChaChaTest, TestVector) {
     EXPECT_EQ(Bytes(kOutput, len), Bytes(buf.get(), len));
   }
 }
+
+#if defined(CHACHA20_ASM) && defined(SUPPORTS_ABI_TEST)
+TEST(ChaChaTest, ABI) {
+  uint32_t key[8];
+  OPENSSL_memcpy(key, kKey, sizeof(key));
+
+  static const uint32_t kCounterNonce[4] = {0};
+
+  std::unique_ptr<uint8_t[]> buf(new uint8_t[sizeof(kInput)]);
+  for (size_t len = 0; len <= 32; len++) {
+    SCOPED_TRACE(len);
+    CHECK_ABI(ChaCha20_ctr32, buf.get(), kInput, len, key, kCounterNonce);
+  }
+
+  for (size_t len : {32 * 2, 32 * 4, 32 * 8, 32 * 16, 32 * 24}) {
+    SCOPED_TRACE(len);
+    CHECK_ABI(ChaCha20_ctr32, buf.get(), kInput, len, key, kCounterNonce);
+    // Cover the partial block paths.
+    CHECK_ABI(ChaCha20_ctr32, buf.get(), kInput, len + 15, key, kCounterNonce);
+  }
+}
+#endif  // CHACHA20_ASM && SUPPORTS_ABI_TEST

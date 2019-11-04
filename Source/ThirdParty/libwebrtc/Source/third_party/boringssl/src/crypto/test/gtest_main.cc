@@ -20,6 +20,7 @@
 #include <openssl/cpu.h>
 #include <openssl/rand.h>
 
+#include "abi_test.h"
 #include "gtest_main.h"
 #include "../internal.h"
 
@@ -34,16 +35,15 @@ int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   bssl::SetupGoogleTest();
 
-#if !defined(OPENSSL_WINDOWS)
+  bool unwind_tests = true;
   for (int i = 1; i < argc; i++) {
+#if !defined(OPENSSL_WINDOWS)
     if (strcmp(argv[i], "--fork_unsafe_buffering") == 0) {
       RAND_enable_fork_unsafe_buffering(-1);
     }
-  }
 #endif
 
 #if defined(TEST_ARM_CPUS)
-  for (int i = 1; i < argc; i++) {
     if (strncmp(argv[i], "--cpu=", 6) == 0) {
       const char *cpu = argv[i] + 6;
       uint32_t armcap;
@@ -68,8 +68,28 @@ int main(int argc, char **argv) {
       printf("Simulating CPU '%s'\n", cpu);
       *armcap_ptr = armcap;
     }
-  }
 #endif  // TEST_ARM_CPUS
 
-  return RUN_ALL_TESTS();
+    if (strcmp(argv[i], "--no_unwind_tests") == 0) {
+      unwind_tests = false;
+    }
+  }
+
+  if (unwind_tests) {
+    abi_test::EnableUnwindTests();
+  }
+
+  // Run the entire test suite under an ABI check. This is less effective than
+  // testing the individual assembly functions, but will catch issues with
+  // rarely-used registers.
+  abi_test::Result abi;
+  int ret = abi_test::Check(&abi, RUN_ALL_TESTS);
+  if (!abi.ok()) {
+    fprintf(stderr, "ABI failure in test suite:\n");
+    for (const auto &error : abi.errors) {
+      fprintf(stderr, "    %s\n", error.c_str());
+    }
+    exit(1);
+  }
+  return ret;
 }

@@ -316,7 +316,7 @@ static const uint16_t kPrimes[] = {
 //
 // This table is generated using the algorithm of FIPS PUB 186-4
 // Digital Signature Standard (DSS), section F.1, page 117.
-// (https://dx.doi.org/10.6028/NIST.FIPS.186-4)
+// (https://doi.org/10.6028/NIST.FIPS.186-4)
 // The following magma script was used to generate the output:
 // securitybits:=125;
 // k:=1024;

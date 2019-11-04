@@ -1247,4 +1247,4 @@ while(<SELF>) {
 close SELF;
 
 print $code;
-close STDOUT;	# enforce flush
+close STDOUT or die "error closing STDOUT";	# enforce flush

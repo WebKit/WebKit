@@ -21,6 +21,13 @@ these patches in multiple places was growing steadily.
 Currently BoringSSL is the SSL library in Chrome/Chromium, Android (but it's
 not part of the NDK) and a number of other apps/programs.
 
+Project links:
+
+  * [API documentation](https://commondatastorage.googleapis.com/chromium-boringssl-docs/headers.html)
+  * [Bug tracker](https://bugs.chromium.org/p/boringssl/issues/list)
+  * [CI](https://ci.chromium.org/p/boringssl/g/main/console)
+  * [Code review](https://boringssl-review.googlesource.com)
+
 There are other files in this directory which might be helpful:
 
   * [PORTING.md](/PORTING.md): how to port OpenSSL-using code to BoringSSL.

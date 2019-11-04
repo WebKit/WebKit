@@ -60,8 +60,6 @@ OPENSSL_STATIC_ASSERT(16 % sizeof(size_t) == 0,
 void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                            const AES_KEY *key, uint8_t ivec[16], unsigned *num,
                            int enc, block128_f block) {
-  size_t l = 0;
-
   assert(in && out && key && ivec && num);
 
   unsigned n = *num;
@@ -72,21 +70,6 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
       --len;
       n = (n + 1) % 16;
     }
-#if STRICT_ALIGNMENT
-    if (((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
-        0) {
-      while (l < len) {
-        if (n == 0) {
-          (*block)(ivec, ivec, key);
-        }
-        out[l] = ivec[n] ^= in[l];
-        ++l;
-        n = (n + 1) % 16;
-      }
-      *num = n;
-      return;
-    }
-#endif
     while (len >= 16) {
       (*block)(ivec, ivec, key);
       for (; n < 16; n += sizeof(size_t)) {
@@ -115,22 +98,6 @@ void CRYPTO_cfb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
       ivec[n] = c;
       --len;
       n = (n + 1) % 16;
-    }
-    if (STRICT_ALIGNMENT &&
-        ((uintptr_t)in | (uintptr_t)out | (uintptr_t)ivec) % sizeof(size_t) !=
-            0) {
-      while (l < len) {
-        uint8_t c;
-        if (n == 0) {
-          (*block)(ivec, ivec, key);
-        }
-        out[l] = ivec[n] ^ (c = in[l]);
-        ivec[n] = c;
-        ++l;
-        n = (n + 1) % 16;
-      }
-      *num = n;
-      return;
     }
     while (len >= 16) {
       (*block)(ivec, ivec, key);

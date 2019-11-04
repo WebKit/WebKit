@@ -82,7 +82,7 @@ void CRYPTO_STATIC_MUTEX_unlock_write(struct CRYPTO_STATIC_MUTEX *lock) {
   ReleaseSRWLockExclusive(&lock->lock);
 }
 
-static CRITICAL_SECTION g_destructors_lock;
+static SRWLOCK g_destructors_lock = SRWLOCK_INIT;
 static thread_local_destructor_t g_destructors[NUM_OPENSSL_THREAD_LOCALS];
 
 static CRYPTO_once_t g_thread_local_init_once = CRYPTO_ONCE_INIT;
@@ -90,10 +90,6 @@ static DWORD g_thread_local_key;
 static int g_thread_local_failed;
 
 static void thread_local_init(void) {
-  if (!InitializeCriticalSectionAndSpinCount(&g_destructors_lock, 0x400)) {
-    g_thread_local_failed = 1;
-    return;
-  }
   g_thread_local_key = TlsAlloc();
   g_thread_local_failed = (g_thread_local_key == TLS_OUT_OF_INDEXES);
 }
@@ -121,12 +117,11 @@ static void NTAPI thread_local_destructor(PVOID module, DWORD reason,
 
   thread_local_destructor_t destructors[NUM_OPENSSL_THREAD_LOCALS];
 
-  EnterCriticalSection(&g_destructors_lock);
+  AcquireSRWLockExclusive(&g_destructors_lock);
   OPENSSL_memcpy(destructors, g_destructors, sizeof(destructors));
-  LeaveCriticalSection(&g_destructors_lock);
+  ReleaseSRWLockExclusive(&g_destructors_lock);
 
-  unsigned i;
-  for (i = 0; i < NUM_OPENSSL_THREAD_LOCALS; i++) {
+  for (unsigned i = 0; i < NUM_OPENSSL_THREAD_LOCALS; i++) {
     if (destructors[i] != NULL) {
       destructors[i](pointers[i]);
     }
@@ -250,9 +245,9 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
     }
   }
 
-  EnterCriticalSection(&g_destructors_lock);
+  AcquireSRWLockExclusive(&g_destructors_lock);
   g_destructors[index] = destructor;
-  LeaveCriticalSection(&g_destructors_lock);
+  ReleaseSRWLockExclusive(&g_destructors_lock);
 
   pointers[index] = value;
   return 1;

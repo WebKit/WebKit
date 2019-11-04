@@ -66,6 +66,8 @@ z_bss_get:
 	leaq	.Lz_local_target(%rip), %rax
 	ret
 .type OPENSSL_ia32cap_get, @function
+.globl OPENSSL_ia32cap_get
+.LOPENSSL_ia32cap_get_local_target:
 OPENSSL_ia32cap_get:
 	leaq OPENSSL_ia32cap_P(%rip), %rax
 	ret

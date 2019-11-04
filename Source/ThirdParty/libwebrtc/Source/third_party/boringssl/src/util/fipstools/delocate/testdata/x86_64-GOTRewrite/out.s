@@ -148,7 +148,7 @@ foo:
 # WAS movq foobar_bss_get@GOTPCREL(%rip), %r11
 	leaq	foobar_bss_get(%rip), %r11
 # WAS movq OPENSSL_ia32cap_get@GOTPCREL(%rip), %r11
-	leaq	OPENSSL_ia32cap_get(%rip), %r11
+	leaq	.LOPENSSL_ia32cap_get_local_target(%rip), %r11
 
 	# Transforming moves run the transform in-place after the load.
 # WAS vpbroadcastq stderr@GOTPCREL(%rip), %xmm0
@@ -186,6 +186,8 @@ stderr_GOTPCREL_external:
 	.long stderr@GOTPCREL
 	.long 0
 .type OPENSSL_ia32cap_get, @function
+.globl OPENSSL_ia32cap_get
+.LOPENSSL_ia32cap_get_local_target:
 OPENSSL_ia32cap_get:
 	leaq OPENSSL_ia32cap_P(%rip), %rax
 	ret

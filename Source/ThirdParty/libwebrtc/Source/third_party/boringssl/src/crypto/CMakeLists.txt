@@ -87,7 +87,7 @@ endfunction()
 add_subdirectory(fipsmodule)
 add_subdirectory(test)
 
-if(FIPS_DELOCATE)
+if(FIPS_DELOCATE OR FIPS_SHARED)
   SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
   SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES GENERATED true)
 
@@ -105,6 +105,7 @@ if(${ARCH} STREQUAL "arm")
     chacha/chacha-armv4.${ASM_EXT}
     curve25519/asm/x25519-asm-arm.S
     poly1305/poly1305_arm_asm.S
+    test/trampoline-armv4.${ASM_EXT}
   )
 endif()
 
@@ -113,6 +114,8 @@ if(${ARCH} STREQUAL "aarch64")
     CRYPTO_ARCH_SOURCES
 
     chacha/chacha-armv8.${ASM_EXT}
+    test/trampoline-armv8.${ASM_EXT}
+    third_party/sike/asm/fp-armv8.${ASM_EXT}
   )
 endif()
 
@@ -121,6 +124,7 @@ if(${ARCH} STREQUAL "x86")
     CRYPTO_ARCH_SOURCES
 
     chacha/chacha-x86.${ASM_EXT}
+    test/trampoline-x86.${ASM_EXT}
   )
 endif()
 
@@ -131,6 +135,9 @@ if(${ARCH} STREQUAL "x86_64")
     chacha/chacha-x86_64.${ASM_EXT}
     cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT}
     cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT}
+    hrss/asm/poly_rq_mul.S
+    test/trampoline-x86_64.${ASM_EXT}
+    third_party/sike/asm/fp-x86_64.${ASM_EXT}
   )
 endif()
 
@@ -140,6 +147,12 @@ perlasm(chacha/chacha-x86.${ASM_EXT} chacha/asm/chacha-x86.pl)
 perlasm(chacha/chacha-x86_64.${ASM_EXT} chacha/asm/chacha-x86_64.pl)
 perlasm(cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT} cipher_extra/asm/aes128gcmsiv-x86_64.pl)
 perlasm(cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_x86_64.pl)
+perlasm(third_party/sike/asm/fp-x86_64.${ASM_EXT} ../third_party/sike/asm/fp-x86_64.pl)
+perlasm(third_party/sike/asm/fp-armv8.${ASM_EXT} ../third_party/sike/asm/fp-armv8.pl)
+perlasm(test/trampoline-armv4.${ASM_EXT} test/asm/trampoline-armv4.pl)
+perlasm(test/trampoline-armv8.${ASM_EXT} test/asm/trampoline-armv8.pl)
+perlasm(test/trampoline-x86.${ASM_EXT} test/asm/trampoline-x86.pl)
+perlasm(test/trampoline-x86_64.${ASM_EXT} test/asm/trampoline-x86_64.pl)
 
 add_custom_command(
   OUTPUT err_data.c
@@ -269,12 +282,15 @@ add_library(
   evp/p_ed25519_asn1.c
   evp/p_rsa.c
   evp/p_rsa_asn1.c
+  evp/p_x25519.c
+  evp/p_x25519_asn1.c
   evp/pbkdf.c
   evp/print.c
   evp/scrypt.c
   evp/sign.c
   ex_data.c
   hkdf/hkdf.c
+  hrss/hrss.c
   lhash/lhash.c
   mem.c
   obj/obj.c
@@ -307,6 +323,7 @@ add_library(
   rsa_extra/rsa_asn1.c
   rsa_extra/rsa_print.c
   stack/stack.c
+  siphash/siphash.c
   thread.c
   thread_none.c
   thread_pthread.c
@@ -394,6 +411,11 @@ add_library(
   x509v3/v3_sxnet.c
   x509v3/v3_utl.c
   ../third_party/fiat/curve25519.c
+  ../third_party/sike/fpx.c
+  ../third_party/sike/isogeny.c
+  ../third_party/sike/curve_params.c
+  ../third_party/sike/sike.c
+  ../third_party/sike/asm/fp_generic.c
 
   $<TARGET_OBJECTS:fipsmodule>
 
@@ -401,9 +423,25 @@ add_library(
   ${CRYPTO_FIPS_OBJECTS}
 )
 
+if(FIPS_SHARED)
+  # Rewrite libcrypto.so to inject the correct module hash value. This assumes
+  # UNIX-style library naming, but we only support FIPS mode on Linux anyway.
+  add_custom_command(
+    TARGET crypto POST_BUILD
+    COMMAND ${GO_EXECUTABLE} run
+    ${CMAKE_CURRENT_SOURCE_DIR}/../util/fipstools/inject_hash/inject_hash.go
+    -o libcrypto.so -in-object libcrypto.so
+    # The DEPENDS argument to a POST_BUILD rule appears to be ignored. Thus
+    # go_executable isn't used (as it doesn't get built), but we list this
+    # dependency anyway in case it starts working in some CMake version.
+    DEPENDS ../util/fipstools/inject_hash/inject_hash.go
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
+endif()
+
 add_dependencies(crypto global_target)
 
-if(FIPS_DELOCATE)
+if(FIPS_DELOCATE OR FIPS_SHARED)
   add_dependencies(crypto bcm_o_target)
 endif()
 
@@ -422,6 +460,7 @@ endif()
 add_executable(
   crypto_test
 
+  abi_self_test.cc
   asn1/asn1_test.cc
   base64/base64_test.cc
   buf/buf_test.cc
@@ -451,10 +490,14 @@ add_executable(
   fipsmodule/ec/ec_test.cc
   fipsmodule/ec/p256-x86_64_test.cc
   fipsmodule/ecdsa/ecdsa_test.cc
+  fipsmodule/md5/md5_test.cc
   fipsmodule/modes/gcm_test.cc
   fipsmodule/rand/ctrdrbg_test.cc
+  fipsmodule/sha/sha_test.cc
   hkdf/hkdf_test.cc
   hmac_extra/hmac_test.cc
+  hrss/hrss_test.cc
+  impl_dispatch_test.cc
   lhash/lhash_test.cc
   obj/obj_test.cc
   pem/pem_test.cc
@@ -468,21 +511,22 @@ add_executable(
   rsa_extra/rsa_test.cc
   self_test.cc
   stack/stack_test.cc
+  siphash/siphash_test.cc
   test/file_test_gtest.cc
   thread_test.cc
   x509/x509_test.cc
   x509/x509_time_test.cc
   x509v3/tab_test.cc
   x509v3/v3name_test.cc
+  ../third_party/sike/sike_test.cc
 
   $<TARGET_OBJECTS:crypto_test_data>
   $<TARGET_OBJECTS:boringssl_gtest_main>
-  $<TARGET_OBJECTS:test_support>
 )
 
 add_dependencies(crypto_test global_target)
 
-target_link_libraries(crypto_test crypto boringssl_gtest)
+target_link_libraries(crypto_test test_support_lib boringssl_gtest crypto)
 if(WIN32)
   target_link_libraries(crypto_test ws2_32)
 endif()

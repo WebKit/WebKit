@@ -384,6 +384,23 @@ int bn_expand(BIGNUM *bn, size_t bits) {
 }
 
 int bn_resize_words(BIGNUM *bn, size_t words) {
+#if defined(OPENSSL_PPC64LE)
+  // This is a workaround for a miscompilation bug in Clang 7.0.1 on POWER.
+  // The unittests catch the miscompilation, if it occurs, and it manifests
+  // as a crash in |bn_fits_in_words|.
+  //
+  // The bug only triggers if building in FIPS mode and with -O3. Clang 8.0.1
+  // has the same bug but this workaround is not effective there---I've not
+  // been able to find a workaround for 8.0.1.
+  //
+  // At the time of writing (2019-08-08), Clang git does *not* have this bug
+  // and does not need this workaroud. The current git version should go on to
+  // be Clang 10 thus, once we can depend on that, this can be removed.
+  if (value_barrier_w((size_t)bn->width == words)) {
+    return 1;
+  }
+#endif
+
   if ((size_t)bn->width <= words) {
     if (!bn_wexpand(bn, words)) {
       return 0;

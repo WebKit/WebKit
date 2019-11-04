@@ -237,6 +237,11 @@ const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
   eckey_priv_decode,
   eckey_priv_encode,
 
+  NULL /* set_priv_raw */,
+  NULL /* set_pub_raw */,
+  NULL /* get_priv_raw */,
+  NULL /* get_pub_raw */,
+
   eckey_opaque,
 
   int_ec_size,

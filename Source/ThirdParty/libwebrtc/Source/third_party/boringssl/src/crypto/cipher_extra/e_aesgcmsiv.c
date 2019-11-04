@@ -27,7 +27,11 @@
 #define EVP_AEAD_AES_GCM_SIV_NONCE_LEN 12
 #define EVP_AEAD_AES_GCM_SIV_TAG_LEN 16
 
-#if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM)
+// TODO(davidben): AES-GCM-SIV assembly is not correct for Windows. It must save
+// and restore xmm6 through xmm15.
+#if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM) && \
+    !defined(OPENSSL_WINDOWS)
+#define AES_GCM_SIV_ASM
 
 // Optimised AES-GCM-SIV
 
@@ -60,10 +64,10 @@ static struct aead_aes_gcm_siv_asm_ctx *asm_ctx_from_ctx(
 extern void aes128gcmsiv_aes_ks(
     const uint8_t key[16], uint8_t out_expanded_key[16*15]);
 
-// aes128gcmsiv_aes_ks writes an AES-128 key schedule for |key| to
+// aes256gcmsiv_aes_ks writes an AES-256 key schedule for |key| to
 // |out_expanded_key|.
 extern void aes256gcmsiv_aes_ks(
-    const uint8_t key[16], uint8_t out_expanded_key[16*15]);
+    const uint8_t key[32], uint8_t out_expanded_key[16*15]);
 
 static int aead_aes_gcm_siv_asm_init(EVP_AEAD_CTX *ctx, const uint8_t *key,
                                      size_t key_len, size_t tag_len) {
@@ -422,6 +426,11 @@ static int aead_aes_gcm_siv_asm_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
     return 0;
   }
 
+  if (nonce_len != EVP_AEAD_AES_GCM_SIV_NONCE_LEN) {
+    OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_UNSUPPORTED_NONCE_SIZE);
+    return 0;
+  }
+
   const struct aead_aes_gcm_siv_asm_ctx *gcm_siv_ctx = asm_ctx_from_ctx(ctx);
   const size_t plaintext_len = in_len - EVP_AEAD_AES_GCM_SIV_TAG_LEN;
   const uint8_t *const given_tag = in + plaintext_len;
@@ -549,7 +558,7 @@ static const EVP_AEAD aead_aes_256_gcm_siv_asm = {
     NULL /* tag_len */,
 };
 
-#endif  // X86_64 && !NO_ASM
+#endif  // X86_64 && !NO_ASM && !WINDOWS
 
 struct aead_aes_gcm_siv_ctx {
   union {
@@ -838,7 +847,7 @@ static const EVP_AEAD aead_aes_256_gcm_siv = {
     NULL /* tag_len */,
 };
 
-#if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM)
+#if defined(AES_GCM_SIV_ASM)
 
 static char avx_aesni_capable(void) {
   const uint32_t ecx = OPENSSL_ia32cap_P[1];
@@ -871,4 +880,4 @@ const EVP_AEAD *EVP_aead_aes_256_gcm_siv(void) {
   return &aead_aes_256_gcm_siv;
 }
 
-#endif  // X86_64 && !NO_ASM
+#endif  // AES_GCM_SIV_ASM

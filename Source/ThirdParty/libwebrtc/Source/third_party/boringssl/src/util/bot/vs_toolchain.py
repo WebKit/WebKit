@@ -87,9 +87,9 @@ def _GetDesiredVsToolchainHashes():
     # Update 3 final with 10.0.15063.468 SDK and no vctip.exe.
     return ['f53e4598951162bad6330f7a167486c7ae5db1e5']
   if env_version == '2017':
-    # VS 2017 Update 7.1 (15.7.1) with 10.0.17134.12 SDK, rebuilt with
-    # dbghelp.dll fix.
-    return ['3bc0ec615cf20ee342f3bc29bc991b5ad66d8d2c']
+    # VS 2017 Update 9 (15.9.3) with 10.0.17763.132 SDK, 10.0.17134 version of
+    # d3dcompiler_47.dll, with ARM64 libraries.
+    return ['818a152b3f1da991c1725d85be19a0f27af6bab4']
   raise Exception('Unsupported VS version %s' % env_version)
 
 

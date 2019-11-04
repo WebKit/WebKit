@@ -697,11 +697,6 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     }
   }
 
-  if (!x509_method->session_cache_objects(ret.get())) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
-    return nullptr;
-  }
-
   CBS age_add;
   int age_add_present;
   if (!CBS_get_optional_asn1_octet_string(&session, &age_add, &age_add_present,
@@ -733,6 +728,11 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
       !SSL_SESSION_parse_octet_string(&session, &ret->early_alpn,
                                       kEarlyALPNTag) ||
       CBS_len(&session) != 0) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
+    return nullptr;
+  }
+
+  if (!x509_method->session_cache_objects(ret.get())) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }

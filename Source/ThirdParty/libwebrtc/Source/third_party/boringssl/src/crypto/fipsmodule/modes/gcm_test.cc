@@ -54,10 +54,13 @@
 #include <gtest/gtest.h>
 
 #include <openssl/aes.h>
+#include <openssl/cpu.h>
 
-#include "internal.h"
+#include "../../test/abi_test.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
+#include "../aes/internal.h"
+#include "internal.h"
 
 
 TEST(GCMTest, TestVectors) {
@@ -90,7 +93,10 @@ TEST(GCMTest, TestVectors) {
       CRYPTO_gcm128_encrypt(&ctx, &aes_key, plaintext.data(), out.data(),
                             plaintext.size());
     }
-    ASSERT_TRUE(CRYPTO_gcm128_finish(&ctx, tag.data(), tag.size()));
+
+    std::vector<uint8_t> got_tag(tag.size());
+    CRYPTO_gcm128_tag(&ctx, got_tag.data(), got_tag.size());
+    EXPECT_EQ(Bytes(tag), Bytes(got_tag));
     EXPECT_EQ(Bytes(ciphertext), Bytes(out));
 
     CRYPTO_gcm128_setiv(&ctx, &aes_key, nonce.data(), nonce.size());
@@ -112,3 +118,108 @@ TEST(GCMTest, ByteSwap) {
   EXPECT_EQ(UINT64_C(0x0807060504030201),
             CRYPTO_bswap8(UINT64_C(0x0102030405060708)));
 }
+
+#if defined(SUPPORTS_ABI_TEST) && defined(GHASH_ASM)
+TEST(GCMTest, ABI) {
+  static const uint64_t kH[2] = {
+      UINT64_C(0x66e94bd4ef8a2c3b),
+      UINT64_C(0x884cfa59ca342b2e),
+  };
+  static const size_t kBlockCounts[] = {1, 2, 3, 4, 7, 8, 15, 16, 31, 32};
+  uint8_t buf[16 * 32];
+  OPENSSL_memset(buf, 42, sizeof(buf));
+
+  uint64_t X[2] = {
+      UINT64_C(0x0388dace60b6a392),
+      UINT64_C(0xf328c2b971b2fe78),
+  };
+
+  alignas(16) u128 Htable[16];
+  CHECK_ABI(gcm_init_4bit, Htable, kH);
+#if defined(GHASH_ASM_X86)
+  CHECK_ABI(gcm_gmult_4bit_mmx, X, Htable);
+  for (size_t blocks : kBlockCounts) {
+    CHECK_ABI(gcm_ghash_4bit_mmx, X, Htable, buf, 16 * blocks);
+  }
+#else
+  CHECK_ABI(gcm_gmult_4bit, X, Htable);
+  for (size_t blocks : kBlockCounts) {
+    CHECK_ABI(gcm_ghash_4bit, X, Htable, buf, 16 * blocks);
+  }
+#endif  // GHASH_ASM_X86
+
+#if defined(GHASH_ASM_X86) || defined(GHASH_ASM_X86_64)
+  if (gcm_ssse3_capable()) {
+    CHECK_ABI_SEH(gcm_init_ssse3, Htable, kH);
+    CHECK_ABI_SEH(gcm_gmult_ssse3, X, Htable);
+    for (size_t blocks : kBlockCounts) {
+      CHECK_ABI_SEH(gcm_ghash_ssse3, X, Htable, buf, 16 * blocks);
+    }
+  }
+
+  if (crypto_gcm_clmul_enabled()) {
+    CHECK_ABI_SEH(gcm_init_clmul, Htable, kH);
+    CHECK_ABI_SEH(gcm_gmult_clmul, X, Htable);
+    for (size_t blocks : kBlockCounts) {
+      CHECK_ABI_SEH(gcm_ghash_clmul, X, Htable, buf, 16 * blocks);
+    }
+
+#if defined(GHASH_ASM_X86_64)
+    if (((OPENSSL_ia32cap_get()[1] >> 22) & 0x41) == 0x41) {  // AVX+MOVBE
+      CHECK_ABI_SEH(gcm_init_avx, Htable, kH);
+      CHECK_ABI_SEH(gcm_gmult_avx, X, Htable);
+      for (size_t blocks : kBlockCounts) {
+        CHECK_ABI_SEH(gcm_ghash_avx, X, Htable, buf, 16 * blocks);
+      }
+
+      if (hwaes_capable()) {
+        AES_KEY aes_key;
+        static const uint8_t kKey[16] = {0};
+
+        // aesni_gcm_* makes assumptions about |GCM128_CONTEXT|'s layout.
+        GCM128_CONTEXT gcm;
+        memset(&gcm, 0, sizeof(gcm));
+        memcpy(&gcm.gcm_key.H, kH, sizeof(kH));
+        memcpy(&gcm.gcm_key.Htable, Htable, sizeof(Htable));
+        memcpy(&gcm.Xi, X, sizeof(X));
+        uint8_t iv[16] = {0};
+
+        aes_hw_set_encrypt_key(kKey, 128, &aes_key);
+        for (size_t blocks : kBlockCounts) {
+          CHECK_ABI(aesni_gcm_encrypt, buf, buf, blocks * 16, &aes_key, iv,
+                    gcm.Xi.u);
+          CHECK_ABI(aesni_gcm_encrypt, buf, buf, blocks * 16 + 7, &aes_key, iv,
+                    gcm.Xi.u);
+        }
+        aes_hw_set_decrypt_key(kKey, 128, &aes_key);
+        for (size_t blocks : kBlockCounts) {
+          CHECK_ABI(aesni_gcm_decrypt, buf, buf, blocks * 16, &aes_key, iv,
+                    gcm.Xi.u);
+          CHECK_ABI(aesni_gcm_decrypt, buf, buf, blocks * 16 + 7, &aes_key, iv,
+                    gcm.Xi.u);
+        }
+      }
+    }
+#endif  // GHASH_ASM_X86_64
+  }
+#endif  // GHASH_ASM_X86 || GHASH_ASM_X86_64
+
+#if defined(GHASH_ASM_ARM)
+  if (gcm_neon_capable()) {
+    CHECK_ABI(gcm_init_neon, Htable, kH);
+    CHECK_ABI(gcm_gmult_neon, X, Htable);
+    for (size_t blocks : kBlockCounts) {
+      CHECK_ABI(gcm_ghash_neon, X, Htable, buf, 16 * blocks);
+    }
+  }
+
+  if (gcm_pmull_capable()) {
+    CHECK_ABI(gcm_init_v8, Htable, kH);
+    CHECK_ABI(gcm_gmult_v8, X, Htable);
+    for (size_t blocks : kBlockCounts) {
+      CHECK_ABI(gcm_ghash_v8, X, Htable, buf, 16 * blocks);
+    }
+  }
+#endif  // GHASH_ASM_ARM
+}
+#endif  // SUPPORTS_ABI_TEST && GHASH_ASM

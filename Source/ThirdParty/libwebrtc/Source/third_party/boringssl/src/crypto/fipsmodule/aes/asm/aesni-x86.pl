@@ -84,6 +84,9 @@ open OUT,">$output";
 &asm_init($ARGV[0]);
 
 &external_label("OPENSSL_ia32cap_P");
+&preprocessor_ifndef("NDEBUG")
+&external_label("BORINGSSL_function_hit");
+&preprocessor_endif();
 &static_label("key_const");
 
 if ($PREFIX eq $AESNI_PREFIX)	{ $movekey=\&movups; }
@@ -193,6 +196,8 @@ sub aesni_generate1	# fully unrolled loop
 # void $PREFIX_encrypt (const void *inp,void *out,const AES_KEY *key);
 &aesni_generate1("enc") if (!$inline);
 &function_begin_B("${PREFIX}_encrypt");
+	&record_function_hit(1);
+
 	&mov	("eax",&wparam(0));
 	&mov	($key,&wparam(2));
 	&movups	($inout0,&QWP(0,"eax"));
@@ -875,6 +880,8 @@ if ($PREFIX eq $AESNI_PREFIX) {
 #	80	saved %esp
 
 &function_begin("${PREFIX}_ctr32_encrypt_blocks");
+	&record_function_hit(0);
+
 	&mov	($inp,&wparam(0));
 	&mov	($out,&wparam(1));
 	&mov	($len,&wparam(2));
@@ -2483,6 +2490,8 @@ if ($PREFIX eq $AESNI_PREFIX) {
 # int $PREFIX_set_encrypt_key (const unsigned char *userKey, int bits,
 #                              AES_KEY *key)
 &function_begin_B("${PREFIX}_set_encrypt_key");
+	&record_function_hit(3);
+
 	&mov	("eax",&wparam(0));
 	&mov	($rounds,&wparam(1));
 	&mov	($key,&wparam(2));
@@ -2542,4 +2551,4 @@ if ($PREFIX eq $AESNI_PREFIX) {
 
 &asm_finish();
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

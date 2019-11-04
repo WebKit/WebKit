@@ -32,6 +32,8 @@ type clientHandshakeState struct {
 	masterSecret  []byte
 	session       *ClientSessionState
 	finishedBytes []byte
+	peerPublicKey crypto.PublicKey
+	skxAlgo       signatureAlgorithm
 }
 
 func mapClientHelloVersion(vers uint16, isDTLS bool) uint16 {
@@ -123,9 +125,11 @@ func (c *Conn) clientHandshake() error {
 		srtpProtectionProfiles:  c.config.SRTPProtectionProfiles,
 		srtpMasterKeyIdentifier: c.config.Bugs.SRTPMasterKeyIdentifer,
 		customExtension:         c.config.Bugs.CustomExtension,
-		pskBinderFirst:          c.config.Bugs.PSKBinderFirst,
+		pskBinderFirst:          c.config.Bugs.PSKBinderFirst && !c.config.Bugs.OnlyCorruptSecondPSKBinder,
 		omitExtensions:          c.config.Bugs.OmitExtensions,
 		emptyExtensions:         c.config.Bugs.EmptyExtensions,
+		delegatedCredentials:    !c.config.Bugs.DisableDelegatedCredentials,
+		pqExperimentSignal:      c.config.PQExperimentSignal,
 	}
 
 	if maxVersion >= VersionTLS13 {
@@ -424,10 +428,9 @@ NextCipherSuite:
 		if len(hello.pskIdentities) > 0 {
 			version := session.wireVersion
 			// We may have a pre-1.3 session if SendBothTickets is
-			// set. Fill in an arbitrary TLS 1.3 version to compute
-			// the binder.
+			// set.
 			if session.vers < VersionTLS13 {
-				version = tls13Draft23Version
+				version = VersionTLS13
 			}
 			generatePSKBinders(version, hello, pskCipherSuite, session.masterSecret, []byte{}, []byte{}, c.config)
 		}
@@ -549,6 +552,9 @@ NextCipherSuite:
 	helloRetryRequest, haveHelloRetryRequest := msg.(*helloRetryRequestMsg)
 	var secondHelloBytes []byte
 	if haveHelloRetryRequest {
+		if c.config.Bugs.FailIfHelloRetryRequested {
+			return errors.New("tls: unexpected HelloRetryRequest")
+		}
 		// Explicitly read the ChangeCipherSpec now; it should
 		// be attached to the first flight, not the second flight.
 		if err := c.readTLS13ChangeCipherSpec(); err != nil {
@@ -597,6 +603,12 @@ NextCipherSuite:
 		}
 
 		hello.hasEarlyData = c.config.Bugs.SendEarlyDataOnSecondClientHello
+		// The first ClientHello may have skipped this due to OnlyCorruptSecondPSKBinder.
+		hello.pskBinderFirst = c.config.Bugs.PSKBinderFirst
+		if c.config.Bugs.OmitPSKsOnSecondClientHello {
+			hello.pskIdentities = nil
+			hello.pskBinders = nil
+		}
 		hello.raw = nil
 
 		if len(hello.pskIdentities) > 0 {
@@ -976,7 +988,6 @@ func (hs *clientHandshakeState) doTLS13Handshake() error {
 		if err := hs.verifyCertificates(certMsg); err != nil {
 			return err
 		}
-		leaf := c.peerCertificates[0]
 		c.ocspResponse = certMsg.certificates[0].ocspResponse
 		c.sctList = certMsg.certificates[0].sctList
 
@@ -992,7 +1003,7 @@ func (hs *clientHandshakeState) doTLS13Handshake() error {
 
 		c.peerSignatureAlgorithm = certVerifyMsg.signatureAlgorithm
 		input := hs.finishedHash.certificateVerifyInput(serverCertificateVerifyContextTLS13)
-		err = verifyMessage(c.vers, getCertificatePublicKey(leaf), c.config, certVerifyMsg.signatureAlgorithm, input, certVerifyMsg.signature)
+		err = verifyMessage(c.vers, hs.peerPublicKey, c.config, certVerifyMsg.signatureAlgorithm, input, certVerifyMsg.signature)
 		if err != nil {
 			return err
 		}
@@ -1231,7 +1242,7 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 	skx, ok := msg.(*serverKeyExchangeMsg)
 	if ok {
 		hs.writeServerHash(skx.marshal())
-		err = keyAgreement.processServerKeyExchange(c.config, hs.hello, hs.serverHello, leaf, skx)
+		err = keyAgreement.processServerKeyExchange(c.config, hs.hello, hs.serverHello, hs.peerPublicKey, skx)
 		if err != nil {
 			c.sendAlert(alertUnexpectedMessage)
 			return err
@@ -1375,6 +1386,23 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 	return nil
 }
 
+// delegatedCredentialSignedMessage returns the bytes that are signed in order
+// to authenticate a delegated credential.
+func delegatedCredentialSignedMessage(credBytes []byte, algorithm signatureAlgorithm, leafDER []byte) []byte {
+	// https://tools.ietf.org/html/draft-ietf-tls-subcerts-03#section-3
+	ret := make([]byte, 64, 128)
+	for i := range ret {
+		ret[i] = 0x20
+	}
+
+	ret = append(ret, []byte("TLS, server delegated credentials\x00")...)
+	ret = append(ret, leafDER...)
+	ret = append(ret, byte(algorithm>>8), byte(algorithm))
+	ret = append(ret, credBytes...)
+
+	return ret
+}
+
 func (hs *clientHandshakeState) verifyCertificates(certMsg *certificateMsg) error {
 	c := hs.c
 
@@ -1383,6 +1411,7 @@ func (hs *clientHandshakeState) verifyCertificates(certMsg *certificateMsg) erro
 		return errors.New("tls: no certificates sent")
 	}
 
+	var dc *delegatedCredential
 	certs := make([]*x509.Certificate, len(certMsg.certificates))
 	for i, certEntry := range certMsg.certificates {
 		cert, err := x509.ParseCertificate(certEntry.data)
@@ -1391,6 +1420,22 @@ func (hs *clientHandshakeState) verifyCertificates(certMsg *certificateMsg) erro
 			return errors.New("tls: failed to parse certificate from server: " + err.Error())
 		}
 		certs[i] = cert
+
+		if certEntry.delegatedCredential != nil {
+			if c.config.Bugs.FailIfDelegatedCredentials {
+				c.sendAlert(alertIllegalParameter)
+				return errors.New("tls: unexpected delegated credential")
+			}
+			if i != 0 {
+				c.sendAlert(alertIllegalParameter)
+				return errors.New("tls: non-leaf certificate has a delegated credential")
+			}
+			if c.config.Bugs.DisableDelegatedCredentials {
+				c.sendAlert(alertIllegalParameter)
+				return errors.New("tls: server sent delegated credential without it being requested")
+			}
+			dc = certEntry.delegatedCredential
+		}
 	}
 
 	if !c.config.InsecureSkipVerify {
@@ -1415,16 +1460,45 @@ func (hs *clientHandshakeState) verifyCertificates(certMsg *certificateMsg) erro
 		}
 	}
 
-	publicKey := getCertificatePublicKey(certs[0])
-	switch publicKey.(type) {
+	leafPublicKey := getCertificatePublicKey(certs[0])
+	switch leafPublicKey.(type) {
 	case *rsa.PublicKey, *ecdsa.PublicKey, ed25519.PublicKey:
 		break
 	default:
 		c.sendAlert(alertUnsupportedCertificate)
-		return fmt.Errorf("tls: server's certificate contains an unsupported type of public key: %T", publicKey)
+		return fmt.Errorf("tls: server's certificate contains an unsupported type of public key: %T", leafPublicKey)
 	}
 
 	c.peerCertificates = certs
+
+	if dc != nil {
+		// Note that this doesn't check a) the delegated credential temporal
+		// validity nor b) that the certificate has the special OID asserted.
+		hs.skxAlgo = dc.expectedCertVerifyAlgo
+
+		var err error
+		if hs.peerPublicKey, err = x509.ParsePKIXPublicKey(dc.pkixPublicKey); err != nil {
+			c.sendAlert(alertBadCertificate)
+			return errors.New("tls: failed to parse public key from delegated credential: " + err.Error())
+		}
+
+		verifier, err := getSigner(c.vers, hs.peerPublicKey, c.config, dc.algorithm, true)
+		if err != nil {
+			c.sendAlert(alertBadCertificate)
+			return errors.New("tls: failed to get verifier for delegated credential: " + err.Error())
+		}
+
+		if err := verifier.verifyMessage(leafPublicKey, delegatedCredentialSignedMessage(dc.signedBytes, dc.algorithm, certs[0].Raw), dc.signature); err != nil {
+			c.sendAlert(alertBadCertificate)
+			return errors.New("tls: failed to verify delegated credential: " + err.Error())
+		}
+	} else if c.config.Bugs.ExpectDelegatedCredentials {
+		c.sendAlert(alertInternalError)
+		return errors.New("tls: delegated credentials missing")
+	} else {
+		hs.peerPublicKey = leafPublicKey
+	}
+
 	return nil
 }
 
@@ -1597,6 +1671,10 @@ func (hs *clientHandshakeState) processServerExtensions(serverExtensions *server
 			return errors.New("tls: server sent QUIC transport params for TLS version less than 1.3")
 		}
 		c.quicTransportParams = serverExtensions.quicTransportParams
+	}
+
+	if c.config.Bugs.ExpectPQExperimentSignal != serverExtensions.pqExperimentSignal {
+		return fmt.Errorf("tls: PQ experiment signal presence (%t) was not what was expected", serverExtensions.pqExperimentSignal)
 	}
 
 	return nil
@@ -1925,18 +2003,24 @@ func writeIntPadded(b []byte, x *big.Int) {
 }
 
 func generatePSKBinders(version uint16, hello *clientHelloMsg, pskCipherSuite *cipherSuite, psk, firstClientHello, helloRetryRequest []byte, config *Config) {
-	if config.Bugs.SendNoPSKBinder {
-		return
-	}
-
+	maybeCorruptBinder := !config.Bugs.OnlyCorruptSecondPSKBinder || len(firstClientHello) > 0
 	binderLen := pskCipherSuite.hash().Size()
-	if config.Bugs.SendShortPSKBinder {
-		binderLen--
-	}
-
 	numBinders := 1
-	if config.Bugs.SendExtraPSKBinder {
-		numBinders++
+	if maybeCorruptBinder {
+		if config.Bugs.SendNoPSKBinder {
+			// The binders may have been set from the previous
+			// ClientHello.
+			hello.pskBinders = nil
+			return
+		}
+
+		if config.Bugs.SendShortPSKBinder {
+			binderLen--
+		}
+
+		if config.Bugs.SendExtraPSKBinder {
+			numBinders++
+		}
 	}
 
 	// Fill hello.pskBinders with appropriate length arrays of zeros so the
@@ -1951,11 +2035,13 @@ func generatePSKBinders(version uint16, hello *clientHelloMsg, pskCipherSuite *c
 	binderSize := len(hello.pskBinders)*(binderLen+1) + 2
 	truncatedHello := helloBytes[:len(helloBytes)-binderSize]
 	binder := computePSKBinder(psk, version, resumptionPSKBinderLabel, pskCipherSuite, firstClientHello, helloRetryRequest, truncatedHello)
-	if config.Bugs.SendShortPSKBinder {
-		binder = binder[:binderLen]
-	}
-	if config.Bugs.SendInvalidPSKBinder {
-		binder[0] ^= 1
+	if maybeCorruptBinder {
+		if config.Bugs.SendShortPSKBinder {
+			binder = binder[:binderLen]
+		}
+		if config.Bugs.SendInvalidPSKBinder {
+			binder[0] ^= 1
+		}
 	}
 
 	for i := range hello.pskBinders {

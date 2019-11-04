@@ -156,9 +156,6 @@ beeu_mod_inverse_vartime:
 .cfi_startproc
     push %rbp
 .cfi_push rbp
-    movq %rsp, %rbp
-.cfi_def_cfa_register rbp
-
     push %r12
 .cfi_push r12
     push %r13
@@ -173,6 +170,7 @@ beeu_mod_inverse_vartime:
 .cfi_push rsi
 
     sub \$$last_rsp_offset, %rsp
+.cfi_adjust_cfa_offset  $last_rsp_offset
     movq $out, $out_rsp(%rsp)
 
     # X=1, Y=0
@@ -380,6 +378,7 @@ beeu_mod_inverse_vartime:
 
 .Lbeeu_finish:
     add \$$last_rsp_offset, %rsp
+.cfi_adjust_cfa_offset  -$last_rsp_offset
     pop %rsi
 .cfi_pop rsi
     pop %rbx
@@ -394,12 +393,11 @@ beeu_mod_inverse_vartime:
 .cfi_pop r12
     pop %rbp
 .cfi_pop rbp
-.cfi_def_cfa rsp, 8
-.cfi_endproc
     ret
+.cfi_endproc
 
 .size beeu_mod_inverse_vartime, .-beeu_mod_inverse_vartime
 ___
 
 print $code;
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

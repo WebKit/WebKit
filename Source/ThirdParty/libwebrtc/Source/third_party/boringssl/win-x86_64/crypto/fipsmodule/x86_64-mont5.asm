@@ -591,6 +591,7 @@ $L$SEH_end_bn_mul4x_mont_gather5:
 
 ALIGN	32
 mul4x_internal:
+
 	shl	r9,5
 	movd	xmm5,DWORD[56+rax]
 	lea	rax,[$L$inc]
@@ -1113,6 +1114,7 @@ $L$inner4x:
 	mov	r15,QWORD[24+rbp]
 	jmp	NEAR $L$sqr4x_sub_entry
 
+
 global	bn_power5
 
 ALIGN	32
@@ -1269,6 +1271,7 @@ global	bn_sqr8x_internal
 ALIGN	32
 bn_sqr8x_internal:
 __bn_sqr8x_internal:
+
 
 
 
@@ -2045,8 +2048,10 @@ DB	102,73,15,126,217
 	DB	0F3h,0C3h		;repret
 
 
+
 ALIGN	32
 __bn_post4x_internal:
+
 	mov	r12,QWORD[rbp]
 	lea	rbx,[r9*1+rdi]
 	mov	rcx,r9
@@ -2098,14 +2103,17 @@ $L$sqr4x_sub_entry:
 	neg	r9
 	DB	0F3h,0C3h		;repret
 
+
 global	bn_from_montgomery
 
 ALIGN	32
 bn_from_montgomery:
+
 	test	DWORD[48+rsp],7
 	jz	NEAR bn_from_mont8x
 	xor	eax,eax
 	DB	0F3h,0C3h		;repret
+
 
 
 
@@ -2418,6 +2426,7 @@ $L$SEH_end_bn_mulx4x_mont_gather5:
 
 ALIGN	32
 mulx4x_internal:
+
 	mov	QWORD[8+rsp],r9
 	mov	r10,r9
 	neg	r9
@@ -2838,6 +2847,7 @@ $L$mulx4x_inner:
 	jmp	NEAR $L$sqrx4x_sub_entry
 
 
+
 ALIGN	32
 bn_powerx5:
 	mov	QWORD[8+rsp],rdi	;WIN64 prologue
@@ -2992,6 +3002,7 @@ global	bn_sqrx8x_internal
 ALIGN	32
 bn_sqrx8x_internal:
 __bn_sqrx8x_internal:
+
 
 
 
@@ -3604,8 +3615,11 @@ DB	102,72,15,126,213
 	jb	NEAR $L$sqrx8x_reduction_loop
 	DB	0F3h,0C3h		;repret
 
+
 ALIGN	32
+
 __bn_postx4x_internal:
+
 	mov	r12,QWORD[rbp]
 	mov	r10,rcx
 	mov	r9,rcx
@@ -3654,10 +3668,12 @@ $L$sqrx4x_sub_entry:
 
 	DB	0F3h,0C3h		;repret
 
+
 global	bn_scatter5
 
 ALIGN	16
 bn_scatter5:
+
 	cmp	edx,0
 	jz	NEAR $L$scatter_epilogue
 	lea	r8,[r9*8+r8]
@@ -3672,13 +3688,16 @@ $L$scatter_epilogue:
 	DB	0F3h,0C3h		;repret
 
 
+
 global	bn_gather5
 
 ALIGN	32
 bn_gather5:
+
 $L$SEH_begin_bn_gather5:
 
 DB	0x4c,0x8d,0x14,0x24
+
 DB	0x48,0x81,0xec,0x08,0x01,0x00,0x00
 	lea	rax,[$L$inc]
 	and	rsp,-16
@@ -3832,8 +3851,10 @@ $L$gather:
 	jnz	NEAR $L$gather
 
 	lea	rsp,[r10]
+
 	DB	0F3h,0C3h		;repret
 $L$SEH_end_bn_gather5:
+
 
 ALIGN	64
 $L$inc:

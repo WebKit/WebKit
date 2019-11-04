@@ -518,6 +518,7 @@ $code.=<<___;
 .type	gcm_init_clmul,\@abi-omnipotent
 .align	16
 gcm_init_clmul:
+.cfi_startproc
 .L_init_clmul:
 ___
 $code.=<<___ if ($win64);
@@ -587,6 +588,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	gcm_init_clmul,.-gcm_init_clmul
 ___
 }
@@ -598,6 +600,7 @@ $code.=<<___;
 .type	gcm_gmult_clmul,\@abi-omnipotent
 .align	16
 gcm_gmult_clmul:
+.cfi_startproc
 .L_gmult_clmul:
 	movdqu		($Xip),$Xi
 	movdqa		.Lbswap_mask(%rip),$T3
@@ -634,6 +637,7 @@ $code.=<<___;
 	pshufb		$T3,$Xi
 	movdqu		$Xi,($Xip)
 	ret
+.cfi_endproc
 .size	gcm_gmult_clmul,.-gcm_gmult_clmul
 ___
 }
@@ -647,6 +651,7 @@ $code.=<<___;
 .type	gcm_ghash_clmul,\@abi-omnipotent
 .align	32
 gcm_ghash_clmul:
+.cfi_startproc
 .L_ghash_clmul:
 ___
 $code.=<<___ if ($win64);
@@ -995,6 +1000,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	gcm_ghash_clmul,.-gcm_ghash_clmul
 ___
 }
@@ -1004,6 +1010,7 @@ $code.=<<___;
 .type	gcm_init_avx,\@abi-omnipotent
 .align	32
 gcm_init_avx:
+.cfi_startproc
 ___
 if ($avx) {
 my ($Htbl,$Xip)=@_4args;
@@ -1132,6 +1139,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	gcm_init_avx,.-gcm_init_avx
 ___
 } else {
@@ -1146,7 +1154,9 @@ $code.=<<___;
 .type	gcm_gmult_avx,\@abi-omnipotent
 .align	32
 gcm_gmult_avx:
+.cfi_startproc
 	jmp	.L_gmult_clmul
+.cfi_endproc
 .size	gcm_gmult_avx,.-gcm_gmult_avx
 ___
 
@@ -1155,6 +1165,7 @@ $code.=<<___;
 .type	gcm_ghash_avx,\@abi-omnipotent
 .align	32
 gcm_ghash_avx:
+.cfi_startproc
 ___
 if ($avx) {
 my ($Xip,$Htbl,$inp,$len)=@_4args;
@@ -1567,6 +1578,7 @@ $code.=<<___ if ($win64);
 ___
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	gcm_ghash_avx,.-gcm_ghash_avx
 ___
 } else {
@@ -1791,4 +1803,4 @@ $code =~ s/\`([^\`]*)\`/eval($1)/gem;
 
 print $code;
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

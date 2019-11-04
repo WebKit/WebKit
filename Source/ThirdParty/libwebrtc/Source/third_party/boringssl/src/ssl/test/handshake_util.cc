@@ -413,8 +413,9 @@ static bool PrepareHandoff(SSL *ssl, SettingsWriter *writer,
   }
 
   ScopedCBB cbb;
+  SSL_CLIENT_HELLO hello;
   if (!CBB_init(cbb.get(), 512) ||
-      !SSL_serialize_handoff(ssl, cbb.get()) ||
+      !SSL_serialize_handoff(ssl, cbb.get(), &hello) ||
       !writer->WriteHandoff({CBB_data(cbb.get()), CBB_len(cbb.get())}) ||
       !SerializeContextState(ssl->ctx.get(), cbb.get()) ||
       !GetTestState(ssl)->Serialize(cbb.get())) {

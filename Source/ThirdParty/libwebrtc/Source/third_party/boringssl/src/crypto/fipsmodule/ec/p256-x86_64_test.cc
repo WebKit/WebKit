@@ -28,6 +28,7 @@
 #include "internal.h"
 #include "../bn/internal.h"
 #include "../../internal.h"
+#include "../../test/abi_test.h"
 #include "../../test/file_test.h"
 #include "../../test/test_util.h"
 #include "p256-x86_64.h"
@@ -61,6 +62,11 @@ TEST(P256_X86_64Test, SelectW5) {
     EXPECT_EQ(Bytes(reinterpret_cast<const char *>(&expected), sizeof(expected)),
               Bytes(reinterpret_cast<const char *>(&val), sizeof(val)));
   }
+
+  // This is a constant-time function, so it is only necessary to instrument one
+  // index for ABI checking.
+  P256_POINT val;
+  CHECK_ABI(ecp_nistz256_select_w5, &val, table, 7);
 }
 
 TEST(P256_X86_64Test, SelectW7) {
@@ -85,6 +91,11 @@ TEST(P256_X86_64Test, SelectW7) {
     EXPECT_EQ(Bytes(reinterpret_cast<const char *>(&expected), sizeof(expected)),
               Bytes(reinterpret_cast<const char *>(&val), sizeof(val)));
   }
+
+  // This is a constant-time function, so it is only necessary to instrument one
+  // index for ABI checking.
+  P256_POINT_AFFINE val;
+  CHECK_ABI(ecp_nistz256_select_w7, &val, table, 42);
 }
 
 TEST(P256_X86_64Test, BEEU) {
@@ -107,11 +118,16 @@ TEST(P256_X86_64Test, BEEU) {
 
   // Trying to find the inverse of zero should fail.
   ASSERT_FALSE(beeu_mod_inverse_vartime(out, in, order_words));
+  // This is not a constant-time function, so instrument both zero and a few
+  // inputs below.
+  ASSERT_FALSE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
 
   // kOneMont is 1, in Montgomery form.
   static const BN_ULONG kOneMont[P256_LIMBS] = {
-      TOBN(0xc46353d, 0x039cdaaf), TOBN(0x43190552, 0x58e8617b),
-      0, 0xffffffff,
+      TOBN(0xc46353d, 0x039cdaaf),
+      TOBN(0x43190552, 0x58e8617b),
+      0,
+      0xffffffff,
   };
 
   for (BN_ULONG i = 1; i < 2000; i++) {
@@ -142,6 +158,10 @@ TEST(P256_X86_64Test, BEEU) {
     // Invert the result and expect to get back to the original value.
     ASSERT_TRUE(beeu_mod_inverse_vartime(out, out, order_words));
     EXPECT_EQ(0, OPENSSL_memcmp(in, out, sizeof(in)));
+
+    if (i < 5) {
+      EXPECT_TRUE(CHECK_ABI(beeu_mod_inverse_vartime, out, in, order_words));
+    }
   }
 }
 
@@ -481,6 +501,77 @@ TEST(P256_X86_64Test, TestVectors) {
       FAIL() << "Unknown test type:" << t->GetParameter();
     }
   });
+}
+
+// Instrument the functions covered in TestVectors for ABI checking.
+TEST(P256_X86_64Test, ABI) {
+  BN_ULONG a[P256_LIMBS], b[P256_LIMBS], c[P256_LIMBS];
+  OPENSSL_memset(a, 0x01, sizeof(a));
+  // These functions are all constant-time, so it is only necessary to
+  // instrument one call each for ABI checking.
+  CHECK_ABI(ecp_nistz256_neg, b, a);
+  CHECK_ABI(ecp_nistz256_mul_mont, c, a, b);
+  CHECK_ABI(ecp_nistz256_sqr_mont, c, a);
+  CHECK_ABI(ecp_nistz256_from_mont, c, a);
+  CHECK_ABI(ecp_nistz256_ord_mul_mont, c, a, b);
+
+  // Check a few different loop counts.
+  CHECK_ABI(ecp_nistz256_ord_sqr_mont, b, a, 1);
+  CHECK_ABI(ecp_nistz256_ord_sqr_mont, b, a, 3);
+
+  // Point addition has some special cases around infinity and doubling. Test a
+  // few different scenarios.
+  static const P256_POINT kA = {
+      {TOBN(0x60559ac7, 0xc8d0d89d), TOBN(0x6cda3400, 0x545f7e2c),
+       TOBN(0x9b5159e0, 0x323e6048), TOBN(0xcb8dea33, 0x27057fe6)},
+      {TOBN(0x81a2d3bc, 0xc93a2d53), TOBN(0x81f40762, 0xa4f33ccf),
+       TOBN(0xc3c3300a, 0xa8ad50ea), TOBN(0x553de89b, 0x31719830)},
+      {TOBN(0x3fd9470f, 0xb277d181), TOBN(0xc191b8d5, 0x6376f206),
+       TOBN(0xb2572c1f, 0x45eda26f), TOBN(0x4589e40d, 0xf2efc546)},
+  };
+  static const P256_POINT kB = {
+      {TOBN(0x3cf0b0aa, 0x92054341), TOBN(0xb949bb80, 0xdab57807),
+       TOBN(0x99de6814, 0xefd21b3e), TOBN(0x32ad5649, 0x7c6c6e83)},
+      {TOBN(0x06afaa02, 0x688399e0), TOBN(0x75f2d096, 0x2a3ce65c),
+       TOBN(0xf6a31eb7, 0xca0244b3), TOBN(0x57b33b7a, 0xcfeee75e)},
+      {TOBN(0x7617d2e0, 0xb4f1d35f), TOBN(0xa922cb10, 0x7f592b65),
+       TOBN(0x12fd6c7a, 0x51a2f474), TOBN(0x337d5e1e, 0xc2fc711b)},
+  };
+  // This file represents Jacobian infinity as (*, *, 0).
+  static const P256_POINT kInfinity = {
+      {TOBN(0, 0), TOBN(0, 0), TOBN(0, 0), TOBN(0, 0)},
+      {TOBN(0, 0), TOBN(0, 0), TOBN(0, 0), TOBN(0, 0)},
+      {TOBN(0, 0), TOBN(0, 0), TOBN(0, 0), TOBN(0, 0)},
+  };
+
+  P256_POINT p;
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kA, &kB);
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kA, &kA);
+  OPENSSL_memcpy(&p, &kA, sizeof(P256_POINT));
+  ecp_nistz256_neg(p.Y, p.Y);
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kA, &p);  // A + -A
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kA, &kInfinity);
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kInfinity, &kA);
+  CHECK_ABI(ecp_nistz256_point_add, &p, &kInfinity, &kInfinity);
+  CHECK_ABI(ecp_nistz256_point_double, &p, &kA);
+  CHECK_ABI(ecp_nistz256_point_double, &p, &kInfinity);
+
+  static const P256_POINT_AFFINE kC = {
+      {TOBN(0x7e3ad339, 0xfb3fa5f0), TOBN(0x559d669d, 0xe3a047b2),
+       TOBN(0x8883b298, 0x7042e595), TOBN(0xfabada65, 0x7e477f08)},
+      {TOBN(0xd9cfceb8, 0xda1c3e85), TOBN(0x80863761, 0x0ce6d6bc),
+       TOBN(0xa8409d84, 0x66034f02), TOBN(0x05519925, 0x31a68d55)},
+  };
+  // This file represents affine infinity as (0, 0).
+  static const P256_POINT_AFFINE kInfinityAffine = {
+    {TOBN(0, 0), TOBN(0, 0), TOBN(0, 0), TOBN(0, 0)},
+    {TOBN(0, 0), TOBN(0, 0), TOBN(0, 0), TOBN(0, 0)},
+  };
+
+  CHECK_ABI(ecp_nistz256_point_add_affine, &p, &kA, &kC);
+  CHECK_ABI(ecp_nistz256_point_add_affine, &p, &kA, &kInfinityAffine);
+  CHECK_ABI(ecp_nistz256_point_add_affine, &p, &kInfinity, &kInfinityAffine);
+  CHECK_ABI(ecp_nistz256_point_add_affine, &p, &kInfinity, &kC);
 }
 
 #endif

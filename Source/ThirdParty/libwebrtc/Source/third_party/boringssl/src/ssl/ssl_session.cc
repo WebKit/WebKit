@@ -1044,6 +1044,11 @@ void SSL_SESSION_get0_peer_sha256(const SSL_SESSION *session,
   }
 }
 
+int SSL_SESSION_early_data_capable(const SSL_SESSION *session) {
+  return ssl_session_protocol_version(session) >= TLS1_3_VERSION &&
+         session->ticket_max_early_data != 0;
+}
+
 SSL_SESSION *SSL_magic_pending_session_ptr(void) {
   return (SSL_SESSION *)&g_pending_session_magic;
 }

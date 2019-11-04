@@ -40,8 +40,8 @@ extern "C" {
 OPENSSL_EXPORT ENGINE *ENGINE_new(void);
 
 // ENGINE_free decrements the reference counts for all methods linked from
-// |engine| and frees |engine| itself.
-OPENSSL_EXPORT void ENGINE_free(ENGINE *engine);
+// |engine| and frees |engine| itself. It returns one.
+OPENSSL_EXPORT int ENGINE_free(ENGINE *engine);
 
 
 // Method accessors.

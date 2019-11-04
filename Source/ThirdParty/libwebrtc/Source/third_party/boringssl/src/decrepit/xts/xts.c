@@ -80,23 +80,13 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
   if (!enc && (len % 16)) len -= 16;
 
   while (len >= 16) {
-#if STRICT_ALIGNMENT
     OPENSSL_memcpy(scratch.c, inp, 16);
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
-#else
-    scratch.u[0] = ((uint64_t *)inp)[0] ^ tweak.u[0];
-    scratch.u[1] = ((uint64_t *)inp)[1] ^ tweak.u[1];
-#endif
     (*ctx->block1)(scratch.c, scratch.c, ctx->key1);
-#if STRICT_ALIGNMENT
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
     OPENSSL_memcpy(out, scratch.c, 16);
-#else
-    ((uint64_t *)out)[0] = scratch.u[0] ^= tweak.u[0];
-    ((uint64_t *)out)[1] = scratch.u[1] ^= tweak.u[1];
-#endif
     inp += 16;
     out += 16;
     len -= 16;
@@ -134,14 +124,9 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
     carry = (unsigned int)(tweak.u[0] >> 63);
     tweak1.u[0] = (tweak.u[0] << 1) ^ res;
     tweak1.u[1] = (tweak.u[1] << 1) | carry;
-#if STRICT_ALIGNMENT
     OPENSSL_memcpy(scratch.c, inp, 16);
     scratch.u[0] ^= tweak1.u[0];
     scratch.u[1] ^= tweak1.u[1];
-#else
-    scratch.u[0] = ((uint64_t *)inp)[0] ^ tweak1.u[0];
-    scratch.u[1] = ((uint64_t *)inp)[1] ^ tweak1.u[1];
-#endif
     (*ctx->block1)(scratch.c, scratch.c, ctx->key1);
     scratch.u[0] ^= tweak1.u[0];
     scratch.u[1] ^= tweak1.u[1];
@@ -154,14 +139,9 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
     (*ctx->block1)(scratch.c, scratch.c, ctx->key1);
-#if STRICT_ALIGNMENT
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
     OPENSSL_memcpy(out, scratch.c, 16);
-#else
-    ((uint64_t *)out)[0] = scratch.u[0] ^ tweak.u[0];
-    ((uint64_t *)out)[1] = scratch.u[1] ^ tweak.u[1];
-#endif
   }
 
   return 1;

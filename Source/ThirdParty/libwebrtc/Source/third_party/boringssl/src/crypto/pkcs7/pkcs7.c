@@ -134,7 +134,7 @@ err:
 int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
                  const void *arg) {
   CBB outer_seq, oid, wrapped_seq, seq, version_bytes, digest_algos_set,
-      content_info;
+      content_info, signer_infos;
 
   // See https://tools.ietf.org/html/rfc2315#section-7
   if (!CBB_add_asn1(out, &outer_seq, CBS_ASN1_SEQUENCE) ||
@@ -150,7 +150,8 @@ int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
       !CBB_add_asn1(&seq, &content_info, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&content_info, &oid, CBS_ASN1_OBJECT) ||
       !CBB_add_bytes(&oid, kPKCS7Data, sizeof(kPKCS7Data)) ||
-      !cb(&seq, arg)) {
+      !cb(&seq, arg) ||
+      !CBB_add_asn1(&seq, &signer_infos, CBS_ASN1_SET)) {
     return 0;
   }
 

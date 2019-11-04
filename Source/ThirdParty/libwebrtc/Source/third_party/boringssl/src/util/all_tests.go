@@ -146,9 +146,14 @@ var (
 
 func runTestOnce(test test, mallocNumToFail int64) (passed bool, err error) {
 	prog := path.Join(*buildDir, test.args[0])
-	args := test.args[1:]
+	args := append([]string{}, test.args[1:]...)
 	if *simulateARMCPUs && test.cpu != "" {
-		args = append([]string{"--cpu=" + test.cpu}, args...)
+		args = append(args, "--cpu=" + test.cpu)
+	}
+	if *useSDE {
+		// SDE is neither compatible with the unwind tester nor automatically
+		// detected.
+		args = append(args, "--no_unwind_tests")
 	}
 	var cmd *exec.Cmd
 	if *useValgrind {

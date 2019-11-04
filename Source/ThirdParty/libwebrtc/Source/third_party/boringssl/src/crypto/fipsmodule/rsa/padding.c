@@ -233,6 +233,9 @@ int RSA_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
   // impossible to completely avoid Bleichenbacher's attack. Consumers should
   // use |RSA_PADDING_NONE| and perform the padding check in constant-time
   // combined with a swap to a random session key or other mitigation.
+  CONSTTIME_DECLASSIFY(&valid_index, sizeof(valid_index));
+  CONSTTIME_DECLASSIFY(&zero_index, sizeof(zero_index));
+
   if (!valid_index) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_PKCS_DECODING_ERROR);
     return 0;

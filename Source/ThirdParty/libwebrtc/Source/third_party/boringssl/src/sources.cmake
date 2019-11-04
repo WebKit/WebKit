@@ -54,6 +54,7 @@ set(
   crypto/fipsmodule/rand/ctrdrbg_vectors.txt
   crypto/hmac_extra/hmac_tests.txt
   crypto/poly1305/poly1305_tests.txt
+  crypto/siphash/siphash_tests.txt
   crypto/x509/many_constraints.pem
   crypto/x509/many_names1.pem
   crypto/x509/many_names2.pem
@@ -80,6 +81,7 @@ set(
   third_party/wycheproof_testvectors/ecdsa_secp384r1_sha512_test.txt
   third_party/wycheproof_testvectors/ecdsa_secp521r1_sha512_test.txt
   third_party/wycheproof_testvectors/eddsa_test.txt
+  third_party/wycheproof_testvectors/kwp_test.txt
   third_party/wycheproof_testvectors/kw_test.txt
   third_party/wycheproof_testvectors/rsa_pss_2048_sha1_mgf1_20_test.txt
   third_party/wycheproof_testvectors/rsa_pss_2048_sha256_mgf1_0_test.txt

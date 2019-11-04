@@ -129,6 +129,14 @@ const EVP_CIPHER *EVP_get_cipherbyname(const char *name) {
     return EVP_aes_192_ofb();
   } else if (OPENSSL_strcasecmp(name, "aes-256-ofb") == 0) {
     return EVP_aes_256_ofb();
+  } else if (OPENSSL_strcasecmp(name, "des-ecb") == 0) {
+    return EVP_des_ecb();
+  } else if (OPENSSL_strcasecmp(name, "des-ede") == 0) {
+    return EVP_des_ede();
+  } else if (OPENSSL_strcasecmp(name, "des-ede-cbc") == 0) {
+    return EVP_des_ede_cbc();
+  } else if (OPENSSL_strcasecmp(name, "rc2-cbc") == 0) {
+    return EVP_rc2_cbc();
   }
 
   return NULL;

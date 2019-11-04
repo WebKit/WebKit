@@ -160,7 +160,7 @@ extern "C" {
 #define BN_DEC_FMT1 "%" PRIu32
 #define BN_DEC_FMT2 "%09" PRIu32
 #define BN_HEX_FMT1 "%" PRIx32
-#define BN_HEX_FMT2 "%08" PRIx64
+#define BN_HEX_FMT2 "%08" PRIx32
 #else
 #error "Must define either OPENSSL_32_BIT or OPENSSL_64_BIT"
 #endif
@@ -931,6 +931,12 @@ OPENSSL_EXPORT BN_MONT_CTX *BN_MONT_CTX_new(void);
 // instead.
 OPENSSL_EXPORT int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod,
                                    BN_CTX *ctx);
+
+// BN_bn2binpad behaves like |BN_bn2bin_padded|, but it returns |len| on success
+// and -1 on error.
+//
+// Use |BN_bn2bin_padded| instead. It is |size_t|-clean.
+OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 
 
 // Private functions

@@ -27,6 +27,16 @@ extern "C" {
 void CRYPTO_hchacha20(uint8_t out[32], const uint8_t key[32],
                       const uint8_t nonce[16]);
 
+#if !defined(OPENSSL_NO_ASM) &&                         \
+    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
+     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
+#define CHACHA20_ASM
+
+// ChaCha20_ctr32 is defined in asm/chacha-*.pl.
+void ChaCha20_ctr32(uint8_t *out, const uint8_t *in, size_t in_len,
+                    const uint32_t key[8], const uint32_t counter[4]);
+#endif
+
 
 #if defined(__cplusplus)
 }  // extern C

@@ -36,7 +36,7 @@ Arg <- QuotedArg / [[0-9a-z%+\-*_@.]]*
 QuotedArg <- '"' QuotedText '"'
 QuotedText <- (EscapedChar / [^"])*
 LabelContainingDirective <- LabelContainingDirectiveName WS SymbolArgs
-LabelContainingDirectiveName <- ".long" / ".set" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type"
+LabelContainingDirectiveName <- ".long" / ".set" / ".8byte" / ".4byte" / ".quad" / ".tc" / ".localentry" / ".size" / ".type" / ".uleb128" / ".sleb128"
 SymbolArgs <- SymbolArg ((WS? ',' WS?) SymbolArg)*
 SymbolArg <- Offset /
              SymbolType /

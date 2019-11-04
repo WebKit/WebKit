@@ -801,6 +801,8 @@ const (
 	// instrCombine merges the source and destination in some fashion, for example
 	// a 2-operand bitwise operation.
 	instrCombine
+	// instrThreeArg merges two sources into a destination in some fashion.
+	instrThreeArg
 	instrOther
 )
 
@@ -829,6 +831,11 @@ func classifyInstruction(instr string, args []*node32) instructionType {
 	case "orq", "andq", "xorq":
 		if len(args) == 2 {
 			return instrCombine
+		}
+
+	case "sarxq", "shlxq", "shrxq":
+		if len(args) == 3 {
+			return instrThreeArg
 		}
 
 	case "vpbroadcastq":
@@ -878,10 +885,24 @@ func saveFlags(w stringWriter, redzoneCleared bool) wrapperFunc {
 	}
 }
 
-func saveRegister(w stringWriter, avoidReg string) (wrapperFunc, string) {
-	reg := "%rax"
-	if reg == avoidReg {
-		reg = "%rbx"
+func saveRegister(w stringWriter, avoidRegs []string) (wrapperFunc, string) {
+	candidates := []string{"%rax", "%rbx", "%rcx", "%rdx"}
+
+	var reg string
+NextCandidate:
+	for _, candidate := range candidates {
+		for _, avoid := range avoidRegs {
+			if candidate == avoid {
+				continue NextCandidate
+			}
+		}
+
+		reg = candidate
+		break
+	}
+
+	if len(reg) == 0 {
+		panic("too many excluded registers")
 	}
 
 	return func(k func()) {
@@ -915,6 +936,13 @@ func combineOp(w stringWriter, instructionName, source, dest string) wrapperFunc
 	return func(k func()) {
 		k()
 		w.WriteString("\t" + instructionName + " " + source + ", " + dest + "\n")
+	}
+}
+
+func threeArgCombineOp(w stringWriter, instructionName, source1, source2, dest string) wrapperFunc {
+	return func(k func()) {
+		k()
+		w.WriteString("\t" + instructionName + " " + source1 + ", " + source2 + ", " + dest + "\n")
 	}
 }
 
@@ -1033,9 +1061,6 @@ Args:
 				if len(offset) > 0 {
 					return nil, errors.New("loading from GOT with offset is unsupported")
 				}
-				if i != 0 {
-					return nil, errors.New("GOT access must be source operand")
-				}
 				if !d.isRIPRelative(memRef) {
 					return nil, errors.New("GOT access must be IP-relative")
 				}
@@ -1048,10 +1073,15 @@ Args:
 					useGOT = true
 				}
 
+				classification := classifyInstruction(instructionName, argNodes)
+				if classification != instrThreeArg && i != 0 {
+					return nil, errors.New("GOT access must be source operand")
+				}
+
 				// Reduce the instruction to movq symbol@GOTPCREL, targetReg.
 				var targetReg string
 				var redzoneCleared bool
-				switch classifyInstruction(instructionName, argNodes) {
+				switch classification {
 				case instrPush:
 					wrappers = append(wrappers, push(d.output))
 					targetReg = "%rax"
@@ -1073,11 +1103,35 @@ Args:
 					if !isValidLEATarget(targetReg) {
 						return nil, fmt.Errorf("cannot handle combining instructions targeting non-general registers")
 					}
-					saveRegWrapper, tempReg := saveRegister(d.output, targetReg)
+					saveRegWrapper, tempReg := saveRegister(d.output, []string{targetReg})
 					redzoneCleared = true
 					wrappers = append(wrappers, saveRegWrapper)
 
 					wrappers = append(wrappers, combineOp(d.output, instructionName, tempReg, targetReg))
+					targetReg = tempReg
+				case instrThreeArg:
+					if n := len(argNodes); n != 3 {
+						return nil, fmt.Errorf("three-argument instruction has %d arguments", n)
+					}
+					if i != 0 && i != 1 {
+						return nil, errors.New("GOT access must be from soure operand")
+					}
+					targetReg = d.contents(argNodes[2])
+
+					otherSource := d.contents(argNodes[1])
+					if i == 1 {
+						otherSource = d.contents(argNodes[0])
+					}
+
+					saveRegWrapper, tempReg := saveRegister(d.output, []string{targetReg, otherSource})
+					redzoneCleared = true
+					wrappers = append(wrappers, saveRegWrapper)
+
+					if i == 0 {
+						wrappers = append(wrappers, threeArgCombineOp(d.output, instructionName, tempReg, otherSource, targetReg))
+					} else {
+						wrappers = append(wrappers, threeArgCombineOp(d.output, instructionName, otherSource, tempReg, targetReg))
+					}
 					targetReg = tempReg
 				default:
 					return nil, fmt.Errorf("Cannot rewrite GOTPCREL reference for instruction %q", instructionName)
@@ -1087,7 +1141,7 @@ Args:
 					// Sometimes the compiler will load from the GOT to an
 					// XMM register, which is not a valid target of an LEA
 					// instruction.
-					saveRegWrapper, tempReg := saveRegister(d.output, "")
+					saveRegWrapper, tempReg := saveRegister(d.output, nil)
 					wrappers = append(wrappers, saveRegWrapper)
 					isAVX := strings.HasPrefix(instructionName, "v")
 					wrappers = append(wrappers, moveTo(d.output, targetReg, isAVX, tempReg))
@@ -1215,6 +1269,13 @@ func transform(w stringWriter, inputs []inputFile) error {
 	// maxObservedFileNumber contains the largest seen file number in a
 	// .file directive. Zero is not a valid number.
 	maxObservedFileNumber := 0
+	// fileDirectivesContainMD5 is true if the compiler is outputting MD5
+	// checksums in .file directives. If it does so, then this script needs
+	// to match that behaviour otherwise warnings result.
+	fileDirectivesContainMD5 := false
+
+	// OPENSSL_ia32cap_get will be synthesized by this script.
+	symbols["OPENSSL_ia32cap_get"] = struct{}{}
 
 	for _, input := range inputs {
 		forEachPath(input.ast.up, func(node *node32) {
@@ -1271,6 +1332,12 @@ func transform(w stringWriter, inputs []inputFile) error {
 			if fileNo > maxObservedFileNumber {
 				maxObservedFileNumber = fileNo
 			}
+
+			for _, token := range parts[2:] {
+				if token == "md5" {
+					fileDirectivesContainMD5 = true
+				}
+			}
 		}, ruleStatement, ruleLocationDirective)
 	}
 
@@ -1291,7 +1358,11 @@ func transform(w stringWriter, inputs []inputFile) error {
 	}
 
 	w.WriteString(".text\n")
-	w.WriteString(fmt.Sprintf(".file %d \"inserted_by_delocate.c\"\n", maxObservedFileNumber+1))
+	var fileTrailing string
+	if fileDirectivesContainMD5 {
+		fileTrailing = " md5 0x00000000000000000000000000000000"
+	}
+	w.WriteString(fmt.Sprintf(".file %d \"inserted_by_delocate.c\"%s\n", maxObservedFileNumber+1, fileTrailing))
 	w.WriteString(fmt.Sprintf(".loc %d 1 0\n", maxObservedFileNumber+1))
 	w.WriteString("BORINGSSL_bcm_text_start:\n")
 
@@ -1394,6 +1465,8 @@ func transform(w stringWriter, inputs []inputFile) error {
 		}
 
 		w.WriteString(".type OPENSSL_ia32cap_get, @function\n")
+		w.WriteString(".globl OPENSSL_ia32cap_get\n")
+		w.WriteString(localTargetName("OPENSSL_ia32cap_get") + ":\n")
 		w.WriteString("OPENSSL_ia32cap_get:\n")
 		w.WriteString("\tleaq OPENSSL_ia32cap_P(%rip), %rax\n")
 		w.WriteString("\tret\n")

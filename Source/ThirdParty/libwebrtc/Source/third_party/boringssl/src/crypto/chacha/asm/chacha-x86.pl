@@ -769,4 +769,4 @@ sub SSSE3ROUND {	# critical path is 20 "SIMD ticks" per round
 
 &asm_finish();
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

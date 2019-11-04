@@ -144,10 +144,11 @@ print <<___;
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
+#if !defined(__has_feature)
+#define __has_feature(x) 0
+#endif
 #if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
 #define OPENSSL_NO_ASM
-#endif
 #endif
 
 #if !defined(OPENSSL_NO_ASM)
@@ -167,6 +168,15 @@ while(my $line=<>) {
     $line =~ s|/\*.*\*/||;	# get rid of C-style comments...
     $line =~ s|^\s+||;		# ... and skip white spaces in beginning...
     $line =~ s|\s+$||;		# ... and at the end
+
+    if ($flavour =~ /64/) {
+	my $copy = $line;
+	# Also remove line comments.
+	$copy =~ s|//.*||;
+	if ($copy =~ /\b[wx]18\b/) {
+	    die "r18 is reserved by the platform and may not be used.";
+	}
+    }
 
     {
 	$line =~ s|[\b\.]L(\w{2,})|L$1|g;	# common denominator for Locallabel

@@ -42,10 +42,12 @@ TEST(CBSTest, Skip) {
 }
 
 TEST(CBSTest, GetUint) {
-  static const uint8_t kData[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+  static const uint8_t kData[] = {1,  2,  3,  4,  5,  6,  7,  8,  9,  10,
+                                  11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
   uint8_t u8;
   uint16_t u16;
   uint32_t u32;
+  uint64_t u64;
   CBS data;
 
   CBS_init(&data, kData, sizeof(kData));
@@ -57,10 +59,12 @@ TEST(CBSTest, GetUint) {
   EXPECT_EQ(0x40506u, u32);
   ASSERT_TRUE(CBS_get_u32(&data, &u32));
   EXPECT_EQ(0x708090au, u32);
+  ASSERT_TRUE(CBS_get_u64(&data, &u64));
+  EXPECT_EQ(0xb0c0d0e0f101112u, u64);
   ASSERT_TRUE(CBS_get_last_u8(&data, &u8));
-  EXPECT_EQ(0xcu, u8);
+  EXPECT_EQ(0x14u, u8);
   ASSERT_TRUE(CBS_get_last_u8(&data, &u8));
-  EXPECT_EQ(0xbu, u8);
+  EXPECT_EQ(0x13u, u8);
   EXPECT_FALSE(CBS_get_u8(&data, &u8));
   EXPECT_FALSE(CBS_get_last_u8(&data, &u8));
 }
@@ -310,7 +314,9 @@ TEST(CBBTest, InitUninitialized) {
 }
 
 TEST(CBBTest, Basic) {
-  static const uint8_t kExpected[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0xa, 0xb, 0xc};
+  static const uint8_t kExpected[] = {1,   2,    3,    4,    5,    6,   7,
+                                      8,   9,    0xa,  0xb,  0xc,  0xd, 0xe,
+                                      0xf, 0x10, 0x11, 0x12, 0x13, 0x14};
   uint8_t *buf;
   size_t buf_len;
 
@@ -323,7 +329,8 @@ TEST(CBBTest, Basic) {
   ASSERT_TRUE(CBB_add_u16(cbb.get(), 0x203));
   ASSERT_TRUE(CBB_add_u24(cbb.get(), 0x40506));
   ASSERT_TRUE(CBB_add_u32(cbb.get(), 0x708090a));
-  ASSERT_TRUE(CBB_add_bytes(cbb.get(), (const uint8_t *)"\x0b\x0c", 2));
+  ASSERT_TRUE(CBB_add_u64(cbb.get(), 0xb0c0d0e0f101112));
+  ASSERT_TRUE(CBB_add_bytes(cbb.get(), (const uint8_t *)"\x13\x14", 2));
   ASSERT_TRUE(CBB_finish(cbb.get(), &buf, &buf_len));
 
   bssl::UniquePtr<uint8_t> scoper(buf);

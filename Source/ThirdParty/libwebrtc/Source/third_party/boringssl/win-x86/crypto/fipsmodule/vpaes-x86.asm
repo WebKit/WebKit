@@ -20,6 +20,9 @@ section	.text	code align=64
 %else
 section	.text	code
 %endif
+%ifndef NDEBUG
+extern	_BORINGSSL_function_hit
+%endif
 align	64
 L$_vpaes_consts:
 dd	218628480,235210255,168496130,67568393
@@ -471,6 +474,18 @@ L$_vpaes_set_encrypt_key_begin:
 	push	ebx
 	push	esi
 	push	edi
+%ifndef NDEBUG
+	push	ebx
+	push	edx
+	call	L$016pic
+L$016pic:
+	pop	ebx
+	lea	ebx,[(_BORINGSSL_function_hit+5-L$016pic)+ebx]
+	mov	edx,1
+	mov	BYTE [ebx],dl
+	pop	edx
+	pop	ebx
+%endif
 	mov	esi,DWORD [20+esp]
 	lea	ebx,[esp-56]
 	mov	eax,DWORD [24+esp]
@@ -484,9 +499,9 @@ L$_vpaes_set_encrypt_key_begin:
 	mov	DWORD [240+edx],ebx
 	mov	ecx,48
 	mov	edi,0
-	lea	ebp,[(L$_vpaes_consts+0x30-L$016pic_point)]
+	lea	ebp,[(L$_vpaes_consts+0x30-L$017pic_point)]
 	call	__vpaes_schedule_core
-L$016pic_point:
+L$017pic_point:
 	mov	esp,DWORD [48+esp]
 	xor	eax,eax
 	pop	edi
@@ -520,9 +535,9 @@ L$_vpaes_set_decrypt_key_begin:
 	shr	ecx,1
 	and	ecx,32
 	xor	ecx,32
-	lea	ebp,[(L$_vpaes_consts+0x30-L$017pic_point)]
+	lea	ebp,[(L$_vpaes_consts+0x30-L$018pic_point)]
 	call	__vpaes_schedule_core
-L$017pic_point:
+L$018pic_point:
 	mov	esp,DWORD [48+esp]
 	xor	eax,eax
 	pop	edi
@@ -538,9 +553,21 @@ L$_vpaes_encrypt_begin:
 	push	ebx
 	push	esi
 	push	edi
-	lea	ebp,[(L$_vpaes_consts+0x30-L$018pic_point)]
+%ifndef NDEBUG
+	push	ebx
+	push	edx
+	call	L$019pic
+L$019pic:
+	pop	ebx
+	lea	ebx,[(_BORINGSSL_function_hit+4-L$019pic)+ebx]
+	mov	edx,1
+	mov	BYTE [ebx],dl
+	pop	edx
+	pop	ebx
+%endif
+	lea	ebp,[(L$_vpaes_consts+0x30-L$020pic_point)]
 	call	__vpaes_preheat
-L$018pic_point:
+L$020pic_point:
 	mov	esi,DWORD [20+esp]
 	lea	ebx,[esp-56]
 	mov	edi,DWORD [24+esp]
@@ -565,9 +592,9 @@ L$_vpaes_decrypt_begin:
 	push	ebx
 	push	esi
 	push	edi
-	lea	ebp,[(L$_vpaes_consts+0x30-L$019pic_point)]
+	lea	ebp,[(L$_vpaes_consts+0x30-L$021pic_point)]
 	call	__vpaes_preheat
-L$019pic_point:
+L$021pic_point:
 	mov	esi,DWORD [20+esp]
 	lea	ebx,[esp-56]
 	mov	edi,DWORD [24+esp]
@@ -597,7 +624,7 @@ L$_vpaes_cbc_encrypt_begin:
 	mov	eax,DWORD [28+esp]
 	mov	edx,DWORD [32+esp]
 	sub	eax,16
-	jc	NEAR L$020cbc_abort
+	jc	NEAR L$022cbc_abort
 	lea	ebx,[esp-56]
 	mov	ebp,DWORD [36+esp]
 	and	ebx,-16
@@ -610,14 +637,14 @@ L$_vpaes_cbc_encrypt_begin:
 	mov	DWORD [4+esp],edx
 	mov	DWORD [8+esp],ebp
 	mov	edi,eax
-	lea	ebp,[(L$_vpaes_consts+0x30-L$021pic_point)]
+	lea	ebp,[(L$_vpaes_consts+0x30-L$023pic_point)]
 	call	__vpaes_preheat
-L$021pic_point:
+L$023pic_point:
 	cmp	ecx,0
-	je	NEAR L$022cbc_dec_loop
-	jmp	NEAR L$023cbc_enc_loop
+	je	NEAR L$024cbc_dec_loop
+	jmp	NEAR L$025cbc_enc_loop
 align	16
-L$023cbc_enc_loop:
+L$025cbc_enc_loop:
 	movdqu	xmm0,[esi]
 	pxor	xmm0,xmm1
 	call	__vpaes_encrypt_core
@@ -627,10 +654,10 @@ L$023cbc_enc_loop:
 	movdqu	[esi*1+ebx],xmm0
 	lea	esi,[16+esi]
 	sub	edi,16
-	jnc	NEAR L$023cbc_enc_loop
-	jmp	NEAR L$024cbc_done
+	jnc	NEAR L$025cbc_enc_loop
+	jmp	NEAR L$026cbc_done
 align	16
-L$022cbc_dec_loop:
+L$024cbc_dec_loop:
 	movdqu	xmm0,[esi]
 	movdqa	[16+esp],xmm1
 	movdqa	[32+esp],xmm0
@@ -642,12 +669,12 @@ L$022cbc_dec_loop:
 	movdqu	[esi*1+ebx],xmm0
 	lea	esi,[16+esi]
 	sub	edi,16
-	jnc	NEAR L$022cbc_dec_loop
-L$024cbc_done:
+	jnc	NEAR L$024cbc_dec_loop
+L$026cbc_done:
 	mov	ebx,DWORD [8+esp]
 	mov	esp,DWORD [48+esp]
 	movdqu	[ebx],xmm1
-L$020cbc_abort:
+L$022cbc_abort:
 	pop	edi
 	pop	esi
 	pop	ebx

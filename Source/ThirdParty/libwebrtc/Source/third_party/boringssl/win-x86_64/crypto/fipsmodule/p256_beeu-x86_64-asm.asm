@@ -32,9 +32,6 @@ $L$SEH_begin_beeu_mod_inverse_vartime:
 
 	push	rbp
 
-	mov	rbp,rsp
-
-
 	push	r12
 
 	push	r13
@@ -49,6 +46,7 @@ $L$SEH_begin_beeu_mod_inverse_vartime:
 
 
 	sub	rsp,80
+
 	mov	QWORD[rsp],rdi
 
 
@@ -318,6 +316,7 @@ $L$beeu_err:
 
 $L$beeu_finish:
 	add	rsp,80
+
 	pop	rsi
 
 	pop	rbx
@@ -332,10 +331,9 @@ $L$beeu_finish:
 
 	pop	rbp
 
-
-
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 
 $L$SEH_end_beeu_mod_inverse_vartime:

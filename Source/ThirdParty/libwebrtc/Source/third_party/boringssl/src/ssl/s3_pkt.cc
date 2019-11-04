@@ -118,6 +118,7 @@
 #include <openssl/mem.h>
 #include <openssl/rand.h>
 
+#include "../crypto/err/internal.h"
 #include "../crypto/internal.h"
 #include "internal.h"
 
@@ -232,25 +233,29 @@ static int do_ssl3_write(SSL *ssl, int type, const uint8_t *in, unsigned len) {
     return -1;
   }
 
-  if (len == 0) {
-    return 0;
-  }
-
   if (!tls_flush_pending_hs_data(ssl)) {
     return -1;
   }
+
   size_t flight_len = 0;
   if (ssl->s3->pending_flight != nullptr) {
     flight_len =
         ssl->s3->pending_flight->length - ssl->s3->pending_flight_offset;
   }
 
-  size_t max_out = len + SSL_max_seal_overhead(ssl);
-  if (max_out < len || max_out + flight_len < max_out) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_OVERFLOW);
-    return -1;
+  size_t max_out = flight_len;
+  if (len > 0) {
+    const size_t max_ciphertext_len = len + SSL_max_seal_overhead(ssl);
+    if (max_ciphertext_len < len || max_out + max_ciphertext_len < max_out) {
+      OPENSSL_PUT_ERROR(SSL, ERR_R_OVERFLOW);
+      return -1;
+    }
+    max_out += max_ciphertext_len;
   }
-  max_out += flight_len;
+
+  if (max_out == 0) {
+    return 0;
+  }
 
   if (!buf->EnsureCap(flight_len + ssl_seal_align_prefix_len(ssl), max_out)) {
     return -1;
@@ -270,12 +275,14 @@ static int do_ssl3_write(SSL *ssl, int type, const uint8_t *in, unsigned len) {
     buf->DidWrite(flight_len);
   }
 
-  size_t ciphertext_len;
-  if (!tls_seal_record(ssl, buf->remaining().data(), &ciphertext_len,
-                       buf->remaining().size(), type, in, len)) {
-    return -1;
+  if (len > 0) {
+    size_t ciphertext_len;
+    if (!tls_seal_record(ssl, buf->remaining().data(), &ciphertext_len,
+                         buf->remaining().size(), type, in, len)) {
+      return -1;
+    }
+    buf->DidWrite(ciphertext_len);
   }
-  buf->DidWrite(ciphertext_len);
 
   // Now that we've made progress on the connection, uncork KeyUpdate
   // acknowledgments.
@@ -375,7 +382,24 @@ ssl_open_record_t ssl3_open_change_cipher_spec(SSL *ssl, size_t *out_consumed,
   return ssl_open_record_success;
 }
 
-int ssl_send_alert(SSL *ssl, int level, int desc) {
+void ssl_send_alert(SSL *ssl, int level, int desc) {
+  // This function is called in response to a fatal error from the peer. Ignore
+  // any failures writing the alert and report only the original error. In
+  // particular, if the transport uses |SSL_write|, our existing error will be
+  // clobbered so we must save and restore the error queue. See
+  // https://crbug.com/959305.
+  //
+  // TODO(davidben): Return the alert out of the handshake, rather than calling
+  // this function internally everywhere.
+  //
+  // TODO(davidben): This does not allow retrying if the alert hit EAGAIN. See
+  // https://crbug.com/boringssl/130.
+  UniquePtr<ERR_SAVE_STATE> err_state(ERR_save_state());
+  ssl_send_alert_impl(ssl, level, desc);
+  ERR_restore_state(err_state.get());
+}
+
+int ssl_send_alert_impl(SSL *ssl, int level, int desc) {
   // It is illegal to send an alert when we've already sent a closing one.
   if (ssl->s3->write_shutdown != ssl_shutdown_none) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_PROTOCOL_IS_SHUTDOWN);
@@ -390,7 +414,7 @@ int ssl_send_alert(SSL *ssl, int level, int desc) {
     ssl->s3->write_shutdown = ssl_shutdown_error;
   }
 
-  ssl->s3->alert_dispatch = 1;
+  ssl->s3->alert_dispatch = true;
   ssl->s3->send_alert[0] = level;
   ssl->s3->send_alert[1] = desc;
   if (ssl->s3->write_buffer.empty()) {
@@ -404,9 +428,9 @@ int ssl_send_alert(SSL *ssl, int level, int desc) {
 }
 
 int ssl3_dispatch_alert(SSL *ssl) {
-  if (ssl->ctx->quic_method) {
-    if (!ssl->ctx->quic_method->send_alert(ssl, ssl->s3->write_level,
-                                           ssl->s3->send_alert[1])) {
+  if (ssl->quic_method) {
+    if (!ssl->quic_method->send_alert(ssl, ssl->s3->write_level,
+                                      ssl->s3->send_alert[1])) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_INTERNAL_ERROR);
       return 0;
     }
@@ -417,7 +441,7 @@ int ssl3_dispatch_alert(SSL *ssl) {
     }
   }
 
-  ssl->s3->alert_dispatch = 0;
+  ssl->s3->alert_dispatch = false;
 
   // If the alert is fatal, flush the BIO now.
   if (ssl->s3->send_alert[0] == SSL3_AL_FATAL) {

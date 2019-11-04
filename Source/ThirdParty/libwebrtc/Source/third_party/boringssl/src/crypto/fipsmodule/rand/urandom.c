@@ -120,7 +120,7 @@ static ssize_t boringssl_getrandom(void *buf, size_t buf_len, unsigned flags) {
 #endif  // OPENSSL_LINUX
 
 // rand_lock is used to protect the |*_requested| variables.
-DEFINE_STATIC_MUTEX(rand_lock);
+DEFINE_STATIC_MUTEX(rand_lock)
 
 // The following constants are magic values of |urandom_fd|.
 static const int kUnset = 0;
@@ -128,12 +128,12 @@ static const int kHaveGetrandom = -3;
 
 // urandom_fd_requested is set by |RAND_set_urandom_fd|. It's protected by
 // |rand_lock|.
-DEFINE_BSS_GET(int, urandom_fd_requested);
+DEFINE_BSS_GET(int, urandom_fd_requested)
 
 // urandom_fd is a file descriptor to /dev/urandom. It's protected by |once|.
-DEFINE_BSS_GET(int, urandom_fd);
+DEFINE_BSS_GET(int, urandom_fd)
 
-DEFINE_STATIC_ONCE(rand_once);
+DEFINE_STATIC_ONCE(rand_once)
 
 // init_once initializes the state of this module to values previously
 // requested. This is the only function that modifies |urandom_fd| and
@@ -182,6 +182,12 @@ static void init_once(void) {
     abort();
   }
 #endif  // USE_NR_getrandom
+
+  // Android FIPS builds must support getrandom.
+#if defined(BORINGSSL_FIPS) && defined(OPENSSL_ANDROID)
+  perror("getrandom not found");
+  abort();
+#endif
 
   if (fd == kUnset) {
     do {

@@ -326,7 +326,7 @@ bool ssl_write_client_hello(SSL_HANDSHAKE *hs) {
   // Now that the length prefixes have been computed, fill in the placeholder
   // PSK binder.
   if (hs->needs_psk_binder &&
-      !tls13_write_psk_binder(hs, msg.data(), msg.size())) {
+      !tls13_write_psk_binder(hs, MakeSpan(msg))) {
     return false;
   }
 
@@ -416,8 +416,6 @@ static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  // Initialize a random session ID for the experimental TLS 1.3 variant
-  // requiring a session id.
   if (ssl->session != nullptr &&
       !ssl->s3->initial_handshake_complete &&
       ssl->session->session_id_length > 0) {
@@ -425,6 +423,7 @@ static enum ssl_hs_wait_t do_start_connect(SSL_HANDSHAKE *hs) {
     OPENSSL_memcpy(hs->session_id, ssl->session->session_id,
                    hs->session_id_len);
   } else if (hs->max_version >= TLS1_3_VERSION) {
+    // Initialize a random session ID.
     hs->session_id_len = sizeof(hs->session_id);
     if (!RAND_bytes(hs->session_id, hs->session_id_len)) {
       return ssl_hs_error;
@@ -457,11 +456,12 @@ static enum ssl_hs_wait_t do_enter_early_data(SSL_HANDSHAKE *hs) {
     return ssl_hs_error;
   }
 
-  if (!tls13_init_early_key_schedule(hs, ssl->session->master_key,
-                                     ssl->session->master_key_length) ||
+  if (!tls13_init_early_key_schedule(
+          hs, MakeConstSpan(ssl->session->master_key,
+                            ssl->session->master_key_length)) ||
       !tls13_derive_early_secrets(hs) ||
       !tls13_set_traffic_key(ssl, ssl_encryption_early_data, evp_aead_seal,
-                             hs->early_traffic_secret, hs->hash_len)) {
+                             hs->early_traffic_secret())) {
     return ssl_hs_error;
   }
 
@@ -590,7 +590,8 @@ static enum ssl_hs_wait_t do_read_server_hello(SSL_HANDSHAKE *hs) {
   }
 
   // Clear some TLS 1.3 state that no longer needs to be retained.
-  hs->key_share.reset();
+  hs->key_shares[0].reset();
+  hs->key_shares[1].reset();
   hs->key_share_bytes.Reset();
 
   // A TLS 1.2 server would not know to skip the early data we offered. Report
@@ -1006,8 +1007,8 @@ static enum ssl_hs_wait_t do_read_server_key_exchange(SSL_HANDSHAKE *hs) {
     }
 
     // Initialize ECDH and save the peer public key for later.
-    hs->key_share = SSLKeyShare::Create(group_id);
-    if (!hs->key_share ||
+    hs->key_shares[0] = SSLKeyShare::Create(group_id);
+    if (!hs->key_shares[0] ||
         !hs->peer_key.CopyFrom(point)) {
       return ssl_hs_error;
     }
@@ -1071,13 +1072,8 @@ static enum ssl_hs_wait_t do_read_server_key_exchange(SSL_HANDSHAKE *hs) {
       return ssl_hs_error;
     }
 
-    bool sig_ok = ssl_public_key_verify(ssl, signature, signature_algorithm,
-                                        hs->peer_pubkey.get(), transcript_data);
-#if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
-    sig_ok = true;
-    ERR_clear_error();
-#endif
-    if (!sig_ok) {
+    if (!ssl_public_key_verify(ssl, signature, signature_algorithm,
+                               hs->peer_pubkey.get(), transcript_data)) {
       // bad signature
       OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_SIGNATURE);
       ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_DECRYPT_ERROR);
@@ -1218,7 +1214,7 @@ static enum ssl_hs_wait_t do_send_client_certificate(SSL_HANDSHAKE *hs) {
     }
   }
 
-  if (!ssl_has_certificate(hs->config)) {
+  if (!ssl_has_certificate(hs)) {
     // Without a client certificate, the handshake buffer may be released.
     hs->transcript.FreeBuffer();
   }
@@ -1248,6 +1244,27 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
   Array<uint8_t> pms;
   uint32_t alg_k = hs->new_cipher->algorithm_mkey;
   uint32_t alg_a = hs->new_cipher->algorithm_auth;
+  if (ssl_cipher_uses_certificate_auth(hs->new_cipher)) {
+    CRYPTO_BUFFER *leaf =
+        sk_CRYPTO_BUFFER_value(hs->new_session->certs.get(), 0);
+    CBS leaf_cbs;
+    CBS_init(&leaf_cbs, CRYPTO_BUFFER_data(leaf), CRYPTO_BUFFER_len(leaf));
+
+    // Check the key usage matches the cipher suite. We do this unconditionally
+    // for non-RSA certificates. In particular, it's needed to distinguish ECDH
+    // certificates, which we do not support, from ECDSA certificates.
+    // Historically, we have not checked RSA key usages, so it is controlled by
+    // a flag for now. See https://crbug.com/795089.
+    ssl_key_usage_t intended_use = (alg_k & SSL_kRSA)
+                                       ? key_usage_encipherment
+                                       : key_usage_digital_signature;
+    if (ssl->config->enforce_rsa_key_usage ||
+        EVP_PKEY_id(hs->peer_pubkey.get()) != EVP_PKEY_RSA) {
+      if (!ssl_cert_check_key_usage(&leaf_cbs, intended_use)) {
+        return ssl_hs_error;
+      }
+    }
+  }
 
   // If using a PSK key exchange, prepare the pre-shared key.
   unsigned psk_len = 0;
@@ -1324,7 +1341,7 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
 
     // Compute the premaster.
     uint8_t alert = SSL_AD_DECODE_ERROR;
-    if (!hs->key_share->Accept(&child, &pms, &alert, hs->peer_key)) {
+    if (!hs->key_shares[0]->Accept(&child, &pms, &alert, hs->peer_key)) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
       return ssl_hs_error;
     }
@@ -1333,7 +1350,8 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
     }
 
     // The key exchange state may now be discarded.
-    hs->key_share.reset();
+    hs->key_shares[0].reset();
+    hs->key_shares[1].reset();
     hs->peer_key.Reset();
   } else if (alg_k & SSL_kPSK) {
     // For plain PSK, other_secret is a block of 0s with the same length as
@@ -1384,12 +1402,12 @@ static enum ssl_hs_wait_t do_send_client_key_exchange(SSL_HANDSHAKE *hs) {
 static enum ssl_hs_wait_t do_send_client_certificate_verify(SSL_HANDSHAKE *hs) {
   SSL *const ssl = hs->ssl;
 
-  if (!hs->cert_request || !ssl_has_certificate(hs->config)) {
+  if (!hs->cert_request || !ssl_has_certificate(hs)) {
     hs->state = state_send_client_finished;
     return ssl_hs_ok;
   }
 
-  assert(ssl_has_private_key(hs->config));
+  assert(ssl_has_private_key(hs));
   ScopedCBB cbb;
   CBB body, child;
   if (!ssl->method->init_message(ssl, cbb.get(), &body,

@@ -12,27 +12,15 @@
  * (2) University of Haifa, Israel
  */
 
-#include <openssl/base.h>
-
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64)
-
 #include "rsaz_exp.h"
+
+#if defined(RSAZ_ENABLED)
 
 #include <openssl/mem.h>
 
 #include "internal.h"
 #include "../../internal.h"
 
-
-// See crypto/bn/asm/rsaz-avx2.pl for further details.
-void rsaz_1024_norm2red_avx2(void *red, const void *norm);
-void rsaz_1024_mul_avx2(void *ret, const void *a, const void *b, const void *n,
-                        BN_ULONG k);
-void rsaz_1024_sqr_avx2(void *ret, const void *a, const void *n, BN_ULONG k,
-                        int cnt);
-void rsaz_1024_scatter5_avx2(void *tbl, const void *val, int i);
-void rsaz_1024_gather5_avx2(void *val, const void *tbl, int i);
-void rsaz_1024_red2norm_avx2(void *norm, const void *red);
 
 // one is 1 in RSAZ's representation.
 alignas(64) static const BN_ULONG one[40] = {
@@ -49,22 +37,21 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
                             const BN_ULONG exponent[16],
                             const BN_ULONG m_norm[16], const BN_ULONG RR[16],
                             BN_ULONG k0,
-                            BN_ULONG storage_words[MOD_EXP_CTIME_STORAGE_LEN]) {
+                            BN_ULONG storage[MOD_EXP_CTIME_STORAGE_LEN]) {
   OPENSSL_STATIC_ASSERT(MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH % 64 == 0,
                         "MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH is too small");
-  unsigned char *storage = (unsigned char *)storage_words;
   assert((uintptr_t)storage % 64 == 0);
 
-  unsigned char *a_inv, *m, *result, *table_s = storage + (320 * 3),
-                                     *R2 = table_s;  // borrow
+  BN_ULONG *a_inv, *m, *result, *table_s = storage + 40 * 3, *R2 = table_s;
+  // Note |R2| aliases |table_s|.
   if (((((uintptr_t)storage & 4095) + 320) >> 12) != 0) {
     result = storage;
-    a_inv = storage + 320;
-    m = storage + (320 * 2);  // should not cross page
+    a_inv = storage + 40;
+    m = storage + 40 * 2;  // should not cross page
   } else {
     m = storage;  // should not cross page
-    result = storage + 320;
-    a_inv = storage + (320 * 2);
+    result = storage + 40;
+    a_inv = storage + 40 * 2;
   }
 
   rsaz_1024_norm2red_avx2(m, m_norm);
@@ -233,7 +220,7 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
 
   rsaz_1024_red2norm_avx2(result_norm, result);
 
-  OPENSSL_cleanse(storage, sizeof(storage));
+  OPENSSL_cleanse(storage, MOD_EXP_CTIME_STORAGE_LEN * sizeof(BN_ULONG));
 }
 
-#endif  // OPENSSL_X86_64
+#endif  // RSAZ_ENABLED

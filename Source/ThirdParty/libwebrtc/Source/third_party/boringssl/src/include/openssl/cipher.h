@@ -419,8 +419,26 @@ OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_192_ctr(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_192_gcm(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_192_ofb(void);
 
+// EVP_des_ede3_ecb is an alias for |EVP_des_ede3|. Use the former instead.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede3_ecb(void);
+
 // EVP_aes_128_cfb128 is only available in decrepit.
 OPENSSL_EXPORT const EVP_CIPHER *EVP_aes_128_cfb128(void);
+
+// EVP_bf_ecb is Blowfish in ECB mode and is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_bf_ecb(void);
+
+// EVP_bf_cbc is Blowfish in CBC mode and is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_bf_cbc(void);
+
+// EVP_bf_cfb is Blowfish in 64-bit CFB mode and is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_bf_cfb(void);
+
+// EVP_cast5_ecb is CAST5 in ECB mode and is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_cast5_ecb(void);
+
+// EVP_cast5_cbc is CAST5 in CBC mode and is only available in decrepit.
+OPENSSL_EXPORT const EVP_CIPHER *EVP_cast5_cbc(void);
 
 // The following flags do nothing and are included only to make it easier to
 // compile code with BoringSSL.

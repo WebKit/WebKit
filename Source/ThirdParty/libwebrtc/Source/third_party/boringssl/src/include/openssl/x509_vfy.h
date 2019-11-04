@@ -370,6 +370,8 @@ OPENSSL_EXPORT void X509_STORE_CTX_set_depth(X509_STORE_CTX *ctx, int depth);
 /* Issuer lookup error */
 #define		X509_V_ERR_STORE_LOOKUP				66
 
+#define		X509_V_ERR_NAME_CONSTRAINTS_WITHOUT_SANS	67
+
 /* Certificate verify flags */
 
 /* Send issuer+subject checks to verify_cb */

@@ -133,6 +133,9 @@ OPENSSL_EXPORT const EC_POINT *EC_GROUP_get0_generator(const EC_GROUP *group);
 // |group| that specifies the order of the group.
 OPENSSL_EXPORT const BIGNUM *EC_GROUP_get0_order(const EC_GROUP *group);
 
+// EC_GROUP_order_bits returns the number of bits of the order of |group|.
+OPENSSL_EXPORT int EC_GROUP_order_bits(const EC_GROUP *group);
+
 // EC_GROUP_get_cofactor sets |*cofactor| to the cofactor of |group| using
 // |ctx|, if it's not NULL. It returns one on success and zero otherwise.
 OPENSSL_EXPORT int EC_GROUP_get_cofactor(const EC_GROUP *group,
@@ -158,6 +161,11 @@ OPENSSL_EXPORT unsigned EC_GROUP_get_degree(const EC_GROUP *group);
 // |nid|, or NULL if |nid| is not a NIST curve. For example, it returns "P-256"
 // for |NID_X9_62_prime256v1|.
 OPENSSL_EXPORT const char *EC_curve_nid2nist(int nid);
+
+// EC_curve_nist2nid returns the NID of the elliptic curve specified by the NIST
+// name |name|, or |NID_undef| if |name| is not a recognized name. For example,
+// it returns |NID_X9_62_prime256v1| for "P-256".
+OPENSSL_EXPORT int EC_curve_nist2nid(const char *name);
 
 
 // Points on elliptic curves.
@@ -317,6 +325,7 @@ OPENSSL_EXPORT int EC_GROUP_get_order(const EC_GROUP *group, BIGNUM *order,
 OPENSSL_EXPORT void EC_GROUP_set_asn1_flag(EC_GROUP *group, int flag);
 
 #define OPENSSL_EC_NAMED_CURVE 0
+#define OPENSSL_EC_EXPLICIT_CURVE 1
 
 typedef struct ec_method_st EC_METHOD;
 

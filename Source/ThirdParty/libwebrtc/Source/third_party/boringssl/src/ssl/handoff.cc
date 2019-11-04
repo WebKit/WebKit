@@ -49,15 +49,17 @@ static bool serialize_features(CBB *out) {
   return CBB_flush(out);
 }
 
-bool SSL_serialize_handoff(const SSL *ssl, CBB *out) {
+bool SSL_serialize_handoff(const SSL *ssl, CBB *out,
+                           SSL_CLIENT_HELLO *out_hello) {
   const SSL3_STATE *const s3 = ssl->s3;
   if (!ssl->server ||
       s3->hs == nullptr ||
-      s3->rwstate != SSL_HANDOFF) {
+      s3->rwstate != SSL_ERROR_HANDOFF) {
     return false;
   }
 
   CBB seq;
+  SSLMessage msg;
   Span<const uint8_t> transcript = s3->hs->transcript.buffer();
   if (!CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&seq, kHandoffVersion) ||
@@ -66,7 +68,9 @@ bool SSL_serialize_handoff(const SSL *ssl, CBB *out) {
                                  reinterpret_cast<uint8_t *>(s3->hs_buf->data),
                                  s3->hs_buf->length) ||
       !serialize_features(&seq) ||
-      !CBB_flush(out)) {
+      !CBB_flush(out) ||
+      !ssl->method->get_message(ssl, &msg) ||
+      !ssl_client_hello_init(ssl, out_hello, msg)) {
     return false;
   }
 
@@ -77,7 +81,7 @@ bool SSL_decline_handoff(SSL *ssl) {
   const SSL3_STATE *const s3 = ssl->s3;
   if (!ssl->server ||
       s3->hs == nullptr ||
-      s3->rwstate != SSL_HANDOFF) {
+      s3->rwstate != SSL_ERROR_HANDOFF) {
     return false;
   }
 
@@ -307,7 +311,7 @@ bool SSL_serialize_handback(const SSL *ssl, CBB *out) {
     return false;
   }
   if (type == handback_after_ecdhe &&
-      !s3->hs->key_share->Serialize(&key_share)) {
+      !s3->hs->key_shares[0]->Serialize(&key_share)) {
     return false;
   }
   return CBB_flush(out);
@@ -446,6 +450,10 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
   s3->aead_write_ctx->SetVersionIfNullCipher(ssl->version);
   s3->hs->cert_request = cert_request;
 
+  // TODO(davidben): When handoff for TLS 1.3 is added, serialize
+  // |early_data_reason| and stabilize the constants.
+  s3->early_data_reason = ssl_early_data_protocol_version;
+
   Array<uint8_t> key_block;
   if ((type == handback_after_session_resumption ||
        type == handback_after_handshake) &&
@@ -471,7 +479,7 @@ bool SSL_apply_handback(SSL *ssl, Span<const uint8_t> handback) {
     return false;
   }
   if (type == handback_after_ecdhe &&
-      (s3->hs->key_share = SSLKeyShare::Create(&key_share)) == nullptr) {
+      (s3->hs->key_shares[0] = SSLKeyShare::Create(&key_share)) == nullptr) {
     return false;
   }
 

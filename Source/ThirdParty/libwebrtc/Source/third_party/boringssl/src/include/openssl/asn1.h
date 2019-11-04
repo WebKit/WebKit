@@ -666,7 +666,6 @@ OPENSSL_EXPORT int 		d2i_ASN1_BOOLEAN(int *a,const unsigned char **pp,long lengt
 DECLARE_ASN1_FUNCTIONS(ASN1_INTEGER)
 OPENSSL_EXPORT int		i2c_ASN1_INTEGER(ASN1_INTEGER *a,unsigned char **pp);
 OPENSSL_EXPORT ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **a,const unsigned char **pp, long length);
-OPENSSL_EXPORT ASN1_INTEGER *d2i_ASN1_UINTEGER(ASN1_INTEGER **a,const unsigned char **pp, long length);
 OPENSSL_EXPORT ASN1_INTEGER *	ASN1_INTEGER_dup(const ASN1_INTEGER *x);
 OPENSSL_EXPORT int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y);
 

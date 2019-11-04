@@ -35,6 +35,15 @@
 // compile this.
 #if !defined(_MSC_VER)
 
+#if defined(BORINGSSL_FIPS) && defined(OPENSSL_ANDROID)
+// FIPS builds on Android will attempt to write flag files to
+// /dev/boringssl/selftest/ named after the module hash. If the flag file
+// exists, it's assumed that self-tests have already passed and thus do not need
+// to be repeated.
+#define BORINGSSL_FIPS_SELF_TEST_FLAG_FILE
+static const char kFlagPrefix[] = "/dev/boringssl/selftest/";
+#endif
+
 static void hexdump(const uint8_t *in, size_t len) {
   for (size_t i = 0; i < len; i++) {
     fprintf(stderr, "%02x", in[i]);
@@ -227,7 +236,30 @@ static EC_KEY *self_test_ecdsa_key(void) {
   return ec_key;
 }
 
-int BORINGSSL_self_test(void) {
+int BORINGSSL_self_test(
+    const uint8_t module_sha512_hash[SHA512_DIGEST_LENGTH]) {
+#if defined(BORINGSSL_FIPS_SELF_TEST_FLAG_FILE)
+  // Test whether the flag file exists.
+  char flag_path[sizeof(kFlagPrefix) + 2*SHA512_DIGEST_LENGTH];
+  memcpy(flag_path, kFlagPrefix, sizeof(kFlagPrefix) - 1);
+  static const char kHexTable[17] = "0123456789abcdef";
+  uint8_t module_hash_sum = 0;
+  for (size_t i = 0; i < SHA512_DIGEST_LENGTH; i++) {
+    module_hash_sum |= module_sha512_hash[i];
+    flag_path[sizeof(kFlagPrefix) - 1 + 2 * i] =
+        kHexTable[module_sha512_hash[i] >> 4];
+    flag_path[sizeof(kFlagPrefix) - 1 + 2 * i + 1] =
+        kHexTable[module_sha512_hash[i] & 15];
+  }
+  flag_path[sizeof(flag_path) - 1] = 0;
+
+  const int flag_path_valid = (module_hash_sum != 0);
+  if (flag_path_valid && access(flag_path, F_OK) == 0) {
+    // Flag file found. Skip self-tests.
+    return 1;
+  }
+#endif // BORINGSSL_FIPS_SELF_TEST_FLAG_FILE
+
   static const uint8_t kAESKey[16] = "BoringCrypto Key";
   static const uint8_t kAESIV[16] = {0};
   static const uint8_t kPlaintext[64] =
@@ -576,6 +608,16 @@ int BORINGSSL_self_test(void) {
   }
 
   ret = 1;
+
+#if defined(BORINGSSL_FIPS_SELF_TEST_FLAG_FILE)
+  // Tests were successful. Write flag file if requested.
+  if (flag_path_valid) {
+    const int fd = open(flag_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd >= 0) {
+      close(fd);
+    }
+  }
+#endif  // BORINGSSL_FIPS_SELF_TEST_FLAG_FILE
 
 err:
   EVP_AEAD_CTX_cleanup(&aead_ctx);

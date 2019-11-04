@@ -195,6 +195,16 @@ ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **a, const unsigned char **pp,
     unsigned char *to, *s;
     int i;
 
+    /*
+     * This function can handle lengths up to INT_MAX - 1, but the rest of the
+     * legacy ASN.1 code mixes integer types, so avoid exposing it to
+     * ASN1_INTEGERS with larger lengths.
+     */
+    if (len < 0 || len > INT_MAX / 2) {
+        OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
+        return NULL;
+    }
+
     if ((a == NULL) || ((*a) == NULL)) {
         if ((ret = M_ASN1_INTEGER_new()) == NULL)
             return (NULL);
@@ -268,75 +278,6 @@ ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **a, const unsigned char **pp,
     if (a != NULL)
         (*a) = ret;
     *pp = pend;
-    return (ret);
- err:
-    OPENSSL_PUT_ERROR(ASN1, i);
-    if ((ret != NULL) && ((a == NULL) || (*a != ret)))
-        M_ASN1_INTEGER_free(ret);
-    return (NULL);
-}
-
-/*
- * This is a version of d2i_ASN1_INTEGER that ignores the sign bit of ASN1
- * integers: some broken software can encode a positive INTEGER with its MSB
- * set as negative (it doesn't add a padding zero).
- */
-
-ASN1_INTEGER *d2i_ASN1_UINTEGER(ASN1_INTEGER **a, const unsigned char **pp,
-                                long length)
-{
-    ASN1_INTEGER *ret = NULL;
-    const unsigned char *p;
-    unsigned char *s;
-    long len;
-    int inf, tag, xclass;
-    int i;
-
-    if ((a == NULL) || ((*a) == NULL)) {
-        if ((ret = M_ASN1_INTEGER_new()) == NULL)
-            return (NULL);
-        ret->type = V_ASN1_INTEGER;
-    } else
-        ret = (*a);
-
-    p = *pp;
-    inf = ASN1_get_object(&p, &len, &tag, &xclass, length);
-    if (inf & 0x80) {
-        i = ASN1_R_BAD_OBJECT_HEADER;
-        goto err;
-    }
-
-    if (tag != V_ASN1_INTEGER) {
-        i = ASN1_R_EXPECTING_AN_INTEGER;
-        goto err;
-    }
-
-    /*
-     * We must OPENSSL_malloc stuff, even for 0 bytes otherwise it signifies
-     * a missing NULL parameter.
-     */
-    s = (unsigned char *)OPENSSL_malloc((int)len + 1);
-    if (s == NULL) {
-        i = ERR_R_MALLOC_FAILURE;
-        goto err;
-    }
-    ret->type = V_ASN1_INTEGER;
-    if (len) {
-        if ((*p == 0) && (len != 1)) {
-            p++;
-            len--;
-        }
-        OPENSSL_memcpy(s, p, (int)len);
-        p += len;
-    }
-
-    if (ret->data != NULL)
-        OPENSSL_free(ret->data);
-    ret->data = s;
-    ret->length = (int)len;
-    if (a != NULL)
-        (*a) = ret;
-    *pp = p;
     return (ret);
  err:
     OPENSSL_PUT_ERROR(ASN1, i);

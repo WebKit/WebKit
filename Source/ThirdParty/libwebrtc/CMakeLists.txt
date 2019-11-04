@@ -124,6 +124,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/evp/p_ed25519_asn1.c
     Source/third_party/boringssl/src/crypto/evp/p_rsa.c
     Source/third_party/boringssl/src/crypto/evp/p_rsa_asn1.c
+    Source/third_party/boringssl/src/crypto/evp/p_x25519.c
+    Source/third_party/boringssl/src/crypto/evp/p_x25519_asn1.c
     Source/third_party/boringssl/src/crypto/evp/pbkdf.c
     Source/third_party/boringssl/src/crypto/evp/print.c
     Source/third_party/boringssl/src/crypto/evp/scrypt.c
@@ -133,6 +135,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/fipsmodule/is_fips.c
     Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
     Source/third_party/boringssl/src/crypto/hkdf/hkdf.c
+    Source/third_party/boringssl/src/crypto/hrss/hrss.c
     Source/third_party/boringssl/src/crypto/lhash/lhash.c
     Source/third_party/boringssl/src/crypto/mem.c
     Source/third_party/boringssl/src/crypto/obj/obj.c
@@ -286,6 +289,11 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
     Source/third_party/boringssl/src/third_party/fiat/curve25519.c
+    Source/third_party/boringssl/src/third_party/sike/asm/fp_generic.c
+    Source/third_party/boringssl/src/third_party/sike/curve_params.c
+    Source/third_party/boringssl/src/third_party/sike/fpx.c
+    Source/third_party/boringssl/src/third_party/sike/isogeny.c
+    Source/third_party/boringssl/src/third_party/sike/sike.c
     Source/third_party/jsoncpp/source/src/lib_json/json_reader.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_value.cpp
     Source/third_party/jsoncpp/source/src/lib_json/json_writer.cpp

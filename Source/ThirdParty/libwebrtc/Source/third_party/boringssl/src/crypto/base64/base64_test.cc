@@ -39,14 +39,14 @@ enum encoding_relation {
   invalid,
 };
 
-struct TestVector {
+struct Base64TestVector {
   enum encoding_relation relation;
   const char *decoded;
   const char *encoded;
 };
 
 // Test vectors from RFC 4648.
-static const TestVector kTestVectors[] = {
+static const Base64TestVector kTestVectors[] = {
     {canonical, "", ""},
     {canonical, "f", "Zg==\n"},
     {canonical, "fo", "Zm8=\n"},
@@ -103,9 +103,9 @@ static const TestVector kTestVectors[] = {
      "=======\n"},
 };
 
-class Base64Test : public testing::TestWithParam<TestVector> {};
+class Base64Test : public testing::TestWithParam<Base64TestVector> {};
 
-INSTANTIATE_TEST_CASE_P(, Base64Test, testing::ValuesIn(kTestVectors));
+INSTANTIATE_TEST_SUITE_P(, Base64Test, testing::ValuesIn(kTestVectors));
 
 // RemoveNewlines returns a copy of |in| with all '\n' characters removed.
 static std::string RemoveNewlines(const char *in) {
@@ -122,7 +122,7 @@ static std::string RemoveNewlines(const char *in) {
 }
 
 TEST_P(Base64Test, EncodeBlock) {
-  const TestVector &t = GetParam();
+  const Base64TestVector &t = GetParam();
   if (t.relation != canonical) {
     return;
   }
@@ -140,7 +140,7 @@ TEST_P(Base64Test, EncodeBlock) {
 }
 
 TEST_P(Base64Test, DecodeBase64) {
-  const TestVector &t = GetParam();
+  const Base64TestVector &t = GetParam();
   if (t.relation == valid) {
     // The non-canonical encodings will generally have odd whitespace etc
     // that |EVP_DecodeBase64| will reject.
@@ -164,7 +164,7 @@ TEST_P(Base64Test, DecodeBase64) {
 }
 
 TEST_P(Base64Test, DecodeBlock) {
-  const TestVector &t = GetParam();
+  const Base64TestVector &t = GetParam();
   if (t.relation != canonical) {
     return;
   }
@@ -188,7 +188,7 @@ TEST_P(Base64Test, DecodeBlock) {
 }
 
 TEST_P(Base64Test, EncodeDecode) {
-  const TestVector &t = GetParam();
+  const Base64TestVector &t = GetParam();
 
   EVP_ENCODE_CTX ctx;
   const size_t decoded_len = strlen(t.decoded);
@@ -246,7 +246,7 @@ TEST_P(Base64Test, EncodeDecode) {
 }
 
 TEST_P(Base64Test, DecodeUpdateStreaming) {
-  const TestVector &t = GetParam();
+  const Base64TestVector &t = GetParam();
   if (t.relation == invalid) {
     return;
   }

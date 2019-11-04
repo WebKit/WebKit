@@ -22,9 +22,6 @@ _beeu_mod_inverse_vartime:
 
 	pushq	%rbp
 
-	movq	%rsp,%rbp
-
-
 	pushq	%r12
 
 	pushq	%r13
@@ -39,6 +36,7 @@ _beeu_mod_inverse_vartime:
 
 
 	subq	$80,%rsp
+
 	movq	%rdi,0(%rsp)
 
 
@@ -308,6 +306,7 @@ L$beeu_err:
 
 L$beeu_finish:
 	addq	$80,%rsp
+
 	popq	%rsi
 
 	popq	%rbx
@@ -322,9 +321,8 @@ L$beeu_finish:
 
 	popq	%rbp
 
-
-
 	.byte	0xf3,0xc3
+
 
 
 #endif

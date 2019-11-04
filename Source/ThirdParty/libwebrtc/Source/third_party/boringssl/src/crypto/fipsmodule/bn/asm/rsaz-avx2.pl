@@ -52,7 +52,6 @@ die "can't locate x86_64-xlate.pl";
 # versions, but BoringSSL is intended to be used with pre-generated perlasm
 # output, so this isn't useful anyway.
 $avx = 2;
-$addx = 1;
 
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT = *OUT;
@@ -1474,6 +1473,7 @@ $code.=<<___;
 .type	rsaz_1024_red2norm_avx2,\@abi-omnipotent
 .align	32
 rsaz_1024_red2norm_avx2:
+.cfi_startproc
 	sub	\$-128,$inp	# size optimization
 	xor	%rax,%rax
 ___
@@ -1507,12 +1507,14 @@ ___
 }
 $code.=<<___;
 	ret
+.cfi_endproc
 .size	rsaz_1024_red2norm_avx2,.-rsaz_1024_red2norm_avx2
 
 .globl	rsaz_1024_norm2red_avx2
 .type	rsaz_1024_norm2red_avx2,\@abi-omnipotent
 .align	32
 rsaz_1024_norm2red_avx2:
+.cfi_startproc
 	sub	\$-128,$out	# size optimization
 	mov	($inp),@T[0]
 	mov	\$0x1fffffff,%eax
@@ -1544,6 +1546,7 @@ $code.=<<___;
 	mov	@T[0],`8*($j+2)-128`($out)
 	mov	@T[0],`8*($j+3)-128`($out)
 	ret
+.cfi_endproc
 .size	rsaz_1024_norm2red_avx2,.-rsaz_1024_norm2red_avx2
 ___
 }
@@ -1555,6 +1558,7 @@ $code.=<<___;
 .type	rsaz_1024_scatter5_avx2,\@abi-omnipotent
 .align	32
 rsaz_1024_scatter5_avx2:
+.cfi_startproc
 	vzeroupper
 	vmovdqu	.Lscatter_permd(%rip),%ymm5
 	shl	\$4,$power
@@ -1574,6 +1578,7 @@ rsaz_1024_scatter5_avx2:
 
 	vzeroupper
 	ret
+.cfi_endproc
 .size	rsaz_1024_scatter5_avx2,.-rsaz_1024_scatter5_avx2
 
 .globl	rsaz_1024_gather5_avx2
@@ -1733,27 +1738,6 @@ ___
 }
 
 $code.=<<___;
-.extern	OPENSSL_ia32cap_P
-.globl	rsaz_avx2_eligible
-.type	rsaz_avx2_eligible,\@abi-omnipotent
-.align	32
-rsaz_avx2_eligible:
-	leaq	OPENSSL_ia32cap_P(%rip),%rax
-	mov	8(%rax),%eax
-___
-$code.=<<___	if ($addx);
-	mov	\$`1<<8|1<<19`,%ecx
-	mov	\$0,%edx
-	and	%eax,%ecx
-	cmp	\$`1<<8|1<<19`,%ecx	# check for BMI2+AD*X
-	cmove	%edx,%eax
-___
-$code.=<<___;
-	and	\$`1<<5`,%eax
-	shr	\$5,%eax
-	ret
-.size	rsaz_avx2_eligible,.-rsaz_avx2_eligible
-
 .align	64
 .Land_mask:
 	.quad	0x1fffffff,0x1fffffff,0x1fffffff,0x1fffffff
@@ -1956,4 +1940,4 @@ rsaz_1024_gather5_avx2:
 ___
 }}}
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

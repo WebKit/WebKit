@@ -21,9 +21,8 @@
 #include "../../internal.h"
 
 
-static void ec_GFp_mont_mul_single(const EC_GROUP *group, EC_RAW_POINT *r,
-                                   const EC_RAW_POINT *p,
-                                   const EC_SCALAR *scalar) {
+void ec_GFp_mont_mul(const EC_GROUP *group, EC_RAW_POINT *r,
+                     const EC_RAW_POINT *p, const EC_SCALAR *scalar) {
   // This is a generic implementation for uncommon curves that not do not
   // warrant a tuned one. It uses unsigned digits so that the doubling case in
   // |ec_GFp_mont_add| is always unreachable, erring on safety and simplicity.
@@ -79,21 +78,7 @@ static void ec_GFp_mont_mul_single(const EC_GROUP *group, EC_RAW_POINT *r,
   }
 }
 
-void ec_GFp_mont_mul(const EC_GROUP *group, EC_RAW_POINT *r,
-                     const EC_SCALAR *g_scalar, const EC_RAW_POINT *p,
-                     const EC_SCALAR *p_scalar) {
-  assert(g_scalar != NULL || p_scalar != NULL);
-  if (p_scalar == NULL) {
-    ec_GFp_mont_mul_single(group, r, &group->generator->raw, g_scalar);
-  } else if (g_scalar == NULL) {
-    ec_GFp_mont_mul_single(group, r, p, p_scalar);
-  } else {
-    // Support constant-time two-point multiplication for compatibility.  This
-    // does not actually come up in keygen, ECDH, or ECDSA, so we implement it
-    // the naive way.
-    ec_GFp_mont_mul_single(group, r, &group->generator->raw, g_scalar);
-    EC_RAW_POINT tmp;
-    ec_GFp_mont_mul_single(group, &tmp, p, p_scalar);
-    ec_GFp_mont_add(group, r, r, &tmp);
-  }
+void ec_GFp_mont_mul_base(const EC_GROUP *group, EC_RAW_POINT *r,
+                          const EC_SCALAR *scalar) {
+  ec_GFp_mont_mul(group, r, &group->generator->raw, scalar);
 }

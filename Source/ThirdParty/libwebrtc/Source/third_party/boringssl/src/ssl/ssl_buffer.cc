@@ -116,7 +116,7 @@ static int dtls_read_buffer_next_packet(SSL *ssl) {
   int ret =
       BIO_read(ssl->rbio.get(), buf->data(), static_cast<int>(buf->cap()));
   if (ret <= 0) {
-    ssl->s3->rwstate = SSL_READING;
+    ssl->s3->rwstate = SSL_ERROR_WANT_READ;
     return ret;
   }
   buf->DidWrite(static_cast<size_t>(ret));
@@ -138,7 +138,7 @@ static int tls_read_buffer_extend_to(SSL *ssl, size_t len) {
     int ret = BIO_read(ssl->rbio.get(), buf->data() + buf->size(),
                        static_cast<int>(len - buf->size()));
     if (ret <= 0) {
-      ssl->s3->rwstate = SSL_READING;
+      ssl->s3->rwstate = SSL_ERROR_WANT_READ;
       return ret;
     }
     buf->DidWrite(static_cast<size_t>(ret));
@@ -243,7 +243,7 @@ static int tls_write_buffer_flush(SSL *ssl) {
   while (!buf->empty()) {
     int ret = BIO_write(ssl->wbio.get(), buf->data(), buf->size());
     if (ret <= 0) {
-      ssl->s3->rwstate = SSL_WRITING;
+      ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
       return ret;
     }
     buf->Consume(static_cast<size_t>(ret));
@@ -260,7 +260,7 @@ static int dtls_write_buffer_flush(SSL *ssl) {
 
   int ret = BIO_write(ssl->wbio.get(), buf->data(), buf->size());
   if (ret <= 0) {
-    ssl->s3->rwstate = SSL_WRITING;
+    ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
     // If the write failed, drop the write buffer anyway. Datagram transports
     // can't write half a packet, so the caller is expected to retry from the
     // top.

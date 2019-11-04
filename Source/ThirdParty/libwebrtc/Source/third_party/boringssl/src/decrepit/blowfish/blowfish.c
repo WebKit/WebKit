@@ -55,7 +55,10 @@
  * [including the GNU Public Licence.] */
 
 #include <openssl/blowfish.h>
+#include <openssl/cipher.h>
+#include <openssl/obj.h>
 
+#include <assert.h>
 #include <string.h>
 
 #include "../../crypto/internal.h"
@@ -149,18 +152,18 @@ void BF_ecb_encrypt(const uint8_t *in, uint8_t *out,
   l2n(d[1], out);
 }
 
-void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
+void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                     const BF_KEY *schedule, uint8_t *ivec, int encrypt) {
   uint32_t tin0, tin1;
   uint32_t tout0, tout1, xor0, xor1;
-  long l = length;
+  size_t l = length;
   uint32_t tin[2];
 
   if (encrypt) {
     n2l(ivec, tout0);
     n2l(ivec, tout1);
     ivec -= 8;
-    for (l -= 8; l >= 0; l -= 8) {
+    while (l >= 8) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin0 ^= tout0;
@@ -172,9 +175,10 @@ void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       tout1 = tin[1];
       l2n(tout0, out);
       l2n(tout1, out);
+      l -= 8;
     }
-    if (l != -8) {
-      n2ln(in, tin0, tin1, l + 8);
+    if (l != 0) {
+      n2ln(in, tin0, tin1, l);
       tin0 ^= tout0;
       tin1 ^= tout1;
       tin[0] = tin0;
@@ -191,7 +195,7 @@ void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
     n2l(ivec, xor0);
     n2l(ivec, xor1);
     ivec -= 8;
-    for (l -= 8; l >= 0; l -= 8) {
+    while (l >= 8) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin[0] = tin0;
@@ -203,8 +207,9 @@ void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       l2n(tout1, out);
       xor0 = tin0;
       xor1 = tin1;
+      l -= 8;
     }
-    if (l != -8) {
+    if (l != 0) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin[0] = tin0;
@@ -212,7 +217,7 @@ void BF_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       BF_decrypt(tin, schedule);
       tout0 = tin[0] ^ xor0;
       tout1 = tin[1] ^ xor1;
-      l2nn(tout0, tout1, out, l + 8);
+      l2nn(tout0, tout1, out, l);
       xor0 = tin0;
       xor1 = tin1;
     }
@@ -492,3 +497,130 @@ void BF_set_key(BF_KEY *key, size_t len, const uint8_t *data) {
     p[i + 1] = in[1];
   }
 }
+
+static void BF_cfb64_encrypt(const uint8_t *in, uint8_t *out, size_t length,
+                             const BF_KEY *schedule, uint8_t *ivec, int *num,
+                             int encrypt) {
+  uint32_t v0, v1, t;
+  int n = *num;
+  size_t l = length;
+  uint32_t ti[2];
+  uint8_t c, cc;
+
+  uint8_t *iv = ivec;
+  if (encrypt) {
+    while (l--) {
+      if (n == 0) {
+        n2l(iv, v0);
+        ti[0] = v0;
+        n2l(iv, v1);
+        ti[1] = v1;
+        BF_encrypt(ti, schedule);
+        iv = ivec;
+        t = ti[0];
+        l2n(t, iv);
+        t = ti[1];
+        l2n(t, iv);
+        iv = ivec;
+      }
+      c = *(in++) ^ iv[n];
+      *(out++) = c;
+      iv[n] = c;
+      n = (n + 1) & 0x07;
+    }
+  } else {
+    while (l--) {
+      if (n == 0) {
+        n2l(iv, v0);
+        ti[0] = v0;
+        n2l(iv, v1);
+        ti[1] = v1;
+        BF_encrypt(ti, schedule);
+        iv = ivec;
+        t = ti[0];
+        l2n(t, iv);
+        t = ti[1];
+        l2n(t, iv);
+        iv = ivec;
+      }
+      cc = *(in++);
+      c = iv[n];
+      iv[n] = cc;
+      *(out++) = c ^ cc;
+      n = (n + 1) & 0x07;
+    }
+  }
+
+  *num = n;
+}
+
+static int bf_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
+                            const uint8_t *iv, int enc) {
+  BF_KEY *bf_key = ctx->cipher_data;
+  BF_set_key(bf_key, ctx->key_len, key);
+  return 1;
+}
+
+static int bf_ecb_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                         size_t len) {
+  BF_KEY *bf_key = ctx->cipher_data;
+
+  while (len >= BF_BLOCK) {
+    BF_ecb_encrypt(in, out, bf_key, ctx->encrypt);
+    in += BF_BLOCK;
+    out += BF_BLOCK;
+    len -= BF_BLOCK;
+  }
+  assert(len == 0);
+
+  return 1;
+}
+
+static int bf_cbc_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                         size_t len) {
+  BF_KEY *bf_key = ctx->cipher_data;
+  BF_cbc_encrypt(in, out, len, bf_key, ctx->iv, ctx->encrypt);
+  return 1;
+}
+
+static int bf_cfb_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                         size_t len) {
+  BF_KEY *bf_key = ctx->cipher_data;
+  int num = ctx->num;
+  BF_cfb64_encrypt(in, out, len, bf_key, ctx->iv, &num, ctx->encrypt);
+  ctx->num = num;
+  return 1;
+}
+
+static const EVP_CIPHER bf_ecb = {
+    NID_bf_ecb,          BF_BLOCK /* block_size */,
+    16 /* key_size */,   BF_BLOCK /* iv_len */,
+    sizeof(BF_KEY),      EVP_CIPH_ECB_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    NULL /* app_data */, bf_init_key,
+    bf_ecb_cipher,       NULL /* cleanup */,
+    NULL /* ctrl */,
+};
+
+static const EVP_CIPHER bf_cbc = {
+    NID_bf_cbc,          BF_BLOCK /* block_size */,
+    16 /* key_size */,   BF_BLOCK /* iv_len */,
+    sizeof(BF_KEY),      EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    NULL /* app_data */, bf_init_key,
+    bf_cbc_cipher,       NULL /* cleanup */,
+    NULL /* ctrl */,
+};
+
+static const EVP_CIPHER bf_cfb = {
+    NID_bf_cfb64,        1 /* block_size */,
+    16 /* key_size */,   BF_BLOCK /* iv_len */,
+    sizeof(BF_KEY),      EVP_CIPH_CFB_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    NULL /* app_data */, bf_init_key,
+    bf_cfb_cipher,       NULL /* cleanup */,
+    NULL /* ctrl */,
+};
+
+const EVP_CIPHER *EVP_bf_ecb(void) { return &bf_ecb; }
+
+const EVP_CIPHER *EVP_bf_cbc(void) { return &bf_cbc; }
+
+const EVP_CIPHER *EVP_bf_cfb(void) { return &bf_cfb; }

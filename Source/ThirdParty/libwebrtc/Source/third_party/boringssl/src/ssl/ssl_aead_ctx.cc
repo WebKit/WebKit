@@ -42,7 +42,6 @@ SSLAEADContext::SSLAEADContext(uint16_t version_arg, bool is_dtls_arg,
       random_variable_nonce_(false),
       xor_fixed_nonce_(false),
       omit_length_in_ad_(false),
-      omit_ad_(false),
       ad_is_header_(false) {
   OPENSSL_memset(fixed_nonce_, 0, sizeof(fixed_nonce_));
 }
@@ -134,11 +133,7 @@ UniquePtr<SSLAEADContext> SSLAEADContext::Create(
       aead_ctx->xor_fixed_nonce_ = true;
       aead_ctx->variable_nonce_len_ = 8;
       aead_ctx->variable_nonce_included_in_record_ = false;
-      if (ssl_is_draft28(version)) {
-        aead_ctx->ad_is_header_ = true;
-      } else {
-        aead_ctx->omit_ad_ = true;
-      }
+      aead_ctx->ad_is_header_ = true;
       assert(fixed_iv.size() >= aead_ctx->variable_nonce_len_);
     }
   } else {
@@ -229,10 +224,6 @@ Span<const uint8_t> SSLAEADContext::GetAdditionalData(
     const uint8_t seqnum[8], size_t plaintext_len, Span<const uint8_t> header) {
   if (ad_is_header_) {
     return header;
-  }
-
-  if (omit_ad_) {
-    return {};
   }
 
   OPENSSL_memcpy(storage, seqnum, 8);

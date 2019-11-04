@@ -460,3 +460,11 @@ BIGNUM *BN_mpi2bn(const uint8_t *in, size_t len, BIGNUM *out) {
   }
   return out;
 }
+
+int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len) {
+  if (len < 0 ||
+      !BN_bn2bin_padded(out, (size_t)len, in)) {
+    return -1;
+  }
+  return len;
+}

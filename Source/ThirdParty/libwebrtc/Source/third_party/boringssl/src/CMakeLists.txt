@@ -1,10 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
-
-# Report AppleClang separately from Clang. Their version numbers are different.
-# https://cmake.org/cmake/help/v3.0/policy/CMP0025.html
-if(POLICY CMP0025)
-  cmake_policy(SET CMP0025 NEW)
-endif()
+cmake_minimum_required(VERSION 3.0)
 
 # Defer enabling C and CXX languages.
 project(BoringSSL NONE)
@@ -39,6 +33,20 @@ else()
   find_program(GO_EXECUTABLE go)
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING)
+  find_package(PkgConfig QUIET)
+  if (PkgConfig_FOUND)
+    pkg_check_modules(LIBUNWIND libunwind-generic)
+    if(LIBUNWIND_FOUND)
+      add_definitions(-DBORINGSSL_HAVE_LIBUNWIND)
+    else()
+      message("libunwind not found. Disabling unwind tests.")
+    endif()
+  else()
+    message("pkgconfig not found. Disabling unwind tests.")
+  endif()
+endif()
+
 if(NOT GO_EXECUTABLE)
   message(FATAL_ERROR "Could not find Go")
 endif()
@@ -50,6 +58,18 @@ endif()
 if(BORINGSSL_ALLOW_CXX_RUNTIME)
   add_definitions(-DBORINGSSL_ALLOW_CXX_RUNTIME)
 endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  # Windows release builds don't set NDEBUG in NASM flags automatically.
+  set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -DNDEBUG")
+endif()
+
+# Add a RelWithAsserts build configuration. It is the same as Release, except it
+# does not define NDEBUG, so asserts run.
+foreach(VAR CMAKE_C_FLAGS CMAKE_CXX_FLAGS CMAKE_ASM_FLAGS)
+  string(REGEX REPLACE "(^| )[/-]DNDEBUG( |$)" " " "${VAR}_RELWITHASSERTS"
+         "${${VAR}_RELEASE}")
+endforeach()
 
 if(BORINGSSL_PREFIX AND BORINGSSL_PREFIX_SYMBOLS)
   add_definitions(-DBORINGSSL_PREFIX=${BORINGSSL_PREFIX})
@@ -178,6 +198,7 @@ elseif(MSVC)
               # copy constructor is inaccessible or deleted
       "C4626" # assignment operator could not be generated because a base class
               # assignment operator is inaccessible or deleted
+      "C4628" # digraphs not supported with -Ze
       "C4668" # 'symbol' is not defined as a preprocessor macro, replacing with
               # '0' for 'directives'
               # Disable this because GTest uses it everywhere.
@@ -316,6 +337,22 @@ if(TSAN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=thread")
 endif()
 
+if(UBSAN)
+  if(NOT CLANG)
+    message(FATAL_ERROR "Cannot enable UBSAN unless using Clang")
+  endif()
+
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+
+  if(NOT UBSAN_RECOVER)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-sanitize-recover=undefined")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-sanitize-recover=undefined")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fno-sanitize-recover=undefined")
+  endif()
+endif()
+
 if(GCOV)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
@@ -326,14 +363,24 @@ if(FIPS)
   if(FIPS_BREAK_TEST)
     add_definitions("-DBORINGSSL_FIPS_BREAK_${FIPS_BREAK_TEST}=1")
   endif()
-  # Delocate does not work for ASan and MSan builds.
+  # The FIPS integrity check does not work for ASan and MSan builds.
   if(NOT ASAN AND NOT MSAN)
-    set(FIPS_DELOCATE "1")
+    if(BUILD_SHARED_LIBS)
+      set(FIPS_SHARED "1")
+    else()
+      set(FIPS_DELOCATE "1")
+    endif()
   endif()
 endif()
 
 if(OPENSSL_SMALL)
   add_definitions(-DOPENSSL_SMALL)
+endif()
+
+if(CONSTANT_TIME_VALIDATION)
+  add_definitions(-DBORINGSSL_CONSTANT_TIME_VALIDATION)
+  # Asserts will often test secret data.
+  add_definitions(-DNDEBUG)
 endif()
 
 function(go_executable dest package)
@@ -432,13 +479,6 @@ if(ANDROID AND NOT ANDROID_NDK_REVISION AND ${ARCH} STREQUAL "arm")
   set(CMAKE_ASM_FLAGS "-march=${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_ASM_FLAGS}")
 endif()
 
-if(${ARCH} STREQUAL "x86" AND APPLE AND ${CMAKE_VERSION} VERSION_LESS "3.0")
-  # With CMake 2.8.x, ${CMAKE_SYSTEM_PROCESSOR} evalutes to i386 on OS X,
-  # but clang defaults to 64-bit builds on OS X unless otherwise told.
-  # Set ARCH to x86_64 so clang and CMake agree. This is fixed in CMake 3.
-  set(ARCH "x86_64")
-endif()
-
 if(USE_CUSTOM_LIBCXX)
   if(NOT CLANG)
     message(FATAL_ERROR "USE_CUSTOM_LIBCXX only supported with Clang")
@@ -517,11 +557,20 @@ add_library(crypto_test_data OBJECT crypto_test_data.cc)
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(ssl/test)
-add_subdirectory(fipstools)
 add_subdirectory(tool)
+add_subdirectory(util/fipstools/cavp)
+add_subdirectory(util/fipstools/acvp/modulewrapper)
 add_subdirectory(decrepit)
 
 if(FUZZ)
+  if(LIBFUZZER_FROM_DEPS)
+    file(GLOB LIBFUZZER_SOURCES "util/bot/libFuzzer/*.cpp")
+    add_library(Fuzzer STATIC ${LIBFUZZER_SOURCES})
+    # libFuzzer does not pass our aggressive warnings. It also must be built
+    # without -fsanitize-coverage options or clang crashes.
+    set_target_properties(Fuzzer PROPERTIES COMPILE_FLAGS "-Wno-shadow -Wno-format-nonliteral -Wno-missing-prototypes -fsanitize-coverage=0")
+  endif()
+
   add_subdirectory(fuzz)
 endif()
 

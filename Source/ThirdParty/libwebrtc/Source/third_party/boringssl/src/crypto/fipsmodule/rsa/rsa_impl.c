@@ -120,6 +120,8 @@ static int ensure_fixed_copy(BIGNUM **out, const BIGNUM *in, int width) {
     return 0;
   }
   *out = copy;
+  CONSTTIME_SECRET(copy->d, sizeof(BN_ULONG) * width);
+
   return 1;
 }
 
@@ -166,6 +168,11 @@ static int freeze_private_key(RSA *rsa, BN_CTX *ctx) {
   }
 
   if (rsa->p != NULL && rsa->q != NULL) {
+    // TODO: p and q are also CONSTTIME_SECRET but not yet marked as such
+    // because the Montgomery code does things like test whether or not values
+    // are zero. So the secret marking probably needs to happen inside that
+    // code.
+
     if (rsa->mont_p == NULL) {
       rsa->mont_p = BN_MONT_CTX_new_consttime(rsa->p, ctx);
       if (rsa->mont_p == NULL) {
@@ -224,6 +231,9 @@ static int freeze_private_key(RSA *rsa, BN_CTX *ctx) {
           goto err;
         }
         rsa->inv_small_mod_large_mont = inv_small_mod_large_mont;
+        CONSTTIME_SECRET(
+            rsa->inv_small_mod_large_mont->d,
+            sizeof(BN_ULONG) * rsa->inv_small_mod_large_mont->width);
       }
     }
   }
@@ -480,6 +490,7 @@ int rsa_default_sign_raw(RSA *rsa, size_t *out_len, uint8_t *out,
     goto err;
   }
 
+  CONSTTIME_DECLASSIFY(out, rsa_size);
   *out_len = rsa_size;
   ret = 1;
 
@@ -539,8 +550,11 @@ int rsa_default_decrypt(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
       goto err;
   }
 
+  CONSTTIME_DECLASSIFY(&ret, sizeof(ret));
   if (!ret) {
     OPENSSL_PUT_ERROR(RSA, RSA_R_PADDING_CHECK_FAILED);
+  } else {
+    CONSTTIME_DECLASSIFY(out, *out_len);
   }
 
 err:

@@ -116,6 +116,10 @@
 #include <assert.h>
 #include <string.h>
 
+#if defined(BORINGSSL_CONSTANT_TIME_VALIDATION)
+#include <valgrind/memcheck.h>
+#endif
+
 #if !defined(__cplusplus)
 #if defined(_MSC_VER)
 #define alignas(x) __declspec(align(x))
@@ -183,6 +187,12 @@ typedef __uint128_t uint128_t;
 #define OPENSSL_FALLTHROUGH [[gnu::fallthrough]]
 #elif defined(__GNUC__) && __GNUC__ >= 7 // gcc 7
 #define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
+#elif defined(__clang__)
+#if __has_attribute(fallthrough)
+#define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
+#else // clang versions that do not support fallthrough.
+#define OPENSSL_FALLTHROUGH
+#endif
 #else // C++11 on gcc 6, and all other cases
 #define OPENSSL_FALLTHROUGH
 #endif
@@ -235,6 +245,36 @@ typedef uint32_t crypto_word_t;
 #define CONSTTIME_FALSE_W ((crypto_word_t)0)
 #define CONSTTIME_TRUE_8 ((uint8_t)0xff)
 #define CONSTTIME_FALSE_8 ((uint8_t)0)
+
+// value_barrier_w returns |a|, but prevents GCC and Clang from reasoning about
+// the returned value. This is used to mitigate compilers undoing constant-time
+// code, until we can express our requirements directly in the language.
+//
+// Note the compiler is aware that |value_barrier_w| has no side effects and
+// always has the same output for a given input. This allows it to eliminate
+// dead code, move computations across loops, and vectorize.
+static inline crypto_word_t value_barrier_w(crypto_word_t a) {
+#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+  __asm__("" : "+r"(a) : /* no inputs */);
+#endif
+  return a;
+}
+
+// value_barrier_u32 behaves like |value_barrier_w| but takes a |uint32_t|.
+static inline uint32_t value_barrier_u32(uint32_t a) {
+#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+  __asm__("" : "+r"(a) : /* no inputs */);
+#endif
+  return a;
+}
+
+// value_barrier_u64 behaves like |value_barrier_w| but takes a |uint64_t|.
+static inline uint64_t value_barrier_u64(uint64_t a) {
+#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+  __asm__("" : "+r"(a) : /* no inputs */);
+#endif
+  return a;
+}
 
 // constant_time_msb_w returns the given value with the MSB copied to all the
 // other bits.
@@ -348,7 +388,13 @@ static inline uint8_t constant_time_eq_int_8(int a, int b) {
 static inline crypto_word_t constant_time_select_w(crypto_word_t mask,
                                                    crypto_word_t a,
                                                    crypto_word_t b) {
-  return (mask & a) | (~mask & b);
+  // Clang recognizes this pattern as a select. While it usually transforms it
+  // to a cmov, it sometimes further transforms it into a branch, which we do
+  // not want.
+  //
+  // Adding barriers to both |mask| and |~mask| breaks the relationship between
+  // the two, which makes the compiler stick with bitmasks.
+  return (value_barrier_w(mask) & a) | (value_barrier_w(~mask) & b);
 }
 
 // constant_time_select_8 acts like |constant_time_select| but operates on
@@ -364,6 +410,26 @@ static inline int constant_time_select_int(crypto_word_t mask, int a, int b) {
   return (int)(constant_time_select_w(mask, (crypto_word_t)(a),
                                       (crypto_word_t)(b)));
 }
+
+#if defined(BORINGSSL_CONSTANT_TIME_VALIDATION)
+
+// CONSTTIME_SECRET takes a pointer and a number of bytes and marks that region
+// of memory as secret. Secret data is tracked as it flows to registers and
+// other parts of a memory. If secret data is used as a condition for a branch,
+// or as a memory index, it will trigger warnings in valgrind.
+#define CONSTTIME_SECRET(x, y) VALGRIND_MAKE_MEM_UNDEFINED(x, y)
+
+// CONSTTIME_DECLASSIFY takes a pointer and a number of bytes and marks that
+// region of memory as public. Public data is not subject to constant-time
+// rules.
+#define CONSTTIME_DECLASSIFY(x, y) VALGRIND_MAKE_MEM_DEFINED(x, y)
+
+#else
+
+#define CONSTTIME_SECRET(x, y)
+#define CONSTTIME_DECLASSIFY(x, y)
+
+#endif  // BORINGSSL_CONSTANT_TIME_VALIDATION
 
 
 // Thread-safe initialisation.
@@ -529,6 +595,7 @@ BSSL_NAMESPACE_END
 // stored.
 typedef enum {
   OPENSSL_THREAD_LOCAL_ERR = 0,
+  OPENSSL_THREAD_LOCAL_RAND,
   OPENSSL_THREAD_LOCAL_TEST,
   NUM_OPENSSL_THREAD_LOCALS,
 } thread_local_data_t;
@@ -620,7 +687,7 @@ static inline uint64_t CRYPTO_bswap8(uint64_t x) {
 }
 #elif defined(_MSC_VER)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
-#include <intrin.h>
+#include <stdlib.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #pragma intrinsic(_byteswap_uint64, _byteswap_ulong)
 static inline uint32_t CRYPTO_bswap4(uint32_t x) {

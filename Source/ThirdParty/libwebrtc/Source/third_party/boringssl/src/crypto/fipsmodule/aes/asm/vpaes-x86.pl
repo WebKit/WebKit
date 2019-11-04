@@ -69,6 +69,9 @@ $PREFIX="vpaes";
 my  ($round, $base, $magic, $key, $const, $inp, $out)=
     ("eax",  "ebx", "ecx",  "edx","ebp",  "esi","edi");
 
+&preprocessor_ifndef("NDEBUG")
+&external_label("BORINGSSL_function_hit");
+&preprocessor_endif();
 &static_label("_vpaes_consts");
 &static_label("_vpaes_schedule_low_round");
 
@@ -758,6 +761,8 @@ $k_dsbo=0x2c0;		# decryption sbox final output
 # Interface to OpenSSL
 #
 &function_begin("${PREFIX}_set_encrypt_key");
+	record_function_hit(5);
+
 	&mov	($inp,&wparam(0));		# inp
 	&lea	($base,&DWP(-56,"esp"));
 	&mov	($round,&wparam(1));		# bits
@@ -812,6 +817,8 @@ $k_dsbo=0x2c0;		# decryption sbox final output
 &function_end("${PREFIX}_set_decrypt_key");
 
 &function_begin("${PREFIX}_encrypt");
+	record_function_hit(4);
+
 	&lea	($const,&DWP(&label("_vpaes_consts")."+0x30-".&label("pic_point")));
 	&call	("_vpaes_preheat");
 &set_label("pic_point");
@@ -913,4 +920,4 @@ $k_dsbo=0x2c0;		# decryption sbox final output
 
 &asm_finish();
 
-close STDOUT;
+close STDOUT or die "error closing STDOUT";

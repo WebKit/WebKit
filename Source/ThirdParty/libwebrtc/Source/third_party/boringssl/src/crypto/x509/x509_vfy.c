@@ -70,6 +70,7 @@
 
 #include "vpm_int.h"
 #include "../internal.h"
+#include "../x509v3/internal.h"
 
 static CRYPTO_EX_DATA_CLASS g_ex_data_class =
     CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA;
@@ -710,13 +711,40 @@ static int check_chain_extensions(X509_STORE_CTX *ctx)
     return ok;
 }
 
+static int reject_dns_name_in_common_name(X509 *x509)
+{
+    X509_NAME *name = X509_get_subject_name(x509);
+    int i = -1;
+    for (;;) {
+        i = X509_NAME_get_index_by_NID(name, NID_commonName, i);
+        if (i == -1) {
+            return X509_V_OK;
+        }
+
+        X509_NAME_ENTRY *entry = X509_NAME_get_entry(name, i);
+        ASN1_STRING *common_name = X509_NAME_ENTRY_get_data(entry);
+        unsigned char *idval;
+        int idlen = ASN1_STRING_to_UTF8(&idval, common_name);
+        if (idlen < 0) {
+            return X509_V_ERR_OUT_OF_MEM;
+        }
+        /* Only process attributes that look like host names. Note it is
+         * important that this check be mirrored in |X509_check_host|. */
+        int looks_like_dns = x509v3_looks_like_dns_name(idval, (size_t)idlen);
+        OPENSSL_free(idval);
+        if (looks_like_dns) {
+            return X509_V_ERR_NAME_CONSTRAINTS_WITHOUT_SANS;
+        }
+    }
+}
+
 static int check_name_constraints(X509_STORE_CTX *ctx)
 {
-    X509 *x;
     int i, j, rv;
+    int has_name_constraints = 0;
     /* Check name constraints for all certificates */
     for (i = sk_X509_num(ctx->chain) - 1; i >= 0; i--) {
-        x = sk_X509_value(ctx->chain, i);
+        X509 *x = sk_X509_value(ctx->chain, i);
         /* Ignore self issued certs unless last in chain */
         if (i && (x->ex_flags & EXFLAG_SI))
             continue;
@@ -729,6 +757,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx)
         for (j = sk_X509_num(ctx->chain) - 1; j > i; j--) {
             NAME_CONSTRAINTS *nc = sk_X509_value(ctx->chain, j)->nc;
             if (nc) {
+                has_name_constraints = 1;
                 rv = NAME_CONSTRAINTS_check(x, nc);
                 switch (rv) {
                 case X509_V_OK:
@@ -747,6 +776,36 @@ static int check_name_constraints(X509_STORE_CTX *ctx)
             }
         }
     }
+
+    /* Name constraints do not match against the common name, but
+     * |X509_check_host| still implements the legacy behavior where, on
+     * certificates lacking a SAN list, DNS-like names in the common name are
+     * checked instead.
+     *
+     * While we could apply the name constraints to the common name, name
+     * constraints are rare enough that can hold such certificates to a higher
+     * standard. Note this does not make "DNS-like" heuristic failures any
+     * worse. A decorative common-name misidentified as a DNS name would fail
+     * the name constraint anyway. */
+    X509 *leaf = sk_X509_value(ctx->chain, 0);
+    if (has_name_constraints && leaf->altname == NULL) {
+        rv = reject_dns_name_in_common_name(leaf);
+        switch (rv) {
+        case X509_V_OK:
+            break;
+        case X509_V_ERR_OUT_OF_MEM:
+            ctx->error = rv;
+            return 0;
+        default:
+            ctx->error = rv;
+            ctx->error_depth = i;
+            ctx->current_cert = leaf;
+            if (!ctx->verify_cb(0, ctx))
+                return 0;
+            break;
+        }
+    }
+
     return 1;
 }
 

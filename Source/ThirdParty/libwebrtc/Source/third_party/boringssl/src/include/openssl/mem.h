@@ -136,6 +136,10 @@ OPENSSL_EXPORT int BIO_vsnprintf(char *buf, size_t n, const char *format,
 #define CRYPTO_realloc OPENSSL_realloc
 #define CRYPTO_free OPENSSL_free
 
+// OPENSSL_clear_free calls |OPENSSL_free|. BoringSSL automatically clears all
+// allocations on free, but we define |OPENSSL_clear_free| for compatibility.
+OPENSSL_EXPORT void OPENSSL_clear_free(void *ptr, size_t len);
+
 
 #if defined(__cplusplus)
 }  // extern C

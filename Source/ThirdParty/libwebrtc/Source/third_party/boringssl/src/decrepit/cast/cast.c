@@ -55,6 +55,8 @@
  * [including the GNU Public Licence.]. */
 
 #include <openssl/cast.h>
+#include <openssl/cipher.h>
+#include <openssl/obj.h>
 
 #if defined(OPENSSL_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
@@ -62,6 +64,7 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #endif
 
+#include "../../crypto/internal.h"
 #include "internal.h"
 #include "../macros.h"
 
@@ -163,18 +166,18 @@ void CAST_decrypt(uint32_t *data, const CAST_KEY *key) {
   data[0] = r & 0xffffffffL;
 }
 
-void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
+void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                       const CAST_KEY *ks, uint8_t *iv, int enc) {
   uint32_t tin0, tin1;
   uint32_t tout0, tout1, xor0, xor1;
-  long l = length;
+  size_t l = length;
   uint32_t tin[2];
 
   if (enc) {
     n2l(iv, tout0);
     n2l(iv, tout1);
     iv -= 8;
-    for (l -= 8; l >= 0; l -= 8) {
+    while (l >= 8) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin0 ^= tout0;
@@ -186,9 +189,10 @@ void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       tout1 = tin[1];
       l2n(tout0, out);
       l2n(tout1, out);
+      l -= 8;
     }
-    if (l != -8) {
-      n2ln(in, tin0, tin1, l + 8);
+    if (l != 0) {
+      n2ln(in, tin0, tin1, l);
       tin0 ^= tout0;
       tin1 ^= tout1;
       tin[0] = tin0;
@@ -205,7 +209,7 @@ void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
     n2l(iv, xor0);
     n2l(iv, xor1);
     iv -= 8;
-    for (l -= 8; l >= 0; l -= 8) {
+    while (l >= 8) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin[0] = tin0;
@@ -217,8 +221,9 @@ void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       l2n(tout1, out);
       xor0 = tin0;
       xor1 = tin1;
+      l -= 8;
     }
-    if (l != -8) {
+    if (l != 0) {
       n2l(in, tin0);
       n2l(in, tin1);
       tin[0] = tin0;
@@ -226,7 +231,7 @@ void CAST_cbc_encrypt(const uint8_t *in, uint8_t *out, long length,
       CAST_decrypt(tin, ks);
       tout0 = tin[0] ^ xor0;
       tout1 = tin[1] ^ xor1;
-      l2nn(tout0, tout1, out, l + 8);
+      l2nn(tout0, tout1, out, l);
       xor0 = tin0;
       xor1 = tin1;
     }
@@ -351,12 +356,12 @@ void CAST_set_key(CAST_KEY *key, size_t len, const uint8_t *data) {
 // The input and output encrypted as though 64bit cfb mode is being used. The
 // extra state information to record how much of the 64bit block we have used
 // is contained in *num.
-void CAST_cfb64_encrypt(const uint8_t *in, uint8_t *out, long length,
+void CAST_cfb64_encrypt(const uint8_t *in, uint8_t *out, size_t length,
                         const CAST_KEY *schedule, uint8_t *ivec, int *num,
                         int enc) {
   uint32_t v0, v1, t;
   int n = *num;
-  long l = length;
+  size_t l = length;
   uint32_t ti[2];
   uint8_t *iv, c, cc;
 
@@ -406,3 +411,54 @@ void CAST_cfb64_encrypt(const uint8_t *in, uint8_t *out, long length,
   v0 = v1 = ti[0] = ti[1] = t = c = cc = 0;
   *num = n;
 }
+
+static int cast_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
+                         const uint8_t *iv, int enc) {
+  CAST_KEY *cast_key = ctx->cipher_data;
+  CAST_set_key(cast_key, ctx->key_len, key);
+  return 1;
+}
+
+static int cast_ecb_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                           size_t len) {
+  CAST_KEY *cast_key = ctx->cipher_data;
+
+  while (len >= CAST_BLOCK) {
+    CAST_ecb_encrypt(in, out, cast_key, ctx->encrypt);
+    in += CAST_BLOCK;
+    out += CAST_BLOCK;
+    len -= CAST_BLOCK;
+  }
+  assert(len == 0);
+
+  return 1;
+}
+
+static int cast_cbc_cipher(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                           size_t len) {
+  CAST_KEY *cast_key = ctx->cipher_data;
+  CAST_cbc_encrypt(in, out, len, cast_key, ctx->iv, ctx->encrypt);
+  return 1;
+}
+
+static const EVP_CIPHER cast5_ecb = {
+    NID_cast5_ecb,       CAST_BLOCK,
+    CAST_KEY_LENGTH,     CAST_BLOCK /* iv_len */,
+    sizeof(CAST_KEY),    EVP_CIPH_ECB_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    NULL /* app_data */, cast_init_key,
+    cast_ecb_cipher,     NULL /* cleanup */,
+    NULL /* ctrl */,
+};
+
+static const EVP_CIPHER cast5_cbc = {
+    NID_cast5_cbc,       CAST_BLOCK,
+    CAST_KEY_LENGTH,     CAST_BLOCK /* iv_len */,
+    sizeof(CAST_KEY),    EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH,
+    NULL /* app_data */, cast_init_key,
+    cast_cbc_cipher,     NULL /* cleanup */,
+    NULL /* ctrl */,
+};
+
+const EVP_CIPHER *EVP_cast5_ecb(void) { return &cast5_ecb; }
+
+const EVP_CIPHER *EVP_cast5_cbc(void) { return &cast5_cbc; }

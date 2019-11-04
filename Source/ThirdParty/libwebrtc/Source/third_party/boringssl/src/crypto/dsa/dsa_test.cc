@@ -62,6 +62,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <openssl/bn.h>
@@ -314,4 +316,19 @@ TEST(DSATest, AllTests) {
       !TestVerify(fips_sig_bad_r, sizeof(fips_sig_bad_r), 0)) {
     ADD_FAILURE() << "Tests failed";
   }
+}
+
+TEST(DSATest, InvalidGroup) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+  BN_zero(dsa->g);
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  static const uint8_t kDigest[32] = {0};
+  EXPECT_FALSE(
+      DSA_sign(0, kDigest, sizeof(kDigest), sig.data(), &sig_len, dsa.get()));
+  uint32_t err = ERR_get_error();
+  EXPECT_EQ(ERR_LIB_DSA, ERR_GET_LIB(err));
+  EXPECT_EQ(DSA_R_INVALID_PARAMETERS, ERR_GET_REASON(err));
 }

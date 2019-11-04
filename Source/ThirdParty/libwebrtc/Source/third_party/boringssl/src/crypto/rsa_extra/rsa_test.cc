@@ -461,7 +461,8 @@ TEST_P(RSAEncryptTest, TestKey) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(, RSAEncryptTest, testing::ValuesIn(kRSAEncryptParams));
+INSTANTIATE_TEST_SUITE_P(, RSAEncryptTest,
+                         testing::ValuesIn(kRSAEncryptParams));
 
 TEST(RSATest, TestDecrypt) {
   bssl::UniquePtr<RSA> rsa(

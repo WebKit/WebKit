@@ -73,6 +73,7 @@ static const EVP_PKEY_ASN1_METHOD *const kASN1Methods[] = {
     &ec_asn1_meth,
     &dsa_asn1_meth,
     &ed25519_asn1_meth,
+    &x25519_asn1_meth,
 };
 
 static int parse_key_type(CBS *cbs, int *out_type) {
@@ -343,4 +344,45 @@ int i2d_PublicKey(const EVP_PKEY *key, uint8_t **outp) {
       OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
       return -1;
   }
+}
+
+EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out, const uint8_t **inp,
+                        long len) {
+  EVP_PKEY *ret = EVP_PKEY_new();
+  if (ret == NULL) {
+    return NULL;
+  }
+
+  CBS cbs;
+  CBS_init(&cbs, *inp, len < 0 ? 0 : (size_t)len);
+  switch (type) {
+    case EVP_PKEY_RSA: {
+      RSA *rsa = RSA_parse_public_key(&cbs);
+      if (rsa == NULL || !EVP_PKEY_assign_RSA(ret, rsa)) {
+        RSA_free(rsa);
+        goto err;
+      }
+      break;
+    }
+
+    // Unlike OpenSSL, we do not support EC keys with this API. The raw EC
+    // public key serialization requires knowing the group. In OpenSSL, calling
+    // this function with |EVP_PKEY_EC| and setting |out| to NULL does not work.
+    // It requires |*out| to include a partially-initiazed |EVP_PKEY| to extract
+    // the group.
+    default:
+      OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
+      goto err;
+  }
+
+  *inp = CBS_data(&cbs);
+  if (out != NULL) {
+    EVP_PKEY_free(*out);
+    *out = ret;
+  }
+  return ret;
+
+err:
+  EVP_PKEY_free(ret);
+  return NULL;
 }

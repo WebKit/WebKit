@@ -19,6 +19,8 @@ vars = {
   'checkout_sde': False,
   'checkout_nasm': False,
   'checkout_libcxx': False,
+
+  'android_sdk_platform-tools_version': 'MSnxgXN7IurL-MQs1RrTkSFSb8Xd1UtZjLArI8Ty1FgC',
 }
 
 deps = {
@@ -27,22 +29,33 @@ deps = {
     'condition': 'checkout_android',
   },
 
-  'boringssl/util/bot/android_tools': {
-    'url': Var('chromium_git') + '/android_tools.git' + '@' + '130499e25286f4d56acafa252fee09f3cc595c49',
-    'condition': 'checkout_android',
+  'boringssl/util/bot/android_sdk/public': {
+      'packages': [
+          {
+              'package': 'chromium/third_party/android_sdk/public/platform-tools',
+              'version': Var('android_sdk_platform-tools_version'),
+          },
+      ],
+      'condition': 'checkout_android',
+      'dep_type': 'cipd',
   },
 
   'boringssl/util/bot/gyp':
     Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
 
+  'boringssl/util/bot/libFuzzer': {
+    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + 'e9b95bcfe2f5472fac2e516a0040aedf2140dd62',
+    'condition': 'checkout_fuzzer',
+  },
+
   # Update the following revisions from
-  # https://chromium.googlesource.com/chromium/buildtools/+/master/DEPS
+  # https://chromium.googlesource.com/chromium/src/+/master/buildtools/DEPS
   'boringssl/util/bot/libcxx': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/libcxx.git' + '@' + '85a7702b4cc5d69402791fe685f151cf3076be71',
+    'url': Var('chromium_git') + '/chromium/llvm-project/libcxx.git' + '@' + '5938e0582bac570a41edb3d6a2217c299adc1bc6',
     'condition': 'checkout_libcxx',
   },
   'boringssl/util/bot/libcxxabi': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/libcxxabi.git' + '@' + '05a73941f3fb177c4a891d4ff2a4ed5785e3b80c',
+    'url': Var('chromium_git') + '/chromium/llvm-project/libcxxabi.git' + '@' + '0d529660e32d77d9111912d73f2c74fc5fa2a858',
     'condition': 'checkout_libcxx',
   },
 }
@@ -201,6 +214,26 @@ hooks = [
                 'boringssl/util/bot/extract.py',
                 'boringssl/util/bot/sde-linux64.tar.bz2',
                 'boringssl/util/bot/sde-linux64/',
+    ],
+  },
+  {
+    'name': 'sde_win32',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "win"',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--bucket', 'chrome-boringssl-sde',
+                '-s', 'boringssl/util/bot/sde-win32.tar.bz2.sha1'
+    ],
+  },
+  {
+    'name': 'sde_win32_extract',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "win"',
+    'action': [ 'python',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/sde-win32.tar.bz2',
+                'boringssl/util/bot/sde-win32/',
     ],
   },
 ]

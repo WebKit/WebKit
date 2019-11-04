@@ -116,6 +116,8 @@
 #include <limits.h>
 #include <string.h>
 
+#include <tuple>
+
 #include <openssl/buf.h>
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
@@ -188,14 +190,12 @@ bool ssl3_add_message(SSL *ssl, Array<uint8_t> msg) {
   // unnecessary encryption overhead, notably in TLS 1.3 where we send several
   // encrypted messages in a row. For now, we do not do this for the null
   // cipher. The benefit is smaller and there is a risk of breaking buggy
-  // implementations. Additionally, we tie this to draft-28 as a sanity check,
-  // on the off chance middleboxes have fixated on sizes.
+  // implementations.
   //
   // TODO(davidben): See if we can do this uniformly.
   Span<const uint8_t> rest = msg;
-  if (ssl->ctx->quic_method == nullptr &&
-      (ssl->s3->aead_write_ctx->is_null_cipher() ||
-       ssl->version == TLS1_3_DRAFT23_VERSION)) {
+  if (ssl->quic_method == nullptr &&
+      ssl->s3->aead_write_ctx->is_null_cipher()) {
     while (!rest.empty()) {
       Span<const uint8_t> chunk = rest.subspan(0, ssl->max_send_fragment);
       rest = rest.subspan(chunk.size());
@@ -250,9 +250,9 @@ bool tls_flush_pending_hs_data(SSL *ssl) {
   auto data =
       MakeConstSpan(reinterpret_cast<const uint8_t *>(pending_hs_data->data),
                     pending_hs_data->length);
-  if (ssl->ctx->quic_method) {
-    if (!ssl->ctx->quic_method->add_handshake_data(ssl, ssl->s3->write_level,
-                                                   data.data(), data.size())) {
+  if (ssl->quic_method) {
+    if (!ssl->quic_method->add_handshake_data(ssl, ssl->s3->write_level,
+                                              data.data(), data.size())) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_INTERNAL_ERROR);
       return false;
     }
@@ -269,7 +269,7 @@ bool ssl3_add_change_cipher_spec(SSL *ssl) {
     return false;
   }
 
-  if (!ssl->ctx->quic_method &&
+  if (!ssl->quic_method &&
       !add_record_to_flight(ssl, SSL3_RT_CHANGE_CIPHER_SPEC,
                             kChangeCipherSpec)) {
     return false;
@@ -285,13 +285,13 @@ int ssl3_flush_flight(SSL *ssl) {
     return -1;
   }
 
-  if (ssl->ctx->quic_method) {
+  if (ssl->quic_method) {
     if (ssl->s3->write_shutdown != ssl_shutdown_none) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_PROTOCOL_IS_SHUTDOWN);
       return -1;
     }
 
-    if (!ssl->ctx->quic_method->flush_flight(ssl)) {
+    if (!ssl->quic_method->flush_flight(ssl)) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_QUIC_INTERNAL_ERROR);
       return -1;
     }
@@ -317,7 +317,7 @@ int ssl3_flush_flight(SSL *ssl) {
   if (!ssl->s3->write_buffer.empty()) {
     int ret = ssl_write_buffer_flush(ssl);
     if (ret <= 0) {
-      ssl->s3->rwstate = SSL_WRITING;
+      ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
       return ret;
     }
   }
@@ -329,7 +329,7 @@ int ssl3_flush_flight(SSL *ssl) {
         ssl->s3->pending_flight->data + ssl->s3->pending_flight_offset,
         ssl->s3->pending_flight->length - ssl->s3->pending_flight_offset);
     if (ret <= 0) {
-      ssl->s3->rwstate = SSL_WRITING;
+      ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
       return ret;
     }
 
@@ -337,7 +337,7 @@ int ssl3_flush_flight(SSL *ssl) {
   }
 
   if (BIO_flush(ssl->wbio.get()) <= 0) {
-    ssl->s3->rwstate = SSL_WRITING;
+    ssl->s3->rwstate = SSL_ERROR_WANT_WRITE;
     return -1;
   }
 
@@ -496,7 +496,7 @@ static bool parse_message(const SSL *ssl, SSLMessage *out,
   return true;
 }
 
-bool ssl3_get_message(SSL *ssl, SSLMessage *out) {
+bool ssl3_get_message(const SSL *ssl, SSLMessage *out) {
   size_t unused;
   if (!parse_message(ssl, out, &unused)) {
     return false;
@@ -652,6 +652,74 @@ void ssl3_next_message(SSL *ssl) {
   if (!SSL_in_init(ssl) && ssl->s3->hs_buf->length == 0) {
     ssl->s3->hs_buf.reset();
   }
+}
+
+// CipherScorer produces a "score" for each possible cipher suite offered by
+// the client.
+class CipherScorer {
+ public:
+  CipherScorer(uint16_t group_id)
+      : aes_is_fine_(EVP_has_aes_hardware()),
+        security_128_is_fine_(group_id != SSL_CURVE_CECPQ2 &&
+                              group_id != SSL_CURVE_CECPQ2b) {}
+
+  typedef std::tuple<bool, bool, bool> Score;
+
+  // MinScore returns a |Score| that will compare less than the score of all
+  // cipher suites.
+  Score MinScore() const {
+    return Score(false, false, false);
+  }
+
+  Score Evaluate(const SSL_CIPHER *a) const {
+    return Score(
+        // Something is always preferable to nothing.
+        true,
+        // Either 128-bit is fine, or 256-bit is preferred.
+        security_128_is_fine_ || a->algorithm_enc != SSL_AES128GCM,
+        // Either AES is fine, or else ChaCha20 is preferred.
+        aes_is_fine_ || a->algorithm_enc == SSL_CHACHA20POLY1305);
+  }
+
+ private:
+  const bool aes_is_fine_;
+  const bool security_128_is_fine_;
+};
+
+const SSL_CIPHER *ssl_choose_tls13_cipher(CBS cipher_suites, uint16_t version,
+                                          uint16_t group_id) {
+  if (CBS_len(&cipher_suites) % 2 != 0) {
+    return nullptr;
+  }
+
+  const SSL_CIPHER *best = nullptr;
+  CipherScorer scorer(group_id);
+  CipherScorer::Score best_score = scorer.MinScore();
+
+  while (CBS_len(&cipher_suites) > 0) {
+    uint16_t cipher_suite;
+    if (!CBS_get_u16(&cipher_suites, &cipher_suite)) {
+      return nullptr;
+    }
+
+    // Limit to TLS 1.3 ciphers we know about.
+    const SSL_CIPHER *candidate = SSL_get_cipher_by_value(cipher_suite);
+    if (candidate == nullptr ||
+        SSL_CIPHER_get_min_version(candidate) > version ||
+        SSL_CIPHER_get_max_version(candidate) < version) {
+      continue;
+    }
+
+    const CipherScorer::Score candidate_score = scorer.Evaluate(candidate);
+    // |candidate_score| must be larger to displace the current choice. That way
+    // the client's order controls between ciphers with an equal score.
+    if (candidate_score > best_score) {
+      best = candidate;
+      best_score = candidate_score;
+    }
+  }
+
+  return best;
 }
 
 BSSL_NAMESPACE_END

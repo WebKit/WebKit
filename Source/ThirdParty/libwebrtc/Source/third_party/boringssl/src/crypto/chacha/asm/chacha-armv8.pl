@@ -131,12 +131,6 @@ $code.=<<___;
 .quad	0x3320646e61707865,0x6b20657479622d32		// endian-neutral
 .Lone:
 .long	1,0,0,0
-.LOPENSSL_armcap_P:
-#ifdef	__ILP32__
-.long	OPENSSL_armcap_P-.
-#else
-.quad	OPENSSL_armcap_P-.
-#endif
 .asciz	"ChaCha20 for ARMv8, CRYPTOGAMS by <appro\@openssl.org>"
 
 .text
@@ -146,11 +140,14 @@ $code.=<<___;
 .align	5
 ChaCha20_ctr32:
 	cbz	$len,.Labort
+#if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
+	adrp	@x[0],:pg_hi21_nc:OPENSSL_armcap_P
+#else
 	adrp	@x[0],:pg_hi21:OPENSSL_armcap_P
+#endif
 	cmp	$len,#192
 	b.lo	.Lshort
-	add	@x[0],@x[0],:lo12:OPENSSL_armcap_P
-	ldr	w17,[@x[0]]
+	ldr	w17,[@x[0],:lo12:OPENSSL_armcap_P]
 	tst	w17,#ARMV7_NEON
 	b.ne	ChaCha20_neon
 
@@ -1134,4 +1131,4 @@ foreach (split("\n",$code)) {
 
 	print $_,"\n";
 }
-close STDOUT;	# flush
+close STDOUT or die "error closing STDOUT";	# flush

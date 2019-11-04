@@ -153,3 +153,19 @@ TEST(ConstantTimeTest, MemCmp) {
     }
   }
 }
+
+TEST(ConstantTimeTest, ValueBarrier) {
+  for (int i = 0; i < 10; i++) {
+    crypto_word_t word;
+    RAND_bytes(reinterpret_cast<uint8_t *>(&word), sizeof(word));
+    EXPECT_EQ(word, value_barrier_w(word));
+
+    uint32_t u32;
+    RAND_bytes(reinterpret_cast<uint8_t *>(&u32), sizeof(u32));
+    EXPECT_EQ(u32, value_barrier_u32(u32));
+
+    uint64_t u64;
+    RAND_bytes(reinterpret_cast<uint8_t *>(&u64), sizeof(u64));
+    EXPECT_EQ(u64, value_barrier_u64(u64));
+  }
+}

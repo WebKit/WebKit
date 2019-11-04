@@ -486,6 +486,10 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
     goto err;
   }
 
+  // TODO(davidben): OpenSSL has since extended |pbe_nid| to control either the
+  // PBES1 scheme or the PBES2 PRF. E.g. passing |NID_hmacWithSHA256| will
+  // select PBES2 with HMAC-SHA256 as the PRF. Implement this if anything uses
+  // it. See 5693a30813a031d3921a016a870420e7eb93ec90 in OpenSSL.
   int alg_ok;
   if (pbe_nid == -1) {
     alg_ok = PKCS5_pbe2_encrypt_init(&epki, &ctx, cipher, (unsigned)iterations,

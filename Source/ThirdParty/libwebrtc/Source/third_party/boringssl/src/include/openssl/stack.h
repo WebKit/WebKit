@@ -78,7 +78,7 @@ extern "C" {
 //     int bar;
 //   } FOO;
 //
-//   DEFINE_STACK_OF(FOO);
+//   DEFINE_STACK_OF(FOO)
 //
 // Although note that the stack will contain /pointers/ to |FOO|.
 //

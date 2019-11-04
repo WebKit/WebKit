@@ -40,7 +40,7 @@ fi
 for test in $TESTS; do
 	pushd build-$test
 	printf "\n\n\\x1b[1m$test\\x1b[0m\n"
-	./fipstools/test_fips
+	./util/fipstools/cavp/test_fips
 	echo "Waiting for keypress..."
 	read
 	popd
@@ -48,6 +48,6 @@ done
 
 pushd build-NONE
 printf "\\x1b[1mIntegrity\\x1b[0m\n"
-go run ../util/fipstools/break-hash.go ./fipstools/test_fips ./fipstools/test_fips_broken
-./fipstools/test_fips_broken
+go run ../util/fipstools/break-hash.go ./util/fipstools/cavp/test_fips ./util/fipstools/cavp/test_fips_broken
+./util/fipstools/cavp/test_fips_broken
 popd

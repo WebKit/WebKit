@@ -558,29 +558,34 @@ static int mod_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 }
 
 DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
-  BIGNUM *kinv = NULL, *r = NULL, *s = NULL;
-  BIGNUM m;
-  BIGNUM xr;
-  BN_CTX *ctx = NULL;
-  int reason = ERR_R_BN_LIB;
-  DSA_SIG *ret = NULL;
-
-  BN_init(&m);
-  BN_init(&xr);
-
   if (!dsa->p || !dsa->q || !dsa->g) {
-    reason = DSA_R_MISSING_PARAMETERS;
-    goto err;
+    OPENSSL_PUT_ERROR(DSA, DSA_R_MISSING_PARAMETERS);
+    return NULL;
+  }
+
+  // Reject invalid parameters. In particular, the algorithm will infinite loop
+  // if |g| is zero.
+  if (BN_is_zero(dsa->p) || BN_is_zero(dsa->q) || BN_is_zero(dsa->g)) {
+    OPENSSL_PUT_ERROR(DSA, DSA_R_INVALID_PARAMETERS);
+    return NULL;
   }
 
   // We only support DSA keys that are a multiple of 8 bits. (This is a weaker
   // check than the one in |DSA_do_check_signature|, which only allows 160-,
   // 224-, and 256-bit keys.
   if (BN_num_bits(dsa->q) % 8 != 0) {
-    reason = DSA_R_BAD_Q_VALUE;
-    goto err;
+    OPENSSL_PUT_ERROR(DSA, DSA_R_BAD_Q_VALUE);
+    return NULL;
   }
 
+  BIGNUM *kinv = NULL, *r = NULL, *s = NULL;
+  BIGNUM m;
+  BIGNUM xr;
+  BN_CTX *ctx = NULL;
+  DSA_SIG *ret = NULL;
+
+  BN_init(&m);
+  BN_init(&xr);
   s = BN_new();
   if (s == NULL) {
     goto err;
@@ -640,7 +645,7 @@ redo:
 
 err:
   if (ret == NULL) {
-    OPENSSL_PUT_ERROR(DSA, reason);
+    OPENSSL_PUT_ERROR(DSA, ERR_R_BN_LIB);
     BN_free(r);
     BN_free(s);
   }

@@ -20,7 +20,8 @@
 #include "../internal.h"
 
 
-#if defined(BORINGSSL_FIPS) && !defined(OPENSSL_ASAN) && !defined(OPENSSL_MSAN)
+#if !defined(BORINGSSL_SHARED_LIBRARY) && defined(BORINGSSL_FIPS) && \
+    !defined(OPENSSL_ASAN) && !defined(OPENSSL_MSAN)
 #define DEFINE_BSS_GET(type, name)        \
   static type name __attribute__((used)); \
   type *name##_bss_get(void) __attribute__((const));
