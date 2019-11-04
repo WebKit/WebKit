@@ -107,9 +107,16 @@ bool CtapAuthenticator::tryDowngrade()
 {
     if (m_info.versions().find(ProtocolVersion::kU2f) == m_info.versions().end())
         return false;
-    if (!isConvertibleToU2fSignCommand(WTF::get<PublicKeyCredentialRequestOptions>(requestData().options)))
-        return false;
     if (!observer())
+        return false;
+
+    bool isConvertible = false;
+    WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
+        isConvertible = isConvertibleToU2fRegisterCommand(options);
+    }, [&](const PublicKeyCredentialRequestOptions& options) {
+        isConvertible = isConvertibleToU2fSignCommand(options);
+    });
+    if (!isConvertible)
         return false;
 
     m_isDowngraded = true;

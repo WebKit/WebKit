@@ -1,3 +1,21 @@
+2019-11-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] CtapAuthenticator::tryDowngrade should distinguish requestData().options
+        https://bugs.webkit.org/show_bug.cgi?id=203771
+        <rdar://problem/56832618>
+
+        Reviewed by Brent Fulgham.
+
+        CtapAuthenticator::tryDowngrade assumes the request is a getAssertion request. This is true
+        for most cases but not for Google's registration. For Google's registration, a quirk is
+        implemented to use U2F commands for registration if GoogleLegacyAppIdSupportExtension asks
+        us to do so.
+
+        No tests given there is no way to simulate google.com in our test infrastructures.
+
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::tryDowngrade):
+
 2019-11-03  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView can get stuck blank (Web Content process thinks the app is backgrounded)
