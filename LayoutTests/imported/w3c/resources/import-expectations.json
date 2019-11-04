@@ -85,6 +85,7 @@
     "web-platform-tests/css/css-grid/parsing/": "import", 
     "web-platform-tests/css/css-images": "import", 
     "web-platform-tests/css/css-lists": "import", 
+    "web-platform-tests/css/css-lists/parsing": "import", 
     "web-platform-tests/css/css-logical": "import", 
     "web-platform-tests/css/css-multicol": "import", 
     "web-platform-tests/css/css-overflow": "import", 
