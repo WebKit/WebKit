@@ -79,6 +79,8 @@ private:
     
     Ref<Blob> createRecordingDataBlob();
 
+    Document* document() const;
+
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -86,9 +88,9 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject API.
+    void suspend(ReasonForSuspension) final;
     void stop() final;
     const char* activeDOMObjectName() const final;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const final;
     
     void stopRecordingInternal();
     

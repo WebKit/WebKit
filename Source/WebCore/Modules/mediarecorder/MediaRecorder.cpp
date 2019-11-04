@@ -35,6 +35,7 @@
 #include "MediaRecorderErrorEvent.h"
 #include "MediaRecorderPrivate.h"
 #include "SharedBuffer.h"
+#include "WindowEventLoop.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -93,20 +94,35 @@ MediaRecorder::~MediaRecorder()
     stopRecordingInternal();
 }
 
+Document* MediaRecorder::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
 void MediaRecorder::stop()
 {
     m_isActive = false;
     stopRecordingInternal();
 }
 
+void MediaRecorder::suspend(ReasonForSuspension reason)
+{
+    if (reason != ReasonForSuspension::BackForwardCache)
+        return;
+
+    if (!m_isActive || state() == RecordingState::Inactive)
+        return;
+
+    stopRecordingInternal();
+
+    scheduleDeferredTask([this] {
+        dispatchEvent(MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "MediaStream recording was interrupted"_s }));
+    });
+}
+
 const char* MediaRecorder::activeDOMObjectName() const
 {
     return "MediaRecorder";
-}
-
-bool MediaRecorder::shouldPreventEnteringBackForwardCache_DEPRECATED() const
-{
-    return true; // FIXME: We should do better here as this prevents entering BackForwardCache.
 }
 
 ExceptionOr<void> MediaRecorder::startRecording(Optional<int> timeslice)
@@ -196,11 +212,11 @@ void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const 
 void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)
 {
     ASSERT(function);
-    auto* scriptExecutionContext = this->scriptExecutionContext();
-    if (!scriptExecutionContext)
+    auto* document = this->document();
+    if (!document)
         return;
 
-    scriptExecutionContext->postTask([protectedThis = makeRef(*this), function = WTFMove(function)] (auto&) {
+    document->eventLoop().queueTask(TaskSource::Networking, *document, [pendingActivity = makePendingActivity(*this), function = WTFMove(function)] {
         function();
     });
 }

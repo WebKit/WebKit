@@ -4236,6 +4236,7 @@ webkit.org/b/190032 legacy-animation-engine/animations/stacking-context-unchange
 # MediaRecorder is not enabled on Windows
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
+fast/history/page-cache-media-recorder.html [ Skip ]
 http/wpt/mediarecorder [ Skip ]
 
 webkit.org/b/190472 fast/forms/fieldset/fieldset-elements-htmlcollection.html [ Failure ]

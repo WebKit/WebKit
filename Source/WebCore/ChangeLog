@@ -1,3 +1,25 @@
+2019-11-04  Chris Dumez  <cdumez@apple.com>
+
+        MediaRecorder should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203093
+        <rdar://problem/56748870>
+
+        Reviewed by Eric Carlson.
+
+        Let pages using MediaRecorder enter the back/forward cache. On suspension, we
+        stop recording and we queue an error event which will get dispatched upon
+        resuming.
+
+        Test: fast/history/page-cache-media-recorder.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::document const):
+        (WebCore::MediaRecorder::suspend):
+        (WebCore::MediaRecorder::activeDOMObjectName const):
+        (WebCore::MediaRecorder::scheduleDeferredTask):
+        (WebCore::MediaRecorder::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/mediarecorder/MediaRecorder.h:
+
 2019-11-04  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r243947) Epson software updater fails to install new version
