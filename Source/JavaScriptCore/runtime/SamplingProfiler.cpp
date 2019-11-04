@@ -170,7 +170,7 @@ protected:
         }
 
         CodeBlock* codeBlock = m_callFrame->unsafeCodeBlock();
-        if (!codeBlock || m_callFrame->callee().isWasm())
+        if (!codeBlock || m_callFrame->unsafeCallee().isWasm())
             return;
 
         if (!isValidCodeBlock(codeBlock)) {
