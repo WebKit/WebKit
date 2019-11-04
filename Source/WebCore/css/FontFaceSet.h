@@ -29,7 +29,6 @@
 #include "CSSFontFaceSet.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
-#include "SuspendableTaskQueue.h"
 
 namespace WebCore {
 
@@ -118,7 +117,6 @@ private:
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     UniqueRef<ReadyPromise> m_readyPromise;
-    UniqueRef<SuspendableTaskQueue> m_taskQueue;
     bool m_isFirstLayoutDone { true };
 };
 

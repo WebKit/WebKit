@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FontFaceSet.h"
 
+#include "AbstractEventLoop.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "FontFace.h"
@@ -58,7 +59,6 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
     : ActiveDOMObject(document)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
-    , m_taskQueue(SuspendableTaskQueue::create(document))
 {
     m_backing->addClient(*this);
     for (auto& face : initialFaces)
@@ -69,7 +69,6 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     : ActiveDOMObject(document)
     , m_backing(backing)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
-    , m_taskQueue(SuspendableTaskQueue::create(document))
 {
     if (document.frame())
         m_isFirstLayoutDone = document.frame()->loader().stateMachine().firstLayoutDone();
@@ -201,7 +200,7 @@ void FontFaceSet::didFirstLayout()
 {
     m_isFirstLayoutDone = true;
     if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled()) {
-        m_taskQueue->enqueueTask([this] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [this] {
             if (!m_readyPromise->isFulfilled())
                 m_readyPromise->resolve(*this);
         });
@@ -211,7 +210,7 @@ void FontFaceSet::didFirstLayout()
 void FontFaceSet::completedLoading()
 {
     if (m_isFirstLayoutDone && !m_readyPromise->isFulfilled()) {
-        m_taskQueue->enqueueTask([this] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [this] {
             if (!m_readyPromise->isFulfilled())
                 m_readyPromise->resolve(*this);
         });
@@ -227,7 +226,7 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     if (pendingPromises.isEmpty())
         return;
 
-    m_taskQueue->enqueueTask([pendingPromises = WTFMove(pendingPromises), newStatus] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::FontLoading, [pendingPromises = WTFMove(pendingPromises), newStatus] {
         for (auto& pendingPromise : pendingPromises) {
             if (pendingPromise->hasReachedTerminalState)
                 continue;
