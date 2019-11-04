@@ -25,6 +25,7 @@ EditingTestHarness.mm
 WKWebViewConfigurationExtras.mm
 
 cocoa/PlatformUtilitiesCocoa.mm
+cocoa/TestCocoa.mm
 cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
 cocoa/TestWKWebView.mm

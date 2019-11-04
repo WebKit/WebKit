@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
-#import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -34,12 +34,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKTextInputContext.h>
 #import <wtf/RetainPtr.h>
-
-#define EXPECT_RECT_EQ(xExpected, yExpected, widthExpected, heightExpected, rect) \
-    EXPECT_DOUBLE_EQ(xExpected, rect.origin.x); \
-    EXPECT_DOUBLE_EQ(yExpected, rect.origin.y); \
-    EXPECT_DOUBLE_EQ(widthExpected, rect.size.width); \
-    EXPECT_DOUBLE_EQ(heightExpected, rect.size.height);
 
 @implementation WKWebView (SynchronousTextInputContext)
 
@@ -92,34 +86,34 @@ TEST(WebKit, RequestTextInputContext)
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 50, 50, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<textarea style='width: 100px; height: 100px;'></textarea>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 100, 100, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<div contenteditable style='width: 100px; height: 100px;'></div>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 100, 100, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 
     // Basic inputs inside subframe.
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<input type='text' style='width: 50px; height: 50px;'>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 200, 50, 50, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 200, 50, 50), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<textarea style='width: 100px; height: 100px;'></textarea>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 200, 100, 100, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 
     [webView synchronouslyLoadHTMLString:applyIframe(@"<div contenteditable style='width: 100px; height: 100px;'></div>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 200, 100, 100, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 200, 100, 100), contexts[0].boundingRect);
 
     // Read only inputs; should not be included.
 
@@ -158,23 +152,23 @@ TEST(WebKit, RequestTextInputContext)
 #endif
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 50, 50, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
 
     // Multiple inputs.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'><br/><input type='text' style='width: 50px; height: 50px;'>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(3UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 50, 50, contexts[0].boundingRect);
-    EXPECT_RECT_EQ(0, 50, 50, 50, contexts[1].boundingRect);
-    EXPECT_RECT_EQ(0, 100, 50, 50, contexts[2].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 50, 50), contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 50, 50, 50), contexts[1].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 100, 50, 50), contexts[2].boundingRect);
 
     // Nested <input>-inside-contenteditable. Only the contenteditable is considered.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<div contenteditable style='width: 100px; height: 100px;'><input type='text' style='width: 50px; height: 50px;'></div>")];
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_RECT_EQ(0, 0, 100, 100, contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 100, 100), contexts[0].boundingRect);
 }
 
 TEST(WebKit, DISABLED_FocusTextInputContext)

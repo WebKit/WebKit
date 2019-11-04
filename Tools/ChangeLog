@@ -1,3 +1,40 @@
+2019-11-04  Daniel Bates  <dabates@apple.com>
+
+        Add Googletest assertion support for CGRect and NSRect
+        https://bugs.webkit.org/show_bug.cgi?id=203817
+
+        Reviewed by Myles C. Maxfield.
+
+        Add operator== and operator<< overloads for CGRect and NSRect so that these types can be
+        passed to EXPECT_EQ() and other Googletest assertions.
+
+        To make use of these overloads Cocoa tests should include #import "TestCocoa.h" instead of
+        "Test.h". TestCocoa.h imports Test.h. With these overloads an assertion like this:
+
+            EXPECT_EQ(CGRectMake(0, 0, 23, 24), rects[0].CGRectValue);
+
+        will produce output like this when it fails:
+
+            Expected equality of these values:
+              CGRectMake(138, 0, 23, 24)
+                Which is: (origin = (x = 138, y = 0), size = (width = 23, height = 24))
+              rects.firstObject.CGRectValue
+                Which is: (origin = (x = 96, y = 0), size = (width = 16, height = 17))
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add source files.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        Write in terms of EXPECT_EQ() now that it just works when passed CGRects.
+
+        * TestWebKitAPI/cocoa/TestCocoa.h: Added.
+        * TestWebKitAPI/cocoa/TestCocoa.mm: Added.
+        (ostreamRectCommon):
+        (operator<<):
+        (operator==):
+
 2019-11-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Status bubble should be white for CANCELLED builds

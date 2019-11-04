@@ -2433,6 +2433,8 @@
 		CE449E1021AE0F7200E7ADA1 /* WKWebViewFindString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewFindString.mm; sourceTree = "<group>"; };
 		CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StringWithDirection.cpp; sourceTree = "<group>"; };
 		CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionSet.cpp; sourceTree = "<group>"; };
+		CE640CA52370A4F300C5CAA4 /* TestCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TestCocoa.h; path = cocoa/TestCocoa.h; sourceTree = "<group>"; };
+		CE640CA62370A4F300C5CAA4 /* TestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestCocoa.mm; path = cocoa/TestCocoa.mm; sourceTree = "<group>"; };
 		CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SetTimeoutFunction.mm; sourceTree = "<group>"; };
 		CE6E81A320A933B800E2C80F /* set-timeout-function.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "set-timeout-function.html"; path = "ios/set-timeout-function.html"; sourceTree = SOURCE_ROOT; };
 		CE78705C2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveOnlyLifecycleLogger.h; sourceTree = "<group>"; };
@@ -2729,6 +2731,8 @@
 				F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */,
 				F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
+				CE640CA52370A4F300C5CAA4 /* TestCocoa.h */,
+				CE640CA62370A4F300C5CAA4 /* TestCocoa.mm */,
 				5CE7594822A883A500C12409 /* TestContextMenuDriver.h */,
 				5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
