@@ -33,12 +33,13 @@
 #include "ActiveDOMObject.h"
 #include "CDMInstanceSession.h"
 #include "EventTarget.h"
+#include "GenericEventQueue.h"
+#include "GenericTaskQueue.h"
 #include "IDLTypes.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeySessionType.h"
 #include "MediaKeyStatus.h"
 #include <wtf/RefCounted.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -90,9 +91,6 @@ private:
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
 
-    void enqueueTask(Function<void()>&&);
-    void enqueueEvent(Ref<Event>&&);
-
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
     void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) final;
@@ -106,6 +104,8 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const override;
+    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
+    void stop() override;
 
     WeakPtr<MediaKeys> m_keys;
     String m_sessionId;
@@ -119,6 +119,8 @@ private:
     MediaKeySessionType m_sessionType;
     Ref<CDM> m_implementation;
     Ref<CDMInstanceSession> m_instanceSession;
+    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
+    GenericTaskQueue<Timer> m_taskQueue;
     Vector<Ref<SharedBuffer>> m_recordOfKeyUsage;
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
