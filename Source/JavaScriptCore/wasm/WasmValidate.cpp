@@ -175,6 +175,7 @@ public:
 
     void dump(const Vector<ControlEntry>&, const Stack*);
     void setParser(FunctionParser<Validate>*) { }
+    void didFinishParsingLocals() { }
 
 private:
     Result WARN_UNUSED_RETURN unify(const Stack&, const ControlData&);

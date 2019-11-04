@@ -243,6 +243,7 @@ public:
 
     void dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
+    void didFinishParsingLocals() { }
 
     Value* constant(B3::Type, uint64_t bits, Optional<Origin> = WTF::nullopt);
     Value* framePointer();

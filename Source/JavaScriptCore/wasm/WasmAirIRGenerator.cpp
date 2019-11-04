@@ -298,6 +298,7 @@ public:
 
     void dump(const Vector<ControlEntry>& controlStack, const Stack* expressionStack);
     void setParser(FunctionParser<AirIRGenerator>* parser) { m_parser = parser; };
+    void didFinishParsingLocals() { }
 
     static Vector<Tmp> toTmpVector(const Vector<TypedTmp>& vector)
     {

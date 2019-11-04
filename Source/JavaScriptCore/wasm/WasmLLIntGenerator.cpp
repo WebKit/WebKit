@@ -207,6 +207,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ExpressionList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
+    void didFinishParsingLocals();
+
     void setParser(FunctionParser<LLIntGenerator>* parser) { m_parser = parser; };
 
     void dump(const Vector<ControlEntry>&, const ExpressionList*) { }
@@ -272,6 +274,7 @@ private:
     Vector<VirtualRegister> m_normalizedArguments;
     HashMap<Label*, Vector<SwitchEntry>> m_switches;
     ExpressionType m_jsNullConstant;
+    ExpressionList m_unitializedLocals;
 };
 
 Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const Signature& signature, const ModuleInformation& info, uint32_t functionIndex, ThrowWasmException throwWasmException)
@@ -484,13 +487,21 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
         switch (type) {
         case Type::Anyref:
         case Type::Funcref:
-            WasmMov::emit(this, local, jsNullConstant());
+            m_unitializedLocals.append(local);
             break;
         default:
             break;
         }
     }
     return { };
+}
+
+void LLIntGenerator::didFinishParsingLocals()
+{
+    auto null = jsNullConstant();
+    for (auto local : m_unitializedLocals)
+        WasmMov::emit(this, local, null);
+    m_unitializedLocals.clear();
 }
 
 auto LLIntGenerator::addConstant(Type, uint64_t value) -> ExpressionType

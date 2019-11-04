@@ -146,6 +146,8 @@ auto FunctionParser<Context>::parse() -> Result
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
 
+    m_context.didFinishParsingLocals();
+
     WASM_FAIL_IF_HELPER_FAILS(parseBody());
 
     return { };

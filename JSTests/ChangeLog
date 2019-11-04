@@ -1,3 +1,12 @@
+2019-11-03  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLIntGenerator should not allocate temporaries in between variables
+        https://bugs.webkit.org/show_bug.cgi?id=203787
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/stress/local-ref.js: Added.
+
 2019-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Revert http://trac.webkit.org/r251875

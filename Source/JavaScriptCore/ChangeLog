@@ -1,3 +1,28 @@
+2019-11-03  Tadeu Zagallo  <tzagallo@apple.com>
+
+        LLIntGenerator should not allocate temporaries in between variables
+        https://bugs.webkit.org/show_bug.cgi?id=203787
+
+        Reviewed by Yusuke Suzuki.
+
+        The BytecodeGenerator requires that all variables must be allocated contiguously, before any
+        temporaries are allocated. Currently, we might end up allocating a temporary to materialize
+        the null constant to initialize locals of type Anyref/Funcref. Fix it by keeping track of the
+        locals that need to be initialized and adding a new callback to notify when we have finished
+        parsing locals. Only then we perform the delayed initialization of local refs.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::didFinishParsingLocals):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::didFinishParsingLocals):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addLocal):
+        (JSC::Wasm::LLIntGenerator::didFinishParsingLocals):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::didFinishParsingLocals):
+
 2019-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Revert http://trac.webkit.org/r251875
