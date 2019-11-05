@@ -29,6 +29,7 @@
 #include "CSSFontFaceSet.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 

@@ -1,3 +1,9 @@
+2019-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix wincairo build after r252016.
+
+        * css/FontFaceSet.h:
+
 2019-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r248750): Drop-down menu for Walgreens 2FA unresponsive to touch
