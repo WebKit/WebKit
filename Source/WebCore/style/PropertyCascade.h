@@ -36,6 +36,33 @@ class StyleResolver;
 
 namespace Style {
 
+inline bool isValidVisitedLinkProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyCaretColor:
+    case CSSPropertyColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyColumnRuleColor:
+    case CSSPropertyTextDecorationColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyFill:
+    case CSSPropertyStroke:
+    case CSSPropertyStrokeColor:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:

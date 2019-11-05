@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerInitializationData.h"
 
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "WebCompiledContentRuleListData.h"

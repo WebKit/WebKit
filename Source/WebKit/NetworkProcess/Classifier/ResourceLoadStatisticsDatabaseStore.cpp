@@ -45,6 +45,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>

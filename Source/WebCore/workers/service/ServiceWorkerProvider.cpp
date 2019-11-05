@@ -33,6 +33,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "LegacySchemeRegistry.h"
+#include "Page.h"
 #include "SWClientConnection.h"
 
 namespace WebCore {

@@ -37,11 +37,13 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkSession.h"
+#include "ServiceWorkerFetchTask.h"
 #include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
+#include "WebSWServerConnection.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>

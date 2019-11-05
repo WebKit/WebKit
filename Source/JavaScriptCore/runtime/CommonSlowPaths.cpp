@@ -46,6 +46,7 @@
 #include "IteratorOperations.h"
 #include "JIT.h"
 #include "JSArrayInlines.h"
+#include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSFixedArray.h"

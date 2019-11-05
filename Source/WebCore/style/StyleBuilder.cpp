@@ -31,6 +31,9 @@
 #include "StyleBuilder.h"
 
 #include "CSSFontSelector.h"
+#include "CSSPaintImageValue.h"
+#include "CSSValuePool.h"
+#include "PaintWorkletGlobalScope.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"

@@ -32,6 +32,7 @@
 
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
+#include "CSSFontSelector.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
@@ -40,8 +41,10 @@
 #include "RenderTheme.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"
+#include "Settings.h"
 #include "StyleBuilder.h"
 #include "StyleCachedImage.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "TransformFunctions.h"
 

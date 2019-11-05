@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DOMCacheStorage.h"
 
+#include "AbstractEventLoop.h"
 #include "CacheQueryOptions.h"
 #include "ClientOrigin.h"
 #include "JSDOMCache.h"

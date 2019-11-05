@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "Document.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "ScriptExecutionContext.h"
@@ -43,7 +44,6 @@
 namespace WebCore {
 
 class AbstractEventLoop;
-class Document;
 class WorkerEventLoop;
 class WorkletScriptController;
 

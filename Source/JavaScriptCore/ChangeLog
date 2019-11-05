@@ -1,3 +1,11 @@
+2019-11-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for non-unified build.
+
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        Add missing includes.
+
 2019-11-04  Saam Barati  <sbarati@apple.com>
 
         Don't use memmove/memcpy/memset for memory that can be scanned concurrently

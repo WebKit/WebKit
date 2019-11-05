@@ -28,6 +28,7 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include "WebPageProxy.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 

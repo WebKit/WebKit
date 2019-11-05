@@ -54,6 +54,7 @@
 #include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSCPtrTag.h"
