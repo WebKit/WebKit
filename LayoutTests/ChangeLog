@@ -1,3 +1,18 @@
+2019-11-05  Devin Rousso  <drousso@apple.com>
+
+        Layout test http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=203841
+        <rdar://problem/51752151>
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html:
+        Rewrite the test so it actually waits for the resource response information to be received
+        in the frontend before testing any information about the resource, as the response is what
+        contains the status code and source. Previously, we would only wait for the inspected page
+        to finish loading, which did guarantee that the inspector frontend at least knew about the
+        resource being loaded, but not necessarily that it had been told about the response.
+
 2019-11-05  Daniel Bates  <dabates@apple.com>
 
         [Cocoa] Right Command key should have location DOM_KEY_LOCATION_RIGHT instead of DOM_KEY_LOCATION_STANDARD
