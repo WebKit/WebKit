@@ -22,7 +22,7 @@ PASS areArraysEqual(items, ["Photo Library", "Take Photo", "Browse"]) is true
 PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Browse"]) is true
 
 * accept = audio/*
-PASS areArraysEqual(items, ["Browse"]) is true
+PASS areArraysEqual(items, ["Photo Library", "Take Video", "Browse"]) is true
 
 * accept = .TXT
 PASS areArraysEqual(items, ["Browse"]) is true

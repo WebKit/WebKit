@@ -1,3 +1,14 @@
+2019-11-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Update fast/forms/ios/file-upload-panel.html test and results
+        https://bugs.webkit.org/show_bug.cgi?id=203823
+        <rdar://problem/56080440>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/forms/ios/file-upload-panel-expected.txt:
+        * fast/forms/ios/file-upload-panel.html:
+
 2019-11-05  youenn fablet  <youenn@apple.com>
 
         mp4 video element broken with service worker

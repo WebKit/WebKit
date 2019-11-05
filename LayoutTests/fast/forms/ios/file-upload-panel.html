@@ -56,6 +56,7 @@ function runAcceptTest(accept, expectedMenuItems)
             getFileUploadPickerMenuItems().then((_items) => {
                 items = _items;
                 shouldBeTrue("areArraysEqual(items, " + expectedMenuItems + ")");
+
                 debug("");
                 dismissFilePicker().then(() => { resolve(); });
             });
@@ -73,7 +74,7 @@ async function runTests()
     await runAcceptTest("image/*, video/*", '["Photo Library", "Take Photo or Video", "Browse"]');
     await runAcceptTest(".PNG, .GIF", '["Photo Library", "Take Photo", "Browse"]');
     await runAcceptTest(".PNG, .GIF, .MOV", '["Photo Library", "Take Photo or Video", "Browse"]');
-    await runAcceptTest("audio/*", '["Browse"]');
+    await runAcceptTest("audio/*", '["Photo Library", "Take Video", "Browse"]');
     await runAcceptTest(".TXT", '["Browse"]');
     await runAcceptTest(".PDF", '["Browse"]');
     await runAcceptTest(".PDF, .TXT", '["Browse"]');
