@@ -198,6 +198,9 @@ class WinPort(ApplePort):
 
         return self._build_path('ImageDiff.exe')
 
+    def _path_to_default_image_diff(self):
+        return self._path_to_image_diff()
+
     API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKitLegacy.exe']
 
     def path_to_api_test_binaries(self):

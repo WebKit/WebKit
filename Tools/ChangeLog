@@ -1,3 +1,25 @@
+2019-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r252031): layout tests fail to run in non apple ports after r252031
+        https://bugs.webkit.org/show_bug.cgi?id=203844
+
+        Reviewed by Žan Doberšek.
+
+        Since r252032 Port.check_image_diff() assumes that ImageDiff binary is built in the build path, which is not
+        true for all ports. This patch adds Port._path_to_default_image_diff() to be used instead of the build_path()
+        and overriden by ports not building the ImageDiff in the build path.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_image_diff):
+        (Port._path_to_default_image_diff):
+        (Port._path_to_image_diff):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._path_to_default_image_diff):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._path_to_default_image_diff):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._path_to_default_image_diff):
+
 2019-11-05  Chris Lord  <clord@igalia.com>
 
         [WPE] Geolocation API tests are consistently passing
