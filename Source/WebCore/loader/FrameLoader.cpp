@@ -1237,6 +1237,7 @@ void FrameLoader::setupForReplace()
     m_client.revertToProvisionalState(m_documentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader = m_documentLoader;
+    RELEASE_LOG_IF_ALLOWED("setupForReplace: Setting provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     m_documentLoader = nullptr;
     detachChildren();
 }
@@ -1651,6 +1652,7 @@ void FrameLoader::clearProvisionalLoadForPolicyCheck()
 
     SetForScope<bool> change(m_inClearProvisionalLoadForPolicyCheck, true);
     m_provisionalDocumentLoader->stopLoading();
+    RELEASE_LOG_IF_ALLOWED("clearProvisionalLoadForPolicyCheck: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 }
 
@@ -1839,6 +1841,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     if (m_documentLoader)
         m_documentLoader->stopLoading();
 
+    RELEASE_LOG_IF_ALLOWED("allAllLoaders: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 
     m_inStopAllLoaders = false;    
@@ -1850,6 +1853,7 @@ void FrameLoader::stopForBackForwardCache()
     if (!m_frame.isMainFrame()) {
         if (m_provisionalDocumentLoader)
             m_provisionalDocumentLoader->stopLoading();
+        RELEASE_LOG_IF_ALLOWED("stopForBackForwardCache: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
         setProvisionalDocumentLoader(nullptr);
     }
 
@@ -1996,6 +2000,7 @@ void FrameLoader::setState(FrameState newState)
 
 void FrameLoader::clearProvisionalLoad()
 {
+    RELEASE_LOG_IF_ALLOWED("clearProvisionalLoad: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
     m_progressTracker->progressCompleted();
     setState(FrameStateComplete);
@@ -2161,6 +2166,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     setDocumentLoader(m_provisionalDocumentLoader.get());
     if (pdl != m_provisionalDocumentLoader)
         return;
+    RELEASE_LOG_IF_ALLOWED("transitionToCommitted: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 
     // Nothing else can interrupt this commit - set the Provisional->Committed transition in stone
@@ -3205,6 +3211,7 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     // If we have a provisional request for a different document, a fragment scroll should cancel it.
     if (m_provisionalDocumentLoader && !equalIgnoringFragmentIdentifier(m_provisionalDocumentLoader->request().url(), request.url())) {
         m_provisionalDocumentLoader->stopLoading();
+        RELEASE_LOG_IF_ALLOWED("continueFragmentScrollAfterNavigationPolicy: Clearing provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
         setProvisionalDocumentLoader(nullptr);
     }
 
@@ -3490,6 +3497,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     }
 
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
+    RELEASE_LOG_IF_ALLOWED("continueLoadAfterNavigationPolicy: Setting provisional document loader (frame = %p, main = %d m_provisionalDocumentLoader=%p)", &m_frame, m_frame.isMainFrame(), m_provisionalDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);
 

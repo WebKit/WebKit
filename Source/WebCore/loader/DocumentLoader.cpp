@@ -223,8 +223,12 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     ASSERT(!m_committed);
 
     m_request = req;
-    if (shouldNotifyAboutProvisionalURLChange)
+    if (shouldNotifyAboutProvisionalURLChange) {
+        // Logging for <rdar://problem/54830233>.
+        if (!frameLoader()->provisionalDocumentLoader())
+            RELEASE_LOG_IF_ALLOWED("DocumentLoader::setRequest: With no provisional document loader (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
         frameLoader()->client().dispatchDidChangeProvisionalURL();
+    }
 }
 
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
@@ -569,6 +573,10 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     // deferrals plays less of a part in this function in preventing the bad behavior deferring 
     // callbacks is meant to prevent.
     ASSERT(!newRequest.isNull());
+
+    // Logging for <rdar://problem/54830233>.
+    if (!frameLoader() || !frameLoader()->provisionalDocumentLoader())
+        RELEASE_LOG_IF_ALLOWED("willSendRequest: With no provisional document loader (frame = %p, main = %d)", m_frame, m_frame ? m_frame->isMainFrame() : false);
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
     if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {

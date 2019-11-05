@@ -1,3 +1,26 @@
+2019-11-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Adding logging to diagnose crashes resulting from provisional document loader unexpectedly being nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=203837
+
+        Reviewed by Geoffrey Garen.
+
+        Added various logging for DocumentLoader and FrameLoader to figure out why
+        FrameLoader::m_provisionalDocumentLoader can be nullptr in some cases.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::clearProvisionalLoadForPolicyCheck):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::stopForBackForwardCache):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2019-11-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>
