@@ -649,8 +649,6 @@ void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, u
 
 void WebPageProxy::applicationDidEnterBackground()
 {
-    m_lastObservedStateWasBackground = true;
-
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
     
     RELEASE_LOG_IF_ALLOWED(ViewState, "applicationDidEnterBackground: isSuspendedUnderLock? %d", isSuspendedUnderLock);
@@ -680,8 +678,6 @@ bool WebPageProxy::isInHardwareKeyboardMode()
 
 void WebPageProxy::applicationWillEnterForeground()
 {
-    m_lastObservedStateWasBackground = false;
-
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
     RELEASE_LOG_IF_ALLOWED(ViewState, "applicationWillEnterForeground: isSuspendedUnderLock? %d", isSuspendedUnderLock);
 
