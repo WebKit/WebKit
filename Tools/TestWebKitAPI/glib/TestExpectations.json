@@ -106,12 +106,6 @@
             "WebKit.WKPreferencesDefaults": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
             },
-            "WebKit.GeolocationBasic": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
-            "WebKit.GeolocationTransitionToLowAccuracy": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
             "WebKit.HitTestResultNodeHandle": {
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
             },
@@ -119,12 +113,6 @@
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
             },
             "WebKit.NewFirstVisuallyNonEmptyLayoutFrames": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
-            "WebKit.GeolocationTransitionToHighAccuracy": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
-            "WebKit.GeolocationBasicWithHighAccuracy": {
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
             }
         }
