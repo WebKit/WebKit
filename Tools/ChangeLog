@@ -1,3 +1,16 @@
+2019-11-05  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION(r252031): layout tests fail to run in non apple ports after r252031 (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=203844
+
+        Rubber-stamped by Aakash Jain.
+
+        Remove infinite loop for Windows.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._path_to_default_image_diff):
+        (WinPort._path_to_image_diff): Deleted.
+
 2019-11-05  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should report test failures from clean-tree to results.webkit.org

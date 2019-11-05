@@ -192,14 +192,8 @@ class WinPort(ApplePort):
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
 
-    def _path_to_image_diff(self):
-        if self.is_cygwin():
-            return super(WinPort, self)._path_to_image_diff()
-
-        return self._build_path('ImageDiff.exe')
-
     def _path_to_default_image_diff(self):
-        return self._path_to_image_diff()
+        return self._build_path('ImageDiff.exe')
 
     API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKitLegacy.exe']
 
