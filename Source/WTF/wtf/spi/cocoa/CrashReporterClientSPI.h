@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <CrashReporterClient.h>

@@ -1368,7 +1368,6 @@
 		A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
 		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A1FB68271F6E51C100C43F9F /* CrashReporterClientSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */; };
 		A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A513F53E2154A5CC00662841 /* WebPageInspectorController.h */; };
 		A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
@@ -4125,7 +4124,6 @@
 		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
 		A1FB68221F6E518200C43F9F /* WKCrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCrashReporter.h; sourceTree = "<group>"; };
 		A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCrashReporter.mm; sourceTree = "<group>"; };
-		A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashReporterClientSPI.h; sourceTree = "<group>"; };
 		A513F53E2154A5CC00662841 /* WebPageInspectorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorController.h; sourceTree = "<group>"; };
 		A513F53F2154A5CD00662841 /* WebPageInspectorController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInspectorController.cpp; sourceTree = "<group>"; };
 		A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKInspectorWKWebView.h; sourceTree = "<group>"; };
@@ -6279,7 +6277,6 @@
 			children = (
 				1A5705101BE410E500874AF1 /* BlockSPI.h */,
 				37C21CAD1E994C0C0029D5F9 /* CorePredictionSPI.h */,
-				A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */,
 				57DCEDAA214B9B430016B847 /* DeviceIdentitySPI.h */,
 				2DAADA8E2298C21000E36B0C /* DeviceManagementSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
@@ -9499,7 +9496,6 @@
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
 				37C21CAE1E994C0C0029D5F9 /* CorePredictionSPI.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
-				A1FB68271F6E51C100C43F9F /* CrashReporterClientSPI.h in Headers */,
 				57597EBD218184900037F924 /* CtapAuthenticator.h in Headers */,
 				57597EB921811D9A0037F924 /* CtapHidDriver.h in Headers */,
 				570DAACA230385FD00E8FC04 /* CtapNfcDriver.h in Headers */,

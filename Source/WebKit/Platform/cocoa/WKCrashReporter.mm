@@ -25,33 +25,15 @@
 
 #import "config.h"
 #import "WKCrashReporter.h"
+#import <wtf/cocoa/CrashReporter.h>
 
 #import <cstdlib>
-#import "CrashReporterClientSPI.h"
-
-// Avoid having to link with libCrashReporterClient.a
-CRASH_REPORTER_CLIENT_HIDDEN
-struct crashreporter_annotations_t gCRAnnotations
-__attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))
-    = { CRASHREPORTER_ANNOTATIONS_VERSION, 0, 0, 0, 0, 0, 0, 0 };
 
 namespace WebKit {
 
-static void setCrashLogMessage(const char* message)
-{
-    // We have to copy the string because CRSetCrashLogMessage doesn't.
-    char* copiedMessage = message ? strdup(message) : nullptr;
-
-    CRSetCrashLogMessage(copiedMessage);
-
-    // Delete the message from last time, so we don't keep leaking messages.
-    static char* previousCopiedCrashLogMessage;
-    std::free(std::exchange(previousCopiedCrashLogMessage, copiedMessage));
-}
-
 void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
 {
-    setCrashLogMessage([(__bridge NSString *)infoString UTF8String]);
+    WTF::setCrashLogMessage([(__bridge NSString *)infoString UTF8String]);
 }
 
 }

@@ -158,6 +158,7 @@
 		C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC531F621F3F00C9222C /* LineEnding.cpp */; };
 		C805EF39E5F14481A96D39FC /* ASCIILiteral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F050790D9C432A99085E75 /* ASCIILiteral.cpp */; };
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
+		CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA072A9236FFBF70018839C /* CrashReporter.cpp */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */; };
 		E311FB171F0A568B003C08DE /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E311FB151F0A568B003C08DE /* ThreadGroup.cpp */; };
@@ -652,6 +653,9 @@
 		CD7600FF1F90A3CA00026E26 /* UnsafePointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnsafePointer.h; sourceTree = "<group>"; };
 		CDCC9BC422382FCE00FFB51C /* AggregateLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateLogger.h; path = wtf/AggregateLogger.h; sourceTree = SOURCE_ROOT; };
 		CE73E02419DCB7AB00580D5C /* XPCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCSPI.h; sourceTree = "<group>"; };
+		CEA072A7236FFA160018839C /* CrashReporterClientSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashReporterClientSPI.h; sourceTree = "<group>"; };
+		CEA072A8236FFBF70018839C /* CrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashReporter.h; sourceTree = "<group>"; };
+		CEA072A9236FFBF70018839C /* CrashReporter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CrashReporter.cpp; sourceTree = "<group>"; };
 		DCEE21FA1CEA7538000C2396 /* CFBundleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFBundleSPI.h; sourceTree = "<group>"; };
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
@@ -1364,6 +1368,7 @@
 		CE46516C19DB1FB4003ECA05 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CEA072A7236FFA160018839C /* CrashReporterClientSPI.h */,
 				9384B73E20DEA284005B73B2 /* CFXPCBridgeSPI.h */,
 				E31BDE2822E913CC0029B105 /* MachVMSPI.h */,
 				93D191CF20CAECE800C51B8E /* objcSPI.h */,
@@ -1437,6 +1442,8 @@
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,
+				CEA072A8236FFBF70018839C /* CrashReporter.h */,
+				CEA072A9236FFBF70018839C /* CrashReporter.cpp */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1576,6 +1583,7 @@
 				53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */,
 				7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
+				CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadCocoa.mm in Sources */,
 				A8A473E9151A825B004123FF /* MD5.cpp in Sources */,
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,
