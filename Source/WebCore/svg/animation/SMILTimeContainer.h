@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,6 @@ class SVGSVGElement;
 class SMILTimeContainer final : public RefCounted<SMILTimeContainer>  {
 public:
     static Ref<SMILTimeContainer> create(SVGSVGElement& owner) { return adoptRef(*new SMILTimeContainer(owner)); }
-    ~SMILTimeContainer();
 
     void schedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
     void unschedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
@@ -69,9 +68,15 @@ private:
     void timerFired();
     void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
-    
+
+    typedef std::pair<SVGElement*, QualifiedName> ElementAttributePair;
+    typedef Vector<SVGSMILElement*> AnimationsVector;
+    typedef HashMap<ElementAttributePair, std::unique_ptr<AnimationsVector>> GroupedAnimationsMap;
+
+    void processAnimations(const AnimationsVector&, Function<void(SVGSMILElement*)>&&);
+    void processScheduledAnimations(Function<void(SVGSMILElement*)>&&);
     void updateDocumentOrderIndexes();
-    void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);
+    void sortByPriority(AnimationsVector& smilElements, SMILTime elapsed);
 
     MonotonicTime m_beginTime;
     MonotonicTime m_pauseTime;
@@ -80,19 +85,9 @@ private:
     Seconds m_presetStartTime { 0_s };
 
     bool m_documentOrderIndexesDirty { false };
-    
     Timer m_timer;
-
-    typedef std::pair<SVGElement*, QualifiedName> ElementAttributePair;
-    typedef Vector<SVGSMILElement*> AnimationsVector;
-    typedef HashMap<ElementAttributePair, std::unique_ptr<AnimationsVector>> GroupedAnimationsMap;
     GroupedAnimationsMap m_scheduledAnimations;
-
     SVGSVGElement& m_ownerSVGElement;
-
-#ifndef NDEBUG
-    bool m_preventScheduledAnimationsChanges { false };
-#endif
 };
 
 } // namespace WebCore

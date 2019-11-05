@@ -147,8 +147,8 @@ void SVGAnimateElementBase::resetAnimatedType()
     if (!targetElement())
         return;
 
-    if (auto* animator = this->animator())
-        animator->start(targetElement());
+    if (auto protectedAnimator = makeRefPtr(this->animator()))
+        protectedAnimator->start(targetElement());
 }
 
 void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repeatCount, SVGSMILElement*)
@@ -163,8 +163,8 @@ void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repe
     if (calcMode() == CalcMode::Discrete)
         progress = progress < 0.5 ? 0 : 1;
 
-    if (auto* animator = this->animator())
-        animator->animate(targetElement(), progress, repeatCount);
+    if (auto protectedAnimator = makeRefPtr(this->animator()))
+        protectedAnimator->animate(targetElement(), progress, repeatCount);
 }
 
 void SVGAnimateElementBase::applyResultsToTarget()

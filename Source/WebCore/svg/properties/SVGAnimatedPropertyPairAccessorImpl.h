@@ -60,7 +60,7 @@ private:
         return type == SVGMarkerOrientAuto || type == SVGMarkerOrientAutoStartReverse ? string2 : string1;
     }
 
-    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
         return SVGAnimatedAngleOrientAnimator::create(attributeName, property1(owner), property2(owner), animationMode, calcMode, isAccumulated, isAdditive);
     }
@@ -95,7 +95,7 @@ private:
         return string1 == string2 ? string1 : string1 + ", " + string2;
     }
 
-    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
         return SVGAnimatedIntegerPairAnimator::create(attributeName, property1(owner), property2(owner), animationMode, calcMode, isAccumulated, isAdditive);
     }
@@ -130,7 +130,7 @@ private:
         return string1 == string2 ? string1 : string1 + ", " + string2;
     }
 
-    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
         return SVGAnimatedNumberPairAnimator::create(attributeName, property1(owner), property2(owner), animationMode, calcMode, isAccumulated, isAdditive);
     }

@@ -74,8 +74,8 @@ protected:
         m_animatedPropertyAnimator2->stop(targetElement);
     }
 
-    std::unique_ptr<AnimatedPropertyAnimator1> m_animatedPropertyAnimator1;
-    std::unique_ptr<AnimatedPropertyAnimator2> m_animatedPropertyAnimator2;
+    Ref<AnimatedPropertyAnimator1> m_animatedPropertyAnimator1;
+    Ref<AnimatedPropertyAnimator2> m_animatedPropertyAnimator2;
 };
 
 }

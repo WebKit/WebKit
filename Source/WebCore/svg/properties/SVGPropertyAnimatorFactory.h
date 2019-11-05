@@ -43,7 +43,7 @@ public:
         return attributeAnimatorCreator().contains(attributeName.impl());
     }
 
-    std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    RefPtr<SVGAttributeAnimator> createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
         auto iterator = attributeAnimatorCreator().find(attributeName.impl());
         if (iterator == attributeAnimatorCreator().end())
@@ -75,7 +75,7 @@ private:
         QualifiedName::QualifiedNameImpl*,
         std::pair<
             std::function<Ref<SVGProperty>()>,
-            std::function<std::unique_ptr<SVGAttributeAnimator>(const QualifiedName&, Ref<SVGProperty>&&, AnimationMode, CalcMode, bool, bool)>
+            std::function<Ref<SVGAttributeAnimator>(const QualifiedName&, Ref<SVGProperty>&&, AnimationMode, CalcMode, bool, bool)>
         >
     >;
 
