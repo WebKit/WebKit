@@ -66,7 +66,7 @@ public:
             return false;
 
         buffer.grow(bufferSize);
-        m_pixels = SharedBuffer::create(WTFMove(buffer));
+        m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
@@ -201,7 +201,9 @@ private:
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        m_pixels = SharedBuffer::create(other.m_pixels->data(), other.m_pixels->size());
+        Vector<char> buffer;
+        buffer.append(other.m_pixels->data(), other.m_pixels->size());
+        m_pixels = SharedBuffer::DataSegment::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
     }
 
@@ -226,7 +228,7 @@ private:
         return makeRGBA(r, g, b, a);
     }
 
-    RefPtr<SharedBuffer> m_pixels;
+    RefPtr<SharedBuffer::DataSegment> m_pixels;
     RGBA32* m_pixelsPtr { nullptr };
     IntSize m_size;
     IntRect m_frameRect; // This will always just be the entire buffer except for GIF and PNG frames

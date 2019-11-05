@@ -37,7 +37,7 @@ NativeImagePtr ImageBackingStore::image() const
         reinterpret_cast<unsigned char*>(const_cast<uint32_t*>(m_pixelsPtr)),
         CAIRO_FORMAT_ARGB32, size().width(), size().height(), size().width() * sizeof(uint32_t)));
     static cairo_user_data_key_t s_surfaceDataKey;
-    cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, m_pixels.get(), [](void* data) { static_cast<SharedBuffer*>(data)->deref(); });
+    cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, m_pixels.get(), [](void* data) { static_cast<SharedBuffer::DataSegment*>(data)->deref(); });
 
     return surface;
 }
