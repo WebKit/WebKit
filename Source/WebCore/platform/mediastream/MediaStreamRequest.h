@@ -33,9 +33,10 @@ namespace WebCore {
 
 struct MediaStreamRequest {
     enum class Type { UserMedia, DisplayMedia };
-    Type type;
+    Type type { Type::UserMedia };
     MediaConstraints audioConstraints;
     MediaConstraints videoConstraints;
+    bool isUserGesturePriviledged { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -43,12 +44,13 @@ struct MediaStreamRequest {
         encoder.encodeEnum(type);
         encoder << audioConstraints;
         encoder << videoConstraints;
+        encoder << isUserGesturePriviledged;
     }
 
     template <class Decoder> static Optional<MediaStreamRequest> decode(Decoder& decoder)
     {
         MediaStreamRequest request;
-        if (decoder.decodeEnum(request.type) && decoder.decode(request.audioConstraints) && decoder.decode(request.videoConstraints))
+        if (decoder.decodeEnum(request.type) && decoder.decode(request.audioConstraints) && decoder.decode(request.videoConstraints) && decoder.decode(request.isUserGesturePriviledged))
             return request;
 
         return WTF::nullopt;

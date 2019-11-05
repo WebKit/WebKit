@@ -744,7 +744,6 @@ public:
     void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack&);
     void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
     void setMediaStreamSourceInterrupted(MediaStreamTrack&, bool);
-    void setDisableGetDisplayMediaUserGestureConstraint(bool);
 #endif
 
     bool supportsAudioSession() const;

@@ -16,17 +16,26 @@
                 window.internals.settings.setScreenCaptureEnabled(true);
             }
 
+            function callGetDisplayMedia(options)
+            {
+                let promise;
+                window.internals.withUserGesture(() => {
+                    promise = navigator.mediaDevices.getDisplayMedia(options);
+                });
+                return promise;
+            }
+
             let defaultWidth;
             let defaultHeight;
             promise_test(async () => {
-                stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                stream = await callGetDisplayMedia({ video: true });
                 let settings = stream.getVideoTracks()[0].getSettings();
                 defaultWidth = settings.width;
                 defaultHeight = settings.height;
             }, "setup");
             
             promise_test((test) => {
-                return navigator.mediaDevices.getDisplayMedia({ video: { width: {ideal: 640} } })
+                return callGetDisplayMedia({ video: { width: {ideal: 640} } })
                     .then((stream) => {
                         let settings = stream.getVideoTracks()[0].getSettings()
                         assert_equals(settings.height, Math.floor(640 * (defaultHeight / defaultWidth)));
@@ -35,7 +44,7 @@
 
             promise_test((test) => {
 
-                return navigator.mediaDevices.getDisplayMedia({ video: { height: {ideal: 240} } })
+                return callGetDisplayMedia({ video: { height: {ideal: 240} } })
                     .then((stream) => {
                         let settings = stream.getVideoTracks()[0].getSettings()
                         assert_equals(settings.width, Math.floor(240 * (defaultWidth / defaultHeight)));

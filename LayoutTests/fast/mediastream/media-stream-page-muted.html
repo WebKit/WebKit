@@ -4,9 +4,6 @@
     <title>mediastream page muted</title>
     <script src="../../resources/js-test-pre.js"></script>
     <script>
-        if (window.internals)
-            internals.setDisableGetDisplayMediaUserGestureConstraint(true);
-
         async function checkPageState(activeState, inactiveState) {
             await new Promise((resolve, reject) => {
                 let retryCount = 0;
@@ -69,14 +66,27 @@
             });
         }
 
-        async function createScreenCaptureStream() {
+        function createScreenCaptureStream() {
+            let resolveCallback, rejectCallback;
+            let promise = new Promise((resolve, reject) => {
+                resolveCallback = resolve;
+                rejectCallback = reject;
+            });
             debug("<br>*** Creating screen capture stream");
-			displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-            shouldBeType("displayStream", "Object");
-            shouldBe("displayStream.getTracks().length", "1");
-            shouldBe("displayStream.getVideoTracks().length", "1");
-            screenCaptureTrack = displayStream.getVideoTracks()[0];
-            shouldBeFalse("screenCaptureTrack.muted");
+            window.internals.withUserGesture(async () => {
+                try {
+                    displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    shouldBeType("displayStream", "Object");
+                    shouldBe("displayStream.getTracks().length", "1");
+                    shouldBe("displayStream.getVideoTracks().length", "1");
+                    screenCaptureTrack = displayStream.getVideoTracks()[0];
+                    shouldBeFalse("screenCaptureTrack.muted");
+                    resolveCallback();
+                } catch(e) {
+                    rejectCallback(e);
+                }
+            });
+            return promise;
         }
 
         async function createCameraMicrophoneStream() {

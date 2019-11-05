@@ -49,6 +49,7 @@ namespace WebCore {
 class Document;
 class MediaDeviceInfo;
 class MediaStream;
+class UserGestureToken;
 
 struct MediaTrackSupportedConstraints;
 
@@ -77,15 +78,13 @@ public:
         Variant<bool, MediaTrackConstraints> video;
         Variant<bool, MediaTrackConstraints> audio;
     };
-    void getUserMedia(const StreamConstraints&, Promise&&) const;
-    void getDisplayMedia(const StreamConstraints&, Promise&&) const;
+    void getUserMedia(const StreamConstraints&, Promise&&);
+    void getDisplayMedia(const StreamConstraints&, Promise&&);
     void enumerateDevices(EnumerateDevicesPromise&&);
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     using RefCounted<MediaDevices>::ref;
     using RefCounted<MediaDevices>::deref;
-
-    void setDisableGetDisplayMediaUserGestureConstraint(bool value) { m_disableGetDisplayMediaUserGestureConstraint = value; }
 
 private:
     explicit MediaDevices(Document&);
@@ -109,15 +108,24 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    enum class GestureAllowedRequest {
+        Microphone = 1 << 0,
+        Camera = 1 << 1,
+        Display = 1 << 2,
+    };
+    bool computeUserGesturePriviledge(GestureAllowedRequest);
+
     Timer m_scheduledEventTimer;
     UserMediaClient::DeviceChangeObserverToken m_deviceChangeToken;
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
     bool m_listeningForDeviceChanges { false };
-    bool m_disableGetDisplayMediaUserGestureConstraint { false };
 
     Vector<Ref<MediaDeviceInfo>> m_devices;
     bool m_canAccessCamera { false };
     bool m_canAccessMicrophone { false };
+
+    OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
+    UserGestureToken* m_currentGestureToken { nullptr };
 };
 
 } // namespace WebCore

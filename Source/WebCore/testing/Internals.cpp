@@ -4871,16 +4871,6 @@ void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool in
 {
     track.source().setInterruptedForTesting(interrupted);
 }
-
-void Internals::setDisableGetDisplayMediaUserGestureConstraint(bool value)
-{
-    Document* document = contextDocument();
-    if (!document || !document->domWindow())
-        return;
-
-    if (auto* mediaDevices = NavigatorMediaDevices::mediaDevices(document->domWindow()->navigator()))
-        mediaDevices->setDisableGetDisplayMediaUserGestureConstraint(value);
-}
 #endif
 
 bool Internals::supportsAudioSession() const

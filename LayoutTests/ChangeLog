@@ -1,5 +1,26 @@
 2019-11-05  youenn fablet  <youenn@apple.com>
 
+        Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+        <rdar://problem/56648232>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/constraint-intrinsic-size.html:
+        * fast/mediastream/get-display-media-muted.html:
+        * fast/mediastream/getUserMedia-deny-persistency5-expected.txt:
+        * fast/mediastream/getUserMedia-deny-persistency5.html:
+        * fast/mediastream/media-stream-page-muted.html:
+        Use user gesture simulation instead of disabling user gesture check.
+        * fast/mediastream/screencapture-user-gesture.html:
+        * fast/mediastream/screencapture-user-gesture-expected.txt:
+        * http/tests/media/media-stream/get-display-media-iframe-allow-attribute-expected.txt:
+        * http/tests/media/media-stream/get-display-media-prompt.html:
+        * http/tests/media/media-stream/resources/get-display-media-devices-iframe.html:
+        * resources/testharnessreport.js:
+
+2019-11-05  youenn fablet  <youenn@apple.com>
+
         LayoutTest webrtc/captureCanvas-webrtc.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=181835
 

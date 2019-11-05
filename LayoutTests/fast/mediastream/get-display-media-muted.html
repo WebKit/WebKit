@@ -10,6 +10,15 @@
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
+    function callGetDisplayMedia(options)
+    {
+        let promise;
+        window.internals.withUserGesture(() => {
+            promise = navigator.mediaDevices.getDisplayMedia(options);
+        });
+        return promise;
+    }
+
     async function waitForPageStateChange(numberOfTries, originalState)
     {
         return new Promise(async (resolve) => {
@@ -29,7 +38,7 @@
 
     promise_test(async (test) => {
         await new Promise(async (resolve, reject) => {
-            let stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            let stream = await callGetDisplayMedia({ video: true });
             let pageMediaState = internals.pageMediaState();
 
             assert_false(pageMediaState.includes('HasMutedDisplayCaptureDevice'), 'page state does not include HasMutedDisplayCaptureDevice');

@@ -1,3 +1,36 @@
+2019-11-05  youenn fablet  <youenn@apple.com>
+
+        Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
+        https://bugs.webkit.org/show_bug.cgi?id=203362
+
+        Reviewed by Eric Carlson.
+
+        Compute whether a media request is user priviledged or not.
+        It is priviledged if it is created as part of a user gesture and no request of the same type
+        has been previously created for the same user gesture.
+        If getDisplayMedia is called twice as part of a single user gesture, getDisplaMedia will reject for the second call.
+
+        Remove the internal ability to disable user gesture check.
+        Instead use internals API to simulate a user gesture.       
+
+        Test: fast/mediastream/getUserMedia-deny-persistency5.html and updated test.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::computeUserGesturePriviledge):
+        (WebCore::MediaDevices::getUserMedia):
+        (WebCore::MediaDevices::getDisplayMedia):
+        (WebCore::MediaDevices::getUserMedia const): Deleted.
+        (WebCore::MediaDevices::getDisplayMedia const): Deleted.
+        * Modules/mediastream/MediaDevices.h:
+        * platform/mediastream/MediaStreamRequest.h:
+        (WebCore::MediaStreamRequest::encode const):
+        (WebCore::MediaStreamRequest::decode):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaStreamSourceInterrupted):
+        (WebCore::Internals::setDisableGetDisplayMediaUserGestureConstraint): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Too slow running encoding/legacy-mb-korean/euc-kr WPT tests

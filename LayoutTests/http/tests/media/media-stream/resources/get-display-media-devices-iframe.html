@@ -1,11 +1,17 @@
 <script>
-    if (window.internals)
-        internals.setDisableGetDisplayMediaUserGestureConstraint(true);
+    function callGetDisplayMedia(options)
+    {
+        let promise;
+        window.internals.withUserGesture(() => {
+            promise = navigator.mediaDevices.getDisplayMedia(options);
+        });
+        return promise;
+    }
 
     async function enumerate(event)
     {
         let result;
-        await navigator.mediaDevices.getDisplayMedia({video: true})
+        await callGetDisplayMedia({video: true})
             .then((s) => result = "allow")
             .catch((e) => result = "deny");
         parent.postMessage(`${event.data}:${result}`, '*');

@@ -2,12 +2,16 @@
 <html>
     <head>
         <script>
-
             let stream = null;
 
             function promptForCapture(constraints)
             {
-                window.internals.withUserGesture(async () => {
+                if (!window.internals) {
+                    window.webkit.messageHandlers.testHandler.postMessage('test requires internals');
+                    return;
+                }
+
+                window.internals.withUserGesture(() => {
                     navigator.mediaDevices.getDisplayMedia(constraints)
                     .then((s) => {
                         stream = s;
