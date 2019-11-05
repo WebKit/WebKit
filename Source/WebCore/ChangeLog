@@ -1,3 +1,17 @@
+2019-11-05  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa] Right Command key should have location DOM_KEY_LOCATION_RIGHT instead of DOM_KEY_LOCATION_STANDARD
+        https://bugs.webkit.org/show_bug.cgi?id=202601
+        <rdar://problem/55992775>
+
+        Reviewed by Wenson Hsieh.
+
+        On Cocoa platforms the right Command key is mapped to VK_APPS. Report VK_APPS as being on the
+        right side of the keyboard on these platforms.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::keyLocationCode):
+
 2019-11-05  Chris Dumez  <cdumez@apple.com>
 
         DatabaseContext should not prevent entering the back/forward cache

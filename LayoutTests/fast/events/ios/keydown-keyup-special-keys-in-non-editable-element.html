@@ -76,7 +76,7 @@ function log(message)
 function logKeyEvent(event)
 {
     let pieces = [];
-    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
+    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which", "location"])
         pieces.push(`${propertyName}: ${event[propertyName]}`);
     log(pieces.join(", "));
 }

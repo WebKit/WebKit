@@ -1,3 +1,17 @@
+2019-11-05  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa] Right Command key should have location DOM_KEY_LOCATION_RIGHT instead of DOM_KEY_LOCATION_STANDARD
+        https://bugs.webkit.org/show_bug.cgi?id=202601
+        <rdar://problem/55992775>
+
+        Reviewed by Wenson Hsieh.
+
+        Update test to emit the location property of the DOM key event to ensure that we do not
+        regress the value of this property.
+
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html:
+
 2019-11-05  Chris Dumez  <cdumez@apple.com>
 
         DatabaseContext should not prevent entering the back/forward cache

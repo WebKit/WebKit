@@ -81,13 +81,19 @@ static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeybo
     switch (key.windowsVirtualKeyCode()) {
     case VK_LCONTROL:
     case VK_LSHIFT:
-    case VK_LMENU:
-    case VK_LWIN:
+    case VK_LMENU: // Left Option/Alt
+    case VK_LWIN: // Left Command/Windows key (Natural keyboard)
         return KeyboardEvent::DOM_KEY_LOCATION_LEFT;
     case VK_RCONTROL:
     case VK_RSHIFT:
-    case VK_RMENU:
-    case VK_RWIN:
+    case VK_RMENU: // Right Option/Alt
+    case VK_RWIN: // Right Windows key (Natural keyboard)
+#if PLATFORM(COCOA)
+    // FIXME: WebCore maps the right command key to VK_APPS even though the USB HID spec.,
+    // <https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf>, states that it
+    // should map to the same key as the right Windows key (VK_RWIN).
+    case VK_APPS: // Right Command
+#endif
         return KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
     default:
         return KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
