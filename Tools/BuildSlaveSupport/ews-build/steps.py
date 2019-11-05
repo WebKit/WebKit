@@ -320,6 +320,13 @@ class ValidatePatch(buildstep.BuildStep):
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
 
+    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, **kwargs):
+        self.verifyObsolete = verifyObsolete
+        self.verifyBugClosed = verifyBugClosed
+        self.verifyReviewDenied = verifyReviewDenied
+        self.addURLs = addURLs
+        buildstep.BuildStep.__init__(self)
+
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
         try:
@@ -381,7 +388,8 @@ class ValidatePatch(buildstep.BuildStep):
             return -1
 
         patch_author = patch_json.get('creator')
-        self.addURL('Patch by: {}'.format(patch_author), 'mailto:{}'.format(patch_author))
+        if self.addURLs:
+            self.addURL('Patch by: {}'.format(patch_author), 'mailto:{}'.format(patch_author))
         return patch_json.get('is_obsolete')
 
     def _is_patch_review_denied(self, patch_id):
@@ -406,7 +414,8 @@ class ValidatePatch(buildstep.BuildStep):
             return -1
 
         bug_title = bug_json.get('summary')
-        self.addURL(u'Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
+        if self.addURLs:
+            self.addURL(u'Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
             return 1
         return 0
@@ -433,17 +442,17 @@ class ValidatePatch(buildstep.BuildStep):
 
         bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
-        bug_closed = self._is_bug_closed(bug_id)
+        bug_closed = self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
         if bug_closed == 1:
             self.skip_build('Bug {} is already closed'.format(bug_id))
             return None
 
-        obsolete = self._is_patch_obsolete(patch_id)
+        obsolete = self._is_patch_obsolete(patch_id) if self.verifyObsolete else 0
         if obsolete == 1:
             self.skip_build('Patch {} is obsolete'.format(patch_id))
             return None
 
-        review_denied = self._is_patch_review_denied(patch_id)
+        review_denied = self._is_patch_review_denied(patch_id) if self.verifyReviewDenied else 0
         if review_denied == 1:
             self.skip_build('Patch {} is marked r-'.format(patch_id))
             return None
@@ -453,7 +462,12 @@ class ValidatePatch(buildstep.BuildStep):
             self.setProperty('validated', False)
             return None
 
-        self._addToLog('stdio', 'Bug is open.\nPatch is not obsolete.\nPatch is not marked r-.\n')
+        if self.verifyBugClosed:
+            self._addToLog('stdio', 'Bug is open.\n')
+        if self.verifyObsolete:
+            self._addToLog('stdio', 'Patch is not obsolete.\n')
+        if self.verifyReviewDenied:
+            self._addToLog('stdio', 'Patch is not marked r-.\n')
         self.finished(SUCCESS)
         return None
 
@@ -1090,7 +1104,7 @@ class RunWebKitTests(shell.Test):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults(), ReRunWebKitTests()])
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(), ExtractTestResults(), ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunWebKitTests()])
         return rc
 
     def getResultSummary(self):
@@ -1115,7 +1129,14 @@ class ReRunWebKitTests(RunWebKitTests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([ArchiveTestResults(), UploadTestResults(identifier='rerun'), ExtractTestResults(identifier='rerun'), UnApplyPatchIfRequired(), CompileWebKitToT(), RunWebKitTestsWithoutPatch()])
+            self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
+                                                UploadTestResults(identifier='rerun'),
+                                                ExtractTestResults(identifier='rerun'),
+                                                UnApplyPatchIfRequired(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                CompileWebKitToT(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                RunWebKitTestsWithoutPatch()])
         return rc
 
     def commandComplete(self, cmd):
@@ -1421,7 +1442,7 @@ class RunAPITests(TestWithFailureCount):
             self.build.results = SUCCESS
             self.build.buildFinished([message], SUCCESS)
         else:
-            self.build.addStepsAfterCurrentStep([ReRunAPITests()])
+            self.build.addStepsAfterCurrentStep([ValidatePatch(verifyBugClosed=False, addURLs=False), ReRunAPITests()])
         return rc
 
 
@@ -1437,7 +1458,12 @@ class ReRunAPITests(RunAPITests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), RunAPITestsWithoutPatch(), AnalyzeAPITestsResults()])
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                CompileWebKitToT(),
+                                                ValidatePatch(verifyBugClosed=False, addURLs=False),
+                                                RunAPITestsWithoutPatch(),
+                                                AnalyzeAPITestsResults()])
         return rc
 
 

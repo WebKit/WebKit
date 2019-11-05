@@ -1,3 +1,18 @@
+2019-11-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Perform validation of patch before retrying API and layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=203756
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidatePatch.__init__): Added parameters to optionally skip certain validations.
+        (ValidatePatch.start): Skip certain validations based on the parameters.
+        (RunWebKitTests.evaluateCommand): Add a ValidatePatch step before retrying.
+        (ReRunWebKitTests.evaluateCommand): Ditto.
+        (RunAPITests.evaluateCommand): Ditto.
+        (ReRunAPITests.evaluateCommand): Ditto.
+
 2019-11-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Guard against unexpected -[_WKWebAuthenticationPanel cancel]
