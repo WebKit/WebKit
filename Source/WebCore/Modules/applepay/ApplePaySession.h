@@ -102,8 +102,8 @@ private:
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
     void stop() override;
+    void suspend(ReasonForSuspension) override;
 
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const override { return ApplePaySessionEventTargetInterfaceType; }
@@ -130,6 +130,7 @@ private:
     bool canCompleteShippingContactSelection() const;
     bool canCompletePaymentMethodSelection() const;
     bool canCompletePayment() const;
+    bool canSuspendWithoutCanceling() const;
 
     bool isFinalState() const;
     void didReachFinalState();

@@ -1,3 +1,16 @@
+2019-11-05  Andy Estes  <aestes@apple.com>
+
+        ApplePaySession should never prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203087
+        <rdar://problem/56744401>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/ssl/applepay/page-cache-active-apple-pay-session-expected.txt: Added.
+        * http/tests/ssl/applepay/page-cache-active-apple-pay-session.html: Added.
+        * http/tests/ssl/applepay/page-cache-inactive-apple-pay-session-expected.txt: Added.
+        * http/tests/ssl/applepay/page-cache-inactive-apple-pay-session.html: Added.
+
 2019-11-05  youenn fablet  <youenn@apple.com>
 
         MessagePort::close cannot assume that is execution context is not null
