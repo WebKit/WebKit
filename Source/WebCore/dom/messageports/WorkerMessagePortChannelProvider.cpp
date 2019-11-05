@@ -74,11 +74,9 @@ void WorkerMessagePortChannelProvider::messagePortDisentangled(const MessagePort
     });
 }
 
-void WorkerMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& local)
+void WorkerMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier&)
 {
-    callOnMainThread([local] {
-        MessagePortChannelProvider::singleton().messagePortClosed(local);
-    });
+    ASSERT_NOT_REACHED();
 }
 
 void WorkerMessagePortChannelProvider::postMessageToRemote(const MessageWithMessagePorts& message, const MessagePortIdentifier& remoteTarget)

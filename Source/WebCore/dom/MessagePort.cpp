@@ -226,7 +226,14 @@ void MessagePort::close()
         return;
     m_closed = true;
 
-    MessagePortChannelProvider::fromContext(*m_scriptExecutionContext).messagePortClosed(m_identifier);
+    if (isMainThread())
+        MessagePortChannelProvider::singleton().messagePortClosed(m_identifier);
+    else {
+        callOnMainThread([identifier = m_identifier] {
+            MessagePortChannelProvider::singleton().messagePortClosed(identifier);
+        });
+    }
+
     removeAllEventListeners();
     m_eventQueue->close();
 }

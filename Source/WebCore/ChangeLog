@@ -1,3 +1,19 @@
+2019-11-05  youenn fablet  <youenn@apple.com>
+
+        MessagePort::close cannot assume that is execution context is not null
+        https://bugs.webkit.org/show_bug.cgi?id=203843
+        <rdar://problem/55599877>
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::close):
+        Do not use m_scriptExecutionContext since it can be nulled out in MessagePort::disentangle.
+        * dom/messageports/WorkerMessagePortChannelProvider.cpp:
+        (WebCore::WorkerMessagePortChannelProvider::messagePortClosed):
+
 2019-11-05  James Darpinian  <jdarpinian@chromium.org>
 
         Enable powerPreference controlled GPU switching with ANGLE

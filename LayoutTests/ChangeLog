@@ -1,3 +1,17 @@
+2019-11-05  youenn fablet  <youenn@apple.com>
+
+        MessagePort::close cannot assume that is execution context is not null
+        https://bugs.webkit.org/show_bug.cgi?id=203843
+        <rdar://problem/55599877>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/basic-messageport-expected.txt:
+        * http/tests/workers/service/resources/basic-messageport.js:
+        (async.doLog):
+        (then):
+        (): Deleted.
+
 2019-11-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Update fast/forms/ios/file-upload-panel.html test and results
