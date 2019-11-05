@@ -1,3 +1,33 @@
+2019-11-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Guard against unexpected -[_WKWebAuthenticationPanel cancel]
+        https://bugs.webkit.org/show_bug.cgi?id=203830
+        <rdar://problem/56797134>
+
+        Reviewed by Brent Fulgham .
+
+        -[_WKWebAuthenticationPanel cancel] was only expected to be called on behalf of an
+        explicit user cancel from the UI. However, clients may call it in different other
+        unexpected scenarios as well. We should guard against that.
+
+        To do so, two counter ways are implemented:
+        1) AuthenticatorManager::cancelRequest is changed to invoke the pending request if there
+        is no GlobalFrameID. This case can only be reached via calling -[_WKWebAuthenticationPanel cancel]
+        before AuthenticatorManager::cancelRequest.
+        2) WebAuthenticationPanelClient::updatePanel and WebAuthenticationPanelClient::dismissPanel
+        will call delegate methods in the next run loop to prevent -[_WKWebAuthenticationPanel cancel]
+        being called in the delegates.
+
+        Covered by new API tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::cancelRequest):
+        (WebKit::AuthenticatorManager::createService const):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::updatePanel const):
+        (WebKit::WebAuthenticationPanelClient::dismissPanel const):
+
 2019-11-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for non-unified build.

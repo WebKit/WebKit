@@ -44,6 +44,7 @@ static bool webAuthenticationPanelFailed = false;
 static bool webAuthenticationPanelSucceded = false;
 static bool webAuthenticationPanelUpdateMultipleNFCTagsPresent = false;
 static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
+static bool webAuthenticationPanelCancelImmediately = false;
 
 @interface TestWebAuthenticationPanelDelegate : NSObject <_WKWebAuthenticationPanelDelegate>
 @end
@@ -53,6 +54,9 @@ static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 - (void)panel:(_WKWebAuthenticationPanel *)panel updateWebAuthenticationPanel:(_WKWebAuthenticationPanelUpdate)update
 {
     ASSERT_NE(panel, nil);
+    if (webAuthenticationPanelCancelImmediately)
+        [panel cancel];
+
     if (update == _WKWebAuthenticationPanelUpdateMultipleNFCTagsPresent) {
         webAuthenticationPanelUpdateMultipleNFCTagsPresent = true;
         return;
@@ -66,6 +70,9 @@ static bool webAuthenticationPanelUpdateNoCredentialsFound = false;
 - (void)panel:(_WKWebAuthenticationPanel *)panel dismissWebAuthenticationPanelWithResult:(_WKWebAuthenticationResult)result
 {
     ASSERT_NE(panel, nil);
+    if (webAuthenticationPanelCancelImmediately)
+        [panel cancel];
+
     if (result == _WKWebAuthenticationResultFailed) {
         webAuthenticationPanelFailed = true;
         return;
@@ -189,6 +196,7 @@ static void reset()
     webAuthenticationPanelRan = false;
     webAuthenticationPanelFailed = false;
     webAuthenticationPanelSucceded = false;
+    webAuthenticationPanelCancelImmediately = false;
 }
 
 static void checkPanel(_WKWebAuthenticationPanel *panel, NSString *relyingPartyID, NSArray *transports, _WKWebAuthenticationType type)
@@ -679,6 +687,59 @@ TEST(WebAuthenticationPanel, PanelMultipleNFCTagsPresent)
     Util::run(&webAuthenticationPanelUpdateMultipleNFCTagsPresent);
 }
 #endif
+
+TEST(WebAuthenticationPanel, PanelHidCancelReloadNoCrash)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-cancel" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelRan);
+    [[delegate panel] cancel];
+    [webView reload];
+    [webView waitForMessage:@"Operation timed out."];
+}
+
+TEST(WebAuthenticationPanel, PanelHidSuccessCancelNoCrash)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    webAuthenticationPanelCancelImmediately = true;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+
+TEST(WebAuthenticationPanel, PanelHidCtapNoCredentialsFoundCancelNoCrash)
+{
+    reset();
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-hid-no-credentials" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    webAuthenticationPanelCancelImmediately = true;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&webAuthenticationPanelUpdateNoCredentialsFound);
+}
 
 } // namespace TestWebKitAPI
 
