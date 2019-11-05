@@ -1206,7 +1206,7 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
         || equalLettersIgnoringASCIICase(family, ".sf ns mono")
         || equalLettersIgnoringASCIICase(family, ".sf ui mono")
         || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded")) {
-        // If you want to use these fonts, use ui-serif, ui-monospaced, and ui-rounded.
+        // If you want to use these fonts, use ui-serif, ui-monospace, and ui-rounded.
         return { nullptr };
     }
 
@@ -1273,8 +1273,8 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     Optional<SystemFontDatabaseCoreText::ClientUse> designSystemUI;
     if (equalLettersIgnoringASCIICase(family, "ui-serif"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
-    else if (equalLettersIgnoringASCIICase(family, "ui-monospaced"))
-        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
+    else if (equalLettersIgnoringASCIICase(family, "ui-monospace"))
+        designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospace;
     else if (equalLettersIgnoringASCIICase(family, "ui-rounded"))
         designSystemUI = SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
 

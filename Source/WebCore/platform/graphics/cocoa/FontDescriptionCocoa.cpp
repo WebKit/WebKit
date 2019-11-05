@@ -58,8 +58,8 @@ static inline Optional<SystemFontDatabaseCoreText::ClientUse> matchSystemFontUse
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
     if (equalLettersIgnoringASCIICase(string, "ui-serif"))
         return SystemFontDatabaseCoreText::ClientUse::ForSystemUISerif;
-    if (equalLettersIgnoringASCIICase(string, "ui-monospaced"))
-        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospaced;
+    if (equalLettersIgnoringASCIICase(string, "ui-monospace"))
+        return SystemFontDatabaseCoreText::ClientUse::ForSystemUIMonospace;
     if (equalLettersIgnoringASCIICase(string, "ui-rounded"))
         return SystemFontDatabaseCoreText::ClientUse::ForSystemUIRounded;
 #endif

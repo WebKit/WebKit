@@ -68,7 +68,7 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createDesignSystemUIFont(Client
     case ClientUse::ForSystemUISerif:
         design = kCTFontUIFontDesignSerif;
         break;
-    case ClientUse::ForSystemUIMonospaced:
+    case ClientUse::ForSystemUIMonospace:
         design = kCTFontUIFontDesignMonospaced;
         break;
     case ClientUse::ForSystemUIRounded:
@@ -108,7 +108,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
             systemFont = createSystemUIFont(parameters, localeString.get());
             break;
         case ClientUse::ForSystemUISerif:
-        case ClientUse::ForSystemUIMonospaced:
+        case ClientUse::ForSystemUIMonospace:
         case ClientUse::ForSystemUIRounded:
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
             systemFont = createDesignSystemUIFont(clientUse, parameters);
@@ -221,9 +221,9 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
         result.fontName = systemUISerif.get();
         break;
     }
-    case ClientUse::ForSystemUIMonospaced: {
-        static NeverDestroyed<AtomString> systemUIMonospaced = AtomString("ui-monospaced", AtomString::ConstructFromLiteral);
-        result.fontName = systemUIMonospaced.get();
+    case ClientUse::ForSystemUIMonospace: {
+        static NeverDestroyed<AtomString> systemUIMonospace = AtomString("ui-monospace", AtomString::ConstructFromLiteral);
+        result.fontName = systemUIMonospace.get();
         break;
     }
     case ClientUse::ForSystemUIRounded: {

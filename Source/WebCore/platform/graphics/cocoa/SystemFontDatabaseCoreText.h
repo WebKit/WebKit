@@ -99,7 +99,7 @@ public:
     enum class ClientUse : uint8_t {
         ForSystemUI,
         ForSystemUISerif,
-        ForSystemUIMonospaced,
+        ForSystemUIMonospace,
         ForSystemUIRounded,
         ForTextStyle
     };

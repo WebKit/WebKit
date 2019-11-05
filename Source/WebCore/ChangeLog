@@ -1,3 +1,25 @@
+2019-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename ui-monospaced to ui-monospace to match the monospace generic font family
+        https://bugs.webkit.org/show_bug.cgi?id=203602
+
+        Reviewed by Simon Fraser.
+
+        As per https://github.com/w3c/csswg-drafts/issues/4469
+
+        Updated existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamilySpecialCase):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::matchSystemFontUse):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::createDesignSystemUIFont):
+        (WebCore::SystemFontDatabaseCoreText::cascadeList):
+        (WebCore::SystemFontDatabaseCoreText::systemFontParameters):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+
 2019-11-04  Chris Dumez  <cdumez@apple.com>
 
         MediaKeySession / WebKitMediaKeySession should not prevent entering the back/forward cache
