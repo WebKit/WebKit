@@ -1,3 +1,10 @@
+2019-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Removed the flaky failure expectation from focusing-element-with-tabindex-by-tap-or-click.html
+        since it appears to be always passing now.
+
+        * platform/ios/TestExpectations:
+
 2019-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename ui-monospaced to ui-monospace to match the monospace generic font family
