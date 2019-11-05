@@ -1376,7 +1376,7 @@ class Port(object):
         default_image_diff = self._path_to_default_image_diff()
         if self._filesystem.exists(default_image_diff):
             return default_image_diff
-        built_image_diff = self._filesystem.join(self._config.build_directory(self.get_option('configuration')), 'ImageDiff')
+        built_image_diff = self._filesystem.join(self._config.build_directory(self.get_option('configuration'), for_host=True), 'ImageDiff')
         _log.debug('ImageDiff not found at {}, using {} instead'.format(default_image_diff, built_image_diff))
         return built_image_diff
 

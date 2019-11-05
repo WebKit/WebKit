@@ -1,3 +1,18 @@
+2019-11-05  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Build ImageDiff if it is missing (Follow-fix)
+        https://bugs.webkit.org/show_bug.cgi?id=183422
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._path_to_image_diff): Use the host build directory.
+        * Scripts/webkitpy/port/config.py:
+        (Config.build_directory): Allow the caller to ignore the port argument, which will return the default
+        build directory for the host running the script.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.make_port):
+
 2019-11-05  Chris Lord  <clord@igalia.com>
 
         [WPE] WebKit.NewFirstVisuallyNonEmptyLayout* unexpected pass
