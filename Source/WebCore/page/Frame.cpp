@@ -557,12 +557,15 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     ResourceCacheValidationSuppressor validationSuppressor(m_doc->cachedResourceLoader());
 
     m_doc->setPrinting(printing);
-    auto& frameView = *view();
-    frameView.adjustMediaTypeForPrinting(printing);
+    view()->adjustMediaTypeForPrinting(printing);
 
     // FIXME: Consider invoking Page::updateRendering or an equivalent.
     m_doc->styleScope().didChangeStyleSheetEnvironment();
     m_doc->evaluateMediaQueriesAndReportChanges();
+    if (!view())
+        return;
+
+    auto& frameView = *view();
     if (shouldUsePrintingLayout())
         frameView.forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
     else {
