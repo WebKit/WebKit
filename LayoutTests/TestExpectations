@@ -774,7 +774,6 @@ imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
 # These fetch tests time out
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-no-load-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Skip ]

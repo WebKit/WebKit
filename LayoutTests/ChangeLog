@@ -1,5 +1,18 @@
 2019-11-05  youenn fablet  <youenn@apple.com>
 
+        mp4 video element broken with service worker
+        https://bugs.webkit.org/show_bug.cgi?id=184447
+        <rdar://problem/39313155>
+
+        Reviewed by Chris Dumez.
+
+        Enable test for WK2, not WK1.
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2019-11-05  youenn fablet  <youenn@apple.com>
+
         Enforce user gesture for getUserMedia in case a previous getUserMedia call was denied
         https://bugs.webkit.org/show_bug.cgi?id=203362
         <rdar://problem/56648232>

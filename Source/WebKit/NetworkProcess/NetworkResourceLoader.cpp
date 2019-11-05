@@ -501,7 +501,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     }
 
     if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(m_response);
+        auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
         if (!error.isNull()) {
             RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
                 if (protectedThis->m_networkLoad)
@@ -911,7 +911,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         return;
     }
     if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(response);
+        auto error = m_networkLoadChecker->validateResponse(originalRequest(), response);
         if (!error.isNull()) {
             didFailLoading(error);
             return;

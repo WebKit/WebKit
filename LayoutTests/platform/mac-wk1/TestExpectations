@@ -291,6 +291,7 @@ imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worke
 imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-self-fallback.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
+imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Skip ]

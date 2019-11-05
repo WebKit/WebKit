@@ -919,6 +919,9 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         if (request.options().mode == FetchOptions::Mode::NoCors) {
             if (auto error = validateCrossOriginResourcePolicy(*request.origin(), request.resourceRequest().url(), resource->response()))
                 return makeUnexpected(WTFMove(*error));
+
+            if (auto error = validateRangeRequestedFlag(request.resourceRequest(), resource->response()))
+                return makeUnexpected(WTFMove(*error));
         }
         if (shouldUpdateCachedResourceWithCurrentRequest(*resource, request)) {
             resource = updateCachedResourceWithCurrentRequest(*resource, WTFMove(request), page.sessionID(), cookieJar);

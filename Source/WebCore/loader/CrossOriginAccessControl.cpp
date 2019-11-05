@@ -247,4 +247,11 @@ Optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin& 
     return WTF::nullopt;
 }
 
+Optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)
+{
+    if (response.isRangeRequested() && response.httpStatusCode() == 206 && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
+        return ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General);
+    return WTF::nullopt;
+}
+
 } // namespace WebCore
