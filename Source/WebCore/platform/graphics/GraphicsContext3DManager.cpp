@@ -35,7 +35,7 @@
 #include <sys/sysctl.h>
 #endif
 
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
 #include "SwitchingGPUClient.h"
 #include <OpenGL/OpenGL.h>
 #endif
@@ -222,7 +222,7 @@ void GraphicsContext3DManager::removeContextRequiringHighPerformance(GraphicsCon
 
 void GraphicsContext3DManager::updateHighPerformanceState()
 {
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
     if (!hasLowAndHighPowerGPUs())
         return;
     
@@ -262,7 +262,7 @@ void GraphicsContext3DManager::disableHighPerformanceGPUTimerFired()
         return;
 
     m_requestingHighPerformance = false;
-#if PLATFORM(MAC) && USE(OPENGL)
+#if PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
     SwitchingGPUClient::singleton().releaseHighPerformanceGPU();
 #endif
 }

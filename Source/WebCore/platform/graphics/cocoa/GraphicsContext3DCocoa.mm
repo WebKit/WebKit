@@ -178,12 +178,19 @@ static void setGPUByRegistryID(PlatformGraphicsContext3D contextObj, CGLPixelFor
     }
 }
 
-#endif // PLATFORM(MAC) && USE(OPENGL)
+#endif // PLATFORM(MAC) && (USE(OPENGL) || USE(ANGLE))
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
     , m_private(makeUnique<GraphicsContext3DPrivate>(this))
 {
+
+#if HAVE(APPLE_GRAPHICS_CONTROL)
+    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
+#else
+    m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
+#endif
+
 #if !USE(ANGLE)
 #if USE(OPENGL_ES)
     if (m_attrs.isWebGL2)
@@ -208,12 +215,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     if (m_attrs.isWebGL2)
         ::glEnable(GraphicsContext3D::PRIMITIVE_RESTART_FIXED_INDEX);
 #elif USE(OPENGL)
-
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContext3DPowerPreference::HighPerformance) ? GraphicsContext3DPowerPreference::HighPerformance : GraphicsContext3DPowerPreference::Default;
-#else
-    m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
-#endif
 
     bool useMultisampling = m_attrs.antialias;
 
@@ -699,6 +700,9 @@ void GraphicsContext3D::updateCGLContext()
     m_hasSwitchedToHighPerformanceGPU = true;
 }
 
+#endif // USE(OPENGL)
+
+#if USE(OPENGL) || USE(ANGLE)
 void GraphicsContext3D::setContextVisibility(bool isVisible)
 {
     if (m_powerPreferenceUsedForCreation == GraphicsContext3DPowerPreference::HighPerformance) {
@@ -708,7 +712,7 @@ void GraphicsContext3D::setContextVisibility(bool isVisible)
             GraphicsContext3DManager::sharedManager().removeContextRequiringHighPerformance(this);
     }
 }
-#endif // USE(OPENGL)
+#endif // USE(OPENGL) || USE(ANGLE)
 
 #if USE(ANGLE)
 void GraphicsContext3D::allocateIOSurfaceBackingStore(IntSize size)

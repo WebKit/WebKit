@@ -1,3 +1,25 @@
+2019-11-05  James Darpinian  <jdarpinian@chromium.org>
+
+        Enable powerPreference controlled GPU switching with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=203773
+
+        GPU switching can't be controlled from within ANGLE running in the content process
+        due to sandbox restrictions. So we need to continue using the existing
+        HighPerformanceGPUManager path with ANGLE.
+
+        Although the high power GPU is activated on request with this change, ANGLE does
+        not use it yet.
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DManager.cpp:
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+        (WebCore::GraphicsContext3DManager::disableHighPerformanceGPUTimerFired):
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2019-11-05  youenn fablet  <youenn@apple.com>
 
         mp4 video element broken with service worker

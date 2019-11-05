@@ -1567,7 +1567,7 @@ private:
     Platform3DObject m_vao { 0 };
 #endif
 
-#if PLATFORM(COCOA) && USE(OPENGL)
+#if PLATFORM(COCOA) && (USE(OPENGL) || USE(ANGLE))
     bool m_hasSwitchedToHighPerformanceGPU { false };
 #endif
 };
