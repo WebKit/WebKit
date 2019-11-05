@@ -36,7 +36,6 @@
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerRegistration.h"
 #include "ServiceWorkerRegistrationOptions.h"
-#include "SuspendableTaskQueue.h"
 #include "WorkerType.h"
 #include <wtf/Threading.h>
 

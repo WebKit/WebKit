@@ -34,7 +34,6 @@ list(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/LocalizedStrings.cpp
     platform/StaticPasteboard.cpp
-    platform/SuspendableTaskQueue.cpp
 
     platform/audio/PlatformMediaSessionManager.cpp
 

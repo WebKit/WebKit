@@ -1761,7 +1761,6 @@ platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp
 platform/SharedStringHash.cpp
 platform/StaticPasteboard.cpp
-platform/SuspendableTaskQueue.cpp
 platform/Theme.cpp
 platform/ThreadGlobalData.cpp
 platform/ThreadTimers.cpp

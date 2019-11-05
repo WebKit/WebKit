@@ -1,3 +1,19 @@
+2019-11-04  Chris Dumez  <cdumez@apple.com>
+
+        Drop SuspendableTaskQueue now that it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=203827
+
+        Reviewed by Ryosuke Niwa.
+
+        All users have been ported to the HTML5 event loop.
+
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SuspendableTaskQueue.cpp: Removed.
+        * platform/SuspendableTaskQueue.h: Removed.
+        * workers/service/ServiceWorkerContainer.h:
+
 2019-11-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename ui-monospaced to ui-monospace to match the monospace generic font family
