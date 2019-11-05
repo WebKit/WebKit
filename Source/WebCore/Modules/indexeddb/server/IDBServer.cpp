@@ -430,12 +430,12 @@ void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier,
     databaseConnection->connectionClosedFromClient();
 }
 
-void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     LOG(IndexedDB, "IDBServer::didFireVersionChangeEvent");
 
     if (auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
-        databaseConnection->didFireVersionChangeEvent(requestIdentifier);
+        databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
 void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)

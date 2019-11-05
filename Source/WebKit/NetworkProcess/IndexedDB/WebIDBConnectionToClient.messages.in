@@ -47,7 +47,7 @@ messages -> WebIDBConnectionToClient {
     DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier);
     AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier);
-    DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier);
+    DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer);
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData);
     ConfirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
 

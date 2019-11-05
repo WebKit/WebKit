@@ -105,7 +105,7 @@ public:
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
     void confirmConnectionClosedOnServer(UniqueIDBDatabaseConnection&);
-    void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier);
+    void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     void openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier);
     void confirmDidCloseFromServer(UniqueIDBDatabaseConnection&);
 
@@ -249,6 +249,8 @@ private:
     void waitForRequestSpaceCompletion(UniqueIDBDatabaseTransaction&, CompletionHandler<void(IDBError&&)>&&);
     void startSpaceIncreaseTask(uint64_t identifier, uint64_t taskSize);
     void finishSpaceIncreaseTask(uint64_t identifier, bool isTaskSuccessful);
+
+    void clearTransactionsOnConnection(UniqueIDBDatabaseConnection&);
 
     static uint64_t generateUniqueCallbackIdentifier();
 

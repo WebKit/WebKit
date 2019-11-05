@@ -425,10 +425,10 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionId
     });
 }
 
-void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, requestIdentifier] {
-        m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, requestIdentifier, connectionClosed] {
+        m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
     });
 }
 

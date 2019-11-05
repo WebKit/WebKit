@@ -327,9 +327,9 @@ void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t databaseConnec
     idbServer().abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    idbServer().didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier);
+    idbServer().didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier, connectionClosed);
 }
 
 void WebIDBConnectionToClient::openDBRequestCancelled(const IDBRequestData& requestData)

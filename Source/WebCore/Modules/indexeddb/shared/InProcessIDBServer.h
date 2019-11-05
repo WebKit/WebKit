@@ -91,7 +91,7 @@ public:
     void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) final;
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) final;
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) final;
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer = IndexedDB::ConnectionClosedOnBehalfOfServer::No) final;
     void openDBRequestCancelled(const IDBRequestData&) final;
     void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) final;
     void getAllDatabaseNames(const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID) final;

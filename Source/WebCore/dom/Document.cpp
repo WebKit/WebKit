@@ -5161,10 +5161,19 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
         m_styleRecalcTimer.stop();
 
         clearSharedObjectPool();
+
+#if ENABLE(INDEXED_DATABASE)
+        if (m_idbConnectionProxy)
+            m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), true);
+#endif
         break;
     case NotInBackForwardCache:
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
+#if ENABLE(INDEXED_DATABASE)
+        if (m_idbConnectionProxy)
+            m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
+#endif
         break;
     case AboutToEnterBackForwardCache:
         break;

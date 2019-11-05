@@ -415,13 +415,13 @@ void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionId
     m_proxy->fireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, requestedVersion);
 }
 
-void IDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+void IDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     LOG(IndexedDB, "IDBConnectionToServer::didFireVersionChangeEvent");
     ASSERT(isMainThread());
 
     if (m_serverConnectionIsValid)
-        m_delegate->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier);
+        m_delegate->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
 }
 
 void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)

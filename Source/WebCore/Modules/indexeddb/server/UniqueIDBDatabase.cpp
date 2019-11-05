@@ -752,7 +752,29 @@ void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChange
     m_currentOpenDBRequest->maybeNotifyRequestBlocked(m_databaseInfo->version());
 }
 
-void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier)
+void UniqueIDBDatabase::clearTransactionsOnConnection(UniqueIDBDatabaseConnection& connection)
+{
+    Deque<RefPtr<UniqueIDBDatabaseTransaction>> pendingTransactions;
+    while (!m_pendingTransactions.isEmpty()) {
+        auto transaction = m_pendingTransactions.takeFirst();
+        if (&transaction->databaseConnection() != &connection)
+            pendingTransactions.append(WTFMove(transaction));
+        else
+            connection.deleteTransaction(*transaction);
+    }
+    if (!pendingTransactions.isEmpty())
+        m_pendingTransactions.swap(pendingTransactions);
+
+    Deque<RefPtr<UniqueIDBDatabaseTransaction>> transactionsToAbort;
+    for (auto& transaction : m_inProgressTransactions.values()) {
+        if (&transaction->databaseConnection() == &connection)
+            transactionsToAbort.append(transaction);
+    }
+    for (auto& transaction : transactionsToAbort)
+        transaction->abortWithoutCallback();
+}
+
+void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
 {
     LOG(IndexedDB, "UniqueIDBDatabase::didFireVersionChangeEvent");
 
@@ -760,6 +782,13 @@ void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& c
         return;
 
     ASSERT_UNUSED(requestIdentifier, m_currentOpenDBRequest->requestData().requestIdentifier() == requestIdentifier);
+
+    if (connectionClosedOnBehalfOfServer == IndexedDB::ConnectionClosedOnBehalfOfServer::Yes) {
+        if (m_openDatabaseConnections.contains(&connection)) {
+            clearTransactionsOnConnection(connection);
+            m_openDatabaseConnections.remove(&connection);
+        }
+    }
 
     notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
 }
@@ -1845,24 +1874,7 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
         m_versionChangeDatabaseConnection = nullptr;
     }
 
-    Deque<RefPtr<UniqueIDBDatabaseTransaction>> pendingTransactions;
-    while (!m_pendingTransactions.isEmpty()) {
-        auto transaction = m_pendingTransactions.takeFirst();
-        if (&transaction->databaseConnection() != &connection)
-            pendingTransactions.append(WTFMove(transaction));
-    }
-
-    if (!pendingTransactions.isEmpty())
-        m_pendingTransactions.swap(pendingTransactions);
-
-    Deque<RefPtr<UniqueIDBDatabaseTransaction>> transactionsToAbort;
-    for (auto& transaction : m_inProgressTransactions.values()) {
-        if (&transaction->databaseConnection() == &connection)
-            transactionsToAbort.append(transaction);
-    }
-
-    for (auto& transaction : transactionsToAbort)
-        transaction->abortWithoutCallback();
+    clearTransactionsOnConnection(connection);
 
     if (m_currentOpenDBRequest)
         notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());

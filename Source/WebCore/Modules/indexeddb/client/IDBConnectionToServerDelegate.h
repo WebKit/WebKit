@@ -48,6 +48,7 @@ struct SecurityOriginData;
 
 namespace IndexedDB {
 enum class ObjectStoreOverwriteMode;
+enum class ConnectionClosedOnBehalfOfServer : bool;
 }
 
 struct IDBKeyRangeData;
@@ -83,7 +84,7 @@ public:
     virtual void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) = 0;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
     virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) = 0;
-    virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) = 0;
+    virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer) = 0;
     virtual void openDBRequestCancelled(const IDBRequestData&) = 0;
     virtual void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) = 0;
 

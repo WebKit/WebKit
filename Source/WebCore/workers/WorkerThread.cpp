@@ -269,7 +269,13 @@ void WorkerThread::suspend()
 {
     m_isSuspended = true;
     runLoop().postTask([&](ScriptExecutionContext&) {
+        if (m_workerGlobalScope)
+            m_workerGlobalScope->suspend();
+
         m_suspensionSemaphore.wait();
+
+        if (m_workerGlobalScope)
+            m_workerGlobalScope->resume();
     });
 }
 

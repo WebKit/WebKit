@@ -52,6 +52,9 @@ public:
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeCompletion();
 
+    void setIsContextSuspended(bool);
+    bool isContextSuspended() const { return m_isContextSuspended; }
+
 private:
     IDBOpenDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, const IDBDatabaseIdentifier&, uint64_t version, IndexedDB::RequestType);
 
@@ -68,6 +71,9 @@ private:
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version { 0 };
+
+    bool m_isContextSuspended { false };
+    bool m_isBlocked { false };
 };
 
 } // namespace WebCore

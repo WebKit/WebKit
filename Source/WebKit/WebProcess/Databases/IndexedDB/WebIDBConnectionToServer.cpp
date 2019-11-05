@@ -198,9 +198,9 @@ void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnec
     send(Messages::WebIDBConnectionToClient::AbortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    send(Messages::WebIDBConnectionToClient::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier));
+    send(Messages::WebIDBConnectionToClient::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed));
 }
 
 void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)

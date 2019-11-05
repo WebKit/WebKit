@@ -75,6 +75,8 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
+    void suspend();
+    void resume();
 #endif
 
     WorkerCacheStorageConnection& cacheStorageConnection();

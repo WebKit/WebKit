@@ -104,6 +104,8 @@ enum class GetAllType {
     Values,
 };
 
+enum class ConnectionClosedOnBehalfOfServer : bool { No, Yes };
+
 } // namespace IndexedDB
 
 } // namespace WebCore

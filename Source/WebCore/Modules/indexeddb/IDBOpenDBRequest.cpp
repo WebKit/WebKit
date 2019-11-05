@@ -190,6 +190,8 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 
     ASSERT(&originThread() == &Thread::current());
 
+    m_isBlocked = false;
+
     // If an Open request was completed after the page has navigated, leaving this request
     // with a stopped script execution context, we need to message back to the server so it
     // doesn't hang waiting on a database connection or transaction that will never exist.
@@ -229,9 +231,26 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 void IDBOpenDBRequest::requestBlocked(uint64_t oldVersion, uint64_t newVersion)
 {
     ASSERT(&originThread() == &Thread::current());
+    ASSERT(!m_isBlocked);
+
+    m_isBlocked = true;
 
     LOG(IndexedDB, "IDBOpenDBRequest::requestBlocked");
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().blockedEvent));
+}
+
+void IDBOpenDBRequest::setIsContextSuspended(bool isContextSuspended)
+{
+    m_isContextSuspended = isContextSuspended;
+
+    // If this request is blocked, it means this request is being processed on the server.
+    // The client needs to actively stop the request so it doesn't blocks the processing of subsequent requests.
+    if (m_isBlocked) {
+        IDBRequestData requestData(connectionProxy(), *this);
+        connectionProxy().openDBRequestCancelled(requestData);
+        auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError { UnknownError, "Blocked open request on cached page is aborted to unblock other requests"_s });
+        requestCompleted(result);
+    }
 }
 
 } // namespace WebCore

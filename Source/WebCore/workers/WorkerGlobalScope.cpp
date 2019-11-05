@@ -210,6 +210,22 @@ void WorkerGlobalScope::stopIndexedDatabase()
 #endif
 }
 
+void WorkerGlobalScope::suspend()
+{
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
+    if (m_connectionProxy)
+        m_connectionProxy->setContextSuspended(*scriptExecutionContext(), true);
+#endif
+}
+
+void WorkerGlobalScope::resume()
+{
+#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
+    if (m_connectionProxy)
+        m_connectionProxy->setContextSuspended(*scriptExecutionContext(), false);
+#endif
+}
+
 #endif // ENABLE(INDEXED_DATABASE)
 
 WorkerLocation& WorkerGlobalScope::location() const

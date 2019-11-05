@@ -80,7 +80,7 @@ private:
     void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) final;
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
     void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier) final;
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier) final;
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
     void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
     void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier) final;
 

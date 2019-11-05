@@ -85,7 +85,7 @@ public:
     void renameIndex(TransactionOperation&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
 
     void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier);
+    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer = IndexedDB::ConnectionClosedOnBehalfOfServer::No);
 
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void openDBRequestCancelled(const IDBRequestData&);
@@ -124,6 +124,7 @@ public:
     void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
     void forgetTransaction(IDBTransaction&);
     void forgetActivityForCurrentThread();
+    void setContextSuspended(ScriptExecutionContext& currentContext, bool isContextSuspended);
 
 private:
     void completeOpenDBRequest(const IDBResultData&);

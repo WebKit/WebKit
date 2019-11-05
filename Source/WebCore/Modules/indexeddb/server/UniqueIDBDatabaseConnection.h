@@ -78,7 +78,7 @@ public:
     void didCreateIndex(const IDBResultData&);
     void didDeleteIndex(const IDBResultData&);
     void didRenameIndex(const IDBResultData&);
-    void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier);
+    void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
     void confirmDidCloseFromServer();
 

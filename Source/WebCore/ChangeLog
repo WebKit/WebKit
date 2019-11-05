@@ -1,3 +1,61 @@
+2019-11-05  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r250754): web page using IDBIndex doesn't load occasionally
+        https://bugs.webkit.org/show_bug.cgi?id=203431
+
+        Reviewed by Brady Eidson.
+
+        We now allow page to enter cache even when there are active IDB objects. The open database connection or blocked
+        database request on suspended pages may stop other active pages from deleting or opening the same database.
+
+        To fix this issue, we close those open connections on suspended page when we know from the versionchange event, 
+        that there is open/delete request blocked. For blocked requests on suspended page, we abort them and return 
+        error. This way, when the suspended page resumes, it will get close event fired on previously opened database 
+        connections, and error event fired on previously blocked requests.
+
+        API test: IndexedDB.IndexedDBInPageCache
+
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::requestCompleted):
+        (WebCore::IDBOpenDBRequest::requestBlocked):
+        (WebCore::IDBOpenDBRequest::setIsContextSuspended):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        * Modules/indexeddb/IndexedDB.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest):
+        (WebCore::IDBClient::IDBConnectionProxy::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::didFireVersionChangeEvent):
+        (WebCore::IDBClient::setMatchingItemsContextSuspended):
+        (WebCore::IDBClient::IDBConnectionProxy::setContextSuspended):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::clearTransactionsOnConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setBackForwardCacheState):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::suspend):
+        (WebCore::WorkerGlobalScope::resume):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::suspend):
+
 2019-11-05  Eric Carlson  <eric.carlson@apple.com>
 
         http/tests/media/track-in-band-hls-metadata.html sometimes crashes after r251626
