@@ -46,5 +46,4 @@
 @interface WKWebView (TestWebKitAPIExtras)
 - (void)_test_waitForDidStartProvisionalNavigation;
 - (void)_test_waitForDidFinishNavigation;
-- (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate;
 @end

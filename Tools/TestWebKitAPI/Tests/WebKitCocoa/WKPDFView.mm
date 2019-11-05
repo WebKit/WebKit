@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,112 +23,298 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
+#import <WebKit/WKFoundation.h>
 
-#import "ClassMethodSwizzler.h"
-#import "InstanceMethodSwizzler.h"
+// FIXME: Enable these tests on iOS 12 once rdar://problem/39475542 is resolved.
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 120000
+
 #import "PlatformUtilities.h"
-#import "Test.h"
 #import "TestNavigationDelegate.h"
-#import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import "Utilities.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFindDelegate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
+static void runTest(NSURL *pdfURL)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
+    [webView _test_waitForDidFinishNavigation];
 
-@interface PDFHostViewController : UIViewController
-+ (void)createHostView:(void(^)(id hostViewController))callback forExtensionIdentifier:(NSString *)extensionIdentifier;
+    NSData *expected = [NSData dataWithContentsOfURL:pdfURL];
+    NSData *actual = [webView _dataForDisplayedPDF];
+    EXPECT_TRUE([expected isEqualToData:actual]);
+}
+
+TEST(WKPDFView, DataForDisplayedPDF)
+{
+    runTest([[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]);
+}
+
+TEST(WKPDFView, DataForDisplayedPDFEncrypted)
+{
+    runTest([[NSBundle mainBundle] URLForResource:@"encrypted" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]);
+}
+
+static BOOL isDone;
+static const NSUInteger maxCount = 100;
+
+@interface TestFindDelegate : NSObject <_WKFindDelegate>
+@property (nonatomic, readonly) NSString *findString;
+@property (nonatomic, readonly) NSUInteger matchesCount;
+@property (nonatomic, readonly) NSInteger matchIndex;
+@property (nonatomic, readonly) BOOL didFail;
 @end
 
-@interface WKApplicationStateTrackingView : UIView
-- (BOOL)isBackground;
+@implementation TestFindDelegate {
+    RetainPtr<NSString> _findString;
+}
+
+- (NSString *)findString
+{
+    return _findString.get();
+}
+
+- (void)_webView:(WKWebView *)webView didCountMatches:(NSUInteger)matches forString:(NSString *)string
+{
+    _findString = string;
+    _matchesCount = matches;
+    _didFail = NO;
+    isDone = YES;
+}
+
+- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex
+{
+    _findString = string;
+    _matchesCount = matches;
+    _matchIndex = matchIndex;
+    _didFail = NO;
+    isDone = YES;
+}
+
+- (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string
+{
+    _findString = string;
+    _didFail = YES;
+    isDone = YES;
+}
+
 @end
 
-TEST(WebKit, WKPDFViewResizeCrash)
+static void loadWebView(WKWebView *webView, TestFindDelegate *findDelegate)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+    [webView _setFindDelegate:findDelegate];
+    NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"find" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
     [webView _test_waitForDidFinishNavigation];
-
-    [webView setFrame:NSMakeRect(0, 0, 100, 100)];
-    webView = nil;
-
-    __block bool finishedDispatch = false;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        finishedDispatch = true;
-    });
-
-    TestWebKitAPI::Util::run(&finishedDispatch);
 }
 
-TEST(WebKit, WKPDFViewStablePresentationUpdateCallback)
+TEST(WKPDFView, CountString)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
+    NSString *expectedString = @"Two";
+    [webView _countStringMatches:expectedString options:0 maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
 
-    __block bool finished;
-    [webView _doAfterNextStablePresentationUpdate:^{
-        finished = true;
-    }];
-
-    TestWebKitAPI::Util::run(&finished);
+    EXPECT_EQ(1U, [findDelegate matchesCount]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
 }
 
-static BOOL sIsBackground;
-static BOOL isBackground(id self)
+TEST(WKPDFView, CountStringMissing)
 {
-    return sIsBackground;
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
+
+    NSString *expectedString = @"One";
+    [webView _countStringMatches:expectedString options:0 maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(0U, [findDelegate matchesCount]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
 }
 
-static void createHostViewForExtensionIdentifier(void(^callback)(id hostViewController), NSString *extensionIdentifier)
+TEST(WKPDFView, CountStringCaseInsensitive)
 {
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
+
+    NSString *expectedString = @"t";
+    [webView _countStringMatches:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
 }
 
-TEST(WebKit, WKPDFViewLosesApplicationForegroundNotification)
+TEST(WKPDFView, FindString)
 {
-    std::unique_ptr<ClassMethodSwizzler> pdfHostViewControllerSwizzler = std::make_unique<ClassMethodSwizzler>([PDFHostViewController class], @selector(createHostView:forExtensionIdentifier:), reinterpret_cast<IMP>(createHostViewForExtensionIdentifier));
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
 
-    std::unique_ptr<InstanceMethodSwizzler> isInBackgroundSwizzler = std::make_unique<InstanceMethodSwizzler>(NSClassFromString(@"WKApplicationStateTrackingView"), @selector(isBackground), reinterpret_cast<IMP>(isBackground));
+    NSString *expectedString = @"one";
+    [webView _findString:expectedString options:0 maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
 
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration _setAlwaysRunsAtForegroundPriority:YES];
+    EXPECT_EQ(1U, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+}
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+TEST(WKPDFView, FindStringMissing)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
 
-    // Load a PDF, so we install a WKPDFView.
-    [webView loadData:[NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]] MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/0"]];
-    [webView _test_waitForDidFinishNavigation];
+    NSString *expectedString = @"One";
+    [webView _findString:expectedString options:0 maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
 
-    // Go into the background and parent the WKWebView.
-    // This will cause WKPDFView to send a applicationDidEnterBackground
-    // to the Web Content process, freezing the layer tree.
-    sIsBackground = YES;
-    RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [uiWindow addSubview:webView.get()];
-    [webView removeFromSuperview];
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+}
 
-    // Load a HTML document, so we switch back to WKContentView.
-    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
-    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
+TEST(WKPDFView, FindStringCaseInsensitive)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
 
-    // Go into the foreground, and parent the view.
-    // This should be sufficient to unfreeze the layer tree.
-    sIsBackground = NO;
-    [uiWindow addSubview:webView.get()];
+    NSString *expectedString = @"t";
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
 
-    __block bool finished = false;
-    // If the bug reproduces, no stable presentation update will ever come,
-    // so the test times out here.
-    [webView _doAfterNextPresentationUpdate:^{
-        finished = true;
-    }];
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
 
-    TestWebKitAPI::Util::run(&finished);
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(1, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+}
+
+TEST(WKPDFView, FindStringBackward)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
+
+    NSString *expectedString = @"t";
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(4, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(3, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(5U, [findDelegate matchesCount]);
+    EXPECT_EQ(4, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+}
+
+TEST(WKPDFView, FindStringPastEnd)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
+
+    NSString *expectedString = @"two";
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(2U, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(2U, [findDelegate matchesCount]);
+    EXPECT_EQ(1, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+}
+
+TEST(WKPDFView, FindStringBackwardPastStart)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+    loadWebView(webView.get(), findDelegate.get());
+
+    NSString *expectedString = @"two";
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(2U, [findDelegate matchesCount]);
+    EXPECT_EQ(1, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_EQ(2U, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
+
+    isDone = NO;
+    [webView _findString:expectedString options:_WKFindOptionsCaseInsensitive | _WKFindOptionsBackwards maxCount:maxCount];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_WK_STREQ(expectedString, [findDelegate findString]);
 }
 
 #endif
