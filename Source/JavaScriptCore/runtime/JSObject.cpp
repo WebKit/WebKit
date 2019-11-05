@@ -684,7 +684,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     JSObject* current = object;
     PropertyDescriptor ownDescriptor;
     while (true) {
-        if (current->type() == ProxyObjectType && propertyName != vm.propertyNames->underscoreProto) {
+        if (current->type() == ProxyObjectType) {
             ProxyObject* proxy = jsCast<ProxyObject*>(current);
             PutPropertySlot slot(receiver, shouldThrow);
             RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, exec, propertyName, value, slot));
@@ -828,8 +828,8 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             }
             ASSERT(!(attributes & PropertyAttribute::Accessor));
 
-            // If there's an existing property on the object or one of its 
-            // prototypes it should be replaced, so break here.
+            // If there's an existing property on the base object, or on one of its 
+            // prototypes, we should store the property on the *base* object.
             break;
         }
         if (!obj->staticPropertiesReified(vm)) {
@@ -838,7 +838,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
                     RELEASE_AND_RETURN(scope, putEntry(exec, entry->table->classForThis, entry->value, obj, this, propertyName, value, slot));
             }
         }
-        if (obj->type() == ProxyObjectType && propertyName != vm.propertyNames->underscoreProto) {
+        if (obj->type() == ProxyObjectType) {
             // FIXME: We shouldn't unconditionally perform [[Set]] here.
             // We need to do more because this is observable behavior.
             // https://bugs.webkit.org/show_bug.cgi?id=155012
