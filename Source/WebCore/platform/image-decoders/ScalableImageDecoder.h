@@ -76,7 +76,10 @@ public:
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 
-        m_data = &data;
+        if (data.data()) {
+            // SharedBuffer::data() combines all segments into one in case there's more than one.
+            m_data = data.begin()->segment.copyRef();
+        }
         if (m_encodedDataStatus == EncodedDataStatus::TypeAvailable) {
             m_decodingSizeFromSetData = true;
             tryDecodeSize(allDataReceived);
@@ -192,7 +195,7 @@ public:
     Optional<IntPoint> hotSpot() const override { return WTF::nullopt; }
 
 protected:
-    RefPtr<SharedBuffer> m_data; // The encoded data.
+    RefPtr<SharedBuffer::DataSegment> m_data;
     Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache;
     mutable Lock m_mutex;
     bool m_premultiplyAlpha;

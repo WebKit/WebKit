@@ -147,7 +147,7 @@ public:
         m_readOffset = 0;
     }
 
-    bool decode(const SharedBuffer& data, bool sizeOnly, unsigned haltAtFrame)
+    bool decode(const SharedBuffer::DataSegment& data, bool sizeOnly, unsigned haltAtFrame)
     {
         m_decodingSizeOnly = sizeOnly;
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
@@ -157,24 +157,16 @@ public:
             return decoder->setFailed();
 
         auto bytesToSkip = m_readOffset;
-        
-        // FIXME: Use getSomeData which is O(log(n)) instead of skipping bytes which is O(n).
-        for (const auto& element : data) {
-            if (bytesToSkip > element.segment->size()) {
-                bytesToSkip -= element.segment->size();
-                continue;
-            }
-            auto bytesToUse = element.segment->size() - bytesToSkip;
-            m_readOffset += bytesToUse;
-            m_currentBufferSize = m_readOffset;
-            png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(element.segment->data() + bytesToSkip)), bytesToUse);
-            bytesToSkip = 0;
-            // We explicitly specify the superclass encodedDataStatus() because we
-            // merely want to check if we've managed to set the size, not
-            // (recursively) trigger additional decoding if we haven't.
-            if (sizeOnly ? decoder->ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable : decoder->isCompleteAtIndex(haltAtFrame))
-                return true;
-        }
+        auto bytesToUse = data.size() - bytesToSkip;
+        m_readOffset += bytesToUse;
+        m_currentBufferSize = m_readOffset;
+        png_process_data(m_png, m_info, reinterpret_cast<png_bytep>(const_cast<char*>(data.data() + bytesToSkip)), bytesToUse);
+        // We explicitly specify the superclass encodedDataStatus() because we
+        // merely want to check if we've managed to set the size, not
+        // (recursively) trigger additional decoding if we haven't.
+        if (sizeOnly ? decoder->ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable : decoder->isCompleteAtIndex(haltAtFrame))
+            return true;
+
         return false;
     }
 

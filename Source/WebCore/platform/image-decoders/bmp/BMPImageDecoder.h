@@ -57,7 +57,7 @@ private:
 
     inline uint32_t readUint32(int offset) const
     {
-        return BMPImageReader::readUint32(m_data.get(), m_decodedOffset + offset);
+        return BMPImageReader::readUint32(*m_data, m_decodedOffset + offset);
     }
 
     // Decodes the image. If |onlySize| is true, stops decoding after
