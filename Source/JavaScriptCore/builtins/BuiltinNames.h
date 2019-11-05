@@ -45,6 +45,7 @@ namespace JSC {
     JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     macro(add) \
+    macro(applyFunction) \
     macro(arrayIteratorNextIndex) \
     macro(arrayIterationKind) \
     macro(arrayIteratorNext) \
@@ -52,6 +53,7 @@ namespace JSC {
     macro(arrayIteratorKind) \
     macro(arraySpeciesCreate) \
     macro(assert) \
+    macro(callFunction) \
     macro(charCodeAt) \
     macro(executor) \
     macro(isView) \
@@ -73,6 +75,7 @@ namespace JSC {
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
     macro(Set) \
+    macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
     macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \

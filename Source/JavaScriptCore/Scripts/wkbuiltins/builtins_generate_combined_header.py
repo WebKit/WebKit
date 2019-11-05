@@ -172,11 +172,10 @@ extern const JSC::ConstructorKind s_%(codeName)sConstructorKind;""" % function_a
         functions.sort(key=lambda x: x.function_name)
         for function in functions:
             function_args = {
-                'varName': get_var_name(function),
                 'funcName': function.function_name,
                 'codeName': BuiltinsGenerator.mangledNameForFunction(function),
             }
 
-            lines.append("    macro(%(varName)s, %(funcName)s, %(codeName)s) \\" % function_args)
+            lines.append("    macro(%(funcName)s, %(codeName)s) \\" % function_args)
 
         return '\n'.join(lines)

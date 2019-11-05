@@ -6342,11 +6342,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_jneq_ptr: {
             auto bytecode = currentInstruction->as<OpJneqPtr>();
-            Special::Pointer specialPointer = bytecode.m_specialPointer;
-            ASSERT(pointerIsCell(specialPointer));
-            JSCell* actualPointer = static_cast<JSCell*>(
-                actualPointerFor(m_inlineStackTop->m_codeBlock, specialPointer));
-            FrozenValue* frozenPointer = m_graph.freeze(actualPointer);
+            FrozenValue* frozenPointer = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer.offset()));
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* child = get(bytecode.m_value);
             if (bytecode.metadata(codeBlock).m_hasJumped) {

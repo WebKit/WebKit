@@ -944,14 +944,12 @@ namespace JSC {
             Function
         };
 
-        typedef RegisterID* (BytecodeIntrinsicNode::* EmitterType)(BytecodeGenerator&, RegisterID*);
-
-        BytecodeIntrinsicNode(Type, const JSTokenLocation&, EmitterType, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        BytecodeIntrinsicNode(Type, const JSTokenLocation&, BytecodeIntrinsicRegistry::Entry, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
         bool isBytecodeIntrinsicNode() const override { return true; }
 
         Type type() const { return m_type; }
-        EmitterType emitter() const { return m_emitter; }
+        BytecodeIntrinsicRegistry::Entry entry() const { return m_entry; }
         const Identifier& identifier() const { return m_ident; }
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_FUNCTIONS(name) RegisterID* emit_intrinsic_##name(BytecodeGenerator&, RegisterID*);
@@ -964,7 +962,7 @@ namespace JSC {
 
         bool isFunctionCall() const override { return m_type == Type::Function; }
 
-        EmitterType m_emitter;
+        BytecodeIntrinsicRegistry::Entry m_entry;
         const Identifier& m_ident;
         ArgumentsNode* m_args;
         Type m_type;

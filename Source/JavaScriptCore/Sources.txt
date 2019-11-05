@@ -244,6 +244,7 @@ bytecode/IntrinsicGetterAccessCase.cpp
 bytecode/JumpTable.cpp
 bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp
 bytecode/LazyOperandValueProfile.cpp
+bytecode/LinkTimeConstant.cpp
 bytecode/MetadataTable.cpp
 bytecode/MethodOfGettingAValueProfile.cpp
 bytecode/ModuleNamespaceAccessCase.cpp
@@ -263,7 +264,6 @@ bytecode/PutByIdStatus.cpp
 bytecode/PutByIdVariant.cpp
 bytecode/RecordedStatuses.cpp
 bytecode/ReduceWhitespace.cpp
-bytecode/SpecialPointer.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
 bytecode/StructureStubClearingWatchpoint.cpp

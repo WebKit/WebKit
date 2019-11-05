@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,51 +20,32 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "SpecialPointer.h"
+#include "LinkTimeConstant.h"
 
-#include "CodeBlock.h"
-#include "JSGlobalObject.h"
-#include "JSCInlines.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
-
-void* actualPointerFor(JSGlobalObject* globalObject, Special::Pointer pointer)
-{
-    return globalObject->actualPointerFor(pointer);
-}
-
-void* actualPointerFor(CodeBlock* codeBlock, Special::Pointer pointer)
-{
-    return actualPointerFor(codeBlock->globalObject(), pointer);
-}
 
 } // namespace JSC
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::Special::Pointer pointer)
+#define PRINT_LINK_TIME_CONSTANT(name, code) \
+    case JSC::LinkTimeConstant::name: \
+        out.print(#name); \
+        return;
+
+void printInternal(PrintStream& out, JSC::LinkTimeConstant constant)
 {
-    switch (pointer) {
-    case JSC::Special::CallFunction:
-        out.print("CallFunction");
-        return;
-    case JSC::Special::ApplyFunction:
-        out.print("ApplyFunction");
-        return;
-    case JSC::Special::ObjectConstructor:
-        out.print("ObjectConstructor");
-        return;
-    case JSC::Special::ArrayConstructor:
-        out.print("ArrayConstructor");
-        return;
-    case JSC::Special::TableSize:
-        out.print("TableSize");
-        return;
+    switch (constant) {
+        JSC_FOREACH_LINK_TIME_CONSTANTS(PRINT_LINK_TIME_CONSTANT)
     }
 }
+
+#undef PRINT_LINK_TIME_CONSTANT
 
 } // namespace WTF

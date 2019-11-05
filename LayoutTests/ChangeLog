@@ -1,3 +1,12 @@
+2019-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce LinkTimeConstant mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=153792
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/tail-deleted-frames/tail-deleted-frames-this-value-expected.txt:
+
 2019-11-04  Yury Semikhatsky  <yurys@chromium.org>
 
         [GTK] Inspector protocol tests timing out on the bots

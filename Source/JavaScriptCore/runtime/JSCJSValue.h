@@ -129,7 +129,8 @@ bool isInt52(double);
 enum class SourceCodeRepresentation : uint8_t {
     Other,
     Integer,
-    Double
+    Double,
+    LinkTimeConstant,
 };
 
 class JSValue {

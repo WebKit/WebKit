@@ -237,19 +237,16 @@ function Promise(executor)
     var promise = @createPromise(this, /* isInternalPromise */ false);
     var capturedPromise = promise;
 
-    // FIXME: We should allow using function-declaration here.
-    // https://bugs.webkit.org/show_bug.cgi?id=203502
-    var @reject = function @reject(reason) {
-        return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
-    };
-
     try {
         executor(
             function @resolve(resolution) {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
-            }, @reject);
+            },
+            function @reject(reason) {
+                return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
+            });
     } catch (error) {
-        @reject(error);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
     }
 
     return promise;
@@ -266,19 +263,16 @@ function InternalPromise(executor)
     var promise = @createPromise(this, /* isInternalPromise */ true);
     var capturedPromise = promise;
 
-    // FIXME: We should allow using function-declaration here.
-    // https://bugs.webkit.org/show_bug.cgi?id=203502
-    var @reject = function @reject(reason) {
-        return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
-    };
-
     try {
         executor(
             function @resolve(resolution) {
                 return @resolvePromiseWithFirstResolvingFunctionCallCheck(capturedPromise, resolution);
-            }, @reject);
+            },
+            function @reject(reason) {
+                return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
+            });
     } catch (error) {
-        @reject(error);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
     }
 
     return promise;

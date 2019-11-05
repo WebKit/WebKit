@@ -478,12 +478,13 @@ void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpJneqPtr>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     int src = bytecode.m_value.offset();
-    Special::Pointer ptr = bytecode.m_specialPointer;
+    JSValue specialPointer = getConstantOperand(bytecode.m_specialPointer.offset());
+    ASSERT(specialPointer.isCell());
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
 
     emitLoad(src, regT1, regT0);
     Jump notCell = branchIfNotCell(regT1);
-    Jump equal = branchPtr(Equal, regT0, TrustedImmPtr(actualPointerFor(m_codeBlock, ptr)));
+    Jump equal = branchPtr(Equal, regT0, TrustedImmPtr(specialPointer.asCell()));
     notCell.link(this);
     store8(TrustedImm32(1), &metadata.m_hasJumped);
     addJump(jump(), target);

@@ -399,12 +399,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation(), topLevelExecutable);
     RETURN_IF_EXCEPTION(throwScope, false);
 
-    for (unsigned i = 0; i < LinkTimeConstantCount; i++) {
-        LinkTimeConstant type = static_cast<LinkTimeConstant>(i);
-        if (unsigned registerIndex = unlinkedCodeBlock->registerIndexForLinkTimeConstant(type))
-            m_constantRegisters[registerIndex].set(vm, this, m_globalObject->jsCellForLinkTimeConstant(type));
-    }
-
     // We already have the cloned symbol table for the module environment since we need to instantiate
     // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
     if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = jsDynamicCast<UnlinkedModuleProgramCodeBlock*>(vm, unlinkedCodeBlock)) {
@@ -905,29 +899,36 @@ void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& consta
     }
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
+        switch (constantsSourceCodeRepresentation[i]) {
+        case SourceCodeRepresentation::LinkTimeConstant:
+            constant = globalObject->linkTimeConstant(static_cast<LinkTimeConstant>(constant.asInt32AsAnyInt()));
+            break;
+        case SourceCodeRepresentation::Other:
+        case SourceCodeRepresentation::Integer:
+        case SourceCodeRepresentation::Double:
+            if (!constant.isEmpty()) {
+                if (constant.isCell()) {
+                    JSCell* cell = constant.asCell();
+                    if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
+                        if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
+                            ConcurrentJSLocker locker(symbolTable->m_lock);
+                            symbolTable->prepareForTypeProfiling(locker);
+                        }
 
-        if (!constant.isEmpty()) {
-            if (constant.isCell()) {
-                JSCell* cell = constant.asCell();
-                if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
-                    if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
-                        ConcurrentJSLocker locker(symbolTable->m_lock);
-                        symbolTable->prepareForTypeProfiling(locker);
+                        SymbolTable* clone = symbolTable->cloneScopePart(vm);
+                        if (wasCompiledWithDebuggingOpcodes())
+                            clone->setRareDataCodeBlock(this);
+
+                        constant = clone;
+                    } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
+                        auto* templateObject = topLevelExecutable->createTemplateObject(globalObject, descriptor);
+                        RETURN_IF_EXCEPTION(scope, void());
+                        constant = templateObject;
                     }
-
-                    SymbolTable* clone = symbolTable->cloneScopePart(vm);
-                    if (wasCompiledWithDebuggingOpcodes())
-                        clone->setRareDataCodeBlock(this);
-
-                    constant = clone;
-                } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
-                    auto* templateObject = topLevelExecutable->createTemplateObject(globalObject, descriptor);
-                    RETURN_IF_EXCEPTION(scope, void());
-                    constant = templateObject;
                 }
             }
+            break;
         }
-
         m_constantRegisters[i].set(vm, this, constant);
     }
 

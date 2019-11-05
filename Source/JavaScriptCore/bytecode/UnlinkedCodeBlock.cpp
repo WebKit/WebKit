@@ -76,8 +76,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     , m_codeGenerationMode(codeGenerationMode)
     , m_metadata(UnlinkedMetadataTable::create())
 {
-    for (auto& constantRegisterIndex : m_linkTimeConstants)
-        constantRegisterIndex = 0;
     ASSERT(m_constructorKind == static_cast<unsigned>(info.constructorKind()));
     ASSERT(m_codeType == static_cast<unsigned>(codeType));
     ASSERT(m_didOptimize == static_cast<unsigned>(MixedTriState));

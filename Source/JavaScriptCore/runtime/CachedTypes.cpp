@@ -1801,7 +1801,6 @@ public:
 private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
-    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
 
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;
@@ -2039,9 +2038,6 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
 template<typename CodeBlockType>
 ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, UnlinkedCodeBlock& codeBlock) const
 {
-    for (unsigned i = LinkTimeConstantCount; i--;)
-        codeBlock.m_linkTimeConstants[i] = m_linkTimeConstants[i];
-
     m_constantRegisters.decode(decoder, codeBlock.m_constantRegisters, &codeBlock);
     m_constantsSourceCodeRepresentation.decode(decoder, codeBlock.m_constantsSourceCodeRepresentation);
     m_expressionInfo.decode(decoder, codeBlock.m_expressionInfo);
@@ -2206,9 +2202,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_parseMode = codeBlock.m_parseMode;
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;
-
-    for (unsigned i = LinkTimeConstantCount; i--;)
-        m_linkTimeConstants[i] = codeBlock.m_linkTimeConstants[i];
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());

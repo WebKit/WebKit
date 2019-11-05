@@ -32,7 +32,6 @@
 #include "ProfileTypeBytecodeFlag.h"
 #include "PutByIdFlags.h"
 #include "ResultType.h"
-#include "SpecialPointer.h"
 #include "SymbolTableOrScopeDepth.h"
 #include "VirtualRegister.h"
 #include <type_traits>

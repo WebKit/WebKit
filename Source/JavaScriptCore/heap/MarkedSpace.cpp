@@ -139,8 +139,7 @@ const Vector<size_t>& sizeClasses()
             // Manually inject size classes for objects we know will be allocated in high volume.
             // FIXME: All of these things should have IsoSubspaces.
             // https://bugs.webkit.org/show_bug.cgi?id=179876
-            add(sizeof(UnlinkedFunctionCodeBlock));
-            add(sizeof(JSString));
+            add(256);
 
             {
                 // Sort and deduplicate.

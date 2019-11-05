@@ -466,15 +466,37 @@ macro loadVariable(get, fieldName, valueReg)
 end
 
 # Index and value must be different registers. Index may be clobbered.
+macro loadConstant(size, index, value)
+    macro loadNarrow()
+        loadp CodeBlock[cfr], value
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        loadq -(FirstConstantRegisterIndexNarrow * 8)[value, index, 8], value
+    end
+
+    macro loadWide16()
+        loadp CodeBlock[cfr], value
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        loadq -(FirstConstantRegisterIndexWide16 * 8)[value, index, 8], value
+    end
+
+    macro loadWide32()
+        loadp CodeBlock[cfr], value
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        subp FirstConstantRegisterIndexWide32, index
+        loadq [value, index, 8], value
+    end
+
+    size(loadNarrow, loadWide16, loadWide32, macro (load) load() end)
+end
+
+# Index and value must be different registers. Index may be clobbered.
 macro loadConstantOrVariable(size, index, value)
     macro loadNarrow()
         bpgteq index, FirstConstantRegisterIndexNarrow, .constant
         loadq [cfr, index, 8], value
         jmp .done
     .constant:
-        loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
-        loadq -(FirstConstantRegisterIndexNarrow * 8)[value, index, 8], value
+        loadConstant(size, index, value)
     .done:
     end
 
@@ -483,9 +505,7 @@ macro loadConstantOrVariable(size, index, value)
         loadq [cfr, index, 8], value
         jmp .done
     .constant:
-        loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
-        loadq -(FirstConstantRegisterIndexWide16 * 8)[value, index, 8], value
+        loadConstant(size, index, value)
     .done:
     end
 
@@ -494,10 +514,7 @@ macro loadConstantOrVariable(size, index, value)
         loadq [cfr, index, 8], value
         jmp .done
     .constant:
-        loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
-        subp FirstConstantRegisterIndexWide32, index
-        loadq [value, index, 8], value
+        loadConstant(size, index, value)
     .done:
     end
 
@@ -1816,11 +1833,9 @@ undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
 
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
-    getu(size, OpJneqPtr, m_specialPointer, t1)
-    loadp CodeBlock[cfr], t2
-    loadp CodeBlock::m_globalObject[t2], t2
-    loadp JSGlobalObject::m_specialPointers[t2, t1, PtrSize], t1
-    bpneq t1, [cfr, t0, 8], .opJneqPtrTarget
+    get(m_specialPointer, t1)
+    loadConstant(size, t1, t2)
+    bpneq t2, [cfr, t0, 8], .opJneqPtrTarget
     dispatch()
 
 .opJneqPtrTarget:

@@ -42,7 +42,6 @@
 #include "ParserModes.h"
 #include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
-#include "SpecialPointer.h"
 #include "StringPrototype.h"
 #include "SymbolPrototype.h"
 #include "VM.h"
@@ -119,6 +118,7 @@ class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
 struct ActivationStackNode;
 struct HashTable;
+enum class LinkTimeConstant : int32_t;
 
 #ifdef JSC_GLIB_API_ENABLED
 class WrapperMap;
@@ -297,26 +297,16 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_parseIntFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_parseFloatFunction;
 
-    WriteBarrier<JSFunction> m_callFunction;
-    WriteBarrier<JSFunction> m_applyFunction;
-    WriteBarrier<JSFunction> m_throwTypeErrorFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
-    WriteBarrier<JSFunction> m_newPromiseCapabilityFunction;
-    WriteBarrier<JSFunction> m_resolvePromiseFunction;
-    WriteBarrier<JSFunction> m_rejectPromiseFunction;
-    WriteBarrier<JSFunction> m_promiseProtoThenFunction;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_numberProtoToStringFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
-    WriteBarrier<JSObject> m_regExpProtoExec;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
-    WriteBarrier<GetterSetter> m_regExpProtoGlobalGetter;
-    WriteBarrier<GetterSetter> m_regExpProtoUnicodeGetter;
     WriteBarrier<GetterSetter> m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter;
 
     LazyProperty<JSGlobalObject, JSModuleLoader> m_moduleLoader;
@@ -430,8 +420,7 @@ public:
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_STRUCTURE)
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
-    JSCell* m_specialPointers[Special::TableSize]; // Special pointers used by the LLInt and JIT.
-    JSCell* m_linkTimeConstants[LinkTimeConstantCount];
+    Vector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
 
     String m_name;
 
@@ -616,24 +605,22 @@ public:
     JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(this); }
 
     JSFunction* evalFunction() const { return m_evalFunction.get(this); }
-    JSFunction* callFunction() const { return m_callFunction.get(); }
-    JSFunction* applyFunction() const { return m_applyFunction.get(); }
-    JSFunction* throwTypeErrorFunction() const { return m_throwTypeErrorFunction.get(); }
+    JSFunction* throwTypeErrorFunction() const;
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* iteratorProtocolFunction() const { return m_iteratorProtocolFunction.get(this); }
-    JSFunction* newPromiseCapabilityFunction() const { return m_newPromiseCapabilityFunction.get(); }
+    JSFunction* newPromiseCapabilityFunction() const;
     JSFunction* promiseResolveFunction() const { return m_promiseResolveFunction.get(this); }
-    JSFunction* resolvePromiseFunction() const { return m_resolvePromiseFunction.get(); }
-    JSFunction* rejectPromiseFunction() const { return m_rejectPromiseFunction.get(); }
-    JSFunction* promiseProtoThenFunction() const { return m_promiseProtoThenFunction.get(); }
+    JSFunction* resolvePromiseFunction() const;
+    JSFunction* rejectPromiseFunction() const;
+    JSFunction* promiseProtoThenFunction() const;
     JSFunction* objectProtoValueOfFunction() const { return m_objectProtoValueOfFunction.get(); }
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.get(); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
-    JSObject* regExpProtoExecFunction() const { return m_regExpProtoExec.get(); }
+    JSFunction* regExpProtoExecFunction() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
-    GetterSetter* regExpProtoGlobalGetter() const { return m_regExpProtoGlobalGetter.get(); }
-    GetterSetter* regExpProtoUnicodeGetter() const { return m_regExpProtoUnicodeGetter.get(); }
+    GetterSetter* regExpProtoGlobalGetter() const;
+    GetterSetter* regExpProtoUnicodeGetter() const;
     GetterSetter* throwTypeErrorArgumentsCalleeAndCallerGetterSetter()
     {
         return m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter.get();
@@ -911,16 +898,11 @@ public:
         return lazyTypedArrayStructure(type).constructor(this);
     }
 
-    JSCell* actualPointerFor(Special::Pointer pointer)
+    JSCell* linkTimeConstant(LinkTimeConstant value) const
     {
-        ASSERT(pointer < Special::TableSize);
-        return m_specialPointers[pointer];
-    }
-    JSCell* jsCellForLinkTimeConstant(LinkTimeConstant type)
-    {
-        unsigned index = static_cast<unsigned>(type);
-        ASSERT(index < LinkTimeConstantCount);
-        return m_linkTimeConstants[index];
+        JSCell* result = m_linkTimeConstants[static_cast<unsigned>(value)].getInitializedOnMainThread(this);
+        ASSERT(result);
+        return result;
     }
 
     WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }

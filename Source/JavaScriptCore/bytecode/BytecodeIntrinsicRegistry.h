@@ -35,6 +35,7 @@ class CommonIdentifiers;
 class BytecodeGenerator;
 class BytecodeIntrinsicNode;
 class RegisterID;
+enum class LinkTimeConstant : int32_t;
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     macro(argument) \
@@ -137,7 +138,44 @@ public:
 
     typedef RegisterID* (BytecodeIntrinsicNode::* EmitterType)(BytecodeGenerator&, RegisterID*);
 
-    EmitterType lookup(const Identifier&) const;
+    enum class Type : uint8_t {
+        Emitter = 0,
+        LinkTimeConstant = 1,
+    };
+
+    class Entry {
+    public:
+        Entry()
+            : m_type(Type::Emitter)
+        {
+            m_emitter = nullptr;
+        }
+
+        Entry(EmitterType emitter)
+            : m_type(Type::Emitter)
+        {
+            m_emitter = emitter;
+        }
+
+        Entry(LinkTimeConstant linkTimeConstant)
+            : m_type(Type::LinkTimeConstant)
+        {
+            m_linkTimeConstant = linkTimeConstant;
+        }
+
+        Type type() const { return m_type; }
+        LinkTimeConstant linkTimeConstant() const { return m_linkTimeConstant; }
+        EmitterType emitter() const { return m_emitter; }
+
+    private:
+        union {
+            EmitterType m_emitter;
+            LinkTimeConstant m_linkTimeConstant;
+        };
+        Type m_type;
+    };
+
+    Optional<Entry> lookup(const Identifier&) const;
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) JSValue name##Value(BytecodeGenerator&);
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)
@@ -145,7 +183,7 @@ public:
 
 private:
     VM& m_vm;
-    HashMap<RefPtr<UniquedStringImpl>, EmitterType, IdentifierRepHash> m_bytecodeIntrinsicMap;
+    HashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash> m_bytecodeIntrinsicMap;
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) Strong<Unknown> m_##name;
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)

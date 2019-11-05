@@ -37,7 +37,6 @@
 #include "Opcode.h"
 #include "ParserModes.h"
 #include "RegExp.h"
-#include "SpecialPointer.h"
 #include "UnlinkedFunctionExecutable.h"
 #include "UnlinkedMetadataTable.h"
 #include "VirtualRegister.h"
@@ -63,6 +62,7 @@ class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
 class UnlinkedFunctionExecutable;
 struct ExecutableInfo;
+enum class LinkTimeConstant : int32_t;
 
 template<typename CodeBlockType>
 class CachedCodeBlock;
@@ -180,25 +180,15 @@ public:
         m_constantsSourceCodeRepresentation.append(sourceCodeRepresentation);
         return result;
     }
-    unsigned addConstant(LinkTimeConstant type)
+    unsigned addConstant(LinkTimeConstant linkTimeConstant)
     {
         VM& vm = this->vm();
         auto locker = lockDuringMarking(vm.heap, cellLock());
         unsigned result = m_constantRegisters.size();
-        ASSERT(result);
-        unsigned index = static_cast<unsigned>(type);
-        ASSERT(index < LinkTimeConstantCount);
-        m_linkTimeConstants[index] = result;
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
+        m_constantRegisters.last().set(vm, this, jsNumber(static_cast<int32_t>(linkTimeConstant)));
+        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::LinkTimeConstant);
         return result;
-    }
-
-    unsigned registerIndexForLinkTimeConstant(LinkTimeConstant type)
-    {
-        unsigned index = static_cast<unsigned>(type);
-        ASSERT(index < LinkTimeConstantCount);
-        return m_linkTimeConstants[index];
     }
 
     const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
@@ -405,8 +395,6 @@ private:
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
-
-    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
 
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;

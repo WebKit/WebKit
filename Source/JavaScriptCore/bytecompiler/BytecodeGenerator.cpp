@@ -50,6 +50,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSTemplateObjectDescriptor.h"
+#include "LinkTimeConstant.h"
 #include "LowLevelInterpreter.h"
 #include "Options.h"
 #include "PreciseJumpTargetsInlines.h"
@@ -308,9 +309,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables->size());
 
-    for (auto& constantRegister : m_linkTimeConstantRegisters)
-        constantRegister = nullptr;
-
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
     emitEnter();
@@ -360,9 +358,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_needsToUpdateArrowFunctionContext(functionNode->usesArrowFunction() || functionNode->usesEval())
     , m_derivedContextType(codeBlock->derivedContextType())
 {
-    for (auto& constantRegister : m_linkTimeConstantRegisters)
-        constantRegister = nullptr;
-
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = 0;
@@ -788,11 +783,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
         // @rejectPromiseWithFirstResolvingFunctionCallCheck(@promise, thrownValue);
         // return @promise;
-        auto varRejectPromise = variable(propertyNames().builtinNames().rejectPromiseWithFirstResolvingFunctionCallCheckPrivateName());
-        RefPtr<RegisterID> scope = newTemporary();
-        move(scope.get(), emitResolveScope(scope.get(), varRejectPromise));
-        RefPtr<RegisterID> rejectPromise = emitGetFromScope(newTemporary(), scope.get(), varRejectPromise, ThrowIfNotFound);
-
+        RefPtr<RegisterID> rejectPromise = moveLinkTimeConstant(nullptr, LinkTimeConstant::rejectPromiseWithFirstResolvingFunctionCallCheck);
         CallArguments args(*this, nullptr, 2);
         emitLoad(args.thisRegister(), jsUndefined());
         move(args.argumentRegister(0), promiseRegister());
@@ -848,9 +839,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_needsToUpdateArrowFunctionContext(evalNode->usesArrowFunction() || evalNode->usesEval())
     , m_derivedContextType(codeBlock->derivedContextType())
 {
-    for (auto& constantRegister : m_linkTimeConstantRegisters)
-        constantRegister = nullptr;
-
     m_codeBlock->setNumParameters(1);
 
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize, TDZRequirement::UnderTDZ);
@@ -909,9 +897,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables->size());
-
-    for (auto& constantRegister : m_linkTimeConstantRegisters)
-        constantRegister = nullptr;
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
@@ -1442,12 +1427,12 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
 
 void BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit(this, cond, Special::CallFunction, target.bind(this));
+    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::callFunction), target.bind(this));
 }
 
 void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit(this, cond, Special::ApplyFunction, target.bind(this));
+    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
 }
 
 bool BytecodeGenerator::hasConstant(const Identifier& ident) const
@@ -1499,17 +1484,15 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v, SourceCodeRepresentat
 
 RegisterID* BytecodeGenerator::moveLinkTimeConstant(RegisterID* dst, LinkTimeConstant type)
 {
-    unsigned constantIndex = static_cast<unsigned>(type);
-    if (!m_linkTimeConstantRegisters[constantIndex]) {
+    RegisterID* constant = m_linkTimeConstantRegisters.ensure(type, [&] {
         int index = addConstantIndex();
         m_codeBlock->addConstant(type);
-        m_linkTimeConstantRegisters[constantIndex] = &m_constantPoolRegisters[index];
-    }
-
+        return &m_constantPoolRegisters[index];
+    }).iterator->value;
     if (!dst)
-        return m_linkTimeConstantRegisters[constantIndex];
+        return constant;
 
-    OpMov::emit(this, dst, m_linkTimeConstantRegisters[constantIndex]);
+    OpMov::emit(this, dst, constant);
 
     return dst;
 }
@@ -3101,7 +3084,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         if (callArguments.argumentCountIncludingThis() >= 2)
             return NoExpectedFunction;
         
-        OpJneqPtr::emit(this, func, Special::ObjectConstructor, realCall->bind(this));
+        OpJneqPtr::emit(this, func, moveLinkTimeConstant(nullptr, LinkTimeConstant::Object), realCall->bind(this));
         
         if (dst != ignoredResult())
             emitNewObject(dst);
@@ -3117,7 +3100,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         if (callArguments.argumentCountIncludingThis() > 2)
             return NoExpectedFunction;
         
-        OpJneqPtr::emit(this, func, Special::ArrayConstructor, realCall->bind(this));
+        OpJneqPtr::emit(this, func, moveLinkTimeConstant(nullptr, LinkTimeConstant::Array), realCall->bind(this));
         
         if (dst != ignoredResult()) {
             if (callArguments.argumentCountIncludingThis() == 2)
@@ -3285,7 +3268,7 @@ void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* p
     if (attributes.hasGet() || attributes.hasSet()) {
         RefPtr<RegisterID> throwTypeErrorFunction;
         if (!attributes.hasGet() || !attributes.hasSet())
-            throwTypeErrorFunction = moveLinkTimeConstant(nullptr, LinkTimeConstant::ThrowTypeErrorFunction);
+            throwTypeErrorFunction = moveLinkTimeConstant(nullptr, LinkTimeConstant::throwTypeErrorFunction);
 
         RefPtr<RegisterID> getter;
         if (attributes.hasGet())
@@ -4474,10 +4457,7 @@ RegisterID* BytecodeGenerator::emitGetAsyncIterator(RegisterID* argument, Throwa
 
     RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
 
-    auto varCreateAsyncFromSyncIterator = variable(propertyNames().builtinNames().createAsyncFromSyncIteratorPrivateName());
-    RefPtr<RegisterID> scope = newTemporary();
-    move(scope.get(), emitResolveScope(scope.get(), varCreateAsyncFromSyncIterator));
-    RefPtr<RegisterID> createAsyncFromSyncIterator = emitGetFromScope(newTemporary(), scope.get(), varCreateAsyncFromSyncIterator, ThrowIfNotFound);
+    RefPtr<RegisterID> createAsyncFromSyncIterator = moveLinkTimeConstant(nullptr, LinkTimeConstant::createAsyncFromSyncIterator);
 
     CallArguments args(*this, nullptr, 2);
     emitLoad(args.thisRegister(), jsUndefined());

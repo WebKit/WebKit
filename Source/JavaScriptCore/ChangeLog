@@ -1,3 +1,136 @@
+2019-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce LinkTimeConstant mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=153792
+
+        Reviewed by Saam Barati.
+
+        We are using private-name-variables of JSGlobalObject as a way to access to constants that are materialized per JSGlobalObject.
+        And we also have special-pointers and old link-time-constants to access to per JSGlobalObject constants.
+        We have bytecode intrinsic constants, but it is only available for per VM values.
+
+        However, these ones have multiple problems.
+
+        1. private-name-variables is too costly. We need to have an entry in JSGlobalObject's variable, this makes SymbolTable of JSGlobalObject large.
+           It also requires WatchpointSet to make it constant-fold in DFG. And accessing these variables from builtin JS takes op_resolve_scope and op_get_from_scope,
+           enlarging bytecode and slow in interpreter and baseline compared to just getting them as a constant register.
+        2. special-pointers are tailored to op_jne_ptr opcode, and not usable in the other bytecode since this is completely separate from VirtualRegister.
+        3. Old link-time-constants implementation is putting array of all link-time-constants on each UnlinkedCodeBlock, even if it is not used. If you increase # of
+           link-time-constant, it increases sizeof(UnlinkedCodeBlock).
+
+        In this patch, we introduce a new link-time-constant mechanism and remove the above old ones mostly. (private-name-variables still exists for WebCore and @assert).
+        We manage link-time-constants in BytecodeIntrinsicRegistry, and emit Int32:LinkTimeConstantID constant when generating an UnlinkedCodeBlock. Later, this constant
+        is alternated to an actual value when we link UnlinkedCodeBlock to CodeBlock with specific JSGlobalObject. private-name-variables accesses are now converted to
+        constant register so that it is very efficiently accessed and it reduces memory used for SymbolTable and WatchpointSet. op_jne_ptr takes link-time-constant
+        VirtualRegisters instead of special-pointers, so that we can remove special-pointers mechanism. We also replace old link-time-constants with new one, which reduces
+        sizeof(UnlinkedCodeBlock).
+
+        Furthermore, new link-time-constant supports lazy initialization by using LazyProperty in JSGlobalObject. This allows us to lazily generate many internal functions
+        that are previously initialized eagerly. This reduces # of allocated JSFunction significantly when initializing JSGlobalObject.
+
+        This patch also manually adds 256 to MarkedSpace's size-class. We empirically know that adding 256 here makes sequence of size-class better for memory consumption.
+        But this was achieved by adding `sizeof(UnlinkedFunctionCodeBlock)`. Now sizeof(UnlinkedFunctionCodeBlock) is changed by this patch, and this patch unintentionally
+        breaks that sequence. We should explicitly add 256 instead of adding sizeof(UnlinkedFunctionCodeBlock) adhocly.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (generate_section_for_global_private_code_name_macro):
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * builtins/PromiseConstructor.js:
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise):
+        (nakedConstructor.Promise.reject): Deleted.
+        (nakedConstructor.InternalPromise.reject): Deleted.
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpConstants):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::lookup const):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        (JSC::BytecodeIntrinsicRegistry::Entry::Entry):
+        (JSC::BytecodeIntrinsicRegistry::Entry::type const):
+        (JSC::BytecodeIntrinsicRegistry::Entry::linkTimeConstant const):
+        (JSC::BytecodeIntrinsicRegistry::Entry::emitter const):
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        * bytecode/Fits.h:
+        * bytecode/LinkTimeConstant.cpp: Renamed from Source/JavaScriptCore/bytecode/SpecialPointer.h.
+        (WTF::printInternal):
+        * bytecode/LinkTimeConstant.h: Added.
+        * bytecode/SpecialPointer.cpp: Removed.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addConstant):
+        (JSC::UnlinkedCodeBlock::registerIndexForLinkTimeConstant): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ImportNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emitBytecode):
+        (JSC::promiseInternalFieldIndex):
+        (JSC::generatorInternalFieldIndex):
+        (JSC::asyncGeneratorInternalFieldIndex):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::ObjectPatternNode::bindValue const):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * heap/MarkedSpace.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::BytecodeIntrinsicNode::BytecodeIntrinsicNode):
+        * parser/Nodes.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        * runtime/JSCJSValue.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::linkTimeConstant const):
+        (JSC::JSGlobalObject::callFunction const): Deleted.
+        (JSC::JSGlobalObject::applyFunction const): Deleted.
+        (JSC::JSGlobalObject::throwTypeErrorFunction const): Deleted.
+        (JSC::JSGlobalObject::newPromiseCapabilityFunction const): Deleted.
+        (JSC::JSGlobalObject::resolvePromiseFunction const): Deleted.
+        (JSC::JSGlobalObject::rejectPromiseFunction const): Deleted.
+        (JSC::JSGlobalObject::promiseProtoThenFunction const): Deleted.
+        (JSC::JSGlobalObject::regExpProtoExecFunction const): Deleted.
+        (JSC::JSGlobalObject::regExpProtoGlobalGetter const): Deleted.
+        (JSC::JSGlobalObject::regExpProtoUnicodeGetter const): Deleted.
+        (JSC::JSGlobalObject::actualPointerFor): Deleted.
+        (JSC::JSGlobalObject::jsCellForLinkTimeConstant): Deleted.
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::throwTypeErrorFunction const):
+        (JSC::JSGlobalObject::newPromiseCapabilityFunction const):
+        (JSC::JSGlobalObject::resolvePromiseFunction const):
+        (JSC::JSGlobalObject::rejectPromiseFunction const):
+        (JSC::JSGlobalObject::promiseProtoThenFunction const):
+        (JSC::JSGlobalObject::regExpProtoExecFunction const):
+        (JSC::JSGlobalObject::regExpProtoGlobalGetter const):
+        (JSC::JSGlobalObject::regExpProtoUnicodeGetter const):
+
 2019-11-04  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for non-unified build.

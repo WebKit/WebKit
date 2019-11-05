@@ -211,7 +211,7 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
 RegisterID* ImportNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> importModule = generator.emitGetGlobalPrivate(generator.newTemporary(), generator.propertyNames().builtinNames().importModulePrivateName());
+    RefPtr<RegisterID> importModule = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::importModule);
     CallArguments arguments(generator, nullptr, 1);
     generator.emitLoad(arguments.thisRegister(), jsUndefined());
     generator.emitNode(arguments.argumentRegister(0), m_expr);
@@ -985,7 +985,11 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
 
 RegisterID* BytecodeIntrinsicNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    return (this->*m_emitter)(generator, dst);
+    if (m_entry.type() == BytecodeIntrinsicRegistry::Type::Emitter)
+        return (this->*m_entry.emitter())(generator, dst);
+    if (dst == generator.ignoredResult())
+        return nullptr;
+    return generator.moveLinkTimeConstant(dst, m_entry.linkTimeConstant());
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByIdDirect(BytecodeGenerator& generator, RegisterID* dst)
@@ -1013,9 +1017,10 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate(BytecodeG
 
 static JSPromise::Field promiseInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_promiseFieldFlags)
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_promiseFieldFlags)
         return JSPromise::Field::Flags;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_promiseFieldReactionsOrResult)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_promiseFieldReactionsOrResult)
         return JSPromise::Field::ReactionsOrResult;
     RELEASE_ASSERT_NOT_REACHED();
     return JSPromise::Field::Flags;
@@ -1023,13 +1028,14 @@ static JSPromise::Field promiseInternalFieldIndex(BytecodeIntrinsicNode* node)
 
 static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldState)
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldState)
         return JSGenerator::Field::State;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
         return JSGenerator::Field::Next;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
         return JSGenerator::Field::This;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
         return JSGenerator::Field::Frame;
     RELEASE_ASSERT_NOT_REACHED();
     return JSGenerator::Field::State;
@@ -1037,19 +1043,20 @@ static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* nod
 
 static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldState)
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldState)
         return JSAsyncGenerator::Field::State;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldNext)
         return JSAsyncGenerator::Field::Next;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldThis)
         return JSAsyncGenerator::Field::This;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_generatorFieldFrame)
         return JSAsyncGenerator::Field::Frame;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldSuspendReason)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldSuspendReason)
         return JSAsyncGenerator::Field::SuspendReason;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueFirst)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueFirst)
         return JSAsyncGenerator::Field::QueueFirst;
-    if (node->emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueLast)
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueLast)
         return JSAsyncGenerator::Field::QueueLast;
     RELEASE_ASSERT_NOT_REACHED();
     return JSAsyncGenerator::Field::State;
@@ -4096,10 +4103,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
 
         // load and call @asyncFunctionResume
-        auto var = generator.variable(generator.propertyNames().builtinNames().asyncFunctionResumePrivateName());
-        RefPtr<RegisterID> scope = generator.newTemporary();
-        generator.move(scope.get(), generator.emitResolveScope(scope.get(), var));
-        RefPtr<RegisterID> asyncFunctionResume = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
+        RefPtr<RegisterID> asyncFunctionResume = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::asyncFunctionResume);
 
         CallArguments args(generator, nullptr, 4);
         unsigned argumentCount = 0;
@@ -4578,11 +4582,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     IdentifierSet excludedSet;
     RefPtr<RegisterID> addMethod;
     if (m_containsRestElement && m_containsComputedProperty) {
-        auto var = generator.variable(generator.propertyNames().builtinNames().SetPrivateName());
-
-        RefPtr<RegisterID> scope = generator.newTemporary();
-        generator.move(scope.get(), generator.emitResolveScope(scope.get(), var));
-        RefPtr<RegisterID> setConstructor = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
+        RefPtr<RegisterID> setConstructor = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::Set);
 
         CallArguments args(generator, nullptr, 0);
         excludedList = generator.emitConstruct(generator.newTemporary(), setConstructor.get(), setConstructor.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd());
@@ -4633,11 +4633,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
             RefPtr<RegisterID> newObject = generator.emitNewObject(generator.newTemporary());
             
             // load and call @copyDataProperties
-            auto var = generator.variable(generator.propertyNames().builtinNames().copyDataPropertiesPrivateName());
-            
-            RefPtr<RegisterID> scope = generator.newTemporary();
-            generator.move(scope.get(), generator.emitResolveScope(scope.get(), var));
-            RefPtr<RegisterID> copyDataProperties = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
+            RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
             
             CallArguments args(generator, nullptr, 3);
             generator.emitLoad(args.thisRegister(), jsUndefined());
@@ -4810,11 +4806,7 @@ RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generato
     generator.emitNode(src.get(), m_expression);
     
     // load and call @copyDataPropertiesNoExclusions
-    auto var = generator.variable(generator.propertyNames().builtinNames().copyDataPropertiesNoExclusionsPrivateName());
-    
-    RefPtr<RegisterID> scope = generator.newTemporary();
-    generator.move(scope.get(), generator.emitResolveScope(scope.get(), var));
-    RefPtr<RegisterID> copyDataProperties = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
+    RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataPropertiesNoExclusions);
     
     CallArguments args(generator, nullptr, 2);
     generator.emitLoad(args.thisRegister(), jsUndefined());

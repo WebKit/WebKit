@@ -464,6 +464,18 @@ end
 
 # Index, tag, and payload must be different registers. Index is not
 # changed.
+macro loadConstant(size, index, tag, payload)
+    size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
+        loadp CodeBlock[cfr], payload
+        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[payload], payload
+        subp FirstConstantRegisterIndex, index
+        loadp TagOffset[payload, index, 8], tag
+        loadp PayloadOffset[payload, index, 8], payload
+    end)
+end
+
+# Index, tag, and payload must be different registers. Index is not
+# changed.
 macro loadConstantOrVariable(size, index, tag, payload)
     size(FirstConstantRegisterIndexNarrow, FirstConstantRegisterIndexWide16, FirstConstantRegisterIndexWide32, macro (FirstConstantRegisterIndex)
         bigteq index, FirstConstantRegisterIndex, .constant
@@ -471,11 +483,7 @@ macro loadConstantOrVariable(size, index, tag, payload)
         loadi PayloadOffset[cfr, index, 8], payload
         jmp .done
     .constant:
-        loadp CodeBlock[cfr], payload
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[payload], payload
-        subp FirstConstantRegisterIndex, index
-        loadp TagOffset[payload, index, 8], tag
-        loadp PayloadOffset[payload, index, 8], payload
+        loadConstant(size, index, tag, payload)
     .done:
     end)
 end
@@ -1710,12 +1718,10 @@ undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
 
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
-    getu(size, OpJneqPtr, m_specialPointer, t1)
-    loadp CodeBlock[cfr], t2
-    loadp CodeBlock::m_globalObject[t2], t2
+    get(m_specialPointer, t1)
+    loadConstant(size, t1, t3, t2)
     bineq TagOffset[cfr, t0, 8], CellTag, .opJneqPtrBranch
-    loadp JSGlobalObject::m_specialPointers[t2, t1, 4], t1
-    bpeq PayloadOffset[cfr, t0, 8], t1, .opJneqPtrFallThrough
+    bpeq PayloadOffset[cfr, t0, 8], t2, .opJneqPtrFallThrough
 .opJneqPtrBranch:
     metadata(t5, t2)
     storeb 1, OpJneqPtr::Metadata::m_hasJumped[t5]
