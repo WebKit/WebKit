@@ -3503,6 +3503,9 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
     UNUSED_PARAM(track);
 
+    if (!m_player || !metadataGroups)
+        return;
+
     m_taskQueue.enqueueTask([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
         if (!player)
             return;
@@ -3518,6 +3521,9 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(metadataCollector);
     UNUSED_PARAM(indexesOfNewGroups);
     UNUSED_PARAM(indexesOfModifiedGroups);
+
+    if (!m_player || !metadataGroups)
+        return;
 
     m_taskQueue.enqueueTask([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
         if (!player)

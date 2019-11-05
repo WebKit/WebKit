@@ -1,3 +1,19 @@
+2019-11-05  Eric Carlson  <eric.carlson@apple.com>
+
+        http/tests/media/track-in-band-hls-metadata.html sometimes crashes after r251626
+        https://bugs.webkit.org/show_bug.cgi?id=203849
+        <rdar://problem/56889717>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, fixes existing test.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver metadataOutput:didOutputTimedMetadataGroups:fromPlayerItemTrack:]): Return early if
+        m_player has been cleared.
+        (-[WebCoreAVFMovieObserver metadataCollector:didCollectDateRangeMetadataGroups:indexesOfNewGroups:indexesOfModifiedGroups:]):
+        Ditto.
+
 2019-11-05  Andy Estes  <aestes@apple.com>
 
         ApplePaySession should never prevent entering the back/forward cache
