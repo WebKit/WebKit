@@ -1,3 +1,15 @@
+2019-11-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add logging and telemetry to mach services believed to be unused
+        https://bugs.webkit.org/show_bug.cgi?id=203831
+
+        Reviewed by Geoffrey Garen.
+
+        The sandbox rules for mach services believed to be unused should have logging and telemetry added to confirm
+        whether the assumption is correct.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-05  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         move CrashReporterClientSPI.h and parts of WKCrashReporter to WTF so it can be used in JavaScriptCore
