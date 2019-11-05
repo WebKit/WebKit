@@ -31,12 +31,14 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "AbstractEventLoop.h"
 #include "CDM.h"
 #include "CDMClient.h"
 #include "CDMInstance.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "MediaKeySession.h"
+#include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -79,7 +81,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     return session;
 }
 
-void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
+void MediaKeys::setServerCertificate(ScriptExecutionContext& context, const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
     // W3C Editor's Draft 09 November 2016
@@ -104,7 +106,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
 
-    m_taskQueue.enqueueTask([this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, context, [this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
         // 5.1. Use this object's cdm instance to process certificate.
         if (m_instance->setServerCertificate(WTFMove(certificate)) == CDMInstance::Failed) {
             // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.

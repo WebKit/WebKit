@@ -1,0 +1,14 @@
+Tests that a page with a MediaKeySession goes into the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!session is true
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page was restored from back/forward cache
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

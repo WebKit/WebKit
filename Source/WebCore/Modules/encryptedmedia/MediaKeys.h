@@ -31,7 +31,6 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "ExceptionOr.h"
-#include "GenericTaskQueue.h"
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -59,7 +58,7 @@ public:
     ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(ScriptExecutionContext&, MediaKeySessionType);
-    void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
+    void setServerCertificate(ScriptExecutionContext&, const BufferSource&, Ref<DeferredPromise>&&);
 
     void attachCDMClient(CDMClient&);
     void detachCDMClient(CDMClient&);
@@ -80,7 +79,6 @@ protected:
 
     Vector<Ref<MediaKeySession>> m_sessions;
     Vector<CDMClient*> m_cdmClients;
-    GenericTaskQueue<Timer> m_taskQueue;
 };
 
 } // namespace WebCore
