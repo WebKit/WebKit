@@ -1,5 +1,16 @@
 2019-11-05  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
+        Add definitions of ANSI colors for colorful log output
+        https://bugs.webkit.org/show_bug.cgi?id=203805
+
+        Reviewed by Saam Barati.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AnsiColors.h: Added.
+        * wtf/CMakeLists.txt:
+
+2019-11-05  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
         move CrashReporterClientSPI.h and parts of WKCrashReporter to WTF so it can be used in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=203803
 

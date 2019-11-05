@@ -2,6 +2,7 @@ set(WTF_PUBLIC_HEADERS
     ASCIICType.h
     AggregateLogger.h
     Algorithms.h
+    AnsiColors.h
     Assertions.h
     Atomics.h
     AutodrainedPool.h
