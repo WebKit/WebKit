@@ -39,6 +39,10 @@ extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
 #endif
 #endif
 
+#define WEBCONTENT_SERVICE_INITIALIZER WebContentServiceInitializer
+#define NETWORK_SERVICE_INITIALIZER NetworkServiceInitializer
+#define PLUGIN_SERVICE_INITIALIZER PluginServiceInitializer
+
 namespace WebKit {
 
 class XPCServiceInitializerDelegate {

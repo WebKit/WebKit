@@ -26,8 +26,6 @@
 	<string>${BUNDLE_VERSION}</string>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
-	<key>WebKitEntryPoint</key>
-	<string>WebContentServiceInitializer</string>
 	<key>XPCService</key>
 	<dict>
 		<key>ServiceType</key>

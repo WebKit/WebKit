@@ -69,9 +69,9 @@ using namespace WebKit;
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
+extern "C" WK_EXPORT void PLUGIN_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
-void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
+void PLUGIN_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     WTF::initializeMainThread();

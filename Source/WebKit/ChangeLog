@@ -1,5 +1,29 @@
 2019-11-05  Per Arne Vollan  <pvollan@apple.com>
 
+        Eliminate mach lookup to cfprefsd on process startup
+        https://bugs.webkit.org/show_bug.cgi?id=202866
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, the WebContent and Networking process is calling CFBundleGetValueForInfoDictionaryKey on startup
+        to get the entry point function name into the WebKit bundle. This causes a mach lookup to cfprefsd which
+        should be avoided. Instead, we can send the service name as part of the bootstrap message when the UI process
+        is starting the process, and have the new process read this value from the message on startup to determine
+        the name of the entry point. This is possibly also an improvement in launch time, since we avoid reading a
+        value from Info.plist.
+
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist:
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist:
+        * PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.64.Info.plist:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist:
+
+2019-11-05  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add logging and telemetry to mach services believed to be unused
         https://bugs.webkit.org/show_bug.cgi?id=203831
 

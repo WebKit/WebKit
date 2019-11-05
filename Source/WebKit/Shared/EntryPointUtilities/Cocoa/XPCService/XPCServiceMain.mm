@@ -55,8 +55,19 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
                 CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-                CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
+                const char* serviceName = xpc_dictionary_get_string(event, "service-name");
+                CFStringRef entryPointFunctionName = nullptr;
+                if (!strcmp(serviceName, "com.apple.WebKit.WebContent") || !strcmp(serviceName, "com.apple.WebKit.WebContent.Development"))
+                    entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
+                else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
+                    entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
+                else if (!strcmp(serviceName, "com.apple.WebKit.Plugin.64"))
+                    entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(PLUGIN_SERVICE_INITIALIZER));
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+
+                
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t, xpc_object_t);
                 InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
