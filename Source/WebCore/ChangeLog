@@ -1,3 +1,71 @@
+2019-11-05  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-lists] Implement list-style-type: <string>
+        https://bugs.webkit.org/show_bug.cgi?id=167729
+
+        Reviewed by Antti Koivisto.
+
+        This patch extends the syntax of the list-style-type property to accept
+        arbitrary string values in order to customize the marker contents.
+
+        When a string is specified for list-style-type, the patch sets it to a
+        special ListStyleType::String, and the string value is stored in an
+        extra field.
+
+        Tests: imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-001a.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-001b.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-003.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-004.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005a.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-006.html
+               imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-007.html
+               imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-type-computed.html
+               imported/w3c/web-platform-tests/css/css-lists/parsing/list-style-type-valid.html
+
+        Some tests fail because mixed-bidi is not supported in markers
+        (https://bugs.webkit.org/show_bug.cgi?id=202849).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isPartialKeywordPropertyID):
+        * css/parser/CSSParserFastPaths.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::effectiveListMarkerType):
+        (WebCore::listMarkerSuffix):
+        (WebCore::listMarkerText):
+        (WebCore::RenderListMarker::styleDidChange):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::updateContent):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        (WebCore::RenderListMarker::suffix const):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/style/CounterContent.h:
+        (WebCore::CounterContent::CounterContent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::listStyleStringValue const):
+        (WebCore::RenderStyle::setListStyleStringValue):
+        (WebCore::RenderStyle::initialListStyleStringValue):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInheritListStyleType):
+        (WebCore::Style::BuilderCustom::applyInitialListStyleType):
+        (WebCore::Style::BuilderCustom::applyValueListStyleType):
+
 2019-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Content can disappear with a combination of <video> with controls and clipping

@@ -2933,6 +2933,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyListStylePosition:
             return cssValuePool.createValue(style.listStylePosition());
         case CSSPropertyListStyleType:
+            if (style.listStyleType() == ListStyleType::String)
+                return cssValuePool.createValue(style.listStyleStringValue(), CSSPrimitiveValue::CSS_STRING);
             return cssValuePool.createValue(style.listStyleType());
         case CSSPropertyWebkitLocale:
             if (style.locale().isNull())

@@ -68,6 +68,7 @@ public:
     bool hasColorFilters() const;
 
     RefPtr<StyleImage> listStyleImage;
+    AtomString listStyleStringValue;
 
     Color textStrokeColor;
     float textStrokeWidth;
