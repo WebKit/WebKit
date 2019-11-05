@@ -1,3 +1,18 @@
+2019-11-05  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layers: enable tab by default
+        https://bugs.webkit.org/show_bug.cgi?id=203833
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView.isTabAllowed):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2019-11-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: "Toggle Visibility" does not work for element inside Shadow DOM

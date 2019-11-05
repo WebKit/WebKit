@@ -300,7 +300,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             });
         }
 
-        if (WI.settings.experimentalEnableLayersTab.value && InspectorBackend.hasDomain("LayerTree") && attached) {
+        if (InspectorBackend.hasDomain("LayerTree") && attached) {
             contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
                 WI.showLayersTab({nodeToSelect: domNode});
             });

@@ -449,7 +449,6 @@ localizedStrings["Enable Descendant Breakpoints"] = "Enable Descendant Breakpoin
 localizedStrings["Enable Event Listener"] = "Enable Event Listener";
 localizedStrings["Enable Event Listeners"] = "Enable Event Listeners";
 localizedStrings["Enable Inspector Bootstrap Script"] = "Enable Inspector Bootstrap Script";
-localizedStrings["Enable Layers Tab"] = "Enable Layers Tab";
 localizedStrings["Enable Local Override"] = "Enable Local Override";
 localizedStrings["Enable New Tab Bar"] = "Enable New Tab Bar";
 localizedStrings["Enable Preview Features"] = "Enable Preview Features";
@@ -658,7 +657,6 @@ localizedStrings["Latency"] = "Latency";
 localizedStrings["Layer Count: %d"] = "Layer Count: %d";
 localizedStrings["Layer Info"] = "Layer Info";
 localizedStrings["Layers"] = "Layers";
-localizedStrings["Layers:"] = "Layers:";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";

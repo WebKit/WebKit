@@ -354,11 +354,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
-        if (InspectorBackend.hasDomain("LayerTree")) {
-            experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
-            experimentalSettingsView.addSeparator();
-        }
-
         experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
         experimentalSettingsView.addSeparator();
 
@@ -371,10 +366,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", (event) => {
-            if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && InspectorBackend.hasDomain("LayerTree") && WI.settings.experimentalEnableLayersTab.value)
-                WI._openTabsSetting.value.push(WI.LayersTabContentView.Type);
-            WI._openTabsSetting.save();
-
             InspectorFrontendHost.reopen();
         });
 
@@ -389,7 +380,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         listenForChange(WI.settings.experimentalEnablePreviewFeatures);
-        listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 
         if (InspectorBackend.hasDomain("CSS"))

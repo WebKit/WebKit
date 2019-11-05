@@ -53,7 +53,7 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
 
     static isTabAllowed()
     {
-        return InspectorBackend.hasDomain("LayerTree") && !!WI.settings.experimentalEnableLayersTab.value;
+        return InspectorBackend.hasDomain("LayerTree");
     }
 
     // Public
