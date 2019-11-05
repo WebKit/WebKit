@@ -1,5 +1,17 @@
 2019-11-04  Zalan Bujtas  <zalan@apple.com>
 
+        [iOS] LayoutTest fast/events/touch/ios/double-tap-for-double-click3.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=203835
+        <rdar://problem/56123067>
+
+        Unable to reproduce. Inserting a double-tap-delay between the events usually fixes these problems.
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/touch/ios/double-tap-for-double-click3.html:
+
+2019-11-04  Zalan Bujtas  <zalan@apple.com>
+
         [iOS] fast/events/touch/ios/content-observation/click-event-suppression-on-content-change.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=203838
         <rdar://problem/55664976>
