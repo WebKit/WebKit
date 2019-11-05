@@ -108,12 +108,6 @@
             },
             "WebKit.HitTestResultNodeHandle": {
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
-            "WebKit.NewFirstVisuallyNonEmptyLayoutFails": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
-            },
-            "WebKit.NewFirstVisuallyNonEmptyLayoutFrames": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
             }
         }
     },
