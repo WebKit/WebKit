@@ -7076,6 +7076,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_hasNetworkRequestsOnSuspended = false;
     m_isKeyboardAnimatingIn = false;
     m_isScrollingOrZooming = false;
+    m_lastObservedStateWasBackground = false;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)

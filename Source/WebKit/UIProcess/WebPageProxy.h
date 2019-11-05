@@ -706,6 +706,7 @@ public:
     void applicationDidEnterBackground();
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground();
+    bool lastObservedStateWasBackground() const { return m_lastObservedStateWasBackground; }
     void applicationWillResignActive();
     void applicationDidBecomeActive();
     void commitPotentialTapFailed();
@@ -2494,6 +2495,7 @@ private:
     double m_viewportConfigurationLayoutSizeScaleFactor { 1 };
     double m_viewportConfigurationMinimumEffectiveDeviceWidth { 0 };
     WebCore::FloatSize m_maximumUnobscuredSize;
+    bool m_lastObservedStateWasBackground { false };
 #endif
 
     Optional<WebCore::FontAttributes> m_cachedFontAttributesAtSelectionStart;
