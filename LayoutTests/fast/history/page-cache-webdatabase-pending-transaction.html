@@ -2,58 +2,75 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-description('Tests that a page with an open WebDatabase that has pending transactions does not go into the page cache.');
-window.jsTestIsAsync = true;
+description('Tests that a page with an open WebDatabase that has pending transactions is able to go into the back/forward cache.');
+jsTestIsAsync = true;
+let restoredFromCache = false;
+let pendingTransactionCount = 0;
 
 if (window.testRunner)
     testRunner.clearAllDatabases();
 
+function checkTestComplete()
+{
+    if (!pendingTransactionCount && restoredFromCache) {
+        testPassed("All done");
+        finishJSTest();
+    }
+}
+
 window.addEventListener("pageshow", function(event) {
     debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
-    if (!window.sessionStorage.page_cache_open_webdatabase_test_started)
-        return;
 
-    delete window.sessionStorage.page_cache_open_webdatabase_test_started;
-
-    if (event.persisted)
-        testFailed("Page did enter and was restored from the page cache");
-    else
-        testPassed("Page was not restored from page cache");
-    finishJSTest();
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the back/forward cache");
+        restoredFromCache = true;
+        checkTestComplete();
+    }
 }, false);
 
 window.addEventListener("pagehide", function(event) {
     debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
-    if (event.persisted) {
-        testFailed("Page entered the page cache.");
+    if (!event.persisted) {
+        testFailed("Page failed to enter the back/forward cache.");
         finishJSTest();
     }
 }, false);
 
+function handleTransactionComplete()
+{
+    if (!pendingTransactionCount) {
+        testFailed("Too many completion handlers");
+        finishJSTest();
+    }
+
+    pendingTransactionCount--;
+    checkTestComplete();
+}
+
 window.addEventListener('load', function() {
-    // Open the database.
-    db = openDatabase("PageCacheTest", "", "Page Cache Test", 32768);
+    setTimeout(() => {
+        db = openDatabase("PageCacheTest", "", "Back Forward Cache Test", 32768);
 
-    db.transaction(function(tx) {
-        // Force a back navigation back to this page.
-        window.sessionStorage.page_cache_open_webdatabase_test_started = true;
-        window.location.href = "resources/page-cache-helper.html";
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            window.location.href = "resources/page-cache-helper.html";
 
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
-    });
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
 
-    db.transaction(function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS2 (id unique, log)');
-    });
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS2 (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
 
-    db.transaction(function(tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS3 (id unique, log)');
-    });
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS3 (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
+    }, 0);
 }, false);
-
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

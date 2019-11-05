@@ -1,3 +1,38 @@
+2019-11-05  Chris Dumez  <cdumez@apple.com>
+
+        DatabaseContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203103
+        <rdar://problem/56592193>
+
+        Reviewed by Geoffrey Garen.
+
+        Let pages with active webdatabase transactions into the back/forward cache. We make sure
+        to queue tasks that run script to the Window event loop, so that they get delayed when
+        the document is suspended.
+
+        This patch also makes sure that the transaction's error callback gets called if the database
+        gets closed while the transaction is going on. We previously did not happen and it was causing
+        issues because databases get closed on navigation.
+
+        No new tests, updated existing test.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::performPendingCallback):
+        (WebCore::SQLTransaction::notifyDatabaseThreadIsShuttingDown):
+        (WebCore::SQLTransaction::callErrorCallbackDueToInterruption):
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::deliverSuccessCallback):
+        (WebCore::SQLTransaction::computeNextStateAndCleanupIfNeeded):
+        * Modules/webdatabase/SQLTransaction.h:
+
 2019-11-05  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r250754): web page using IDBIndex doesn't load occasionally

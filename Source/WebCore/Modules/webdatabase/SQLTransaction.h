@@ -105,6 +105,8 @@ private:
 
     NO_RETURN_DUE_TO_ASSERT void unreachableState();
 
+    void callErrorCallbackDueToInterruption();
+
     void getNextStatement();
     bool runCurrentStatement();
     void handleCurrentStatementError();

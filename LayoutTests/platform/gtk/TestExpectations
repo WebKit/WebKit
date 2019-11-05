@@ -1659,7 +1659,6 @@ webkit.org/b/144864 fast/events/clear-edit-drag-state.html [ Failure Pass ]
 webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
 
 webkit.org/b/145051 media/video-rtl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/145052 fast/history/page-cache-webdatabase-pending-transaction.html [ Failure Pass ]
 
 webkit.org/b/145167 transforms/2d/perspective-not-fixed-container.html [ ImageOnlyFailure Pass ]
 

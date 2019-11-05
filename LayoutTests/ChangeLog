@@ -1,3 +1,19 @@
+2019-11-05  Chris Dumez  <cdumez@apple.com>
+
+        DatabaseContext should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203103
+        <rdar://problem/56592193>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/history/page-cache-webdatabase-pending-transaction-expected.txt:
+        * fast/history/page-cache-webdatabase-pending-transaction.html:
+        Update existing test to reflect behavior change.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unmark test as flaky.
+
 2019-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Native text substitutions interfere with HTML <datalist> options resulting in crash
