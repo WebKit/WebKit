@@ -308,6 +308,9 @@ public:
 
     void webPageMediaStateDidChange(WebPageProxy&);
 
+    void ref() final { ThreadSafeRefCounted::ref(); }
+    void deref() final { ThreadSafeRefCounted::deref(); }
+
 protected:
     static WebCore::PageIdentifier generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);

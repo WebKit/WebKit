@@ -42,6 +42,9 @@ public:
         virtual void didChangeIsResponsive() = 0;
 
         virtual bool mayBecomeUnresponsive() = 0;
+
+        virtual void ref() = 0;
+        virtual void deref() = 0;
     };
 
     explicit ResponsivenessTimer(ResponsivenessTimer::Client&);
