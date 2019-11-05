@@ -1,3 +1,22 @@
+2019-11-04  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Build ImageDiff if it is missing
+        https://bugs.webkit.org/show_bug.cgi?id=183422
+
+        Reviewed by Alexey Proskuryakov.
+
+        ImageDiff is built with a different SDK than the rest of the WebKit
+        stack, and this frequently causes infrastructure failures where ImageDiff
+        is missing on testers. To address this, we should automatically build
+        ImageDiff if it is missing.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_build): Unconditionally build ImageDiff if it is missing.
+        (Port.check_image_diff): Use _build_path since _path_to_image_diff will
+        attempt to use a back-up location.
+        (Port._path_to_image_diff): If the provided path to ImageDiff does not
+        exist, use the path of the one we built.
+
 2019-11-04  Daniel Bates  <dabates@apple.com>
 
         Add Googletest assertion support for CGRect and NSRect

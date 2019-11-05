@@ -242,10 +242,7 @@ class Port(object):
         if self.get_option('install') and not self._check_driver():
             return False
         if not self.check_image_diff():
-            if self.get_option('build'):
-                return self._build_image_diff()
-            else:
-                return False
+            return self._build_image_diff()
         return True
 
     def check_api_test_build(self, canonicalized_binaries=None):
@@ -287,7 +284,7 @@ class Port(object):
 
     def check_image_diff(self, override_step=None, logging=True):
         """This routine is used to check whether image_diff binary exists."""
-        image_diff_path = self._path_to_image_diff()
+        image_diff_path = self._build_path('ImageDiff')
         if not self._filesystem.exists(image_diff_path):
             if logging:
                 _log.error("ImageDiff was not found at %s" % image_diff_path)
@@ -1367,11 +1364,17 @@ class Port(object):
         This is likely only used by start/stop_helper()."""
         return None
 
+    @memoized
     def _path_to_image_diff(self):
         """Returns the full path to the image_diff binary, or None if it is not available.
 
         This is likely used only by diff_image()"""
-        return self._build_path('ImageDiff')
+        default_image_diff = self._build_path('ImageDiff')
+        if self._filesystem.exists(default_image_diff):
+            return default_image_diff
+        built_image_diff = self._filesystem.join(self._config.build_directory(self.get_option('configuration')), 'ImageDiff')
+        _log.debug('ImageDiff not found at {}, using {} instead'.format(default_image_diff, built_image_diff))
+        return built_image_diff
 
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI']
 
