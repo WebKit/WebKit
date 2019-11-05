@@ -36,10 +36,38 @@
 #import <WebCore/CredentialStorage.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ProtectionSpace.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKitLegacy/WebPanelAuthenticationHandler.h>
 #import <pal/spi/cocoa/NSURLDownloadSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/spi/darwin/dyldSPI.h>
+
+static bool shouldCallOnNetworkThread()
+{
+#if PLATFORM(MAC)
+    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && dyld_get_program_sdk_version() < DYLD_MACOSX_VERSION_10_15;
+    return isOldEpsonSoftwareUpdater;
+#else
+    return false;
+#endif
+}
+
+static void callOnDelegateThread(Function<void()>&& function)
+{
+    if (shouldCallOnNetworkThread())
+        function();
+    callOnMainThread(WTFMove(function));
+}
+
+template<typename Callable>
+static void callOnDelegateThreadAndWait(Callable&& work)
+{
+    if (shouldCallOnNetworkThread() || isMainThread())
+        work();
+    else
+        dispatch_sync(dispatch_get_main_queue(), work);
+}
 
 using namespace WebCore;
 
@@ -83,7 +111,7 @@ using namespace WebCore;
 
 - (void)downloadDidBegin:(NSURLDownload *)download
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download)] {
         [realDelegate downloadDidBegin:download.get()];
     });
 }
@@ -95,10 +123,7 @@ using namespace WebCore;
         ASSERT(isMainThread());
         returnValue = [realDelegate download:download willSendRequest:request redirectResponse:redirectResponse];
     };
-    if (isMainThread())
-        work();
-    else
-        dispatch_sync(dispatch_get_main_queue(), work);
+    callOnDelegateThreadAndWait(WTFMove(work));
     return returnValue.autorelease();
 }
 
@@ -115,11 +140,11 @@ using namespace WebCore;
     }
 
     if ([realDelegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:)]) {
-        callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), challenge = retainPtr(challenge)] {
+        callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), challenge = retainPtr(challenge)] {
             [realDelegate download:download.get() didReceiveAuthenticationChallenge:challenge.get()];
         });
     } else {
-        callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), challenge = retainPtr(challenge)] {
+        callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), challenge = retainPtr(challenge)] {
             NSWindow *window = nil;
             if ([realDelegate respondsToSelector:@selector(downloadWindowForAuthenticationSheet:)])
                 window = [realDelegate downloadWindowForAuthenticationSheet:(WebDownload *)download.get()];
@@ -132,14 +157,14 @@ using namespace WebCore;
 
 - (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), response = retainPtr(response)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), response = retainPtr(response)] {
         [realDelegate download:download.get() didReceiveResponse:response.get()];
     });
 }
 
 - (void)download:(NSURLDownload *)download didReceiveDataOfLength:(NSUInteger)length
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), length] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), length] {
         [realDelegate download:download.get() didReceiveDataOfLength:length];
     });
 }
@@ -150,37 +175,34 @@ using namespace WebCore;
     auto work = [&] {
         returnValue = [realDelegate download:download shouldDecodeSourceDataOfMIMEType:encodingType];
     };
-    if (isMainThread())
-        work();
-    else
-        dispatch_sync(dispatch_get_main_queue(), work);
+    callOnDelegateThreadAndWait(WTFMove(work));
     return returnValue;
 }
 
 - (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), filename = retainPtr(filename)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), filename = retainPtr(filename)] {
         [realDelegate download:download.get() decideDestinationWithSuggestedFilename:filename.get()];
     });
 }
 
 - (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), path = retainPtr(path)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), path = retainPtr(path)] {
         [realDelegate download:download.get() didCreateDestination:path.get()];
     });
 }
 
 - (void)downloadDidFinish:(NSURLDownload *)download
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download)] {
         [realDelegate downloadDidFinish:download.get()];
     });
 }
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
-    callOnMainThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), error = retainPtr(error)] {
+    callOnDelegateThread([realDelegate = retainPtr(realDelegate), download = retainPtr(download), error = retainPtr(error)] {
         [realDelegate download:download.get() didFailWithError:error.get()];
     });
 }

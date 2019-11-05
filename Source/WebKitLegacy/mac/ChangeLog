@@ -1,3 +1,64 @@
+2019-11-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r252000. rdar://problem/56887517
+
+    REGRESSION(r243947) Epson software updater fails to install new version
+    https://bugs.webkit.org/show_bug.cgi?id=203809
+    <rdar://problem/56002179>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2019-11-04
+    Reviewed by Brady Eidson.
+    
+    Source/WebCore:
+    
+    I manually verified this fixes the issue.  See the radar.
+    
+    * platform/RuntimeApplicationChecks.h:
+    * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+    (WebCore::MacApplication::isEpsonSoftwareUpdater):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Misc/WebDownload.mm:
+    (shouldCallOnNetworkThread):
+    (callOnDelegateThread):
+    (isDelegateThread):
+    (-[WebDownloadInternal downloadDidBegin:]):
+    (-[WebDownloadInternal download:willSendRequest:redirectResponse:]):
+    (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+    (-[WebDownloadInternal download:didReceiveResponse:]):
+    (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+    (-[WebDownloadInternal download:shouldDecodeSourceDataOfMIMEType:]):
+    (-[WebDownloadInternal download:decideDestinationWithSuggestedFilename:]):
+    (-[WebDownloadInternal download:didCreateDestination:]):
+    (-[WebDownloadInternal downloadDidFinish:]):
+    (-[WebDownloadInternal download:didFailWithError:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@252000 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-11-04  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r243947) Epson software updater fails to install new version
+            https://bugs.webkit.org/show_bug.cgi?id=203809
+            <rdar://problem/56002179>
+
+            Reviewed by Brady Eidson.
+
+            * Misc/WebDownload.mm:
+            (shouldCallOnNetworkThread):
+            (callOnDelegateThread):
+            (isDelegateThread):
+            (-[WebDownloadInternal downloadDidBegin:]):
+            (-[WebDownloadInternal download:willSendRequest:redirectResponse:]):
+            (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+            (-[WebDownloadInternal download:didReceiveResponse:]):
+            (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+            (-[WebDownloadInternal download:shouldDecodeSourceDataOfMIMEType:]):
+            (-[WebDownloadInternal download:decideDestinationWithSuggestedFilename:]):
+            (-[WebDownloadInternal download:didCreateDestination:]):
+            (-[WebDownloadInternal downloadDidFinish:]):
+            (-[WebDownloadInternal download:didFailWithError:]):
+
 2019-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r250365. rdar://problem/55770710
