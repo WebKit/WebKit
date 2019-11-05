@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks detaching the SVG pair properties from the owner element.");
+
+if (window.testRunner) {
+    gc = function() { window.GCController.collect() };
+} else if (!window.gc)
+    gc = function() { };
+
+var angle = document.createElementNS("http://www.w3.org/2000/svg", "marker").orientAngle;
+var type = document.createElementNS("http://www.w3.org/2000/svg", "marker").orientType;
+var radiusX = document.createElementNS("http://www.w3.org/2000/svg", "feMorphology").radiusX;
+var orderX = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix").orderX;
+
+gc();
+
+shouldBe("angle.baseVal.value = 100", "100");
+shouldBe("type.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
+shouldBe("radiusX.baseVal = 100", "100");
+shouldBe("orderX.baseVal = 100", "100");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
