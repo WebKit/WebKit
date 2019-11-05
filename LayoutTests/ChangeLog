@@ -1,3 +1,20 @@
+2019-11-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        [GTK] Inspector protocol tests timing out on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=122571
+
+        Reviewed by Devin Rousso.
+
+        Mark more inspector tests as passing on GTK.
+
+        * inspector/dom/focus.html: Remove 'focus' event listener before closing dummy inspector
+        window. Otherwise it triggers a WebPage::setActivityState which in turn triggers focus
+        event on the page and on the focused element which results in two extra 'focus' lines printed.
+        To be clear this only avoids the extra text output that could be added to the output. Timeout
+        and crash problems must have been fixed before (likely by the recent changes in local inspector
+        client).
+        * platform/gtk/TestExpectations:
+
 2019-11-04  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r251993.

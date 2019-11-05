@@ -2331,14 +2331,6 @@ webkit.org/b/116957 media/track/track-automatic-subtitles.html [ Timeout ]
 webkit.org/b/120682 inspector/page/archive.html [ Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
-webkit.org/b/122571 http/tests/inspector/dom/cross-domain-inspected-node-access.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/dom/focus.html [ Failure Timeout Pass ]
-webkit.org/b/122571 inspector/runtime/getProperties.html [ Timeout Pass Crash ]
-webkit.org/b/122571 inspector/runtime/saveResult.html [ Timeout Pass Crash ]
-webkit.org/b/122571 inspector/page/frameStartedLoading.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/page/frameScheduledNavigation.html [ Timeout Pass Crash ]
-webkit.org/b/122571 inspector/page/setEmulatedMedia.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/css/getSupportedCSSProperties.html [ Timeout Pass ]
 
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 

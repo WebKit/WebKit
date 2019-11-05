@@ -2,11 +2,20 @@
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
+
+function focusListener()
+{
+    log("focused");
+}
+
 window.addEventListener("load", function() {
-    document.querySelector("#second").addEventListener("focus", function() {
-        log("focused");
-    });
+    document.querySelector("#second").addEventListener("focus", focusListener);
 });
+
+function removeFocusListener()
+{
+    document.querySelector("#second").removeEventListener("focus", focusListener);
+}
 
 function test()
 {
@@ -35,7 +44,10 @@ function test()
     function onFocus(msg) {
         if (msg.error)
             ProtocolTest.log(msg.error);
-        ProtocolTest.completeTest();
+        ProtocolTest.evaluateInPage("removeFocusListener()")
+        .then(() => {
+            ProtocolTest.completeTest();
+        });
     }
 }
 </script>
