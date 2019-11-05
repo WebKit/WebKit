@@ -1,3 +1,16 @@
+2019-11-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][CMake] Build WebCore as an OBJECT library unless Apple internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=203663
+
+        Reviewed by Ross Kirsling.
+
+        No behavioral changes.
+
+        * CMakeLists.txt: Changed WebCoreTestSupport not to link with
+        WebCore for Windows. Because WebKit.dll exports WebCore symbols,
+        they will be duplicated with WebCore.
+
 2019-11-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r251930): Flaky WK1 crash in printing/pseudo-class-outside-page.html

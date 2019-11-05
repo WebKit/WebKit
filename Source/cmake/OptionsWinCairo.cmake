@@ -64,3 +64,7 @@ set(WebKit_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WebKit/DerivedSources)
 # Override scripts directories
 set(WTF_SCRIPTS_DIR ${CMAKE_BINARY_DIR}/WTF/Scripts)
 set(JavaScriptCore_SCRIPTS_DIR ${CMAKE_BINARY_DIR}/JavaScriptCore/Scripts)
+
+# Override library types
+set(WebCore_LIBRARY_TYPE OBJECT)
+set(WebCoreTestSupport_LIBRARY_TYPE OBJECT)

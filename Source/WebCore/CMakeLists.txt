@@ -1230,9 +1230,11 @@ set(WebCore_LIBRARIES
 )
 
 set(WebCoreTestSupport_LIBRARIES
-    WebCore
     WebKit::JavaScriptCore
 )
+if (NOT WTF_OS_WINDOWS)
+    list(APPEND WebCoreTestSupport_LIBRARIES WebCore)
+endif ()
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
