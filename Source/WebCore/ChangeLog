@@ -1,3 +1,29 @@
+2019-11-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Too slow running encoding/legacy-mb-korean/euc-kr WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=203544
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use a cache for system fallbacks to keep the fonts sorted by font description. When a system fallback is needed
+        again for the same font description, but different characters, we just iterate the cached font set comparing the
+        charsets to get the best one. This avoids using FcFontMatch and FcFontSort is only called once per font description.
+
+        * platform/graphics/FontCache.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::CachedFontSet::CachedFontSet):
+        (WebCore::CachedFontSet::bestForCharacters):
+        (WebCore::FallbackFontDescriptionKey::FallbackFontDescriptionKey):
+        (WebCore::FallbackFontDescriptionKey::operator== const):
+        (WebCore::FallbackFontDescriptionKey::operator!= const):
+        (WebCore::FallbackFontDescriptionKey::isHashTableDeletedValue const):
+        (WebCore::FallbackFontDescriptionKey::computeHash const):
+        (WebCore::FallbackFontDescriptionKeyHash::hash):
+        (WebCore::FallbackFontDescriptionKeyHash::equal):
+        (WebCore::systemFallbackCache):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::platformPurgeInactiveFontData):
+
 2019-11-04  Chris Dumez  <cdumez@apple.com>
 
         Drop SuspendableTaskQueue now that it is unused
