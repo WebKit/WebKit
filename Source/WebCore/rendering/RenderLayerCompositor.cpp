@@ -2422,6 +2422,9 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || renderer.hasBackdropFilter())
         return true;
 
+    if (layer.isComposited() && layer.backing()->hasBackingSharingLayers())
+        return true;
+
     if (layer.mustCompositeForIndirectReasons()) {
         IndirectCompositingReason reason = layer.indirectCompositingReason();
         return reason == IndirectCompositingReason::Overlap
@@ -2432,10 +2435,8 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
             || reason == IndirectCompositingReason::Preserve3D; // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
     }
 
+    // FIXME: We really need to keep track of the ancestor layer that has its own backing store.
     if (!ancestorCompositedBounds.contains(layerCompositedBoundsInAncestor))
-        return true;
-
-    if (layer.isComposited() && layer.backing()->hasBackingSharingLayers())
         return true;
 
     return false;

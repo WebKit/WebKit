@@ -1,3 +1,23 @@
+2019-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Content can disappear with a combination of <video> with controls and clipping
+        https://bugs.webkit.org/show_bug.cgi?id=203834
+        rdar://problem/56559648
+
+        Reviewed by Zalan Bujtas.
+        
+        <video> with controls triggered a bug where a backing-sharing layer also claimed
+        that it didn't need any backing store. RenderLayerCompositor::requiresOwnBackingStore()
+        could early-return with 'false' if a layer had an indirect compositing reason of "Clipping",
+        while also backing-sharing. We need to check for backing-sharing first.
+
+        Test: compositing/shared-backing/clipping-and-shared-backing.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setBackingSharingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+
 2019-11-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Disabled SVG shapes should not be hit

@@ -294,8 +294,11 @@ void RenderLayerBacking::setBackingSharingLayers(Vector<WeakPtr<RenderLayer>>&& 
 
     clearBackingSharingLayerProviders(m_backingSharingLayers);
 
-    if (sharingLayers != m_backingSharingLayers)
+    if (sharingLayers != m_backingSharingLayers) {
+        if (sharingLayers.size())
+            setRequiresOwnBackingStore(true);
         setContentsNeedDisplay(); // This could be optimized to only repaint rects for changed layers.
+    }
 
     auto oldSharingLayers = WTFMove(m_backingSharingLayers);
     m_backingSharingLayers = WTFMove(sharingLayers);
