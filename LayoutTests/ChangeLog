@@ -1,3 +1,9 @@
+2019-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip fast/forms/ios/inputmode-change-update-keyboard.html on iPads as this test relies on iPhone's keyboard behavior.
+
+        * platform/ipad/TestExpectations:
+
 2019-11-04  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] LayoutTest fast/events/touch/ios/double-tap-for-double-click3.html is failing

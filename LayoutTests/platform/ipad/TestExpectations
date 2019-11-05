@@ -43,6 +43,9 @@ webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.ht
 # This tests an iphone-specific behavior so is expected to fail on iPad.
 fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
 
+# This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
+fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
 # <rdar://problem/51869921> REGRESSION (iOS 13) [ iPad Sim ] Layout Test http/tests/adClickAttribution/anchor-tag-attributes-validation.html is failing
 http/tests/adClickAttribution/anchor-tag-attributes-validation.html [ Failure ]
 
