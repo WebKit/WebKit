@@ -60,18 +60,15 @@ void RenderSVGRect::updateShapeFromElement()
     SVGLengthContext lengthContext(&rectElement());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
 
-    // Element is invalid if either dimension is negative.
-    if (boundingBoxSize.width() < 0 || boundingBoxSize.height() < 0)
+    // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
+    if (boundingBoxSize.isEmpty())
         return;
 
-    // Rendering enabled? Spec: "A value of zero disables rendering of the element."
-    if (!boundingBoxSize.isEmpty()) {
-        if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
-            // Fall back to RenderSVGShape
-            RenderSVGShape::updateShapeFromElement();
-            m_usePathFallback = true;
-            return;
-        }
+    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
+        // Fall back to RenderSVGShape
+        RenderSVGShape::updateShapeFromElement();
+        m_usePathFallback = true;
+        return;
     }
 
     m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().svgStyle().x(), SVGLengthMode::Width),

@@ -133,7 +133,7 @@ bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const W
 
 bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, const WindRule fillRule)
 {
-    if (!m_fillBoundingBox.contains(point))
+    if (m_fillBoundingBox.isEmpty() || !m_fillBoundingBox.contains(point))
         return false;
 
     Color fallbackColor;
@@ -145,7 +145,7 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
 
 bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke)
 {
-    if (!strokeBoundingBox().contains(point))
+    if (strokeBoundingBox().isEmpty() || !strokeBoundingBox().contains(point))
         return false;
 
     Color fallbackColor;

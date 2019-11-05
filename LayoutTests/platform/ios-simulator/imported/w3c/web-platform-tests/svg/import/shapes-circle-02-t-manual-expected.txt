@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {circle} at (0,0) size 85x85 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGEllipse {circle} at (0,82) size 85x169 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=0.00] [cy=100.00] [r=50.00]
         RenderSVGEllipse {circle} at (82,0) size 169x85 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=0.00] [r=50.00]
-        RenderSVGEllipse {circle} at (165,165) size 3x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=0.00]
         RenderSVGEllipse {circle} at (82,82) size 169x169 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
     RenderSVGContainer {g} at (16,516) size 385x64
       RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)

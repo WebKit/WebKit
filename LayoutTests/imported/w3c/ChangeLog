@@ -1,3 +1,15 @@
+2019-11-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Disabled SVG shapes should not be hit
+        https://bugs.webkit.org/show_bug.cgi?id=200140
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/svg/import/types-dom-08-f-manual.svg:
+        This is the expectation of FireFox as well.
+
+        * web-platform-tests/svg/shapes/scripted/disabled-shapes-not-hit-expected.txt:
+
 2019-11-05  youenn fablet  <youenn@apple.com>
 
         mp4 video element broken with service worker

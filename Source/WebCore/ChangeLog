@@ -1,3 +1,25 @@
+2019-11-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Disabled SVG shapes should not be hit
+        https://bugs.webkit.org/show_bug.cgi?id=200140
+
+        Reviewed by Simon Fraser.
+
+        The fill and the stroke rectangles should not be computed for disabled
+        SVG shapes.
+
+        The existing code may calculate the root's boundary: at(0, 0) size 0x0
+        while one of its children boundary is calculated at: (47,47) size 6x6.
+        See circle-01-expected.txt.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::updateShapeFromElement):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::fillContains):
+        (WebCore::RenderSVGShape::strokeContains):
+
 2019-11-05  Daniel Bates  <dabates@apple.com>
 
         [Cocoa] Right Command key should have location DOM_KEY_LOCATION_RIGHT instead of DOM_KEY_LOCATION_STANDARD

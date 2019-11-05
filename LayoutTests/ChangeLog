@@ -1,3 +1,85 @@
+2019-11-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Disabled SVG shapes should not be hit
+        https://bugs.webkit.org/show_bug.cgi?id=200140
+
+        Reviewed by Simon Fraser.
+
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/animate-elem-32-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-intro-01-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/animate-elem-32-t-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/shapes-intro-01-t-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/import/types-dom-08-f-manual-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/ios/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/animate-elem-32-t-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/shapes-intro-01-t-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/import/types-dom-08-f-manual-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/animate-elem-32-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-circle-02-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-ellipse-02-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-intro-01-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/import/shapes-rect-02-t-manual-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/circle-01-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/ellipse-04-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/ellipse-09-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/rect-05-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/svg/shapes/reftests/disabled-shapes-01-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+
+        * svg/custom/getBBox-js-circle-zerodimension-expected.txt: Removed.
+        * svg/custom/getBBox-js-circle-zerodimension.html: Removed.
+        * svg/custom/getBBox-js-ellipse-zerodimension-expected.txt: Removed.
+        * svg/custom/getBBox-js-ellipse-zerodimension.html: Removed.
+        * svg/custom/getBBox-js-rect-zerodimension-expected.txt: Removed.
+        * svg/custom/getBBox-js-rect-zerodimension.html: Removed.
+        These tests were added in r169522. They succeed in Safari and Chrome but
+        they fail in FireFox. The issue of calculating getBBox was discussed in:
+        https://lists.w3.org/Archives/Public/www-svg/2012Aug/0014.html. But no
+        resolution was reached. 
+
 2019-11-05  Devin Rousso  <drousso@apple.com>
 
         Layout test http/tests/inspector/network/resource-response-source-memory-cache-revalidate-expired-only.html is a flakey failure
