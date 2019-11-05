@@ -1,3 +1,16 @@
+2019-11-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: "Toggle Visibility" does not work for element inside Shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=202218
+        <rdar://problem/55713078>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.toggleElementVisibility.inspectedPage_node_injectStyleAndToggleClass):
+        If the node is inside a shadow tree, store the `<style>` inside the shadow root instead of
+        always using `document.head`.
+
 2019-11-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add diagnostic logging for frontend feature usage

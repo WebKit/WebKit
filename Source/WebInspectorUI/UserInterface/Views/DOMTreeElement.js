@@ -341,12 +341,18 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
 
         function inspectedPage_node_injectStyleAndToggleClass(hiddenClassName, force) {
-            let styleElement = document.getElementById(hiddenClassName);
+            let root = this.getRootNode() || document;
+
+            let styleElement = root.getElementById(hiddenClassName);
             if (!styleElement) {
                 styleElement = document.createElement("style");
                 styleElement.id = hiddenClassName;
                 styleElement.textContent = `.${hiddenClassName} { visibility: hidden !important; }`;
-                document.head.appendChild(styleElement);
+
+                if (root instanceof HTMLDocument)
+                    root.head.appendChild(styleElement);
+                else // Inside Shadow DOM.
+                    root.insertBefore(styleElement, root.firstChild);
             }
 
             this.classList.toggle(hiddenClassName, force);
