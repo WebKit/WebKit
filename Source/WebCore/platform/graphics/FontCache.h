@@ -293,7 +293,7 @@ inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTes
     return createFontPlatformData(fontDescription, family, nullptr, nullptr, { });
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(FREETYPE)
 
 inline void FontCache::platformPurgeInactiveFontData()
 {
