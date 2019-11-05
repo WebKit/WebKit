@@ -46,26 +46,26 @@ async function test() {
     // Test tapping in a div.
     output("Tapping once");
     await UIHelper.tapAt(150, 150);
-    await UIHelper.delayFor(50);
+    await UIHelper.waitForDoubleTapDelay();
 
     output("Tapping again");
     await UIHelper.tapAt(150, 150);
-    await UIHelper.delayFor(50);
+    await UIHelper.waitForDoubleTapDelay();
 
     output("Tapping out");
     await UIHelper.tapAt(150, 50);
-    await UIHelper.delayFor(50);
+    await UIHelper.waitForDoubleTapDelay();
 
     output("Enabling mutation on mouseover");
     testDiv.removeAttribute("role"); 
     mutateOnMouseOver = true;
     output("Tapping once");
     await UIHelper.tapAt(150, 150);
-    await UIHelper.delayFor(50);
+    await UIHelper.waitForDoubleTapDelay();
 
     output("Tapping again");
     await UIHelper.tapAt(150, 150);
-    await UIHelper.delayFor(50);
+    await UIHelper.waitForDoubleTapDelay();
 
     document.querySelector('#output').innerHTML += outputText;
     testRunner.notifyDone();
