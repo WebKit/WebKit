@@ -40,7 +40,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeL
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, ExtractBuiltProduct, ExtractTestResults, InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses,
                    PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch,
                    RunBindingsTests, RunBuildWebKitOrgUnitTests, RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests,
-                   RunWebKitPerlTests, RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
+                   RunWebKitPerlTests, RunWebKitPyTests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, Trigger, TransferToS3, UnApplyPatchIfRequired,
                    UpdateWorkingDirectory, UploadBuiltProduct, UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -1143,6 +1143,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 0,
@@ -1157,6 +1158,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 0
@@ -1174,6 +1176,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 2
@@ -1202,6 +1205,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 0
@@ -1220,6 +1224,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 2
@@ -1238,6 +1243,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 2
@@ -1256,6 +1262,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--debug', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
@@ -1271,6 +1278,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -1285,6 +1293,88 @@ class TestReRunWebKitTests(TestRunWebKitTests):
         self.setupStep(ReRunWebKitTests())
         self.property_exceed_failure_limit = 'second_results_exceed_failure_limit'
         self.property_failures = 'second_run_failures'
+
+
+class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'layout-test-results/full_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(RunWebKitTestsWithoutPatch())
+        self.property_exceed_failure_limit = 'clean_tree_results_exceed_failure_limit'
+        self.property_failures = 'clean_tree_run_failures'
+        self.setProperty('buildername', 'iOS-13-Simulator-WK2-Tests-EWS')
+        self.setProperty('buildnumber', '123')
+        self.setProperty('workername', 'ews126')
+        os.environ['RESULTS_SERVER_API_KEY'] = 'sample-key'
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests',
+                                 '--release',
+                                 '--buildbot-master', 'ews-build.webkit.org',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--report', 'https://results.webkit.org',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
+                        logEnviron=False,
+                        command=['python',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build',
+                                 '--no-show-results',
+                                 '--no-new-test-results',
+                                 '--clobber-old-results',
+                                 '--exit-after-n-failures', '30',
+                                 '--skip-failing-tests',
+                                 '--release',
+                                 '--buildbot-master', 'ews-build.webkit.org',
+                                 '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews126',
+                                 '--report', 'https://results.webkit.org',
+                                 '--results-directory', 'layout-test-results',
+                                 '--debug-rwt-logging'],
+                        )
+            + ExpectShell.log('stdio', stdout='9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.runStep()
 
 
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
@@ -1303,6 +1393,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--debug', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + 0,
@@ -1317,6 +1408,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
                         command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--exit-after-n-failures', '30', '--skip-failing-tests', '--release', '--dump-render-tree', '--results-directory', 'layout-test-results', '--debug-rwt-logging'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
@@ -2055,6 +2147,114 @@ All tests successfully passed!
         self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
         return self.runStep()
 
+
+class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'api_test_results.json'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success_mac(self):
+        self.setupStep(RunAPITestsWithoutPatch())
+        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'API-Tests-macOS-EWS')
+        self.setProperty('buildnumber', '11525')
+        self.setProperty('workername', 'ews155')
+        os.environ['RESULTS_SERVER_API_KEY'] = 'sample-key'
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env={'RESULTS_SERVER_API_KEY': 'sample-key'},
+                        command=['python',
+                                 'Tools/Scripts/run-api-tests',
+                                 '--no-build',
+                                 '--release',
+                                 '--verbose',
+                                 '--json-output={0}'.format(self.jsonFileName),
+                                 '--buildbot-master', 'ews-build.webkit.org',
+                                 '--builder-name', 'API-Tests-macOS-EWS',
+                                 '--build-number', '11525',
+                                 '--buildbot-worker', 'ews155',
+                                 '--report', 'https://results.webkit.org'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''...
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+Ran 1888 tests of 1888 with 1888 successful
+------------------------------
+All tests successfully passed!
+''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='run-api-tests-without-patch')
+        return self.runStep()
+
+    def test_one_failure(self):
+        self.setupStep(RunAPITestsWithoutPatch())
+        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('platform', 'ios-simulator')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('buildername', 'API-Tests-iOS-EWS')
+        self.setProperty('buildnumber', '123')
+        self.setProperty('workername', 'ews156')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env={'RESULTS_SERVER_API_KEY': None},
+                        command=['python',
+                                 'Tools/Scripts/run-api-tests',
+                                 '--no-build',
+                                 '--debug',
+                                 '--verbose',
+                                 '--json-output={0}'.format(self.jsonFileName),
+                                 '--buildbot-master', 'ews-build.webkit.org',
+                                 '--builder-name', 'API-Tests-iOS-EWS',
+                                 '--build-number', '123',
+                                 '--buildbot-worker', 'ews156',
+                                 '--report', 'https://results.webkit.org'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''
+worker/0 TestWTF.WTF_Variant.OperatorAmpersand Passed
+worker/0 TestWTF.WTF_Variant.Ref Passed
+worker/0 TestWTF.WTF_Variant.RefPtr Passed
+worker/0 TestWTF.WTF_Variant.RetainPtr Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingMakeVisitor Passed
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1887 successful
+------------------------------
+Test suite failed
+
+Crashed
+
+    TestWTF.WTF.StringConcatenate_Unsigned
+        **FAIL** WTF.StringConcatenate_Unsigned
+
+        Tools\\TestWebKitAPI\\Tests\\WTF\\StringConcatenate.cpp:84
+        Value of: makeString('hello ', static_cast<unsigned short>(42) , ' world')
+          Actual: hello 42 world
+        Expected: 'hello * world'
+        Which is: 74B00C9C
+
+Testing completed, Exit status: 3
+''')
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='1 api test failed or timed out')
+        return self.runStep()
 
 class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
