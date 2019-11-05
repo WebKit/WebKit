@@ -1,3 +1,27 @@
+2019-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native text substitutions interfere with HTML <datalist> options resulting in crash
+        https://bugs.webkit.org/show_bug.cgi?id=203116
+        <rdar://problem/49875932>
+
+        Reviewed by Tim Horton.
+
+        On macOS, an NSTableView inside a separate window is used to render suggestions when showing a datalist. The
+        crash happens when this table view is reloaded while clicking a datalist suggestion; that is, if -[NSTableView
+        reloadData] is invoked after the user sends a platform MouseDown event on the table view cell but before the
+        MouseUp is received, the selected row of the table view will be -1 when the action, `-selectedRow:`, is invoked.
+
+        In this particular case, the table view reload is triggered as a result of hiding the autocorrection bubble on
+        macOS, thereby committing the alternative text suggestion and changing the value of the text field via an
+        editing command.
+
+        To avoid crashing, we simply make `-selectedRow:` robust in the case where the index is invalid.
+
+        Test: fast/forms/datalist/datalist-click-crash.html
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionsController selectedRow:]):
+
 2019-11-05  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r250754): web page using IDBIndex doesn't load occasionally

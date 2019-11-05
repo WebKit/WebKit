@@ -219,6 +219,7 @@ interface UIScriptController {
 
     // <datalist>
     readonly attribute boolean isShowingDataListSuggestions;
+    void activateDataListSuggestion(unsigned long index, object callback);
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();

@@ -201,6 +201,7 @@ public:
     virtual JSObjectRef calendarType() const { notImplemented(); return nullptr; }
     virtual void setDefaultCalendarType(JSStringRef calendarIdentifier) { notImplemented(); }
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
+    virtual void activateDataListSuggestion(long, JSValueRef) { notImplemented(); }
 
     // Share Sheet
 

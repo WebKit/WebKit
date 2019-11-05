@@ -1032,6 +1032,19 @@ void UIScriptControllerIOS::completeBackSwipe(JSValueRef callback)
     [webView() _completeBackSwipeForTesting];
 }
 
+void UIScriptControllerIOS::activateDataListSuggestion(long index, JSValueRef callback)
+{
+    // FIXME: Not implemented.
+    UNUSED_PARAM(index);
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
 bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
     Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");

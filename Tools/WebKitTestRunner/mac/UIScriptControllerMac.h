@@ -43,6 +43,7 @@ public:
     double zoomScale() const override;
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
+    void activateDataListSuggestion(long index, JSValueRef callback) override;
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
     void playBackEventStream(JSStringRef, JSValueRef) override;
@@ -57,6 +58,9 @@ public:
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 
     void activateAtPoint(long x, long y, JSValueRef callback) override;
+
+private:
+    NSTableView *dataListSuggestionsTableView() const;
 };
 
 } // namespace WTR

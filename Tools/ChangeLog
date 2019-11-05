@@ -1,3 +1,32 @@
+2019-11-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native text substitutions interfere with HTML <datalist> options resulting in crash
+        https://bugs.webkit.org/show_bug.cgi?id=203116
+        <rdar://problem/49875932>
+
+        Reviewed by Tim Horton.
+
+        Add a new testing hook to wait for datalist suggestions to show up and choose the suggestion at the given index.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::activateDataListSuggestion):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::isShowingDataListSuggestions const):
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+
+        Dig through the view hierarchy of the NSWindow subclass used to show datalist suggestions for the table view
+        containing the suggestions; then, select the given row, and invoke the action on the target.
+
+        (WTR::UIScriptControllerMac::dataListSuggestionsTableView const):
+
 2019-11-05  Daniel Bates  <dabates@apple.com>
 
         TestWebKitAPI.WebKit.DocumentEditingContext is failing on iPad

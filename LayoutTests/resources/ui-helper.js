@@ -666,6 +666,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static activateDataListSuggestion(index) {
+        const script = `uiController.activateDataListSuggestion(${index}, () => {
+            uiController.uiScriptComplete("");
+        });`;
+        return new Promise(resolve => testRunner.runUIScript(script, resolve));
+    }
+
     static isShowingDataListSuggestions()
     {
         return new Promise(resolve => {

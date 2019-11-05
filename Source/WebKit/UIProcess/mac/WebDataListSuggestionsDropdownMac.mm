@@ -402,7 +402,11 @@ void WebDataListSuggestionsDropdownMac::close()
 
 - (void)selectedRow:(NSTableView *)sender
 {
-    _dropdown->didSelectOption(_suggestions.at([sender selectedRow]));
+    auto selectedString = self.currentSelectedString;
+    if (!selectedString)
+        return;
+
+    _dropdown->didSelectOption(selectedString);
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView

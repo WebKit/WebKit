@@ -28,6 +28,7 @@
 
 #import "EventSenderProxy.h"
 #import "EventSerializerMac.h"
+#import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
 #import "SharedEventStreamsMac.h"
 #import "TestController.h"
@@ -96,11 +97,38 @@ void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSVa
 
 bool UIScriptControllerMac::isShowingDataListSuggestions() const
 {
+    return dataListSuggestionsTableView();
+}
+
+void UIScriptControllerMac::activateDataListSuggestion(long index, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    RetainPtr<NSTableView> table;
+    do {
+        table = dataListSuggestionsTableView();
+    } while (index >= [table numberOfRows] && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]);
+
+    [table selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+
+    // Send the action after a short delay to simulate normal user interaction.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)), dispatch_get_main_queue(), [this, protectedThis = makeRefPtr(*this), callbackID, table] {
+        if ([table window])
+            [table sendAction:[table action] to:[table target]];
+
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+NSTableView *UIScriptControllerMac::dataListSuggestionsTableView() const
+{
     for (NSWindow *childWindow in webView().window.childWindows) {
         if ([childWindow isKindOfClass:NSClassFromString(@"WKDataListSuggestionWindow")])
-            return true;
+            return (NSTableView *)[findAllViewsInHierarchyOfType(childWindow.contentView, NSClassFromString(@"WKDataListSuggestionTableView")) firstObject];
     }
-    return false;
+    return nil;
 }
 
 static void playBackEvents(WKWebView *webView, UIScriptContext *context, NSString *eventStream, JSValueRef callback)
