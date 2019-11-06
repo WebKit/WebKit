@@ -63,10 +63,6 @@ class BugzillaPatchFetcher():
         _log.info('{} r? patches, {} patches need to be sent to Buildbot: {}'.format(len(patch_ids), len(patches_to_send), patches_to_send))
 
         for patch_id in patches_to_send:
-            if Patch.is_patch_sent_to_buildbot(patch_id):
-                _log.error('Patch {} is already sent to buildbot.'.format(patch_id))
-                continue
-            Patch.set_sent_to_buildbot(patch_id, True)
             bz_patch = Bugzilla.retrieve_attachment(patch_id)
             if not bz_patch or bz_patch['id'] != patch_id:
                 _log.error('Unable to retrive patch "{}"'.format(patch_id))
@@ -75,6 +71,10 @@ class BugzillaPatchFetcher():
                 _log.warn('Patch is obsolete, skipping')
                 Patch.set_obsolete(patch_id)
                 continue
+            if Patch.is_patch_sent_to_buildbot(patch_id):
+                _log.error('Patch {} is already sent to buildbot.'.format(patch_id))
+                continue
+            Patch.set_sent_to_buildbot(patch_id, True)
             rc = Buildbot.send_patch_to_buildbot(bz_patch['path'],
                      properties=['patch_id={}'.format(patch_id), 'bug_id={}'.format(bz_patch['bug_id']), 'owner={}'.format(bz_patch.get('creator', ''))])
             if rc == 0:
