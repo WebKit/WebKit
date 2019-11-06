@@ -1,3 +1,18 @@
+2019-11-06  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix: fix TestWebKitAPI in macCatalyst, tvOS, and
+        watchOS builds by conditionalizing some code on HAVE_UIWEBVIEW and
+        HAVE_PDFKIT. Follow-up to r251976.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/JSLockTakesWebThreadLock.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollToRevealSelection.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/SnapshotViaRenderInContext.mm:
+        * TestWebKitAPI/Tests/ios/SetTimeoutFunction.mm:
+        * TestWebKitAPI/config.h:
+
 2019-11-06  Aakash Jain  <aakash_jain@apple.com>
 
         All EWS status-bubbles shows #1 on security patches when patch is uploaded with webkit-patch --no-review

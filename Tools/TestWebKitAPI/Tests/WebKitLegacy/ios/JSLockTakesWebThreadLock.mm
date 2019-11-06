@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(UIWEBVIEW)
 
 #import "PlatformUtilities.h"
 #import <JavaScriptCore/JSVirtualMachine.h>

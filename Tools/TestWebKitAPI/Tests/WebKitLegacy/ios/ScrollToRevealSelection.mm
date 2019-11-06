@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(UIWEBVIEW)
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(UIWEBVIEW)
 
 #import "PlatformUtilities.h"
 #import <WebKit/DOMHTMLMediaElement.h>

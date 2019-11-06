@@ -34,7 +34,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(PDFKIT) && PLATFORM(IOS)
 
 @interface PDFHostViewController : UIViewController
 + (void)createHostView:(void(^)(id hostViewController))callback forExtensionIdentifier:(NSString *)extensionIdentifier;
