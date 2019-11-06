@@ -1,3 +1,16 @@
+2019-11-06  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r252138.
+
+        Caused 8 http/tests/cookies/same-site/ to fail
+
+        Reverted changeset:
+
+        "Update SameSite tests for new semantics for empty and invalid
+        SameSite attribute"
+        https://bugs.webkit.org/show_bug.cgi?id=203755
+        https://trac.webkit.org/changeset/252138
+
 2019-11-06  Peng Liu  <peng.liu6@apple.com>
 
         Layout tests in media/modern-media-controls/pip-placard are designed for MacOS only
