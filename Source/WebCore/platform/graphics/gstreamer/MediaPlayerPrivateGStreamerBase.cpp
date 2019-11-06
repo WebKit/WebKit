@@ -1206,8 +1206,33 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
     result &= gst_element_link_many(upload, colorconvert, appsink, nullptr);
 
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
-    gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
+    // Workaround until we can depend on GStreamer 1.16.2.
+    // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
+    // Forcing a color conversion to RGBA here allows glupload to internally use
+    // an uploader that adds a VideoMeta, through the TextureUploadMeta caps
+    // feature, without needing the patch above. However this specific caps
+    // feature is going to be removed from GStreamer so it is considered a
+    // short-term workaround. This code path most likely will have a negative
+    // performance impact on embedded platforms as well. Downstream embedders
+    // are highly encouraged to cherry-pick the patch linked above in their BSP
+    // and set the WEBKIT_GST_NO_RGBA_CONVERSION environment variable until
+    // GStreamer 1.16.2 is released.
+    // See also https://bugs.webkit.org/show_bug.cgi?id=201422
+    if (webkitGstCheckVersion(1, 16, 2) || getenv("WEBKIT_GST_NO_RGBA_CONVERSION")) {
+        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+        gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
+    } else {
+        GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
+        GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format=RGBA"));
+        g_object_set(capsFilter, "caps", caps.get(), nullptr);
+
+        GstElement* videoconvert = gst_element_factory_make("videoconvert", nullptr);
+        gst_bin_add_many(GST_BIN_CAST(videoSink), capsFilter, videoconvert, nullptr);
+        result &= gst_element_link_many(capsFilter, videoconvert, upload, nullptr);
+
+        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(capsFilter, "sink"));
+        gst_element_add_pad(videoSink, gst_ghost_pad_new("sink", pad.get()));
+    }
 
     if (!result) {
         GST_WARNING("Failed to link GstGL elements");

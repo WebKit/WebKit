@@ -1,3 +1,22 @@
+2019-11-06  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r249428): [GStreamer] VP9 video rendered green
+        https://bugs.webkit.org/show_bug.cgi?id=201422
+        <rdar://problem/55945741>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the texture upload GStreamer meta code path. Until
+        GStreamer 1.16.2 this workaround is needed to fix VP9 (vp9dec)
+        rendering. For downstream users cherry-picking the corresponding
+        GStreamer patch[0], an environment variable can be set to bypass
+        the reintroduced slow color conversion: $WEBKIT_GST_NO_RGBA_CONVERSION.
+
+        [0] https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL):
+
 2019-11-06  youenn fablet  <youenn@apple.com>
 
         There is no need to clean the content type header of a request if it is null
