@@ -150,7 +150,8 @@ void VisualViewport::update()
     double height = 0;
     double scale = 1;
 
-    if (auto* frame = this->frame()) {
+    auto frame = makeRefPtr(this->frame());
+    if (frame) {
         if (auto* view = frame->view()) {
             auto visualViewportRect = view->visualViewportRect();
             auto layoutViewportRect = view->layoutViewportRect();
@@ -173,20 +174,12 @@ void VisualViewport::update()
         m_offsetTop = offsetTop;
     }
     if (m_width != width || m_height != height || m_scale != scale) {
-        enqueueResizeEvent();
+        if (auto* frame = this->frame())
+            frame->document()->setNeedsVisualViewportResize();
         m_width = width;
         m_height = height;
         m_scale = scale;
     }
-}
-
-void VisualViewport::enqueueResizeEvent()
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return;
-
-    frame->document()->eventQueue().enqueueResizeEvent(*this, Event::CanBubble::No, Event::IsCancelable::No);
 }
 
 void VisualViewport::enqueueScrollEvent()

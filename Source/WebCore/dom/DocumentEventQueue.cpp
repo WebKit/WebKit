@@ -105,22 +105,6 @@ void DocumentEventQueue::enqueueScrollEvent(EventTarget& target, Event::CanBubbl
     enqueueEvent(WTFMove(scrollEvent));
 }
 
-void DocumentEventQueue::enqueueResizeEvent(EventTarget& target, Event::CanBubble canBubble, Event::IsCancelable cancelable)
-{
-    if (m_isClosed)
-        return;
-
-    if (!m_document.hasListenerType(Document::RESIZE_LISTENER))
-        return;
-
-    if (!m_targetsWithQueuedResizeEvents.add(&target).isNewEntry)
-        return;
-
-    Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, canBubble, cancelable);
-    resizeEvent->setTarget(&target);
-    enqueueEvent(WTFMove(resizeEvent));
-}
-
 bool DocumentEventQueue::cancelEvent(Event& event)
 {
     bool found = m_queuedEvents.remove(&event);
