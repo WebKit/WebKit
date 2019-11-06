@@ -1,3 +1,14 @@
+2019-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement support for Pointer Lock API
+        https://bugs.webkit.org/show_bug.cgi?id=202956
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Enable Pointer Lock for GTK port.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2019-11-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][CMake] Build WebCore as an OBJECT library for WinCairo port

@@ -34,7 +34,7 @@ namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
+    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int, Optional<WebCore::IntPoint>);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
     static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const String&, bool handledByInputMethod, Vector<String>&& commands);

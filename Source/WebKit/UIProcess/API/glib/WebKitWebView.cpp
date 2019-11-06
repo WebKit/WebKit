@@ -2627,6 +2627,22 @@ void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& me
     g_signal_emit(webView, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get(), &returnValue);
 }
 
+#if ENABLE(POINTER_LOCK)
+void webkitWebViewRequestPointerLock(WebKitWebView* webView)
+{
+#if PLATFORM(GTK)
+    webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
+}
+
+void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
+{
+#if PLATFORM(GTK)
+    webkitWebViewBaseDidLosePointerLock(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
+}
+#endif
+
 #if PLATFORM(WPE)
 /**
  * webkit_web_view_get_backend:

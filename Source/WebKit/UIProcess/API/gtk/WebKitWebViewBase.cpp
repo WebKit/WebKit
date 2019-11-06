@@ -38,6 +38,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
+#include "PointerLockManager.h"
 #include "ViewGestureController.h"
 #include "WebEventFactory.h"
 #include "WebInspectorProxy.h"
@@ -195,6 +196,7 @@ struct _WebKitWebViewBasePrivate {
     KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
     IntSize contentsSize;
+    GUniquePtr<GdkEvent> lastMotionEvent;
 
     GtkWindow* toplevelOnScreenWindow { nullptr };
     unsigned long toplevelFocusInEventID { 0 };
@@ -229,6 +231,8 @@ struct _WebKitWebViewBasePrivate {
     CompletionHandler<void(String)> emojiChooserCompletionHandler;
     RunLoop::Timer<WebKitWebViewBasePrivate> releaseEmojiChooserTimer;
 #endif
+
+    std::unique_ptr<PointerLockManager> pointerLockManager;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -555,6 +559,10 @@ static void webkitWebViewBaseDispose(GObject* gobject)
 #if GTK_CHECK_VERSION(3, 24, 0)
     webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
 #endif
+    if (webView->priv->pointerLockManager) {
+        webView->priv->pointerLockManager->unlock();
+        webView->priv->pointerLockManager = nullptr;
+    }
     webView->priv->pageProxy->close();
     webView->priv->acceleratedBackingStore = nullptr;
     webView->priv->sleepDisabler = nullptr;
@@ -821,6 +829,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
     ASSERT(!priv->dialog);
 
     int clickCount = 0;
+    Optional<IntPoint> movementDelta;
     GdkEventType eventType = gdk_event_get_event_type(event);
     switch (eventType) {
     case GDK_BUTTON_PRESS:
@@ -850,6 +859,16 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
         gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case GDK_MOTION_NOTIFY:
+        // Pointer Lock. 7.1 Attributes: movementX/Y must be updated regardless of pointer lock state.
+        if (priv->lastMotionEvent) {
+            double currentX, currentY;
+            gdk_event_get_root_coords(event, &currentX, &currentY);
+            double previousX, previousY;
+            gdk_event_get_root_coords(priv->lastMotionEvent.get(), &previousX, &previousY);
+            movementDelta = IntPoint(currentX - previousX, currentY - previousY);
+        }
+        priv->lastMotionEvent.reset(gdk_event_copy(event));
+        break;
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
         break;
@@ -857,7 +876,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
         ASSERT_NOT_REACHED();
     }
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, clickCount));
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, clickCount, movementDelta));
 }
 
 static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventButton* event)
@@ -959,6 +978,11 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     if (priv->dialog) {
         auto* widgetClass = GTK_WIDGET_CLASS(webkit_web_view_base_parent_class);
         return widgetClass->motion_notify_event ? widgetClass->motion_notify_event(widget, event) : GDK_EVENT_PROPAGATE;
+    }
+
+    if (priv->pointerLockManager) {
+        priv->pointerLockManager->didReceiveMotionEvent(reinterpret_cast<GdkEvent*>(event));
+        return GDK_EVENT_STOP;
     }
 
     webkitWebViewBaseHandleMouseEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
@@ -1837,3 +1861,42 @@ int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBa
     return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
 }
 #endif
+
+void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    RELEASE_ASSERT(!priv->pointerLockManager);
+    if (!priv->lastMotionEvent) {
+        GtkWidget* viewWidget = GTK_WIDGET(webViewBase);
+        auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
+        int x, y;
+        GdkModifierType state;
+        gdk_window_get_device_position(gtk_widget_get_window(viewWidget), device, &x, &y, &state);
+        priv->lastMotionEvent.reset(gdk_event_new(GDK_MOTION_NOTIFY));
+        priv->lastMotionEvent->motion.x = x;
+        priv->lastMotionEvent->motion.y = y;
+        int rootX, rootY;
+        gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &rootX, &rootY);
+        priv->lastMotionEvent->motion.x_root = rootX;
+        priv->lastMotionEvent->motion.y_root = rootY;
+        priv->lastMotionEvent->motion.state = state;
+    }
+    priv->pointerLockManager = PointerLockManager::create(*priv->pageProxy, priv->lastMotionEvent.get());
+    if (priv->pointerLockManager->lock()) {
+        priv->pageProxy->didAllowPointerLock();
+        return;
+    }
+
+    priv->pointerLockManager = nullptr;
+    priv->pageProxy->didDenyPointerLock();
+}
+
+void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (!priv->pointerLockManager)
+        return;
+
+    priv->pointerLockManager->unlock();
+    priv->pointerLockManager = nullptr;
+}

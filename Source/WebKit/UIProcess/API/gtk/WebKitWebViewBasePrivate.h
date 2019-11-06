@@ -101,3 +101,6 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase*, const WebCore::IntRec
 #if USE(WPE_RENDERER)
 int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase*);
 #endif
+
+void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase*);
+void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase*);

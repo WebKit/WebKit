@@ -1,3 +1,52 @@
+2019-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement support for Pointer Lock API
+        https://bugs.webkit.org/show_bug.cgi?id=202956
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add platform specific implementation of Pointer Lock for the GTK port.
+
+        * PlatformGTK.cmake: Generate code for pointer-constraints and relative-pointer Wayland protocols.
+        * Shared/NativeWebMouseEvent.h: Add optional mouse movement delta.
+        * Shared/gtk/NativeWebMouseEventGtk.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent): Pass movement delta to WebEventFactory::createWebMouseEvent().
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent): Initialize deltaX and deltaY for motion events using the received delta.
+        * Shared/gtk/WebEventFactory.h: Add optional mouse movement delta.
+        * SourcesGTK.txt: Add new files to compilation.
+        * UIProcess/API/glib/WebKitUIClient.cpp: Add implementation for requestPointerLock and didLosePointerLock.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRequestPointerLock): Call webkitWebViewBaseRequestPointerLock().
+        (webkitWebViewDidLosePointerLock): Call webkitWebViewBaseDidLosePointerLock().
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose): Unlock the pointer and release the PointerLockManager.
+        (webkitWebViewBaseHandleMouseEvent): Initialize the mouse movement delta for motion events and save the current event.
+        (webkitWebViewBaseMotionNotifyEvent): Let PointerLockManager handle motion events while pointer is locked.
+        (webkitWebViewBaseRequestPointerLock): Create a PointerLockManager and request it to lock the pointer.
+        (webkitWebViewBaseDidLosePointerLock): Request PointerLockManager to unlock the pointer.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/PointerLockManager.cpp: Added.
+        (WebKit::PointerLockManager::create):
+        (WebKit::PointerLockManager::PointerLockManager):
+        (WebKit::PointerLockManager::~PointerLockManager):
+        (WebKit::PointerLockManager::lock):
+        (WebKit::PointerLockManager::unlock):
+        (WebKit::PointerLockManager::handleMotion):
+        * UIProcess/gtk/PointerLockManager.h: Added.
+        (WebKit::PointerLockManager::didReceiveMotionEvent):
+        * UIProcess/gtk/PointerLockManagerWayland.cpp: Added.
+        (WebKit::PointerLockManagerWayland::PointerLockManagerWayland):
+        (WebKit::PointerLockManagerWayland::~PointerLockManagerWayland):
+        (WebKit::PointerLockManagerWayland::lock):
+        (WebKit::PointerLockManagerWayland::unlock):
+        * UIProcess/gtk/PointerLockManagerWayland.h: Added.
+        * UIProcess/gtk/PointerLockManagerX11.cpp: Added.
+        (WebKit::PointerLockManagerX11::PointerLockManagerX11):
+        (WebKit::PointerLockManagerX11::didReceiveMotionEvent):
+        * UIProcess/gtk/PointerLockManagerX11.h: Added.
+
 2019-11-05  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Scroll position does not get restored when doing a history navigation while the reader view is shown

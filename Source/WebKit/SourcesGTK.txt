@@ -240,6 +240,9 @@ UIProcess/gtk/GestureController.cpp
 UIProcess/gtk/HardwareAccelerationManager.cpp
 UIProcess/gtk/InputMethodFilter.cpp
 UIProcess/gtk/KeyBindingTranslator.cpp
+UIProcess/gtk/PointerLockManager.cpp @no-unify
+UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
+UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
 UIProcess/gtk/RemoteWebInspectorProxyGtk.cpp
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewGestureControllerGtk.cpp @no-unify

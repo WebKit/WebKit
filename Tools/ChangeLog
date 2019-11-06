@@ -1,3 +1,13 @@
+2019-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement support for Pointer Lock API
+        https://bugs.webkit.org/show_bug.cgi?id=202956
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::getGDKKeySymForKeyRef): Handle escape key.
+
 2019-11-05  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Scroll position does not get restored when doing a history navigation while the reader view is shown

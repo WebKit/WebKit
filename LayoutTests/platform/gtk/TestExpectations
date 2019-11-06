@@ -530,14 +530,6 @@ Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
 Bug(GTK) compositing/visible-rect [ Skip ]
 Bug(GTK) legacy-animation-engine/compositing/visible-rect [ Skip ]
 
-# Pointer Lock is not implemented.
-webkit.org/b/99036 pointer-lock [ Skip ]
-# As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.
-webkit.org/b/99036 http/tests/fullscreen [ Skip ]
-webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
-webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
-webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
-
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
@@ -2532,6 +2524,9 @@ webkit.org/b/202245 http/tests/workers/service/Client-properties-subframe.html [
 webkit.org/b/202245 http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html [ Timeout ]
 webkit.org/b/202245 http/tests/workers/service/registration-clear-redundant-worker.html [ Timeout ]
 
+webkit.org/b/99036 pointer-lock/pointerlockchange-event-on-lock-lost.html [ Timeout ]
+webkit.org/b/99036 pointer-lock/pointerlockelement-null-when-pending.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3876,6 +3871,9 @@ webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
 webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-fill-05-b-manual.svg [ Failure ]
 webkit.org/b/203677 imported/w3c/web-platform-tests/svg/import/painting-stroke-08-t-manual.svg [ Failure ]
 webkit.org/b/203677 svg/W3C-SVG-1.1/painting-fill-05-b.svg [ Failure ]
+
+webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Failure ]
+webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

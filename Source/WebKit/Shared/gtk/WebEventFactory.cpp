@@ -135,7 +135,7 @@ static inline short pressedMouseButtons(GdkModifierType state)
     return buttons;
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int currentClickCount)
+WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int currentClickCount, Optional<IntPoint> delta)
 {
     double x, y, xRoot, yRoot;
     gdk_event_get_coords(event, &x, &y);
@@ -148,6 +148,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
     gdk_event_get_button(event, &eventButton);
 
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
+    IntPoint movementDelta;
 
     GdkEventType eventType = gdk_event_get_event_type(event);
     switch (eventType) {
@@ -155,6 +156,8 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
     case GDK_ENTER_NOTIFY:
     case GDK_LEAVE_NOTIFY:
         type = WebEvent::MouseMove;
+        if (delta)
+            movementDelta = delta.value();
         break;
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
@@ -179,8 +182,8 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
         pressedMouseButtons(state),
         IntPoint(x, y),
         IntPoint(xRoot, yRoot),
-        0 /* deltaX */,
-        0 /* deltaY */,
+        movementDelta.x(),
+        movementDelta.y(),
         0 /* deltaZ */,
         currentClickCount,
         modifiersForEvent(event),

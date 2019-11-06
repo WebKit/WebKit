@@ -270,6 +270,8 @@ int getGDKKeySymForKeyRef(WKStringRef keyRef, unsigned location, guint* modifier
         return GDK_KEY_F11;
     if (WKStringIsEqualToUTF8CString(keyRef, "F12"))
         return GDK_KEY_F12;
+    if (WKStringIsEqualToUTF8CString(keyRef, "escape"))
+        return GDK_KEY_Escape;
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
     auto buffer = makeUniqueArray<char>(bufferSize);

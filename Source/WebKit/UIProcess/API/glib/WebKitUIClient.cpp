@@ -250,6 +250,19 @@ private:
         webkitWebViewIsPlayingAudioChanged(m_webView);
     }
 
+#if ENABLE(POINTER_LOCK)
+    void requestPointerLock(WebPageProxy* page) final
+    {
+        webkitWebViewRequestPointerLock(m_webView);
+    }
+
+    void didLosePointerLock(WebPageProxy*) final
+    {
+        webkitWebViewDidLosePointerLock(m_webView);
+    }
+#endif
+
+
     WebKitWebView* m_webView;
 };
 
