@@ -1,3 +1,16 @@
+2019-11-06  Jer Noble  <jer.noble@apple.com>
+
+        Screen locks while watching previously-muted-then-unmuted video
+        https://bugs.webkit.org/show_bug.cgi?id=203906
+        <rdar://problem/55821375>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-unmuted-after-play-holds-sleep-assertion.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted):
+
 2019-11-06  Oriol Brufau  <obrufau@igalia.com>
 
         Keep None value at the end of the ListStyleType enum

@@ -3817,6 +3817,7 @@ void HTMLMediaElement::setMuted(bool muted)
         scheduleUpdateMediaState();
 #endif
         m_mediaSession->canProduceAudioChanged();
+        updateSleepDisabling();
     }
 
     schedulePlaybackControlsManagerUpdate();

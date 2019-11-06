@@ -1,3 +1,14 @@
+2019-11-06  Jer Noble  <jer.noble@apple.com>
+
+        Screen locks while watching previously-muted-then-unmuted video
+        https://bugs.webkit.org/show_bug.cgi?id=203906
+        <rdar://problem/55821375>
+
+        Reviewed by Eric Carlson.
+
+        * media/video-unmuted-after-play-holds-sleep-assertion-expected.txt: Added.
+        * media/video-unmuted-after-play-holds-sleep-assertion.html: Added.
+
 2019-11-06  Daniel Bates  <dabates@apple.com>
 
         Update SameSite tests for new semantics for empty and invalid SameSite attribute
