@@ -2189,8 +2189,14 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_restorePageScrollPosition:(Optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+        // Defer scroll position restoration until after the current resize completes.
+        RetainPtr<WKWebView> retainedSelf = self;
+        _callbacksDeferredDuringResize.append([retainedSelf, scrollPosition, scrollOrigin, obscuredInsets, scale] {
+            [retainedSelf _restorePageScrollPosition:scrollPosition scrollOrigin:scrollOrigin previousObscuredInset:obscuredInsets scale:scale];
+        });
         return;
+    }
 
     if (![self usesStandardContentView])
         return;
@@ -2207,8 +2213,14 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (void)_restorePageStateToUnobscuredCenter:(Optional<WebCore::FloatPoint>)center scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+        // Defer scroll position restoration until after the current resize completes.
+        RetainPtr<WKWebView> retainedSelf = self;
+        _callbacksDeferredDuringResize.append([retainedSelf, center, scale] {
+            [retainedSelf _restorePageStateToUnobscuredCenter:center scale:scale];
+        });
         return;
+    }
 
     if (![self usesStandardContentView])
         return;
