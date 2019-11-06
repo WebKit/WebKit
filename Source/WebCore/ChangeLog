@@ -1,3 +1,28 @@
+2019-11-06  Chris Lord  <clord@igalia.com>
+
+        [Cairo] Cairo graphics backend uses ImageBuffer::copyImage just to access native image buffer handles
+        https://bugs.webkit.org/show_bug.cgi?id=203884
+
+        Reviewed by Carlos Garcia Campos.
+
+        The Cairo graphics backend uses ImageBuffer::copyImage(DontCopyBackingStore) frequently just to access
+        the native image pointer. This makes several functions unusable off-main-thread, so add an accessor
+        function to avoid doing this.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawShadowLayerBuffer):
+        (WebCore::Cairo::drawShadowImage):
+        (WebCore::Cairo::fillShadowBuffer):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::clipToImageBuffer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::nativeImage const):
+
 2019-11-06  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r249428): [GStreamer] VP9 video rendered green

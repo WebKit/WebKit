@@ -411,11 +411,7 @@ IntRect GraphicsContextImplCairo::clipBounds()
 
 void GraphicsContextImplCairo::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
 {
-    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    if (auto surface = image->nativeImageForCurrentFrame())
+    if (auto surface = buffer.nativeImage())
         Cairo::clipToImageBuffer(m_platformContext, surface.get(), destRect);
 }
 

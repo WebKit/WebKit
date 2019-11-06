@@ -174,11 +174,7 @@ enum PathDrawingStyle {
 
 static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize, const ShadowState& shadowState)
 {
-    RefPtr<Image> image = layerImage.copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    if (auto surface = image->nativeImageForCurrentFrame()) {
+    if (auto surface = layerImage.nativeImage()) {
         drawNativeImage(platformContext, surface.get(), FloatRect(roundedIntPoint(layerOrigin), layerSize), FloatRect(FloatPoint(), layerSize), { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
     }
 }
@@ -186,11 +182,7 @@ static void drawShadowLayerBuffer(PlatformContextCairo& platformContext, ImageBu
 // FIXME: This is mostly same as drawShadowLayerBuffer, so we should merge two.
 static void drawShadowImage(PlatformContextCairo& platformContext, ImageBuffer& layerImage, const FloatRect& destRect, const FloatRect& srcRect, const ShadowState& shadowState)
 {
-    RefPtr<Image> image = layerImage.copyImage(DontCopyBackingStore);
-    if (!image)
-        return;
-
-    if (auto surface = image->nativeImageForCurrentFrame()) {
+    if (auto surface = layerImage.nativeImage()) {
         drawNativeImage(platformContext, surface.get(), destRect, srcRect, { shadowState.globalCompositeOperator }, shadowState.globalAlpha, ShadowState());
     }
 }
@@ -199,11 +191,8 @@ static void fillShadowBuffer(PlatformContextCairo& platformContext, ImageBuffer&
 {
     save(platformContext);
 
-    RefPtr<Image> image = layerImage.copyImage(DontCopyBackingStore);
-    if (image) {
-        if (auto surface = image->nativeImageForCurrentFrame())
-            clipToImageBuffer(platformContext, surface.get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
-    }
+    if (auto surface = layerImage.nativeImage())
+        clipToImageBuffer(platformContext, surface.get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
 
     FillSource fillSource;
     fillSource.globalAlpha = shadowState.globalAlpha;

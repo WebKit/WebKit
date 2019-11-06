@@ -116,6 +116,10 @@ public:
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const;
     Vector<uint8_t> toBGRAData() const;
 
+#if USE(CAIRO)
+    NativeImagePtr nativeImage() const;
+#endif
+
 #if !USE(CG)
     AffineTransform baseTransform() const { return AffineTransform(); }
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);

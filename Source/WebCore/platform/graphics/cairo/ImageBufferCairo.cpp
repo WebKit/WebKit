@@ -259,6 +259,11 @@ Vector<uint8_t> ImageBuffer::toBGRAData() const
     return imageData;
 }
 
+NativeImagePtr ImageBuffer::nativeImage() const
+{
+    return m_data.m_surface.get();
+}
+
 ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, const HostWindow*, bool& success)
     : m_data(IntSize(size), renderingMode)
     , m_logicalSize(size)
