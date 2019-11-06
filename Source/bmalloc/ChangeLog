@@ -1,3 +1,14 @@
+2019-11-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, roll-out r251268 due to RAMification regression
+        https://bugs.webkit.org/show_bug.cgi?id=203121
+
+        The code was the bug, but it would be possible that this bug accidentally makes our policy better.
+        We should clean up to make this bug's behavior default. And we should look for a bit larger interval here.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2019-10-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [bmalloc] Bug fix for wait time when it's in mini mode.
