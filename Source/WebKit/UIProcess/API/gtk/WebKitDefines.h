@@ -45,4 +45,4 @@
 #define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED
 #define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)
 
-#endif // WebKitDefines_h
+#endif /* WebKitDefines_h */

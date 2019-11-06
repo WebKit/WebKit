@@ -82,7 +82,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitUserContentFilter, webkit_user_content_filt
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebsiteData, webkit_website_data_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebViewSessionState, webkit_web_view_session_state_unref)
 
-#endif // __GI_SCANNER__
-#endif // G_DEFINE_AUTOPTR_CLEANUP_FUNC
+#endif /* __GI_SCANNER__ */
+#endif /* G_DEFINE_AUTOPTR_CLEANUP_FUNC */
 
-#endif // WebKitAutocleanups_h
+#endif /* WebKitAutocleanups_h */

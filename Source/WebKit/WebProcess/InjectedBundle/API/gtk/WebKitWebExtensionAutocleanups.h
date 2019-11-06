@@ -34,7 +34,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebExtension, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebHitTestResult, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebPage, g_object_unref)
 
-#endif // __GI_SCANNER__
-#endif // G_DEFINE_AUTOPTR_CLEANUP_FUNC
+#endif /* __GI_SCANNER__ */
+#endif /* G_DEFINE_AUTOPTR_CLEANUP_FUNC */
 
-#endif // WebKitWebExtensionAutocleanups_h
+#endif /* WebKitWebExtensionAutocleanups_h */

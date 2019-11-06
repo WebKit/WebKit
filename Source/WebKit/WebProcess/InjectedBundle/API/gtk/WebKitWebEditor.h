@@ -62,4 +62,4 @@ webkit_web_editor_get_page (WebKitWebEditor *editor);
 
 G_END_DECLS
 
-#endif // WebKitWebEditor_h
+#endif /* WebKitWebEditor_h */
