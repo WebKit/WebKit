@@ -267,11 +267,6 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transition startInteractiveTransition:m_swipeTransitionContext.get()];
 }
 
-void ViewGestureController::makeSnapshotBlank()
-{
-    [m_snapshotView layer].contents = nil;
-}
-
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *context, bool cancelled)
 {
     [context _setTransitionIsInFlight:NO];
@@ -317,20 +312,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    SnapshotRemovalTracker::Events desiredEvents;
-    if (targetItem->hasCachedWebPage()) {
-        desiredEvents = SnapshotRemovalTracker::RenderTreeSizeThreshold
-            | SnapshotRemovalTracker::RepaintAfterNavigation
-            | SnapshotRemovalTracker::MainFrameLoad
-            | SnapshotRemovalTracker::SubresourceLoads
-            | SnapshotRemovalTracker::ScrollPositionRestoration;
-    } else {
-        desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout;
-        makeSnapshotBlank();
-    }
-
     // FIXME: Should we wait for VisuallyNonEmptyLayout like we do on Mac?
-    m_snapshotRemovalTracker.start(desiredEvents, [this] {
+    m_snapshotRemovalTracker.start(SnapshotRemovalTracker::RenderTreeSizeThreshold
+        | SnapshotRemovalTracker::RepaintAfterNavigation
+        | SnapshotRemovalTracker::MainFrameLoad
+        | SnapshotRemovalTracker::SubresourceLoads
+        | SnapshotRemovalTracker::ScrollPositionRestoration, [this] {
             this->removeSwipeSnapshot();
     });
 

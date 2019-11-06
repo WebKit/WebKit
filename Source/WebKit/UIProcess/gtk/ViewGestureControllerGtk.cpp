@@ -570,8 +570,4 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     return true;
 }
 
-void ViewGestureController::makeSnapshotBlank()
-{
-}
-
 } // namespace WebKit

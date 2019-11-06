@@ -1,5 +1,18 @@
 2019-11-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r251907.
+
+        Causes white flashing in some cases <rdar://problem/56957850>
+
+        Reverted changeset:
+
+        "Take down the gesture snapshot early when the back/forward
+        cache is not leveraged"
+        https://bugs.webkit.org/show_bug.cgi?id=203713
+        https://trac.webkit.org/changeset/251907
+
+2019-11-06  Chris Dumez  <cdumez@apple.com>
+
         Make sure we never end up with NetworkDataTaskCocoa TaskIdentifier conflicts
         https://bugs.webkit.org/show_bug.cgi?id=203902
 

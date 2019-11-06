@@ -173,11 +173,6 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
         endMagnificationGesture();
 }
 
-void ViewGestureController::makeSnapshotBlank()
-{
-    [m_swipeSnapshotLayer setContents:nil];
-}
-
 void ViewGestureController::endMagnificationGesture()
 {
     if (m_activeGestureType != ViewGestureType::Magnification)
