@@ -1,3 +1,16 @@
+2019-11-05  Timothy Hatcher  <timothy@apple.com>
+
+        [ Mac Debug WK1 ] REGRESSION (r251262?): fast/scrolling/latching/scroll-select-bottom-test.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=203176
+        rdar://problem/56425901
+
+        Unreviewed test gardening.
+
+        This hasn't been flaky since r251565 when a related r251261 regression/bug was fixed.
+        I was also able to run it locally against r252065 a total of 1,100 times with no failures.
+
+        * platform/mac-wk1/TestExpectations: Removed scroll-select-bottom-test.html.
+
 2019-11-06  Daniel Bates  <dabates@apple.com>
 
         REGRESSION [ PHP ][ iOS ]: Two http/tests/cookies/same-site/set-first-party-* Tests are Failing

@@ -809,8 +809,6 @@ webkit.org/b/200002 [ Mojave+ Debug ] imported/blink/storage/indexeddb/blob-basi
 # Skip IsLoggedIn
 http/tests/is-logged-in/ [ Skip ]
 
-webkit.org/b/203176 [ Debug ] fast/scrolling/latching/scroll-select-bottom-test.html [ Pass Failure ]
-
 webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 
 # wpt css-position failures
