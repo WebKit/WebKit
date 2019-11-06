@@ -1,3 +1,15 @@
+2019-11-05  John Wilander  <wilander@apple.com>
+
+        Temporarily turn off NSURLSession isolation
+        https://bugs.webkit.org/show_bug.cgi?id=201822
+
+        Reviewed by Chris Dumez.
+
+        Re-enabling it is tracked in rdar://problem/56921584.
+
+        * platform/wk2/TestExpectations:
+            Skipped the associated tests.
+
 2019-11-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-lists] Implement list-style-type: <string>

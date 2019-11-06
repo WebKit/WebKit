@@ -213,7 +213,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (auto* networkStorageSession = session.networkStorageSession()) {
         if (!shouldBlockCookies)
             shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID, pageID);
-        needsIsolatedSession = networkStorageSession->shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(firstParty);
+        // FIXME: <rdar://problem/56921584> needsIsolatedSession should be set here.
     }
 #endif
     restrictRequestReferrerToOriginIfNeeded(request);
