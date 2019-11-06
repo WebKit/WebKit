@@ -10,8 +10,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Cookies sent with HTTP request:
 PASS Do not have cookie "strict".
-PASS Do not have cookie "implicit-strict".
-PASS Do not have cookie "strict-because-invalid-SameSite-value".
+FAIL Should have cookie "implicit-strict". But do not.
+FAIL Should have cookie "strict-because-invalid-SameSite-value". But do not.
 PASS Do not have cookie "lax".
 
 Cookies visible in DOM:
@@ -20,6 +20,7 @@ PASS Do not have DOM cookie "implicit-strict".
 PASS Do not have DOM cookie "strict-because-invalid-SameSite-value".
 PASS Do not have DOM cookie "lax".
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

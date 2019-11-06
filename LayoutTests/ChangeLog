@@ -1,3 +1,63 @@
+2019-11-06  Daniel Bates  <dabates@apple.com>
+
+        Update SameSite tests for new semantics for empty and invalid SameSite attribute
+        https://bugs.webkit.org/show_bug.cgi?id=203755
+        <rdar://problem/50816282>
+
+        Reviewed by Brent Fulgham.
+
+        Update the tests and test expectations following CFNetwork change <rdar://problem/42290578> as we
+        now only recognize SameSite=Strict and SameSite=Lax. That is, we no longer treat SameSite= or
+        SameSite=<some garbage value> as SameSite=Strict.
+
+        MacOS Mojave does not have the fix for <rdar://problem/42290578> and so we land expected failure results.
+
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt:
+        * http/tests/cookies/same-site/popup-cross-site-post.html:
+        * http/tests/cookies/same-site/popup-cross-site.html:
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html:
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.php:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.php:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.php:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php:
+        * http/tests/cookies/same-site/resources/fetch-in-cross-origin-service-worker.html:
+        * platform/ios-12/http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/popup-cross-site-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/popup-cross-site-post-expected.txt: Removed.
+        * platform/ios-12/http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/popup-cross-site-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/popup-cross-site-post-expected.txt: Removed.
+        * platform/ios/http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect-expected.txt: Removed.
+        * platform/mac-mojave/http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/popup-cross-site-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/popup-cross-site-post-expected.txt:
+        * platform/mac-mojave/http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect-expected.txt:
+        * platform/mac/http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/popup-cross-site-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/popup-cross-site-post-expected.txt: Removed.
+        * platform/mac/http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect-expected.txt: Removed.
+
 2019-11-06  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r252138.
