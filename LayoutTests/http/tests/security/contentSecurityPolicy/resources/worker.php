@@ -80,10 +80,10 @@ try {
 postMessage(id === 0 ? "setTimeout blocked" : "setTimeout allowed");
 
 <?php
-} else if ($_GET["type"] == "alert-pass") {
+} else if ($_GET["type"] == "post-message-pass") {
 ?>
 
-alert('PASS');
+postMessage("PASS");
 
 <?php
 } else if ($_GET["type"] == "report-referrer") {

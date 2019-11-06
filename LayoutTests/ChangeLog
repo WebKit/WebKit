@@ -1,5 +1,21 @@
 2019-11-06  Daniel Bates  <dabates@apple.com>
 
+        http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html is a Flakey Failure
+        https://bugs.webkit.org/show_bug.cgi?id=198924
+        <rdar://problem/51811010>
+
+        Reviewed by Brent Fulgham.
+
+        JavaScript alert() cannot be called from a Web Worker. Use postMessage() instead to post "PASS"
+        to the worker's owner document. The tests don't actually make use of this posted message, but
+        fixing the code to use postMessage() may come in handy for future tests.
+
+        * http/tests/security/contentSecurityPolicy/resources/worker.php:
+        * http/tests/security/contentSecurityPolicy/worker-script-src.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html:
+
+2019-11-06  Daniel Bates  <dabates@apple.com>
+
         Update SameSite tests for new semantics for empty and invalid SameSite attribute
         https://bugs.webkit.org/show_bug.cgi?id=203755
         <rdar://problem/50816282>
