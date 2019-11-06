@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
     }
 }
 
-String JSGlobalObjectScriptDebugServer::runLoopMode()
+RunLoopMode JSGlobalObjectScriptDebugServer::runLoopMode()
 {
 #if USE(CF) && !PLATFORM(WATCHOS)
     // Run the RunLoop in a custom run loop mode to prevent default observers
@@ -76,9 +76,9 @@ String JSGlobalObjectScriptDebugServer::runLoopMode()
     // FIXME: <rdar://problem/25972777>. On watchOS, in order for auto-attach to work,
     // we need to run in the default run loop mode otherwise we do not receive the XPC messages
     // necessary to setup the relay connection and negotiate an auto-attach debugger.
-    return "com.apple.JavaScriptCore.remote-inspector-runloop-mode"_s;
+    return CFSTR("com.apple.JavaScriptCore.remote-inspector-runloop-mode");
 #else
-    return { };
+    return DefaultRunLoopMode;
 #endif
 }
 

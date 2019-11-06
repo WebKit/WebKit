@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
@@ -37,11 +37,23 @@
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CF)
+#include <CoreFoundation/CFRunLoop.h>
+#endif
+
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/GRefPtr.h>
 #endif
 
 namespace WTF {
+
+#if USE(CF)
+using RunLoopMode = CFStringRef;
+#define DefaultRunLoopMode kCFRunLoopDefaultMode
+#else
+using RunLoopMode = unsigned;
+#define DefaultRunLoopMode 0
+#endif
 
 class RunLoop : public FunctionDispatcher {
     WTF_MAKE_NONCOPYABLE(RunLoop);
@@ -62,7 +74,7 @@ public:
     WTF_EXPORT_PRIVATE void wakeUp();
 
     enum class CycleResult { Continue, Stop };
-    WTF_EXPORT_PRIVATE CycleResult static cycle(const String& = { });
+    WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode);
 
 #if USE(COCOA_EVENT_LOOP)
     WTF_EXPORT_PRIVATE void runForDuration(Seconds duration);
@@ -218,3 +230,4 @@ private:
 } // namespace WTF
 
 using WTF::RunLoop;
+using WTF::RunLoopMode;

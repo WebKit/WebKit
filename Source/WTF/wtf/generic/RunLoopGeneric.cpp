@@ -218,7 +218,7 @@ void RunLoop::wakeUp()
     wakeUp(locker);
 }
 
-RunLoop::CycleResult RunLoop::cycle(const String&)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
     iterate();
 }

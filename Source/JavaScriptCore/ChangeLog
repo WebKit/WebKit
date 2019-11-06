@@ -1,3 +1,19 @@
+2019-11-05  Mark Lam  <mark.lam@apple.com>
+
+        WTF::RunLoop should not depend on isMainThread() idiom.
+        https://bugs.webkit.org/show_bug.cgi?id=203873
+        <rdar://problem/56524251>
+
+        Reviewed by Saam Barati, Ryosuke Niwa, and Devin Rousso.
+
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::runLoopMode):
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetInitializeGlobalQueue):
+        (Inspector::RemoteConnectionToTarget::setupRunLoop):
+        (Inspector::RemoteConnectionToTarget::teardownRunLoop):
+
 2019-11-05  Tadeu Zagallo  <tzagallo@apple.com>
 
         [WebAssembly] Allow tiering up from LLInt to BBQ

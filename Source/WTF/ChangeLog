@@ -1,3 +1,35 @@
+2019-11-05  Mark Lam  <mark.lam@apple.com>
+
+        WTF::RunLoop should not depend on isMainThread() idiom.
+        https://bugs.webkit.org/show_bug.cgi?id=203873
+        <rdar://problem/56524251>
+
+        Reviewed by Saam Barati, Ryosuke Niwa, and Devin Rousso.
+
+        The isMainThread() idiom is only meaningful for WebCore.  It is less meaningful
+        for JSC since a VM instance can be entered from multiple threads, as long as only
+        one thread enters it at any time.  Hence, the concept of a main thread doesn't
+        make sense at the JSC level.
+
+        Since r251036, we started using a WTF::String to represent the RunLoop mode.
+        This caused problems for JSC clients when USE(CF) since it necessitated the use of
+        StringWrapperCFAllocator to track the life cycle of the CFStringRef generated from
+        the WTF::String.
+
+        To fix this problem, we should restore the original behavior of using CFStringRefs
+        as the RunLoop mode token.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::cycle): Deleted.
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::cycle):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::cycle):
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::cycle):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::cycle):
+
 2019-11-05  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         Add definitions of ANSI colors for colorful log output

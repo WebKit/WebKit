@@ -123,7 +123,7 @@ void RunLoop::wakeUp()
     g_source_set_ready_time(m_source.get(), 0);
 }
 
-RunLoop::CycleResult RunLoop::cycle(const String&)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
     g_main_context_iteration(NULL, FALSE);
     return CycleResult::Continue;

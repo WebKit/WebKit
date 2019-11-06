@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,8 +89,8 @@ static void RemoteTargetInitializeGlobalQueue()
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
         auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
-        if (!mode.isNull())
-            CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, mode.createCFString().get());
+        if (mode != DefaultRunLoopMode)
+            CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, mode);
     });
 }
 
@@ -262,8 +262,8 @@ void RemoteConnectionToTarget::setupRunLoop()
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
     auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
-    if (!mode.isNull())
-        CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), mode.createCFString().get());
+    if (mode != DefaultRunLoopMode)
+        CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), mode);
 }
 
 void RemoteConnectionToTarget::teardownRunLoop()
@@ -273,8 +273,8 @@ void RemoteConnectionToTarget::teardownRunLoop()
 
     CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
     auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
-    if (!mode.isNull())
-        CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), mode.createCFString().get());
+    if (mode != DefaultRunLoopMode)
+        CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), mode);
 
     m_runLoop = nullptr;
     m_runLoopSource = nullptr;

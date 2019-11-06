@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,7 @@ void RunLoop::wakeUp()
     ::PostMessage(m_runLoopMessageWindow, PerformWorkMessage, reinterpret_cast<WPARAM>(this), 0);
 }
 
-RunLoop::CycleResult RunLoop::cycle(const String&)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
     MSG message;
     if (!::GetMessage(&message, 0, 0, 0))
