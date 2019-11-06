@@ -64,6 +64,9 @@ public:
 #endif
 
     NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
+    void registerDataTask(NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa&, WebCore::StoredCredentialsPolicy);
+    void unregisterDataTask(NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa&, WebCore::StoredCredentialsPolicy);
+
     NSURLSessionDownloadTask* downloadTaskWithResumeData(NSData*);
 
     WebSocketTask* webSocketDataTaskForIdentifier(WebSocketTask::TaskIdentifier);
@@ -99,6 +102,8 @@ private:
     void addWebSocketTask(WebSocketTask&) final;
     void removeWebSocketTask(WebSocketTask&) final;
 #endif
+
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*>& dataTaskMap(WebCore::StoredCredentialsPolicy);
 
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithoutState;

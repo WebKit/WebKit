@@ -49,7 +49,7 @@ public:
 
     ~NetworkDataTaskCocoa();
 
-    typedef uint64_t TaskIdentifier;
+    using TaskIdentifier = uint64_t;
 
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend);
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, ChallengeCompletionHandler&&);

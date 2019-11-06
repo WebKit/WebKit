@@ -1220,12 +1220,39 @@ void NetworkSessionCocoa::clearCredentials()
 #endif
 }
 
+HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*>& NetworkSessionCocoa::dataTaskMap(WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    ASSERT(RunLoop::isMain());
+    switch (storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
+        return m_dataTaskMapEphemeralStatelessCookieless;
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
+        return m_dataTaskMapWithoutState;
+    case WebCore::StoredCredentialsPolicy::Use:
+        return m_dataTaskMapWithCredentials;
+    }
+    ASSERT_NOT_REACHED();
+    return m_dataTaskMapWithCredentials;
+}
+
 NetworkDataTaskCocoa* NetworkSessionCocoa::dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
     ASSERT(RunLoop::isMain());
-    if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use)
-        return m_dataTaskMapWithCredentials.get(taskIdentifier);
-    return m_dataTaskMapWithoutState.get(taskIdentifier);
+    return dataTaskMap(storedCredentialsPolicy).get(taskIdentifier);
+}
+
+void NetworkSessionCocoa::registerDataTask(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa& dataTask, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    auto& map = dataTaskMap(storedCredentialsPolicy);
+    RELEASE_ASSERT(!map.contains(taskIdentifier));
+    map.add(taskIdentifier, &dataTask);
+}
+
+void NetworkSessionCocoa::unregisterDataTask(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa& dataTask, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+    auto& map = dataTaskMap(storedCredentialsPolicy);
+    RELEASE_ASSERT(map.get(taskIdentifier) == &dataTask);
+    map.remove(taskIdentifier);
 }
 
 NSURLSessionDownloadTask* NetworkSessionCocoa::downloadTaskWithResumeData(NSData* resumeData)

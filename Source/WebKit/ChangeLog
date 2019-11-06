@@ -1,3 +1,28 @@
+2019-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we never end up with NetworkDataTaskCocoa TaskIdentifier conflicts
+        https://bugs.webkit.org/show_bug.cgi?id=203902
+
+        Reviewed by Antti Koivisto.
+
+        Consolidate the all the code related to data task registration / lookup / unregistration
+        in NetworkSessionCocoa and add a utility method (dataTaskMap()) to decide which data
+        task map to use. This makes it less error-prone and unlikely that someone would update
+        part of the code and fail to update the rest accordingly.
+
+        I also converted the debug assertions into release ones so that we crash in case of
+        id confusion instead of having a very bad and hard to diagnose bug like Bug 201822.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::dataTaskForIdentifier):
+        (WebKit::NetworkSessionCocoa::registerDataTask):
+        (WebKit::NetworkSessionCocoa::unregisterDataTask):
+
 2019-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement support for Pointer Lock API

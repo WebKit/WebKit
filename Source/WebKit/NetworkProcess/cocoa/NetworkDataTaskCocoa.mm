@@ -226,23 +226,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_task = [cocoaSession.isolatedSession(storedCredentialsPolicy, firstParty) dataTaskWithRequest:nsRequest];
     else
         m_task = [cocoaSession.session(storedCredentialsPolicy) dataTaskWithRequest:nsRequest];
-    switch (storedCredentialsPolicy) {
-    case WebCore::StoredCredentialsPolicy::Use:
-        ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
-        cocoaSession.m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
-        LOG(NetworkSession, "%llu Creating stateful NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-        break;
-    case WebCore::StoredCredentialsPolicy::DoNotUse:
-        ASSERT(!cocoaSession.m_dataTaskMapWithoutState.contains([m_task taskIdentifier]));
-        cocoaSession.m_dataTaskMapWithoutState.add([m_task taskIdentifier], this);
-        LOG(NetworkSession, "%llu Creating stateless NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-        break;
-    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
-        ASSERT(!cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.contains([m_task taskIdentifier]));
-        cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.add([m_task taskIdentifier], this);
-        LOG(NetworkSession, "%llu Creating ephemeral, stateless, cookieless NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-        break;
-    }
+
+    LOG(NetworkSession, "%llu Creating NetworkDataTask with storedCredentialsPolicy=%u and URL=%s", [m_task taskIdentifier], storedCredentialsPolicy, nsRequest.URL.absoluteString.UTF8String);
+    cocoaSession.registerDataTask([m_task taskIdentifier], *this, storedCredentialsPolicy);
 
     if (shouldPreconnectOnly == PreconnectOnly::Yes) {
 #if ENABLE(SERVER_PRECONNECT)
@@ -281,20 +267,7 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         return;
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
-    switch (m_storedCredentialsPolicy) {
-    case WebCore::StoredCredentialsPolicy::Use:
-        ASSERT(cocoaSession.m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
-        cocoaSession.m_dataTaskMapWithCredentials.remove([m_task taskIdentifier]);
-        break;
-    case WebCore::StoredCredentialsPolicy::DoNotUse:
-        ASSERT(cocoaSession.m_dataTaskMapWithoutState.get([m_task taskIdentifier]) == this);
-        cocoaSession.m_dataTaskMapWithoutState.remove([m_task taskIdentifier]);
-        break;
-    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
-        ASSERT(cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.get([m_task taskIdentifier]) == this);
-        cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.remove([m_task taskIdentifier]);
-        break;
-    }
+    cocoaSession.unregisterDataTask([m_task taskIdentifier], *this, m_storedCredentialsPolicy);
 }
 
 void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
