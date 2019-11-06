@@ -74,7 +74,7 @@ onmessage = function(event) {
     } else {
       valueToSend = view.buffer;
     }
-    var transferablesToSend = [];
+    var transferablesToSend = undefined;
     if (message.command == 'transfer' ||
         message.command == 'transferBuffer') {
       transferablesToSend = [ view.buffer ];

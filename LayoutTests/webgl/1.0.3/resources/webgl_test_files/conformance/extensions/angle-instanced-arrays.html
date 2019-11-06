@@ -77,6 +77,7 @@ var program;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
+    finishTest();
 } else {
     testPassed("WebGL context exists");
 
@@ -88,6 +89,7 @@ if (!gl) {
         testPassed("No ANGLE_instanced_arrays support -- this is legal");
 
         runSupportedTest(false);
+        finishTest();
     } else {
         testPassed("Successfully enabled ANGLE_instanced_arrays extension");
 
@@ -121,7 +123,7 @@ function runSupportedTest(extensionEnabled) {
 
 function runDivisorTestDisabled() {
     debug("Testing VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE with extension disabled");
-    
+
     var VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88FE;
 
     gl.getVertexAttrib(0, VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE);
@@ -381,7 +383,7 @@ function runANGLECorruptionTest()
 
         ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, instanceCount);
 
-        // Make sure each color was drawn correctly 
+        // Make sure each color was drawn correctly
         var i;
         var passed = true;
         for (i = 0; i < instanceCount; ++i) {
@@ -413,10 +415,6 @@ function runANGLECorruptionTest()
 
     cycleAndTest();
 }
-
-var successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>

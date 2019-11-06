@@ -395,34 +395,21 @@ editing/pasteboard/paste-global-selection.html
 
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
-webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
-http/tests/webgl/1.0.2/origin-clean-conformance.html [ Skip ]
+webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
+webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
 
-webkit.org/b/124935 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
+webkit.org/b/124935 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 
-# Skip 1.0.3 tests for now, to be unskipped when we get closer to conformance
-webgl/1.0.3/conformance/attribs [ Skip ]
-webgl/1.0.3/conformance/buffers [ Skip ]
-webgl/1.0.3/conformance/canvas [ Skip ]
-webgl/1.0.3/conformance/context [ Skip ]
-webgl/1.0.3/conformance/glsl [ Skip ]
-webgl/1.0.3/conformance/renderbuffers [ Skip ]
-webgl/1.0.3/conformance/rendering [ Skip ]
-webgl/1.0.3/conformance/state [ Skip ]
-webgl/1.0.3/conformance/textures [ Skip ]
-webgl/1.0.3/conformance/typedarrays [ Skip ]
-webgl/1.0.3/conformance/uniforms [ Skip ]
-webgl/1.0.3/conformance/extensions/angle-instanced-arrays.html [ Skip ]
-webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Skip ]
-webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Skip ]
-webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
+# Skip 1.0.3 tests that pass in conformance suite but timeout in TestRunner
+webgl/1.0.3/conformance/more/glsl [ Skip ]
+webgl/1.0.3/conformance/more/conformance [ Skip ]
+webgl/1.0.3/conformance/more/functions [ Skip ]
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]
 
 webkit.org/b/96828 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
-webkit.org/b/96828 webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Skip ]
+webkit.org/b/96828 webgl/1.0.3/conformance/extensions/oes-vertex-array-object.html [ Skip ]
 
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
@@ -702,7 +689,7 @@ webkit.org/b/131715 legacy-animation-engine/transitions/cancel-transition.html [
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 # <rdar://problem/16696298>
-webkit.org/b/131886 webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
+webkit.org/b/131886 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Pass Failure ]
 webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure Timeout ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
@@ -1036,7 +1023,6 @@ webkit.org/b/174066 inspector/canvas/recording-webgl2-memoryLimit.html [ Pass Fa
 webkit.org/b/174066 inspector/canvas/recording-webgl2-snapshots.html [ Pass Failure Timeout ]
 webkit.org/b/174272 inspector/canvas/requestClientNodes-css.html [ Pass Failure ]
 webkit.org/b/174066 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass Failure Timeout ]
-webkit.org/b/160048 [ Debug ] inspector/codemirror/prettyprinting-javascript.html [ Pass Timeout ]
 webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
 webkit.org/b/152452 [ Debug ] inspector/console/messageRepeatCountUpdated.html [ Pass Timeout ]
 webkit.org/b/168926 inspector/controller/runtime-controller-import.html [ Pass Timeout ]
@@ -1132,7 +1118,7 @@ webkit.org/b/154753 js/basic-map.html [ Skip ]
 # outline: auto -focusring.
 accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]
 
-webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
+webkit.org/b/152506 webgl/1.0.3/conformance/extensions/get-extension.html [ Pass Timeout ]
 
 webkit.org/b/154709 [ Sierra+ ] fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
 webkit.org/b/154709 [ Sierra+ ] legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Pass Failure ]
@@ -1518,10 +1504,6 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 [ HighSierra+ ] fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
 [ HighSierra+ ] fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 
-
-# <rdar://problem/32431942> REGRESSION: webgl/1.0.2/conformance/textures/gl-teximage.html is failing
-[ HighSierra+ ] webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
-
 # <rdar://problem/32620024> REGRESSION: LayoutTests canvas/philip/tests/2d.path.stroke.scale2.html and imported/w3c/canvas/2d.path.stroke.scale2.html are failing
 [ HighSierra+ ] canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
 [ HighSierra+ ] imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
@@ -1753,7 +1735,7 @@ webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 webkit.org/b/176929 [ Mojave+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
-webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
+webkit.org/b/170877 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
 webkit.org/b/190883 legacy-animation-engine/animations/suspend-resume-animation.html [ Pass Failure ]
 

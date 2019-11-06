@@ -1,3 +1,15 @@
+2019-11-05  Justin Fan  <justin_fan@apple.com>
+
+        [WebGL] Update WebGL 1 tests to prep for WebGL Conformance bot
+        https://bugs.webkit.org/show_bug.cgi?id=203763
+
+        Reviewed by Dean Jackson.
+
+        Remove the 1.0.2 suite and update 1.0.3 suite, which supercedes the former.
+
+        * webgl/1.0.2: Removed.
+        * webgl/1.0.3: Updated to latest Khronos version and expectations to match. Unskip all non-timeout/non-crashing tests.
+
 2019-11-05  John Wilander  <wilander@apple.com>
 
         Temporarily turn off NSURLSession isolation

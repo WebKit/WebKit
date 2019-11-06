@@ -6,4 +6,3 @@ webgl_field.vert.html
 webgl_function.vert.html
 webgl_struct.vert.html
 webgl_variable.vert.html
---min-version 1.0.2 webgl_preprocessor_reserved.html

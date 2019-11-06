@@ -1567,8 +1567,6 @@ webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 
 webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ Slow ]
 
-webkit.org/b/139640 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
-
 # These tests are generating inconsistent results between my machine (AMD) and test bots (INTEL)
 webkit.org/b/189641 webgl/2.0.0/conformance/buffers/buffer-uninitialized.html [ Skip ]
 webkit.org/b/189641 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Skip ]
@@ -1712,7 +1710,6 @@ webkit.org/b/121452 [ Debug ] fast/frames/lots-of-iframes.html [ Slow ]
 webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] js/dfg-double-vote-fuzz.html [ Slow ]
 [ Debug ] js/dom/string-replacement-outofmemory.html [ Slow ]
-[ Debug ] webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Slow ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Slow ]
 [ Debug ] fast/workers/dedicated-worker-lifecycle.html [ Slow ]
@@ -2697,8 +2694,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ ImageOnly
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/177799 accessibility/table-detection.html [ Pass Failure ]
-
-webkit.org/b/177997 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Pass Failure ]
 
 webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_032.htm [ Pass Failure ]
 
@@ -3908,3 +3903,21 @@ webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-chan
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-contents-shadow-dom-1.html [ Skip ]
+
+# webkit.org/b/203763 2019 WebGL test gardening: These tests pass in Safari and the conformance suite, but timeout in TestRunner and MiniBrowser.
+webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec3.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec3.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat2.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat3.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-mat4.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec3.html [ Skip ]
+webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ]
+webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
+webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
+webgl/1.0.3/conformance/glsl/misc/shaders-with-mis-matching-uniforms.html [ Skip ]
+webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ]
+webgl/1.0.3/conformance/glsl/misc/struct-unary-operators.html [ Skip ]
+webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]

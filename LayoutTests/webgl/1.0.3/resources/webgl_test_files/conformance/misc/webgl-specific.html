@@ -43,12 +43,13 @@
 var wtu = WebGLTestUtils;
 description("Tests the few differences between WebGL and GLES2");
 
-var gl = wtu.create3DContext();
+var gl = wtu.create3DContext(undefined, {stencil:true});
 var program = wtu.loadStandardProgram(gl);
 gl.useProgram(program);
 var vertexObject = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
 gl.enableVertexAttribArray(0);
+gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 0);
 wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup should succeed");
 
 debug("");
@@ -80,10 +81,11 @@ debug("Verify that front/back settings should be the same for stenclMask and ste
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMask(255)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.FRONT, 1)");
+gl.enable(gl.STENCIL_TEST);
+shouldBe("!!gl.getParameter(gl.STENCIL_BITS)", "true");
 wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.BACK, 1)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
-
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFunc(gl.ALWAYS, 0, 255)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
 wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 255)");

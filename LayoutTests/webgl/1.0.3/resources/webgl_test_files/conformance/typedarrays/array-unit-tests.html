@@ -195,16 +195,30 @@ function testInheritanceHierarchy() {
   // case, assert the new behavior.
   shouldBe('new Uint8ClampedArray(1) instanceof Uint8Array', 'false');
 
-  shouldBe('Object.getPrototypeOf(Int8Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Uint8Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Uint8ClampedArray.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Int16Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Uint16Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Int32Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Uint32Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Float32Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(Float64Array.prototype)', 'Object.prototype');
-  shouldBe('Object.getPrototypeOf(DataView.prototype)', 'Object.prototype');
+  if (Object.getPrototypeOf(Int8Array.prototype) == Object.prototype) {
+    // ES5 behavior.
+    shouldBe('Object.getPrototypeOf(Int8Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Uint8Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Uint8ClampedArray.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Int16Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Uint16Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Int32Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Uint32Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Float32Array.prototype)', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Float64Array.prototype)', 'Object.prototype');
+  } else {
+    // As of ES6, the prototypes for typed array constructors point to an intrinsic object whose internal
+    // prototype is Object.prototype. Relevant spec section is 22.2.5.2: TypedArray.prototype.
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int8Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint8Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint8ClampedArray.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int16Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint16Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Int32Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Uint32Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Float32Array.prototype))', 'Object.prototype');
+    shouldBe('Object.getPrototypeOf(Object.getPrototypeOf(Float64Array.prototype))', 'Object.prototype');
+  }
 }
 
 //
@@ -625,21 +639,27 @@ function testConstructionWithNullBuffer(type, name) {
     var array;
     try {
         array = new type(null);
-        testFailed("Construction of " + name + " with null buffer should throw exception");
+        assertEq("Length of " + name + " constructed with null", 0, array.length);
+        testPassed("Construction of " + name + " with null produced a " + name + " of length 0");
     } catch (e) {
-        testPassed("Construction of " + name + " with null buffer threw exception");
+        // This used to be correct, but TC39 has changed the behavior of these constructors.
+        testPassed("Construction of " + name + " with null threw exception");
+    }
+    try {
+        array = new type(null, 0);
+        assertEq("Length of " + name + " constructed with null", 0, array.length);
+        testPassed("Construction of " + name + " with null produced a " + name + " of length 0");
+    } catch (e) {
+        // This used to be correct, but TC39 has changed the behavior of these constructors.
+        testPassed("Construction of " + name + " with (null, 0) threw exception");
     }
     try {
         array = new type(null, 0, 0);
-        testFailed("Construction of " + name + " with (null buffer, 0) should throw exception");
+        assertEq("Length of " + name + " constructed with null", 0, array.length);
+        testPassed("Construction of " + name + " with null produced a " + name + " of length 0");
     } catch (e) {
-        testPassed("Construction of " + name + " with (null buffer, 0) threw exception");
-    }
-    try {
-        array = new type(null, 0, 0);
-        testFailed("Construction of " + name + " with (null buffer, 0, 0) should throw exception");
-    } catch (e) {
-        testPassed("Construction of " + name + " with (null buffer, 0, 0) threw exception");
+        // This used to be correct, but TC39 has changed the behavior of these constructors.
+        testPassed("Construction of " + name + " with (null, 0, 0) threw exception");
     }
 }
 

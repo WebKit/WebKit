@@ -500,6 +500,9 @@ function drawWithProgram(program, programInfo, test) {
   // Check for unset uniforms
   for (var name in uniforms) {
     var uniform = uniforms[name];
+    if (name.indexOf("gl_") == 0) {
+      continue;
+    }
     if (!uniform.used) {
       testFailed("uniform " + name + " never set");
     }

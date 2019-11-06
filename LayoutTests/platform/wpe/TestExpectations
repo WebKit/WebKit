@@ -764,7 +764,7 @@ webkit.org/b/185591 [ Debug ] imported/w3c/web-platform-tests/encrypted-media/cl
 
 webkit.org/b/188161 [ Debug ] fast/canvas/webgl/context-lost-restored.html [ Crash ]
 webkit.org/b/188161 [ Debug ] fast/canvas/webgl/WebGLContextEvent.html [ Crash ]
-webkit.org/b/188161 [ Debug ] webgl/1.0.2/conformance/context/context-lost-restored.html [ Crash ]
+webkit.org/b/188161 [ Debug ] webgl/1.0.3/conformance/context/context-lost-restored.html [ Crash ]
 
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Crash ]
 webkit.org/b/188162 [ Debug ] fast/canvas/webgl/texImage2D-video-flipY-true.html [ Crash ]
@@ -886,7 +886,7 @@ webkit.org/b/192894 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 
-webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
+webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 webkit.org/b/178705 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
@@ -1071,10 +1071,10 @@ webkit.org/b/202801 imported/w3c/web-platform-tests/offscreen-canvas/shadows/2d.
 # This test is so slow that a Slow expectation is not enough to avoid flakiness.
 webkit.org/b/159754 workers/bomb.html [ Skip ]
 
-webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 Bug(WPE) webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
@@ -1178,19 +1178,19 @@ Bug(WPE) loader/navigation-policy/should-open-external-urls/ [ Skip ]
 Bug(WPE) loader/stateobjects/pushstate-size-iframe.html [ Skip ]
 Bug(WPE) loader/stateobjects/pushstate-size.html [ Skip ]
 
-# webgl/1.0.2:
-#  Failing
-Bug(WPE) webgl/1.0.2/conformance/canvas/drawingbuffer-test.html [ Failure ]
-Bug(WPE) webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
-#  Timing out
-Bug(WPE) webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/textures/texture-size-limit.html [ Timeout Failure ]
-
 # webgl/1.0.3:
+
+#  Failing
+Bug(WPE) webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
+Bug(WPE) webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
+#  Timing out
+Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
+Bug(WPE) webgl/1.0.3/conformance/textures/texture-size-limit.html [ Timeout Failure ]
+
 #  Failing:
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 Bug(WPE) webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]

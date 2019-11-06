@@ -94,6 +94,9 @@ These lines appears at the top of every html and js file under sdk/tests/conform
              As compositing is a browser specific thing this provides a central place to
              update all tests that rely on compositing to function.
 
+            *   If you don't care about composition, `wtu.dispatchTask` makes it easy to
+                yield back to the event loop.
+
     *   Code/Tag Order
 
         Most tests run inline. They don't use window.onload or the load event. This works by placing

@@ -62,7 +62,7 @@ Tests.testTexImage2D = function(gl) {
     assertOk("x > dst tex width", function(){
         gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0, 16,0, 1,1);
     });
-    assertOk("y > dst tex width", function(){
+    assertOk("y > dst tex height", function(){
         gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0, 0,16, 1,1);
     });
     assertOk("x < 0", function(){

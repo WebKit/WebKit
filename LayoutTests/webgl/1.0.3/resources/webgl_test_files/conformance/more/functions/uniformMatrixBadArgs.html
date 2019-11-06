@@ -120,7 +120,7 @@ Tests.testUniformf = function(gl, unwrappedGL) {
   });
   var d = new Uint8Array(4);
   gl.readPixels(0,0,1,1,gl.RGBA, gl.UNSIGNED_BYTE, d);
-  assertArrayEquals([1,2,3,8], d);
+  assertArrayEqualsWithEpsilon([1,2,3,8], d, [1,1,1,1]);
   sh.destroy();
 }
 

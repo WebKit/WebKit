@@ -105,11 +105,11 @@ function main() {
                     gl.RGBA,           // format
                     gl.UNSIGNED_BYTE,  // type
                     null);             // data
-	  var err = gl.getError();
-	  if (err != gl.NO_ERROR) {
-		stop("got error: " + wtu.glEnumToString(gl, err));
-		return;
-	  }
+          var err = gl.getError();
+          if (err != gl.NO_ERROR) {
+                stop("got error: " + wtu.glEnumToString(gl, err));
+                return;
+          }
       if (allocateFramebuffers) {
         var fb = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
@@ -124,16 +124,16 @@ function main() {
           stop("got: " + wtu.glEnumToString(gl, status));
           return;
         }
-		// use the framebuffer
+                // use the framebuffer
         wtu.drawFloatColorQuad(gl, [1, Math.random(), 1, 1]);
       }
     }, 200);
 
-	function stop(msg) {
+        function stop(msg) {
         debug(msg);
-		window.clearInterval(intervalId);
-		finish();
-	}
+                window.clearInterval(intervalId);
+                finish();
+        }
 
   }
 

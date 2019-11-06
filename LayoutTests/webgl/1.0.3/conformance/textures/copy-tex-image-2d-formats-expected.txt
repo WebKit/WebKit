@@ -1,0 +1,56 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/textures/copy-tex-image-2d-formats.html
+[ 1: PASS ] getError was expected value: NO_ERROR : During Initialization
+[ 2: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D ALPHA from RGBA
+[ 3: FAIL ] at (0, 0) expected: 0,0,0,127 was 0,0,0,0
+[ 4: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 5: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE from RGBA
+[ 6: FAIL ] at (0, 0) expected: 64,64,64,255 was 0,0,0,255
+[ 7: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 8: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE_ALPHA from RGBA
+[ 9: FAIL ] at (0, 0) expected: 64,64,64,127 was 0,0,0,0
+[ 10: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 11: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGB from RGBA
+[ 12: PASS ] should be 64,255,191,255
+[ 13: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 14: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGBA from RGBA
+[ 15: PASS ] should be 64,255,191,127
+[ 16: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 17: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D ALPHA from RGB
+[ 18: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE from RGB
+[ 19: PASS ] should be 64,64,64,255
+[ 20: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 21: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D LUMINANCE_ALPHA from RGB
+[ 22: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGB from RGB
+[ 23: PASS ] should be 64,255,191,255
+[ 24: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 25: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D RGBA from RGB
+[ 26: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D ALPHA from RGBA
+[ 27: PASS ] should be 0,0,0,127
+[ 28: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 29: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE from RGBA
+[ 30: PASS ] should be 64,64,64,255
+[ 31: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 32: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE_ALPHA from RGBA
+[ 33: PASS ] should be 64,64,64,127
+[ 34: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 35: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGB from RGBA
+[ 36: PASS ] should be 64,255,191,255
+[ 37: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 38: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGBA from RGBA
+[ 39: PASS ] should be 64,255,191,127
+[ 40: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 41: PASS ] getError was expected value: NO_ERROR : During Initialization
+[ 42: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D ALPHA from RGB
+[ 43: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D LUMINANCE from RGB
+[ 44: FAIL ] at (0, 0) expected: 64,64,64,255 was 0,0,0,255
+[ 45: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 46: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D LUMINANCE_ALPHA from RGB
+[ 47: PASS ] getError was expected value: NO_ERROR : should be able to copyTexImage2D RGB from RGB
+[ 48: PASS ] should be 64,255,191,255
+[ 49: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 50: PASS ] getError was expected value: INVALID_OPERATION : should not be able to copyTexImage2D RGBA from RGB
+[ 51: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
+
