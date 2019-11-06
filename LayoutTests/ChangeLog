@@ -1,3 +1,12 @@
+2019-11-06  Peng Liu  <peng.liu6@apple.com>
+
+        Layout tests in media/modern-media-controls/pip-placard are designed for MacOS only
+        https://bugs.webkit.org/show_bug.cgi?id=203859
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/TestExpectations:
+
 2019-11-05  Timothy Hatcher  <timothy@apple.com>
 
         [ Mac Debug WK1 ] REGRESSION (r251262?): fast/scrolling/latching/scroll-select-bottom-test.html is a Flaky Failure
