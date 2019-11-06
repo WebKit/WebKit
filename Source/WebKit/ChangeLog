@@ -1,3 +1,27 @@
+2019-11-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        Layout test website-data-removal-for-site-navigated-to-with-link-decoration.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203706
+        <rdar://problem/56801615>
+
+        Reviewed by Chris Dumez. 
+
+        No new tests, this change is tested by the existing resourceLoadStatistics
+        tests.
+
+        This test started flaking when a new memory store was being created
+        between tests to maintain consistency. The call to grandfatherExistingWebsiteData
+        from populateMemoryStoreFromDisk in the persistent storage was
+        async, causing a race condition that led to occasional failures.
+        Adding a completion handler and changing the callsite of
+        populateMemoryStoreFromDisk should fix this problem.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsPersistentStorage.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk):
+
 2019-11-05  John Wilander  <wilander@apple.com>
 
         Temporarily turn off NSURLSession isolation

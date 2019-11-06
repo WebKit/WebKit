@@ -54,7 +54,7 @@ public:
 
     enum class ForceImmediateWrite { No, Yes, };
     void scheduleOrWriteMemoryStore(ForceImmediateWrite);
-    void populateMemoryStoreFromDisk();
+    void populateMemoryStoreFromDisk(CompletionHandler<void()>&&);
 
 private:
     String storageDirectoryPathIsolatedCopy() const;

@@ -183,19 +183,20 @@ void ResourceLoadStatisticsPersistentStorage::refreshMemoryStoreFromDisk()
     m_lastStatisticsFileSyncTime = readTime;
 }
 
-void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
+void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     String filePath = resourceLogFilePath();
     if (filePath.isEmpty() || !FileSystem::fileExists(filePath)) {
-        m_memoryStore.grandfatherExistingWebsiteData([]() { });
+        m_memoryStore.grandfatherExistingWebsiteData(WTFMove(completionHandler));
         monitorDirectoryForNewStatistics();
         return;
     }
 
     if (!hasFileChangedSince(filePath, m_lastStatisticsFileSyncTime)) {
         // No need to grandfather in this case.
+        completionHandler();
         return;
     }
 
@@ -203,7 +204,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 
     auto decoder = createForFile(filePath);
     if (!decoder) {
-        m_memoryStore.grandfatherExistingWebsiteData([]() { });
+        m_memoryStore.grandfatherExistingWebsiteData(WTFMove(completionHandler));
         return;
     }
 
@@ -214,6 +215,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
     m_lastStatisticsFileSyncTime = readTime;
 
     m_memoryStore.logTestingEvent("PopulatedWithoutGrandfathering"_s);
+    completionHandler();
 }
 
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()

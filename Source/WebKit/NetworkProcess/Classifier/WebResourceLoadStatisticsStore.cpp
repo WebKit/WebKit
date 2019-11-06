@@ -225,11 +225,13 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_persistentStorage)
-            m_persistentStorage->populateMemoryStoreFromDisk();
-
-        postTaskReply(WTFMove(completionHandler));
+            m_persistentStorage->populateMemoryStoreFromDisk([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+                postTaskReply(WTFMove(completionHandler));
+            });
+        else
+            postTaskReply(WTFMove(completionHandler));
     });
 }
 
