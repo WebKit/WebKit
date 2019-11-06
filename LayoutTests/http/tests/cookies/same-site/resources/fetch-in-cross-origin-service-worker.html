@@ -16,8 +16,8 @@ async function checkResult()
 
     debug("Cookies sent with HTTP request:");
     await shouldNotHaveCookie("strict");
-    await shouldNotHaveCookie("implicit-strict");
-    await shouldNotHaveCookie("strict-because-invalid-SameSite-value");
+    await shouldHaveCookieWithValue("implicit-strict", "10"); // Behaves like a non-SameSite cookie
+    await shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "10"); // Behaves like a non-SameSite cookie
     await shouldNotHaveCookie("lax");
 
     debug("<br>Cookies visible in DOM:");
