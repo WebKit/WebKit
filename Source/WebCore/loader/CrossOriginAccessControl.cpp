@@ -153,8 +153,11 @@ OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeepFromCleaning(const HTT
 void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, OptionSet<HTTPHeadersToKeepFromCleaning> headersToKeep)
 {
     // Remove headers that may have been added by the network layer that cause access control to fail.
-    if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::ContentType) && !isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, request.httpContentType()))
-        request.clearHTTPContentType();
+    if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::ContentType)) {
+        auto contentType = request.httpContentType();
+        if (!contentType.isNull() && !isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, contentType))
+            request.clearHTTPContentType();
+    }
     if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::Referer))
         request.clearHTTPReferrer();
     if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::Origin))
