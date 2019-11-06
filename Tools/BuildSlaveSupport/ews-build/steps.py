@@ -190,7 +190,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     command = ['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
 
     def __init__(self, **kwargs):
-        super(ApplyPatch, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+        super(ApplyPatch, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
 
     def _get_patch(self):
         sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))

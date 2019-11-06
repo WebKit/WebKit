@@ -1,5 +1,14 @@
 2019-11-06  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Increase timeout for svn-apply
+        https://bugs.webkit.org/show_bug.cgi?id=203909
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+
+2019-11-06  Aakash Jain  <aakash_jain@apple.com>
+
         Add watchlist category for BuildSlaveSupport
         https://bugs.webkit.org/show_bug.cgi?id=203900
 
