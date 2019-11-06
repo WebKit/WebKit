@@ -1,5 +1,20 @@
 2019-11-06  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION [ PHP ][ iOS ]: Two http/tests/cookies/same-site/set-first-party-* Tests are Failing
+        https://bugs.webkit.org/show_bug.cgi?id=203567
+        <rdar://problem/56708500>
+
+        Reviewed by Youenn Fablet.
+
+        A callable must be passed by string in PHP. Any other way seems to be non-standard and your
+        mileage may vary.
+
+        * http/tests/cookies/resources/cookie-utilities.php:
+        * http/tests/cookies/resources/cookie-utility.php:
+        * platform/ios-wk2/TestExpectations:
+
+2019-11-06  Daniel Bates  <dabates@apple.com>
+
         http/tests/security/isolatedWorld/bypass-main-world-csp-worker.html is a Flakey Failure
         https://bugs.webkit.org/show_bug.cgi?id=198924
         <rdar://problem/51811010>

@@ -41,7 +41,7 @@ function echoCookie($value, $name)
 function echoAllCookies()
 {
     echo "Cookies are:\n";
-    array_walk($_COOKIE, echoCookie);    
+    array_walk($_COOKIE, 'echoCookie');
 }
 
 ?>

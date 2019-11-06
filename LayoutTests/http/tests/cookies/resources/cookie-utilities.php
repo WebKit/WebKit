@@ -48,6 +48,6 @@ function _deleteCookieCallback($value, $name)
 
 function resetCookiesForCurrentOrigin()
 {
-    array_walk($_COOKIE, _deleteCookieCallback);
+    array_walk($_COOKIE, '_deleteCookieCallback');
 }
 ?>
