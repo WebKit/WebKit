@@ -115,6 +115,7 @@ function installDependenciesWithApt {
         gsettings-desktop-schemas-dev \
         libegl1-mesa-dev \
         libexpat1-dev \
+        libfdk-aac-dev \
         libgles2-mesa-dev \
         libluajit-5.1-dev \
         libmount-dev \
@@ -213,6 +214,7 @@ function installDependenciesWithPacman {
         expat \
         git \
         gsettings-desktop-schemas \
+        libfdk-aac \
         libproxy \
         libpsl \
         libpulse \
@@ -320,6 +322,7 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
         expat-devel \
+        fdk-aac-devel \
         git \
         gsettings-desktop-schemas-devel \
         libmount-devel \

@@ -190,6 +190,7 @@ function installDependenciesWithApt {
         libepoxy-dev \
         libevdev-dev \
         libexpat1-dev \
+        libfdk-aac-dev \
         libgbm-dev \
         libgles2-mesa-dev \
         libgnutls28-dev \
@@ -356,6 +357,7 @@ function installDependenciesWithPacman {
         libdrm \
         libepoxy \
         libevdev \
+        libfdk-aac \
         libgpg-error \
         libinput \
         p11-kit \
@@ -516,6 +518,7 @@ function installDependenciesWithDnf {
         cups-devel \
         docbook-utils \
         expat-devel \
+        fdk-aac-devel \
         flex \
         git \
         gnutls-devel \
