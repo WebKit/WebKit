@@ -63,6 +63,14 @@ EntryPlan::EntryPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work,
 {
 }
 
+EntryPlan::EntryPlan(Context* context, Ref<ModuleInformation> moduleInformation, CompletionTask&& task)
+    : Base(context, WTFMove(moduleInformation), WTFMove(task))
+    , m_streamingParser(m_moduleInformation.get(), *this)
+    , m_state(State::Initial)
+    , m_asyncWork(AsyncWork::FullCompile)
+{
+}
+
 EntryPlan::EntryPlan(Context* context, AsyncWork work, CompletionTask&& task)
     : Base(context, WTFMove(task))
     , m_streamingParser(m_moduleInformation.get(), *this)

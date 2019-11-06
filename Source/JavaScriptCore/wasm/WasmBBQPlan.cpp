@@ -53,6 +53,14 @@ namespace WasmBBQPlanInternal {
 static constexpr bool verbose = false;
 }
 
+BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, CodeBlock* codeBlock, CompletionTask&& completionTask)
+    : EntryPlan(context, WTFMove(moduleInformation), WTFMove(completionTask))
+    , m_codeBlock(codeBlock)
+    , m_functionIndex(functionIndex)
+{
+    setMode(m_codeBlock->mode());
+}
+
 bool BBQPlan::prepareImpl()
 {
     const auto& functions = m_moduleInformation->functions;
@@ -80,7 +88,6 @@ void BBQPlan::work(CompilationEffort effort)
     std::unique_ptr<TierUpCount> tierUp = makeUnique<TierUpCount>();
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, context, unlinkedWasmToWasmCalls, tierUp.get());
 
-    Entrypoint bbqEntrypoint;
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
@@ -88,15 +95,15 @@ void BBQPlan::work(CompilationEffort effort)
     }
 
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
-    bbqEntrypoint.compilation = makeUnique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] name %s", m_functionIndex, makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
+    const Signature& signature = SignatureInformation::get(signatureIndex);
+    function->entrypoint.compilation = makeUnique<B3::Compilation>(
+        FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::BBQMode, linkBuffer, B3CompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
-
-    bbqEntrypoint.calleeSaveRegisters = WTFMove(function->entrypoint.calleeSaveRegisters);
 
     MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
     {
-        Ref<BBQCallee> callee = BBQCallee::create(WTFMove(bbqEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls));
+        Ref<BBQCallee> callee = BBQCallee::create(WTFMove(function->entrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), WTFMove(unlinkedWasmToWasmCalls));
         MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
         ASSERT(!m_codeBlock->m_bbqCallees[m_functionIndex]);
         entrypoint = callee->entrypoint();
@@ -109,7 +116,9 @@ void BBQPlan::work(CompilationEffort effort)
         m_codeBlock->m_bbqCallees[m_functionIndex] = callee.copyRef();
         {
             LLIntCallee& llintCallee = *m_codeBlock->m_llintCallees[m_functionIndex];
+            auto locker = holdLock(llintCallee.tierUpCounter().m_lock);
             llintCallee.setReplacement(callee.copyRef());
+            llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
         }
         for (auto& call : callee->wasmToWasmCallsites()) {
             MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
@@ -147,6 +156,8 @@ void BBQPlan::work(CompilationEffort effort)
             if (LLIntCallee* llintCallee = m_codeBlock->m_llintCallees[i].get()) {
                 if (JITCallee* replacementCallee = llintCallee->replacement())
                     repatchCalls(replacementCallee->wasmToWasmCallsites());
+                if (OMGForOSREntryCallee* osrEntryCallee = llintCallee->osrEntryCallee())
+                    repatchCalls(osrEntryCallee->wasmToWasmCallsites());
             }
             if (BBQCallee* bbqCallee = m_codeBlock->m_bbqCallees[i].get()) {
                 if (OMGCallee* replacementCallee = bbqCallee->replacement())
@@ -190,7 +201,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     const auto& function = m_moduleInformation->functions[functionIndex];
     SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
     const Signature& signature = SignatureInformation::get(signatureIndex);
-    unsigned functionIndexSpace = m_wasmToWasmExitStubs.size() + functionIndex;
+    unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
     ASSERT(validateFunction(function, signature, m_moduleInformation.get()));
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;

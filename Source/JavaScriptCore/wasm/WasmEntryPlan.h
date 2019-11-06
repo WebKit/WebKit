@@ -49,6 +49,7 @@ public:
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
     EntryPlan(Context*, Ref<ModuleInformation>, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
     JS_EXPORT_PRIVATE EntryPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&, CreateEmbedderWrapper&&, ThrowWasmException);
+    EntryPlan(Context*, Ref<ModuleInformation>, CompletionTask&&);
     EntryPlan(Context*, AsyncWork, CompletionTask&&);
 
     virtual ~EntryPlan() = default;

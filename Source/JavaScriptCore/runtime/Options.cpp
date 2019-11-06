@@ -360,7 +360,7 @@ static void overrideDefaults()
     Options::useMachForExceptions() = false;
 #endif
 
-    if (Options::useWasmLLInt()) {
+    if (Options::useWasmLLInt() && !Options::wasmLLIntTiersUpToBBQ()) {
         Options::thresholdForOMGOptimizeAfterWarmUp() = 1500;
         Options::thresholdForOMGOptimizeSoon() = 100;
     }

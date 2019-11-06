@@ -1,3 +1,48 @@
+2019-11-05  Tadeu Zagallo  <tzagallo@apple.com>
+
+        [WebAssembly] Allow tiering up from LLInt to BBQ
+        https://bugs.webkit.org/show_bug.cgi?id=203793
+
+        Reviewed by Yusuke Suzuki.
+
+        Even though the interpreter was overall neutral on throughput, it's still a regression in pathological
+        cases where massive functions spend too long in the LLInt while compiling the function with OMG. This
+        patch makes it so that the LLInt can tier up to BBQ from the prologue, while still tiering up to OMG from
+        from loops. This is a huge speed up on the tsf-wasm subtest of JS2:
+
+        # BBQ -> OMG
+        Startup: 100.680
+        Runtime: 1.852
+        Score: 13.654
+
+        # LLInt -> OMG
+        Startup: 378.205
+        Runtime: 1.291
+        Score: 22.082
+
+        # LLInt -> BBQ -> OMG
+        Startup: 405.983
+        Runtime: 2.311
+        Score: 30.623
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * runtime/OptionsList.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::EntryPlan):
+        * wasm/WasmEntryPlan.h:
+        * wasm/WasmLLIntTierUpCounter.h:
+        (JSC::Wasm::LLIntTierUpCounter::optimizeAfterWarmUp):
+        (JSC::Wasm::LLIntTierUpCounter::optimizeSoon):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+
 2019-11-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce LinkTimeConstant mechanism
