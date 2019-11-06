@@ -39,7 +39,7 @@ public:
 
     virtual ~PlatformDisplayLibWPE();
 
-    void initialize(int);
+    bool initialize(int);
 
     struct wpe_renderer_backend_egl* backend() const { return m_backend; }
 

@@ -66,17 +66,18 @@ PlatformDisplayLibWPE::~PlatformDisplayLibWPE()
     wpe_renderer_backend_egl_destroy(m_backend);
 }
 
-void PlatformDisplayLibWPE::initialize(int hostFd)
+bool PlatformDisplayLibWPE::initialize(int hostFd)
 {
     m_backend = wpe_renderer_backend_egl_create(hostFd);
 
     m_eglDisplay = eglGetDisplay(wpe_renderer_backend_egl_get_native_display(m_backend));
     if (m_eglDisplay == EGL_NO_DISPLAY) {
         WTFLogAlways("PlatformDisplayLibWPE: could not create the EGL display: %s.", GLContextEGL::lastErrorString());
-        return;
+        return false;
     }
 
     PlatformDisplay::initializeEGLDisplay();
+    return m_eglDisplay != EGL_NO_DISPLAY;
 }
 
 } // namespace WebCore
