@@ -402,16 +402,22 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Box& l
             auto& layoutContainer = downcast<Container>(layoutBox);
             if (!layoutState.hasFormattingState(layoutContainer))
                 return false;
-            auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer));
-            if (!formattingState.inlineRuns().isEmpty())
-                return false;
-            // Any float box in this formatting context prevents collapsing through.
-            auto& floats = formattingState.floatingState().floats();
-            for (auto& floatItem : floats) {
-                if (floatItem.isDescendantOfFormattingRoot(layoutContainer))
-                    return false;
-            }
-            return true;
+
+            auto isConsideredEmpty = [&] {
+                auto& formattingState = downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutContainer));
+                for (auto& lineBox : formattingState.lineBoxes()) {
+                    if (!lineBox->isConsideredEmpty())
+                        return false;
+                }
+                // Any float box in this formatting context prevents collapsing through.
+                auto& floats = formattingState.floatingState().floats();
+                for (auto& floatItem : floats) {
+                    if (floatItem.isDescendantOfFormattingRoot(layoutContainer))
+                        return false;
+                }
+                return true;
+            };
+            return isConsideredEmpty();
         }
 
         // A root of a non-inline formatting context (table, flex etc) with inflow descendants should not collapse through.

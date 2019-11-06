@@ -1,3 +1,32 @@
+2019-11-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing] Add Line::isConsideredEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=203800
+        <rdar://problem/56854192>
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
+        Line boxes that contain no text, no preserved white space, no inline elements with non-zero margins, padding, or borders,
+        and no other in-flow content (such as images, inline blocks or inline tables), and do not end with a preserved newline
+        must be treated as zero-height line boxes for the purposes of determining the positions of any elements inside of them,
+        and must be treated as not existing for any other purpose.
+
+        Note that it does not necessarily mean visually non-empty line
+        <span style="font-size: 0px">this is still considered non-empty</span>
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const):
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineBox):
+        (WebCore::Layout::Line::appendReplacedInlineBox):
+        (WebCore::Layout::Line::appendLineBreak):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::isConsideredEmpty const):
+        (WebCore::Layout::LineBox::setIsConsideredNonEmpty):
+
 2019-11-06  Chris Lord  <clord@igalia.com>
 
         [Cairo] Cairo graphics backend uses ImageBuffer::copyImage just to access native image buffer handles

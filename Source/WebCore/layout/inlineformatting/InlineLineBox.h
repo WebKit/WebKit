@@ -108,6 +108,15 @@ public:
     void expandVertically(LayoutUnit delta) { m_rect.expandVertically(delta); }
     void shrinkVertically(LayoutUnit delta) { expandVertically(-delta); }
 
+    // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
+    // Line boxes that contain no text, no preserved white space, no inline elements with non-zero margins, padding, or borders,
+    // and no other in-flow content (such as images, inline blocks or inline tables), and do not end with a preserved newline
+    // must be treated as zero-height line boxes for the purposes of determining the positions of any elements inside of them,
+    // and must be treated as not existing for any other purpose.
+    // Note that it does not necessarily mean visually non-empty line. <span style="font-size: 0px">this is still considered non-empty</span>
+    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
+    void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
+
 private:
 #if !ASSERT_DISABLED
     bool m_hasValidBaseline { false };
@@ -116,6 +125,7 @@ private:
     Display::Rect m_rect;
     Baseline m_baseline;
     LayoutUnit m_baselineOffset;
+    bool m_isConsideredEmpty { true };
 };
 
 inline LineBox::LineBox(Display::Rect rect, const Baseline& baseline, LayoutUnit baselineOffset)

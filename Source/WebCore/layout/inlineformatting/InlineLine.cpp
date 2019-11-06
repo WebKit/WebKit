@@ -384,6 +384,8 @@ void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const Display::
 {
     m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
     m_lineBox.expandHorizontally(logicalRect.width());
+    if (logicalRect.width())
+        m_lineBox.setIsConsideredNonEmpty();
 }
 
 void Line::appendInlineContainerStart(const InlineItem& inlineItem, LayoutUnit logicalWidth)
@@ -463,6 +465,9 @@ void Line::appendTextContent(const InlineTextItem& inlineItem, LayoutUnit logica
     auto collapsesToZeroAdvanceWidth = willCollapseCompletely();
     if (collapsesToZeroAdvanceWidth)
         lineRun->setCollapsesToZeroAdvanceWidth();
+    else
+        m_lineBox.setIsConsideredNonEmpty();
+
     if (collapsedRun)
         lineRun->setIsCollapsed();
     if (isTrimmable)
@@ -488,6 +493,7 @@ void Line::appendNonReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit l
 
     m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
     m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
+    m_lineBox.setIsConsideredNonEmpty();
     m_trimmableContent.clear();
 }
 
@@ -496,6 +502,7 @@ void Line::appendReplacedInlineBox(const InlineItem& inlineItem, LayoutUnit logi
     ASSERT(inlineItem.layoutBox().isReplaced());
     // FIXME: Surely replaced boxes behave differently.
     appendNonReplacedInlineBox(inlineItem, logicalWidth);
+    m_lineBox.setIsConsideredNonEmpty();
     if (auto* replaced = inlineItem.layoutBox().replaced(); replaced && replaced->cachedImage())
         m_runList.last()->m_displayRun.setImage(*replaced->cachedImage());
 }
@@ -509,6 +516,7 @@ void Line::appendLineBreak(const InlineItem& inlineItem)
         adjustBaselineAndLineHeight(inlineItem);
         logicalRect.setHeight(logicalHeight());
     }
+    m_lineBox.setIsConsideredNonEmpty();
     m_runList.append(makeUnique<Run>(inlineItem, Display::Run { inlineItem.style(), logicalRect }));
 }
 
