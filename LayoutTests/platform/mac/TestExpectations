@@ -398,8 +398,6 @@ editing/pasteboard/paste-global-selection.html
 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
 
-webkit.org/b/124935 [ Debug ] webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
-
 # Skip 1.0.3 tests that pass in conformance suite but timeout in TestRunner
 webgl/1.0.3/conformance/more/glsl [ Skip ]
 webgl/1.0.3/conformance/more/conformance [ Skip ]

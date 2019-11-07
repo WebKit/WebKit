@@ -18,8 +18,6 @@ webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.htm
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
 
-webkit.org/b/174100 webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
-
 webkit.org/b/173010 js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
 
 webkit.org/b/174183 animations/resume-after-page-cache.html [ Pass Failure ]
