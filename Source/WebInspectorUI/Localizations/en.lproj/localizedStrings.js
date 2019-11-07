@@ -883,6 +883,7 @@ localizedStrings["Recording %d"] = "Recording %d";
 localizedStrings["Recording Error: %s"] = "Recording Error: %s";
 localizedStrings["Recording Timeline Data"] = "Recording Timeline Data";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
+localizedStrings["Recording stop requested \u2014 %s"] = "Recording stop requested \u2014 %s";
 localizedStrings["Recordings"] = "Recordings";
 localizedStrings["Redirect Response"] = "Redirect Response";
 localizedStrings["Redirects"] = "Redirects";
