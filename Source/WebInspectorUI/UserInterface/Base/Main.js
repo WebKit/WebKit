@@ -1571,13 +1571,16 @@ WI._restoreCookieForOpenTabs = function(restorationType)
         tabContentView.restoreStateFromCookie(restorationType);
     }
 
-    window.requestAnimationFrame(() => {
-        if (WI.isContentAreaFocused() || WI.isShowingTimelineTab() || WI.isShowingAuditTab())
-            return;
+    // Only attempt to autofocus when Web Inspector is first opened.
+    if (WI._didAutofocusConsolePrompt === undefined) {
+        window.requestAnimationFrame(() => {
+            if (WI.isContentAreaFocused() || WI.isShowingTimelineTab() || WI.isShowingAuditTab())
+                return;
 
-        WI.quickConsole.prompt.focus();
-        WI._didAutofocusConsolePrompt = true;
-    });
+            WI.quickConsole.prompt.focus();
+            WI._didAutofocusConsolePrompt = true;
+        });
+    }
 };
 
 WI._saveCookieForOpenTabs = function()
