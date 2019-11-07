@@ -2673,7 +2673,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
 
     // Schedule the scroll and scroll-related DOM events.
     if (Element* element = renderer().element())
-        element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
+        element->document().addPendingScrollEventTarget(*element);
 
     if (scrollsOverflow())
         view.frameView().didChangeScrollOffset();

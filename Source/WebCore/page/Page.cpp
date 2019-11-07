@@ -1290,11 +1290,15 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+    // Flush autofocus candidates
+
     forEachDocument([&](Document& document) {
         document.runResizeSteps();
     });
 
-    // FIXME: Run the scroll steps
+    forEachDocument([&](Document& document) {
+        document.runScrollSteps();
+    });
 
     forEachDocument([&](Document& document) {
         document.evaluateMediaQueriesAndReportChanges();        
@@ -1318,9 +1322,6 @@ void Page::updateRendering()
     for (auto& document : documents)
         document->updateResizeObservations(*this);
 #endif
-
-    // FIXME: Flush autofocus candidates
-    // https://github.com/whatwg/html/issues/4992
 
     layoutIfNeeded();
 }

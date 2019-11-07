@@ -1,0 +1,9 @@
+Tests that scroll event on visualViewport fires after resize event in a subframe. To manually test, pinch zoom.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -30,11 +30,13 @@ description("This test verifies that we don't crash while scrolling an overflow 
 
 const text = document.getElementById("text");
 text.scrollTo(0, 1000);
-addEventListener("load", () => text.scrollTo(0, 500));
-text.addEventListener("scroll", () => {
-    text.textContent = "";
-    testPassed("Successfully removed the text.");
-    finishJSTest();
+addEventListener("load", () => {
+    text.addEventListener("scroll", () => {
+        text.textContent = "";
+        testPassed("Successfully removed the text.");
+        finishJSTest();
+    });
+    text.scrollTo(0, 500);
 });
 </script>
 </html>

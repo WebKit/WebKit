@@ -168,27 +168,20 @@ void VisualViewport::update()
             scale = page->pageScaleFactor();
     }
 
+    RefPtr<Document> document = frame ? frame->document() : nullptr;
     if (m_offsetLeft != offsetLeft || m_offsetTop != offsetTop) {
-        enqueueScrollEvent();
+        if (document)
+            document->setNeedsVisualViewportScrollEvent();
         m_offsetLeft = offsetLeft;
         m_offsetTop = offsetTop;
     }
     if (m_width != width || m_height != height || m_scale != scale) {
-        if (auto* frame = this->frame())
-            frame->document()->setNeedsVisualViewportResize();
+        if (document)
+            document->setNeedsVisualViewportResize();
         m_width = width;
         m_height = height;
         m_scale = scale;
     }
-}
-
-void VisualViewport::enqueueScrollEvent()
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return;
-
-    frame->document()->eventQueue().enqueueScrollEvent(*this, Event::CanBubble::No, Event::IsCancelable::No);
 }
 
 } // namespace WebCore

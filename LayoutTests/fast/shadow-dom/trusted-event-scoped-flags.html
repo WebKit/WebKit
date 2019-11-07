@@ -96,11 +96,13 @@ function testScrollEvent() {
     log(window, 'scroll');
     setTimeout(function () {
         window.scrollTo(0, 1000);
-        setTimeout(function () {
-            checkFlags('', {eventType: 'scroll', composed: false});
-            window.scrollTo(0, 0);
-            testResizeEvent();
-        }, 0);
+        requestAnimationFrame(() => {
+            setTimeout(function () {
+                checkFlags('', {eventType: 'scroll', composed: false});
+                window.scrollTo(0, 0);
+                testResizeEvent();
+            }, 0);
+        });
     }, 0);
 }
 

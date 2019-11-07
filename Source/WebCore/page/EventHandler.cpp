@@ -4029,8 +4029,12 @@ void EventHandler::sendScrollEvent()
 {
     Ref<Frame> protectedFrame(m_frame);
     setFrameWasScrolledByUser();
-    if (m_frame.view() && m_frame.document())
-        m_frame.document()->eventQueue().enqueueOrDispatchScrollEvent(*m_frame.document());
+    if (!m_frame.view())
+        return;
+    auto document = makeRefPtr(m_frame.document());
+    if (!document)
+        return;
+    document->addPendingScrollEventTarget(*document);
 }
 
 void EventHandler::setFrameWasScrolledByUser()

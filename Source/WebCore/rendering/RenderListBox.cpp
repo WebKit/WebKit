@@ -713,7 +713,7 @@ void RenderListBox::scrollTo(int newOffset)
     computeFirstIndexesVisibleInPaddingTopBottomAreas();
 
     repaint();
-    document().eventQueue().enqueueOrDispatchScrollEvent(selectElement());
+    document().addPendingScrollEventTarget(selectElement());
 }
 
 LayoutUnit RenderListBox::itemHeight() const

@@ -1,3 +1,25 @@
+2019-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Integrate scroll event into HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203839
+        <rdar://problem/56890922>
+
+        Reviewed by Simon Fraser.
+
+        Added tests to test the timing at which scroll events are fired across multiple elements and documents,
+        and with visualViewport, and updated the existing tests to work with the new timing.
+
+        * editing/selection/overflow-scroll-while-selecting-text.html:
+        * fast/events/scroll-multiple-elements-in-rendering-update-expected.txt: Added.
+        * fast/events/scroll-multiple-elements-in-rendering-update.html: Added.
+        * fast/events/scroll-subframe-in-rendering-update-expected.txt: Added.
+        * fast/events/scroll-subframe-in-rendering-update.html: Added.
+        * fast/scrolling/programmatic-scroll-to-negative-offset.html:
+        * fast/shadow-dom/trusted-event-scoped-flags.html:
+        * fast/visual-viewport/visual-viewport-scroll-after-resize-in-subframe-expected.txt: Added.
+        * fast/visual-viewport/visual-viewport-scroll-after-resize-in-subframe.html: Added.
+        * tiled-drawing/scrolling/fast-scroll-div-latched-mainframe.html:
+
 2019-11-07  Justin Fan  <justin_fan@apple.com>
 
         REGRESSION: r252121 introduced timeout in webgl/1.0.3/conformance/glsl/misc/shader-with-non-reserved-words.html

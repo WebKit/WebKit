@@ -47,8 +47,13 @@ function onPageScroll()
         checkForScroll();
 }
 
+let didCheck = false;
 function checkForScroll()
 {
+    if (didCheck)
+        return;
+    didCheck = true;
+
     // The div should not have scrolled at all.
     var pageScrollPositionAfter = document.scrollingElement.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
@@ -96,7 +101,9 @@ function setupTopLevel()
         testRunner.waitUntilDone();
 
         eventSender.monitorWheelEvents();
-        setTimeout(scrollTest, 0);
+        requestIdleCallback(() => {
+            setTimeout(scrollTest, 0);
+        });
     } else {
         var messageLocation = document.getElementById('parent');
         var message = document.createElement('div');

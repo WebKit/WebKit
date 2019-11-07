@@ -25,13 +25,13 @@
             scroller = document.getElementById('scroller');
 			scroller.scrollLeft = 50;
 
-			scroller.addEventListener('scroll', (event) => {
-				shouldBe("scroller.scrollLeft", "0");
-				shouldBe("scroller.scrollLeft", "0");
-				finishJSTest();
-			}, false);
-
 			setTimeout(() => {
+    			scroller.addEventListener('scroll', (event) => {
+    				shouldBe("scroller.scrollLeft", "0");
+    				shouldBe("scroller.scrollLeft", "0");
+    				finishJSTest();
+    			}, false);
+
 				scroller.scrollLeft = -200;
 				scroller.scrollTop = -100;
 			}, 0)

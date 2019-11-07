@@ -1364,6 +1364,10 @@ public:
     void setNeedsVisualViewportResize();
     void runResizeSteps();
 
+    void addPendingScrollEventTarget(ContainerNode&);
+    void setNeedsVisualViewportScrollEvent();
+    void runScrollSteps();
+
     WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
     WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
@@ -2019,6 +2023,7 @@ private:
     bool m_hasStyleWithViewportUnits { false };
     bool m_needsDOMWindowResizeEvent { false };
     bool m_needsVisualViewportResizeEvent { false };
+    bool m_needsVisualViewportScrollEvent { false };
     bool m_isTimerThrottlingEnabled { false };
     bool m_isSuspended { false };
 
@@ -2034,6 +2039,8 @@ private:
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool m_isTelephoneNumberParsingAllowed { true };
 #endif
+
+    Vector<WeakPtr<ContainerNode>> m_pendingScrollEventTargets;
 
 #if ENABLE(MEDIA_STREAM)
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;

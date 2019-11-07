@@ -1,3 +1,48 @@
+2019-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Integrate scroll event into HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203839
+        <rdar://problem/56890922>
+
+        Reviewed by Simon Fraser.
+
+        Dispatch scroll events on each pending scroll event targets inside the update-the-rendering step
+        of the event loop as specified in the HTML5 and CSSOM View Module specifications:
+        https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
+        https://drafts.csswg.org/cssom-view/#run-the-scroll-steps
+
+        The new behavior also matches that of Chrome and Firefox.
+
+        Like resize event, the current visual viewport specification does not specify when scroll event
+        is dispatched on visualViewport interface: https://github.com/WICG/visual-viewport/issues/66
+        For now, we always dispatch upon it after dispatching on all pending scroll event targets.
+
+        Tests: fast/events/scroll-multiple-elements-in-rendering-update.html
+               fast/events/scroll-subframe-in-rendering-update.html
+               fast/visual-viewport/visual-viewport-scroll-after-resize-in-subframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addPendingScrollEventTarget): Added.
+        (WebCore::Document::setNeedsVisualViewportScrollEvent): Added.
+        (WebCore::Document::runScrollSteps): Added. This implements run the scroll steps in CSS OM View.
+        * dom/Document.h:
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent): Deleted.
+        (WebCore::DocumentEventQueue::enqueueScrollEvent): Deleted.
+        * dom/DocumentEventQueue.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendScrollEvent):
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering): Invoke runScrollSteps on each document in the frame tree order.
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::update):
+        (WebCore::VisualViewport::enqueueScrollEvent): Deleted.
+        * page/VisualViewport.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollTo):
+
 2019-11-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][MarginCollapsing] Drag anonymous block level boxes into margin collapsing

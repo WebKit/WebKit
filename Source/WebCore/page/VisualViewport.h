@@ -60,9 +60,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    void enqueueResizeEvent();
-    void enqueueScrollEvent();
-
     void updateFrameLayout() const;
 
     double m_offsetLeft { 0 };

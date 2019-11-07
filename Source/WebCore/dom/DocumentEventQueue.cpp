@@ -81,30 +81,6 @@ bool DocumentEventQueue::enqueueEvent(Ref<Event>&& event)
     return true;
 }
 
-void DocumentEventQueue::enqueueOrDispatchScrollEvent(Node& target)
-{
-    ASSERT(&target.document() == &m_document);
-
-    // Per the W3C CSSOM View Module, scroll events fired at the document should bubble, others should not.
-    enqueueScrollEvent(target, target.isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No, Event::IsCancelable::No);
-}
-
-void DocumentEventQueue::enqueueScrollEvent(EventTarget& target, Event::CanBubble canBubble, Event::IsCancelable cancelable)
-{
-    if (m_isClosed)
-        return;
-
-    if (!m_document.hasListenerType(Document::SCROLL_LISTENER))
-        return;
-
-    if (!m_targetsWithQueuedScrollEvents.add(&target).isNewEntry)
-        return;
-
-    Ref<Event> scrollEvent = Event::create(eventNames().scrollEvent, canBubble, cancelable);
-    scrollEvent->setTarget(&target);
-    enqueueEvent(WTFMove(scrollEvent));
-}
-
 bool DocumentEventQueue::cancelEvent(Event& event)
 {
     bool found = m_queuedEvents.remove(&event);
