@@ -179,21 +179,53 @@ private
 <head>
 <meta charset='utf-8'>
 <style>
+:root {
+    color-scheme: light dark;
+    --link-color: #039;
+    --border-color: #ddd;
+    --grouped-bg-color: #eee;
+    --page-bg-color: white;
+}
+
 :link, :visited {
     text-decoration: none;
     border-bottom: 1px dotted;
 }
 
 :link {
-    color: #039;
+    color: var(--link-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --link-color: #09f;
+        --border-color: #222;
+        --grouped-bg-color: #111;
+        --page-bg-color: black;
+    }
+
+    :visited {
+        color: #882bce;
+    }
+
+    body {
+        background-color: var(--page-bg-color);
+        color: #eee;
+    }
 }
 
 .FileDiff {
     background-color: #f8f8f8;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     font-family: monospace;
     margin: 1em 0;
     position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+    .FileDiff {
+        background-color: #212121;
+    }
 }
 
 h1 {
@@ -206,13 +238,25 @@ h1 {
     padding: 0.5em;
 }
 
+@media (prefers-color-scheme: dark) {
+    h1 {
+        color: #ccc;
+    }
+}
+
 h1 :link, h1 :visited {
     color: inherit;
 }
 
 h1 :hover {
     color: #555;
-    background-color: #eee;
+    background-color: var(--grouped-bg-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    h1 :hover {
+        color: #aaa;
+    }
 }
 
 .DiffLinks {
@@ -227,8 +271,8 @@ h1 :hover {
 }
 
 .DiffSection {
-    background-color: white;
-    border: solid #ddd;
+    background-color: var(--page-bg-color);
+    border: solid var(--border-color);
     border-width: 1px 0px;
 }
 
@@ -268,8 +312,9 @@ h1 :hover {
 }
 
 .lineNumber, .expansionLineNumber {
-    border-bottom: 1px solid #998;
-    border-right: 1px solid #ddd;
+    --border-bottom-color: #998;
+    border-bottom: 1px solid var(--border-bottom-color);
+    border-right: 1px solid var(--border-color);
     color: #444;
     display: inline-block;
     padding: 1px 5px 0px 0px;
@@ -278,12 +323,25 @@ h1 :hover {
     width: 3em;
 }
 
+@media (prefers-color-scheme: dark) {
+    .lineNumber, .expansionLineNumber {
+        --border-bottom-color: #424242;
+        color: #bbb;
+    }
+}
+
 .lineNumber {
   background-color: #eed;
 }
 
+@media (prefers-color-scheme: dark) {
+    .lineNumber {
+        background-color: #121212;
+    }
+}
+
 .expansionLineNumber {
-  background-color: #eee;
+  background-color: var(--grouped-bg-color);
 }
 
 pre, .text {
@@ -293,12 +351,19 @@ pre, .text {
 }
 
 .image {
-    border: 2px solid black;
+    border: 2px solid text;
 }
 
 .context, .context .lineNumber {
     color: #849;
     background-color: #fef;
+}
+
+@media (prefers-color-scheme: dark) {
+    .context, .context .lineNumber {
+        color: #a24bb7;
+        background-color: #1f0f24;
+    }
 }
 
 .Line.add, .FileDiff .add {
@@ -310,6 +375,16 @@ pre, .text {
     text-decoration: none;
 }
 
+@media (prefers-color-scheme: dark) {
+    .Line.add, .FileDiff .add {
+        background-color: #242;
+    }
+
+    .Line.add ins {
+        background-color: #186e0c;
+    }
+}
+
 .Line.remove, .FileDiff .remove {
     background-color: #fdd;
 }
@@ -317,6 +392,16 @@ pre, .text {
 .Line.remove del {
     background-color: #e99;
     text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .Line.remove, .FileDiff .remove {
+        background-color: #410000;
+    }
+
+    .Line.remove del {
+        background-color: #8d1e0b;
+    }
 }
 
 /* Support for inline comments */
@@ -359,8 +444,8 @@ pre, .text {
   padding: 3px;
   left: 0;
   right: 0;
-  border: 1px solid #ddd;
-  background-color: #eee;
+  border: 1px solid var(--border-color);
+  background-color: var(--grouped-bg-color);
   font-family: sans-serif;
   position: fixed;
   bottom: 0;
@@ -392,7 +477,7 @@ pre, .text {
   right: 10%;
   top: 10%;
   bottom: 10%;
-  background: white;
+  background: var(--page-bg-color);
 }
 
 .lightbox iframe {
@@ -401,19 +486,33 @@ pre, .text {
 }
 
 .commentContext .lineNumber {
-  background-color: yellow;
+    background-color: yellow;
+}
+
+@media (prefers-color-scheme: dark) {
+    .commentContext .lineNumber {
+        background-color: #770;
+        color: white;
+    }
 }
 
 .selected .lineNumber {
-  background-color: #69F;
-  border-bottom-color: #69F;
-  border-right-color: #69F;
+  --selection-color: #69f;
+  background-color: var(--selection-color);
+  border-bottom-color: var(--selection-color);
+  border-right-color: var(--selection-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .selected .lineNumber {
+        color: white;
+    }
 }
 
 .ExpandLinkContainer {
   opacity: 0;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .ExpandArea {
@@ -438,7 +537,7 @@ pre, .text {
 .LinkContainer label:after,
 .LinkContainer a:after {
   content: " | ";
-  color: black;
+  color: text;
 }
 
 .LinkContainer a:last-of-type:after {
@@ -446,7 +545,7 @@ pre, .text {
 }
 
 .LinkContainer label {
-  color: #039;
+  color: var(--link-color);
 }
 
 .help {
@@ -465,6 +564,12 @@ pre, .text {
 
 .comment, .previousComment, .frozenComment {
   background-color: #ffd;
+}
+
+@media (prefers-color-scheme: dark) {
+    .comment, .previousComment, .frozenComment {
+        background-color: #373700;
+    }
 }
 
 .overallComments {
@@ -506,15 +611,16 @@ div:focus {
   right: 0;
   top: -1.3em;
   padding: 0 3px;
-  outline: 1px solid #DDD;
+  outline: 1px solid var(--border-color);
   color: #8FDF5F;
-  font-size: small;   
-  background-color: #EEE;
+  font-size: small;
+  background-color: var(--grouped-bg-color);
 }
 
 .autosave-state:empty {
   outline: 0px;
 }
+
 .autosave-state.saving {
   color: #E98080;
 }

@@ -1,3 +1,15 @@
+2019-11-06  James Savage  <james.savage@apple.com>
+
+        Support CSS Dark Mode for PrettyDiff.rb.
+        https://bugs.webkit.org/show_bug.cgi?id=203874.
+
+        Reviewed by Tim Horton.
+
+        * PrettyPatch/PrettyPatch.rb: Modify CSS to support dark mode. I used
+        CSS variables in places where colors were shared, but otherwise provided
+        alternate style rules individually. Some colors looked fine in both
+        appearances, and those I left with only their light definition.
+
 2019-09-04  Aakash Jain  <aakash_jain@apple.com>
 
         EWS bubbles should indicate builder vs tester
