@@ -3174,11 +3174,12 @@
    },
    "Katherine Cheney" : {
       "emails" : [
-	 "katherine_cheney@apple.com"
+         "katherine_cheney@apple.com"
       ],
       "nicks" : [
          "kate"
-      ]
+      ],
+      "status" : "committer"
    },
    "Katie Madonna" : {
       "emails" : [

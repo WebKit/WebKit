@@ -1,3 +1,9 @@
+2019-11-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        Update entry in contributors.json to fix commit privileges.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-11-06  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix: fix TestWebKitAPI in macCatalyst, tvOS, and
