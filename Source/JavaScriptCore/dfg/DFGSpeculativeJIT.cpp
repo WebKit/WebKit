@@ -7815,7 +7815,6 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         // always be bounded by stack size. Realistically, we won't be able to push enough
         // arguments to have arrayLength exceed MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
         bool shouldAllowForArrayStorageStructureForLargeArrays = false;
-        ASSERT(m_jit.graph().globalObjectFor(node->origin.semantic)->restParameterStructure()->indexingMode() == ArrayWithContiguous || m_jit.graph().globalObjectFor(node->origin.semantic)->isHavingABadTime());
         compileAllocateNewArrayWithSize(m_jit.graph().globalObjectFor(node->origin.semantic), arrayResultGPR, arrayLengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
 
         GPRTemporary argumentsStart(this);
@@ -7979,7 +7978,6 @@ void SpeculativeJIT::compileNewArray(Node* node)
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
     if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(node->indexingType())) {
-        DFG_ASSERT(m_jit.graph(), node, structure->indexingType() == node->indexingType(), structure->indexingType(), node->indexingType());
         ASSERT(
             hasUndecided(structure->indexingType())
             || hasInt32(structure->indexingType())
@@ -8173,7 +8171,6 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             // ensured above that the spread array length will definitely fit in a
             // non-ArrayStorage shaped array.
             bool shouldAllowForArrayStorageStructureForLargeArrays = false;
-            ASSERT(m_jit.graph().globalObjectFor(node->origin.semantic)->restParameterStructure()->indexingType() == ArrayWithContiguous || m_jit.graph().globalObjectFor(node->origin.semantic)->isHavingABadTime());
             compileAllocateNewArrayWithSize(m_jit.graph().globalObjectFor(node->origin.semantic), resultGPR, lengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
         }
 

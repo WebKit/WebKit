@@ -1565,12 +1565,6 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     if (isHavingABadTime())
         return;
 
-    // Make sure that all allocations or indexed storage transitions that are inlining
-    // the assumption that it's safe to transition to a non-SlowPut array storage don't
-    // do so anymore.
-    m_havingABadTimeWatchpoint->fireAll(vm, "Having a bad time");
-    ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
-    
     // Make sure that all JSArray allocations that load the appropriate structure from
     // this object now load a structure that uses SlowPut.
     for (unsigned i = 0; i < NumberOfArrayIndexingModes; ++i)
@@ -1584,6 +1578,16 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     m_regExpMatchesArrayWithGroupsStructure.set(vm, this, slowPutStructure);
     slowPutStructure = ClonedArguments::createSlowPutStructure(vm, this, m_objectPrototype.get());
     m_clonedArgumentsStructure.set(vm, this, slowPutStructure);
+
+    // Make sure that all allocations or indexed storage transitions that are inlining
+    // the assumption that it's safe to transition to a non-SlowPut array storage don't
+    // do so anymore.
+    // Note: we are deliberately firing the watchpoint here at the end only after
+    // making all the array structures SlowPut. This ensures that the concurrent
+    // JIT threads will always get the SlowPut versions of the structures if
+    // isHavingABadTime() returns true. The concurrent JIT relies on this.
+    m_havingABadTimeWatchpoint->fireAll(vm, "Having a bad time");
+    ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
 };
 
 void JSGlobalObject::haveABadTime(VM& vm)
