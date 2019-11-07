@@ -1,3 +1,17 @@
+2019-11-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: http/tests/inspector/target/target-events-for-provisional-page.html is flaky when running with other tests
+        https://bugs.webkit.org/show_bug.cgi?id=203965
+        <rdar://problem/56988642>
+
+        Reviewed by Devin Rousso.
+
+        Enforce enableProcessSwapOnWindowOpen=true for the test so that it PSON is enabled regardless of other tests
+        that may run before (the test may reuse Page instance from the previous test on which
+        Page::openedByDOMWithOpener==true).
+
+        * http/tests/inspector/target/target-events-for-provisional-page.html:
+
 2019-11-07  Kate Cheney  <katherine_cheney@apple.com>
 
        Many resourceLoadStatistics tests and storageAccess tests using the ITP
