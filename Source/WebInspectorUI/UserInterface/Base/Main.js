@@ -1086,6 +1086,16 @@ WI.showTimelineTab = function()
     WI.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WI.isShowingTimelineTab = function()
+{
+    return WI.tabBrowser.selectedTabContentView instanceof WI.TimelineTabContentView;
+};
+
+WI.isShowingAuditTab = function()
+{
+    return WI.tabBrowser.selectedTabContentView instanceof WI.AuditTabContentView;
+}
+
 WI.showLayersTab = function(options = {})
 {
     let tabContentView = WI.tabBrowser.bestTabContentViewForClass(WI.LayersTabContentView);
@@ -1562,7 +1572,7 @@ WI._restoreCookieForOpenTabs = function(restorationType)
     }
 
     window.requestAnimationFrame(() => {
-        if (WI.isContentAreaFocused())
+        if (WI.isContentAreaFocused() || WI.isShowingTimelineTab() || WI.isShowingAuditTab())
             return;
 
         WI.quickConsole.prompt.focus();

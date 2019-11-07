@@ -1,5 +1,17 @@
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r251958): automatic console prompt focusing prevents any "space" shortcuts from working
+        https://bugs.webkit.org/show_bug.cgi?id=203939
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.isShowingTimelineTab): Added.
+        (WI.isShowingAuditTab): Added.
+        (WI._restoreCookieForOpenTabs):
+
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: Unable to get object details - GlobalObject
         https://bugs.webkit.org/show_bug.cgi?id=203930
         <rdar://problem/56960937>
