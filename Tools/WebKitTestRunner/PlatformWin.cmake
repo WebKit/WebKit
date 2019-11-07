@@ -35,8 +35,8 @@ set(WebKitTestRunnerLib_LIBRARIES
     Oleacc
 )
 
-list(APPEND WebKitTestRunner_LIBRARIES
-    WebKit
+set(WebKitTestRunner_LIBRARIES
+    shlwapi
 )
 
 set(WebKitTestRunnerInjectedBundle_LIBRARIES

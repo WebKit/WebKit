@@ -1,3 +1,20 @@
+2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] DumpRenderTree.exe and WebKitTestRunner.exe shouldn't link with WebCoreTestSupport
+        https://bugs.webkit.org/show_bug.cgi?id=203879
+
+        Reviewed by Ross Kirsling.
+
+        After r252086, WinCairo DumpRenderTree.exe and
+        WebKitTestRunner.exe can't start because they are linked with
+        WinCairoRequirements DLLs unexpectedly.
+
+        DumpRenderTree.exe and WebKitTestRunner.exe are just wrapper
+        programs. They shouldn't link with WinCairoRequirements libs.
+
+        * DumpRenderTree/PlatformWin.cmake: Set DumpRenderTree_LIBRARIES only shlwapi.
+        * WebKitTestRunner/PlatformWin.cmake: Set WebKitTestRunner_LIBRARIES only shlwapi.
+
 2019-11-06  Kate Cheney  <katherine_cheney@apple.com>
 
         Update entry in contributors.json to fix commit privileges.
