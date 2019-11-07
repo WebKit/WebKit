@@ -1756,11 +1756,13 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             "        prevActiveElement.blur();"
             "    element.focus();"
             "    let tagName = element.tagName.toUpperCase();"
+            "    if (tagName === 'BODY' || element === document.documentElement)"
+            "        return;"
             "    let isTextElement = tagName === 'TEXTAREA' || (tagName === 'INPUT' && element.type === 'text');"
             "    if (isTextElement && element.selectionEnd == 0)"
             "        element.setSelectionRange(element.value.length, element.value.length);"
             "    if (element != doc.activeElement)"
-            "        throw new Error('cannot focus element');"
+            "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
             "}";
 
         RefPtr<JSON::Array> arguments = JSON::Array::create();

@@ -1,3 +1,21 @@
+2019-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: correctly handle errors when focusing element before sending key events
+        https://bugs.webkit.org/show_bug.cgi?id=203945
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We are throwing an exception that is not correctly handled.
+
+        Fixes: imported/w3c/webdriver/tests/element_send_keys/interactability.py::test_not_a_focusable_element
+               imported/w3c/webdriver/tests/element_send_keys/interactability.py::test_display_none
+               imported/w3c/webdriver/tests/element_send_keys/interactability.py::test_visibility_hidden
+               imported/w3c/webdriver/tests/element_send_keys/interactability.py::test_hidden
+               imported/w3c/webdriver/tests/element_send_keys/interactability.py::test_disabled
+
+        * Session.cpp:
+        (WebDriver::Session::elementSendKeys): Raise ElementNotInteractable error when element is not focusable.
+
 2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part

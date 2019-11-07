@@ -543,18 +543,6 @@
         "subtests": {
             "test_document_element_is_interactable": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
-            },
-            "test_not_a_focusable_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
-            },
-            "test_not_displayed_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
-            },
-            "test_hidden_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
-            },
-            "test_disabled_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188545"}}
             }
         }
     },

@@ -1,3 +1,15 @@
+2019-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: correctly handle errors when focusing element before sending key events
+        https://bugs.webkit.org/show_bug.cgi?id=203945
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Handle ElementNotInteractable JavaScript exception to generate the appropriate Automation error.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+
 2019-11-06  Eric Liang  <ericliang@apple.com>
 
         AX: WKWebView does not shift Accessibility Focus for Catalyst (203798)
