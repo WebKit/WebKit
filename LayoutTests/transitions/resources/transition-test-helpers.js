@@ -40,16 +40,17 @@ function isCloseEnough(actual, desired, tolerance)
 
 function isShadow(property)
 {
-  return (property == '-webkit-box-shadow' || property == 'text-shadow');
+  return (property == '-webkit-box-shadow' || property == 'box-shadow' || property == 'text-shadow');
 }
 
 function getShadowXY(cssValue)
 {
     var text = cssValue.cssText;
     // Shadow cssText looks like "rgb(0, 0, 255) 0px -3px 10px 0px"
-    var shadowPositionRegExp = /\)\s*(-?\d+)px\s*(-?\d+)px/;
+    var shadowPositionRegExp = /\)\s*(-?\d+\.?\d*)px\s*(-?\d+\.?\d*)px/;
     var result = shadowPositionRegExp.exec(text);
-    return [parseInt(result[1]), parseInt(result[2])];
+    console.log(text, result);
+    return [parseFloat(result[1]), parseFloat(result[2])];
 }
 
 function compareRGB(rgb, expected, tolerance)
@@ -304,6 +305,7 @@ function checkExpectedValue(expected, index)
                     // arbitrarily pick shadow-x and shadow-y
                     if (isShadow) {
                       var shadowXY = getShadowXY(styleValue);
+                      console.log('shadowXY', shadowXY);
                       values.push(shadowXY[0]);
                       values.push(shadowXY[1]);
                     } else

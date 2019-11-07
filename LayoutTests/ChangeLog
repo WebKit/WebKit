@@ -107,6 +107,20 @@
 
         * platform/ios/TestExpectations:
 
+2019-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r252161): 3 transitions/ tests time-out
+        https://bugs.webkit.org/show_bug.cgi?id=203966
+
+        Reviewed by Dean Jackson.
+
+        Fix the shadow parsing code to deal with non-integral values.
+
+        * legacy-animation-engine/transitions/resources/transition-test-helpers.js:
+        (isShadow):
+        * transitions/resources/transition-test-helpers.js:
+        (isShadow):
+
 2019-11-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Display color picker for p3 colors
