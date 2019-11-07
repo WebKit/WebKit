@@ -389,7 +389,6 @@ function assert(b) {
     let called = false;
     let handler = {
         getPrototypeOf: function(theTarget) {
-            assert(theTarget === target);
             called = true;
             return proto;
         },
@@ -400,9 +399,8 @@ function assert(b) {
     
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 500; i++) {
-        let result = "x" in proxy;
-        assert(called);
-        called = false;
+        let result = 1 in proxy;
+        assert(!called);
     }
 }
 

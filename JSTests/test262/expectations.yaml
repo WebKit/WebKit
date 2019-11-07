@@ -633,12 +633,6 @@ test/built-ins/Array/proto-from-ctor-realm-zero.js:
 test/built-ins/Array/prototype/filter/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
-test/built-ins/Array/prototype/indexOf/calls-only-has-on-prototype-after-length-zeroed.js:
-  default: 'Test262Error: [[GetPrototypeOf]] trap called'
-  strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
-test/built-ins/Array/prototype/lastIndexOf/calls-only-has-on-prototype-after-length-zeroed.js:
-  default: 'Test262Error: [[GetPrototypeOf]] trap called'
-  strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
 test/built-ins/Array/prototype/map/target-array-with-non-writable-property.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
@@ -664,8 +658,8 @@ test/built-ins/Array/prototype/push/throws-if-integer-limit-exceeded.js:
   default: 'Test262Error: Length is 2**53 - 1 Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Length is 2**53 - 1 Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-proxy.js:
-  default: 'Test262Error: Expected a StopReverse but got a Test262Error'
-  strict mode: 'Test262Error: Expected a StopReverse but got a Test262Error'
+  default: 'Test262Error: Expected [Get:length, Has:0, Get:0, Has:4294967294, Delete:0, Set:4294967294, GetOwnPropertyDescriptor:4294967294, DefineProperty:4294967294, Has:1, Has:4294967293, Delete:1, Delete:4294967293, Has:2, Get:2, Has:4294967292, Delete:2, Set:4294967292, GetOwnPropertyDescriptor:4294967292, DefineProperty:4294967292, Has:3, Has:4294967291, Delete:3, Delete:4294967291, Has:4, Get:4] and [Get:length, Has:0, Get:0, Has:9007199254740990, Get:9007199254740990, Set:0, GetOwnPropertyDescriptor:0, DefineProperty:0, Set:9007199254740990, GetOwnPropertyDescriptor:9007199254740990, DefineProperty:9007199254740990, Has:1, Has:9007199254740989, Has:2, Get:2, Has:9007199254740988, Delete:2, Set:9007199254740988, GetOwnPropertyDescriptor:9007199254740988, DefineProperty:9007199254740988, Has:3, Has:9007199254740987, Get:9007199254740987, Set:3, GetOwnPropertyDescriptor:3, DefineProperty:3, Delete:9007199254740987, Has:4, Get:4] to have the same contents. '
+  strict mode: 'Test262Error: Expected [Get:length, Has:0, Get:0, Has:4294967294, Delete:0, Set:4294967294, GetOwnPropertyDescriptor:4294967294, DefineProperty:4294967294, Has:1, Has:4294967293, Delete:1, Delete:4294967293, Has:2, Get:2, Has:4294967292, Delete:2, Set:4294967292, GetOwnPropertyDescriptor:4294967292, DefineProperty:4294967292, Has:3, Has:4294967291, Delete:3, Delete:4294967291, Has:4, Get:4] and [Get:length, Has:0, Get:0, Has:9007199254740990, Get:9007199254740990, Set:0, GetOwnPropertyDescriptor:0, DefineProperty:0, Set:9007199254740990, GetOwnPropertyDescriptor:9007199254740990, DefineProperty:9007199254740990, Has:1, Has:9007199254740989, Has:2, Get:2, Has:9007199254740988, Delete:2, Set:9007199254740988, GetOwnPropertyDescriptor:9007199254740988, DefineProperty:9007199254740988, Has:3, Has:9007199254740987, Get:9007199254740987, Set:3, GetOwnPropertyDescriptor:3, DefineProperty:3, Delete:9007199254740987, Has:4, Get:4] to have the same contents. '
 test/built-ins/Array/prototype/slice/length-exceeding-integer-limit-proxied-array.js:
   default: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
   strict mode: 'Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. slice(9007199254740989)'
@@ -685,8 +679,8 @@ test/built-ins/Array/prototype/splice/create-proxy.js:
   default: 'TypeError: Attempted to assign to readonly property.'
   strict mode: 'TypeError: Attempted to assign to readonly property.'
 test/built-ins/Array/prototype/splice/create-species-length-exceeding-integer-limit.js:
-  default: 'Test262Error: Expected a StopSplice but got a Test262Error'
-  strict mode: 'Test262Error: Expected a StopSplice but got a Test262Error'
+  default: 'Test262Error: length and deleteCount were correctly clamped to 2^53-1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
+  strict mode: 'Test262Error: length and deleteCount were correctly clamped to 2^53-1 Expected SameValue(Â«4294967295Â», Â«9007199254740991Â») to be true'
 test/built-ins/Array/prototype/splice/length-and-deleteCount-exceeding-integer-limit.js:
   default: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
   strict mode: "Test262Error: Expected [] and [9007199254740989, 9007199254740990] to have the same contents. arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed"
@@ -1153,9 +1147,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: Expected a TypeError but got a TypeError'
-test/built-ins/Proxy/has/call-in-prototype.js:
-  default: 'Test262Error: [[GetPrototypeOf]] trap called'
-  strict mode: 'Test262Error: [[GetPrototypeOf]] trap called'
 test/built-ins/Proxy/revocable/revocation-function-name.js:
   default: 'Test262Error: obj should have an own property name'
   strict mode: 'Test262Error: obj should have an own property name'

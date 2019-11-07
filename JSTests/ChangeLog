@@ -1,3 +1,13 @@
+2019-11-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [[HasProperty]] result of Proxy in prototype chain is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=203560
+
+        Reviewed by Ross Kirsling.
+
+        * stress/proxy-get-prototype-of.js: Correct Proxy "has" trap test.
+        * test262/expectations.yaml: Mark 6 test cases as passing.
+
 2019-11-06  Mark Lam  <mark.lam@apple.com>
 
         JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut() should fire its watchpoint as the last step.

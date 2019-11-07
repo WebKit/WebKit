@@ -322,7 +322,7 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
     slot.setValue(this, static_cast<unsigned>(PropertyAttribute::None), jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
 
     auto performDefaultHasProperty = [&] {
-        return target->methodTable(vm)->getOwnPropertySlot(target, globalObject, propertyName, slot);
+        return target->getPropertySlot(globalObject, propertyName, slot);
     };
 
     if (propertyName.isPrivateName())
