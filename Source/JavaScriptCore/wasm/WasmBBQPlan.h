@@ -70,7 +70,7 @@ private:
     Vector<CompilationContext> m_compilationContexts;
     Vector<std::unique_ptr<TierUpCount>> m_tierUpCounts;
 
-    CodeBlock* m_codeBlock { nullptr };
+    RefPtr<CodeBlock> m_codeBlock { nullptr };
     uint32_t m_functionIndex;
 };
 
