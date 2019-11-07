@@ -1,5 +1,39 @@
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Local Resource Overrides: automatically show a file picker when attempting to create an override for non-text resources
+        https://bugs.webkit.org/show_bug.cgi?id=203917
+
+        Reviewed by Timothy Hatcher.
+
+        Since there's no way to edit non-text resources (e.g. images, fonts, etc.) in Web Inspector,
+        when creating a local override for non-text resources, default to showing a file picker and
+        creating a local override from the content and MIME type of whatever file is chosen.
+
+        Still provide a way (shift-click) to create a local override for non-text resources from the
+        resource's contents, as that can be useful if the user just wants to change some headers.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.async createLocalResourceOverride):
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.get createLocalResourceOverrideTooltip): Added.
+        (WI.ResourceContentView.prototype.requestLocalResourceOverrideInitialContent): Added.
+        (WI.ResourceContentView.prototype.async _getContentForLocalResourceOverrideFromFile): Added.
+        (WI.ResourceContentView.prototype._handleCreateLocalResourceOverride):
+        (WI.ResourceContentView.prototype._handleImportLocalResourceOverride):
+        (WI.ResourceContentView.prototype.localResourceOverrideInitialContent): Deleted.
+        (WI.ResourceContentView.prototype.async _handleCreateLocalResourceOverride): Deleted.
+
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.get createLocalResourceOverrideTooltip): Added.
+        (WI.TextResourceContentView.prototype.requestLocalResourceOverrideInitialContent): Added.
+        (WI.TextResourceContentView.prototype.localResourceOverrideInitialContent): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: add a marker for when a stop was requested
         https://bugs.webkit.org/show_bug.cgi?id=203935
 

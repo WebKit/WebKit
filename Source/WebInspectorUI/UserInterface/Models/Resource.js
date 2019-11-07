@@ -1058,19 +1058,18 @@ WI.Resource = class Resource extends WI.SourceCode
         cookie[WI.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 
-    async createLocalResourceOverride({initialContent} = {})
+    async createLocalResourceOverride({initialMIMEType, initialBase64Encoded, initialContent} = {})
     {
         console.assert(!this.isLocalResourceOverride);
         console.assert(WI.NetworkManager.supportsLocalResourceOverrides());
 
         let {rawContent, rawBase64Encoded} = await this.requestContent();
-        let content = initialContent !== undefined ? initialContent : rawContent;
 
         return WI.LocalResourceOverride.create({
             url: this.url,
-            mimeType: this.mimeType,
-            content,
-            base64Encoded: rawBase64Encoded,
+            mimeType: initialMIMEType !== undefined ? initialMIMEType : this.mimeType,
+            content: initialContent !== undefined ? initialContent : rawContent,
+            base64Encoded: initialBase64Encoded !== undefined ? initialBase64Encoded : rawBase64Encoded,
             statusCode: this.statusCode,
             statusText: this.statusText,
             headers: this.responseHeaders,

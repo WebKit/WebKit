@@ -77,7 +77,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             } else {
                 this._localResourceOverrideBannerView = new WI.LocalResourceOverrideWarningView(resource);
 
-                this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", WI.UIString("Create Local Override"), "Images/NavigationItemNetworkOverride.svg", 13, 14);
+                this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", this.createLocalResourceOverrideTooltip, "Images/NavigationItemNetworkOverride.svg", 13, 14);
                 this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
                 this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the content is available.
                 this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
@@ -122,10 +122,26 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         throw WI.NotImplementedError.subclassMustOverride();
     }
 
-    localResourceOverrideInitialContent()
+    get createLocalResourceOverrideTooltip()
     {
-        // Implemented by subclasses if needed.
-        return {};
+        return WI.UIString("Click to import a file and create a Local Override\nShift-click to create a Local Override from this content");
+    }
+
+    requestLocalResourceOverrideInitialContent(callback)
+    {
+        // Overridden by subclasses if needed.
+
+        WI.FileUtilities.import(async (fileList) => {
+            console.assert(fileList.length === 1);
+
+            this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
+                callback({
+                    initialMIMEType: mimeType,
+                    initialBase64Encoded: base64Encoded,
+                    initialContent: content,
+                });
+            });
+        });
     }
 
     showGenericNoContentMessage()
@@ -230,12 +246,38 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         this.addIssue(issue);
     }
 
-    async _handleCreateLocalResourceOverride(event)
+    async _getContentForLocalResourceOverrideFromFile(file, callback)
     {
-        let initialContent = this.localResourceOverrideInitialContent();
-        let localResourceOverride = await this._resource.createLocalResourceOverride(initialContent);
-        WI.networkManager.addLocalResourceOverride(localResourceOverride);
-        WI.showLocalResourceOverride(localResourceOverride);
+        let initialMIMEType = file.type || WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(file.name));
+        if (WI.shouldTreatMIMETypeAsText(initialMIMEType)) {
+            await WI.FileUtilities.readText(file, async ({text}) => {
+                await callback({
+                    mimeType: initialMIMEType,
+                    base64Encoded: false,
+                    content: text,
+                });
+            });
+        } else {
+            await WI.FileUtilities.readData(file, async ({mimeType, base64Encoded, content}) => {
+                await callback({mimeType, base64Encoded, content});
+            });
+        }
+    }
+
+    _handleCreateLocalResourceOverride(event)
+    {
+        let {nativeEvent} = event.data;
+
+        let createLocalResourceOverride = async (initialContent) => {
+            let localResourceOverride = await this._resource.createLocalResourceOverride(initialContent);
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+            WI.showLocalResourceOverride(localResourceOverride);
+        };
+
+        if (nativeEvent.shiftKey)
+            createLocalResourceOverride({});
+        else
+            this.requestLocalResourceOverrideInitialContent(createLocalResourceOverride);
     }
 
     _handleImportLocalResourceOverride(event)
@@ -249,18 +291,9 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             console.assert(localResourceOverride);
 
             let revision = localResourceOverride.localResource.currentRevision;
-
-            let file = fileList[0];
-            let mimeType = file.type || WI.mimeTypeForFileExtension(WI.fileExtensionForFilename(file.name));
-            if (WI.shouldTreatMIMETypeAsText(mimeType)) {
-                await WI.FileUtilities.readText(file, ({text}) => {
-                    revision.updateRevisionContent(text, {base64Encoded: false, mimeType});
-                });
-            } else {
-                await WI.FileUtilities.readData(file, ({dataURL, mimeType, base64Encoded, content}) => {
-                    revision.updateRevisionContent(content, {base64Encoded, mimeType});
-                });
-            }
+            await this._getContentForLocalResourceOverrideFromFile(fileList[0], ({mimeType, base64Encoded, content}) => {
+                revision.updateRevisionContent(content, {base64Encoded, mimeType});
+            });
 
             if (!this.showingLocalResourceOverride)
                 WI.showLocalResourceOverride(localResourceOverride);

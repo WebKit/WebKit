@@ -144,9 +144,14 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         // Do nothing.
     }
 
-    localResourceOverrideInitialContent()
+    get createLocalResourceOverrideTooltip()
     {
-        return {initialContent: this._textEditor.string};
+        return WI.UIString("Click to create a Local Override from this content");
+    }
+
+    requestLocalResourceOverrideInitialContent(callback)
+    {
+        callback({initialContent: this._textEditor.string});
     }
 
     get supportsSave()
