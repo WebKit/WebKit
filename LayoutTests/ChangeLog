@@ -1,3 +1,36 @@
+2019-11-07  Kate Cheney  <katherine_cheney@apple.com>
+
+       Many resourceLoadStatistics tests and storageAccess tests using the ITP
+       Database redirect to the corresponding memory store test after setting
+       a cookie
+       https://bugs.webkit.org/show_bug.cgi?id=203958
+       <rdar://problem/56984114>
+
+        Reviewed by John Wilander.
+
+        This patch fixes incorrect redirects in some ITP database store tests.
+        They should redirect back to themselves as opposed to corresponding
+        memory store tests to be sure they are testing the correct
+        functionality.
+
+        * http/tests/resourceLoadStatistics/add-blocking-to-redirect-database.html:
+        * http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import-database.html:
+        * http/tests/resourceLoadStatistics/cookie-deletion-database.html:
+        * http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction-database.html:
+        * http/tests/resourceLoadStatistics/do-not-capture-statistics-for-simple-top-navigations-database.html:
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource-database.html:
+        * http/tests/resourceLoadStatistics/grandfathering-database.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context-database.html:
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource-database.html:
+        * http/tests/storageAccess/deny-due-to-no-interaction-under-general-third-party-cookie-blocking-database.html:
+        * http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-blocking-database.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-database.html:
+        * http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral-database.html:
+        * http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-with-cookie-database.html:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-database.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access-database.html:
+
 2019-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Integrate scroll event into HTML5 event loop

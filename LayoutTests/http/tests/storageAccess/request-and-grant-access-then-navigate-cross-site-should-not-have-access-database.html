@@ -64,7 +64,7 @@
         testRunner.setUseITPDatabase(true);
         if (document.location.hash !== "#firstPartyCookieSet") {
             setEnableFeature(true, function() {
-                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.html#firstPartyCookieSet";
+                document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access-database.html#firstPartyCookieSet";
             });
         } else {
             testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
