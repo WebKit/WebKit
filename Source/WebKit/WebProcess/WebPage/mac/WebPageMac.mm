@@ -90,7 +90,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
-#import <pal/spi/mac/NSAccessibilitySPI.h>
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/SetForScope.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -76,8 +76,8 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
-#import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
 #import <wtf/text/StringBuilder.h>

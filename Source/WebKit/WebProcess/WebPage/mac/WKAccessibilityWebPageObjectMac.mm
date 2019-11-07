@@ -45,7 +45,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
-#import <pal/spi/mac/NSAccessibilitySPI.h>
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/ObjCRuntimeExtras.h>
 
 
