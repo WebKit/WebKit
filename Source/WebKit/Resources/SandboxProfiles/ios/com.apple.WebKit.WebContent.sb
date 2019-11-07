@@ -122,7 +122,8 @@
 
 (define-once (play-audio)
     (allow mach-lookup
-           (global-name "com.apple.audio.AURemoteIOServer")
+           (global-name "com.apple.audio.AURemoteIOServer"))
+    (allow mach-lookup (with report) (with telemetry)
            (xpc-service-name "com.apple.audio.toolbox.reporting.service")))
 
 (define-once (play-media . filters)
@@ -201,6 +202,8 @@
         "com.apple.mobileipod")
     (allow mach-lookup
            (global-name "com.apple.mediaremoted.xpc"))
+    (allow mach-lookup (with report) (with telemetry)
+        (xpc-service-name "com.apple.MediaPlayer.RemotePlayerService"))
 )
 
 (define-once (media-capture-support)
@@ -627,7 +630,8 @@
 (allow ipc-posix-shm-read*
        (ipc-posix-name-prefix "apple.cfprefs."))
  
-(allow mach-lookup
+(allow mach-lookup (with report) (with telemetry)
+    (global-name "com.apple.lsd.open")
     (global-name "com.apple.lsd.mapdb"))
 
 ;; <rdar://problem/12413942>
@@ -643,6 +647,9 @@
     (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
     (allow ipc-posix-sem-open))
 
+(allow mach-lookup (with report) (with telemetry)
+    (global-name "com.apple.runningboard"))
+
 (allow system-sched
        (require-entitlement "com.apple.private.kernel.override-cpumon"))
 
@@ -653,6 +660,9 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
+(allow mach-lookup (with report) (with telemetry)
+       (global-name "com.apple.system.logger"))
+
 (allow file-read-metadata network-outbound
        (literal "/private/var/run/syslog"))
 
@@ -660,6 +670,9 @@
        (global-name "com.apple.system.notification_center"))
 (allow ipc-posix-shm-read*
        (ipc-posix-name "apple.shm.notification_center"))
+
+(allow mach-lookup (with report) (with telemetry)
+    (global-name "com.apple.diagnosticd"))
 
 (logd-diagnostic-client)
 
@@ -717,7 +730,7 @@
 
 (speech-synthesis-and-voiceover)
 
-(allow mach-lookup
+(allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 
 ;; Permit reading assets via MobileAsset framework.
@@ -761,7 +774,7 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(allow mach-lookup
+(allow mach-lookup (with report) (with telemetry)
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 

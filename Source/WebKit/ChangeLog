@@ -1,3 +1,14 @@
+2019-11-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add logging and telemetry to more mach lookup rules
+        https://bugs.webkit.org/show_bug.cgi?id=203978
+
+        Reviewed by Brent Fulgham.
+
+        Add logging and telemetry to help determine if mach lookup of these services can be denied in the WebContent process.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-11-07  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable NSURLSession isolation after r252116
