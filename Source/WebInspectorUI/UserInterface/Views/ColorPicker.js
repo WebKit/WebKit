@@ -60,6 +60,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             return {containerElement, numberInputElement};
         };
 
+        // FIXME: <https://webkit.org/b/203928> Web Inspector: Show RGBA input fields for p3 color picker
         this._colorInputs = new Map([
             ["R", createColorInput("R", {max: 255})],
             ["G", createColorInput("G", {max: 255})],
@@ -167,6 +168,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         let opacity = Math.round(this._opacity * 100) / 100;
 
         let format = this._color.format;
+        let gamut = this._color.gamut;
         let components = null;
         if (format === WI.Color.Format.HSL || format === WI.Color.Format.HSLA) {
             components = this._colorSquare.tintedColor.hsl.concat(opacity);
@@ -180,7 +182,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         let formatChanged = this._color.format === format;
 
-        this._color = new WI.Color(format, components);
+        this._color = new WI.Color(format, components, gamut);
 
         this._showColorComponentInputs();
 
@@ -193,8 +195,10 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     _updateOpacitySlider()
     {
         let rgb = this._colorSquare.tintedColor.rgb;
-        let opaque = new WI.Color(WI.Color.Format.RGBA, rgb.concat(1)).toString();
-        let transparent = new WI.Color(WI.Color.Format.RGBA, rgb.concat(0)).toString();
+        let gamut = this._colorSquare.tintedColor.gamut;
+        let format = gamut === WI.Color.Gamut.DisplayP3 ? WI.Color.Format.ColorFunction : WI.Color.Format.RGBA;
+        let opaque = new WI.Color(format, rgb.concat(1), gamut).toString();
+        let transparent = new WI.Color(format, rgb.concat(0), gamut).toString();
         this._opacitySlider.element.style.setProperty("background-image", "linear-gradient(90deg, " + transparent + ", " + opaque + "), " + this._opacityPattern);
     }
 
@@ -209,6 +213,8 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             && this._color.format !== WI.Color.Format.ShortHEXAlpha
             && this._color.format !== WI.Color.Format.HSL
             && this._color.format !== WI.Color.Format.HSLA);
+
+        this._element.classList.toggle("gamut-p3", this._color.gamut === WI.Color.Gamut.DisplayP3);
 
         this.dispatchEventToListeners(WI.ColorPicker.Event.FormatChanged);
     }

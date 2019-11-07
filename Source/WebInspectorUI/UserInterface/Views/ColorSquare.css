@@ -45,14 +45,15 @@
 
 .color-square > .crosshair {
     position: absolute;
-    top: calc(-1 * var(--crosshair-size) / 2);
-    left: calc(-1 * var(--crosshair-size) / 2);
+    top: calc(-1 * (var(--crosshair-size) + var(--border-width)) / 2);
+    left: calc(-1 * (var(--crosshair-size) + var(--border-width)) / 2);
     width: var(--crosshair-size);
     height: var(--crosshair-size);
-    background-color: white;
-    border: 0.5px solid black;
+    border: var(--border-width) solid white;
+    box-shadow: 0 0 2px black;
     border-radius: 3px;
     pointer-events: none;
 
+    --border-width: 1px;
     --crosshair-size: 7px;
 }

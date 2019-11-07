@@ -211,7 +211,9 @@ WI.settings = {
     debugLayoutDirection: new WI.Setting("debug-layout-direction-override", "system"),
 };
 
-WI.previewFeatures = [];
+WI.previewFeatures = [
+    "p3-gamut-color-picker" // FIXME: <https://webkit.org/b/203931> Web Inspector: Enable p3 color picker by default
+];
 
 WI.isTechnologyPreviewBuild = function()
 {

@@ -1,3 +1,49 @@
+2019-11-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Display color picker for p3 colors
+        https://bugs.webkit.org/show_bug.cgi?id=203436
+        <rdar://problem/56635062>
+
+        Reviewed by Brian Burg.
+
+        For p3 colors, display ColorSquare with display-p3 gamut.
+        Continue showing ColorSquare with sRGB gamut by default.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Models/Color.js:
+        (WI.Color):
+        (WI.Color.rgb2hsv):
+        (WI.Color.hsv2rgb.fraction):
+        (WI.Color.hsv2rgb):
+        (WI.Color.prototype.get hsla):
+        (WI.Color.prototype.isKeyword):
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker > .hue):
+        (@media (color-gamut: p3)):
+        (.color-picker.gamut-p3 > .hue):
+
+        * UserInterface/Views/ColorPicker.js:
+        (WI.ColorPicker.prototype._updateColor):
+        (WI.ColorPicker.prototype._updateOpacitySlider):
+        (WI.ColorPicker.prototype._handleFormatChange):
+        Introduce `gamut` parameter. Previously, the only available `gamut` was sRGB.
+
+        * UserInterface/Views/ColorSquare.css:
+        (.color-square > .crosshair):
+        Update the crosshair style to look better for both light and dark backgrounds.
+
+        * UserInterface/Views/ColorSquare.js:
+        (WI.ColorSquare):
+        (WI.ColorSquare.prototype.get tintedColor):
+        (WI.ColorSquare.prototype.set tintedColor):
+        (WI.ColorSquare.prototype._setCrosshairPosition):
+        (WI.ColorSquare.prototype._updateBaseColor):
+        (WI.ColorSquare.prototype._updateCrosshairBackground):
+
+        * UserInterface/Views/InlineSwatch.js:
+        Make p3 color picker a preview (e.g. STP-only) feature.
+
 2019-11-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers: enable tab by default

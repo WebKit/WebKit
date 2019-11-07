@@ -32,7 +32,9 @@ WI.Color = class Color
     constructor(format, components, gamut)
     {
         this.format = format;
-        this.gamut = gamut || "srgb";
+
+        console.assert(gamut === undefined || Object.values(WI.Color.Gamut).includes(gamut));
+        this.gamut = gamut || WI.Color.Gamut.SRGB;
 
         if (components.length === 3)
             components.push(1);
@@ -178,7 +180,7 @@ WI.Color = class Color
                 return null;
 
             let gamut = components[0].toLowerCase();
-            if (gamut !== "srgb" && gamut !== "display-p3")
+            if (!Object.values(WI.Color.Gamut).includes(gamut))
                 return null;
 
             let alpha = 1;
@@ -298,6 +300,54 @@ WI.Color = class Color
         return [h, saturation * 100, l * 100];
     }
 
+    // https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+    static rgb2hsv(r, g, b)
+    {
+        r = Number.constrain(r, 0, 1);
+        g = Number.constrain(g, 0, 1);
+        b = Number.constrain(b, 0, 1);
+
+        let max = Math.max(r, g, b);
+        let min = Math.min(r, g, b);
+        let h = 0;
+        let delta = max - min;
+        let s = max === 0 ? 0 : delta / max;
+        let v = max;
+
+        if (max === min)
+            h = 0; // Grayscale.
+        else {
+            switch (max) {
+            case r:
+                h = ((g - b) / delta) + ((g < b) ? 6 : 0);
+                break;
+            case g:
+                h = ((b - r) / delta) + 2;
+                break;
+            case b:
+                h = ((r - g) / delta) + 4;
+                break;
+            }
+            h /= 6;
+        }
+
+        return [h * 360, s * 100, v * 100];
+    }
+
+    // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB_alternative
+    static hsv2rgb(h, s, v)
+    {
+        h = Number.constrain(h, 0, 360);
+        s = Number.constrain(s, 0, 100) / 100;
+        v = Number.constrain(v, 0, 100) / 100;
+
+        function fraction(n) {
+            let k = (n + (h / 60)) % 6;
+            return v - (v * s * Math.max(Math.min(k, 4 - k, 1), 0));
+        }
+        return [fraction(5), fraction(3), fraction(1)];
+    }
+
     static cmyk2rgb(c, m, y, k)
     {
         c = Number.constrain(c, 0, 1);
@@ -399,8 +449,19 @@ WI.Color = class Color
 
     get hsla()
     {
-        if (!this._hsla)
-            this._hsla = this._rgbaToHSLA(this.rgba);
+        if (!this._hsla) {
+            let rgba = this.rgba;
+            if (this.format === WI.Color.Format.ColorFunction) {
+                rgba = [
+                    rgba[0] * 255,
+                    rgba[1] * 255,
+                    rgba[2] * 255,
+                    rgba[3],
+                ];
+            }
+            this._hsla = this._rgbaToHSLA(rgba);
+        }
+
         return this._hsla;
     }
 
@@ -461,7 +522,7 @@ WI.Color = class Color
         if (this.keyword)
             return true;
 
-        if (this.gamut !== "srgb")
+        if (this.gamut !== WI.Color.Gamut.SRGB)
             return false;
 
         if (!this.simple)
@@ -663,6 +724,11 @@ WI.Color.Format = {
     HSL: "color-format-hsl",
     HSLA: "color-format-hsla",
     ColorFunction: "color-format-color-function",
+};
+
+WI.Color.Gamut = {
+    SRGB: "srgb",
+    DisplayP3: "display-p3",
 };
 
 WI.Color.FunctionNames = new Set([

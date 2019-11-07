@@ -32,6 +32,7 @@ WI.ColorSquare = class ColorSquare
         this._hue = 0;
         this._x = 0;
         this._y = 0;
+        this._gamut = null;
         this._crosshairPosition = null;
 
         this._element = document.createElement("div");
@@ -80,6 +81,12 @@ WI.ColorSquare = class ColorSquare
     get tintedColor()
     {
         if (this._crosshairPosition) {
+            if (this._gamut === WI.Color.Gamut.DisplayP3) {
+                let rgb = WI.Color.hsv2rgb(this._hue, this._saturation, this._brightness);
+                rgb = rgb.map(((x) => Math.roundTo(x, 0.001)));
+                return new WI.Color(WI.Color.Format.ColorFunction, rgb, this._gamut);
+            }
+
             let hsl = WI.Color.hsv2hsl(this._hue, this._saturation, this._brightness);
             return new WI.Color(WI.Color.Format.HSL, hsl);
         }
@@ -90,26 +97,31 @@ WI.ColorSquare = class ColorSquare
     set tintedColor(tintedColor)
     {
         console.assert(tintedColor instanceof WI.Color);
-        let hsl = tintedColor.hsl;
-        let saturation = Number.constrain(hsl[1], 0, 100);
-        let x = saturation / 100 * this._dimension;
 
-        let lightness = hsl[2];
+        this._gamut = tintedColor.gamut;
 
-        // The color picker is HSB-based. (HSB is also known as HSV.)
-        // Derive lightness by using HSB to HSL equation.
-        let y = 2 * lightness / (200 - saturation);
-        y = -1 * (y - 1) * this._dimension;
+        if (tintedColor.format === WI.Color.Format.ColorFunction) {
+            // CSS color function only supports RGB. It doesn't support HSL.
+            let hsv = WI.Color.rgb2hsv(...tintedColor.rgb);
+            let x = hsv[1] / 100 * this._dimension;
+            let y = (1 - (hsv[2] / 100)) * this._dimension;
+            this._setCrosshairPosition(new WI.Point(x, y));
+        } else {
+            let hsl = tintedColor.hsl;
+            let saturation = Number.constrain(hsl[1], 0, 100);
+            let x = saturation / 100 * this._dimension;
 
-        this._setCrosshairPosition(new WI.Point(x, y));
-    }
+            let lightness = hsl[2];
 
-    get rawColor()
-    {
-        if (this._crosshairPosition)
-            return new WI.Color(WI.Color.Format.HSL, [this._hue, this._saturation, 50]);
+            // The color picker is HSV-based. (HSV is also known as HSB.)
+            // Derive lightness by using HSV to HSL equation.
+            let y = 2 * lightness / (200 - saturation);
+            y = -1 * (y - 1) * this._dimension;
 
-        return new WI.Color(WI.Color.Format.HSLA, WI.Color.Keywords.transparent);
+            this._setCrosshairPosition(new WI.Point(x, y));
+        }
+
+        this._updateBaseColor();
     }
 
     // Protected
@@ -182,10 +194,23 @@ WI.ColorSquare = class ColorSquare
         this._x = Number.constrain(Math.round(point.x), 0, this._dimension);
         this._y = Number.constrain(Math.round(point.y), 0, this._dimension);
         this._crosshairElement.style.setProperty("transform", `translate(${this._x}px, ${this._y}px)`);
+
+        this._updateCrosshairBackground();
     }
 
     _updateBaseColor()
     {
-        this._element.style.backgroundColor = `hsl(${this._hue}, 100%, 50%)`;
+        if (this._gamut === WI.Color.Gamut.DisplayP3) {
+            let [r, g, b] = WI.Color.hsl2rgb(this._hue, 100, 50);
+            this._element.style.backgroundColor = `color(display-p3 ${r / 255} ${g / 255} ${b / 255})`;
+        } else
+            this._element.style.backgroundColor = `hsl(${this._hue}, 100%, 50%)`;
+
+        this._updateCrosshairBackground();
+    }
+
+    _updateCrosshairBackground()
+    {
+        this._crosshairElement.style.backgroundColor = this.tintedColor.toString();
     }
 };

@@ -1,3 +1,16 @@
+2019-11-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Display color picker for p3 colors
+        https://bugs.webkit.org/show_bug.cgi?id=203436
+        <rdar://problem/56635062>
+
+        Reviewed by Brian Burg.
+
+        Add tests for WI.Color.rgb2hsv and WI.Color.hsv2rgb.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2019-11-06  Justin Fan  <justin_fan@apple.com>
 
         REGRESSION: r252121 introduced new webgl/ failures

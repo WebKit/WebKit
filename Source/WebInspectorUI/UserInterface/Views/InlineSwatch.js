@@ -159,6 +159,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (event.shiftKey && value) {
             if (this._type === WI.InlineSwatch.Type.Color) {
                 let nextFormat = value.nextFormat();
+                // FIXME: <https://webkit.org/b/203534> Provide UI to convert between sRGB and p3 color spaces
                 console.assert(nextFormat);
                 if (nextFormat) {
                     value.format = nextFormat;
@@ -176,6 +177,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         }
 
         if (this._valueEditor)
+            return;
+
+        if (!WI.arePreviewFeaturesEnabled() && value.format === WI.Color.Format.ColorFunction)
             return;
 
         if (!value)
