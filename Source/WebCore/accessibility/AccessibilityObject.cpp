@@ -2601,10 +2601,79 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+#if !PLATFORM(MAC)
+String AccessibilityObject::rolePlatformString() const
+{
+    // FIXME: implement in other platforms.
+    return String();
+}
+
+String AccessibilityObject::rolePlatformDescription() const
+{
+    // FIXME: implement in other platforms.
+    return String();
+}
+#endif
+
+String AccessibilityObject::ariaLandmarkRoleDescription() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::LandmarkBanner:
+        return AXARIAContentGroupText("ARIALandmarkBanner");
+    case AccessibilityRole::LandmarkComplementary:
+        return AXARIAContentGroupText("ARIALandmarkComplementary");
+    case AccessibilityRole::LandmarkContentInfo:
+        return AXARIAContentGroupText("ARIALandmarkContentInfo");
+    case AccessibilityRole::LandmarkMain:
+        return AXARIAContentGroupText("ARIALandmarkMain");
+    case AccessibilityRole::LandmarkNavigation:
+        return AXARIAContentGroupText("ARIALandmarkNavigation");
+    case AccessibilityRole::LandmarkDocRegion:
+    case AccessibilityRole::LandmarkRegion:
+        return AXARIAContentGroupText("ARIALandmarkRegion");
+    case AccessibilityRole::LandmarkSearch:
+        return AXARIAContentGroupText("ARIALandmarkSearch");
+    case AccessibilityRole::ApplicationAlert:
+        return AXARIAContentGroupText("ARIAApplicationAlert");
+    case AccessibilityRole::ApplicationAlertDialog:
+        return AXARIAContentGroupText("ARIAApplicationAlertDialog");
+    case AccessibilityRole::ApplicationDialog:
+        return AXARIAContentGroupText("ARIAApplicationDialog");
+    case AccessibilityRole::ApplicationLog:
+        return AXARIAContentGroupText("ARIAApplicationLog");
+    case AccessibilityRole::ApplicationMarquee:
+        return AXARIAContentGroupText("ARIAApplicationMarquee");
+    case AccessibilityRole::ApplicationStatus:
+        return AXARIAContentGroupText("ARIAApplicationStatus");
+    case AccessibilityRole::ApplicationTimer:
+        return AXARIAContentGroupText("ARIAApplicationTimer");
+    case AccessibilityRole::Document:
+        return AXARIAContentGroupText("ARIADocument");
+    case AccessibilityRole::DocumentArticle:
+        return AXARIAContentGroupText("ARIADocumentArticle");
+    case AccessibilityRole::DocumentMath:
+        return AXARIAContentGroupText("ARIADocumentMath");
+    case AccessibilityRole::DocumentNote:
+        return AXARIAContentGroupText("ARIADocumentNote");
+    case AccessibilityRole::UserInterfaceTooltip:
+        return AXARIAContentGroupText("ARIAUserInterfaceTooltip");
+    case AccessibilityRole::TabPanel:
+        return AXARIAContentGroupText("ARIATabPanel");
+    case AccessibilityRole::WebApplication:
+        return AXARIAContentGroupText("ARIAWebApplication");
+    default:
+        return String();
+    }
+}
+
 String AccessibilityObject::roleDescription() const
 {
     // aria-roledescription takes precedence over any other rule.
     String roleDescription = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
+    if (!roleDescription.isEmpty())
+        return roleDescription;
+
+    roleDescription = rolePlatformDescription();
     if (!roleDescription.isEmpty())
         return roleDescription;
 
@@ -3765,5 +3834,20 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child
     
     child->setIsIgnoredFromParentData(result);
 }
+
+namespace Accessibility {
+
+#if !PLATFORM(MAC)
+// FIXME: implement in other platforms.
+PlatformRoleMap createPlatformRoleMap() { return PlatformRoleMap(); }
+#endif
+
+String roleToPlatformString(AccessibilityRole role)
+{
+    static NeverDestroyed<PlatformRoleMap> roleMap = createPlatformRoleMap();
+    return roleMap->get(static_cast<unsigned>(role));
+}
+
+} // namespace Accessibility
 
 } // namespace WebCore

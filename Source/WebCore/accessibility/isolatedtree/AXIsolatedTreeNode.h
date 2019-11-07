@@ -54,8 +54,13 @@ public:
     AXID objectID() const override { return m_id; }
     void init() override { }
 
+    AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }
     void detach(AccessibilityDetachmentType, AXObjectCache* = nullptr) override { }
     bool isDetached() const override { return false; }
+
+    void setTreeIdentifier(AXIsolatedTreeID);
+    void setParent(AXID);
+    void appendChild(AXID);
 
 private:
     bool isAccessibilityObject() const override { return false; }
@@ -259,7 +264,6 @@ private:
     const AtomString& identifierAttribute() const override { return nullAtom(); }
     const AtomString& linkRelValue() const override { return nullAtom(); }
     void classList(Vector<String>&) const override { }
-    String roleDescription() const override { return String(); }
     AccessibilityCurrentState currentState() const override { return AccessibilityCurrentState::False; }
     String currentValue() const override { return String(); }
     bool supportsCurrent() const override { return false; }
@@ -343,6 +347,9 @@ private:
     void colorValue(int&, int&, int&) const override { }
 
     AccessibilityRole roleValue() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
+    String rolePlatformString() const override { return stringAttributeValue(AXPropertyName::RolePlatformString); }
+    String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }
+    String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
 
     AXObjectCache* axObjectCache() const override { return nullptr; }
 
@@ -590,7 +597,6 @@ private:
     bool isDOMHidden() const override { return false; }
     bool isHidden() const override { return false; }
 
-    AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) override { m_wrapper = wrapper; }
 
     void overrideAttachmentParent(AXCoreObject*) override { }
@@ -631,11 +637,6 @@ private:
     void clearIsIgnoredFromParentData() override { }
     void setIsIgnoredFromParentDataForChild(AXCoreObject*) override { }
 
-    void setTreeIdentifier(AXIsolatedTreeID);
-    AXIsolatedTree* tree() const;
-    void setParent(AXID);
-    void appendChild(AXID);
-
     enum class AXPropertyName : uint8_t {
         None = 0,
         HelpText,
@@ -652,6 +653,9 @@ private:
         Description,
         RelativeFrame,
         RoleValue,
+        RolePlatformString,
+        RoleDescription,
+        ARIALandmarkRoleDescription,
         SpeechHint,
         Title,
     };
@@ -659,6 +663,7 @@ private:
     AXID parent() const { return m_parent; }
 
     AXIsolatedTreeID treeIdentifier() const { return m_treeIdentifier; }
+    AXIsolatedTree* tree() const;
 
     AXIsolatedTreeNode() = default;
     AXIsolatedTreeNode(const AXCoreObject&);

@@ -326,9 +326,6 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 
 - (AXCoreObject*)accessibilityObject
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    ASSERT(!_AXUIElementRequestServicedBySecondaryAXThread());
-#endif
     return m_object;
 }
 
@@ -472,53 +469,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 
 - (NSString *)ariaLandmarkRoleDescription
 {
-    switch (_axBackingObject->roleValue()) {
-    case AccessibilityRole::LandmarkBanner:
-        return AXARIAContentGroupText(@"ARIALandmarkBanner");
-    case AccessibilityRole::LandmarkComplementary:
-        return AXARIAContentGroupText(@"ARIALandmarkComplementary");
-    case AccessibilityRole::LandmarkContentInfo:
-        return AXARIAContentGroupText(@"ARIALandmarkContentInfo");
-    case AccessibilityRole::LandmarkMain:
-        return AXARIAContentGroupText(@"ARIALandmarkMain");
-    case AccessibilityRole::LandmarkNavigation:
-        return AXARIAContentGroupText(@"ARIALandmarkNavigation");
-    case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::LandmarkRegion:
-        return AXARIAContentGroupText(@"ARIALandmarkRegion");
-    case AccessibilityRole::LandmarkSearch:
-        return AXARIAContentGroupText(@"ARIALandmarkSearch");
-    case AccessibilityRole::ApplicationAlert:
-        return AXARIAContentGroupText(@"ARIAApplicationAlert");
-    case AccessibilityRole::ApplicationAlertDialog:
-        return AXARIAContentGroupText(@"ARIAApplicationAlertDialog");
-    case AccessibilityRole::ApplicationDialog:
-        return AXARIAContentGroupText(@"ARIAApplicationDialog");
-    case AccessibilityRole::ApplicationLog:
-        return AXARIAContentGroupText(@"ARIAApplicationLog");
-    case AccessibilityRole::ApplicationMarquee:
-        return AXARIAContentGroupText(@"ARIAApplicationMarquee");
-    case AccessibilityRole::ApplicationStatus:
-        return AXARIAContentGroupText(@"ARIAApplicationStatus");
-    case AccessibilityRole::ApplicationTimer:
-        return AXARIAContentGroupText(@"ARIAApplicationTimer");
-    case AccessibilityRole::Document:
-        return AXARIAContentGroupText(@"ARIADocument");
-    case AccessibilityRole::DocumentArticle:
-        return AXARIAContentGroupText(@"ARIADocumentArticle");
-    case AccessibilityRole::DocumentMath:
-        return AXARIAContentGroupText(@"ARIADocumentMath");
-    case AccessibilityRole::DocumentNote:
-        return AXARIAContentGroupText(@"ARIADocumentNote");
-    case AccessibilityRole::UserInterfaceTooltip:
-        return AXARIAContentGroupText(@"ARIAUserInterfaceTooltip");
-    case AccessibilityRole::TabPanel:
-        return AXARIAContentGroupText(@"ARIATabPanel");
-    case AccessibilityRole::WebApplication:
-        return AXARIAContentGroupText(@"ARIAWebApplication");
-    default:
-        return nil;
-    }
+    return m_object->ariaLandmarkRoleDescription();
 }
 
 - (void)baseAccessibilitySetFocus:(BOOL)focus

@@ -54,6 +54,9 @@ AXIsolatedTreeNode::~AXIsolatedTreeNode() = default;
 void AXIsolatedTreeNode::initializeAttributeData(const AXCoreObject& object)
 {
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
+    setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
+    setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
+    setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsMediaControlLabel, object.isMediaControlLabel());
     setProperty(AXPropertyName::IsLink, object.isLink());

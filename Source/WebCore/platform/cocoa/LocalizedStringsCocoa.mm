@@ -181,63 +181,6 @@ String contextMenuItemTagExitVideoEnhancedFullscreen()
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
-String AXARIAContentGroupText(const String& ariaType)
-{
-    if (ariaType == "ARIAApplicationAlert")
-        return WEB_UI_STRING("alert", "An ARIA accessibility group that acts as an alert.");
-    if (ariaType == "ARIAApplicationAlertDialog")
-        return WEB_UI_STRING("web alert dialog", "An ARIA accessibility group that acts as an alert dialog.");
-    if (ariaType == "ARIAApplicationDialog")
-        return WEB_UI_STRING("web dialog", "An ARIA accessibility group that acts as an dialog.");
-    if (ariaType == "ARIAApplicationLog")
-        return WEB_UI_STRING("log", "An ARIA accessibility group that acts as a console log.");
-    if (ariaType == "ARIAApplicationMarquee")
-        return WEB_UI_STRING("marquee", "An ARIA accessibility group that acts as a marquee.");
-    if (ariaType == "ARIAApplicationStatus")
-        return WEB_UI_STRING("application status", "An ARIA accessibility group that acts as a status update.");
-    if (ariaType == "ARIAApplicationTimer")
-        return WEB_UI_STRING("timer", "An ARIA accessibility group that acts as an updating timer.");
-    if (ariaType == "ARIADocument")
-        return WEB_UI_STRING("document", "An ARIA accessibility group that acts as a document.");
-    if (ariaType == "ARIADocumentArticle")
-        return WEB_UI_STRING("article", "An ARIA accessibility group that acts as an article.");
-    if (ariaType == "ARIADocumentNote")
-        return WEB_UI_STRING("note", "An ARIA accessibility group that acts as a note in a document.");
-    if (ariaType == "ARIAWebApplication")
-        return WEB_UI_STRING("web application", "An ARIA accessibility group that acts as an application.");
-    if (ariaType == "ARIALandmarkBanner")
-        return WEB_UI_STRING("banner", "An ARIA accessibility group that acts as a banner.");
-    if (ariaType == "ARIALandmarkComplementary")
-        return WEB_UI_STRING("complementary", "An ARIA accessibility group that acts as a region of complementary information.");
-    if (ariaType == "ARIALandmarkContentInfo")
-        return WEB_UI_STRING("content information", "An ARIA accessibility group that contains content.");
-    if (ariaType == "ARIALandmarkMain")
-        return WEB_UI_STRING("main", "An ARIA accessibility group that is the main portion of the website.");
-    if (ariaType == "ARIALandmarkNavigation")
-        return WEB_UI_STRING("navigation", "An ARIA accessibility group that contains the main navigation elements of a website.");
-    if (ariaType == "ARIALandmarkRegion")
-        return WEB_UI_STRING("region", "An ARIA accessibility group that acts as a distinct region in a document.");
-    if (ariaType == "ARIALandmarkSearch")
-        return WEB_UI_STRING("search", "An ARIA accessibility group that contains a search feature of a website.");
-    if (ariaType == "ARIAUserInterfaceTooltip")
-        return WEB_UI_STRING("tooltip", "An ARIA accessibility group that acts as a tooltip.");
-    if (ariaType == "ARIATabPanel")
-        return WEB_UI_STRING("tab panel", "An ARIA accessibility group that contains the content of a tab.");
-    if (ariaType == "ARIADocumentMath")
-        return WEB_UI_STRING("math", "An ARIA accessibility group that contains mathematical symbols.");
-    return String();
-}
-
-String AXHorizontalRuleDescriptionText()
-{
-    return WEB_UI_STRING("separator", "accessibility role description for a horizontal rule [<hr>]");
-}
-
-String AXMarkText()
-{
-    return WEB_UI_STRING("highlighted", "accessibility role description for a mark element");
-}
-
 #if ENABLE(METER_ELEMENT)
 String AXMeterGaugeRegionOptimumText()
 {

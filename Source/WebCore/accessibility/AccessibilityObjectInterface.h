@@ -669,7 +669,6 @@ public:
     virtual const AtomString& identifierAttribute() const = 0;
     virtual const AtomString& linkRelValue() const = 0;
     virtual void classList(Vector<String>&) const = 0;
-    virtual String roleDescription() const = 0;
     virtual AccessibilityCurrentState currentState() const = 0;
     virtual String currentValue() const = 0;
     virtual bool supportsCurrent() const = 0;
@@ -764,6 +763,12 @@ public:
     virtual void colorValue(int& r, int& g, int& b) const = 0;
 
     virtual AccessibilityRole roleValue() const = 0;
+    // Non-localized string associated with the object role.
+    virtual String rolePlatformString() const = 0;
+    // Localized string that describes the object's role.
+    virtual String roleDescription() const = 0;
+    // Localized string that describes ARIA landmark roles.
+    virtual String ariaLandmarkRoleDescription() const = 0;
 
     virtual AXObjectCache* axObjectCache() const = 0;
 

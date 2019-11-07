@@ -1,3 +1,60 @@
+2019-11-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Implement AXIsolatedTreeNode::roleDescription.
+        https://bugs.webkit.org/show_bug.cgi?id=203863
+        <rdar://problem/56934443>
+
+        Reviewed by Chris Fleizach.
+
+        No new tests needed, no new functionality.
+
+        AccessibilityObjectWrapper cannot call any of the AX.*Text functions to
+        retrieve localized role descriptions, because when running on the
+        secondary thread, those AtomStrings are not accessible. Moreover, some
+        of the special cases require access to DOM objects that are not
+        available in the secondary thread. Therefore, added
+        AXCoreObject::rolePlatformDescription that runs in the main thread to
+        initialize the corresponding attribute in AXIsolatedTreeNode.
+        rolePlatformString, createPlatformRoleMap, roleToPlatformString,
+        ariaLandmarkRoleDescription, are helper functions. The platform
+        functions allow to customize the behavior of roleDescription in each
+        platform. The platform overrides are implemented for mac. Other
+        platforms are pending.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::rolePlatformString const):
+        (WebCore::AccessibilityObject::rolePlatformDescription const):
+        (WebCore::AccessibilityObject::ariaLandmarkRoleDescription const):
+        (WebCore::AccessibilityObject::roleDescription const):
+        (WebCore::Accessibility::createPlatformRoleMap):
+        (WebCore::Accessibility::roleToPlatformString):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedTreeNode::initializeAttributeData):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::rolePlatformString const):
+        (WebCore::AccessibilityObject::rolePlatformDescription const):
+        (WebCore::Accessibility::createPlatformRoleMap):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase accessibilityObject]):
+        (-[WebAccessibilityObjectWrapperBase ariaLandmarkRoleDescription]): Implementation moved to AccessibilityObject.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper role]): Special cases moved to rolePlatformString.
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (createAccessibilityRoleMap): Deleted, became Accessibility::createPlatformRoleMap.
+        (roleValueToNSString): Deleted, became Accessibility::roleToPlatformString.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXARIAContentGroupText):
+        (WebCore::AXHorizontalRuleDescriptionText):
+        (WebCore::AXMarkText):
+        * platform/LocalizedStrings.h:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::AXARIAContentGroupText): Deleted, moved to LocalizedStrings.cpp.
+        (WebCore::AXHorizontalRuleDescriptionText): Deleted, moved to LocalizedStrings.cpp.
+        (WebCore::AXMarkText): Deleted, moved to LocalizedStrings.cpp.
+
 2019-11-07  Chris Lord  <clord@igalia.com>
 
         Indentation in ThreadGlobalData.h is incorrect

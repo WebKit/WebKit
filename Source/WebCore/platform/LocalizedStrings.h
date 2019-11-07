@@ -186,7 +186,10 @@ namespace WebCore {
     String AXMonthFieldText();
     String AXNumberFieldText();
     String AXWeekFieldText();
-    
+    String AXARIAContentGroupText(const String& ariaType);
+    String AXHorizontalRuleDescriptionText();
+    String AXMarkText();
+
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();
     String AXTextFieldActionVerb();
@@ -203,9 +206,6 @@ namespace WebCore {
     String weekFormatInLDML();
 #endif
 #if PLATFORM(COCOA)
-    String AXARIAContentGroupText(const String& ariaType);
-    String AXHorizontalRuleDescriptionText();
-    String AXMarkText();
 #if ENABLE(METER_ELEMENT)
     String AXMeterGaugeRegionOptimumText();
     String AXMeterGaugeRegionSuboptimalText();

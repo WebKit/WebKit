@@ -326,7 +326,6 @@ public:
     const AtomString& identifierAttribute() const override;
     const AtomString& linkRelValue() const override;
     void classList(Vector<String>&) const override;
-    String roleDescription() const override;
     AccessibilityCurrentState currentState() const override;
     String currentValue() const override;
     bool supportsCurrent() const override;
@@ -428,6 +427,9 @@ public:
     void colorValue(int& r, int& g, int& b) const override { r = 0; g = 0; b = 0; }
 
     AccessibilityRole roleValue() const override { return m_role; }
+    String rolePlatformString() const override;
+    String roleDescription() const override;
+    String ariaLandmarkRoleDescription() const override;
 
     AXObjectCache* axObjectCache() const override;
     AXID objectID() const override { return m_id; }
@@ -794,6 +796,7 @@ protected:
     static bool isAccessibilityTextSearchMatch(AXCoreObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
+    String rolePlatformDescription() const;
     bool isOnScreen() const override;
     bool dispatchTouchEvent();
 
@@ -827,6 +830,15 @@ inline void AccessibilityObject::updateBackingStore() override { }
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const WTF::Function<bool(const AccessibilityObject&)>& isAccessible);
+
+namespace Accessibility {
+
+using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+
+PlatformRoleMap createPlatformRoleMap();
+String roleToPlatformString(AccessibilityRole);
+
+} // namespace Accessibility
 
 } // namespace WebCore
 
