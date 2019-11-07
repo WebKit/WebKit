@@ -75,7 +75,8 @@ void MediaDevices::stop()
 {
     if (m_deviceChangeToken) {
         auto* controller = UserMediaController::from(document()->page());
-        controller->removeDeviceChangeObserver(m_deviceChangeToken);
+        if (controller)
+            controller->removeDeviceChangeObserver(m_deviceChangeToken);
     }
     m_devices.clear();
     m_scheduledEventTimer.stop();

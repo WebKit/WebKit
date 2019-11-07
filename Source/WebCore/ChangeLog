@@ -1,3 +1,14 @@
+2019-11-07  Eric Carlson  <eric.carlson@apple.com>
+
+        UserMediaController::from(document) can return nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=203977
+        <rdar://problem/56908013>
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::stop): NULL-check the UserMediaController.
+
 2019-11-07  Chris Dumez  <cdumez@apple.com>
 
         Port ServiceWorkerContainer to the HTML5 event loop
