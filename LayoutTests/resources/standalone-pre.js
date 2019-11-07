@@ -10,8 +10,8 @@ self.testRunner = {
 
 var silentTestPass, didPassSomeTestsSilently, didFailSomeTests, successfullyParsed;
 silentTestPass = false;
-didPassSomeTestsSilenty = false;
-didFaileSomeTests = false;
+didPassSomeTestsSilently = false;
+didFailSomeTests = false;
 
 function description(msg)
 {

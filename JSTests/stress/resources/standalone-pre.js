@@ -10,7 +10,7 @@ var silentMode = true;
 var throwOnFirstFail = true;
 var silentTestPass, didPassSomeTestsSilently, didFailSomeTests, successfullyParsed;
 silentTestPass = false;
-didPassSomeTestsSilenty = false;
+didPassSomeTestsSilently = false;
 didFailSomeTests = false;
 
 function description(msg)
