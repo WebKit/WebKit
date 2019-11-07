@@ -98,7 +98,6 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
     : ActiveDOMObject(&scriptExecutionContext)
     , m_identifier(local)
     , m_remoteIdentifier(remote)
-    , m_eventQueue(GenericEventQueue::create(*this))
 {
     LOG(MessagePorts, "Created MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
@@ -235,7 +234,6 @@ void MessagePort::close()
     }
 
     removeAllEventListeners();
-    m_eventQueue->close();
 }
 
 void MessagePort::contextDestroyed()
@@ -277,11 +275,20 @@ void MessagePort::dispatchMessages()
             if (contextIsWorker && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
                 return;
             auto ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(message.transferredPorts));
-            m_eventQueue->enqueueEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+            // Per specification, each MessagePort object has a task source called the port message queue.
+            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
         }
     };
 
     MessagePortChannelProvider::fromContext(*m_scriptExecutionContext).takeAllMessagesForPort(m_identifier, WTFMove(messagesTakenHandler));
+}
+
+void MessagePort::dispatchEvent(Event& event)
+{
+    if (m_closed)
+        return;
+
+    EventTarget::dispatchEvent(event);
 }
 
 void MessagePort::updateActivity(MessagePortChannelProvider::HasActivity hasActivity)

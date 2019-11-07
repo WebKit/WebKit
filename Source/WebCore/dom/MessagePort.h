@@ -29,7 +29,6 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "GenericEventQueue.h"
 #include "MessagePortChannel.h"
 #include "MessagePortIdentifier.h"
 #include "MessageWithMessagePorts.h"
@@ -96,6 +95,8 @@ public:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    void dispatchEvent(Event&) final;
+
 private:
     explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
@@ -126,7 +127,6 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     mutable std::atomic<unsigned> m_refCount { 1 };
-    UniqueRef<GenericEventQueue> m_eventQueue;
 };
 
 } // namespace WebCore
