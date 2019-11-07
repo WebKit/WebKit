@@ -191,7 +191,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         // in either this switch statement or the one in CSSComputedStyleDelcaration::getPropertyCSSValue
         ASSERT_WITH_MESSAGE(0, "unimplemented propertyID: %d", propertyID);
     }
-    LOG_ERROR("unimplemented propertyID: %d", propertyID);
     return nullptr;
 }
 

@@ -1679,15 +1679,6 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     return list;
 }
 
-static void logUnimplementedPropertyID(CSSPropertyID propertyID)
-{
-    static NeverDestroyed<HashSet<CSSPropertyID>> propertyIDSet;
-    if (!propertyIDSet.get().add(propertyID).isNewEntry)
-        return;
-
-    LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(propertyID));
-}
-
 static Ref<CSSValueList> fontFamilyListFromStyle(const RenderStyle& style)
 {
     auto list = CSSValueList::createCommaSeparated();
@@ -3883,7 +3874,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return nullptr;
     }
 
-    logUnimplementedPropertyID(propertyID);
     return nullptr;
 }
 
