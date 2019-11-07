@@ -26,6 +26,21 @@
         * testing/js/WebCoreTestSupportPrefix.h: Define WEBCORE_TESTSUPPORT_EXPORT empty.
         * WebCorePrefix.h: Removed WEBCORE_TESTSUPPORT_EXPORT definition.
 
+2019-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Change the UIWebView layer border colors to more strongly differentiate them from WKWebView's colors
+        https://bugs.webkit.org/show_bug.cgi?id=203940
+        rdar://problem/56708548
+
+        Reviewed by Tim Horton, Wenson Hsieh.
+
+        Change layer border colors (which also affect the repaint counter) in UIWebView to use
+        a chartreuse color, so it's easy to tell at a glance whether an app is using the deprecated
+        UIWebView.
+
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::colorForGridTileBorder const):
+
 2019-11-06  Jer Noble  <jer.noble@apple.com>
 
         Screen locks while watching previously-muted-then-unmuted video
