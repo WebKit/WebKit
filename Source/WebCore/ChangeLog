@@ -1,3 +1,31 @@
+2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WEBCORE_TESTSUPPORT_EXPORT should be used only for WebCoreTestSupport, not for WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=203876
+
+        Reviewed by Ross Kirsling.
+
+        WEBCORE_TESTSUPPORT_EXPORT shouldn't be used for WebCore. It is
+        only for WebCoreTestSupport module.
+
+        WebCoreTestSupport symbols don't need to export on Windows because
+        it is a static library on it. WEBCORE_TESTSUPPORT_EXPORT should be
+        empty.
+
+        No behavioral changes.
+
+        * Modules/encryptedmedia/MediaKeyEncryptionScheme.idl:
+        * Modules/encryptedmedia/MediaKeySessionType.idl:
+        * Modules/encryptedmedia/MediaKeysRequirement.idl:
+        * Modules/mediastream/NavigatorMediaDevices.h:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/TestNode.idl:
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        Replaced wrongly marked WEBCORE_TESTSUPPORT_EXPORT with WEBCORE_EXPORT.
+
+        * testing/js/WebCoreTestSupportPrefix.h: Define WEBCORE_TESTSUPPORT_EXPORT empty.
+        * WebCorePrefix.h: Removed WEBCORE_TESTSUPPORT_EXPORT definition.
+
 2019-11-06  Jer Noble  <jer.noble@apple.com>
 
         Screen locks while watching previously-muted-then-unmuted video

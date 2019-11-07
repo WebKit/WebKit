@@ -68,8 +68,7 @@ public:
 
     const URL& scriptURL() const { return m_document->url(); }
 
-    // Public only for testing purposes.
-    WEBCORE_TESTSUPPORT_EXPORT void notifyNetworkStateChange(bool isOnline);
+    WEBCORE_EXPORT void notifyNetworkStateChange(bool isOnline);
 
     WEBCORE_EXPORT void startFetch(SWServerConnectionIdentifier, FetchIdentifier, Ref<ServiceWorkerFetch::Client>&&, Optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
     WEBCORE_EXPORT void cancelFetch(SWServerConnectionIdentifier, FetchIdentifier);

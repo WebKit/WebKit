@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class WEBCORE_TESTSUPPORT_EXPORT JSTestNode : public JSNode {
+class WEBCORE_EXPORT JSTestNode : public JSNode {
 public:
     using Base = JSNode;
     using DOMWrapped = TestNode;
@@ -60,7 +60,7 @@ protected:
     void finishCreation(JSC::VM&);
 };
 
-WEBCORE_TESTSUPPORT_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNode&);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestNode&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestNode* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestNode>&&);
 inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestNode>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }

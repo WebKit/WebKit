@@ -1,5 +1,17 @@
 2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        WEBCORE_TESTSUPPORT_EXPORT should be used only for WebCoreTestSupport, not for WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=203876
+
+        Reviewed by Ross Kirsling.
+
+        * TestWebKitAPI/win/TestWebKitAPIPrefix.h:
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerInjectedBundlePrefix.h:
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+        Define WEBCORE_TESTSUPPORT_EXPORT emtpy.
+
+2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win] DumpRenderTree.exe and WebKitTestRunner.exe shouldn't link with WebCoreTestSupport
         https://bugs.webkit.org/show_bug.cgi?id=203879
 

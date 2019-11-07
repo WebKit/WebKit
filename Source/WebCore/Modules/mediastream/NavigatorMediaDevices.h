@@ -47,7 +47,7 @@ public:
     virtual ~NavigatorMediaDevices();
     static NavigatorMediaDevices* from(Navigator*);
 
-    WEBCORE_TESTSUPPORT_EXPORT static MediaDevices* mediaDevices(Navigator&);
+    WEBCORE_EXPORT static MediaDevices* mediaDevices(Navigator&);
     MediaDevices* mediaDevices() const;
 
 private:
