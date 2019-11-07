@@ -1,3 +1,23 @@
+2019-11-07  Chris Lord  <clord@igalia.com>
+
+        Indentation in ThreadGlobalData.h is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=203895
+
+        Reviewed by Žan Doberšek.
+
+        No new tests -- no change in behavior.
+
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::ThreadGlobalData::cachedResourceRequestInitiators):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::eventNames):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::threadTimers):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::qualifiedNameCache):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::cachedConverterICU):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::currentState const):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::setCurrentState):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::isInRemoveAllEventListeners const):
+        (WebCore::ThreadGlobalData::ThreadGlobalData::setIsInRemoveAllEventListeners):
+
 2019-11-05  Sergio Villar Senin  <svillar@igalia.com>
 
         VRDisplay should not prevent entering the back/forward cache
