@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if USE(APPKIT)
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -55,5 +57,14 @@ void NSAccessibilityHandleFocusChanged();
 void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 
 WTF_EXTERN_C_END
+
+#elif PLATFORM(MACCATALYST)
+
+@interface NSObject (NSAccessibilityRemoteUIElement_Private)
+
+- (void)registerRemoteUIProcessIdentifier:(pid_t)pid;
+- (void)unregisterRemoteUIProcessIdentifier:(pid_t)pid;
+
+@end
 
 #endif // USE(APPKIT)
