@@ -967,12 +967,12 @@ class ReRunJavaScriptCoreTests(RunJavaScriptCoreTests):
             self.build.buildFinished([message], SUCCESS)
         else:
             self.setProperty('patchFailedTests', True)
-            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJavaScriptCoreTestsToT()])
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileJSCToT(), RunJSCTestsWithoutPatch()])
         return rc
 
 
-class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
-    name = 'jscore-test-tot'
+class RunJSCTestsWithoutPatch(RunJavaScriptCoreTests):
+    name = 'jscore-test-without-patch'
     jsonFileName = 'jsc_results.json'
 
     def evaluateCommand(self, cmd):
