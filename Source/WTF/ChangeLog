@@ -1,3 +1,39 @@
+2019-11-06  Mark Lam  <mark.lam@apple.com>
+
+        Remove remnants of support code for an upwards growing stack.
+        https://bugs.webkit.org/show_bug.cgi?id=203942
+
+        Reviewed by Yusuke Suzuki.
+
+        We haven't supported an upwards growing stack in years, and a lot of code has
+        since been written specifically with only a downwards growing stack in mind (e.g.
+        the LLInt, the JITs).  Also, all our currently supported platforms use a downward
+        growing stack.
+
+        We should remove the remnants of support code for an upwards growing stack.  The
+        presence of that code is deceptive in that it conveys support for an upwards
+        growing stack where this hasn't been the case in years.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::newThreadStackBounds):
+        (WTF::StackBounds::currentThreadStackBoundsInternal):
+        (WTF::StackBounds::stackDirection): Deleted.
+        (WTF::testStackDirection2): Deleted.
+        (WTF::testStackDirection): Deleted.
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::size const):
+        (WTF::StackBounds::contains const):
+        (WTF::StackBounds::recursionLimit const):
+        (WTF::StackBounds::StackBounds):
+        (WTF::StackBounds::isGrowingDownwards const):
+        (WTF::StackBounds::checkConsistency const):
+        (WTF::StackBounds::isGrowingDownward const): Deleted.
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+
 2019-11-05  Mark Lam  <mark.lam@apple.com>
 
         WTF::RunLoop should not depend on isMainThread() idiom.

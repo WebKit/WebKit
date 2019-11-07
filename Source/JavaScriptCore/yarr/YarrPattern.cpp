@@ -1122,7 +1122,6 @@ private:
     {
         if (!m_stackLimit)
             return true;
-        ASSERT(Thread::current().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(currentStackPointer());
         int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
         return curr >= limit;

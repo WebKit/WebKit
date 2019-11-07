@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,6 @@ class StackBounds {
     static constexpr size_t s_defaultAvailabilityDelta = 64 * 1024;
 
 public:
-    enum class StackDirection { Upward, Downward };
-
     static constexpr StackBounds emptyBounds() { return StackBounds(); }
 
 #if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
@@ -72,9 +70,7 @@ public:
     
     size_t size() const
     {
-        if (isGrowingDownward())
-            return static_cast<char*>(m_origin) - static_cast<char*>(m_bound);
-        return static_cast<char*>(m_bound) - static_cast<char*>(m_origin);
+        return static_cast<char*>(m_origin) - static_cast<char*>(m_bound);
     }
 
     bool isEmpty() const { return !m_origin; }
@@ -83,17 +79,13 @@ public:
     {
         if (isEmpty())
             return false;
-        if (isGrowingDownward())
-            return (m_origin >= p) && (p > m_bound);
-        return (m_bound > p) && (p >= m_origin);
+        return (m_origin >= p) && (p > m_bound);
     }
 
     void* recursionLimit(size_t minAvailableDelta = s_defaultAvailabilityDelta) const
     {
         checkConsistency();
-        if (isGrowingDownward())
-            return static_cast<char*>(m_bound) + minAvailableDelta;
-        return static_cast<char*>(m_bound) - minAvailableDelta;
+        return static_cast<char*>(m_bound) + minAvailableDelta;
     }
 
     void* recursionLimit(char* startOfUserStack, size_t maxUserStack, size_t reservedZoneSize) const
@@ -103,29 +95,13 @@ public:
             reservedZoneSize = maxUserStack;
         size_t maxUserStackWithReservedZone = maxUserStack - reservedZoneSize;
 
-        if (isGrowingDownward()) {
-            char* endOfStackWithReservedZone = reinterpret_cast<char*>(m_bound) + reservedZoneSize;
-            if (startOfUserStack < endOfStackWithReservedZone)
-                return endOfStackWithReservedZone;
-            size_t availableUserStack = startOfUserStack - endOfStackWithReservedZone;
-            if (maxUserStackWithReservedZone > availableUserStack)
-                maxUserStackWithReservedZone = availableUserStack;
-            return startOfUserStack - maxUserStackWithReservedZone;
-        }
-
-        char* endOfStackWithReservedZone = reinterpret_cast<char*>(m_bound) - reservedZoneSize;
-        if (startOfUserStack > endOfStackWithReservedZone)
+        char* endOfStackWithReservedZone = reinterpret_cast<char*>(m_bound) + reservedZoneSize;
+        if (startOfUserStack < endOfStackWithReservedZone)
             return endOfStackWithReservedZone;
-        size_t availableUserStack = endOfStackWithReservedZone - startOfUserStack;
+        size_t availableUserStack = startOfUserStack - endOfStackWithReservedZone;
         if (maxUserStackWithReservedZone > availableUserStack)
             maxUserStackWithReservedZone = availableUserStack;
-        return startOfUserStack + maxUserStackWithReservedZone;
-    }
-
-    bool isGrowingDownward() const
-    {
-        ASSERT(m_origin && m_bound);
-        return m_bound <= m_origin;
+        return startOfUserStack - maxUserStackWithReservedZone;
     }
 
 private:
@@ -133,6 +109,7 @@ private:
         : m_origin(origin)
         , m_bound(end)
     {
+        ASSERT(isGrowingDownwards());
     }
 
     constexpr StackBounds()
@@ -141,7 +118,11 @@ private:
     {
     }
 
-    static StackDirection stackDirection();
+    inline bool isGrowingDownwards() const
+    {
+        ASSERT(m_origin && m_bound);
+        return m_bound <= m_origin;
+    }
 
     WTF_EXPORT_PRIVATE static StackBounds currentThreadStackBoundsInternal();
 
@@ -150,9 +131,7 @@ private:
 #if !ASSERT_DISABLED
         void* currentPosition = currentStackPointer();
         ASSERT(m_origin != m_bound);
-        ASSERT(isGrowingDownward()
-            ? (currentPosition < m_origin && currentPosition > m_bound)
-            : (currentPosition > m_origin && currentPosition < m_bound));
+        ASSERT(currentPosition < m_origin && currentPosition > m_bound);
 #endif
     }
 

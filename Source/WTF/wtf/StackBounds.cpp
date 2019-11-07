@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -45,42 +45,10 @@
 
 namespace WTF {
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)
-ALWAYS_INLINE StackBounds::StackDirection StackBounds::stackDirection()
-{
-    return StackDirection::Downward;
-}
-#else
-static NEVER_INLINE NOT_TAIL_CALLED StackBounds::StackDirection testStackDirection2(volatile const uint8_t* pointer)
-{
-    volatile uint8_t* stackValue = bitwise_cast<uint8_t*>(currentStackPointer());
-    return (pointer < stackValue) ? StackBounds::StackDirection::Upward : StackBounds::StackDirection::Downward;
-}
-
-static NEVER_INLINE NOT_TAIL_CALLED StackBounds::StackDirection testStackDirection()
-{
-    NO_TAIL_CALLS();
-    volatile uint8_t* stackValue = bitwise_cast<uint8_t*>(currentStackPointer());
-    return testStackDirection2(stackValue);
-}
-
-NEVER_INLINE StackBounds::StackDirection StackBounds::stackDirection()
-{
-    static StackBounds::StackDirection result = StackBounds::StackDirection::Downward;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        NO_TAIL_CALLS();
-        result = testStackDirection();
-    });
-    return result;
-}
-#endif
-
 #if OS(DARWIN)
 
 StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
 {
-    ASSERT(stackDirection() == StackDirection::Downward);
     void* origin = pthread_get_stackaddr_np(thread);
     rlim_t size = pthread_get_stacksize_np(thread);
     void* bound = static_cast<char*>(origin) - size;
@@ -89,7 +57,6 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
 
 StackBounds StackBounds::currentThreadStackBoundsInternal()
 {
-    ASSERT(stackDirection() == StackDirection::Downward);
     if (pthread_main_np()) {
         // FIXME: <rdar://problem/13741204>
         // pthread_get_size lies to us when we're the main thread, use get_rlimit instead
@@ -112,11 +79,7 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     stack_t stack;
     pthread_stackseg_np(thread, &stack);
     void* origin = stack.ss_sp;
-    void* bound = nullptr;
-    if (stackDirection() == StackDirection::Upward)
-        bound = static_cast<char*>(origin) + stack.ss_size;
-    else
-        bound = static_cast<char*>(origin) - stack.ss_size;
+    void* bound = static_cast<char*>(origin) - stack.ss_size;
     return StackBounds { origin, bound };
 }
 
@@ -142,10 +105,6 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     pthread_attr_destroy(&sattr);
     void* origin = static_cast<char*>(bound) + stackSize;
     // pthread_attr_getstack's bound is the lowest accessible pointer of the stack.
-    // If stack grows up, origin and bound in this code should be swapped.
-    if (stackDirection() == StackDirection::Upward)
-        std::swap(origin, bound);
-
     return StackBounds { origin, bound };
 }
 
@@ -160,7 +119,6 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
 
 StackBounds StackBounds::currentThreadStackBoundsInternal()
 {
-    ASSERT(stackDirection() == StackDirection::Downward);
     MEMORY_BASIC_INFORMATION stackOrigin { };
     VirtualQuery(&stackOrigin, &stackOrigin, sizeof(stackOrigin));
     // stackOrigin.AllocationBase points to the reserved stack memory base address.

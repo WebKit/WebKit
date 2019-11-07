@@ -42,7 +42,6 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     , m_globalObject(globalObject)
 {
     ASSERT(!DisallowVMReentry::isInEffectOnCurrentThread());
-    ASSERT(Thread::current().stack().isGrowingDownward());
     if (!vm.entryScope) {
         vm.entryScope = this;
 

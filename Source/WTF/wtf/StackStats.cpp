@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,6 @@ StackStats::CheckPoint::CheckPoint()
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 
-    bool isGrowingDownward = stack.isGrowingDownward();
     bool needToLog = false;
     char* current = reinterpret_cast<char*>(this);
     char* last = reinterpret_cast<char*>(t.m_currentCheckPoint);
@@ -91,8 +90,6 @@ StackStats::CheckPoint::CheckPoint()
 
     // Update the stack height stats:
     int height = t.m_stackStart - current;
-    if (!isGrowingDownward)
-        height = -height;
     if (height > StackStats::s_maxStackHeight) {
         StackStats::s_maxStackHeight = height;
         needToLog = true;
@@ -100,8 +97,6 @@ StackStats::CheckPoint::CheckPoint()
 
     // Update the checkpoint diff stats:
     int diff = last - current;
-    if (!isGrowingDownward)
-        diff = -diff;
     if (diff > StackStats::s_maxCheckPointDiff) {
         StackStats::s_maxCheckPointDiff = diff;
         needToLog = true;
@@ -138,13 +133,9 @@ StackStats::CheckPoint::~CheckPoint()
 #if ENABLE(VERBOSE_STACK_STATS)
     if (!m_prev) {
         const StackBounds& stack = thread.stack();
-        bool isGrowingDownward = stack.isGrowingDownward();
 
         char* current = reinterpret_cast<char*>(this);
         int height = t.m_stackStart - current;
-
-        if (!isGrowingDownward)
-            height = -height;
 
         dataLogF(" POP to %p diff max %.1fk | reentry %d/%d max | height %.1fk/max %.1fk | stack %p size %.1fk)\n",
             this, StackStats::s_maxCheckPointDiff / 1024.0,
@@ -162,8 +153,6 @@ void StackStats::probe()
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 
-    bool isGrowingDownward = stack.isGrowingDownward();
-
     bool needToLog = false;
 
     int dummy;
@@ -179,8 +168,6 @@ void StackStats::probe()
 
     // Update the stack height stats:
     int height = t.m_stackStart - current;
-    if (!isGrowingDownward)
-        height = -height;
     if (height > StackStats::s_maxStackHeight) {
         StackStats::s_maxStackHeight = height;
         needToLog = true;
@@ -188,8 +175,6 @@ void StackStats::probe()
 
     // Update the checkpoint diff stats:
     int diff = last - current;
-    if (!isGrowingDownward)
-        diff = -diff;
     if (diff > StackStats::s_maxCheckPointDiff) {
         StackStats::s_maxCheckPointDiff = diff;
         needToLog = true;
@@ -223,8 +208,6 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
 
-    bool isGrowingDownward = stack.isGrowingDownward();
-
     // Push this checkpoint:
     m_prev = StackStats::s_topLayoutCheckPoint;
     if (m_prev)
@@ -250,24 +233,18 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
 
     // Update the stack height stats:
     int height = t.m_stackStart - current;
-    if (!isGrowingDownward)
-        height = -height;
     if (height > StackStats::s_maxStackHeight) {
         StackStats::s_maxStackHeight = height;
         needToLog = true;
     }
 
     // Update the layout checkpoint diff stats:
-    if (!isGrowingDownward)
-        diff = -diff;
     if (diff > StackStats::s_maxLayoutCheckPointDiff) {
         StackStats::s_maxLayoutCheckPointDiff = diff;
         needToLog = true;
     }
 
     // Update the total layout checkpoint diff stats:
-    if (!isGrowingDownward)
-        totalDiff = -totalDiff;
     if (totalDiff > StackStats::s_maxTotalLayoutCheckPointDiff) {
         StackStats::s_maxTotalLayoutCheckPointDiff = totalDiff;
         needToLog = true;

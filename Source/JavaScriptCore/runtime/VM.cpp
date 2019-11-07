@@ -896,7 +896,6 @@ inline void VM::updateStackLimits()
     RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize);
 
     if (m_stackPointerAtVMEntry) {
-        ASSERT(stack.isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
         m_softStackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
         m_stackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
@@ -1170,7 +1169,6 @@ size_t VM::committedStackByteCount()
 #if !ENABLE(C_LOOP)
     // When using the C stack, we don't know how many stack pages are actually
     // committed. So, we use the current stack usage as an estimate.
-    ASSERT(Thread::current().stack().isGrowingDownward());
     uint8_t* current = bitwise_cast<uint8_t*>(currentStackPointer());
     uint8_t* high = bitwise_cast<uint8_t*>(Thread::current().stack().origin());
     return high - current;

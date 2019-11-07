@@ -35,7 +35,6 @@ namespace JSC {
 bool VM::ensureStackCapacityFor(Register* newTopOfStack)
 {
 #if !ENABLE(C_LOOP)
-    ASSERT(Thread::current().stack().isGrowingDownward());
     return newTopOfStack >= m_softStackLimit;
 #else
     return ensureStackCapacityForCLoop(newTopOfStack);
