@@ -1,3 +1,33 @@
+2019-11-05  Sergio Villar Senin  <svillar@igalia.com>
+
+        VRDisplay should not prevent entering the back/forward cache
+        https://bugs.webkit.org/show_bug.cgi?id=203105
+
+        Reviewed by Chris Dumez.
+
+        VRDisplay schedules asynchronous execution of events using the WindowEventLoop instead of
+        synchronously firing them. WindowEventLoop does correctly suspend while in cache.
+
+        Apart from that suspend()/resume() were implemented by forcing m_scriptedAnimationController
+        to suspend the VR request animation frame machinery while in cache.
+
+        Last but not least, stopPresenting() is now also called on suspension.
+
+        No new tests were added as there is no testing machinery for WebVR so far. It's unclear how
+        this unreleased feature will evolve as it's being replaced by WebXR.
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::dispatchVRDisplayEventInWindowEventLoop):
+        (WebCore::VRDisplay::platformDisplayConnected): Use dispatchVRDisplayEventInWindowEventLoop.
+        (WebCore::VRDisplay::platformDisplayDisconnected): Ditto.
+        (WebCore::VRDisplay::platformDisplayMounted): Ditto.
+        (WebCore::VRDisplay::platformDisplayUnmounted): Ditto.
+        (WebCore::VRDisplay::suspend): Added.
+        (WebCore::VRDisplay::resume): Added.
+        (WebCore::VRDisplay::stop): Call stopPresenting().
+        (WebCore::VRDisplay::shouldPreventEnteringBackForwardCache_DEPRECATED const): Deleted.
+        * Modules/webvr/VRDisplay.h:
+
 2019-11-06  Devin Rousso  <drousso@apple.com>
 
         Remove unimplemented property error log in when getting a property value from a computed style

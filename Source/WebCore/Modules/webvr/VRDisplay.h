@@ -27,9 +27,11 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "VRDisplayEventReason.h"
 #include "VREye.h"
 #include "VRLayerInit.h"
 #include "VRPlatformDisplayClient.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -106,12 +108,15 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const override;
-    bool shouldPreventEnteringBackForwardCache_DEPRECATED() const override;
+    void suspend(ReasonForSuspension) override;
+    void resume() override;
     void stop() override;
 
     void stopPresenting();
 
     Document* document() { return downcast<Document>(scriptExecutionContext()); }
+
+    void dispatchVRDisplayEventInEventLoop(const AtomString& eventName, Optional<VRDisplayEventReason>&&);
 
     WeakPtr<VRPlatformDisplay> m_display;
 

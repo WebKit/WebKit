@@ -43,6 +43,7 @@
 #include "VRPlatformDisplay.h"
 #include "VRPose.h"
 #include "VRStageParameters.h"
+#include "WindowEventLoop.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -209,24 +210,38 @@ void VRDisplay::submitFrame()
 {
 }
 
+// Use a EventLoop instead of dispatching events synchronously because the
+// EventLoop correctly suspends when in the cache. This way VRDisplay does no
+// longer prevent caching in the back/forward cache.
+void VRDisplay::dispatchVRDisplayEventInEventLoop(const AtomString& eventName, Optional<VRDisplayEventReason>&& reason)
+{
+    auto event = VRDisplayEvent::create(eventName, makeRefPtr(this), WTFMove(reason));
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, event = WTFMove(event)]() mutable {
+        if (!document())
+            return;
+        if (auto* window = document()->domWindow())
+            window->dispatchEvent(event);
+    });
+}
+
 void VRDisplay::platformDisplayConnected()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayconnectEvent, makeRefPtr(this), WTF::nullopt));
+    dispatchVRDisplayEventInEventLoop(eventNames().vrdisplayconnectEvent, WTF::nullopt);
 }
 
 void VRDisplay::platformDisplayDisconnected()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydisconnectEvent, makeRefPtr(this), WTF::nullopt));
+    dispatchVRDisplayEventInEventLoop(eventNames().vrdisplaydisconnectEvent, WTF::nullopt);
 }
 
 void VRDisplay::platformDisplayMounted()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplayactivateEvent, makeRefPtr(this), VRDisplayEventReason::Mounted));
+    dispatchVRDisplayEventInEventLoop(eventNames().vrdisplayactivateEvent, VRDisplayEventReason::Mounted);
 }
 
 void VRDisplay::platformDisplayUnmounted()
 {
-    document()->domWindow()->dispatchEvent(VRDisplayEvent::create(eventNames().vrdisplaydeactivateEvent, makeRefPtr(this), VRDisplayEventReason::Unmounted));
+    dispatchVRDisplayEventInEventLoop(eventNames().vrdisplaydeactivateEvent, VRDisplayEventReason::Unmounted);
 }
 
 bool VRDisplay::hasPendingActivity() const
@@ -239,14 +254,24 @@ const char* VRDisplay::activeDOMObjectName() const
     return "VRDisplay";
 }
 
-// FIXME: This should never prevent entering the back/forward cache.
-bool VRDisplay::shouldPreventEnteringBackForwardCache_DEPRECATED() const
+void VRDisplay::suspend(ReasonForSuspension reason)
 {
-    return true;
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->suspend();
+    if (reason == ReasonForSuspension::BackForwardCache)
+        stopPresenting();
+}
+
+void VRDisplay::resume()
+{
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->resume();
 }
 
 void VRDisplay::stop()
 {
+    m_scriptedAnimationController = nullptr;
+    stopPresenting();
 }
 
 } // namespace WebCore
