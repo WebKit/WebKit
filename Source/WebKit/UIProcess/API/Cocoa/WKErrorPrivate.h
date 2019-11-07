@@ -29,7 +29,7 @@ WK_EXTERN NSString * const _WKLegacyErrorDomain WK_API_AVAILABLE(macos(10.11), i
 
 typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
     _WKErrorCodeFrameLoadInterruptedByPolicyChange WK_API_AVAILABLE(macos(10.11), ios(9.0)) = 102,
-    _WKErrorCodeFrameLoadBlockedByRestrictions WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 106,
+    _WKErrorCodeFrameLoadBlockedByRestrictions WK_API_AVAILABLE(macos(10.15), ios(13.0)) = 106,
     _WKLegacyErrorPlugInWillHandleLoad = 204,
 } WK_API_AVAILABLE(macos(10.11), ios(8.3));
 

@@ -41,13 +41,13 @@ typedef NS_ENUM(NSInteger, WKContentMode) {
     WKContentModeRecommended,
     WKContentModeMobile,
     WKContentModeDesktop
-} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(ios(13.0));
 
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
  @discussion Contains properties used to determine webpage preferences.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 @interface WKWebpagePreferences : NSObject
 
 /*! @abstract A WKContentMode indicating the content mode to prefer
@@ -55,6 +55,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
  @discussion The default value is WKContentModeRecommended. The stated
  preference is ignored on subframe navigation
  */
-@property (nonatomic) WKContentMode preferredContentMode WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) WKContentMode preferredContentMode WK_API_AVAILABLE(ios(13.0));
 
 @end

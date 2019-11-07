@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef struct __IOHIDEvent * IOHIDEventRef;
 
-WK_CLASS_AVAILABLE(ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(ios(13.0))
 @interface _WKTouchEventGenerator : NSObject
 + (_WKTouchEventGenerator *)sharedTouchEventGenerator;
 

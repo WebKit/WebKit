@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  directory may be loaded by WebKit.
 */
 WK_EXTERN NSAttributedStringDocumentReadingOptionKey const NSReadAccessURLDocumentOption
-    NS_SWIFT_NAME(readAccessURL) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(readAccessURL) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @abstract Type definition for the completion handler block used to get asynchronous attributed strings.
@@ -52,7 +52,7 @@ WK_EXTERN NSAttributedStringDocumentReadingOptionKey const NSReadAccessURLDocume
  of this block type must expect to be called asynchronously when passed to HTML loading methods.
 */
 typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullable, NSDictionary<NSAttributedStringDocumentAttributeKey, id> * _Nullable, NSError * _Nullable)
-    NS_SWIFT_NAME(NSAttributedString.CompletionHandler) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(NSAttributedString.CompletionHandler) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @discussion Extension of @link //apple_ref/occ/NSAttributedString NSAttributedString @/link to
@@ -70,7 +70,7 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
  document-level attributes, or an error.
 */
 + (void)loadFromHTMLWithRequest:(NSURLRequest *)request options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
-    NS_SWIFT_NAME(loadFromHTML(request:options:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(loadFromHTML(request:options:completionHandler:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @abstract Converts a local HTML file into an attributed string.
@@ -85,7 +85,7 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
  files inside that directory may be loaded by WebKit.
 */
 + (void)loadFromHTMLWithFileURL:(NSURL *)fileURL options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
-    NS_SWIFT_NAME(loadFromHTML(fileURL:options:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(loadFromHTML(fileURL:options:completionHandler:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @abstract Converts an HTML string into an attributed string.
@@ -99,7 +99,7 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
  within the document.
 */
 + (void)loadFromHTMLWithString:(NSString *)string options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
-    NS_SWIFT_NAME(loadFromHTML(string:options:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(loadFromHTML(string:options:completionHandler:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*!
  @abstract Converts HTML data into an attributed string.
@@ -113,7 +113,7 @@ typedef void (^NSAttributedStringCompletionHandler)(NSAttributedString * _Nullab
  NSCharacterEncodingDocumentOption is supplied, a best-guess encoding is used.
 */
 + (void)loadFromHTMLWithData:(NSData *)data options:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options completionHandler:(NSAttributedStringCompletionHandler)completionHandler
-    NS_SWIFT_NAME(loadFromHTML(data:options:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+    NS_SWIFT_NAME(loadFromHTML(data:options:completionHandler:)) WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end
 

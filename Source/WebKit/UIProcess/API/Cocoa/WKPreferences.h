@@ -56,7 +56,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @discussion The default value is YES. This feature is currently available
  in the following region: China.
  */
-@property (nonatomic, getter=isFraudulentWebsiteWarningEnabled) BOOL fraudulentWebsiteWarningEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, getter=isFraudulentWebsiteWarningEnabled) BOOL fraudulentWebsiteWarningEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 #if !TARGET_OS_IPHONE
 /*!
@@ -71,7 +71,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @interface WKPreferences (WKDeprecated)
 
-@property (nonatomic) BOOL javaEnabled WK_API_DEPRECATED("Java is no longer supported", macos(10.10, WK_MAC_TBA));
-@property (nonatomic) BOOL plugInsEnabled WK_API_DEPRECATED("Plug-ins are no longer supported", macos(10.10, WK_MAC_TBA));
+@property (nonatomic) BOOL javaEnabled WK_API_DEPRECATED("Java is no longer supported", macos(10.10, 10.15));
+@property (nonatomic) BOOL plugInsEnabled WK_API_DEPRECATED("Plug-ins are no longer supported", macos(10.10, 10.15));
 
 @end

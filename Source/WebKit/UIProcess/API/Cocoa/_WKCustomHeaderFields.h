@@ -27,7 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
 @interface _WKCustomHeaderFields : NSObject
 
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> *fields;

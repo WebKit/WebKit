@@ -29,6 +29,6 @@
 
 @property (nonatomic, readonly) WKFrameInfo *_frame;
 @property (nonatomic, readonly) NSURLRequest *_request;
-@property (nonatomic, readonly) NSString *_downloadAttribute WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) NSString *_downloadAttribute WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end

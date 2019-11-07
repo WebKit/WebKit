@@ -67,7 +67,7 @@ typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
     _WKSelectionAttributeIsCaret = 1 << 0,
     _WKSelectionAttributeIsRange = 1 << 1,
     _WKSelectionAttributeAtStartOfSentence = 1 << 2,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 #if TARGET_OS_IPHONE
 
@@ -139,7 +139,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, weak, setter=_setIconLoadingDelegate:) id <_WKIconLoadingDelegate> _iconLoadingDelegate;
 
 @property (nonatomic, readonly) NSURL *_unreachableURL;
-@property (nonatomic, readonly) NSURL *_mainFrameURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) NSURL *_mainFrameURL WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -179,7 +179,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, readonly, getter=_isShowingNavigationGestureSnapshot) BOOL _showingNavigationGestureSnapshot;
 
-@property (nonatomic, readonly) NSURL *_resourceDirectoryURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) NSURL *_resourceDirectoryURL WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_close;
 
@@ -234,7 +234,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (IBAction)_takeFindStringFromSelection:(id)sender WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
 @property (class, nonatomic, copy, setter=_setStringForFind:) NSString *_stringForFind WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic, readonly) _WKSelectionAttributes _selectionAttributes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) _WKSelectionAttributes _selectionAttributes WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 #if TARGET_OS_IPHONE
 
@@ -275,7 +275,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
 
 @property (nonatomic, setter=_setDragInteractionPolicy:) _WKDragInteractionPolicy _dragInteractionPolicy WK_API_AVAILABLE(ios(11.0));
-@property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange WK_API_AVAILABLE(ios(13.0));
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
@@ -288,7 +288,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
-- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments WK_API_AVAILABLE(ios(13.0));
 
 - (void)_clearOverrideLayoutParameters WK_API_AVAILABLE(ios(11.0));
 - (void)_clearInterfaceOrientationOverride WK_API_AVAILABLE(ios(11.0));
@@ -363,7 +363,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents WK_API_AVAILABLE(macos(10.13.4));
 
 // Defaults to YES; if set to NO, WebKit will draw the grey wash and highlights itself.
-@property (nonatomic, setter=_setUsePlatformFindUI:) BOOL _usePlatformFindUI WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, setter=_setUsePlatformFindUI:) BOOL _usePlatformFindUI WK_API_AVAILABLE(macos(10.15));
 
 #endif
 
@@ -376,7 +376,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
 - (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler WK_API_AVAILABLE(macos(10.13), ios(11.0));
-- (void)_getContentsAsAttributedStringWithCompletionHandler:(void (^)(NSAttributedString *, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_getContentsAsAttributedStringWithCompletionHandler:(void (^)(NSAttributedString *, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *, NSError *))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
@@ -417,7 +417,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, setter=_setFullscreenDelegate:) id<_WKFullscreenDelegate> _fullscreenDelegate WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, readonly) BOOL _isInFullscreen WK_API_AVAILABLE(macos(10.12.3));
 
-@property (nonatomic, readonly) _WKMediaCaptureState _mediaCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) _WKMediaCaptureState _mediaCaptureState WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
@@ -432,8 +432,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_resumeAllMediaPlayback;
 - (void)_closeAllMediaPresentations;
 
-- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
+- (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
@@ -470,7 +470,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(10.0));
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(10.0));
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(10.3));
-- (void)_dismissFilePicker WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_dismissFilePicker WK_API_AVAILABLE(ios(13.0));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(10.3));
 @property (nonatomic, readonly) NSString *textContentTypeForTesting WK_API_AVAILABLE(ios(12.0));
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle WK_API_AVAILABLE(ios(12.0));
@@ -501,7 +501,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, readonly) CGRect _dragCaretRect WK_API_AVAILABLE(ios(11.0));
 
-- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action WK_API_AVAILABLE(ios(13.0));
 
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(11.3));
@@ -582,7 +582,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)snapshotConfiguration completion:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 - (void)_processWillSuspendImminentlyForTesting;
 - (void)_processDidResumeForTesting;

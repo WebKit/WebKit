@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @discussion If you implement this method,
  -webView:decidePolicyForNavigationAction:decisionHandler: will not be called.
  */
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 /*! @abstract Decides whether to allow or cancel a navigation after its
  response is known.

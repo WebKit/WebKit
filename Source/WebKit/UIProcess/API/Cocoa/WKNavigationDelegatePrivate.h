@@ -94,13 +94,13 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView willSnapshotBackForwardListItem:(WKBackForwardListItem *)item;
 - (void)_webViewDidRemoveNavigationGestureSnapshot:(WKWebView *)webView WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:", macos(10.12.3, 10.14.4), ios(10.3, 12.2));
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
--(void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:", macos(10.13.4, 10.15), ios(11.3, 13.0));
+-(void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 - (void)_webView:(WKWebView *)webView URL:(NSURL *)url contentRuleListIdentifiers:(NSArray<NSString *> *)identifiers notifications:(NSArray<NSString *> *)notifications WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-- (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 #if TARGET_OS_IPHONE

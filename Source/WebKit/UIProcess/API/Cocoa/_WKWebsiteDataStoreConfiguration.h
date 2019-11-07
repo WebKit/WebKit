@@ -33,16 +33,16 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @interface _WKWebsiteDataStoreConfiguration : NSObject
 
 - (instancetype)init; // Creates a persistent configuration.
-- (instancetype)initNonPersistentConfiguration WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (instancetype)initNonPersistentConfiguration WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-@property (nonatomic, readonly, getter=isPersistent) BOOL persistent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, getter=isPersistent) BOOL persistent WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 // These properties apply to both persistent and non-persistent data stores.
 @property (nonatomic, nullable, copy) NSString *sourceApplicationBundleIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, nullable, copy) NSString *sourceApplicationSecondaryIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, nullable, copy, setter=setHTTPProxy:) NSURL *httpProxy WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, nullable, copy, setter=setHTTPSProxy:) NSURL *httpsProxy WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic) BOOL deviceManagementRestrictionsEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL deviceManagementRestrictionsEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic) BOOL networkCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic) BOOL fastServerTrustEvaluationEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic) NSUInteger perOriginStorageQuota WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
@@ -71,7 +71,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL suppressesConnectionTerminationOnSystemChange WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Testing only.
-@property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end
 

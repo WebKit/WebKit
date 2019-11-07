@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, _WKAutomationSessionBrowsingContextOptions) {
 typedef NS_ENUM(NSInteger, _WKAutomationSessionBrowsingContextPresentation) {
     _WKAutomationSessionBrowsingContextPresentationTab,
     _WKAutomationSessionBrowsingContextPresentationWindow,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @protocol _WKAutomationSessionDelegate <NSObject>
 @optional
@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, _WKAutomationSessionBrowsingContextPresentation) {
 - (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (_WKAutomationSessionJavaScriptDialogType)_automationSession:(_WKAutomationSession *)automationSession typeOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.14), ios(12.0));
-- (_WKAutomationSessionBrowsingContextPresentation)_automationSession:(_WKAutomationSession *)automationSession currentPresentationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (_WKAutomationSessionBrowsingContextPresentation)_automationSession:(_WKAutomationSession *)automationSession currentPresentationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 @end
 

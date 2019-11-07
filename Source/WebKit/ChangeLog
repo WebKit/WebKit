@@ -1,3 +1,57 @@
+2019-11-06  Keith Rollin  <krollin@apple.com>
+
+        Update availability annotations to match the macOS 10.15 and iOS 13.0 GM SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=202243
+        <rdar://problem/55720747>
+
+        Reviewed by Brent Fulgham.
+
+        Changed WK_MAC_TBA and WK_IOS_TBA to 10.15 and 13.0, respectively, in
+        all declarations that appear in the GM SDKs.
+
+        * Configurations/WebKit.xcconfig:
+        * Shared/API/Cocoa/WKMain.h:
+        * UIProcess/API/Cocoa/NSAttributedString.h:
+        * UIProcess/API/Cocoa/WKContextMenuElementInfo.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationResponsePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItem.h:
+        * UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.h:
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/API/Cocoa/_WKContentRuleListAction.h:
+        * UIProcess/API/Cocoa/_WKCustomHeaderFields.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKInspectorWindow.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKTextInputContext.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/_WKTouchEventGenerator.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2019-11-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: [ iOS ] ( r251015 ) Layout Test fast/text/whitespace/pre-wrap-overflow-selection.html is flaky

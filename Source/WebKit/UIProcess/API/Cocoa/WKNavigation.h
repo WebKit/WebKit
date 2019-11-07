@@ -39,6 +39,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! The content mode used when loading this webpage.
  @discussion The value is either WKContentModeMobile or WKContentModeDesktop.
  */
-@property (nonatomic, readonly) WKContentMode effectiveContentMode WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKContentMode effectiveContentMode WK_API_AVAILABLE(ios(13.0));
 
 @end

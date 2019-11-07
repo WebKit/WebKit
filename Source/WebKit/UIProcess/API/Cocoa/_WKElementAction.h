@@ -50,25 +50,25 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpenInExternalApplication WK_API_AVAILABLE(ios(9.0)),
 #endif
     _WKElementActionTypeShare WK_API_AVAILABLE(macos(10.12), ios(10.0)),
-    _WKElementActionTypeOpenInNewTab WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    _WKElementActionTypeOpenInNewWindow WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    _WKElementActionTypeDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    _WKElementActionToggleShowLinkPreviews WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKElementActionTypeOpenInNewTab WK_API_AVAILABLE(macos(10.15), ios(13.0)),
+    _WKElementActionTypeOpenInNewWindow WK_API_AVAILABLE(macos(10.15), ios(13.0)),
+    _WKElementActionTypeDownload WK_API_AVAILABLE(macos(10.15), ios(13.0)),
+    _WKElementActionToggleShowLinkPreviews WK_API_AVAILABLE(macos(10.15), ios(13.0)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKElementAction : NSObject
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type;
-+ (instancetype)elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (instancetype)elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)title;
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
-+ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
-+ (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(13.0));
++ (UIImage *)imageForElementActionType:(_WKElementActionType)actionType WK_API_AVAILABLE(macos(10.15), ios(13.0));
++ (_WKElementActionType)elementActionTypeForUIActionIdentifier:(UIActionIdentifier)identifier WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo;
 
-- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(9.0));
+- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(macos(10.15), ios(9.0));
 
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
