@@ -217,7 +217,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         if (update.change != NoChange && existingStyle && existingStyle->computedFontPixelSize() != update.style->computedFontPixelSize()) {
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             // In practice this is rare.
-            scope().styleResolver.invalidateMatchedPropertiesCache();
+            scope().styleResolver.invalidateMatchedDeclarationsCache();
             descendantsToResolve = DescendantsToResolve::All;
         }
     }

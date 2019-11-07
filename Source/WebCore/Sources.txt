@@ -2344,6 +2344,7 @@ style/AttributeChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
+style/MatchedDeclarationsCache.cpp
 style/PropertyCascade.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp

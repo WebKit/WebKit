@@ -159,6 +159,18 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest);
 }
 
+
+Vector<MatchedProperties>& ElementRuleCollector::declarationsForOrigin(MatchResult& matchResult, DeclarationOrigin declarationOrigin)
+{
+    switch (declarationOrigin) {
+    case DeclarationOrigin::UserAgent: return matchResult.userAgentDeclarations;
+    case DeclarationOrigin::User: return matchResult.userDeclarations;
+    case DeclarationOrigin::Author: return matchResult.authorDeclarations;
+    }
+    ASSERT_NOT_REACHED();
+    return matchResult.authorDeclarations;
+}
+
 void ElementRuleCollector::sortAndTransferMatchedRules(DeclarationOrigin declarationOrigin)
 {
     if (m_matchedRules.isEmpty())
@@ -171,8 +183,8 @@ void ElementRuleCollector::sortAndTransferMatchedRules(DeclarationOrigin declara
 
 void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOrigin, Optional<Style::ScopeOrdinal> fromScope)
 {
-    if (m_matchedRules.size() <= m_matchedRuleTransferIndex)
-        return;
+    if (m_mode != SelectorChecker::Mode::CollectingRules)
+        declarationsForOrigin(m_result, declarationOrigin).reserveCapacity(m_matchedRules.size());
 
     for (; m_matchedRuleTransferIndex < m_matchedRules.size(); ++m_matchedRuleTransferIndex) {
         auto& matchedRule = m_matchedRules[m_matchedRuleTransferIndex];
@@ -658,17 +670,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
 
     m_result.isCacheable = computeIsCacheable();
 
-    switch (declarationOrigin) {
-    case DeclarationOrigin::UserAgent:
-        m_result.userAgentDeclarations.append(WTFMove(matchedProperties));
-        break;
-    case DeclarationOrigin::User:
-        m_result.userDeclarations.append(WTFMove(matchedProperties));
-        break;
-    case DeclarationOrigin::Author:
-        m_result.authorDeclarations.append(WTFMove(matchedProperties));
-        break;
-    }
+    declarationsForOrigin(m_result, declarationOrigin).append(WTFMove(matchedProperties));
 }
 
 } // namespace WebCore

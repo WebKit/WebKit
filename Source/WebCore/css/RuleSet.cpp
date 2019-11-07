@@ -398,7 +398,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
         } else if (is<StyleRuleFontFace>(*rule) && resolver) {
             // Add this font face to our set.
             resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), isInitiatingElementInUserAgentShadowTree);
-            resolver->invalidateMatchedPropertiesCache();
+            resolver->invalidateMatchedDeclarationsCache();
         } else if (is<StyleRuleKeyframes>(*rule) && resolver)
             resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
         else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())

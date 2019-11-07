@@ -2290,7 +2290,7 @@ void Document::fontsNeedUpdate(FontSelector&)
 void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
 {
     if (auto* resolver = styleScope().resolverIfExists())
-        resolver->invalidateMatchedPropertiesCache();
+        resolver->invalidateMatchedDeclarationsCache();
     if (backForwardCacheState() != NotInBackForwardCache || !renderView())
         return;
     scheduleFullStyleRebuild();
@@ -3962,7 +3962,7 @@ void Document::updateViewportUnitsOnResize()
     if (!hasStyleWithViewportUnits())
         return;
 
-    styleScope().resolver().clearCachedPropertiesAffectedByViewportUnits();
+    styleScope().resolver().clearCachedDeclarationsAffectedByViewportUnits();
 
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {

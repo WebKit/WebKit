@@ -62,9 +62,18 @@ struct MatchedProperties {
 
 struct MatchResult {
     bool isCacheable { true };
-    Vector<MatchedProperties, 32> userAgentDeclarations;
-    Vector<MatchedProperties, 32> userDeclarations;
-    Vector<MatchedProperties, 32> authorDeclarations;
+    Vector<MatchedProperties> userAgentDeclarations;
+    Vector<MatchedProperties> userDeclarations;
+    Vector<MatchedProperties> authorDeclarations;
+
+    bool operator==(const MatchResult& other) const
+    {
+        return isCacheable == other.isCacheable
+            && userAgentDeclarations == other.userAgentDeclarations
+            && userDeclarations == other.userDeclarations
+            && authorDeclarations == other.authorDeclarations;
+    }
+    bool operator!=(const MatchResult& other) const { return !(*this == other); }
 
     bool isEmpty() const { return userAgentDeclarations.isEmpty() && userDeclarations.isEmpty() && authorDeclarations.isEmpty(); }
 };
@@ -122,6 +131,7 @@ private:
     void sortMatchedRules();
 
     enum class DeclarationOrigin { UserAgent, User, Author };
+    static Vector<MatchedProperties>& declarationsForOrigin(MatchResult&, DeclarationOrigin);
     void sortAndTransferMatchedRules(DeclarationOrigin);
     void transferMatchedRules(DeclarationOrigin, Optional<Style::ScopeOrdinal> forScope = { });
 

@@ -1,3 +1,65 @@
+2019-11-07  Antti Koivisto  <antti@apple.com>
+
+        Factor matched declarations cache into a class
+        https://bugs.webkit.org/show_bug.cgi?id=203972
+
+        Reviewed by Zalan Bujtas.
+
+        Move the code out from StyleResolver and rename "matched properties cache" -> "matched declarations cache"
+        to better describe it.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::declarationsForOrigin):
+
+        Add a helper.
+
+        (WebCore::ElementRuleCollector::transferMatchedRules):
+
+        Reserve vector capacity before adding rules.
+
+        (WebCore::ElementRuleCollector::addMatchedProperties):
+        * css/ElementRuleCollector.h:
+        (WebCore::MatchResult::operator== const):
+        (WebCore::MatchResult::operator!= const):
+
+        Remove the unneeded inline capacity so we can just use MatchResult itself in the cache.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::invalidateMatchedDeclarationsCache):
+        (WebCore::StyleResolver::clearCachedDeclarationsAffectedByViewportUnits):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache): Deleted.
+        (WebCore::StyleResolver::computeMatchedPropertiesHash): Deleted.
+        (WebCore::StyleResolver::findFromMatchedPropertiesCache): Deleted.
+        (WebCore::StyleResolver::addToMatchedPropertiesCache): Deleted.
+        (WebCore::StyleResolver::invalidateMatchedPropertiesCache): Deleted.
+        (WebCore::StyleResolver::clearCachedPropertiesAffectedByViewportUnits): Deleted.
+        (WebCore::isCacheableInMatchedPropertiesCache): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::MatchedPropertiesCacheItem::MatchedPropertiesCacheItem): Deleted.
+        * dom/Document.cpp:
+        (WebCore::Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc):
+        (WebCore::Document::updateViewportUnitsOnResize):
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleAfterChangeInEnvironment):
+        * style/MatchedDeclarationsCache.cpp: Added.
+        (WebCore::Style::MatchedDeclarationsCache::MatchedDeclarationsCache):
+        (WebCore::Style::MatchedDeclarationsCache::isCacheable):
+        (WebCore::Style::MatchedDeclarationsCache::computeHash):
+        (WebCore::Style::MatchedDeclarationsCache::find):
+        (WebCore::Style::MatchedDeclarationsCache::add):
+        (WebCore::Style::MatchedDeclarationsCache::invalidate):
+        (WebCore::Style::MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits):
+        (WebCore::Style::MatchedDeclarationsCache::sweep):
+        * style/MatchedDeclarationsCache.h: Added.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2019-11-07  Eric Carlson  <eric.carlson@apple.com>
 
         UserMediaController::from(document) can return nullptr

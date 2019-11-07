@@ -25,13 +25,11 @@
 #include "DocumentRuleSets.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
+#include "MatchedDeclarationsCache.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
-#include "SelectorChecker.h"
-#include <bitset>
 #include <memory>
-#include <wtf/Bitmap.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -181,16 +179,15 @@ public:
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesFirstLetterRules() const { return m_ruleSets.features().usesFirstLetterRules; }
     
-    void invalidateMatchedPropertiesCache();
-
-    void clearCachedPropertiesAffectedByViewportUnits();
+    void invalidateMatchedDeclarationsCache();
+    void clearCachedDeclarationsAffectedByViewportUnits();
 
 private:
     void adjustRenderStyle(RenderStyle&, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element*);
     void adjustRenderStyleForSiteSpecificQuirks(RenderStyle&, const Element&);
-        
-    enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
-    void applyMatchedProperties(const MatchResult&, const Element&, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
+
+    enum class UseMatchedDeclarationsCache { Yes, No };
+    void applyMatchedProperties(const MatchResult&, const Element&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
 
     DocumentRuleSets m_ruleSets;
 
@@ -252,37 +249,6 @@ public:
 private:
     void cacheBorderAndBackground();
 
-    static unsigned computeMatchedPropertiesHash(const MatchResult&);
-    struct MatchedPropertiesCacheItem {
-        Vector<MatchedProperties> userAgentDeclarations;
-        Vector<MatchedProperties> userDeclarations;
-        Vector<MatchedProperties> authorDeclarations;
-        std::unique_ptr<RenderStyle> renderStyle;
-        std::unique_ptr<RenderStyle> parentRenderStyle;
-        
-        MatchedPropertiesCacheItem(const MatchResult& matchResult, const RenderStyle* style, const RenderStyle* parentStyle)
-            : renderStyle(RenderStyle::clonePtr(*style))
-            , parentRenderStyle(RenderStyle::clonePtr(*parentStyle))
-        {
-            // Assign rather than copy-construct so we only allocate as much vector capacity as needed.
-            userAgentDeclarations = matchResult.userAgentDeclarations;
-            userDeclarations = matchResult.userDeclarations;
-            authorDeclarations = matchResult.authorDeclarations;
-        }
-        MatchedPropertiesCacheItem() = default;
-    };
-    const MatchedPropertiesCacheItem* findFromMatchedPropertiesCache(unsigned hash, const MatchResult&);
-    void addToMatchedPropertiesCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);
-
-    // Every N additions to the matched declaration cache trigger a sweep where entries holding
-    // the last reference to a style declaration are garbage collected.
-    void sweepMatchedPropertiesCache();
-
-    typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
-    MatchedPropertiesCache m_matchedPropertiesCache;
-
-    Timer m_matchedPropertiesCacheSweepTimer;
-
     MediaQueryEvaluator m_mediaQueryEvaluator;
     std::unique_ptr<RenderStyle> m_rootDefaultStyle;
 
@@ -302,7 +268,7 @@ private:
 
     State m_state;
 
-    unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep { 0 };
+    Style::MatchedDeclarationsCache m_matchedDeclarationsCache;
 
     bool m_matchAuthorAndUserStyles { true };
     // See if we still have crashes where StyleResolver gets deleted early.

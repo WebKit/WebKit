@@ -116,7 +116,6 @@ inline void StyleResolver::State::clear()
 
 StyleResolver::StyleResolver(Document& document)
     : m_ruleSets(*this)
-    , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
@@ -194,27 +193,6 @@ StyleResolver::~StyleResolver()
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     m_viewportStyleResolver->clearDocument();
 #endif
-}
-
-void StyleResolver::sweepMatchedPropertiesCache()
-{
-    // Look for cache entries containing a style declaration with a single ref and remove them.
-    // This may happen when an element attribute mutation causes it to generate a new inlineStyle()
-    // or presentationAttributeStyle(), potentially leaving this cache with the last ref on the old one.
-    auto hasOneRef = [](auto& declarations) {
-        for (auto& matchedProperties : declarations) {
-            if (matchedProperties.properties->hasOneRef())
-                return true;
-        }
-        return false;
-    };
-
-    m_matchedPropertiesCache.removeIf([&](auto& keyValue) {
-        auto& entry = keyValue.value;
-        return hasOneRef(entry.userAgentDeclarations) || hasOneRef(entry.userDeclarations) || hasOneRef(entry.authorDeclarations);
-    });
-
-    m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
 }
 
 StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const SelectorFilter* selectorFilter)
@@ -1121,108 +1099,45 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::meterTag;
 }
 
-unsigned StyleResolver::computeMatchedPropertiesHash(const MatchResult& matchResult)
+void StyleResolver::invalidateMatchedDeclarationsCache()
 {
-    return StringHasher::hashMemory(matchResult.userAgentDeclarations.data(), sizeof(MatchedProperties) * matchResult.userAgentDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.userDeclarations.data(), sizeof(MatchedProperties) * matchResult.userDeclarations.size())
-        ^ StringHasher::hashMemory(matchResult.authorDeclarations.data(), sizeof(MatchedProperties) * matchResult.authorDeclarations.size());
+    m_matchedDeclarationsCache.invalidate();
 }
 
-const StyleResolver::MatchedPropertiesCacheItem* StyleResolver::findFromMatchedPropertiesCache(unsigned hash, const MatchResult& matchResult)
+void StyleResolver::clearCachedDeclarationsAffectedByViewportUnits()
 {
-    ASSERT(hash);
-
-    MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.find(hash);
-    if (it == m_matchedPropertiesCache.end())
-        return nullptr;
-
-    auto& cacheItem = it->value;
-    if (matchResult.userAgentDeclarations != cacheItem.userAgentDeclarations || matchResult.userDeclarations != cacheItem.userDeclarations || matchResult.authorDeclarations != cacheItem.authorDeclarations)
-        return nullptr;
-
-    return &cacheItem;
+    m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
 }
 
-void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const RenderStyle* parentStyle, unsigned hash, const MatchResult& matchResult)
-{
-    static const unsigned matchedDeclarationCacheAdditionsBetweenSweeps = 100;
-    if (++m_matchedPropertiesCacheAdditionsSinceLastSweep >= matchedDeclarationCacheAdditionsBetweenSweeps
-        && !m_matchedPropertiesCacheSweepTimer.isActive()) {
-        static const Seconds matchedDeclarationCacheSweepTime { 1_min };
-        m_matchedPropertiesCacheSweepTimer.startOneShot(matchedDeclarationCacheSweepTime);
-    }
-
-    ASSERT(hash);
-    // Note that we don't cache the original RenderStyle instance. It may be further modified.
-    // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
-    MatchedPropertiesCacheItem cacheItem(matchResult, style, parentStyle);
-    m_matchedPropertiesCache.add(hash, WTFMove(cacheItem));
-}
-
-void StyleResolver::invalidateMatchedPropertiesCache()
-{
-    m_matchedPropertiesCache.clear();
-}
-
-void StyleResolver::clearCachedPropertiesAffectedByViewportUnits()
-{
-    Vector<unsigned, 16> toRemove;
-    for (auto& cacheKeyValue : m_matchedPropertiesCache) {
-        if (cacheKeyValue.value.renderStyle->hasViewportUnits())
-            toRemove.append(cacheKeyValue.key);
-    }
-    for (auto key : toRemove)
-        m_matchedPropertiesCache.remove(key);
-}
-
-static bool isCacheableInMatchedPropertiesCache(const Element& element, const RenderStyle* style, const RenderStyle* parentStyle)
-{
-    // FIXME: Writing mode and direction properties modify state when applying to document element by calling
-    // Document::setWritingMode/DirectionSetOnDocumentElement. We can't skip the applying by caching.
-    if (&element == element.document().documentElement())
-        return false;
-    // content:attr() value depends on the element it is being applied to.
-    if (style->hasAttrContent() || (style->styleType() != PseudoId::None && parentStyle->hasAttrContent()))
-        return false;
-    if (style->hasAppearance())
-        return false;
-    if (style->zoom() != RenderStyle::initialZoom())
-        return false;
-    if (style->writingMode() != RenderStyle::initialWritingMode() || style->direction() != RenderStyle::initialDirection())
-        return false;
-    // The cache assumes static knowledge about which properties are inherited.
-    if (style->hasExplicitlyInheritedProperties())
-        return false;
-    return true;
-}
-
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
+void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, UseMatchedDeclarationsCache useMatchedDeclarationsCache)
 {
     State& state = m_state;
-    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult) : 0;
+    unsigned cacheHash = useMatchedDeclarationsCache == UseMatchedDeclarationsCache::Yes ? Style::MatchedDeclarationsCache::computeHash(matchResult) : 0;
     auto includedProperties = Style::PropertyCascade::IncludedProperties::All;
 
-    const MatchedPropertiesCacheItem* cacheItem = nullptr;
-    if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))
-        && isCacheableInMatchedPropertiesCache(element, state.style(), state.parentStyle())) {
+    auto& style = *state.style();
+    auto& parentStyle = *state.parentStyle();
+
+    auto* cacheEntry = m_matchedDeclarationsCache.find(cacheHash, matchResult);
+    if (cacheEntry && Style::MatchedDeclarationsCache::isCacheable(element, style, parentStyle)) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
-        state.style()->copyNonInheritedFrom(*cacheItem->renderStyle);
-        if (state.parentStyle()->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
+        style.copyNonInheritedFrom(*cacheEntry->renderStyle);
+        if (parentStyle.inheritedDataShared(cacheEntry->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
             InsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
-            state.style()->inheritFrom(*cacheItem->renderStyle);
+            style.inheritFrom(*cacheEntry->renderStyle);
 
             // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
-            state.style()->setInsideLink(linkStatus);
+            style.setInsideLink(linkStatus);
             return;
         }
         includedProperties = Style::PropertyCascade::IncludedProperties::InheritedOnly;
     }
 
-    if (elementTypeHasAppearanceFromUAStyle(*state.element())) {
+    if (elementTypeHasAppearanceFromUAStyle(element)) {
         // FIXME: This is such a hack.
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
@@ -1239,23 +1154,23 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     builder.applyHighPriorityProperties();
 
     // If the effective zoom value changes, we can't use the matched properties cache. Start over.
-    if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
-        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
+    if (cacheEntry && cacheEntry->renderStyle->effectiveZoom() != style.effectiveZoom())
+        return applyMatchedProperties(matchResult, element, UseMatchedDeclarationsCache::No);
 
     // If the font changed, we can't use the matched properties cache. Start over.
-    if (cacheItem && cacheItem->renderStyle->fontDescription() != state.style()->fontDescription())
-        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
+    if (cacheEntry && cacheEntry->renderStyle->fontDescription() != style.fontDescription())
+        return applyMatchedProperties(matchResult, element, UseMatchedDeclarationsCache::No);
 
     builder.applyLowPriorityProperties();
 
     for (auto& contentAttribute : builder.state().registeredContentAttributes())
         ruleSets().mutableFeatures().registerContentAttribute(contentAttribute);
 
-    if (cacheItem || !cacheHash)
+    if (cacheEntry || !cacheHash)
         return;
-    if (!isCacheableInMatchedPropertiesCache(*state.element(), state.style(), state.parentStyle()))
-        return;
-    addToMatchedPropertiesCache(state.style(), state.parentStyle(), cacheHash, matchResult);
+
+    if (Style::MatchedDeclarationsCache::isCacheable(element, style, parentStyle))
+        m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
 }
 
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, std::unique_ptr<RenderStyle> style)

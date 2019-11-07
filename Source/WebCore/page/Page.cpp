@@ -567,7 +567,7 @@ void Page::updateStyleAfterChangeInEnvironment()
 {
     forEachDocument([](Document& document) {
         if (StyleResolver* styleResolver = document.styleScope().resolverIfExists())
-            styleResolver->invalidateMatchedPropertiesCache();
+            styleResolver->invalidateMatchedDeclarationsCache();
         document.scheduleFullStyleRebuild();
         document.styleScope().didChangeStyleSheetEnvironment();
         document.scheduleTimedRenderingUpdate();
