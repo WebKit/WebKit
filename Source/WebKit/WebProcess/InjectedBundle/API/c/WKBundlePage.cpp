@@ -513,6 +513,11 @@ void WKBundlePageForceRepaint(WKBundlePageRef page)
     WebKit::toImpl(page)->forceRepaintWithoutCallback();
 }
 
+void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page)
+{
+    WebKit::toImpl(page)->flushPendingEditorStateUpdate();
+}
+
 void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time)
 {
     WebKit::toImpl(page)->simulateMouseDown(button, WebKit::toIntPoint(position), clickCount, modifiers, WallTime::fromRawSeconds(time));

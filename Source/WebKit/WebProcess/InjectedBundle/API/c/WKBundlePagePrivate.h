@@ -64,6 +64,7 @@ WK_EXPORT void WKBundlePageSetPageZoomFactor(WKBundlePageRef page, double zoomFa
 WK_EXPORT void WKBundlePageSetScaleAtOrigin(WKBundlePageRef page, double scale, WKPoint origin);
 
 WK_EXPORT void WKBundlePageForceRepaint(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageFlushPendingEditorStateUpdate(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time);
 WK_EXPORT void WKBundlePageSimulateMouseUp(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time);

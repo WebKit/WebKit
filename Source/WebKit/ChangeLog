@@ -1,3 +1,24 @@
+2019-11-06  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: [ iOS ] ( r251015 ) Layout Test fast/text/whitespace/pre-wrap-overflow-selection.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=203366
+        <rdar://problem/56580680>
+
+        Reviewed by Simon Fraser.
+
+        WKBundlePageForceRepaint may fail to do synchronous layer flush if there is a pending layer flush in-flight and waiting
+        for completion message from UI process. Layer flush also flushes pending editor state so that doesn't get done either.
+        This may cause randomness in test results.
+
+        In this case the randomness is the switch between simple and complex line layout, triggered by editor state flush. The results
+        between line layout paths are observably identical but produce slightly different render tree dumps.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageFlushPendingEditorStateUpdate):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
+        Add a function for forcing editor state flush, called from the test runner dump() function.
+
 2019-11-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix watchOS build after r252011.
