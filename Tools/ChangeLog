@@ -1,3 +1,26 @@
+2019-11-07  Paulo Matos  <pmatos@igalia.com>
+
+        Add support for remotes file for EWS builders
+        https://bugs.webkit.org/show_bug.cgi?id=203899
+
+        Reviewed by Aakash Jain.
+
+        Require to support builders that cross-compile and run tests on native machines
+        through the use of --remote-config-file.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__):
+        (StyleFactory.__init__):
+        (WatchListFactory.__init__):
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ConfigureBuild.__init__):
+        (ConfigureBuild.start):
+        (RunJavaScriptCoreTests.start):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunJavaScriptCoreTests.test_remote_success):
+
 2019-11-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: [ iOS ] ( r251015 ) Layout Test fast/text/whitespace/pre-wrap-overflow-selection.html is flaky

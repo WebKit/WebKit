@@ -49,7 +49,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ['configuring build']
     descriptionDone = ['Configured build']
 
-    def __init__(self, platform, configuration, architectures, buildOnly, triggers, additionalArguments):
+    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments):
         super(ConfigureBuild, self).__init__()
         self.platform = platform
         if platform != 'jsc-only':
@@ -59,6 +59,7 @@ class ConfigureBuild(buildstep.BuildStep):
         self.architecture = ' '.join(architectures) if architectures else None
         self.buildOnly = buildOnly
         self.triggers = triggers
+        self.remotes = remotes
         self.additionalArguments = additionalArguments
 
     def start(self):
@@ -74,6 +75,8 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty('buildOnly', self.buildOnly, 'config.json')
         if self.triggers:
             self.setProperty('triggers', self.triggers, 'config.json')
+        if self.remotes:
+            self.setProperty('remotes', self.remotes, 'config.json')
         if self.additionalArguments:
             self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
 
@@ -932,6 +935,11 @@ class RunJavaScriptCoreTests(shell.Test):
         shell.Test.__init__(self, logEnviron=False, **kwargs)
 
     def start(self):
+        # add remotes configuration file path to the command line if needed
+        remotesfile = self.getProperty('remotes', False)
+        if remotesfile:
+            self.command.append('--remote-config-file={0}'.format(remotesfile))
+
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 

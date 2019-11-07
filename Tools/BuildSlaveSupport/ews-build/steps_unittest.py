@@ -1011,6 +1011,22 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
 
+    def test_remote_success(self):
+        self.setupStep(RunJavaScriptCoreTests())
+        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('configuration', 'release')
+        self.setProperty('remotes', 'remote-machines.json')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--remote-config-file=remote-machines.json'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(RunJavaScriptCoreTests())
         self.setProperty('fullPlatform', 'jsc-only')

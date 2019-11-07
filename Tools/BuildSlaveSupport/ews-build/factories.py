@@ -33,9 +33,9 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
 
 
 class Factory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, additionalArguments=None, checkRelevance=False, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform, configuration, architectures, buildOnly, triggers, additionalArguments))
+        self.addStep(ConfigureBuild(platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments))
         if checkRelevance:
             self.addStep(CheckPatchRelevance())
         self.addStep(ValidatePatch())
@@ -49,9 +49,9 @@ class Factory(factory.BuildFactory):
 
 
 class StyleFactory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, additionalArguments))
+        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, remotes, additionalArguments))
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
@@ -61,9 +61,9 @@ class StyleFactory(factory.BuildFactory):
 
 
 class WatchListFactory(factory.BuildFactory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, additionalArguments))
+        self.addStep(ConfigureBuild(platform, configuration, architectures, False, triggers, remotes, additionalArguments))
         self.addStep(ValidatePatch())
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
