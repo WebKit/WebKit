@@ -34,7 +34,7 @@ extern "C" bool _AXUIElementRequestServicedBySecondaryAXThread(void);
 
 namespace WebCore {
 
-AXIsolatedTreeNode::AXIsolatedTreeNode(const AXCoreObject& object)
+AXIsolatedObject::AXIsolatedObject(const AXCoreObject& object)
     : m_id(object.objectID())
 {
     ASSERT(isMainThread());
@@ -44,14 +44,14 @@ AXIsolatedTreeNode::AXIsolatedTreeNode(const AXCoreObject& object)
 #endif
 }
 
-Ref<AXIsolatedTreeNode> AXIsolatedTreeNode::create(const AXCoreObject& object)
+Ref<AXIsolatedObject> AXIsolatedObject::create(const AXCoreObject& object)
 {
-    return adoptRef(*new AXIsolatedTreeNode(object));
+    return adoptRef(*new AXIsolatedObject(object));
 }
 
-AXIsolatedTreeNode::~AXIsolatedTreeNode() = default;
+AXIsolatedObject::~AXIsolatedObject() = default;
 
-void AXIsolatedTreeNode::initializeAttributeData(const AXCoreObject& object)
+void AXIsolatedObject::initializeAttributeData(const AXCoreObject& object)
 {
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
@@ -73,7 +73,7 @@ void AXIsolatedTreeNode::initializeAttributeData(const AXCoreObject& object)
     setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
 }
 
-void AXIsolatedTreeNode::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
+void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
 {
     ASSERT(!m_initialized);
     ASSERT(isMainThread());
@@ -84,26 +84,26 @@ void AXIsolatedTreeNode::setProperty(AXPropertyName propertyName, AttributeValue
         m_attributeMap.set(propertyName, value);
 }
 
-void AXIsolatedTreeNode::appendChild(AXID axID)
+void AXIsolatedObject::appendChild(AXID axID)
 {
     ASSERT(isMainThread());
     m_childrenIDs.append(axID);
 }
 
-void AXIsolatedTreeNode::setParent(AXID parent)
+void AXIsolatedObject::setParent(AXID parent)
 {
     ASSERT(isMainThread());
     m_parent = parent;
 }
 
-void AXIsolatedTreeNode::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
+void AXIsolatedObject::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
 {
     m_treeIdentifier = treeIdentifier;
     if (auto tree = AXIsolatedTree::treeForID(m_treeIdentifier))
         m_cachedTree = tree;
 }
 
-const AXCoreObject::AccessibilityChildrenVector& AXIsolatedTreeNode::children(bool)
+const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool)
 {
     if (_AXUIElementRequestServicedBySecondaryAXThread()) {
         m_children.clear();
@@ -115,19 +115,19 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedTreeNode::children(bo
     return m_children;
 }
 
-AXCoreObject* AXIsolatedTreeNode::focusedUIElement() const
+AXCoreObject* AXIsolatedObject::focusedUIElement() const
 {
     if (auto focusedElement = tree()->focusedUIElement())
         return focusedElement.get();
     return nullptr;
 }
     
-AXCoreObject* AXIsolatedTreeNode::parentObjectUnignored() const
+AXCoreObject* AXIsolatedObject::parentObjectUnignored() const
 {
     return tree()->nodeForID(parent()).get();
 }
 
-AXCoreObject* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) const
+AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
 {
     if (!relativeFrame().contains(point))
         return nullptr;
@@ -137,15 +137,15 @@ AXCoreObject* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) co
         if (child && child->relativeFrame().contains(point))
             return child->accessibilityHitTest(point);
     }
-    return const_cast<AXIsolatedTreeNode*>(this);
+    return const_cast<AXIsolatedObject*>(this);
 }
 
-AXIsolatedTree* AXIsolatedTreeNode::tree() const
+AXIsolatedTree* AXIsolatedObject::tree() const
 {
     return m_cachedTree.get();
 }
 
-FloatRect AXIsolatedTreeNode::rectAttributeValue(AXPropertyName propertyName) const
+FloatRect AXIsolatedObject::rectAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -158,7 +158,7 @@ FloatRect AXIsolatedTreeNode::rectAttributeValue(AXPropertyName propertyName) co
     );
 }
 
-double AXIsolatedTreeNode::doubleAttributeValue(AXPropertyName propertyName) const
+double AXIsolatedObject::doubleAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -167,7 +167,7 @@ double AXIsolatedTreeNode::doubleAttributeValue(AXPropertyName propertyName) con
     );
 }
 
-unsigned AXIsolatedTreeNode::unsignedAttributeValue(AXPropertyName propertyName) const
+unsigned AXIsolatedObject::unsignedAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -176,7 +176,7 @@ unsigned AXIsolatedTreeNode::unsignedAttributeValue(AXPropertyName propertyName)
     );
 }
 
-bool AXIsolatedTreeNode::boolAttributeValue(AXPropertyName propertyName) const
+bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -185,7 +185,7 @@ bool AXIsolatedTreeNode::boolAttributeValue(AXPropertyName propertyName) const
     );
 }
 
-const String AXIsolatedTreeNode::stringAttributeValue(AXPropertyName propertyName) const
+const String AXIsolatedObject::stringAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -194,7 +194,7 @@ const String AXIsolatedTreeNode::stringAttributeValue(AXPropertyName propertyNam
     );
 }
 
-int AXIsolatedTreeNode::intAttributeValue(AXPropertyName propertyName) const
+int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
     return WTF::switchOn(value,
@@ -203,7 +203,7 @@ int AXIsolatedTreeNode::intAttributeValue(AXPropertyName propertyName) const
     );
 }
 
-void AXIsolatedTreeNode::updateBackingStore()
+void AXIsolatedObject::updateBackingStore()
 {
     if (_AXUIElementRequestServicedBySecondaryAXThread()) {
         RELEASE_ASSERT(!isMainThread());

@@ -48,16 +48,16 @@ public:
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
 
-    WEBCORE_EXPORT RefPtr<AXIsolatedTreeNode> rootNode();
-    WEBCORE_EXPORT RefPtr<AXIsolatedTreeNode> focusedUIElement();
-    RefPtr<AXIsolatedTreeNode> nodeForID(AXID) const;
-    static RefPtr<AXIsolatedTreeNode> nodeInTreeForID(AXIsolatedTreeID, AXID);
+    WEBCORE_EXPORT RefPtr<AXIsolatedObject> rootNode();
+    WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedUIElement();
+    RefPtr<AXIsolatedObject> nodeForID(AXID) const;
+    static RefPtr<AXIsolatedObject> nodeInTreeForID(AXIsolatedTreeID, AXID);
 
     // Call on main thread
-    void appendNodeChanges(Vector<Ref<AXIsolatedTreeNode>>&);
+    void appendNodeChanges(Vector<Ref<AXIsolatedObject>>&);
     void removeNode(AXID);
 
-    void setRoot(Ref<AXIsolatedTreeNode>&);
+    void setRoot(Ref<AXIsolatedObject>&);
     void setFocusedNodeID(AXID);
     
     // Call on AX thread
@@ -72,10 +72,10 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
 
     // Only access on AX thread requesting data.
-    HashMap<AXID, Ref<AXIsolatedTreeNode>> m_readerThreadNodeMap;
+    HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
-    Vector<Ref<AXIsolatedTreeNode>> m_pendingAppends;
+    Vector<Ref<AXIsolatedObject>> m_pendingAppends;
     Vector<AXID> m_pendingRemovals;
     AXID m_pendingFocusedNodeID;
     Lock m_changeLogLock;

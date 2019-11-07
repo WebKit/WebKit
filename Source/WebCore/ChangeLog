@@ -1,5 +1,73 @@
 2019-11-07  Andres Gonzalez  <andresg_22@apple.com>
 
+        Rename AXIsolatedTreeNode to AXIsolatedObject for consistency with AXCoreObject and AccessibilityObject.
+        https://bugs.webkit.org/show_bug.cgi?id=203913
+
+        Reviewed by Chris Fleizach.
+
+        No new tests needed, no new functionality.
+
+        - Renamed AXIsolatedTreeNode as AXIsolatedObject.
+        - This makes the naming consistent with AXCoreObject and AccessibilityObject.
+        - Some code cleanup in WebAccessibilityObjectWrapperBase.h.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::createIsolatedAccessibilityTreeHierarchy):
+        (WebCore::AXObjectCache::generateIsolatedAccessibilityTree):
+        * accessibility/AXObjectCache.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::nodeInTreeForID):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::focusedUIElement):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::setRoot):
+        (WebCore::AXIsolatedTree::appendNodeChanges):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::create):
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::setProperty):
+        (WebCore::AXIsolatedObject::appendChild):
+        (WebCore::AXIsolatedObject::setParent):
+        (WebCore::AXIsolatedObject::setTreeIdentifier):
+        (WebCore::AXIsolatedObject::children):
+        (WebCore::AXIsolatedObject::focusedUIElement const):
+        (WebCore::AXIsolatedObject::parentObjectUnignored const):
+        (WebCore::AXIsolatedObject::accessibilityHitTest const):
+        (WebCore::AXIsolatedObject::tree const):
+        (WebCore::AXIsolatedObject::rectAttributeValue const):
+        (WebCore::AXIsolatedObject::doubleAttributeValue const):
+        (WebCore::AXIsolatedObject::unsignedAttributeValue const):
+        (WebCore::AXIsolatedObject::boolAttributeValue const):
+        (WebCore::AXIsolatedObject::stringAttributeValue const):
+        (WebCore::AXIsolatedObject::intAttributeValue const):
+        (WebCore::AXIsolatedObject::updateBackingStore):
+        (WebCore::AXIsolatedTreeNode::AXIsolatedTreeNode): Deleted.
+        (WebCore::AXIsolatedTreeNode::create): Deleted.
+        (WebCore::AXIsolatedTreeNode::initializeAttributeData): Deleted.
+        (WebCore::AXIsolatedTreeNode::setProperty): Deleted.
+        (WebCore::AXIsolatedTreeNode::appendChild): Deleted.
+        (WebCore::AXIsolatedTreeNode::setParent): Deleted.
+        (WebCore::AXIsolatedTreeNode::setTreeIdentifier): Deleted.
+        (WebCore::AXIsolatedTreeNode::children): Deleted.
+        (WebCore::AXIsolatedTreeNode::focusedUIElement const): Deleted.
+        (WebCore::AXIsolatedTreeNode::parentObjectUnignored const): Deleted.
+        (WebCore::AXIsolatedTreeNode::accessibilityHitTest const): Deleted.
+        (WebCore::AXIsolatedTreeNode::tree const): Deleted.
+        (WebCore::AXIsolatedTreeNode::rectAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::doubleAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::unsignedAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::boolAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::stringAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::intAttributeValue const): Deleted.
+        (WebCore::AXIsolatedTreeNode::updateBackingStore): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+
+2019-11-07  Andres Gonzalez  <andresg_22@apple.com>
+
         Implement AXIsolatedTreeNode::roleDescription.
         https://bugs.webkit.org/show_bug.cgi?id=203863
         <rdar://problem/56934443>

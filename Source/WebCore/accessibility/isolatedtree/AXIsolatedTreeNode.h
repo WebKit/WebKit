@@ -45,10 +45,10 @@ namespace WebCore {
 
 class AXIsolatedTree;
 
-class AXIsolatedTreeNode final : public AXCoreObject {
+class AXIsolatedObject final : public AXCoreObject {
 public:
-    static Ref<AXIsolatedTreeNode> create(const AXCoreObject&);
-    ~AXIsolatedTreeNode();
+    static Ref<AXIsolatedObject> create(const AXCoreObject&);
+    ~AXIsolatedObject();
 
     void setObjectID(AXID id) override { m_id = id; }
     AXID objectID() const override { return m_id; }
@@ -665,8 +665,8 @@ private:
     AXIsolatedTreeID treeIdentifier() const { return m_treeIdentifier; }
     AXIsolatedTree* tree() const;
 
-    AXIsolatedTreeNode() = default;
-    AXIsolatedTreeNode(const AXCoreObject&);
+    AXIsolatedObject() = default;
+    AXIsolatedObject(const AXCoreObject&);
     void initializeAttributeData(const AXCoreObject&);
 
     using AttributeValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, Optional<FloatRect>>;

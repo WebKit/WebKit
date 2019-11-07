@@ -2943,9 +2943,9 @@ void AXObjectCache::performDeferredCacheUpdate()
 }
     
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-Ref<AXIsolatedTreeNode> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(AXCoreObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedTreeNode>>& nodeChanges)
+Ref<AXIsolatedObject> AXObjectCache::createIsolatedAccessibilityTreeHierarchy(AXCoreObject& object, AXID parentID, AXIsolatedTree& tree, Vector<Ref<AXIsolatedObject>>& nodeChanges)
 {
-    auto isolatedTreeNode = AXIsolatedTreeNode::create(object);
+    auto isolatedTreeNode = AXIsolatedObject::create(object);
     nodeChanges.append(isolatedTreeNode.copyRef());
 
     isolatedTreeNode->setTreeIdentifier(tree.treeIdentifier());
@@ -2968,7 +2968,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedAccessibilityTree()
     if (!tree)
         tree = AXIsolatedTree::createTreeForPageID(*m_document.pageID());
     
-    Vector<Ref<AXIsolatedTreeNode>> nodeChanges;
+    Vector<Ref<AXIsolatedObject>> nodeChanges;
     auto root = createIsolatedAccessibilityTreeHierarchy(*rootObject(), InvalidAXID, *tree, nodeChanges);
     tree->setRoot(root);
     tree->appendNodeChanges(nodeChanges);

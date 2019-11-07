@@ -47,7 +47,7 @@
 namespace WebCore {
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-class AXIsolatedTreeNode;
+class AXIsolatedObject;
 #endif
 class Document;
 class HTMLAreaElement;
@@ -194,7 +194,7 @@ public:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT Ref<AXIsolatedTree> generateIsolatedAccessibilityTree();
 
-    Ref<AXIsolatedTreeNode> createIsolatedAccessibilityTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedTreeNode>>&);
+    Ref<AXIsolatedObject> createIsolatedAccessibilityTreeHierarchy(AXCoreObject&, AXID, AXIsolatedTree&, Vector<Ref<AXIsolatedObject>>&);
 #endif
     
 #if ENABLE(ACCESSIBILITY)
