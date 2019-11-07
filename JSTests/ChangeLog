@@ -1,3 +1,15 @@
+2019-11-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unskip test262 tests for async-iteration
+        https://bugs.webkit.org/show_bug.cgi?id=203921
+
+        Reviewed by Keith Miller.
+
+        This should have been done two years ago, it seems.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2019-11-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [[HasProperty]] result of Proxy in prototype chain is ignored

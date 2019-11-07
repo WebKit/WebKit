@@ -735,6 +735,9 @@ test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
 test/built-ins/AsyncFunction/proto-from-ctor-realm.js:
   default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
   strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncFunction]Â», Â«[object AsyncFunction]Â») to be true'
+test/built-ins/AsyncGeneratorFunction/proto-from-ctor-realm.js:
+  default: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncGeneratorFunction]Â», Â«[object AsyncGeneratorFunction]Â») to be true'
+  strict mode: 'Test262Error: newTarget.prototype is undefined Expected SameValue(Â«[object AsyncGeneratorFunction]Â», Â«[object AsyncGeneratorFunction]Â») to be true'
 test/built-ins/BigInt/constructor-integer.js:
   default: 'RangeError: Not safe integer'
   strict mode: 'RangeError: Not safe integer'
@@ -897,6 +900,9 @@ test/built-ins/Function/prototype/bind/proto-from-ctor-realm.js:
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
   default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
+test/built-ins/Function/prototype/toString/AsyncGenerator.js:
+  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
+  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/Function.js:
   default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
@@ -912,6 +918,27 @@ test/built-ins/Function/prototype/toString/async-function-declaration.js:
 test/built-ins/Function/prototype/toString/async-function-expression.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }'.(async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })"
+test/built-ins/Function/prototype/toString/async-generator-declaration.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
+test/built-ins/Function/prototype/toString/async-generator-expression.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }'.(async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })"
+test/built-ins/Function/prototype/toString/async-generator-method-class-expression-static.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+test/built-ins/Function/prototype/toString/async-generator-method-class-expression.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+test/built-ins/Function/prototype/toString/async-generator-method-class-statement-static.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+test/built-ins/Function/prototype/toString/async-generator-method-class-statement.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+test/built-ins/Function/prototype/toString/async-generator-method-object.js:
+  default: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
+  strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function* f( /* d */ ) /* e */ { /* f */ }'.(async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })"
 test/built-ins/Function/prototype/toString/async-method-class-expression-static.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* b */ ) /* c */ { /* d */ }'.(async f /* a */ ( /* b */ ) /* c */ { /* d */ })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'async function f( /* b */ ) /* c */ { /* d */ }'.(async f /* a */ ( /* b */ ) /* c */ { /* d */ })"
@@ -1947,6 +1974,8 @@ test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-se
   default: 'Test262Error: Expected obj[0] to have configurable:false.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-const.js:
@@ -1959,7 +1988,25 @@ test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-class.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-const.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-let.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-var.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -1967,11 +2014,15 @@ test/language/block-scope/syntax/redeclaration/class-name-redeclaration-attempt-
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -1984,6 +2035,8 @@ test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attem
 test/language/block-scope/syntax/redeclaration/function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -2000,6 +2053,9 @@ test/language/block-scope/syntax/redeclaration/generator-name-redeclaration-atte
 test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
@@ -2008,17 +2064,24 @@ test/language/block-scope/syntax/redeclaration/inner-block-var-name-redeclaratio
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/inner-block-var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-with-function.js:
@@ -2028,6 +2091,8 @@ test/language/block-scope/syntax/redeclaration/var-name-redeclaration-attempt-wi
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-function.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -2246,6 +2311,11 @@ test/language/expressions/assignment/dstr/ident-name-prop-name-literal-with-esca
 test/language/expressions/assignment/fn-name-lhs-cover.js:
   default: 'Test262Error: descriptor value should be '
   strict mode: 'Test262Error: descriptor value should be '
+test/language/expressions/async-generator/early-errors-expression-yield-as-function-binding-identifier.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/expressions/async-generator/generator-created-after-decl-inst.js:
+  default: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2287,6 +2357,9 @@ test/language/expressions/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-gen-meth-valid.js:
+  default: "SyntaxError: Cannot declare an async generator method named 'constructor'."
+  strict mode: "SyntaxError: Cannot declare an async generator method named 'constructor'."
 test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-meth-valid.js:
   default: "SyntaxError: Cannot declare an async method named 'constructor'."
   strict mode: "SyntaxError: Cannot declare an async method named 'constructor'."
@@ -2603,6 +2676,8 @@ test/language/expressions/generators/scope-param-rest-elem-var-close.js:
   default: 'Test262Error: Expected SameValue(Â«insideÂ», Â«outsideÂ») to be true'
 test/language/expressions/import.meta/import-meta-is-an-ordinary-object.js:
   module: 'SyntaxError: Cannot use new with import.'
+test/language/expressions/import.meta/syntax/invalid-assignment-target-for-await-of-loop.js:
+  module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-in-loop.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/expressions/import.meta/syntax/invalid-assignment-target-for-of-loop.js:
@@ -3239,6 +3314,9 @@ test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
+test/language/statements/async-generator/generator-created-after-decl-inst.js:
+  default: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
+  strict mode: 'Test262Error: Expected SameValue(Â«[object AsyncGenerator]Â», Â«[object AsyncGenerator]Â») to be false'
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
@@ -3249,6 +3327,9 @@ test/language/statements/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-gen-meth-valid.js:
+  default: "SyntaxError: Cannot declare an async generator method named 'constructor'."
+  strict mode: "SyntaxError: Cannot declare an async generator method named 'constructor'."
 test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-meth-valid.js:
   default: "SyntaxError: Cannot declare an async method named 'constructor'."
   strict mode: "SyntaxError: Cannot declare an async method named 'constructor'."
@@ -3400,6 +3481,16 @@ test/language/statements/class/subclass/class-definition-superclass-generator.js
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/do-while/let-array-with-newline.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-array-invalid.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-await-of/async-func-decl-dstr-array-elem-nested-obj-invalid.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-await-of/async-func-decl-dstr-array-elem-target-simple-strict.js:
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/for-await-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/12.6.4-2.js:
   default: 'Test262Error: accessedProp Expected SameValue(Â«trueÂ», Â«falseÂ») to be true'
@@ -3659,6 +3750,12 @@ test/language/statements/if/if-async-fun-else-stmt.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-async-fun-no-else.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/if/if-async-gen-else-async-gen.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/if/if-async-gen-else-stmt.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/if/if-async-gen-no-else.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-gen-else-stmt.js:
@@ -3667,11 +3764,16 @@ test/language/statements/if/if-gen-no-else.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-async-fun.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/if/if-stmt-else-async-gen.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/if-stmt-else-gen.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/if/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/labeled/decl-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/decl-gen.js:
@@ -3689,6 +3791,8 @@ test/language/statements/let/syntax/escaped-let.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-const.js:
@@ -3701,7 +3805,25 @@ test/language/statements/switch/syntax/redeclaration/async-function-name-redecla
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-class.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-const.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-let.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/async-generator-name-redeclaration-attempt-with-var.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3709,11 +3831,15 @@ test/language/statements/switch/syntax/redeclaration/class-name-redeclaration-at
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3726,6 +3852,8 @@ test/language/statements/switch/syntax/redeclaration/function-name-redeclaration
 test/language/statements/switch/syntax/redeclaration/function-name-redeclaration-attempt-with-var.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-name-redeclaration-attempt-with-class.js:
   default: 'Test262: This statement should not be evaluated.'
@@ -3741,11 +3869,16 @@ test/language/statements/switch/syntax/redeclaration/generator-name-redeclaratio
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-async-generator.js:
+  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-name-redeclaration-attempt-with-generator.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-async-function.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
+test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-async-generator.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-name-redeclaration-attempt-with-function.js:
