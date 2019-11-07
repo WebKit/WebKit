@@ -1,3 +1,18 @@
+2019-11-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r251940.
+        https://bugs.webkit.org/show_bug.cgi?id=203920
+
+        "it introduced test262 failures" (Requested by rkirsling on
+        #webkit).
+
+        Reverted changeset:
+
+        "[[HasProperty]] result of Proxy in prototype chain is
+        ignored"
+        https://bugs.webkit.org/show_bug.cgi?id=203560
+        https://trac.webkit.org/changeset/251940
+
 2019-11-04  Saam Barati  <sbarati@apple.com>
 
         Don't use memmove/memcpy/memset for memory that can be scanned concurrently
