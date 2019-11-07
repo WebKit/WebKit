@@ -1,3 +1,24 @@
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: Unable to get object details - GlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=203930
+        <rdar://problem/56960937>
+
+        In r248286, calls to `Heap.snapshot`, `Heap.getPreview`, and `Heap.getRemoteObject` were
+        moved to the `WI.HeapManager` instead of being inside view code. During this move, extra
+        `WI.reportInternalError` calls were added, which wasn't entirely correct as it is fully
+        possible (and expected) that any of these commands are invoked with old heap snapshot nodes
+        that may no longer exist. As such, calling any error an "internal error" isn't strictly
+        correct, and instead should just be a log. Also, the frontend code that calls these commands
+        is able to handle errors, again because it is expected.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/HeapManager.js:
+        (WI.HeapManager.prototype.snapshot):
+        (WI.HeapManager.prototype.getPreview):
+        (WI.HeapManager.prototype.getRemoteObject):
+
 2019-11-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Display color picker for p3 colors
