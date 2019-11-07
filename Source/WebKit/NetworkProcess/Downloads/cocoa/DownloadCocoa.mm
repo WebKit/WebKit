@@ -70,8 +70,10 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     NSData *updatedData = [NSPropertyListSerialization dataWithPropertyList:dictionary format:NSPropertyListXMLFormat_v1_0 options:0 error:nullptr];
 #endif
 
-    m_downloadTask = cocoaSession.downloadTaskWithResumeData(updatedData);
-    cocoaSession.addDownloadID(m_downloadTask.get().taskIdentifier, m_downloadID);
+    m_downloadTask = [cocoaSession.sessionWrapperForDownloads().session downloadTaskWithResumeData:updatedData];
+    auto taskIdentifier = [m_downloadTask taskIdentifier];
+    ASSERT(!cocoaSession.sessionWrapperForDownloads().downloadMap.contains(taskIdentifier));
+    cocoaSession.sessionWrapperForDownloads().downloadMap.add(taskIdentifier, m_downloadID);
     m_downloadTask.get()._pathToDownloadTaskFile = path;
 
     [m_downloadTask resume];

@@ -30,7 +30,7 @@ namespace WebCore {
 enum class StoredCredentialsPolicy : uint8_t {
     DoNotUse,
     Use,
-    EphemeralStatelessCookieless
+    EphemeralStateless
 };
 
 } // namespace WebCore

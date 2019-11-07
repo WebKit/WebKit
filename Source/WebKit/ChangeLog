@@ -1,3 +1,67 @@
+2019-11-07  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable NSURLSession isolation after r252116
+        https://bugs.webkit.org/show_bug.cgi?id=203934
+        <rdar://problem/56921584>
+
+        Reviewed by Chris Dumez.
+
+        r252116 was a rollout of r248640, which introduced cases where data tasks from different NSURLSessions
+        which can have the same task identifiers were put into the same maps.  This key collision caused data from the wrong
+        tasks to be sent to NetworkResourceLoader, causing rare and strange loading bugs.  In order to prevent insertion into
+        wrong maps again, I made a new abstraction, SessionWrapper, which wraps a NSURLSession, its delegate, and all maps
+        that are scoped to that NSURLSession.  Along the way I found a few other places where we had made similar mistakes.
+
+        Covered by an API test which would've failed before r252116 because it exercises the key collision condition,
+        and by tests which were skipped in r252116 and I now unskipped.
+
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithSessionWrapper:withCredentials:]):
+        (-[WKNetworkSessionDelegate sessionInvalidated]):
+        (-[WKNetworkSessionDelegate existingTask:]):
+        (-[WKNetworkSessionDelegate sessionCocoa]):
+        (-[WKNetworkSessionDelegate URLSession:didBecomeInvalidWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:willCacheResponse:completionHandler:]):
+        (processServerTrustEvaluation):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        (-[WKNetworkSessionDelegate existingWebSocketTask:]):
+        (WebKit::SessionWrapper::initialize):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessSession):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        (WebKit::NetworkSessionCocoa::isolatedSession):
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel):
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        (WebKit::NetworkSessionCocoa::addWebSocketTask):
+        (WebKit::NetworkSessionCocoa::removeWebSocketTask):
+        (-[WKNetworkSessionDelegate initWithNetworkSession:withCredentials:]): Deleted.
+        (WebKit::NetworkSessionCocoa::initializeEphemeralStatelessCookielessSession): Deleted.
+        (WebKit::NetworkSessionCocoa::session): Deleted.
+        (WebKit::NetworkSessionCocoa::dataTaskForIdentifier): Deleted.
+        (WebKit::NetworkSessionCocoa::downloadTaskWithResumeData): Deleted.
+        (WebKit::NetworkSessionCocoa::addDownloadID): Deleted.
+        (WebKit::NetworkSessionCocoa::downloadID): Deleted.
+        (WebKit::NetworkSessionCocoa::takeDownloadID): Deleted.
+        (WebKit::NetworkSessionCocoa::webSocketDataTaskForIdentifier): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _logUserInteraction:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2019-11-07  Peng Liu  <peng.liu6@apple.com>
 
         ASSERTION FAILED: m_clientCounts.contains(contextId) in WebKit::VideoFullscreenManagerProxy::removeClientForContext(uint64_t)

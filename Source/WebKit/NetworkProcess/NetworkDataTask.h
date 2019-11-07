@@ -133,6 +133,8 @@ public:
 
     PAL::SessionID sessionID() const;
 
+    NetworkSession* networkSession();
+
 protected:
     NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 

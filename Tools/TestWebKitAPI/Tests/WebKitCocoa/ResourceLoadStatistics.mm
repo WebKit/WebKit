@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TCPServer.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
@@ -472,6 +473,105 @@ TEST(ResourceLoadStatistics, NetworkProcessRestart)
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
+}
+
+@interface DataTaskIdentifierCollisionDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+- (NSArray<NSString *> *)waitForMessages:(size_t)count;
+@end
+
+@implementation DataTaskIdentifierCollisionDelegate {
+    RetainPtr<NSMutableArray<NSString *>> _messages;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    [_messages addObject:message];
+    completionHandler();
+}
+
+- (NSArray<NSString *> *)waitForMessages:(size_t)messageCount
+{
+    _messages = adoptNS([NSMutableArray arrayWithCapacity:messageCount]);
+    while ([_messages count] < messageCount)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _messages.autorelease();
+}
+
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * credential))completionHandler
+{
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+}
+
+@end
+
+TEST(ResourceLoadStatistics, DataTaskIdentifierCollision)
+{
+    using namespace TestWebKitAPI;
+
+    std::atomic<unsigned> serversConnected { 0 };
+    const char* header = "HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\n";
+
+    TCPServer httpsServer(TCPServer::Protocol::HTTPSProxy, [&] (SSL* ssl) {
+        serversConnected++;
+        while (serversConnected < 2)
+            usleep(100000);
+        TCPServer::read(ssl);
+        TCPServer::write(ssl, header, strlen(header));
+        const char* body = "<script>alert('1')</script>";
+        TCPServer::write(ssl, body, strlen(body));
+    });
+
+    TCPServer httpServer([&] (int socket) {
+        serversConnected++;
+        while (serversConnected < 2)
+            usleep(100000);
+        TCPServer::read(socket);
+        TCPServer::write(socket, header, strlen(header));
+        const char* body = "<script>alert('2')</script>";
+        TCPServer::write(socket, body, strlen(body));
+    });
+
+    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[_WKWebsiteDataStoreConfiguration new] autorelease];
+    storeConfiguration.httpsProxy = [NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", httpsServer.port()]];
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    [webView1 synchronouslyLoadHTMLString:@"start network process and initialize data store"];
+    auto delegate = adoptNS([DataTaskIdentifierCollisionDelegate new]);
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    [webView1 setUIDelegate:delegate.get()];
+    [webView1 setNavigationDelegate:delegate.get()];
+    [webView2 setUIDelegate:delegate.get()];
+    [webView2 setNavigationDelegate:delegate.get()];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [dataStore _setResourceLoadStatisticsDebugMode:YES];
+
+    __block bool isolatedSessionDomain = false;
+    __block NSURL *prevalentExample = [NSURL URLWithString:@"https://prevalent-example.com/"];
+    [dataStore _logUserInteraction:prevalentExample completionHandler:^{
+        [dataStore _setPrevalentDomain:prevalentExample completionHandler: ^(void) {
+            [dataStore _scheduleCookieBlockingUpdate:^{
+                isolatedSessionDomain = true;
+            }];
+        }];
+    }];
+    TestWebKitAPI::Util::run(&isolatedSessionDomain);
+
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", httpServer.port()]]]];
+    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://prevalent-example.com/"]]];
+
+    NSArray<NSString *> *messages = [delegate waitForMessages:2];
+    auto contains = [] (NSArray<NSString *> *array, NSString *expected) {
+        for (NSString *s in array) {
+            if ([s isEqualToString:expected])
+                return true;
+        }
+        return false;
+    };
+    EXPECT_TRUE(contains(messages, @"1"));
+    EXPECT_TRUE(contains(messages, @"2"));
 }
 
 TEST(ResourceLoadStatistics, NoMessagesWhenNotTesting)

@@ -879,7 +879,7 @@ template<> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
         WebCore::StoredCredentialsPolicy,
         WebCore::StoredCredentialsPolicy::DoNotUse,
         WebCore::StoredCredentialsPolicy::Use,
-        WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
+        WebCore::StoredCredentialsPolicy::EphemeralStateless
     >;
 };
 

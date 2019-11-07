@@ -168,7 +168,7 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     loadParameters.request = request;
     loadParameters.sourceOrigin = SecurityOrigin::create(conversionReferrerURL);
     loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStatelessCookieless;
+    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
     loadParameters.options = options;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
     loadParameters.shouldRestrictHTTPResponseAccess = false;

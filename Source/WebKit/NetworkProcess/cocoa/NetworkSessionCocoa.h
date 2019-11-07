@@ -28,6 +28,7 @@
 OBJC_CLASS DMFWebsitePolicyMonitor;
 OBJC_CLASS NSData;
 OBJC_CLASS NSURLSession;
+OBJC_CLASS NSURLSessionConfiguration;
 OBJC_CLASS NSURLSessionDownloadTask;
 OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
@@ -45,6 +46,19 @@ OBJC_CLASS WKNetworkSessionWebSocketDelegate;
 namespace WebKit {
 
 class LegacyCustomProtocolManager;
+class NetworkSessionCocoa;
+
+struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
+    void initialize(NSURLSessionConfiguration *, NetworkSessionCocoa&, WebCore::StoredCredentialsPolicy);
+
+    RetainPtr<NSURLSession> session;
+    RetainPtr<WKNetworkSessionDelegate> delegate;
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> dataTaskMap;
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> downloadMap;
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, WebSocketTask*> webSocketDataTaskMap;
+#endif
+};
 
 class NetworkSessionCocoa final : public NetworkSession {
     friend class NetworkDataTaskCocoa;
@@ -54,7 +68,7 @@ public:
     NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCocoa();
 
-    void initializeEphemeralStatelessCookielessSession();
+    void initializeEphemeralStatelessSession();
 
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
@@ -63,21 +77,11 @@ public:
     const String& dataConnectionServiceType() const { return m_dataConnectionServiceType; }
 #endif
 
-    NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
-    void registerDataTask(NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa&, WebCore::StoredCredentialsPolicy);
-    void unregisterDataTask(NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa&, WebCore::StoredCredentialsPolicy);
-
-    NSURLSessionDownloadTask* downloadTaskWithResumeData(NSData*);
-
-    WebSocketTask* webSocketDataTaskForIdentifier(WebSocketTask::TaskIdentifier);
-
-    void addDownloadID(NetworkDataTaskCocoa::TaskIdentifier, DownloadID);
-    DownloadID downloadID(NetworkDataTaskCocoa::TaskIdentifier);
-    DownloadID takeDownloadID(NetworkDataTaskCocoa::TaskIdentifier);
-
     static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
 
-    void continueDidReceiveChallenge(const WebCore::AuthenticationChallenge&, NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
+    void continueDidReceiveChallenge(SessionWrapper&, const WebCore::AuthenticationChallenge&, NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
+
+    SessionWrapper& sessionWrapperForDownloads() { return m_sessionWithCredentialStorage; }
 
     bool fastServerTrustEvaluationEnabled() const { return m_fastServerTrustEvaluationEnabled; }
     bool deviceManagementRestrictionsEnabled() const { return m_deviceManagementRestrictionsEnabled; }
@@ -86,8 +90,6 @@ public:
 
     CFDictionaryRef proxyConfiguration() const { return m_proxyConfiguration.get(); }
 
-    NSURLSession* session(WebCore::StoredCredentialsPolicy);
-    NSURLSession* isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain);
     bool hasIsolatedSession(const WebCore::RegistrableDomain) const override;
     void clearIsolatedSessions() override;
 
@@ -96,6 +98,8 @@ private:
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
+    SessionWrapper& sessionWrapperForTask(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy);
+    SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain);
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
     std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
@@ -103,32 +107,19 @@ private:
     void removeWebSocketTask(WebSocketTask&) final;
 #endif
 
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*>& dataTaskMap(WebCore::StoredCredentialsPolicy);
-
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithCredentials;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithoutState;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapEphemeralStatelessCookieless;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> m_downloadMap;
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, WebSocketTask*> m_webSocketDataTaskMap;
-#endif
-
     struct IsolatedSession {
-        RetainPtr<NSURLSession> sessionWithCredentialStorage;
-        RetainPtr<WKNetworkSessionDelegate> sessionWithCredentialStorageDelegate;
-        RetainPtr<NSURLSession> statelessSession;
-        RetainPtr<WKNetworkSessionDelegate> statelessSessionDelegate;
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        SessionWrapper sessionWithCredentialStorage;
+        SessionWrapper sessionWithoutCredentialStorage;
         WallTime lastUsed;
     };
 
-    HashMap<WebCore::RegistrableDomain, IsolatedSession> m_isolatedSessions;
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> m_isolatedSessions;
 
-    RetainPtr<NSURLSession> m_sessionWithCredentialStorage;
-    RetainPtr<WKNetworkSessionDelegate> m_sessionWithCredentialStorageDelegate;
-    RetainPtr<NSURLSession> m_statelessSession;
-    RetainPtr<WKNetworkSessionDelegate> m_statelessSessionDelegate;
-    RetainPtr<NSURLSession> m_ephemeralStatelessCookielessSession;
-    RetainPtr<WKNetworkSessionDelegate> m_ephemeralStatelessCookielessSessionDelegate;
+    SessionWrapper m_sessionWithCredentialStorage;
+    SessionWrapper m_sessionWithoutCredentialStorage;
+    SessionWrapper m_ephemeralStatelessSession;
 
     String m_boundInterfaceIdentifier;
     String m_sourceApplicationBundleIdentifier;

@@ -38,6 +38,7 @@ namespace WebKit {
 
 class Download;
 class NetworkSessionCocoa;
+struct SessionWrapper;
 
 class NetworkDataTaskCocoa final : public NetworkDataTask {
     friend class NetworkSessionCocoa;
@@ -89,6 +90,7 @@ private:
     bool isThirdPartyRequest(const WebCore::ResourceRequest&) const;
     bool isAlwaysOnLoggingAllowed() const;
 
+    SessionWrapper& m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
