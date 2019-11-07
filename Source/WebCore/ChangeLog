@@ -1,3 +1,27 @@
+2019-11-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][MarginCollapsing] Drag anonymous block level boxes into margin collapsing
+        https://bugs.webkit.org/show_bug.cgi?id=203927
+        <rdar://problem/56963636>
+
+        Reviewed by Antti Koivisto.
+
+        We've been ignoring anonymous block level boxes in the context of margin collapsing. Now with IFC, we can't really do that anymore.
+        This patch removes the early bailout on anon boxes and addresses the fallout.
+
+        * layout/MarginTypes.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues):
+
 2019-11-07  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable NSURLSession isolation after r252116

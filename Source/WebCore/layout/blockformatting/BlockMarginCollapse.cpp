@@ -112,9 +112,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarg
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
-    if (layoutBox.isAnonymous())
-        return false;
-
     ASSERT(layoutBox.isBlockLevelBox());
 
     // Margins between a floated box and any other box do not collapse.
@@ -155,16 +152,10 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutBox.isAnonymous())
-        return false;
-
     if (!layoutBox.previousInFlowSibling())
         return false;
 
     auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
-    if (previousInFlowSibling.isAnonymous())
-        return false;
-
     // Margins between a floated box and any other box do not collapse.
     if (layoutBox.isFloatingPositioned() || previousInFlowSibling.isFloatingPositioned())
         return false;
@@ -188,9 +179,6 @@ bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSi
 
 bool BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const Box& layoutBox) const
 {
-    if (layoutBox.isAnonymous())
-        return false;
-
     ASSERT(layoutBox.isBlockLevelBox());
     // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children.
     if (establishesBlockFormattingContext(layoutBox))
@@ -259,9 +247,6 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMargi
 
 bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter(const Box& layoutBox) const
 {
-    if (layoutBox.isAnonymous())
-        return false;
-
     ASSERT(layoutBox.isBlockLevelBox());
 
     // Margins between a floated box and any other box do not collapse.
@@ -348,6 +333,11 @@ bool BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowC
 
     // Margins of inline-block boxes do not collapse.
     if (lastInFlowChild.isInlineBlockBox())
+        return false;
+
+    // This is a quirk behavior: When the margin after of the last inflow child (or a previous sibling with collapsed through margins)
+    // collapses with a quirk parent's the margin before, then the same margin after does not collapses with the parent's margin after.
+    if (formattingContext().quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox) && marginAfterCollapsesWithParentMarginBefore(lastInFlowChild))
         return false;
 
     return true;
@@ -475,7 +465,7 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
     // 1. Get the margin before value from the next in-flow sibling. This is the same as this box's margin after value now since they are collapsed.
     // 2. Update the collapsed margin after value as well as the positive/negative cache.
     // 3. Check if the box's margins collapse through.
-    // 4. If so, update the collapsed margin before value as well as the positive/negative cache.
+    // 4. If so, update the positive/negative cache.
     // 5. In case of collapsed through margins check if the before margin collapes with the previous inflow sibling's after margin.
     // 6. If so, jump to #2.
     // 7. No need to propagate to parent because its margin is not computed yet (estimated at most).
@@ -492,10 +482,6 @@ void BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling
         auto marginsCollapseThrough = marginCollapse.marginsCollapseThrough(previousSibling);
         if (marginsCollapseThrough)
             collapsedVerticalMarginBefore = collapsedVerticalMarginAfter;
-
-        // Update collapsed vertical margin values.
-        previousSiblingVerticalMargin.setCollapsedValues({ collapsedVerticalMarginBefore, collapsedVerticalMarginAfter });
-        previousSiblingDisplayBox.setVerticalMargin(previousSiblingVerticalMargin);
 
         // Update positive/negative cache.
         auto previousSiblingPositiveNegativeMargin = blockFormattingState.positiveAndNegativeVerticalMargin(previousSibling);
@@ -572,7 +558,7 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
     };
 
     // We don't know yet the margin before value of the next sibling. Let's just pretend it does not have one and 
-    // update it later when we compute the next sibling's margin before. See updateCollapsedMarginAfter.
+    // update it later when we compute the next sibling's margin before. See updateMarginAfterForPreviousSibling.
     PositiveAndNegativeVerticalMargin::Values nonCollapsedAfter;
     if (nonCollapsedValues.after > 0)
         nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().hasMarginAfterQuirk() };
@@ -584,9 +570,6 @@ PositiveAndNegativeVerticalMargin::Values BlockFormattingContext::MarginCollapse
 
 EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues usedNonCollapsedMargin)
 {
-    if (layoutBox.isAnonymous())
-        return { };
-
     ASSERT(layoutBox.isBlockLevelBox());
     // Don't estimate vertical margins for out of flow boxes.
     ASSERT(layoutBox.isInFlow() || layoutBox.isFloatingPositioned());
@@ -603,7 +586,6 @@ EstimatedMarginBefore BlockFormattingContext::MarginCollapse::estimatedMarginBef
 
 LayoutUnit BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
 {
-    ASSERT(!layoutBox.isAnonymous());
     ASSERT(layoutBox.isBlockLevelBox());
     return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
 }
@@ -625,9 +607,6 @@ void BlockFormattingContext::MarginCollapse::updatePositiveNegativeMarginValues(
 
 UsedVerticalMargin::CollapsedValues BlockFormattingContext::MarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
 {
-    if (layoutBox.isAnonymous())
-        return { };
-
     ASSERT(layoutBox.isBlockLevelBox());
     // 1. Get min/max margin top values from the first in-flow child if we are collapsing margin top with it.
     // 2. Get min/max margin top values from the previous in-flow sibling, if we are collapsing margin top with it.
