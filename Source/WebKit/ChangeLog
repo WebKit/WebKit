@@ -1,3 +1,29 @@
+2019-11-06  Eric Liang  <ericliang@apple.com>
+
+        AX: WKWebView does not shift Accessibility Focus for Catalyst (203798)
+        https://bugs.webkit.org/show_bug.cgi?id=203798
+
+        Reviewed by Chris Fleizach.
+
+        Added the code to register/unregister remote UI Process identifier on the host app.
+        This is used so that the host app can appear as the sender for notifications sent from its web processes. Unfortunately this has to be done in WebKit: in accessibility bundles the swizzled code is not called because of bundle loading time.
+        Added AppKit softlink for Mac catalyst.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/ios/AppKitSoftLink.h: Added.
+        * UIProcess/ios/AppKitSoftLink.mm: Added.
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController gestureRecognizerForInteractiveTransition:WithTarget:action:]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _updateRemoteAccessibilityRegistration:]):
+        (-[WKContentView _accessibilityRegisterUIProcessTokens]):
+        (-[WKContentView _processDidExit]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2019-11-06  Keith Rollin  <krollin@apple.com>
 
         Update availability annotations to match the macOS 10.15 and iOS 13.0 GM SDKs

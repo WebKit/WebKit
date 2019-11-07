@@ -1,3 +1,15 @@
+2019-11-06  Eric Liang  <ericliang@apple.com>
+
+        AX: WKWebView does not shift Accessibility Focus for Catalyst (203798)
+        https://bugs.webkit.org/show_bug.cgi?id=203798
+
+        Reviewed by Chris Fleizach.
+
+        Changed to use the new cocoa directory instead of macOS only
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+
 2019-11-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WEBCORE_TESTSUPPORT_EXPORT should be used only for WebCoreTestSupport, not for WebCore
