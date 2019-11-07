@@ -226,7 +226,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
 
     contextMenu.appendSeparator();
 
-    if (!options.disallowEditing) {
+    if (!options.usingLocalDOMNode) {
         if (domNode.isCustomElement()) {
             contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
                 function didGetFunctionDetails(error, response) {
@@ -260,7 +260,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             contextMenu.appendSeparator();
         }
 
-        if (WI.cssManager.canForcePseudoClasses() && domNode.attached) {
+        if (!options.disallowEditing && WI.cssManager.canForcePseudoClasses() && domNode.attached) {
             contextMenu.appendSeparator();
 
             let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes", "A context menu item to force (override) a DOM node's pseudo-classes"));

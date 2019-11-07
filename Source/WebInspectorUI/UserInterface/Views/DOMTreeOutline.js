@@ -295,6 +295,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         let options = {
             disallowEditing: !this._editable,
+            usingLocalDOMNode: this._usingLocalDOMNode,
             excludeRevealElement: this._excludeRevealElementContextMenu,
             copySubMenu: subMenus.copy,
         };

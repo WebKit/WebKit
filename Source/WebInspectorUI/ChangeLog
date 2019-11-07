@@ -1,5 +1,26 @@
 2019-11-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r249451): missing "Reveal in DOM Tree" on nodes logged to the console
+        https://bugs.webkit.org/show_bug.cgi?id=203836
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        DOM trees in the console are marked as being non-editable, which is intended to prevent
+        modifications (e.g. changing an attribute) from being made in the console as the DOM tree
+        there is not hooked up to the associated DOM agent. In r249451 however, this guard was over
+        expanded to include non-editing actions, like "Reveal in DOM Tree" and DOM breakpoints.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._handleContextMenuEvent):
+        Drive-by: add a separator before "Copy Selected" so it doesn't end up in the same group as
+                  any "Collapse All" from a `WI.TreeOutline`.
+
+2019-11-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Local Resource Overrides: automatically show a file picker when attempting to create an override for non-text resources
         https://bugs.webkit.org/show_bug.cgi?id=203917
 

@@ -506,6 +506,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
+        contextMenu.appendSeparator();
+
         if (this._selectedMessages.length) {
             contextMenu.appendItem(WI.UIString("Copy Selected"), () => {
                 InspectorFrontendHost.copyText(this._formatMessagesAsData(true));
