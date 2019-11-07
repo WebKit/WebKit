@@ -29,7 +29,6 @@
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
 #include <JavaScriptCore/RuntimeFlags.h>
@@ -68,12 +67,10 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    void enqueueEvent(Ref<Event>&&);
+    void dispatchEvent(Event&) final;
 
 private:
     explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, const Options&);
-
-    void dispatchEvent(Event&) final;
 
     EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
 
@@ -98,7 +95,8 @@ private:
     bool m_shouldBypassMainWorldContentSecurityPolicy { false };
     bool m_isSuspendedForBackForwardCache { false };
     JSC::RuntimeFlags m_runtimeFlags;
-    UniqueRef<GenericEventQueue> m_eventQueue;
+    Deque<RefPtr<Event>> m_pendingEvents;
+    bool m_wasTerminated { false };
 };
 
 } // namespace WebCore

@@ -113,12 +113,6 @@ public:
     bool isContextStopped() const;
     bool isAllowedToRunScript() const;
 
-protected:
-    explicit ActiveDOMObject(ScriptExecutionContext*);
-    explicit ActiveDOMObject(Document*);
-    explicit ActiveDOMObject(Document&);
-    virtual ~ActiveDOMObject();
-
     template<typename T>
     static void queueTaskKeepingObjectAlive(T& object, TaskSource source, Function<void ()>&& task)
     {
@@ -135,6 +129,12 @@ protected:
             target.dispatchEvent(event.get());
         });
     }
+
+protected:
+    explicit ActiveDOMObject(ScriptExecutionContext*);
+    explicit ActiveDOMObject(Document*);
+    explicit ActiveDOMObject(Document&);
+    virtual ~ActiveDOMObject();
 
 private:
     enum CheckedScriptExecutionContextType { CheckedScriptExecutionContext };

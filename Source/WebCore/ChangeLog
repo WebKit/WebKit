@@ -1,5 +1,25 @@
 2019-11-07  Chris Dumez  <cdumez@apple.com>
 
+        Port Worker to the HTML5 event loop
+        https://bugs.webkit.org/show_bug.cgi?id=203919
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/ActiveDOMObject.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::terminate):
+        (WebCore::Worker::hasPendingActivity const):
+        (WebCore::Worker::notifyFinished):
+        (WebCore::Worker::dispatchEvent):
+        (WebCore::Worker::enqueueEvent): Deleted.
+        * workers/Worker.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+
+2019-11-07  Chris Dumez  <cdumez@apple.com>
+
         Port MessagePort to the HTML5 event loop
         https://bugs.webkit.org/show_bug.cgi?id=203960
 
