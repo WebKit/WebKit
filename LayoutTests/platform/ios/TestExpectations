@@ -3471,3 +3471,14 @@ webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properti
 
 # This test fails in iOS due to subpixel differences for the marker position
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
+
+# webkit.org/b/203908 Mark these tests as flaky while Justin Fan fixes them
+webgl/1.0.3/conformance/extensions/get-extension.html [ Failure Pass ]
+webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure Pass ]
+webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure Pass ]
+webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure Pass ]
+webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure Pass ]
+webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure Pass ]
+webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure Pass ]
+webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure Pass ]
+webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure Pass ]

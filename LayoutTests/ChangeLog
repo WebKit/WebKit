@@ -1,3 +1,13 @@
+2019-11-06  Justin Fan  <justin_fan@apple.com>
+
+        REGRESSION: r252121 introduced new webgl/ failures
+        https://bugs.webkit.org/show_bug.cgi?id=203908
+
+        Unreviewed test gardening to quell the bots.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2019-11-06  Jer Noble  <jer.noble@apple.com>
 
         Screen locks while watching previously-muted-then-unmuted video
