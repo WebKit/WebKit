@@ -1,3 +1,15 @@
+2019-11-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fixed for non-unified builds.
+
+        No new tests needed.
+
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp: Add missing inclusion of the
+        wtf/text/StringConcatenateNumbers.h header.
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp: Ditto.
+        * page/DOMWindowExtension.cpp: Add missing inclusion of the Document.h header.
+        * platform/glib/UserAgentGLib.cpp: Add missing inclusion of the HTTPParsers.h header.
+
 2019-10-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] White pages in AC mode: Cannot get default EGL display: EGL_BAD_PARAMETER

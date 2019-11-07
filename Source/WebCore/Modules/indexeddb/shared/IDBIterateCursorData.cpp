@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include <wtf/text/StringConcatenateNumbers.h>
+
 namespace WebCore {
 
 IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
